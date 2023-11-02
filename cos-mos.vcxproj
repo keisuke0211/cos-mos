@@ -29,14 +29,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -71,12 +71,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)</OutDir>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -87,7 +92,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -117,7 +122,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -146,6 +151,143 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\Project\Character\player.cpp" />
+    <ClCompile Include="code\Project\Effect\effect-manager.cpp" />
+    <ClCompile Include="code\Project\Effect\effect.cpp" />
+    <ClCompile Include="code\Project\Effect\particle.cpp" />
+    <ClCompile Include="code\Project\main.cpp" />
+    <ClCompile Include="code\Project\manager.cpp" />
+    <ClCompile Include="code\Project\Mode\mode.cpp" />
+    <ClCompile Include="code\Project\Mode\mode_game.cpp" />
+    <ClCompile Include="code\Project\Mode\mode_logo.cpp" />
+    <ClCompile Include="code\Project\Mode\mode_result.cpp" />
+    <ClCompile Include="code\Project\Mode\mode_title.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\Planet.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\ShiningWave.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\Star.cpp" />
+    <ClCompile Include="code\Project\Object\Block\block.cpp" />
+    <ClCompile Include="code\Project\Object\Block\fill-block.cpp" />
+    <ClCompile Include="code\Project\Object\Block\move-block.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\meteor.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\RoadTripLaser.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\rocket.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\Spike.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\trampoline.cpp" />
+    <ClCompile Include="code\Project\Object\Item\Parts.cpp" />
+    <ClCompile Include="code\Project\Object\stage-object-manager.cpp" />
+    <ClCompile Include="code\Project\Object\stage-object.cpp" />
+    <ClCompile Include="code\Project\precompile.cpp" />
+    <ClCompile Include="code\Project\System\csv_file.cpp" />
+    <ClCompile Include="code\Project\System\StageEditor.cpp" />
+    <ClCompile Include="code\Project\System\words\font-text.cpp" />
+    <ClCompile Include="code\Project\System\words\font.cpp" />
+    <ClCompile Include="code\Project\System\words\object\font-object.cpp" />
+    <ClCompile Include="code\Project\System\words\words.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Body\doll3D-manager.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Body\doll3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Body\motion3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Body\setup3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Calculation\ease.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Calculation\geometry.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Calculation\matrix.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Calculation\number.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\default-data.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\camera.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\camera_control.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\color.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\draw-info.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\draw-manager.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\draw-state.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\light3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon2D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\text2D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\text3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\text.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\texture.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\transition.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\input.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\file.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\object-manager.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\object.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\print.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\window.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\setting.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\sound.cpp" />
+    <ClCompile Include="code\_RNLib\RNlib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\Project\Character\player.h" />
+    <ClInclude Include="code\Project\Effect\effect-manager.h" />
+    <ClInclude Include="code\Project\Effect\effect.h" />
+    <ClInclude Include="code\Project\Effect\particle.h" />
+    <ClInclude Include="code\Project\main.h" />
+    <ClInclude Include="code\Project\manager.h" />
+    <ClInclude Include="code\Project\Mode\mode.h" />
+    <ClInclude Include="code\Project\Mode\mode_game.h" />
+    <ClInclude Include="code\Project\Mode\mode_logo.h" />
+    <ClInclude Include="code\Project\Mode\mode_result.h" />
+    <ClInclude Include="code\Project\Mode\mode_title.h" />
+    <ClInclude Include="code\Project\Object\BackGround\Planet.h" />
+    <ClInclude Include="code\Project\Object\BackGround\Shiningwave.h" />
+    <ClInclude Include="code\Project\Object\BackGround\Star.h" />
+    <ClInclude Include="code\Project\Object\Block\block.h" />
+    <ClInclude Include="code\Project\Object\Block\fill-block.h" />
+    <ClInclude Include="code\Project\Object\Block\move-block.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\goalgate.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\meteor.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\RoadTripLaser.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\rocket.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\Spike.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\trampoline.h" />
+    <ClInclude Include="code\Project\Object\Item\Parts.h" />
+    <ClInclude Include="code\Project\Object\stage-object-manager.h" />
+    <ClInclude Include="code\Project\Object\stage-object.h" />
+    <ClInclude Include="code\Project\precompile.h" />
+    <ClInclude Include="code\Project\System\csv_file.h" />
+    <ClInclude Include="code\Project\System\StageEditor.h" />
+    <ClInclude Include="code\Project\System\words\font-text.h" />
+    <ClInclude Include="code\Project\System\words\font.h" />
+    <ClInclude Include="code\Project\System\words\object\font-object.h" />
+    <ClInclude Include="code\Project\System\words\words.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Body\doll3D-manager.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Body\doll3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Body\motion3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Body\setup3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Calculation\ease.h" />
+    <ClInclude Include="code\_RNLib\Basis\Calculation\geometry.h" />
+    <ClInclude Include="code\_RNLib\Basis\Calculation\matrix.h" />
+    <ClInclude Include="code\_RNLib\Basis\Calculation\number.h" />
+    <ClInclude Include="code\_RNLib\Basis\default-data.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\camera.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\color.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\draw-info.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\draw-manager.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\draw-state.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\light3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon2D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\text2D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\text3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\text.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\texture.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\transition.h" />
+    <ClInclude Include="code\_RNLib\Basis\input.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\file.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\memory.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\object-manager.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\object.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\print.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\window.h" />
+    <ClInclude Include="code\_RNLib\Basis\setting.h" />
+    <ClInclude Include="code\_RNLib\Basis\sound.h" />
+    <ClInclude Include="code\_RNLib\RNlib.h" />
+    <ClInclude Include="code\_RNLib\RNmain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
