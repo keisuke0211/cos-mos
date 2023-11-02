@@ -170,6 +170,7 @@
     <ClCompile Include="code\Project\Object\Block\move-block.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\meteor.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\meteor_generator.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\RoadTripLaser.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\rocket.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\Spike.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="code\Project\Object\Block\move-block.h" />
     <ClInclude Include="code\Project\Object\Gimmick\goalgate.h" />
     <ClInclude Include="code\Project\Object\Gimmick\meteor.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\meteor_generator.h" />
     <ClInclude Include="code\Project\Object\Gimmick\RoadTripLaser.h" />
     <ClInclude Include="code\Project\Object\Gimmick\rocket.h" />
     <ClInclude Include="code\Project\Object\Gimmick\Spike.h" />
