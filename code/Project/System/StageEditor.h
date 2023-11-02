@@ -93,13 +93,18 @@ private:
 		TYPE_SPIKE,					// 棘
 		TYPE_LIFT,					// リフト
 		TYPE_Meteor,				// 隕石
-		TYPE_FILL_BLOCK_11 = 20,	// ブロック(判定 無) 1 * 1
-		TYPE_FILL_BLOCK_22 = 21,	// ブロック(判定 無) 2 * 2
-		TYPE_FILL_BLOCK_33 = 22,	// ブロック(判定 無) 3 * 3
-		TYPE_FILL_BLOCK_44 = 23,	// ブロック(判定 無) 4 * 4
+		TYPE_FILL_BLOCK_11 = 11,	// ブロック(判定 無) 1 * 1
+		TYPE_FILL_BLOCK_12 = 12,	// ブロック(判定 無) 1 * 2
+		TYPE_FILL_BLOCK_13 = 13,	// ブロック(判定 無) 1 * 3
+		TYPE_FILL_BLOCK_21 = 21,	// ブロック(判定 無) 2 * 1
+		TYPE_FILL_BLOCK_22 = 22,	// ブロック(判定 無) 2 * 2
+		TYPE_FILL_BLOCK_31 = 31,	// ブロック(判定 無) 3 * 1
+		TYPE_FILL_BLOCK_33 = 33,	// ブロック(判定 無) 3 * 3
+		TYPE_FILL_BLOCK_44 = 44,	// ブロック(判定 無) 4 * 4
 		TYPE_PLAYER_0 = 90,			// １Ｐ
 		TYPE_PLAYER_1,				// ２Ｐ
-		TYPE_PARTS = 98,			// パーツ
+		TYPE_GOALGATE = 97,			// ゴールゲート
+		TYPE_PARTS,					// パーツ
 		TYPE_GOAL,					// ゴール
 		TYPE_MAX
 	};

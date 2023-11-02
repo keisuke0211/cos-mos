@@ -10,9 +10,13 @@
 #include "../../main.h"
 
 //ÉpÉXì«Ç›çûÇ›
-static const char* s_Path[4] = {
+static const char* s_Path[8] = {
 	"data\\MODEL\\fill-block_1x1.x",
+	"data\\MODEL\\fill-block_1x2.x",
+	"data\\MODEL\\fill-block_1x3.x",
+	"data\\MODEL\\fill-block_2x1.x",
 	"data\\MODEL\\fill-block_2x2.x",
+	"data\\MODEL\\fill-block_3x1.x",
 	"data\\MODEL\\fill-block_3x3.x",
 	"data\\MODEL\\fill-block_4x4.x",
 };
