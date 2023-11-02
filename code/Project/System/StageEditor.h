@@ -112,6 +112,7 @@ private:
 	// *** 関数宣言 ***
 	/* ステージ色	*/void StgColor(CSVFILE *pFile, int nRow, int nLine);
 	/* 色設定		*/void SetColor(CSVFILE *pFile, int nRow, int nLine);
+	/* OBJ配置		*/void ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos,int nType);
 
 	/* ステージ生成 */void SetStage(int nType);
 

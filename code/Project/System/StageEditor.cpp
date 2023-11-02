@@ -398,80 +398,7 @@ void CStageEditor::SetStage(int nType)
 		pos.z = 0.0f/* + fRand() * 4.0f*/;
 
 		// 配置
-		switch (nType)
-		{
-		case TYPE_BLOCK:
-			Manager::BlockMgr()->BlockCreate(pos, m_StageColor.Block);
-			break;
-		case TYPE_TRAMPOLINE:
-			pos.x += fSizeX / 2;
-			Manager::BlockMgr()->TrampolineCreate(pos);
-			break;
-		case TYPE_SPIKE:
-			Manager::BlockMgr()->SpikeCreate(pos);
-			break;
-		case TYPE_LIFT:
-			Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0.0f);
-			break;
-		case TYPE_Meteor:
-			pos.x += fSizeX;
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->MeteorCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			break;
-		case TYPE_FILL_BLOCK_11:
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_12:
-			pos.x += fSizeX * 0.5f;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x2, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_13:
-			pos.x += fSizeX;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x3, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_21:
-			pos.y -= fSizeY * 0.5f;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x1, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_22:
-			pos.x += fSizeX * 0.5f;
-			pos.y -= fSizeY * 0.5f;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x2, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_31:
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x1, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_33:
-			pos.x += fSizeX;
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x3, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_44:
-			pos.x += fSizeX * 1.5f;
-			pos.y -= fSizeY * 1.5f;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_4x4, m_StageColor.FillBlock);
-			break;
-		case TYPE_PLAYER_0:
-			pos.y += fSizeY * 0.5f;
-			CMode_Game::GetPlayer()->SetPos(0, pos);
-			break;
-		case TYPE_PLAYER_1:
-			pos.y += -fSizeY * 0.5f;
-			CMode_Game::GetPlayer()->SetPos(1, pos);
-			break;
-		case TYPE_GOALGATE:
-			Manager::BlockMgr()->BlockCreate(pos, Color{0, 0, 0, 255});
-			break;
-		case TYPE_PARTS:
-			Manager::BlockMgr()->PartsCreate(pos);
-			break;
-		case TYPE_GOAL:
-			pos.x += fSizeX;
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->RocketCreate(pos);
-			break;
-		}
+		ObjPlace(fSizeX,fSizeY,pos,nType);
 	}
 }
 
@@ -506,6 +433,90 @@ void CStageEditor::SetColor(CSVFILE *pFile, int nRow, int nLine)
 	ToData(m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
 	ToData(m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
 }
+
+//========================================
+// オブジェクト配置
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nType)
+{
+	switch (nType)
+	{
+	case TYPE_BLOCK:
+		Manager::BlockMgr()->BlockCreate(pos, m_StageColor.Block);
+		break;
+	case TYPE_TRAMPOLINE:
+		pos.x += fSizeX / 2;
+		Manager::BlockMgr()->TrampolineCreate(pos);
+		break;
+	case TYPE_SPIKE:
+		Manager::BlockMgr()->SpikeCreate(pos);
+		break;
+	case TYPE_LIFT:
+		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0.0f);
+		break;
+	case TYPE_Meteor:
+		pos.x += fSizeX;
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->MeteorCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		break;
+	case TYPE_FILL_BLOCK_11:
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_12:
+		pos.x += fSizeX * 0.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x2, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_13:
+		pos.x += fSizeX;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x3, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_21:
+		pos.y -= fSizeY * 0.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x1, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_22:
+		pos.x += fSizeX * 0.5f;
+		pos.y -= fSizeY * 0.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x2, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_31:
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x1, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_33:
+		pos.x += fSizeX;
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x3, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_44:
+		pos.x += fSizeX * 1.5f;
+		pos.y -= fSizeY * 1.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_4x4, m_StageColor.FillBlock);
+		break;
+	case TYPE_PLAYER_0:
+		pos.y += fSizeY * 0.5f;
+		CMode_Game::GetPlayer()->SetPos(0, pos);
+		break;
+	case TYPE_PLAYER_1:
+		pos.y += -fSizeY * 0.5f;
+		CMode_Game::GetPlayer()->SetPos(1, pos);
+		break;
+	case TYPE_GOALGATE:
+		Manager::BlockMgr()->BlockCreate(pos, Color{ 0, 0, 0, 255 });
+		break;
+	case TYPE_PARTS:
+		Manager::BlockMgr()->PartsCreate(pos);
+		break;
+	case TYPE_GOAL:
+		pos.x += fSizeX;
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->RocketCreate(pos);
+		break;
+	}
+
+}
+
 
 //========================================
 // 変換
