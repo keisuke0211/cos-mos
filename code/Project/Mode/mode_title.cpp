@@ -427,7 +427,7 @@ void CMode_Title::MenuAnime(void)
 				m_bMenuAnime = true;
 
 				m_BgPos[1] = D3DXVECTOR3(-640.0f, 600.0f, 0.0f);
-				m_BgPos[2] = D3DXVECTOR3(1240.0f, -200.0f, 0.0f);
+				m_BgPos[2] = D3DXVECTOR3(1240.0f, -250.0f, 0.0f);
 			}
 		}
 	}
@@ -517,6 +517,7 @@ void CMode_Title::Menu(void)
 	{
 		m_bBackMode = true;
 		SwapMode(TITLE_OUTSET);
+		return;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT,CInput::INPUT_ANGLE::UP))
 	{
@@ -619,7 +620,9 @@ void CMode_Title::StageSelect(void)
 	// -- ÉÅÉjÉÖÅ[ëIë ---------------------------
 	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
 	{
-		/*Title = TITLE_MENU;*/
+		TextClear();
+		SwapMode(TITLE_MENU_ANIME);
+		return;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
 	{
@@ -739,6 +742,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 	{
 		m_bMenuAnime = false;
 		m_BgPos[1] = D3DXVECTOR3(-640.0f, 1000.0f, 0.0f);
+		m_BgPos[2] = D3DXVECTOR3(1240.0f, -250.0f, 0.0f);
 	}
 		break;
 	case CMode_Title::TITLE_MENU:
