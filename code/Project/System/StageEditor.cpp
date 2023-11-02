@@ -96,7 +96,7 @@ void CStageEditor::Uninit(void)
 void CStageEditor::FileLoad(void)
 {
 	int nCntPlanet = 0;
-	int *nCntStage = NULL;
+	int *pCntStage = NULL;
 	char aDataSearch[TXT_MAX];	// データ検索用
 
 	// ファイルの読み込み
@@ -117,10 +117,10 @@ void CStageEditor::FileLoad(void)
 		{// 読み込みを終了
 			fclose(pFile);
 
-			if (nCntStage != NULL)
+			if (pCntStage != NULL)
 			{
-				delete[] nCntStage;
-				nCntStage = NULL;
+				delete[] pCntStage;
+				pCntStage = NULL;
 			}
 
 			break;
@@ -146,11 +146,11 @@ void CStageEditor::FileLoad(void)
 			m_PlanetType = new PlanetType[nMax];
 			assert(m_PlanetType != NULL);
 
-			nCntStage = new int[nMax];
+			pCntStage = new int[nMax];
 
 			for (int nCnt = 0; nCnt < nMax; nCnt++)
 			{
-				nCntStage[nCnt] = 0;
+				pCntStage[nCnt] = 0;
 			}
 
 		}
@@ -180,12 +180,12 @@ void CStageEditor::FileLoad(void)
 			fscanf(pFile, "%s", &aDataSearch[0]);
 			fscanf(pFile, "%d", &nPlanet);	// 惑星番号
 
-			if (nCntStage[nPlanet] < m_PlanetType[nPlanet].nStageMax)
+			if (pCntStage[nPlanet] < m_PlanetType[nPlanet].nStageMax)
 			{
-				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[nCntStage[nPlanet]].aFileName[0]);	// ファイル名
-				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[nCntStage[nPlanet]].aName[0]);		// ステージ名
+				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aFileName[0]);	// ファイル名
+				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aName[0]);		// ステージ名
 
-				nCntStage[nPlanet]++;
+				pCntStage[nPlanet]++;
 			}
 		}
 	}
