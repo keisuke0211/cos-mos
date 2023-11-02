@@ -498,7 +498,17 @@ void CMode_Title::Menu(void)
 	}
 
 	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT,CInput::INPUT_ANGLE::UP))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
+	{
+		//TextClear(TITLE_OUTSET);
+
+		//FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),70.0f,5,10,-1, };// 45
+		//FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
+
+		//m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(230.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+		//	"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, false, &pShadow);
+	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT,CInput::INPUT_ANGLE::UP))
 	{
 		m_nSelect--;
 	}
@@ -605,7 +615,11 @@ void CMode_Title::StageSelect(void)
 
 	bool bInput = false;
 	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
+	{
+		/*Title = TITLE_MENU;*/
+	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
 	{
 		m_nSelect--;
 		bInput = true;

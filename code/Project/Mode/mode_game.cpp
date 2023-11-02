@@ -299,6 +299,11 @@ void CMode_Game::PauseMenu(void)
 //========================================
 void CMode_Game::PauseSelect(void)
 {
+	//if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START))
+	//{
+	//	SetState((int)STATE::NONE);
+	//}
+
 	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
 	{
 		switch (m_nSelect)
