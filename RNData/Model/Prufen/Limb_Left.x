@@ -261,7 +261,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Game&ToolCreate\\Project\\Wishtrum\\RNData\\Texture\\PrufenMat_1.PNG";
+    "RNData\\Texture\\PrufenMat_1.PNG";
    }
   }
   Material {
@@ -270,7 +270,7 @@ Mesh {
    0.500000;0.500000;0.500000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Game&ToolCreate\\Project\\Wishtrum\\RNData\\Texture\\PrufenMat_1.PNG";
+    "RNData\\Texture\\PrufenMat_1.PNG";
    }
   }
   Material {
@@ -279,7 +279,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Game&ToolCreate\\Project\\Wishtrum\\RNData\\Texture\\PrufenMat_2.PNG";
+    "RNData\\Texture\\PrufenMat_2.PNG";
    }
   }
   Material {
@@ -288,7 +288,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Game&ToolCreate\\Project\\Wishtrum\\RNData\\Texture\\PrufenMat_1.PNG";
+    "RNData\\Texture\\PrufenMat_1.PNG";
    }
   }
  }
