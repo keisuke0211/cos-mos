@@ -21,6 +21,7 @@
 #include "BackGround/Shiningwave.h"
 #include "Gimmick/RoadTripLaser.h"
 #include "Gimmick/extenddog.h"
+#include "Gimmick/goalgate.h"
 //****************************************
 // ƒNƒ‰ƒX
 //****************************************
@@ -40,6 +41,7 @@ public:
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
 	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 pos, D3DXVECTOR3 move,float fRefdef);
 	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
+	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos);
 	CRocket     *RocketCreate    (D3DXVECTOR3 pos);
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);

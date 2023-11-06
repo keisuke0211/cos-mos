@@ -107,7 +107,7 @@ void CMode_Title::Init(void) {
 	m_bBackAnime = false;
 
 	// テクスチャ
-	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -1.0f);
+	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
 	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1460.0f, 0.0f);
 	m_BgPos[2] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1460.0f, 0.0f);
 	m_BgPos[3] = D3DXVECTOR3(50, 140.0f, 0.0f);
@@ -127,7 +127,7 @@ void CMode_Title::Init(void) {
 	RNLib::Transition().Set(CTransition::STATE::OPEN, CTransition::TYPE::FADE);
 
 	// カメラの視点/注視点を設定
-	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 状態設定
 	SetState((int)STATE::NONE);
@@ -563,8 +563,8 @@ void CMode_Title::SelectCreate(void)
 		else
 		{
 			m_PlanetType[nCnt].nTex = RNLib::Texture().Load(aTexFile);
-			sprintf(m_PlanetType[nCnt].Text, aStgName);
 		}
+		sprintf(m_PlanetType[nCnt].Text, aStgName);
 	}
 
 	SwapMode(TITLE_SELECT);
@@ -585,26 +585,22 @@ void CMode_Title::StageSelect(void)
 
 	int nTexIdx = 0;
 
+	// ステージ画像
 	if (m_nPlanetIdx == 0)
 	{
-		RNLib::Model().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f), INITD3DXVECTOR3, false)
+		RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 0.0f), INITD3DXVECTOR3, D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0,false)
 			->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
-			->SetCol(Color{ 255, 255, 255, 255 });
+			->SetPriority(0);
 	}
 	else
 	{
-		RNLib::Polygon2D().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f), 0.0f, false)
+		RNLib::Polygon2D().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -1.0f), 0.0f, false)
 			->SetSize(780.0f, 780.0f)
 			->SetCol(Color{ 255,255,255,255 })
 			->SetTex(m_PlanetType[m_nPlanetIdx].nTex);
 	}
 
-	// ステージ画像
-	//RNLib::Polygon2D().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f), 0.0f, false)
-	//	->SetSize(780.0f, 780.0f)
-	//	->SetCol(Color{ 255,255,255,255 })
-	//	->SetTex(m_PlanetType[m_nPlanetIdx].nTex);
-
+	// 矢印
 	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
 		RNLib::Polygon2D().Put(D3DXVECTOR3(400.0f, 550.0f, 0.0), 0.0f, false)
 		->SetSize(100.0f, 100.0f)

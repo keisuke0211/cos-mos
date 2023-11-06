@@ -615,6 +615,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 M
 
 		//表の世界のプレイヤー
 		if (pInfo->side == WORLD_SIDE::FACE) {
+			pInfo->bGround = true;
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
 		}
@@ -629,6 +630,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 M
 
 		//裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND) {
+			pInfo->bGround = true;
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
 		}

@@ -32,7 +32,6 @@ public:
 	virtual void   Draw(void);
 
 	void   SetState(STATE state) { m_state = state; }			//種類設定
-	void   SetScale(D3DXVECTOR3 scale) { m_scale = scale; }		//拡縮設定
 
 	STATE  GetState(void) { return m_state; }					//種類取得
 
@@ -46,8 +45,6 @@ private:
 	//========== [[[ 変数宣言 ]]]
 	STATE m_state;			//種類
 	int m_modelIdx[4];		//モデル番号
-	D3DXVECTOR3 m_scale;	//大きさ
-	bool		m_bLand;	//着地した？
 	float		m_fJamp;	//差分
 	int			m_nCnt;		//カウント
 };
