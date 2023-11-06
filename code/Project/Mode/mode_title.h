@@ -56,6 +56,7 @@ public:
 	struct PlanetType
 	{
 		int nTex;				// 画像
+		int nModel;				// モデル
 		char Text[TXT_MAX];		// ステージ名
 	};
 
@@ -90,7 +91,8 @@ private:
 	/* メニュー					*/void Menu(void);
 	/* ステージ選択生成			*/void SelectCreate(void);
 	/* ステージ選択				*/void StageSelect(void);
-	/* テキスト削除				*/void TextClear(TITLE aTitle);
+	/* テキスト削除				*/void TextClear(void);
+	/* モード切り替え			*/void SwapMode(TITLE aTitle);
 
 	// *** 静的変数 ***
 	static bool s_bStageSelect;
@@ -107,6 +109,8 @@ private:
 	int m_nOldnPlanet;
 	bool m_bMove[WORDS_MAX];
 	bool m_bMenuAnime;
+	bool m_bBackMode;
+	bool m_bBackAnime;
 	CWords *m_Words[WORDS_MAX];
 	CWords *m_WordsShadow[WORDS_MAX];
 	CFontText *m_Menu[MENU_MAX];

@@ -288,6 +288,7 @@ CStar *CStageObjectMgr::StarCreate(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 
 	return pObj;
 }
+
 //========================================
 // ”g‘Å‚ÂŒõ
 //========================================
@@ -304,8 +305,9 @@ CShiningWave *CStageObjectMgr::ShiningWaveCreate(void)
 
 	return pObj;
 }
+
 //========================================
-// ˆÚ“®°
+// ‰•œƒŒ[ƒU[
 //========================================
 CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRefdef)
 {
@@ -320,6 +322,23 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 	pObj->SetRefdef(fRefdef);
 	pObj->Init();
 	
+
+	return pObj;
+}
+//========================================
+//  “®‚­Œ¢
+//========================================
+CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos)
+{
+	CExtenddog *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CExtenddog;
+
+	// ‰Šú‰»ˆ—
+	pObj->SetPos(pos);
+	pObj->Init();
+
 
 	return pObj;
 }
