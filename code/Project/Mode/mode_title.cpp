@@ -590,7 +590,7 @@ void CMode_Title::StageSelect(void)
 	{
 		RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 0.0f), INITD3DXVECTOR3, D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0,false)
 			->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
-			->SetPriority(0);
+			->SetPriority(1);
 	}
 	else
 	{
@@ -605,13 +605,15 @@ void CMode_Title::StageSelect(void)
 		RNLib::Polygon2D().Put(D3DXVECTOR3(400.0f, 550.0f, 0.0), 0.0f, false)
 		->SetSize(100.0f, 100.0f)
 		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nPrevTex);
+		->SetTex(nPrevTex)
+		->SetPriority(1);
 
 	if ((m_nPlanetIdx != nPlanetMax-1) || (m_nPlanetIdx == nPlanetMax-1 && m_nSelect != nStageMax-1))
 		RNLib::Polygon2D().Put(D3DXVECTOR3(880.0f, 550.0f, 0.0), 0.0f, false)
 		->SetSize(100.0f, 100.0f)
 		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nNextTex);
+		->SetTex(nNextTex)
+		->SetPriority(1);
 
 	// 選択アイコン
 	for (int nCnt = 0; nCnt < nStageMax; nCnt++)
@@ -630,7 +632,8 @@ void CMode_Title::StageSelect(void)
 		RNLib::Polygon2D().Put(pos, 0.0f, false)
 			->SetSize(40.0f, 40.0f)
 			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(nTexIdx);
+			->SetTex(nTexIdx)
+			->SetPriority(1);
 	}
 
 	bool bInput = false;

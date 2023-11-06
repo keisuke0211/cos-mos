@@ -29,9 +29,9 @@ CExtenddog::CExtenddog(void) {
 	Manager::BlockMgr()->AddList(this);
 
 	//èâä˙èÛë‘
-	m_type = TYPE::TRAMPOLINE;
-	m_width = SIZE_OF_1_SQUARE * 2;
-	m_height = SIZE_OF_1_SQUARE;
+	m_type = TYPE::EXTENDDOG;
+	m_width = SIZE_OF_1_SQUARE;
+	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_state = STATE::NONE;
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_bLand = false;
@@ -43,6 +43,8 @@ CExtenddog::CExtenddog(void) {
 	m_modelIdx[4] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Head.x");
 	m_nCntShrink = 0;
 	m_fcurrenty = 0.0f;
+	m_fHeadposx = 0.0f;
+	m_fHipposx = 0.0f;
 }
 
 //========================================
@@ -125,9 +127,9 @@ void CExtenddog::Update(void) {
 	//yç¿ïWÇÃçXêV
 	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
 
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - HIP_POS, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_fHipposx, m_pos.y - HIP_POS, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
 		->SetOutLine(true);
 
 	//ìñÇΩÇËîªíË
@@ -165,57 +167,41 @@ void CExtenddog::Collision(void) {
 	//1pêLÇ—ÇÈå¢ìñÇΩÇËîªíË
 	//**************************************
 	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height)
+		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
+		&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
+	{
+		p1->pos.x = p1->posOLd.x;
+	}
+	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width)
+	{
+		m_state = STATE::DOWN_LAND;
+
+	}
+	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
+		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
+		&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
 	{//ìyë‰ÇÃîÕàÕì‡Ç…íÖínÇ≈ì¸Ç¡ÇΩ
-
-		if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - height
-			&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-		{//2pÇ™èÊÇ¡ÇƒÇ¢ÇÈÇ©
-
-
-		}
-		else if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + height
-			&& p2->side == CPlayer::WORLD_SIDE::FACE)
-		{
-
-		}
-
-		if (p1->side == CPlayer::WORLD_SIDE::BEHIND)
-		{//êLÇ—ÇÈå¢Ç™çÏìÆÇµÇƒÇ¢Ç»Ç¢
-
-			m_state = STATE::DOWN_LAND;
-		}
 
 
 	}
 	//**************************************
 	//2pêLÇ—ÇÈå¢ìñÇΩÇËîªíË
 	//**************************************
+	if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
+		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
+		&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
+	{
+		p2->pos.x = p2->posOLd.x;
+	}
 	if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height)
+		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
+		&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
 	{//ìyë‰ÇÃîÕàÕì‡Ç…íÖínÇ≈ì¸Ç¡ÇΩ
 
-		if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + height
-			&& p1->side == CPlayer::WORLD_SIDE::FACE)
-		{//1pÇ™èÊÇ¡ÇƒÇ¢ÇÈÇ©
+	
 
+		m_state = STATE::DOWN_LAND;
 
-		}
-		else if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - height
-			&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-		{
-
-		}
-
-		if (p2->side == CPlayer::WORLD_SIDE::BEHIND)
-		{//êLÇ—ÇÈå¢Ç™çÏìÆÇµÇƒÇ¢Ç»Ç¢
-
-			m_state = STATE::DOWN_LAND;
-		}
 
 
 	}
