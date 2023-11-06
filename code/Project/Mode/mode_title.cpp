@@ -556,14 +556,7 @@ void CMode_Title::SelectCreate(void)
 		char *aTexFile = Manager::StgEd()->GetType()[nCnt].aTexFile;
 		char *aStgName = Manager::StgEd()->GetType()[nCnt].aName;
 
-		if (nCnt == 0)
-		{
-			m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
-		}
-		else
-		{
-			m_PlanetType[nCnt].nTex = RNLib::Texture().Load(aTexFile);
-		}
+		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
 		sprintf(m_PlanetType[nCnt].Text, aStgName);
 	}
 
@@ -586,19 +579,9 @@ void CMode_Title::StageSelect(void)
 	int nTexIdx = 0;
 
 	// ステージ画像
-	if (m_nPlanetIdx == 0)
-	{
-		RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 0.0f), INITD3DXVECTOR3, D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0,false)
-			->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
-			->SetPriority(1);
-	}
-	else
-	{
-		RNLib::Polygon2D().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -1.0f), 0.0f, false)
-			->SetSize(780.0f, 780.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(m_PlanetType[m_nPlanetIdx].nTex);
-	}
+	RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 0.0f), INITD3DXVECTOR3, D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0, false)
+		->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
+		->SetPriority(1);
 
 	// 矢印
 	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
