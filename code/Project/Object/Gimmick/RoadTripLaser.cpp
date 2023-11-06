@@ -11,7 +11,6 @@
 //==========| CRoadTripLaserクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
-static const D3DXVECTOR2  s_Size = D3DXVECTOR2(5.0f,50.0f);	// 高さ
 
 //========================================
 // コンストラクタ
@@ -22,14 +21,15 @@ CRoadTripLaser::CRoadTripLaser(void) {
 	m_type = TYPE::LASER;	// 種類の設定
 
 	// 大きさの設定
-	m_width = SIZE_OF_1_SQUARE * 5;
-	m_height = SIZE_OF_1_SQUARE * 5;
+	m_width = SIZE_OF_1_SQUARE*2;
+	m_height = SIZE_OF_1_SQUARE;
 
 	// 各情報の初期化
 	m_pos = INITD3DXVECTOR3;
 	m_refPos = INITD3DXVECTOR3;
 	m_frefdef = 0.0f;
 	m_fGroundDis = 0.0f;
+	m_LaserSize = D3DXVECTOR2(5.0f, 50.0f);
 }
 
 //========================================
@@ -44,7 +44,7 @@ CRoadTripLaser::~CRoadTripLaser(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CRoadTripLaser::Init(void) {
-	ModelIdx = RNLib::Model().Load("data\\MODEL\\Lift.x");
+	ModelIdx = RNLib::Model().Load("data\\MODEL\\Laser_0.x");
 	//RNLib::Texture().Load();
 
 	m_refPos = m_pos;
@@ -83,12 +83,12 @@ void CRoadTripLaser::Update(void) {
 			D3DXVECTOR3 stagepos = stageObj->GetPos();
 			D3DXVECTOR2 stagesize = D3DXVECTOR2(stageObj->GetWidth(), stageObj->GetHeight());
 
-			if (stagepos.x + (stagesize.x * 0.5f) >= m_pos.x - s_Size.x &&
-				stagepos.x - (stagesize.x * 0.5f) <= m_pos.x + s_Size.x)
+			if (stagepos.x + (stagesize.x * 0.5f) >= m_pos.x - m_LaserSize.x &&
+				stagepos.x - (stagesize.x * 0.5f) <= m_pos.x + m_LaserSize.x)
 			{// 範囲内にいるとき
 				if (fDis >= m_pos.y - stagepos.y - stagesize.y * 0.5f)
 				{// 距離が近いとき
-					fDis = m_pos.y - stagepos.y - stagesize.y * 0.5f;	// 距離の更新
+					m_LaserSize.y = m_pos.y - stagepos.y - stagesize.y * 0.5f;	// 距離の更新
 				}
 			}
 		}
@@ -112,8 +112,8 @@ void CRoadTripLaser::Update(void) {
 	RNLib::Model().Put(Block, m_rot, ModelIdx, false);
 
 	// ビーム
-	RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y - fDis * 0.5f),m_pos.z), m_rot, false)
-		->SetSize(s_Size.x, fDis)
+	RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y - m_LaserSize.y * 0.5f),m_pos.z), m_rot, false)
+		->SetSize(m_LaserSize.x, m_LaserSize.y)
 		->SetCol(Color{255,0,0,255});
 }
 

@@ -136,7 +136,8 @@ void CFontText::Update()
 		RNLib::Polygon2D().Put(m_Info.TexPos, 0.0f, false)
 			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
 			->SetCol(m_Info.TextBoxCol)
-			->SetTex(m_Info.nTexIdx);
+			->SetTex(m_Info.nTexIdx)
+			->SetPriority(1);
 	}
 
 	// テキスト生成

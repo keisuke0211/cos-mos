@@ -36,6 +36,10 @@ public:
 	void	SetCol(Color col) { m_col = col; }
 	void	SetMove(const D3DXVECTOR3 move) { m_move = move; }
 	void	SetRefdef(const float refdef) { m_frefdef = refdef; }
+	void	SetLaserSize(const D3DXVECTOR2 size) { m_LaserSize = size; }
+
+	D3DXVECTOR2	GetLaserSize(void) { return m_LaserSize; }
+
 protected:
 
 private:
@@ -47,5 +51,6 @@ private:
 	Color m_col;				// 色
 	float m_frefdef;			// 反射する距離
 	float m_fGroundDis;			// 地面までの距離
+	D3DXVECTOR2 m_LaserSize;	// レーザーの大きさ
 	int ModelIdx;
 };
