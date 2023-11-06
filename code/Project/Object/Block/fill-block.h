@@ -28,7 +28,11 @@ public:
 	enum class FILL_TYPE
 	{
 		FILL_1x1 = 0,
+		FILL_1x2,
+		FILL_1x3,
+		FILL_2x1,
 		FILL_2x2,
+		FILL_3x1,
 		FILL_3x3,
 		FILL_4x4,
 		FILL_MAX,

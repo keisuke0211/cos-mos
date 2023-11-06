@@ -96,7 +96,7 @@ void CStageEditor::Uninit(void)
 void CStageEditor::FileLoad(void)
 {
 	int nCntPlanet = 0;
-	int *nCntStage = NULL;
+	int *pCntStage = NULL;
 	char aDataSearch[TXT_MAX];	// データ検索用
 
 	// ファイルの読み込み
@@ -117,10 +117,10 @@ void CStageEditor::FileLoad(void)
 		{// 読み込みを終了
 			fclose(pFile);
 
-			if (nCntStage != NULL)
+			if (pCntStage != NULL)
 			{
-				delete[] nCntStage;
-				nCntStage = NULL;
+				delete[] pCntStage;
+				pCntStage = NULL;
 			}
 
 			break;
@@ -146,11 +146,11 @@ void CStageEditor::FileLoad(void)
 			m_PlanetType = new PlanetType[nMax];
 			assert(m_PlanetType != NULL);
 
-			nCntStage = new int[nMax];
+			pCntStage = new int[nMax];
 
 			for (int nCnt = 0; nCnt < nMax; nCnt++)
 			{
-				nCntStage[nCnt] = 0;
+				pCntStage[nCnt] = 0;
 			}
 
 		}
@@ -180,12 +180,12 @@ void CStageEditor::FileLoad(void)
 			fscanf(pFile, "%s", &aDataSearch[0]);
 			fscanf(pFile, "%d", &nPlanet);	// 惑星番号
 
-			if (nCntStage[nPlanet] < m_PlanetType[nPlanet].nStageMax)
+			if (pCntStage[nPlanet] < m_PlanetType[nPlanet].nStageMax)
 			{
-				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[nCntStage[nPlanet]].aFileName[0]);	// ファイル名
-				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[nCntStage[nPlanet]].aName[0]);		// ステージ名
+				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aFileName[0]);	// ファイル名
+				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aName[0]);		// ステージ名
 
-				nCntStage[nPlanet]++;
+				pCntStage[nPlanet]++;
 			}
 		}
 	}
@@ -398,61 +398,7 @@ void CStageEditor::SetStage(int nType)
 		pos.z = 0.0f/* + fRand() * 4.0f*/;
 
 		// 配置
-		switch (nType)
-		{
-		case TYPE_BLOCK:
-			Manager::BlockMgr()->BlockCreate(pos,m_StageColor.Block);
-			break;
-		case TYPE_TRAMPOLINE:
-			pos.x += fSizeX / 2;
-			Manager::BlockMgr()->TrampolineCreate(pos);
-			break;
-		case TYPE_SPIKE:
-			Manager::BlockMgr()->SpikeCreate(pos);
-			break;
-		case TYPE_LIFT:
-			Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),0.0f);
-			break;
-		case TYPE_Meteor:
-			pos.x += fSizeX;
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->MeteorCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			break;
-		case TYPE_FILL_BLOCK_11:
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_22:
-			pos.x += fSizeX * 0.5f;
-			pos.y -= fSizeY * 0.5f;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x2, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_33:
-			pos.x += fSizeX;
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x3, m_StageColor.FillBlock);
-			break;
-		case TYPE_FILL_BLOCK_44:
-			pos.x += fSizeX * 1.5f;
-			pos.y -= fSizeY * 1.5f;
-			Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_4x4, m_StageColor.FillBlock);
-			break;
-		case TYPE_PLAYER_0:
-			pos.y += fSizeY * 0.5f;
-			CMode_Game::GetPlayer()->SetPos(0, pos);
-			break;
-		case TYPE_PLAYER_1:
-			pos.y += -fSizeY * 0.5f;
-			CMode_Game::GetPlayer()->SetPos(1, pos);
-			break;
-		case TYPE_PARTS:
-			Manager::BlockMgr()->PartsCreate(pos);
-			break;
-		case TYPE_GOAL:
-			pos.x += fSizeX;
-			pos.y -= fSizeY;
-			Manager::BlockMgr()->RocketCreate(pos);
-			break;
-		}
+		ObjPlace(fSizeX,fSizeY,pos,nType);
 	}
 }
 
@@ -487,6 +433,93 @@ void CStageEditor::SetColor(CSVFILE *pFile, int nRow, int nLine)
 	ToData(m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
 	ToData(m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
 }
+
+//========================================
+// オブジェクト配置
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nType)
+{
+	switch (nType)
+	{
+	case TYPE_BLOCK:
+		Manager::BlockMgr()->BlockCreate(pos, m_StageColor.Block);
+		break;
+	case TYPE_TRAMPOLINE:
+		pos.x += fSizeX / 2;
+		Manager::BlockMgr()->TrampolineCreate(pos);
+		break;
+	case TYPE_SPIKE:
+		Manager::BlockMgr()->SpikeCreate(pos);
+		break;
+	case TYPE_LIFT:
+		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0.0f);
+		break;
+	case TYPE_Meteor:
+		pos.x += fSizeX;
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->MeteorCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		break;
+	case TYPE_Laser:
+		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),0.0f);
+		break;
+	case TYPE_FILL_BLOCK_11:
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_12:
+		pos.y -= fSizeX * 0.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x2, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_13:
+		pos.y -= fSizeX;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x3, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_21:
+		pos.x += fSizeY * 0.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x1, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_22:
+		pos.x += fSizeX * 0.5f;
+		pos.y -= fSizeY * 0.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x2, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_31:
+		pos.x += fSizeY;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x1, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_33:
+		pos.x += fSizeX;
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x3, m_StageColor.FillBlock);
+		break;
+	case TYPE_FILL_BLOCK_44:
+		pos.x += fSizeX * 1.5f;
+		pos.y -= fSizeY * 1.5f;
+		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_4x4, m_StageColor.FillBlock);
+		break;
+	case TYPE_PLAYER_0:
+		pos.y += fSizeY * 0.5f;
+		CMode_Game::GetPlayer()->SetPos(0, pos);
+		break;
+	case TYPE_PLAYER_1:
+		pos.y += -fSizeY * 0.5f;
+		CMode_Game::GetPlayer()->SetPos(1, pos);
+		break;
+	case TYPE_GOALGATE:
+		Manager::BlockMgr()->BlockCreate(pos, Color{ 0, 0, 0, 255 });
+		break;
+	case TYPE_PARTS:
+		Manager::BlockMgr()->PartsCreate(pos);
+		break;
+	case TYPE_GOAL:
+		pos.x += fSizeX;
+		pos.y -= fSizeY;
+		Manager::BlockMgr()->RocketCreate(pos);
+		break;
+	}
+
+}
+
 
 //========================================
 // 変換

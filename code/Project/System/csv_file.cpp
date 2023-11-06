@@ -104,8 +104,8 @@ void CSVFILE::FileSave(string filepath, char delim)
 		ofs_csv_file << endl;
 	}
 
-	signed int nLine = index.size();
-	for (int nLine = 0; nLine < nLine; nLine++)
+	signed int nIndex = index.size();
+	for (int nLine = 0; nLine < nIndex; nLine++)
 	{
 		if (bIndex)
 		{

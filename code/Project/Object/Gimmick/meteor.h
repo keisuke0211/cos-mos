@@ -5,6 +5,8 @@
 // 
 //========================================
 #pragma once
+#ifndef _METEOR_H_
+#define _METEOR_H_
 
 #include "../../../_RNLib/RNlib.h"
 #include"../stage-object.h"
@@ -43,3 +45,5 @@ private:
 
 	int ModelIdx;
 };
+
+#endif

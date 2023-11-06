@@ -80,6 +80,7 @@ void CMode_Game::Init(void) {
 
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
+	Manager::BlockMgr()->ExtenddogCreate(D3DXVECTOR3(-200.0f, 0.0f, 0.0f));
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
@@ -299,6 +300,11 @@ void CMode_Game::PauseMenu(void)
 //========================================
 void CMode_Game::PauseSelect(void)
 {
+	//if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START))
+	//{
+	//	SetState((int)STATE::NONE);
+	//}
+
 	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
 	{
 		switch (m_nSelect)
