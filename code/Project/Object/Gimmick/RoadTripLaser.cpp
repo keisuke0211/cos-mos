@@ -19,7 +19,7 @@ static const D3DXVECTOR2  s_Size = D3DXVECTOR2(5.0f,50.0f);	// ‚‚³
 CRoadTripLaser::CRoadTripLaser(void) {
 	Manager::BlockMgr()->AddList(this);
 
-	m_type = TYPE::BACKGROUND;	// Ží—Þ‚ÌÝ’è
+	m_type = TYPE::LASER;	// Ží—Þ‚ÌÝ’è
 
 	// ‘å‚«‚³‚ÌÝ’è
 	m_width = SIZE_OF_1_SQUARE * 5;
@@ -113,7 +113,8 @@ void CRoadTripLaser::Update(void) {
 
 	// ƒr[ƒ€
 	RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y - fDis * 0.5f),m_pos.z), m_rot, false)
-		->SetSize(s_Size.x, fDis);
+		->SetSize(s_Size.x, fDis)
+		->SetCol(Color{255,0,0,255});
 }
 
 //========================================

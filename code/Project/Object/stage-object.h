@@ -25,6 +25,7 @@ public:
 		SPIKE	   = 3,	//トゲ
 		MOVE_BLOCK = 4,	//移動ブロック
 		METEOR	   = 5,	//隕石
+		LASER      = 6,	//レーザー
 		GOALGATE   = 6, //ゴールゲート
 		PARTS      = 7,	//ロケットパーツ
 		ROCKET     = 8,	//ロケット本体
