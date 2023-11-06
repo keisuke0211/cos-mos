@@ -674,6 +674,7 @@ void CPlayer::CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 	case COLLI_ROT::LEFT:
 		//位置・移動量修正
 		FixPos_LEFT(&pInfo->pos.x, MinPos.x, &pInfo->move.x);
+		Death(NULL);
 		break;
 
 		//*********************************
@@ -682,6 +683,7 @@ void CPlayer::CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 	case COLLI_ROT::RIGHT:
 		//位置・移動量修正
 		FixPos_RIGHT(&pInfo->pos.x, MaxPos.x, &pInfo->move.x);
+		Death(NULL);
 		break;
 
 		//*********************************
@@ -777,6 +779,15 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR
 		}
 		break;
 	}
+}
+
+//----------------------------
+//レーザーの当たり判定処理
+// Author:KEISUKE OTONO
+//----------------------------
+void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
+{
+
 }
 
 //----------------------------
