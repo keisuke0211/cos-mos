@@ -463,7 +463,7 @@ void CPlayer::WholeCollision(void)
 				case CStageObject::TYPE::METEOR:
 				{
 					CMeteor *pMeteor = (CMeteor *)stageObj;
-					//PosOld = pMeteor->GetPosOld();
+					PosOld = pMeteor->GetPosOld();
 				}
 				break;
 
@@ -504,7 +504,7 @@ void CPlayer::WholeCollision(void)
 				case CStageObject::TYPE::TRAMPOLINE:	CollisionTrampoline(&Player, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::SPIKE:			CollisionSpike(&Player, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::MOVE_BLOCK:	CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, MinPos, MaxPos, ColliRot);	break;
-				case CStageObject::TYPE::METEOR:		break;
+				case CStageObject::TYPE::METEOR:		CollisionMeteor(&Player, MinPos, MaxPos, ColliRot); break;
 				case CStageObject::TYPE::LASER:			CollisionLaser(&Player, (CRoadTripLaser *)stageObj, MinPos, MaxPos, ColliRot, LaserColli);	break;
 				case CStageObject::TYPE::PARTS:			CollisionParts(&Player, (CParts *)stageObj); break;
 				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
@@ -559,7 +559,7 @@ void CPlayer::FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX)
 }
 
 //----------------------------
-//ブロックの当たり判定処理
+// ブロックの当たり判定処理
 //----------------------------
 void CPlayer::CollisionBlock(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
 {
@@ -620,7 +620,7 @@ void CPlayer::CollisionBlock(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 }
 
 //----------------------------
-//穴埋めブロックの当たり判定処理
+// 穴埋めブロックの当たり判定処理
 //----------------------------
 void CPlayer::CollisionFillBlock(COLLI_ROT ColliRot)
 {
@@ -679,16 +679,18 @@ void CPlayer::CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 	switch (ColliRot)
 	{
 		//*********************************
-		//上下どちらかに当たった
+		//上下左右どちらかに当たった or 埋まったら
 		//*********************************
 	case COLLI_ROT::OVER:
 	case COLLI_ROT::UNDER:
-
+	case COLLI_ROT::LEFT:
+	case COLLI_ROT::RIGHT:
+	case COLLI_ROT::UNKNOWN:
 		Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
-		
+
 			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
 		}
 
@@ -696,34 +698,11 @@ void CPlayer::CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 		Death(NULL);
 
 		break;
-
-		//*********************************
-		//左に当たった
-		//*********************************
-	case COLLI_ROT::LEFT:
-		//位置・移動量修正
-		FixPos_LEFT(&pInfo->pos.x, MinPos.x, &pInfo->move.x);
-		Death(NULL);
-		break;
-
-		//*********************************
-		//右に当たった
-		//*********************************
-	case COLLI_ROT::RIGHT:
-		//位置・移動量修正
-		FixPos_RIGHT(&pInfo->pos.x, MaxPos.x, &pInfo->move.x);
-		Death(NULL);
-		break;
-
-		//*********************************
-		//埋まった
-		//*********************************
-	case COLLI_ROT::UNKNOWN: Death(NULL); break;
 	}
 }
 
 //----------------------------
-//移動床の当たり判定処理
+// 移動床の当たり判定処理
 //----------------------------
 void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
 {
@@ -811,11 +790,48 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR
 }
 
 //----------------------------
-//レーザーの当たり判定処理
+// 隕石の当たり判定処理
+// Author:KEISUKE OTONO
+//----------------------------
+void CPlayer::CollisionMeteor(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
+{
+	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
+	//当たった方向ごとに処理を切り替え
+	switch (ColliRot)
+	{
+		//*********************************
+		//上下左右どちらかに当たった or 埋まったら
+		//*********************************
+	case COLLI_ROT::OVER:
+	case COLLI_ROT::UNDER:
+	case COLLI_ROT::LEFT:
+	case COLLI_ROT::RIGHT:
+	case COLLI_ROT::UNKNOWN:
+		Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+		{
+			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+		}
+
+		//死亡処理
+		Death(NULL);
+
+		break;
+	}
+}
+
+//----------------------------
+// レーザーの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
 void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot, COLLI_ROT LaserColli)
 {
+	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
 	// 本体
 	{
 		//当たった方向ごとに処理を切り替え
@@ -880,50 +896,25 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 Mi
 		switch (LaserColli)
 		{
 			//*********************************
-			//上に当たった
+			//上下左右どちらかに当たった or 埋まったら
 			//*********************************
 		case COLLI_ROT::OVER:
-			//位置・移動量修正
-			FixPos_OVER(&pInfo->pos.y, MaxPos.y, &pInfo->move.y);
-
-			//死亡処理
-			Death(NULL);
-			break;
-
-			//*********************************
-			//下に当たった
-			//*********************************
 		case COLLI_ROT::UNDER:
-			//位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, MinPos.y, &pInfo->move.y);
-
-			//死亡処理
-			Death(NULL);
-			break;
-
-			//*********************************
-			//左に当たった
-			//*********************************
 		case COLLI_ROT::LEFT:
-			//位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, MinPos.x, &pInfo->move.x);
-			Death(NULL);
-			break;
-
-			//*********************************
-			//右に当たった
-			//*********************************
 		case COLLI_ROT::RIGHT:
-			//位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, MaxPos.x, &pInfo->move.x);
+		case COLLI_ROT::UNKNOWN:
+			Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+			for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+			{
+
+				Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+			}
+
 			//死亡処理
 			Death(NULL);
-			break;
 
-			//*********************************
-			//埋まった
-			//*********************************
-		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+			break;
 		}
 	}
 }

@@ -42,6 +42,7 @@ public:
 	TYPE GetType(void) { return m_type; }
 	void SetPos(const D3DXVECTOR3& pos) { m_pos = m_posOld = pos; }
 	D3DXVECTOR3& GetPos(void) { return m_pos; }
+	D3DXVECTOR3& GetPosOld(void) { return m_posOld; }
 	void SetRot(const D3DXVECTOR3& rot) { m_rot = rot; }
 	D3DXVECTOR3& GetRot(void) { return m_rot; }
 	void SetColor(Color color) { m_color = color; }
