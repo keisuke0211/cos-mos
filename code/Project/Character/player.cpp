@@ -432,15 +432,21 @@ void CPlayer::WholeCollision(void)
 				//ロケットに乗っていたらスキップ
 				if (Player.bRide) continue;
 
-				//プレイヤーの近くにオブジェクトがあるか判定
-				if (D3DXVec3Length(&(POS - Player.pos)) >
-					D3DXVec2Length(&D3DXVECTOR2(WIDTH + SIZE_WIDTH, HEIGHT + SIZE_HEIGHT))) continue;
-
 				//種類取得
 				const CStageObject::TYPE type = stageObj->GetType();
 
+				//プレイヤーの近くにオブジェクトがあるか判定
+				//レーザー以外の判定
+				if (type != CStageObject::TYPE::LASER) {
+					if (D3DXVec3Length(&(POS - Player.pos)) >
+						D3DXVec2Length(&D3DXVECTOR2(WIDTH + SIZE_WIDTH, HEIGHT + SIZE_HEIGHT))) continue;
+				}
+
 				//前回位置
 				D3DXVECTOR3 PosOld = POS;
+
+				// レーザー用の当たり判定
+				COLLI_ROT LaserColli = COLLI_ROT::NONE;
 
 				//移動するオブジェクトは、前回位置を特別に設定
 				switch (type)
@@ -460,13 +466,35 @@ void CPlayer::WholeCollision(void)
 					//PosOld = pMeteor->GetPosOld();
 				}
 				break;
+
+				//レーザー
+				case CStageObject::TYPE::LASER:
+				{
+					CRoadTripLaser *pLaser = (CRoadTripLaser *)stageObj;
+					
+					D3DXVECTOR3 LaserPOS = pLaser->GetPos();
+					D3DXVECTOR3 LaserPosOld = LaserPOS;
+					const float LaserWIDTH = pLaser->GetLaserSize().x * 0.5f;
+					const float LaserHEIGHT = pLaser->GetLaserSize().y * 0.5f;
+
+					LaserPOS.y = LaserPOS.y - LaserHEIGHT * 2.0f;
+					LaserPosOld = LaserPOS;
+
+					//オブジェクトの最小・最大位置
+					const D3DXVECTOR3 MinPos = D3DXVECTOR3(LaserPOS.x - WIDTH, LaserPOS.y - LaserHEIGHT, 0.0f);
+					const D3DXVECTOR3 MaxPos = D3DXVECTOR3(LaserPOS.x + WIDTH, LaserPOS.y + LaserHEIGHT, 0.0f);
+
+					//当たった方向を格納
+					LaserColli = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, LaserPOS, LaserPosOld, LaserWIDTH, LaserHEIGHT, vec);
+				}
+				break;
 				}
 
 				//当たった方向を格納
 				const COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, POS, PosOld, WIDTH, HEIGHT, vec);
 
 				//当たっていなければスキップ
-				if (ColliRot == COLLI_ROT::NONE) continue;
+				if (ColliRot == COLLI_ROT::NONE && LaserColli == COLLI_ROT::NONE) continue;
 
 				//種類ごとに関数分け
 				switch (type)
@@ -477,12 +505,13 @@ void CPlayer::WholeCollision(void)
 				case CStageObject::TYPE::SPIKE:			CollisionSpike(&Player, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::MOVE_BLOCK:	CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::METEOR:		break;
+				case CStageObject::TYPE::LASER:			CollisionLaser(&Player, (CRoadTripLaser *)stageObj, MinPos, MaxPos, ColliRot, LaserColli);	break;
 				case CStageObject::TYPE::PARTS:			CollisionParts(&Player, (CParts *)stageObj); break;
 				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
 				}
 
 				//当たれば即死のオブジェクトに当たっている
-				if (type == CStageObject::TYPE::SPIKE || type == CStageObject::TYPE::METEOR)
+				if (type == CStageObject::TYPE::SPIKE || type == CStageObject::TYPE::METEOR || type == CStageObject::TYPE::LASER)
 					break;
 			}
 		}
@@ -785,9 +814,118 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR
 //レーザーの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
+void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot, COLLI_ROT LaserColli)
 {
+	// 本体
+	{
+		//当たった方向ごとに処理を切り替え
+		switch (ColliRot)
+		{
+			//*********************************
+			//上に当たった
+			//*********************************
+		case COLLI_ROT::OVER:
+			//位置・移動量修正
+			FixPos_OVER(&pInfo->pos.y, MaxPos.y, &pInfo->move.y);
 
+			//表の世界のプレイヤー
+			if (pInfo->side == WORLD_SIDE::FACE) {
+				pInfo->bGround = true;	//地面に接している
+				pInfo->bJump = false;	//ジャンプ可能
+				pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
+			}
+			break;
+
+			//*********************************
+			//下に当たった
+			//*********************************
+		case COLLI_ROT::UNDER:
+			//位置・移動量修正
+			FixPos_UNDER(&pInfo->pos.y, MinPos.y, &pInfo->move.y);
+
+			//裏の世界のプレイヤーならジャンプ可能
+			if (pInfo->side == WORLD_SIDE::BEHIND) {
+				pInfo->bGround = true;
+				pInfo->bJump = false;	//ジャンプ可能
+				pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
+			}
+			break;
+
+			//*********************************
+			//左に当たった
+			//*********************************
+		case COLLI_ROT::LEFT:
+			//位置・移動量修正
+			FixPos_LEFT(&pInfo->pos.x, MinPos.x, &pInfo->move.x);
+			break;
+
+			//*********************************
+			//右に当たった
+			//*********************************
+		case COLLI_ROT::RIGHT:
+			//位置・移動量修正
+			FixPos_RIGHT(&pInfo->pos.x, MaxPos.x, &pInfo->move.x);
+			break;
+
+			//*********************************
+			//埋まった
+			//*********************************
+		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+		}
+	}
+
+	// レーザー
+	{
+		//当たった方向ごとに処理を切り替え
+		switch (LaserColli)
+		{
+			//*********************************
+			//上に当たった
+			//*********************************
+		case COLLI_ROT::OVER:
+			//位置・移動量修正
+			FixPos_OVER(&pInfo->pos.y, MaxPos.y, &pInfo->move.y);
+
+			//死亡処理
+			Death(NULL);
+			break;
+
+			//*********************************
+			//下に当たった
+			//*********************************
+		case COLLI_ROT::UNDER:
+			//位置・移動量修正
+			FixPos_UNDER(&pInfo->pos.y, MinPos.y, &pInfo->move.y);
+
+			//死亡処理
+			Death(NULL);
+			break;
+
+			//*********************************
+			//左に当たった
+			//*********************************
+		case COLLI_ROT::LEFT:
+			//位置・移動量修正
+			FixPos_LEFT(&pInfo->pos.x, MinPos.x, &pInfo->move.x);
+			Death(NULL);
+			break;
+
+			//*********************************
+			//右に当たった
+			//*********************************
+		case COLLI_ROT::RIGHT:
+			//位置・移動量修正
+			FixPos_RIGHT(&pInfo->pos.x, MaxPos.x, &pInfo->move.x);
+			//死亡処理
+			Death(NULL);
+			break;
+
+			//*********************************
+			//埋まった
+			//*********************************
+		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+		}
+	}
 }
 
 //----------------------------
