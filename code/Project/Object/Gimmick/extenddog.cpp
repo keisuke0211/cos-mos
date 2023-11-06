@@ -41,6 +41,7 @@ CExtenddog::CExtenddog(void) {
 	m_modelIdx[2] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_FeetHead.x");
 	m_modelIdx[3] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Hip.x");
 	m_modelIdx[4] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Head.x");
+	m_modelIdx[5] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Body.x");
 	m_nCntShrink = 0;
 	m_fcurrenty = 0.0f;
 	m_fHeadposx = 0.0f;
@@ -131,7 +132,8 @@ void CExtenddog::Update(void) {
 		->SetOutLine(true);
 	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
 		->SetOutLine(true);
-
+	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, m_pos.y, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f),Scale3D(1.0f, fDowncurrenty - m_pos.y,0.0f), m_modelIdx[5], false)
+		->SetOutLine(true);
 	//“–‚½‚è”»’è
 	Collision();
 }
