@@ -56,6 +56,7 @@ public:
 	struct PlanetType
 	{
 		int nTex;				// 画像
+		int nModel;				// モデル
 		char Text[TXT_MAX];		// ステージ名
 	};
 
