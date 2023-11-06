@@ -467,11 +467,11 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_12:
-		pos.x += fSizeX * 0.5f;
+		pos.y += fSizeX * 0.5f;
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x2, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_13:
-		pos.x += fSizeX;
+		pos.y += fSizeX;
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x3, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_21:
