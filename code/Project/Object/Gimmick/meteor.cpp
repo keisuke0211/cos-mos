@@ -71,7 +71,8 @@ void CMeteor::Uninit(void) {
 //========================================
 void CMeteor::Update(void) {
 
-	m_rot += METEOR_ADDROT;	// 向きの移動量の追加
+	m_posOld = m_pos;		// 過去位置の更新
+
 	m_pos += m_move;		// 移動量の追加
 
 	//点滅アニメーション処理
@@ -82,11 +83,12 @@ void CMeteor::Update(void) {
 		->SetBrightnessOfEmissive(m_fBlink)->SetCol(m_color);
 
 	// とりあえず画面外で消す処理
-	if (m_pos.x >= METEOR_MAXPOS.x || m_pos.y >= METEOR_MAXPOS.y || m_pos.x <= METEOR_MINPOS.x || m_pos.y <= METEOR_MINPOS.y)
-	{
-		// 削除
-		Delete();
-	}
+
+	//if (m_pos.x >= METEOR_MAXPOS.x || m_pos.y >= METEOR_MAXPOS.y || m_pos.x <= METEOR_MINPOS.x || m_pos.y <= METEOR_MINPOS.y)
+	//{
+	//	// 削除
+	//	Delete();
+	//}
 }
 
 //========================================
