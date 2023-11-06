@@ -9,6 +9,9 @@
 #include "../../../_RNLib/Basis/input.h"
 #include "../../Character/player.h"
 
+//マクロ定義
+#define MAX_COUNT		(60)	//最大カウント数
+
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CGoalGateクラスのメンバ関数
@@ -22,10 +25,14 @@ CGoalGate::CGoalGate(void) {
 	Manager::BlockMgr()->AddList(this);
 
 	//初期状態
+	m_scale = Scale3D(3.0f,3.0f,6.0f);
+	m_nCnt = MAX_COUNT;
+	m_state = STATE::SCALE_DOWN;
 	m_type = TYPE::GOALGATE;
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_bGoal = false;
+	m_modelIdx = RNLib::Model().Load("data\\MODEL\\1P.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 }
@@ -59,12 +66,32 @@ void CGoalGate::Uninit(void) {
 //========================================
 void CGoalGate::Update(void) {
 
-	// ゴールポリゴン
-	RNLib::Polygon3D().Put(m_pos, INITD3DXVECTOR3)
-		->SetTex(m_TexIdx[0])
-		->SetBillboard(true);
+	m_rot.z += 0.05f;
 
-	Manager::EffectMgr()->ParticleCreate(m_TexIdx[1],m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+	if (m_state == STATE::SCALE_DOWN)
+	{
+		m_nCnt--;
+
+		if (m_nCnt < MAX_COUNT * 0.8)
+		{
+			m_state = STATE::SCALE_UP;
+		}
+	}
+	if (m_state == STATE::SCALE_UP)
+	{
+		m_nCnt++;
+
+		if (m_nCnt > MAX_COUNT)
+		{
+			m_state = STATE::SCALE_DOWN;
+		}
+	}
+
+	//割合計算
+	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+
+	RNLib::Model().Put(m_pos, m_rot,Scale3D(m_scale.x * fCountRate, m_scale.y * fCountRate,m_scale.z), m_modelIdx, false)
+		->SetOutLine(true);
 }
 //========================================
 // 描画処理
