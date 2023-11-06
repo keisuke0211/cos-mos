@@ -30,7 +30,7 @@ CExtenddog::CExtenddog(void) {
 
 	//‰Šúó‘Ô
 	m_type = TYPE::EXTENDDOG;
-	m_width = SIZE_OF_1_SQUARE * 0.5f;
+	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_state = STATE::NONE;
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
@@ -167,19 +167,32 @@ void CExtenddog::Collision(void) {
 	//1pL‚Ñ‚éŒ¢“–‚½‚è”»’è
 	//**************************************
 	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
+		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
 		&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
 	{
+		p1->pos.x = p1->posOLd.x;
+	}
+	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width)
+	{
+		m_state = STATE::DOWN_LAND;
+
 	}
 	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
 		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
 		&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
 	{//“y‘ä‚Ì”ÍˆÍ“à‚É’…’n‚Å“ü‚Á‚½
 
-			m_state = STATE::DOWN_LAND;
+
 	}
 	//**************************************
 	//2pL‚Ñ‚éŒ¢“–‚½‚è”»’è
 	//**************************************
+	if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
+		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
+		&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
+	{
+		p2->pos.x = p2->posOLd.x;
+	}
 	if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
 		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
 		&& p2->side == CPlayer::WORLD_SIDE::BEHIND)

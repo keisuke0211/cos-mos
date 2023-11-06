@@ -15,6 +15,15 @@
 class CGoalGate : public CStageObject {
 public:
 
+	//========== [[[ 列挙型定義 ]]]
+	enum class STATE {
+		NONE = 0,		//何もない
+		SCALE_UP,		//大きくなる
+		SCALE_DOWN,		//小さくなる
+		SCALE_DELETE,	//消える
+		MAX,
+	};
+
 	//========== [[[ 関数宣言 ]]]
 	CGoalGate();
 	virtual        ~CGoalGate();
@@ -34,6 +43,10 @@ protected:
 private:
 
 	//========== [[[ 変数宣言 ]]]
-	int m_TexIdx[2];		//モデル番号
+	STATE m_state;			//種類
+	int m_modelIdx;			//モデル番号
+	int m_TexIdx[2];		//テクスチャ番号
 	bool m_bGoal;			//ゴールしたか
+	Scale3D m_scale;	//拡縮
+	int			m_nCnt;		//カウント
 };
