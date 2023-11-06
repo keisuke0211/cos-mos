@@ -467,15 +467,15 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_12:
-		pos.y += fSizeX * 0.5f;
+		pos.y -= fSizeX * 0.5f;
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x2, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_13:
-		pos.y += fSizeX;
+		pos.y -= fSizeX;
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x3, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_21:
-		pos.x -= fSizeY * 0.5f;
+		pos.x += fSizeY * 0.5f;
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x1, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_22:
@@ -484,7 +484,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_2x2, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_31:
-		pos.x -= fSizeY;
+		pos.x += fSizeY;
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_3x1, m_StageColor.FillBlock);
 		break;
 	case TYPE_FILL_BLOCK_33:
