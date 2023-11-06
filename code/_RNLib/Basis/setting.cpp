@@ -7,13 +7,13 @@
 // [[[ setting.cpp ]]]
 //========================================
 // RNlib
-#include "../RNLib.h"
+#include "../RNlib.h"
 
 //****************************************
 // マクロ定義
 //****************************************
 // 設定の情報のデータファイルの相対パス
-#define SETTING_DATA_PATH_PATH "data\\SAVEDATA\\setting.bin"
+#define SETTING_DATA_PATH_PATH "Data\\SAVEDATA\\setting.bin"
 // 音量の表示倍率
 #define VOLUME_DISPLAY_DIAMETER (5)
 // 画面モードの切り替えにかかる時間

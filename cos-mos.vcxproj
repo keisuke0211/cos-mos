@@ -220,6 +220,7 @@
     <ClCompile Include="code\_RNLib\Basis\setting.cpp" />
     <ClCompile Include="code\_RNLib\Basis\sound.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
+    <ClCompile Include="code\_RNLib\RNsettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
@@ -292,6 +293,7 @@
     <ClInclude Include="code\_RNLib\Basis\sound.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />
+    <ClInclude Include="code\_RNLib\RNsettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

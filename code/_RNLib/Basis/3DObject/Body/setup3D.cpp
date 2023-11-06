@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../../RNLib.h"
+#include "../../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -95,7 +95,7 @@ short CSetUp3D::Load(const char* loadPath, short idx) {
 					}
 					
 					// ボーンデータ1つ1つの親番号をカウントに変換していく
-					for (int cntBoneData = 0; cntBoneData < m_datas[idx].m_boneDataNum; cntBoneData++) {
+					for (cntBoneData = 0; cntBoneData < m_datas[idx].m_boneDataNum; cntBoneData++) {
 						BoneData& boneData(boneDatas[cntBoneData]);
 
 						// 親がDATANONEの時、折り返す
@@ -126,6 +126,9 @@ short CSetUp3D::Load(const char* loadPath, short idx) {
 		{// 読み込み失敗
 			// エラーメッセージ
 			RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータファイルが存在しません。\n%s", loadPath));
+
+			// 読み込み済パスのメモリリセット
+			ReAllocLoadPath(numOld);
 
 			return NONEDATA;
 		}

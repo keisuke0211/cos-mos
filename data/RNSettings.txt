@@ -1,0 +1,9 @@
+#KeyOption
+projectName				Test
+windowWidth				1280.000000
+windowHeight			720.000000
+isFullScreen			0
+resolution				2.000000
+#OtherOption
+modelOutLineAddDistance	1.000000
+END

@@ -26,9 +26,9 @@
 // Author:RIKU NISHIMURA
 //========================================
 CTransition::CTransition() {
-	m_state     = STATE::NONE;
+	m_state = STATE::NONE;
 	m_nStateCtr = 0;
-	m_type      = TYPE::NONE;
+	m_type = TYPE::NONE;
 }
 
 //========================================
@@ -98,6 +98,6 @@ void CTransition::Set(STATE state, TYPE type) {
 		m_state = STATE::OPEN_WAIT;
 	else
 		m_state = state;
-	m_type      = type;
+	m_type = type;
 	m_nStateCtr = 0;
 }

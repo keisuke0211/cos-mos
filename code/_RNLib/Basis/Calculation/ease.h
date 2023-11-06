@@ -14,13 +14,7 @@ class CEase {
 public:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
 	// í—Ş
-	enum class TYPE {
-		LINEAR,
-		IN_SINE,
-		OUT_SINE,
-		INOUT_SINE,
-		MAX,
-	};
+	enum class TYPE { LINEAR, IN_SINE, OUT_SINE, INOUT_SINE, MAX, };
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	static float Easing(const TYPE& ease, const int& base, const int& max);

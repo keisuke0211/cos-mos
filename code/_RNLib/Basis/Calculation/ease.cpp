@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -25,27 +25,33 @@ float CEase::Easing(const TYPE& ease, const int& base, const int& max) {
 //========================================
 float CEase::Easing(const TYPE& type, const float& base, const float& max) {
 
-	// Š„‡
-	float rate(0.0f);
+	float rate     = 0.0f;
+	float progress = base;
+
+	// Šî€’l‚Ì§Œä
+	if (progress > max)
+		progress = max;
+	else if (progress < 0.0f)
+		progress = 0.0f;
 
 	switch (type) {
 		// [[[ “™‘¬ ]]]
 	case TYPE::LINEAR: {
-		rate = base / max;
+		rate = progress / max;
 	}break;
 		// [[[ ™X‚É‰Á‘¬ ]]]
 	case TYPE::IN_SINE: {
-		rate = base / max;
+		rate = progress / max;
 		rate *= rate;
 	}break;
 		// [[[ ™X‚ÉŒ¸‘¬ ]]]
 	case TYPE::OUT_SINE: {
-		rate = base / max;
+		rate = progress / max;
 		rate = -rate * (rate - 2.0f);
 	}break;
 		// [[[ ‰Á‘¬‚µ‚ÄŒ¸‘¬ ]]]
 	case TYPE::INOUT_SINE: {
-		rate = base / (max / 2.0f);
+		rate = progress / (max / 2.0f);
 
 		if (rate < 1.0f) {
 			rate = 0.5f * rate * rate;
@@ -56,7 +62,6 @@ float CEase::Easing(const TYPE& type, const float& base, const float& max) {
 		}
 	}break;
 	}
-
 
 	return rate;
 }

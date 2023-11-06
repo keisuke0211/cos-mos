@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../../RNmain.h"
+#include "object.h"
 
 //****************************************
 // クラス定義
@@ -35,6 +36,7 @@ public:
 		// メモリ確保する
 		*alloc = new T[num];
 	}
+
 	//========================================
 	// メモリ確保処理(サイズ指定)
 	//========================================
@@ -50,6 +52,7 @@ public:
 		// メモリ確保する
 		*alloc = malloc(size);
 	}
+
 	//========================================
 	// メモリ再確保処理
 	//========================================
@@ -80,6 +83,36 @@ public:
 		Release(alloc);
 		*alloc = newAlloc;
 	}
+
+	//========================================
+	// メモリ再確保処理(Double)
+	//========================================
+	template <class T>void ReAllocDouble(T*** alloc, const int& beforeNum, const int& afterNum, const bool& isMutex = false) {
+
+		// [[[ 減っている時 ]]]
+		if (beforeNum > afterNum) {
+
+			// 減った分のメモリを解放していく
+			for (int cnt = beforeNum - 1; cnt >= afterNum; cnt--) {
+				Release(&*alloc[cnt]);
+			}
+		}
+
+		// ポインタメモリを再確保
+		ReAlloc(alloc, beforeNum, afterNum, isMutex);
+
+		// [[[ 増えている時 ]]]
+		if (beforeNum < afterNum) {
+
+			// 増えた分のメモリを確保していく
+			T** allocTemp = *alloc;
+			for (int cnt = beforeNum; cnt < afterNum; cnt++) {
+				allocTemp[cnt] = NULL;
+				Alloc(&allocTemp[cnt], 1, isMutex);
+			}
+		}
+	}
+
 	//========================================
 	// メモリ解放処理
 	//========================================
@@ -92,6 +125,22 @@ public:
 		// 解放
 		delete[] (*release);
 		*release = NULL;
+	}
+
+	//========================================
+	// メモリ解放処理(Double)
+	//========================================
+	template <class T>void ReleaseDouble(T*** release, const int& num) {
+
+		// NULLなら解放しない
+		if (*release == NULL)
+			return;
+
+		// 確保されたメモリをすべて解放
+		T** releaseTemp = *release;
+		for (int cntData = 0; cntData < num; cntData++)
+			Release(&releaseTemp[cntData]);
+		Release(&releaseTemp);
 	}
 
 private:

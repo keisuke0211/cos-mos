@@ -6,7 +6,7 @@
 //========================================
 // [[[ number.cpp ]]]
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 #include <iostream>
 #include <initializer_list>
 #include <random>
@@ -284,13 +284,13 @@ int OR(std::initializer_list<int> args) {
 int* CreateRandList(int num) {
 	int* pList = NULL;
 	RNLib::Memory().Alloc<int>(&pList, num);
-	for (int nCnt = 0; nCnt < num; nCnt++) {
-		pList[nCnt] = nCnt;
+	for (int cnt = 0; cnt < num; cnt++) {
+		pList[cnt] = cnt;
 	}
-	for (int nCnt = 0; nCnt < num; nCnt++) {
-		int nSwap = nCnt + rand() % (num - nCnt);
-		int nTemp = pList[nCnt];
-		pList[nCnt]  = pList[nSwap];
+	for (int cnt = 0; cnt < num; cnt++) {
+		int nSwap = cnt + rand() % (num - cnt);
+		int nTemp = pList[cnt];
+		pList[cnt]  = pList[nSwap];
 		pList[nSwap] = nTemp;
 	}
 

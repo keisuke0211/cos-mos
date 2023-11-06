@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -17,9 +17,9 @@
 //========================================
 float CGeometry::FindDistance(const Pos3D& posA, const Pos3D& posB) {
 
-	const float x(posA.x - posB.x);	// 平方根のX辺
-	const float y(posA.y - posB.y);	// 平方根のY辺
-	const float z(posA.z - posB.z);	// 平方根のZ辺
+	const float x = posA.x - posB.x;	// 平方根のX辺
+	const float y = posA.y - posB.y;	// 平方根のY辺
+	const float z = posA.z - posB.z;	// 平方根のZ辺
 
 	// 2点の距離を返す
 	return sqrtf((x * x) + (y * y) + (z * z));
@@ -30,8 +30,8 @@ float CGeometry::FindDistance(const Pos3D& posA, const Pos3D& posB) {
 //========================================
 float CGeometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {
 
-	const float x(posA.x - posB.x);	// 平方根のX辺
-	const float z(posA.z - posB.z);	// 平方根のZ辺
+	const float x = posA.x - posB.x;	// 平方根のX辺
+	const float z = posA.z - posB.z;	// 平方根のZ辺
 
 	// 2点の距離を返す
 	return sqrtf((x * x) + (z * z));
@@ -42,8 +42,8 @@ float CGeometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {
 //========================================
 float CGeometry::FindDistanceToCameraPlane(const Pos3D& pos, CCamera& camera) {
 
-	Vector3D camToPosVec(pos - camera.GetPosV());
-	Vector3D camPlaneVec(camera.GetVec());
+	Vector3D camToPosVec = pos - camera.GetPosV();
+	Vector3D camPlaneVec = camera.GetVec();
 
 	return fabsf(D3DXVec3Dot(&camToPosVec, &camPlaneVec));
 }
@@ -77,13 +77,13 @@ Rot3D CGeometry::FindRot(const Pos3D& pos, const Pos3D& targetPos) {
 //========================================
 Pos3D CGeometry::FindIntersectionXZ(const Pos3D& posA1, const Pos3D& posA2, const Pos3D& posB1, const Pos3D& posB2) {
 
-	const Vector3D B1B2Vec(posB2 - posB1);	// ベクトルB1⇒B2
-	const Vector3D A1A2Vec(posA2 - posA1);	// ベクトルA1⇒A2
-	const Vector3D A2B1Vec(posB1 - posA2);	// ベクトルA2⇒B1
-	const Vector3D B1A1Vec(posA1 - posB1);	// ベクトルB1⇒A1
-	const float areaS1(((B1B2Vec.x * B1A1Vec.z) - (B1B2Vec.z * B1A1Vec.x)) * 0.5f);	// 面積S1
-	const float areaS2(((B1B2Vec.x * A2B1Vec.z) - (B1B2Vec.z * A2B1Vec.x)) * 0.5f);	// 面積S2
-	const float S1Rate((areaS1 / (areaS1 + areaS2)));	// 面積S1の割合
+	const Vector3D B1B2Vec = posB2 - posB1;	// ベクトルB1⇒B2
+	const Vector3D A1A2Vec = posA2 - posA1;	// ベクトルA1⇒A2
+	const Vector3D A2B1Vec = posB1 - posA2;	// ベクトルA2⇒B1
+	const Vector3D B1A1Vec = posA1 - posB1;	// ベクトルB1⇒A1
+	const float areaS1 = ((B1B2Vec.x * B1A1Vec.z) - (B1B2Vec.z * B1A1Vec.x)) * 0.5f;	// 面積S1
+	const float areaS2 = ((B1B2Vec.x * A2B1Vec.z) - (B1B2Vec.z * A2B1Vec.x)) * 0.5f;	// 面積S2
+	const float S1Rate = (areaS1 / (areaS1 + areaS2));	// 面積S1の割合
 
 	return Pos3D(posA1.x + (A1A2Vec.x * S1Rate), 0.0f, posA1.z + (A1A2Vec.z * S1Rate));
 }
@@ -134,12 +134,12 @@ Angle CGeometry::FindAngleDifference(const Angle& angle, const Angle& targetAngl
 //========================================
 Vector3D CGeometry::FindRotVec(const Rot3D& rot) {
 
-	const float sinX(sinf(rot.x));
-	const float cosX(cosf(rot.x));
-	const float sinY(sinf(rot.y));
-	const float cosY(cosf(rot.y));
+	const float sinX = sinf(rot.x);
+	const float cosX = cosf(rot.x);
+	const float sinY = sinf(rot.y);
+	const float cosY = cosf(rot.y);
 
-	Vector3D vec(sinY * cosX, sinX, cosY * cosX);
+	Vector3D vec = Vector3D(sinY * cosX, sinX, cosY * cosX);
 	D3DXVec3Normalize(&vec, &vec);
 
 	return vec;
@@ -161,7 +161,7 @@ Rot3D CGeometry::FindVecRot(const Vector3D& vec) {
 //========================================
 Normal3D CGeometry::FindVecNor(const Vector3D& vecA, const Vector3D& vecB) {
 
-	Normal3D nor(INITNORMAL3D);
+	Normal3D nor = INITNORMAL3D;
 	D3DXVec3Cross(&nor, &vecA, &vecB);
 	D3DXVec3Normalize(&nor, &nor);
 
@@ -173,10 +173,10 @@ Normal3D CGeometry::FindVecNor(const Vector3D& vecA, const Vector3D& vecB) {
 //========================================
 Normal3D CGeometry::GetRandomVec(void) {
 
-	float x  (fRand());
-	float y  (fRand());
-	float z  (fRand());
-	float sum(x + y + z);
+	float x   = fRand();
+	float y   = fRand();
+	float z   = fRand();
+	float sum = x + y + z;
 	if (sum > 0.0f) {
 		x /= sum;
 		y /= sum;

@@ -21,15 +21,23 @@
 //****************************************
 // ライブラリのリンク
 //****************************************
-#pragma comment(lib,"d3d9.lib")		// 描画処理に必要
-#pragma comment(lib,"d3dx9.lib")	// [d3d9.lib]の拡張ライブラリ
-#pragma comment(lib,"dxguid.lib")	// DirectXコンポーネントを使用するのに必要
-#pragma comment(lib,"dsound.lib")	// DirectSoundを使用するのに必要
-#pragma comment(lib,"winmm.lib")	// システム時刻取得に必要
-#pragma comment(lib,"dinput8.lib")	// 入力処理に必要
-#pragma comment(lib,"xinput.lib")	// 入力処理に必要
-#pragma warning(disable:4091)		// 警告:C4091を無視する
-#pragma warning(disable:4244)		// 警告:C4244を無視する
+// 描画処理に必要
+#pragma comment(lib,"d3d9.lib")
+// [d3d9.lib]の拡張ライブラリ
+#pragma comment(lib,"d3dx9.lib")
+// DirectXコンポーネントを使用するのに必要
+#pragma comment(lib,"dxguid.lib")
+// DirectSoundを使用するのに必要
+#pragma comment(lib,"dsound.lib")
+// システム時刻取得に必要
+#pragma comment(lib,"winmm.lib")
+// 入力処理に必要
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"xinput.lib")
+// 警告無視
+#pragma warning(disable:4091)
+#pragma warning(disable:4100)
+#pragma warning(disable:4244)
 
 //****************************************
 // マクロ定義
@@ -40,7 +48,6 @@
 // 初期値 (※D3D系列)
 #define INITD3DXMATRIX        D3DXMATRIX   (1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)
 #define INITD3DVIEWPORT9      D3DVIEWPORT9 {0,0,0,0,0.0f,0.0f}
-#define INITD3DXCOLOR         D3DXCOLOR(0.0f,0.0f,0.0f,0.0f)
 #define INITD3DCOLOR          D3DCOLOR_RGBA(255,255,255,255)
 #define INITD3DXVECTOR3       D3DXVECTOR3  (0.0f,0.0f,0.0f)
 #define INITD3DXVECTOR2       D3DXVECTOR2  (0.0f,0.0f)
@@ -73,7 +80,7 @@
 #define PIXEL2D_SIZE          (2.0f)
 #define PIXEL3D_SIZE          (0.4f)
 // データ無し
-#define NONEDATA              (-1)
+#define NONEDATA              ((short)-1)
 #define NONECOLOR             Color{-1,-1,-1,-1}
 // 関数形式
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof(*a))
