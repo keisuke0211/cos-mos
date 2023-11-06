@@ -168,6 +168,7 @@
     <ClCompile Include="code\Project\Object\Block\block.cpp" />
     <ClCompile Include="code\Project\Object\Block\fill-block.cpp" />
     <ClCompile Include="code\Project\Object\Block\move-block.cpp" />
+    <ClCompile Include="code\Project\Object\Gimmick\extenddog.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\meteor.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\meteor_generator.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="code\Project\Object\Block\block.h" />
     <ClInclude Include="code\Project\Object\Block\fill-block.h" />
     <ClInclude Include="code\Project\Object\Block\move-block.h" />
+    <ClInclude Include="code\Project\Object\Gimmick\extenddog.h" />
     <ClInclude Include="code\Project\Object\Gimmick\goalgate.h" />
     <ClInclude Include="code\Project\Object\Gimmick\meteor.h" />
     <ClInclude Include="code\Project\Object\Gimmick\meteor_generator.h" />
