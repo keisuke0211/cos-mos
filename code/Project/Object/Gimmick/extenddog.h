@@ -33,7 +33,7 @@ public:
 
 	void   SetState(STATE state) { m_state = state; }			//種類設定
 	void   SetScale(D3DXVECTOR3 scale) { m_scale = scale; }		//拡縮設定
-
+	void   SetShrink(bool shrink) { m_bShrink = shrink; }		//伸縮設定
 	STATE  GetState(void) { return m_state; }					//種類取得
 
 protected:
@@ -43,12 +43,12 @@ private:
 	//========== [[[ 関数宣言 ]]]
 	void   Collision(void);	//当たり判定処理
 
-							//========== [[[ 変数宣言 ]]]
-	STATE m_state;			//種類
-	int m_modelIdx[5];		//モデル番号
-	D3DXVECTOR3 m_scale;	//大きさ
-	bool		m_bLand;	//着地した？
-	int			m_nCntExtend;		//伸びるカウント
-	int			m_nCntShrink;		//縮むカウント
+	//========== [[[ 変数宣言 ]]]
+	STATE m_state;			// 種類
+	int m_modelIdx[5];		// モデル番号
+	D3DXVECTOR3 m_scale;	// 大きさ
+	bool		m_bLand;	// 着地した？
+	bool		m_bShrink;	// 縮む?
+	int			m_nCntShrink;		// 縮むカウント
 	float		m_fcurrenty;		// 現在のy座標
 };

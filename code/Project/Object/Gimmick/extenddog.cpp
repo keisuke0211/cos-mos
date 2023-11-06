@@ -14,6 +14,7 @@
 #define RADIUS_WIDTH	(0.5f)	//横半径
 #define RADIUS_HEIGHT	(0.5f)	//縦半径
 #define CORRECT_HEIGHT	(15.0f)	//高さ補正
+#define HIP_POS			(7.0f)	//尻の位置
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -34,12 +35,12 @@ CExtenddog::CExtenddog(void) {
 	m_state = STATE::NONE;
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_bLand = false;
+	m_bShrink = false;
 	m_modelIdx[0] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_House.x");
 	m_modelIdx[1] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_FeetHip.x");
 	m_modelIdx[2] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_FeetHead.x");
 	m_modelIdx[3] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Hip.x");
 	m_modelIdx[4] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Head.x");
-	m_nCntExtend = 0;
 	m_nCntShrink = 0;
 	m_fcurrenty = 0.0f;
 }
@@ -83,19 +84,39 @@ void CExtenddog::Update(void) {
 
 		if (m_state == STATE::DOWN_LAND)
 		{
-			// 縮むカウント
-			m_nCntShrink--;
-			if (m_nCntShrink <= 0)
-				m_nCntShrink = 0;
+			if (m_bShrink = false)
+			{
+				// 縮むカウント
+				m_nCntShrink--;
+				if (m_nCntShrink <= 0)
+					m_nCntShrink = 0;
+			}
+			else
+			{
+				// 縮むカウント
+				m_nCntShrink++;
+				if (m_nCntShrink >= MAX_COUNT)
+					m_nCntShrink = MAX_COUNT;
+			}
 		}
 	}
 	else if (m_state == STATE::NONE)
 	{//伸びる犬が作動していない
 
-		// 縮むカウント
-		m_nCntShrink++;
-		if (m_nCntShrink >= MAX_COUNT)
-			m_nCntShrink = MAX_COUNT;
+		if (m_bShrink = false)
+		{
+			// 縮むカウント
+			m_nCntShrink++;
+			if (m_nCntShrink >= MAX_COUNT)
+				m_nCntShrink = MAX_COUNT;
+		}
+		else
+		{
+			// 縮むカウント
+			m_nCntShrink--;
+			if (m_nCntShrink <= 0)
+				m_nCntShrink = 0;
+		}
 	}
 
 	// 割合計算 
@@ -104,7 +125,7 @@ void CExtenddog::Update(void) {
 	//y座標の更新
 	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
 
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - HIP_POS, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
 		->SetOutLine(true);
 	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
 		->SetOutLine(true);
