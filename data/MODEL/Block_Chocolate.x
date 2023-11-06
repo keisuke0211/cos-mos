@@ -258,7 +258,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\MODEL\\TEXTURE\\Block_Nor_1.jpg";
+    "data\\TEXTURE\\Block_Nor_1.jpg";
    }
   }
  }
