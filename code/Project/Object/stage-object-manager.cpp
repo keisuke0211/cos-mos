@@ -248,7 +248,22 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 
 	return pObj;
 }
+//========================================
+// ÉSÅ[ÉãÉQÅ[Ég
+//========================================
+CGoalGate *CStageObjectMgr::GoalGateCreate(D3DXVECTOR3 pos)
+{
+	CGoalGate *pObj = NULL;
 
+	if (pObj != NULL) { return pObj; }
+	pObj = new CGoalGate;
+
+	// èâä˙âªèàóù
+	pObj->Init();
+	pObj->SetPos(pos);
+
+	return pObj;
+}
 //========================================
 // òfêØ
 //========================================

@@ -34,8 +34,6 @@ CTrampoline::CTrampoline(void) {
 	m_width = SIZE_OF_1_SQUARE * 2;
 	m_height = SIZE_OF_1_SQUARE;
 	m_state = STATE::NONE;
-	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-	m_bLand = false;
 	m_modelIdx[0] = RNLib::Model().Load("data\\MODEL\\Spring_Body.x");
 	m_modelIdx[1] = RNLib::Model().Load("data\\MODEL\\Spring_Footing.x");
 	m_modelIdx[2] = RNLib::Model().Load("data\\MODEL\\Spring_Spring.x");
