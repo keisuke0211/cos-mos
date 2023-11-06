@@ -1,7 +1,7 @@
 //========================================
 // 
-// トランポリンの処理
-// Author:RYUKI FUJIWARA
+// 伸びる犬の処理
+// Author:KOMURO HIROMU
 // 
 //========================================
 #pragma once
@@ -12,7 +12,7 @@
 // クラス定義
 //****************************************
 // モードの情報構造体
-class CTrampoline : public CStageObject {
+class CExtenddog : public CStageObject {
 public:
 
 	//========== [[[ 列挙型定義 ]]]
@@ -24,27 +24,31 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CTrampoline();
-	virtual        ~CTrampoline();
+	CExtenddog();
+	virtual        ~CExtenddog();
 	virtual void   Init(void);
 	virtual void   Uninit(void);
 	virtual void   Update(void);
 	virtual void   Draw(void);
 
 	void   SetState(STATE state) { m_state = state; }			//種類設定
+	void   SetScale(D3DXVECTOR3 scale) { m_scale = scale; }		//拡縮設定
 
 	STATE  GetState(void) { return m_state; }					//種類取得
 
 protected:
-	
+
 private:
 
 	//========== [[[ 関数宣言 ]]]
 	void   Collision(void);	//当たり判定処理
 
-	//========== [[[ 変数宣言 ]]]
+							//========== [[[ 変数宣言 ]]]
 	STATE m_state;			//種類
-	int m_modelIdx[4];		//モデル番号
-	float		m_fJamp;	//差分
-	int			m_nCnt;		//カウント
+	int m_modelIdx[5];		//モデル番号
+	D3DXVECTOR3 m_scale;	//大きさ
+	bool		m_bLand;	//着地した？
+	int			m_nCntExtend;		//伸びるカウント
+	int			m_nCntShrink;		//縮むカウント
+	float		m_fcurrenty;		// 現在のy座標
 };
