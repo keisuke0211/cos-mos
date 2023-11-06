@@ -29,20 +29,20 @@ public:
 		static void ReleaseVertexBuffer(void);
 
 		// [[[ •Ï”éŒ¾ ]]]
-		short    m_idx;
-		Matrix   m_mtx;
-		short    m_texIdx;
-		CCamera* m_texCamera;
-		bool     m_isZTest, m_isLighting, m_isBillboard;
+		short                        m_idx;
+		Matrix                       m_mtx;
+		short                        m_texIdx;
+		CCamera*                     m_texCamera;
+		bool                         m_isZTest, m_isLighting, m_isBillboard;
 		CDrawState::ALPHA_BLEND_MODE m_alphaBlendMode;
-		float    m_distance;
-		Vertex3D m_vtxs[4];
+		float                        m_distance;
+		Vertex3D                     m_vtxs[4];
 
 		// [[[ Ã“I•Ï”éŒ¾ ]]]
 		static LPDIRECT3DVERTEXBUFFER9 m_vtxBuff;
-		static unsigned short          m_allocPower;
-		static unsigned short          m_allocNum;
-		static unsigned short          m_idxCount;
+		static UShort                  m_allocPower;
+		static UShort                  m_allocNum;
+		static UShort                  m_idxCount;
 	};
 
 	// “o˜^î•ñ

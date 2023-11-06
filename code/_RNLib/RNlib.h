@@ -7,7 +7,7 @@
 #pragma once
 
 //****************************************
-// ヘッダインクルード
+// ヘッダファイルのインクルード
 //****************************************
 #include "RNmain.h"
 //========== [[[ 3DObject ]]]
@@ -19,11 +19,6 @@
 #include "Basis/Calculation/geometry.h"
 #include "Basis/Calculation/matrix.h"
 #include "Basis/Calculation/number.h"
-//========== [[[ Other... ]]]
-#include "Basis/default-data.h"
-#include "Basis/input.h"
-#include "Basis/setting.h"
-#include "Basis/sound.h"
 //========== [[[ Draw ]]]
 #include "Basis/Draw/PutObject/model.h"
 #include "Basis/Draw/PutObject/polygon2D.h"
@@ -46,6 +41,11 @@
 #include "Basis/Mechanical/print.h"
 #include "Basis/Mechanical/regist.h"
 #include "Basis/Mechanical/window.h"
+//========== [[[ Other... ]]]
+#include "Basis/default-data.h"
+#include "Basis/input.h"
+#include "Basis/setting.h"
+#include "Basis/sound.h"
 
 //****************************************
 // メモリリークチェックの定義
@@ -77,7 +77,7 @@ namespace RNLib {
 	enum class SIGNAL { NONE, INIT, UNINIT, UPDATE, UPDATE_WAIT, DRAW, LOAD, SAVE, END, };
 
 	//========== [[[ 関数宣言 ]]]
-	bool MainLoop(int* pEndCode, HINSTANCE hInstance, const char* pClassName, const char* pWinName, const float fWinWidth, const float fWinHeight, const bool bFullScreen, const float fResolution);
+	bool MainLoop(HINSTANCE instanceHandle, const char* settingsPath);
 	SIGNAL GetSignal      (void);
 	void   UninitScene    (void);
 	int    GetCount       (void);

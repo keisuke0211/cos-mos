@@ -19,7 +19,7 @@ public:
 	static void  SubMgr(CObjectMgr* mgr);
 	             CObjectMgr();
 	virtual      ~CObjectMgr();
-	virtual void Update(void) = 0;
+	virtual void Update(void) {}
 	void         UpdateAll(void);
 	virtual void ReleaseAll(void);
 	void         Release(CObject* obj);

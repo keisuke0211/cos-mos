@@ -4,8 +4,8 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "RNLib.h"
-#include "../Project/../Project/System/words/object/font-object.h"
+#include "RNlib.h"
+#include "RNsettings.h"
 
 //****************************************
 // プロトタイプ宣言
@@ -15,22 +15,13 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 //****************************************
 // クラス定義
 //****************************************
-// RNオブジェクトクラス
-class CRNObject {
-public:
-	//========== [[[ 関数宣言 ]]]
-	virtual void Init(LPDIRECT3DDEVICE9& device) = 0;
-	virtual void Uninit(LPDIRECT3DDEVICE9& device) = 0;
-	virtual void Update(LPDIRECT3DDEVICE9& device) = 0;
-};
-
 // 3Dオブジェクトクラス
-class C3DObject : public CRNObject {
+class C3DObject {
 public:
 	//========== [[[ 関数宣言 ]]]
-	void Init(LPDIRECT3DDEVICE9& device) {}
-	void Uninit(LPDIRECT3DDEVICE9& device) {}
-	void Update(LPDIRECT3DDEVICE9& device) {}
+	void Init(void) {}
+	void Uninit(void) {}
+	void Update(void) {}
 
 	//========== [[[ 変数宣言 ]]]
 	CMotion3D m_motion3D;
@@ -38,12 +29,12 @@ public:
 };
 
 // 計算クラス
-class CCalculation : public CRNObject {
+class CCalculation {
 public:
 	//========== [[[ 関数宣言 ]]]
-	void Init(LPDIRECT3DDEVICE9& device) {}
-	void Uninit(LPDIRECT3DDEVICE9& device) {}
-	void Update(LPDIRECT3DDEVICE9& device) {}
+	void Init(void) {}
+	void Uninit(void) {}
+	void Update(void) {}
 
 	//========== [[[ 変数宣言 ]]]
 	CEase     m_ease;
@@ -52,23 +43,24 @@ public:
 };
 
 // その他クラス
-class COther : public CRNObject {
+class COther {
 public:
 	//========== [[[ 関数宣言 ]]]
-	void Init(LPDIRECT3DDEVICE9& device) {
+	void Init(void) {
 		m_defaultData.Init();
 	}
-	void Uninit(LPDIRECT3DDEVICE9& device) {}
-	void Update(LPDIRECT3DDEVICE9& device) {}
+	void Uninit(void) {}
+	void Update(void) {}
 
 	//========== [[[ 変数宣言 ]]]
 	CDefaultData m_defaultData;
 };
 
 //****************************************
-// 名前空間
+// 無名空間
 //****************************************
 namespace {
+
 	//========== [[[ 関数宣言 ]]]
 	void Init(HINSTANCE hInstance);
 	void Uninit(void);
@@ -78,7 +70,7 @@ namespace {
 	void Save(void);
 
 	//========== [[[ 変数宣言 ]]]
-	RNLib::SIGNAL  m_signal = RNLib::SIGNAL::NONE;
+	RNLib::SIGNAL  signal = RNLib::SIGNAL::NONE;
 	unsigned short m_nCount;
 	DWORD          m_dwCurrentTime;
 	DWORD          m_dwExecLastTime;
@@ -124,7 +116,7 @@ namespace {
 // 取得・設定系処理
 // Author:RIKU NISHIMURA
 //========================================
-RNLib::SIGNAL RNLib::GetSignal     (void)       { return m_signal;       }
+RNLib::SIGNAL RNLib::GetSignal     (void)       { return signal;       }
 int           RNLib::GetCount      (void)       { return m_nCount;       }
 int           RNLib::GetFPSCount   (void)       { return m_nFPSCount;    }
 bool          RNLib::GetBlinkF2    (void)       { return m_bBlinkF2;     }
@@ -165,31 +157,44 @@ CDrawState&   RNLib::DrawStateMng  (void)       { return m_drawState;    }
 // メインループ
 // Author:RIKU NISHIMURA
 //========================================
-bool RNLib::MainLoop(int* pEndCode, HINSTANCE hInstance, const char* pClassName, const char* pWinName, const float fWinWidth, const float fWinHeight, const bool bFullScreen, const float fResolution) {
-	static bool bMessageLoop = false;
+bool RNLib::MainLoop(HINSTANCE instanceHandle, const char* settingsPath) {
+
+	static bool isMessageLoop = false;
 	static MSG  msg;
 
-	if (m_signal == RNLib::SIGNAL::NONE) {
-		m_window.Create(
-			hInstance,
-			{
-				WindowProc,		// ウィンドウプロシージャ
-				pClassName,		// ウィンドウクラスの名前
-				pWinName,		// ウィンドウの名前
-				fWinWidth,		// ウィンドウの幅
-				fWinHeight,		// ウィンドウの高さ
-				bFullScreen,	// ウィンドウモード
-				fResolution,	// 解像度倍率
-			}
-		);
+	// シグナルが無し(初回)の時、
+	if (signal == RNLib::SIGNAL::NONE) {
+
+		// 設定ファイルを読み込み&書き出し
+		if (RNSettings::LoadAndSave(settingsPath))
+		{// 成功した時、
+			RNSettings::Info settingsInfo = RNSettings::GetInfo();
+
+			m_window.Create(
+				instanceHandle,
+				{
+					WindowProc,						// ウィンドウプロシージャ
+					settingsInfo.projectName,		// ウィンドウクラスの名前
+					settingsInfo.projectName,		// ウィンドウの名前
+					settingsInfo.windowWidth,		// ウィンドウの幅
+					settingsInfo.windowHeight,		// ウィンドウの高さ
+					settingsInfo.isFullScreen,		// ウィンドウモード
+					settingsInfo.resolution,		// 解像度倍率
+				}
+			);
+		}
+		else
+		{// 失敗した時、シグナルを終了にする
+			signal = RNLib::SIGNAL::UNINIT;
+		}
 	}
 
-	if (bMessageLoop) {
+	if (isMessageLoop) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
 		{// Windowsの処理
 			if (msg.message == WM_QUIT) {
-				m_signal = SIGNAL::SAVE;
-				bMessageLoop = false;
+				signal = SIGNAL::SAVE;
+				isMessageLoop = false;
 			}
 			else {
 				TranslateMessage(&msg);
@@ -218,31 +223,30 @@ bool RNLib::MainLoop(int* pEndCode, HINSTANCE hInstance, const char* pClassName,
 		}
 	}
 
-	switch (m_signal) {
-	case RNLib::SIGNAL::NONE       :m_signal = RNLib::SIGNAL::LOAD       ; break;
-	case RNLib::SIGNAL::INIT       :m_signal = RNLib::SIGNAL::UPDATE_WAIT; break;
-	case RNLib::SIGNAL::UNINIT     :m_signal = RNLib::SIGNAL::END        ; break;
-	case RNLib::SIGNAL::UPDATE     :m_signal = RNLib::SIGNAL::DRAW       ; break;
-	case RNLib::SIGNAL::UPDATE_WAIT:m_signal = RNLib::SIGNAL::UPDATE     ; break;
-	case RNLib::SIGNAL::DRAW       :m_signal = RNLib::SIGNAL::UPDATE_WAIT; break;
-	case RNLib::SIGNAL::LOAD       :m_signal = RNLib::SIGNAL::INIT       ; break;
-	case RNLib::SIGNAL::SAVE       :m_signal = RNLib::SIGNAL::UNINIT     ; break;
+	switch (signal) {
+	case RNLib::SIGNAL::NONE       :signal = RNLib::SIGNAL::LOAD       ; break;
+	case RNLib::SIGNAL::INIT       :signal = RNLib::SIGNAL::UPDATE_WAIT; break;
+	case RNLib::SIGNAL::UNINIT     :signal = RNLib::SIGNAL::END        ; break;
+	case RNLib::SIGNAL::UPDATE     :signal = RNLib::SIGNAL::DRAW       ; break;
+	case RNLib::SIGNAL::UPDATE_WAIT:signal = RNLib::SIGNAL::UPDATE     ; break;
+	case RNLib::SIGNAL::DRAW       :signal = RNLib::SIGNAL::UPDATE_WAIT; break;
+	case RNLib::SIGNAL::LOAD       :signal = RNLib::SIGNAL::INIT       ; break;
+	case RNLib::SIGNAL::SAVE       :signal = RNLib::SIGNAL::UNINIT     ; break;
 	}
 
-	switch (m_signal) {
+	switch (signal) {
 	case RNLib::SIGNAL::INIT:
-		Init(hInstance);
+		Init(instanceHandle);
 		break;
 	case RNLib::SIGNAL::UNINIT:
 		Uninit();
-		*pEndCode = (int)msg.wParam;
 		break;
 	case RNLib::SIGNAL::UPDATE:
 		Update();
-		bMessageLoop = false;
+		isMessageLoop = false;
 		break;
 	case RNLib::SIGNAL::UPDATE_WAIT:
-		bMessageLoop = true;
+		isMessageLoop = true;
 		break;
 	case RNLib::SIGNAL::DRAW:
 		Draw();
@@ -278,7 +282,6 @@ void RNLib::UninitScene(void) {
 //========================================
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
-	int nID = NONEDATA;
 	switch (uMsg) {
 
 	case WM_DESTROY: {
@@ -352,9 +355,9 @@ namespace {
 		LPDIRECT3DDEVICE9 device = m_window.GetD3DDevice();
 
 		// RNオブジェクト
-		m_3DObject   .Init(device);
-		m_calculation.Init(device);
-		m_other      .Init(device);
+		m_3DObject   .Init();
+		m_calculation.Init();
+		m_other      .Init();
 
 		m_drawMng  .Init();
 		m_drawState.Init(device);
@@ -373,13 +376,10 @@ namespace {
 	//========================================
 	void Uninit(void) {
 
-		// デバイスを取得
-		LPDIRECT3DDEVICE9 device = m_window.GetD3DDevice();
-
 		// RNオブジェクト
-		m_3DObject   .Uninit(device);
-		m_calculation.Uninit(device);
-		m_other      .Uninit(device);
+		m_3DObject   .Uninit();
+		m_calculation.Uninit();
+		m_other      .Uninit();
 
 		m_drawMng    .Uninit();
 		m_drawState  .Uninit();
@@ -394,6 +394,9 @@ namespace {
 		UninitPrint();
 	
 		m_sound  .Uninit();
+
+		// 設定情報の解放処理
+		RNSettings::Release();
 
 		// 分解能を戻す
 		timeEndPeriod(1);
@@ -414,19 +417,15 @@ namespace {
 		// 全オブジェクトマネージャーの更新処理
 		CObjectMgr::UpdateAllMgrs();
 
-		// デバイスを取得
-		LPDIRECT3DDEVICE9 device = m_window.GetD3DDevice();
-
 		// RNオブジェクト
-		m_3DObject   .Update(device);
-		m_calculation.Update(device);
-		m_other      .Update(device);
+		m_3DObject   .Update();
+		m_calculation.Update();
+		m_other      .Update();
 
 		// デバッグログをクリア
 		m_text2D.ClearDebugLog();
 
 		m_input   .Update();
-		m_sound   .Update();
 		m_light3D .Update();
 
 		if (!m_bSpace3DStop) {
@@ -485,9 +484,6 @@ namespace {
 					// 描画
 					m_drawMng.Draw(device, false);
 
-					// フォントオブジェクトの描画処理
-					CFontObject::DrawAll();
-
 					// レンダリング終了
 					m_camera.EndRendering(device);
 
@@ -520,8 +516,7 @@ namespace {
 	// Author:RIKU NISHIMURA
 	//========================================
 	void Load(void) {
-		m_sound   .Load();
-		m_text    .LoadFont();
+		m_text.LoadFont();
 	}
 
 	//========================================

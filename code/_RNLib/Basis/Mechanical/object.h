@@ -15,7 +15,6 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CObject();
 	virtual ~CObject();
-	virtual void Uninit(void) = 0;
 	virtual void Update(void) = 0;
 	void Delete(void) { m_isDelete = true; }
 	// İ’èæ“¾

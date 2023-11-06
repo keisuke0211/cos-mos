@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../RNLib.h"
+#include "../RNlib.h"
 
 //****************************************
 // マクロ定義
@@ -285,7 +285,7 @@ void CInput::UpdateJoyPad(void) {
 //========================================
 CInput::CJoyPad::CJoyPad() {
 
-	m_idx                 = NONEDATA;
+	m_idx                 = 0;
 	for (int cntButton = 0; cntButton < (int)BUTTON::MAX; cntButton++)
 		m_buttonInputs[cntButton] = {};
 	for (int cntStick = 0; cntStick < (int)STICK::MAX; cntStick++)
@@ -390,8 +390,8 @@ void CInput::CJoyPad::UpdateStick(void) {
 		m_sticInputs[cntStick].tiltRate /= 32768.0f;
 
 		// 方向入力フラグを初期化
-		for (int nCntAngle = 0; nCntAngle < (int)INPUT_ANGLE::MAX; nCntAngle++) {
-			angleInputs[nCntAngle] = false;
+		for (int cntAngle = 0; cntAngle < (int)INPUT_ANGLE::MAX; cntAngle++) {
+			angleInputs[cntAngle] = false;
 		}
 
 		if (m_sticInputs[cntStick].tiltRate > 0)

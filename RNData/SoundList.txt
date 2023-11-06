@@ -1,0 +1,51 @@
+BGM{
+	DIGBUG:             RNData\Sound\BGM\DigBug.wav          0.0 -1
+	DIGBUG_BOSS:        RNData\Sound\BGM\DigBug_Boss.wav     0.25 -1
+}
+SE{
+	MENU_SELECT:        RNData\Sound\SE\MenuSelect.wav       1.0 0
+	MENU_DECIDE:        RNData\Sound\SE\MenuDecide.wav       1.0 0
+	MENU_BACK:          RNData\Sound\SE\MenuBack.wav         1.0 0
+	GOLD_COUNT:         RNData\Sound\SE\GoldCount.wav        0.2 0
+	SCORE_COUNT:        RNData\Sound\SE\ScoreCount.wav       0.2 0
+	ITEM_GET:           RNData\Sound\SE\ItemGet.wav          1.0 0
+	GAMECLEAR:          RNData\Sound\SE\GameClear.wav        1.0 0
+	GAMEOVER:           RNData\Sound\SE\GameOver.wav         1.0 0
+	TAKE_AIM:           RNData\Sound\SE\TakeAim.wav          1.0 0
+	BLOW_DAMAGE_LOW:    RNData\Sound\SE\BlowDamage-Low.wav   1.0 0
+	BLOW_DAMAGE_MID:    RNData\Sound\SE\BlowDamage-Mid.wav   1.0 0
+	BLOW_DAMAGE_HIGH:   RNData\Sound\SE\BlowDamage-High.wav  1.0 0
+	SLASH_DAMAGE_LOW:   RNData\Sound\SE\SlashDamage-Low.wav  1.0 0
+	SLASH_DAMAGE_MID:   RNData\Sound\SE\SlashDamage-Mid.wav  1.0 0
+	SLASH_DAMAGE_HIGH:  RNData\Sound\SE\SlashDamage-High.wav 1.0 0
+	SPC_DAMAGE_LOW:     RNData\Sound\SE\SpcDamage-Low.wav    1.0 0
+	SPC_DAMAGE_MID:     RNData\Sound\SE\SpcDamage-Mid.wav    1.0 0
+	ELEM_DAMAGE_FIRE:   RNData\Sound\SE\ElemDamage-Fire.wav  0.5 0
+	ELEM_DAMAGE_WATER:  RNData\Sound\SE\ElemDamage-Water.wav 0.5 0
+	ELEM_DAMAGE_ICE:    RNData\Sound\SE\ElemDamage-Ice.wav   0.5 0
+	ELEM_DAMAGE_WIND:   RNData\Sound\SE\ElemDamage-Wind.wav  0.5 0
+	ELEM_DAMAGE_ELEC:   RNData\Sound\SE\ElemDamage-Elec.wav  0.5 0
+	ELEM_DAMAGE_SOIL:   RNData\Sound\SE\ElemDamage-Soil.wav  0.5 0
+	ELEM_DAMAGE_DARK:   RNData\Sound\SE\ElemDamage-Dark.wav  0.5 0
+	ELEM_DAMAGE_LIGHT:  RNData\Sound\SE\ElemDamage-Light.wav 0.5 0
+	IMPACT_MID:         RNData\Sound\SE\Impact-Mid.wav       0.5 0
+	BREATH_LOW:         RNData\Sound\SE\Breath-Low.wav       1.0 0
+	BREATH_MID:         RNData\Sound\SE\Breath-Mid.wav       1.0 0
+	BREATH_HIGH:        RNData\Sound\SE\Breath-High.wav      1.0 0
+	BREATH_SHOT:        RNData\Sound\SE\BreathShot.wav       0.5 0
+	LANDING_GRASS:      RNData\Sound\SE\Landing-Grass.wav    0.3 0
+	LANDING_SOIL:       RNData\Sound\SE\Landing-Soil.wav     0.3 0
+	LANDING_STONE:      RNData\Sound\SE\Landing-Stone.wav    0.5 0
+	LANDING_SAND:       RNData\Sound\SE\Landing-Sand.wav     0.3 0
+	LANDING_IMPACT:     RNData\Sound\SE\LandingImpact.wav    1.0 0
+	EARTHQUAKE:         RNData\Sound\SE\Earthquake.wav       0.3 -1
+	BREAK_SOIL:         RNData\Sound\SE\Break-Soil.wav       0.2 0
+	BREAK_STONE:        RNData\Sound\SE\Break-Stone.wav      0.2 0
+	EXPLOSION_MID:      RNData\Sound\SE\Explosion-Mid.wav    1.0 0
+	SWING_LOW:          RNData\Sound\SE\Swing-Low.wav        1.0 0
+	SWING_MID:          RNData\Sound\SE\Swing-Mid.wav        1.0 0
+	SWING_HIGH:         RNData\Sound\SE\Swing-High.wav       1.0 0
+	METAL_STRIKE:       RNData\Sound\SE\MetalStrike.wav      1.0 0
+	MOTOR:              RNData\Sound\SE\Motor.wav            0.3 -1
+}
+END

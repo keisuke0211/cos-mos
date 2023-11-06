@@ -13,18 +13,22 @@
 class CDefaultData {
 public:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
-	enum class MODEL { PRUFEN_HEAD, MAX, };
+	enum class SOUND { TEST_BGM, TEST_SE, MAX, };
+	enum class MODEL { PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CDefaultData();
 	~CDefaultData();
 	void Init(void);
-	UShort& GetModelIdx(const MODEL& model) { return m_modelIdxes[(int)model]; }
+	short& GetSoundIdx(const SOUND& sound) { return m_soundIdxes[(int)sound]; }
+	short& GetModelIdx(const MODEL& model) { return m_modelIdxes[(int)model]; }
 
 private:
 	//========== [[[ ’è”éŒ¾ ]]]
+	static const char* SOUND_PATH[(int)SOUND::MAX];
 	static const char* MODEL_PATH[(int)MODEL::MAX];
 
 	//========== [[[ •Ï”éŒ¾ ]]]
-	UShort m_modelIdxes[(int)MODEL::MAX];
+	short m_soundIdxes[(int)SOUND::MAX];
+	short m_modelIdxes[(int)MODEL::MAX];
 };

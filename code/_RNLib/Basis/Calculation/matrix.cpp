@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -17,9 +17,9 @@
 //========================================
 Matrix CMatrix::ConvPosRotToMtx(const Pos3D& pos, const Rot3D& rot) {
 
-	Matrix rotMtx(INITMATRIX);
-	Matrix posMtx(INITMATRIX);
-	Matrix mtx(INITMATRIX);
+	Matrix rotMtx = INITMATRIX;
+	Matrix posMtx = INITMATRIX;
+	Matrix mtx = INITMATRIX;
 
 	// Œü‚«‚ð”½‰f
 	D3DXMatrixRotationYawPitchRoll(&rotMtx, rot.y, rot.x, rot.z);
@@ -37,10 +37,10 @@ Matrix CMatrix::ConvPosRotToMtx(const Pos3D& pos, const Rot3D& rot) {
 //========================================
 Matrix CMatrix::ConvPosRotScaleToMtx(const Pos3D& pos, const Rot3D& rot, const Scale3D& scale) {
 
-	Matrix rotMtx(INITMATRIX);
-	Matrix scaleMtx(INITMATRIX);
-	Matrix posMtx(INITMATRIX);
-	Matrix mtx(INITMATRIX);
+	Matrix rotMtx = INITMATRIX;
+	Matrix scaleMtx = INITMATRIX;
+	Matrix posMtx = INITMATRIX;
+	Matrix mtx = INITMATRIX;
 
 	// Œü‚«‚ð”½‰f
 	D3DXMatrixRotationYawPitchRoll(&rotMtx, rot.y, rot.x, rot.z);
@@ -81,9 +81,9 @@ Rot3D CMatrix::ConvMtxToRot(const Matrix& mtx) {
 //========================================
 Scale3D CMatrix::ConvMtxToScale(const D3DXMATRIX& mtx) {
 
-	const Vector3D vectorX(mtx._11, mtx._12, mtx._13);
-	const Vector3D vectorY(mtx._21, mtx._22, mtx._23);
-	const Vector3D vectorZ(mtx._31, mtx._32, mtx._33);
+	const Vector3D vectorX = Vector3D(mtx._11, mtx._12, mtx._13);
+	const Vector3D vectorY = Vector3D(mtx._21, mtx._22, mtx._23);
+	const Vector3D vectorZ = Vector3D(mtx._31, mtx._32, mtx._33);
 
 	return Scale3D(
 		D3DXVec3Length(&vectorX),
@@ -96,7 +96,7 @@ Scale3D CMatrix::ConvMtxToScale(const D3DXMATRIX& mtx) {
 //========================================
 Matrix CMatrix::MultiplyMtx(const Matrix& mtxA, const Matrix& mtxB) {
 
-	Matrix mtx(INITMATRIX);
+	Matrix mtx = INITMATRIX;
 	D3DXMatrixMultiply(&mtx, &mtxA, &mtxB);
 
 	return mtx;

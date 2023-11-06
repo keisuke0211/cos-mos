@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../../RNLib.h"
+#include "../../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -157,6 +157,9 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 		{// 読み込み失敗
 			// エラーメッセージ
 			RNLib::Window().Message_ERROR(CreateText("モーションデータファイルが存在しません。\n%s", loadPath));
+
+			// 読み込み済パスのメモリリセット
+			ReAllocLoadPath(numOld);
 
 			return NONEDATA;
 		}

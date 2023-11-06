@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -26,10 +26,10 @@ CTexture::~CTexture() {
 
 	// テクスチャ解放
 	if (m_texs != NULL) {
-		for (int nCntTex = 0; nCntTex < m_num; nCntTex++) {
-			if (m_texs[nCntTex] != NULL) {
-				m_texs[nCntTex]->Release();
-				m_texs[nCntTex] = NULL;
+		for (int cntTex = 0; cntTex < m_num; cntTex++) {
+			if (m_texs[cntTex] != NULL) {
+				m_texs[cntTex]->Release();
+				m_texs[cntTex] = NULL;
 			}
 		}
 		delete m_texs;
@@ -55,17 +55,18 @@ int CTexture::Load(const char* loadPath) {
 	if (CRegist::Load(loadPath, idx))
 	{// 読み込み成功
 		// テクスチャのメモリ再確保
-		RNLib::Memory().ReAlloc<LPDIRECT3DTEXTURE9>(&m_texs, numOld, m_num);
+		RNLib::Memory().ReAlloc(&m_texs, numOld, m_num);
 		m_texs[idx] = NULL;
 
 		// テクスチャの読み込み
 		LPDIRECT3DDEVICE9 device = RNLib::Window().GetD3DDevice();
 		if (FAILED(D3DXCreateTextureFromFile(device, loadPath, &m_texs[idx])))
 		{// 読み込み失敗
-			assert(false);
+			// エラーメッセージ
+			RNLib::Window().Message_ERROR(CreateText("テクスチャの読み込みに失敗しました。\n%s", loadPath));
 
 			// テクスチャのメモリリセット
-			RNLib::Memory().ReAlloc<LPDIRECT3DTEXTURE9>(&m_texs, m_num, numOld);
+			RNLib::Memory().ReAlloc(&m_texs, m_num, numOld);
 
 			// 読み込み済パスのメモリリセット
 			ReAllocLoadPath(numOld);

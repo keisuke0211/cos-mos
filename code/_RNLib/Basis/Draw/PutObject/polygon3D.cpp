@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../../RNLib.h"
+#include "../../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -88,15 +88,15 @@ void CPolygon3D::CDrawInfo::ReleaseVertexBuffer(void) {
 //========================================
 CPolygon3D::CDrawInfo::CDrawInfo() {
 
-	m_idx         = 0;
-	m_mtx         = INITMATRIX;
-	m_texIdx      = NONEDATA;
-	m_texCamera   = NULL;
-	m_isZTest     = true;
-	m_isLighting  = true;
-	m_isBillboard = false;
+	m_idx            = 0;
+	m_mtx            = INITMATRIX;
+	m_texIdx         = NONEDATA;
+	m_texCamera      = NULL;
+	m_isZTest        = true;
+	m_isLighting     = true;
+	m_isBillboard    = false;
 	m_alphaBlendMode = CDrawState::ALPHA_BLEND_MODE::NORMAL;
-	m_distance    = 0.0f;
+	m_distance       = 0.0f;
 	for (int cntVtx(0); cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}

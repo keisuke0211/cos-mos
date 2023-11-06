@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -276,7 +276,7 @@ void CWindow::Message(const char *pText, const char *pCaption) {
 // Author:RIKU NISHIMURA
 //========================================
 void CWindow::Message_ERROR(const char* pText) {
-	MessageBox(m_hWnd, pText, "ERROR", MB_OK);
+	MessageBox(m_hWnd, pText, "ERROR", MB_ICONWARNING);
 }
 
 //========================================

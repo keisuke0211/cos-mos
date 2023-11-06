@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //****************************************
 // 定数定義
@@ -131,13 +131,13 @@ char* CFile::ConvPathToDataStartPath(const char* path) {
 	static char dataStartPath[TXT_MAX] = "";
 
 	// パスがdataディレクトリを含まない場合はエラー
-	if (strstr(path, "data\\") == NULL) {
-		RNLib::Window().Message(CreateText("\"%s\" does not contain \"data\\\" directory.\n", path), "Error");
+	if (strstr(path, "Data\\") == NULL) {
+		RNLib::Window().Message(CreateText("\"%s\" does not contain \"Data\\\" directory.\n", path), "Error");
 		return NULL;
 	}
 
 	// dataディレクトリの直後の文字列をコピーする
-	const char *start = strstr(path, "data\\");
+	const char *start = strstr(path, "Data\\");
 	strncpy(dataStartPath, start, TXT_MAX);
 	dataStartPath[TXT_MAX - 1] = '\0'; // NULL終端を付加
 
@@ -153,13 +153,14 @@ bool CFile::OpenLoadFile(const char* path) {
 	RNLib::Memory().ReAlloc<FILE*>(&files, fileNumOld, fileNum);
 	files[fileNumOld] = fopen(path, "r");
 	if (files[fileNumOld] == NULL) {
-		RNLib::Memory().ReAlloc<FILE*>(&files, fileNum, fileNumOld);
 
 		// エラーメッセージ
 		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
 
 		// ファイルを閉じる
 		CloseFile();
+
+		RNLib::Memory().ReAlloc<FILE*>(&files, fileNum, fileNumOld);
 
 		return false;
 	}
@@ -213,8 +214,10 @@ bool CFile::SearchLoop(const char* endIdentifier) {
 	if (files == NULL)
 		return false;
 
-	strcpy(searchString, "");
-	fscanf(files[fileNum-1], "%s", searchString);
+	do{
+		strcpy(searchString, "");
+		fscanf(files[fileNum - 1], "%s", searchString);
+	} while (searchString[0] == '#');
 
 	return (strcmp(searchString, endIdentifier) != 0);
 }

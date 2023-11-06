@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -85,8 +85,8 @@ void CDrawMng::Release(void) {
 	ms_resistInfoSumScreen.Release();
 
 	// ’¸“_ƒoƒbƒtƒ@‚ğ”jŠü‚·‚é
-	//CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
-	//CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
+	CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
+	CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
 }
 
 //========================================
@@ -642,13 +642,20 @@ void CDrawMng::SortDrawInfo(CDrawInfoSum& drawInfoSum) {
 		}
 
 		// [[[ —Dæ‚·‚é‚©’²‚×‚é ]]]
+		// ¦•Ô‚·‚Ì‚Í•`‰æ‚ğ—Dæ‚·‚é‚©‚È‚Ì‚Å’ˆÓ
 		static bool FindPrioritize(CDrawInfoBase& base, CDrawInfoBase& target) {
 
-			if (&base == NULL || &target == NULL) return false;		// •Ğ•û‚ª‘¶İ‚µ‚È‚¢
+			// •Ğ•û‚ª‘¶İ‚µ‚È‚¢
+			if (&base == NULL || &target == NULL)
+				return false;
+			
+			// Šî€‚Ì•û‚ª—Dæ“x‚ª’á‚¢
+			if (base.m_priority < target.m_priority) 
+				return true;
 
-			// ¦«•Ô‚·‚Ì‚Í•`‰æ‚ğ—Dæ‚·‚é‚©‚È‚Ì‚Å’ˆÓ
-			if (base.m_priority < target.m_priority) return true;	// Šî€‚Ì•û‚ª—Dæ“x‚ª’á‚¢
-			if (base.m_priority > target.m_priority) return false;	// Šî€‚Ì•û‚ª—Dæ“x‚ª‚‚¢
+			// Šî€‚Ì•û‚ª—Dæ“x‚ª‚‚¢
+			if (base.m_priority > target.m_priority)
+				return false;
 
 			if (base.m_type == CDrawInfoBase::TYPE::POLYGON2D) {
 				//----------------------------------------

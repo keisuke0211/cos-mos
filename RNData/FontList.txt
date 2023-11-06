@@ -1,0 +1,11 @@
+FONTSET{
+	FONT{
+		TEXTURE_PATH:	RNData\\Texture\\Font\\00.png
+		START_CODE:		0
+		PTN_WIDTH:		128
+		PTN_HEIGHT:		512
+		SPACE_RATE:		1.0
+	}
+}
+
+END
