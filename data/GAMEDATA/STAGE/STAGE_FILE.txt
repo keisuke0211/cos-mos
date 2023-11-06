@@ -6,13 +6,14 @@
 #========================================
 # 惑星数
 #========================================
-NUM_PLANET = 2
+NUM_PLANET = 3
 
 #========================================
 # ステージ数 / 画像 / 惑星名
 #========================================
 PLANET = 3 data\MODEL\Polaris.x ポラリス
 PLANET = 3 data\\TEXTURE\\Planet\\Purple.png レグルス
+PLANET = 3 data\\TEXTURE\\Planet\\Dark.png シリウス
 
 #========================================
 # 惑星番号 / ステージのファイル名 / ステージ名
@@ -23,6 +24,9 @@ STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE02.csv 謎の物体
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE03.csv ？？？
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE04.csv ？？？
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE05.csv ？？？
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE06.csv ？？？
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE07.csv ？？？
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE08.csv ？？？
 
 #========================================
 #||||||||||||||||||||||||||||||||||||||||
