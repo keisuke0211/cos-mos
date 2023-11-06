@@ -17,8 +17,10 @@ public:
 
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
 	enum class STATE {
-		SCALE_UP = 0,		//‘å‚«‚­‚È‚é
-		SCALE_DOWN,			//¬‚³‚­‚È‚é
+		NONE = 0,		//‰½‚à‚È‚¢
+		SCALE_UP,		//‘å‚«‚­‚È‚é
+		SCALE_DOWN,		//¬‚³‚­‚È‚é
+		SCALE_DELETE,	//Á‚¦‚é
 		MAX,
 	};
 
