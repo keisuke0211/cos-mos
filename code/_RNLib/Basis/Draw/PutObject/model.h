@@ -25,12 +25,12 @@ public:
 		void Release(void);
 
 		// [[[ •Ï”éŒ¾ ]]]
-		short*         m_texIdxs;
-		LPD3DXMESH     m_mesh;
-		LPD3DXMESH     m_outLineMesh;
-		LPD3DXBUFFER   m_matBuff;
-		unsigned short m_matNum;
-		float          m_radiusMax;
+		short*       m_texIdxs;
+		LPD3DXMESH   m_mesh;
+		LPD3DXMESH   m_outLineMesh;
+		LPD3DXBUFFER m_matBuff;
+		UShort       m_matNum;
+		float        m_radiusMax;
 	};
 
 	// •`‰æî•ñƒNƒ‰ƒX
@@ -90,12 +90,12 @@ public:
 	~CModel();
 	void         Release(void);
 	short        Load   (const char* loadPath, short idx = NONEDATA);
-	CData&       GetData(const short& idx) { return m_datas[idx]; }
+	CData&       GetData(const short& idx) { return *m_datas[idx]; }
 	CRegistInfo* Put    (const Matrix& mtx, const short& modelIdx, const bool& isOnScreen = false);
 	CRegistInfo* Put    (const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const bool& isOnScreen = false);
 	CRegistInfo* Put    (const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const bool& isOnScreen = false);
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]
-	CData* m_datas;
+	CData** m_datas;
 };

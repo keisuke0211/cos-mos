@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -27,8 +27,8 @@ CRegist::CRegist() {
 CRegist::~CRegist() {
 
 	// 読み込みパスの解放
-	for (int nCnt = 0; nCnt < m_num; nCnt++)
-		RNLib::Memory().Release(&m_loadPaths[nCnt]);
+	for (int cnt = 0; cnt < m_num; cnt++)
+		RNLib::Memory().Release(&m_loadPaths[cnt]);
 	RNLib::Memory().Release(&m_loadPaths);
 }
 
@@ -112,16 +112,16 @@ void CRegist::InitMemory(const unsigned short& num) {
 		char** newLoadPaths = new char*[m_num];
 
 		// 読み込みパスの解放
-		for (int nCnt = 0; nCnt < m_num; nCnt++)
-			RNLib::Memory().Release<char>(&m_loadPaths[nCnt]);
+		for (int cnt = 0; cnt < m_num; cnt++)
+			RNLib::Memory().Release<char>(&m_loadPaths[cnt]);
 		RNLib::Memory().Release<char*>(&m_loadPaths);
 
 		// 読み込みパスのポインタを入れ替える
 		m_loadPaths = newLoadPaths;
 
 		// 文字列メモリ確保
-		for (int nCnt = 0; nCnt < m_num; nCnt++) {
-			m_loadPaths[nCnt] = new char[TXT_MAX];
+		for (int cnt = 0; cnt < m_num; cnt++) {
+			m_loadPaths[cnt] = new char[TXT_MAX];
 		}
 	}
 }

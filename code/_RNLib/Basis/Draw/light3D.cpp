@@ -6,12 +6,12 @@
 //========================================
 // [[[ light3D.cpp ]]]
 //========================================
-#include "../../RNLib.h"
+#include "../../RNlib.h"
 
 //****************************************
 // マクロ定義
 //****************************************
-#define AMBIENTLIGHTDATA_PATH "data\\_RNData\\AmbientLight.txt"
+#define AMBIENTLIGHTDATA_PATH "RNData\\AmbientLight.txt"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -58,23 +58,23 @@ void CLight3D::Init(void) {
 			m_pAmbient = new AmbientLight[m_nSetNum];
 
 			// 光情報のカウント
-			int nCntLight = 0;
+			int cntLight = 0;
 
 			while (RNLib::File().SearchLoop("}")) {
 				if (false) {}
 				else if (RNLib::File().CheckIdentifier("LIGHT{")) {
-					m_pAmbient[nCntLight] = {};
+					m_pAmbient[cntLight] = {};
 
 					while (RNLib::File().SearchLoop("}")) {
 						if (false) {}
-						else if (RNLib::File().CheckIdentifier("ROT:"))        { RNLib::File().Scan(CFile::SCAN::POS3D, &m_pAmbient[nCntLight].rot); }
-						else if (RNLib::File().CheckIdentifier("BRIGHTNESS:")) { RNLib::File().Scan(CFile::SCAN::FLOAT, &m_pAmbient[nCntLight].fBrightness); }
+						else if (RNLib::File().CheckIdentifier("ROT:"))        { RNLib::File().Scan(CFile::SCAN::POS3D, &m_pAmbient[cntLight].rot); }
+						else if (RNLib::File().CheckIdentifier("BRIGHTNESS:")) { RNLib::File().Scan(CFile::SCAN::FLOAT, &m_pAmbient[cntLight].fBrightness); }
 					}
 
 					// カウントの光を設定する
-					SetLight(nCntLight);
+					SetLight(cntLight);
 
-					nCntLight++;	// カウントを加算
+					cntLight++;	// カウントを加算
 				}
 			}
 		}
@@ -113,10 +113,10 @@ void CLight3D::SaveAmbientLight(void) {
 
 	FILE* pFile = RNLib::File().GetFile();
 	fprintf(pFile, "LIGHTSET{ %d\n", m_nSetNum);
-	for (int nCntLight = 0; nCntLight < m_nSetNum; nCntLight++) {
+	for (int cntLight = 0; cntLight < m_nSetNum; cntLight++) {
 		fprintf(pFile, "	LIGHT{\n");
-		fprintf(pFile, "		ROT: %f %f %f\n", m_pAmbient[nCntLight].rot.x, m_pAmbient[nCntLight].rot.y, m_pAmbient[nCntLight].rot.z);
-		fprintf(pFile, "		BRIGHTNESS: %f\n", m_pAmbient[nCntLight].fBrightness);
+		fprintf(pFile, "		ROT: %f %f %f\n", m_pAmbient[cntLight].rot.x, m_pAmbient[cntLight].rot.y, m_pAmbient[cntLight].rot.z);
+		fprintf(pFile, "		BRIGHTNESS: %f\n", m_pAmbient[cntLight].fBrightness);
 		fprintf(pFile, "	}\n");
 	}
 	fprintf(pFile, "}\n");
@@ -160,8 +160,8 @@ void CLight3D::Update(void) {
 void CLight3D::SetCol(Color col) {
 	m_col = col;
 
-	for (int nCntLight = 0; nCntLight < m_nSetNum; nCntLight++) {
-		SetLight(nCntLight);
+	for (int cntLight = 0; cntLight < m_nSetNum; cntLight++) {
+		SetLight(cntLight);
 	}
 }
 
@@ -177,8 +177,8 @@ void CLight3D::SetNum(int nNum) {
 	LPDIRECT3DDEVICE9 pDevice = RNLib::Window().GetD3DDevice();
 
 	// もう使用されない光を全て無効にする
-	for (int nCntLight = nNum; nCntLight < m_nSetNum; nCntLight++) {
-		pDevice->LightEnable(nCntLight, FALSE);
+	for (int cntLight = nNum; cntLight < m_nSetNum; cntLight++) {
+		pDevice->LightEnable(cntLight, FALSE);
 	}
 	
 	// 過去の数として保存しておく

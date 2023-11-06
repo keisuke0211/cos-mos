@@ -13,16 +13,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR IpCmdLine, int nCmdShow) {
 	int nEndCode = 0;
 
-	while (RNLib::MainLoop(
-			&nEndCode,
-			hInstance,
-			"DigBug",	// クラス名
-			"DigBug",	// ウィンドウ名
-			1280,	// 幅
-			720,	// 高さ
-			false,	// ImGui使用
-			2.0f	// 解像度倍率
-			)) {
+	while (RNLib::MainLoop(hInstance, "Data\\RNSettings.txt")) {
 
 		switch (RNLib::GetSignal()) {
 		case RNLib::SIGNAL::INIT:

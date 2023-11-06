@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../../RNLib.h"
+#include "../../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -241,6 +241,9 @@ void CPolygon2D::CDrawInfo::Draw(LPDIRECT3DDEVICE9& device, const Matrix& viewMt
 	//----------------------------------------
 	// フォグを無効化
 	RNLib::DrawStateMng().SetFogMode(CDrawState::FOG_MODE::DISABLED, device);
+
+	// ZテストをOFFに
+	RNLib::DrawStateMng().SetZTestMode(false, device);
 
 	// 頂点フォーマットの設定
 	device->SetFVF(FVF_VERTEX_2D);
