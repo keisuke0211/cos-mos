@@ -28,8 +28,9 @@ public:
 		LASER      = 6,	//レーザー
 		GOALGATE   = 6, //ゴールゲート
 		PARTS      = 7,	//ロケットパーツ
-		ROCKET     = 8,	//ロケット本体
+		ROCKET	   = 8,	//ロケット本体
 		BACKGROUND = 9,	//背景
+		EXTENDDOG  = 10,//動く犬
 		MAX,
 	};
 

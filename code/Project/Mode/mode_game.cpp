@@ -80,7 +80,7 @@ void CMode_Game::Init(void) {
 
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
-	Manager::BlockMgr()->ExtenddogCreate(D3DXVECTOR3(-200.0f, 0.0f, 0.0f),true);
+	Manager::BlockMgr()->ExtenddogCreate(D3DXVECTOR3(-200.0f, 0.0f, 0.0f),-200.0f,-200.0f,true);
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
