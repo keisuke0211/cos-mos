@@ -27,7 +27,7 @@ CGoalGate::CGoalGate(void) {
 	//‰Šúó‘Ô
 	m_scale = Scale3D(3.0f,3.0f,6.0f);
 	m_nCnt = MAX_COUNT;
-	m_state = STATE::SCALE_DOWN;
+	m_state = STATE::NONE;
 	m_type = TYPE::GOALGATE;
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
@@ -50,6 +50,7 @@ CGoalGate::~CGoalGate(void) {
 //========================================
 void CGoalGate::Init(void) {
 
+	m_state = STATE::SCALE_DOWN;
 }
 
 //========================================
@@ -68,6 +69,11 @@ void CGoalGate::Update(void) {
 
 	m_rot.z += 0.05f;
 
+	if (RNLib::Input().GetKeyTrigger(DIK_U))
+	{
+		m_state = STATE::SCALE_DELETE;
+	}
+
 	if (m_state == STATE::SCALE_DOWN)
 	{
 		m_nCnt--;
@@ -77,13 +83,30 @@ void CGoalGate::Update(void) {
 			m_state = STATE::SCALE_UP;
 		}
 	}
-	if (m_state == STATE::SCALE_UP)
+	else if (m_state == STATE::SCALE_UP)
 	{
 		m_nCnt++;
 
 		if (m_nCnt > MAX_COUNT)
 		{
 			m_state = STATE::SCALE_DOWN;
+		}
+	}
+	else if (m_state == STATE::SCALE_DELETE)
+	{
+		if (m_nCnt > 0)
+		{
+			m_nCnt--;
+		}
+		else
+		{
+			m_state = STATE::NONE;
+
+			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
+			{
+				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+			}	
 		}
 	}
 
