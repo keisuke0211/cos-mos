@@ -63,6 +63,7 @@
 #define INITVECTOR3D          Vector3D     (0.0f,0.0f,0.0f)
 #define INITNORMAL3D          Normal3D     (0.0f,0.0f,0.0f)
 #define INITSCALE3D           Scale3D      (1.0f,1.0f,1.0f)
+#define INITD3DXCOLOR         D3DXCOLOR    (1.0f,1.0f,1.0f,1.0f)
 #define INITBGCOLOR           Color        {0,0,0,255}
 #define INITCOLOR             Color        {255,255,255,255}
 // ‰~Žü—¦
