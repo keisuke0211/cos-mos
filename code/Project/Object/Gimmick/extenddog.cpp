@@ -53,7 +53,7 @@ CExtenddog::~CExtenddog(void) {
 
 //========================================
 // 初期化処理
-// Author:RYUKI FUJIWARA
+// Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Init(void) {
 
@@ -61,7 +61,7 @@ void CExtenddog::Init(void) {
 
 //========================================
 // 終了処理
-// Author:RYUKI FUJIWARA
+// Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Uninit(void) {
 
@@ -69,7 +69,7 @@ void CExtenddog::Uninit(void) {
 
 //========================================
 // 更新処理
-// Author:RYUKI FUJIWARA
+// Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Update(void) {
 
@@ -78,69 +78,50 @@ void CExtenddog::Update(void) {
 		->SetCol(m_color)
 		->SetOutLine(true);
 
-
 	if (m_state != STATE::NONE)
 	{//伸びる犬が作動している
 
 		if (m_state == STATE::DOWN_LAND)
 		{
-			m_nCntShrink = 0;	// 初期化
-
-			m_nCntExtend++;		// 増加
-
-								//割合計算
-			float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntExtend, MAX_COUNT);
-
-
-			if (fCountRate >= 1.0f)
-			{
-				fCountRate = 1.0f;
-			}
-
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
-				->SetOutLine(true);
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + (m_fcurrenty - fCountRate * (m_fcurrenty)), m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
-				->SetOutLine(true);
+			// 縮むカウント
+			m_nCntShrink--;
+			if (m_nCntShrink <= 0)
+				m_nCntShrink = 0;
 		}
-
 	}
 	else if (m_state == STATE::NONE)
 	{//伸びる犬が作動していない
 
-		m_nCntExtend = 0;	// 初期化
-
-		m_nCntShrink++;		// 増加
-
-							//割合計算
-		float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntShrink, MAX_COUNT);
-
-		if (fCountRate >= 1.0f)
-		{
-			fCountRate = 1.0f;
-		}
-
-		//y座標の更新
-		m_fcurrenty = m_pos.y + (CORRECT_HEIGHT + fCountRate * (CORRECT_HEIGHT * 2));
-
-		RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
-			->SetOutLine(true);
-		RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_fcurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
-			->SetOutLine(true);
+		// 縮むカウント
+		m_nCntShrink++;
+		if (m_nCntShrink >= MAX_COUNT)
+			m_nCntShrink = MAX_COUNT;
 	}
+
+	// 割合計算 
+	float fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
+
+	//y座標の更新
+	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
+
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
+		->SetOutLine(true);
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
+		->SetOutLine(true);
 
 	//当たり判定
 	Collision();
 }
 //========================================
 // 描画処理
-// Author:RYUKI FUJIWARA
+// Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Draw(void) {
 
 }
 //========================================
 // 当たり判定処理
-// Author:RYUKI FUJIWARA
+// Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Collision(void) {
 
