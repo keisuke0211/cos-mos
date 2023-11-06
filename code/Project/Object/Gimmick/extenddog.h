@@ -34,6 +34,8 @@ public:
 	void   SetState(STATE state) { m_state = state; }			//í—Şİ’è
 	void   SetScale(D3DXVECTOR3 scale) { m_scale = scale; }		//Šgkİ’è
 	void   SetShrink(bool shrink) { m_bShrink = shrink; }		//Lkİ’è
+	void   SetHead(float headposx) { m_fHeadposx = headposx; }	//“ª‚ÌˆÊ’uİ’è
+	void   SetHip(float hipposx) { m_fHipposx = hipposx; }		//‚¨K‚ÌˆÊ’uİ’è
 	STATE  GetState(void) { return m_state; }					//í—Şæ“¾
 
 protected:
@@ -51,4 +53,6 @@ private:
 	bool		m_bShrink;	// k‚Ş?
 	int			m_nCntShrink;		// k‚ŞƒJƒEƒ“ƒg
 	float		m_fcurrenty;		// Œ»İ‚ÌyÀ•W
+	float		m_fHeadposx;		// “ª‚ÌˆÊ’u
+	float		m_fHipposx;			// ‚¨K‚ÌˆÊ’u
 };
