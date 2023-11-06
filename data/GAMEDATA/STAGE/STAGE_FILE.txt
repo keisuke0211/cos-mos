@@ -12,7 +12,7 @@ NUM_PLANET = 2
 # ステージ数 / 画像 / 惑星名
 #========================================
 PLANET = 3 data\MODEL\Polaris.x ポラリス
-PLANET = 1 data\\TEXTURE\\Planet\\Purple.png レグルス
+PLANET = 3 data\\TEXTURE\\Planet\\Purple.png レグルス
 
 #========================================
 # 惑星番号 / ステージのファイル名 / ステージ名
