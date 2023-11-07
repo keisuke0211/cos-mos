@@ -53,6 +53,7 @@ CPlayer::CPlayer()
 		Player.bGround = false;				//地面に接しているか
 		Player.bJump = false;				//ジャンプ
 		Player.bRide = false;				//ロケットに乗っているかどうか
+		Player.bGoal = false;				//ゴールしたかどうか
 		Player.fJumpPower = 0.0f;			//ジャンプ量
 		Player.fGravity = 0.0f;				//重力
 		Player.fMaxHeight = 0.0f;			//最高Ｙ座標
@@ -197,8 +198,17 @@ void CPlayer::Update(void)
 	//操作処理
 	ActionControl();
 
-	//スワップ
-	Swap();
+	//両者ともにゴールしてなかったら
+	if (!m_aInfo[0].bGoal && !m_aInfo[1].bGoal)
+	{
+		//スワップ
+		Swap();
+	}
+	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
+	{
+		int stage = Manager::StgEd()->GetType()->nStageIdx;
+		Manager::StgEd()->SwapStage(stage + 1);
+	}
 
 	//当たり判定まとめ
 	WholeCollision();
@@ -218,8 +228,8 @@ void CPlayer::UpdateInfo(void)
 	for each (Info &Player in m_aInfo)
 	{
 		nCntPlayer++;
-		//ロケットに乗ってたらスキップ
-		if (Player.bRide) continue;
+		//ロケットに乗ってたら　or ゴールしていたらスキップ
+		if (Player.bRide || Player.bGoal) continue;
 
 		//位置設定
 		RNLib::Model().Put(Player.pos, Player.rot, Player.nModelIdx, false)
@@ -259,8 +269,8 @@ void CPlayer::ActionControl(void)
 		//次のプレイヤー番号へ
 		nIdxPlayer++;
 
-		//ロケットに乗ってたらスキップ
-		if (Player.bRide) continue;
+		//ロケットに乗ってたら　or ゴールしていたらスキップ
+		if (Player.bRide || Player.bGoal) continue;
 
 		//ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
@@ -301,6 +311,7 @@ void CPlayer::Swap(void)
 		return;
 	}
 
+
 	//両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
@@ -335,6 +346,19 @@ void CPlayer::Swap(void)
 //----------------------------
 void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 {
+	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
+	if (pDeathPos != NULL)
+	{
+		Manager::EffectMgr()->EffectCreate(EffTex, *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+		{
+			Manager::EffectMgr()->ParticleCreate(ParTex, *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+		}
+	}
+
 	//１Ｐ用初期情報
 	m_aInfo[0].fJumpPower = JUMP_POWER;
 	m_aInfo[0].fGravity = GRAVITY_POWER;
@@ -353,6 +377,7 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 		Player.bGround = false;
 		Player.bJump = true;
 		Player.bRide = false;
+		Player.bGoal = false;
 		Player.bTramJump = false;
 	}
 }
@@ -365,8 +390,8 @@ void CPlayer::Move(COLLI_VEC vec)
 	//プレイヤーの位置更新
 	for each (Info &Player in m_aInfo)
 	{
-		//ロケットに乗っていたらスキップ
-		if (Player.bRide) continue;
+		//ロケットに乗ってたら　or ゴールしていたらスキップ
+		if (Player.bRide || Player.bGoal) continue;
 
 		//移動量反映
 		switch (vec)
@@ -435,8 +460,8 @@ void CPlayer::WholeCollision(void)
 
 			for each(Info& Player in m_aInfo)
 			{
-				//ロケットに乗っていたらスキップ
-				if (Player.bRide) continue;
+				//ロケットに乗ってたら　or ゴールしていたらスキップ
+				if (Player.bRide || Player.bGoal) continue;
 
 				//種類取得
 				const CStageObject::TYPE type = stageObj->GetType();
@@ -572,20 +597,22 @@ void CPlayer::WholeCollision(void)
 				const COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, POS, PosOld, WIDTH, HEIGHT, vec);
 
 				//当たっていなければスキップ
-				if (ColliRot == COLLI_ROT::NONE && LaserColli == COLLI_ROT::NONE &&
-					DogHead == COLLI_ROT::NONE && DogBody == COLLI_ROT::NONE && DogHip == COLLI_ROT::NONE) continue;
+				/* レーザー */if (type == CStageObject::TYPE::LASER && ColliRot == COLLI_ROT::NONE && LaserColli == COLLI_ROT::NONE) continue;
+				/* ヌイ		*/else if(type == CStageObject::TYPE::EXTEND_DOG && ColliRot == COLLI_ROT::NONE && DogHead == COLLI_ROT::NONE && DogBody == COLLI_ROT::NONE && DogHip == COLLI_ROT::NONE) continue;
+				/*その他	*/else if (ColliRot == COLLI_ROT::NONE) continue;
 
 				//種類ごとに関数分け
 				switch (type)
 				{
 				case CStageObject::TYPE::BLOCK:			CollisionBlock(&Player, MinPos, MaxPos, ColliRot);	break;
-				case CStageObject::TYPE::FILLBLOCK:		CollisionFillBlock(ColliRot); break;
+				case CStageObject::TYPE::FILLBLOCK:		CollisionFillBlock(&Player,ColliRot); break;
 				case CStageObject::TYPE::TRAMPOLINE:	CollisionTrampoline(&Player, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::SPIKE:			CollisionSpike(&Player, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::MOVE_BLOCK:	CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::METEOR:		CollisionMeteor(&Player, MinPos, MaxPos, ColliRot); break;
 				case CStageObject::TYPE::LASER:			CollisionLaser(&Player, MinPos, MaxPos, ColliRot, LaserColli);	break;
 				case CStageObject::TYPE::EXTEND_DOG:	CollisionDog(&Player, (CExtenddog *)stageObj,DogMinPos, DogMaxPos, ColliRot, DogHead, DogBody, DogHip); break;
+				case CStageObject::TYPE::GOALGATE:		CollisionGoalGate(&Player, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::PARTS:			CollisionParts(&Player, (CParts *)stageObj); break;
 				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
 				}
@@ -709,16 +736,16 @@ void CPlayer::CollisionBlock(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 		//*********************************
 		//埋まった
 		//*********************************
-	case COLLI_ROT::UNKNOWN: 	Death(NULL); break;
+	case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
 	}
 }
 
 //----------------------------
 // 穴埋めブロックの当たり判定処理
 //----------------------------
-void CPlayer::CollisionFillBlock(COLLI_ROT ColliRot)
+void CPlayer::CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot)
 {
-	Death(NULL);
+	Death(&pInfo->pos);
 }
 
 //----------------------------
@@ -766,18 +793,8 @@ void CPlayer::CollisionTrampoline(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 M
 //----------------------------
 void CPlayer::CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
 {
-	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
-	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
-	Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-	{
-		Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-	}
-
 	//死亡処理
-	Death(NULL);
+	Death(&pInfo->pos);
 }
 
 //----------------------------
@@ -874,18 +891,8 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR
 //----------------------------
 void CPlayer::CollisionMeteor(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
 {
-	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
-	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
-	Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-	{
-		Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-	}
-
 	//死亡処理
-	Death(NULL);
+	Death(&pInfo->pos);
 }
 
 //----------------------------
@@ -894,9 +901,6 @@ void CPlayer::CollisionMeteor(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPo
 //----------------------------
 void CPlayer::CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot, COLLI_ROT LaserColli)
 {
-	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
-	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
 	// 本体
 	{
 		//当たった方向ごとに処理を切り替え
@@ -951,21 +955,14 @@ void CPlayer::CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+		case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
 		}
 	}
 
 	// レーザー
 	{
-		Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-		{
-			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-		}
-
 		//死亡処理
-		Death(NULL);
+		Death(&pInfo->pos);
 	}
 }
 
@@ -1030,7 +1027,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+		case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
 		}
 	}
 
@@ -1087,7 +1084,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+		case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
 		}
 	}
 
@@ -1144,7 +1141,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: break;
+		case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
 		}
 	}
 
@@ -1205,7 +1202,27 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: Death(NULL); break;
+		case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
+		}
+	}
+}
+
+//----------------------------
+// ゴールゲートの当たり判定処理
+// Author:KEISUKE OTONO
+//----------------------------
+void CPlayer::CollisionGoalGate(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
+{
+	if (!pInfo->bGoal)
+	{
+		pInfo->bGoal = true;
+
+		int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+		int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
+		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+		{
+			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
 		}
 	}
 }
@@ -1232,11 +1249,19 @@ void CPlayer::CollisionParts(Info *pInfo, CParts *pParts)
 //----------------------------
 void CPlayer::CollisionRocket(Info *pInfo, CRocket *pRocket)
 {
+	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
 	if (!s_bRideRocket) return;
 
 	//ロケットに搭乗
 	pInfo->bRide = true;
 	pRocket->Ride();
+
+	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+	{
+		Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
+	}
 }
 
 //========================

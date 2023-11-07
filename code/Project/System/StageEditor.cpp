@@ -10,6 +10,7 @@
 #include "../Mode/mode_game.h"
 #include "../Character/player.h"
 #include "StageEditor.h"
+#include "../Mode/mode_title.h"
 
 //========================================
 // Ã“I•Ï”
@@ -410,13 +411,28 @@ void CStageEditor::SwapStage(int nStageIdx)
 {
 	int planet = m_Info.nPlanetIdx;
 	int stage = m_PlanetType[planet].nStageIdx;
+	int NecstStage = nStageIdx;
 
-	if (stage != nStageIdx)
+	if (stage != NecstStage)
 	{
-		if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+		if (NecstStage >= m_PlanetType[planet].nStageMax)
 		{
-			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
-			CMode_Game::SetStage(planet,nStageIdx);
+			planet++;
+			NecstStage = 0;
+		}
+
+		if (planet < m_Info.nPlanetMax)
+		{
+			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+			{
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+				CMode_Game::SetStage(planet, NecstStage);
+			}
+		}
+		else
+		{
+			Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+			CMode_Title::SetSelect(true);
 		}
 	}
 }
@@ -464,7 +480,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),0.0f);
 		break;
 	case TYPE_Extenddog:
-		Manager::BlockMgr()->ExtenddogCreate(pos, D3DXVECTOR3(-184.0f, -6.0f, 0.0f), D3DXVECTOR3(-152.0f, 6.0f, 0.0f), true);
+		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos, true);
 		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
