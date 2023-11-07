@@ -12,7 +12,7 @@ NUM_PLANET = 3
 # ステージ数 / モデル / 惑星名
 #========================================
 PLANET = 3 data\MODEL\Polaris.x ポラリス
-PLANET = 3 data\MODEL\Regulus.x レグルス
+PLANET = 3 data\MODEL\Regulus.x パッパラパー星
 PLANET = 3 data\MODEL\Sirius.x シリウス
 
 #========================================
