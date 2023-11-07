@@ -45,6 +45,11 @@ class CFontText : public CFontObject
 {
 public:
 
+	static const int BOX_SIZE = 60;		// １文字当たりのTxtSizeサイズ
+
+	static const int SPACE = 0;			// 空白
+	static const int SPACE_X = 1;		// 文字生成の開始位置（X）
+
 	// ***** 列挙型 *****
 
 	// テキストボックスの種類
