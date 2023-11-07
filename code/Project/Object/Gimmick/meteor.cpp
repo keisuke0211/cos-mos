@@ -78,21 +78,17 @@ void CMeteor::Update(void) {
 	//点滅アニメーション処理
 	BlinkAnimation();
 
+	// ブロックとの当たり判定処理
+	CollisionBlock();
+
 	//モデル配置
 	RNLib::Model().Put(m_pos, m_rot, ModelIdx, false)->SetOutLine(true)
 		->SetBrightnessOfEmissive(m_fBlink)->SetCol(m_color);
 
-	// とりあえず画面外で消す処理
-
-	//if (m_pos.x >= METEOR_MAXPOS.x || m_pos.y >= METEOR_MAXPOS.y || m_pos.x <= METEOR_MINPOS.x || m_pos.y <= METEOR_MINPOS.y)
-	//{
-	//	// 削除
-	//	Delete();
-	//}
 }
 
 //========================================
-//点滅アニメーション処理
+// 点滅アニメーション処理
 // Author:KOMURO HIROMU  Hirasawa Shion
 //========================================
 void CMeteor::BlinkAnimation(void)
@@ -114,5 +110,47 @@ void CMeteor::BlinkAnimation(void)
 	else
 	{
 		m_nBlinkAnim = 0;
+	}
+}
+//========================================
+// ブロックとの当たり判定処理
+// Author:KOMURO HIROMU
+//========================================
+void CMeteor::CollisionBlock(void)
+{
+	//オブジェクトのポインタを格納
+	CObject *obj = NULL;
+
+	//オブジェクトを取得
+	while (Manager::BlockMgr()->ListLoop(&obj)) {
+		//取得したオブジェクトをキャスト
+		CStageObject* stageObj = (CStageObject*)obj;
+
+		//オブジェクトの当たり判定情報取得
+		const D3DXVECTOR3 POS = stageObj->GetPos();
+		const float WIDTH = stageObj->GetWidth() * 0.5f;
+		const float HEIGHT = stageObj->GetHeight() * 0.5f;
+
+		//オブジェクトの最小・最大位置
+		const D3DXVECTOR3 MinPos = D3DXVECTOR3(POS.x - WIDTH, POS.y - HEIGHT, 0.0f);
+		const D3DXVECTOR3 MaxPos = D3DXVECTOR3(POS.x + WIDTH, POS.y + HEIGHT, 0.0f);
+
+		//種類取得
+		const CStageObject::TYPE type = stageObj->GetType();
+
+		//種類ごとに関数分け
+		switch (type)
+		{
+		case CStageObject::TYPE::BLOCK:
+			if (MaxPos.x + WIDTH > m_pos.x - m_width &&
+				MaxPos.x - WIDTH < m_pos.x + m_width &&
+				MaxPos.y - HEIGHT> m_pos.y - m_height&&
+				MaxPos.y + HEIGHT< m_pos.y + m_height)
+			{
+				// 削除
+				Delete();
+			}
+			break;
+		}
 	}
 }
