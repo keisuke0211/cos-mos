@@ -104,19 +104,6 @@ short CModel::Load(const char* loadPath, short idx) {
 					// 輪郭の加算距離を計算
 					D3DXVECTOR3 addVec = nor * modelOutLineAddDistance;
 
-					// 重なっている頂点位置に輪郭の加算距離を加算
-					for (int cntVtx2 = 0; cntVtx2 < vtxNum; cntVtx2++) {
-
-						// 今のカウントの頂点と同じなら、折り返す
-						if (cntVtx == cntVtx2)
-							continue;
-
-						D3DXVECTOR3* pos2 = (D3DXVECTOR3*)(vtxBuff + (dwSizeFVF * cntVtx2));
-
-						if (*pos == *pos2)
-							*pos2 += addVec;
-					}
-
 					// 位置に輪郭の加算距離を加算
 					*pos += addVec;
 				}
