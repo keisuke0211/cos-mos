@@ -185,6 +185,8 @@ void CPlayer::SetPosOld(void)
 	//プレイヤーの前回位置更新
 	for each (Info &Player in m_aInfo)
 	{
+		//ロケットに乗っていないなら　or ゴールしていないなら
+		if (!Player.bRide || Player.bGoal)
 		Player.posOLd = Player.pos;
 	}
 }
@@ -271,6 +273,14 @@ void CPlayer::ActionControl(void)
 		//次のプレイヤー番号へ
 		nIdxPlayer++;
 
+		// 出る
+		if ((Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
+		{
+			Player.bRide = false;
+			Player.bGoal = false;
+			Player.pos.x = Player.pos.x - 20.0f;
+		}
+
 		//ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal) continue;
 
@@ -281,7 +291,7 @@ void CPlayer::ActionControl(void)
 			Player.move.y = Player.fJumpPower;	//ジャンプ量代入
 			Player.bJump = true;				//ジャンプした
 
-			//SE再生
+												//SE再生
 			RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 		}
 
