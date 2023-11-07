@@ -343,7 +343,7 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 //========================================
 //  “®‚­Œ¢
 //========================================
-CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, float fHippos, float fHeadpos, bool bShrink)
+CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHippos, D3DXVECTOR3 fHeadpos, bool bShrink)
 {
 	CExtenddog *pObj = NULL;
 

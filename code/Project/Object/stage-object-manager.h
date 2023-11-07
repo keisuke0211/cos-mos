@@ -47,7 +47,7 @@ public:
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 	CShiningWave*ShiningWaveCreate(void);
 	CRoadTripLaser* RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRefdef);
-	CExtenddog	 *ExtenddogCreate(D3DXVECTOR3 pos,float fHippos,float fHeadpos,bool bShrink);		
+	CExtenddog	 *ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHippos, D3DXVECTOR3 fHeadpos,bool bShrink);
 private:
 
 	// *** ç\ë¢ëÃ ***

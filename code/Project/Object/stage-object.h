@@ -31,7 +31,6 @@ public:
 		PARTS      = 9,	//ロケットパーツ
 		ROCKET	   = 10,//ロケット本体
 		BACKGROUND = 11,//背景
-		EXTENDDOG  = 12,//動く犬
 		MAX,
 	};
 
