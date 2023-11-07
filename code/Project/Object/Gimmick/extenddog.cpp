@@ -136,8 +136,8 @@ void CExtenddog::Update(void) {
 	RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)	// “ª
 		->SetOutLine(true);
 
-	m_BodyPos.y = m_pos.y + 10;
-	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty + CORRECT_HEIGHT * 3, 1.0f), m_modelIdx[5], false)
+	m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f;
+	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 10, 1.0f), m_modelIdx[5], false)
 		->SetOutLine(true);
 
 	//“–‚½‚è”»’è

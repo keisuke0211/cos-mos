@@ -22,6 +22,7 @@
 #include "Gimmick/RoadTripLaser.h"
 #include "Gimmick/extenddog.h"
 #include "Gimmick/goalgate.h"
+#include "Gimmick/meteor_generator.h"
 //****************************************
 // ÉNÉâÉX
 //****************************************
@@ -48,6 +49,7 @@ public:
 	CShiningWave*ShiningWaveCreate(void);
 	CRoadTripLaser* RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRefdef);
 	CExtenddog	 *ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHippos, D3DXVECTOR3 fHeadpos,bool bShrink);
+	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 private:
 
 	// *** ç\ë¢ëÃ ***
