@@ -39,6 +39,8 @@ public:
 	void	SetLaserSize(const D3DXVECTOR2 size) { m_LaserSize = size; }
 
 	D3DXVECTOR2	GetLaserSize(void) { return m_LaserSize; }
+	D3DXVECTOR3 GetMove(void) { return m_move; }
+
 
 protected:
 
