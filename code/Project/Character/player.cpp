@@ -37,6 +37,7 @@ CPlayer::CPlayer()
 {
 	s_nSwapMarkTex = 0;  //スワップ先のマークテクスチャ番号
 	s_nSwapParticle = 0; //スワップ時のパーティクルテクスチャ番号
+	m_jumpSEIdx = 0;
 	s_nSwapInterval = 0;//残りスワップインターバル
 	s_nNumGetParts = 0;	//取得したパーツの数
 	s_bRideRocket = false;//ロケットに乗れるかどうか
@@ -101,6 +102,8 @@ HRESULT CPlayer::Init(void)
 
 	s_nSwapMarkTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Circle_005.png");
 	s_nSwapParticle = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
+
+	m_jumpSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp.wav");
 
 	//初期情報設定
 	Death(NULL);
@@ -265,6 +268,9 @@ void CPlayer::ActionControl(void)
 			Player.bGround = false;				//地面から離れた
 			Player.move.y = Player.fJumpPower;	//ジャンプ量代入
 			Player.bJump = true;				//ジャンプした
+
+			//SE再生
+			RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 		}
 
 		//右に移動
