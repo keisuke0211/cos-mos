@@ -144,7 +144,7 @@ CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos)
 	pObj->Init();
 
 	if (pos.y <= 0) {
-		pObj->SetRot(D3DXVECTOR3(0.0f,0.0f, 3.24f));
+		pObj->SetRot(D3DXVECTOR3(0.0f,0.0f, D3DX_PI));
 		pos.y += CStageObject::SIZE_OF_1_SQUARE * 0.25f;
 	}
 	else {
@@ -241,9 +241,8 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 	pObj->Init();
 	pObj->SetPos(pos);
 
-	if (pos.y <= 0)
-	{
-		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, 3.24f));
+	if (pos.y <= 0) {
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
 	}
 
 	return pObj;
@@ -333,6 +332,11 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 
 	// ‰Šú‰»ˆ—
 	pObj->SetPos(pos);
+
+	if (pos.y <= 0) {
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
+	}
+
 	pObj->SetMove(move);
 	pObj->SetRefdef(fRefdef);
 	pObj->Init();

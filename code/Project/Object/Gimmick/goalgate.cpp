@@ -32,7 +32,7 @@ CGoalGate::CGoalGate(void) {
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_bGoal = false;
-	m_modelIdx = RNLib::Model().Load("data\\MODEL\\1P.x");
+	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 }

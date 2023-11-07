@@ -85,6 +85,7 @@ public:
 		float		fMaxHeight;   //最高Ｙ座標
 		int			nTramJumpCounter;//トランポリンによって跳ね上がる時間
 		bool		bTramJump;    //トランポリン用の特殊ジャンプ
+		bool		bExtendDog;	  //ヌイ用の接触フラグ
 		int			nModelIdx;    //モデル番号
 		WORLD_SIDE  side;         //どちらの世界に存在するか
 		int             Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; //キーボードのキー配置

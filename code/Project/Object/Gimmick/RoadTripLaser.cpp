@@ -45,12 +45,10 @@ CRoadTripLaser::~CRoadTripLaser(void) {
 //========================================
 void CRoadTripLaser::Init(void) {
 	ModelIdx = RNLib::Model().Load("data\\MODEL\\Laser_0.x");
-	//RNLib::Texture().Load();
 
 	m_refPos = m_pos;
 	m_fGroundDis = m_pos.y - 0.0f;
 	m_fGroundDis = fabsf(m_fGroundDis);
-
 }
 
 //========================================
@@ -93,7 +91,7 @@ void CRoadTripLaser::Update(void) {
 			}
 		}
 	}
-	
+
 	// x‚ÌˆÚ“®—Ê‚Ì”½“]
 	if (m_refPos.x + m_frefdef <= m_pos.x || m_refPos.x - m_frefdef >= m_pos.x)
 	{
@@ -112,9 +110,14 @@ void CRoadTripLaser::Update(void) {
 	RNLib::Model().Put(Block, m_rot, ModelIdx, false);
 
 	// ƒr[ƒ€
-	RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y - m_LaserSize.y * 0.5f),m_pos.z), m_rot, false)
+	if (m_rot.z == 0.0f)
+		RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y - m_LaserSize.y * 0.5f), m_pos.z), m_rot, false)
 		->SetSize(m_LaserSize.x, m_LaserSize.y)
-		->SetCol(Color{255,0,0,255});
+		->SetCol(Color{ 255,0,0,255 });
+	else if (m_rot.z == D3DX_PI)
+		RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y + m_LaserSize.y * 0.5f), m_pos.z), m_rot, false)
+		->SetSize(m_LaserSize.x, m_LaserSize.y)
+		->SetCol(Color{ 255,0,0,255 });
 }
 
 //========================================

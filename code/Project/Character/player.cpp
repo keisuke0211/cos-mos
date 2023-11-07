@@ -60,6 +60,7 @@ CPlayer::CPlayer()
 		Player.fMaxHeight = 0.0f;			//最高Ｙ座標
 		Player.nTramJumpCounter = 0;		//トランポリンによって跳ね上がる最高到達地点
 		Player.bTramJump = false;			//トランポリン用の特殊ジャンプ
+		Player.bExtendDog = false;			//ヌイ用の接触フラグ
 		Player.nModelIdx = NONEDATA;		//モデル番号
 		Player.side = WORLD_SIDE::FACE;		//どちらの世界に存在するか
 	}
@@ -106,10 +107,11 @@ CPlayer *CPlayer::Create(void)
 HRESULT CPlayer::Init(void)
 {
 	//１Ｐ初期情報
-	m_aInfo[0].nModelIdx = RNLib::Model().Load("data\\MODEL\\1P.x");
+	m_aInfo[0].nModelIdx = RNLib::Model().Load("data\\MODEL\\Player_Human.x");
 
 	//２Ｐ初期情報
-	m_aInfo[1].nModelIdx = RNLib::Model().Load("data\\MODEL\\2P.x");
+	m_aInfo[1].nModelIdx = RNLib::Model().Load("data\\MODEL\\Player_Octopus.x");
+	m_aInfo[1].rot.z = D3DX_PI;
 
 	//キーコンフィグ初期化
 	InitKeyConfig();
@@ -254,13 +256,15 @@ void CPlayer::UpdateInfo(void)
 
 		//スワップ先のマークを描画する位置
 		D3DXVECTOR3 MarkPos = Player.pos;
+		MarkPos.z = -10.0f;
 		MarkPos.y *= -1.0f;
 
 		RNLib::Polygon3D().Put(MarkPos, INITD3DXVECTOR3)
 			->SetSize(20.0f, 20.0f)
 			->SetBillboard(true)
 			->SetTex(s_nSwapMarkTex)
-			->SetCol(Color{ Player.color.r, Player.color.g, Player.color.b, 100 });
+			->SetCol(Color{ Player.color.r, Player.color.g, Player.color.b, 100 })
+			->SetPriority(1);
 
 		//最高Ｙ座標更新
 		switch (Player.side)
@@ -358,6 +362,11 @@ void CPlayer::Swap(void)
 			Player.fGravity *= -1.0f;
 			Player.fJumpPower *= -1.0f;
 			Player.side = (WORLD_SIDE)(((int)Player.side + 1) % (int)WORLD_SIDE::MAX);
+
+			if (Player.side == WORLD_SIDE::FACE)
+				Player.rot.z = 0.0f;
+			else if (Player.side == WORLD_SIDE::BEHIND)
+				Player.rot.z = D3DX_PI;
 		}
 
 		//前回位置更新
@@ -590,8 +599,8 @@ void CPlayer::WholeCollision(void)
 					DogHip = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, pDogColli[2].pos, pDogColli[2].posOLd, pDogColli[2].fWidth, pDogColli[2].fHeight, vec);
 
 					CExtenddog::STATE state = pDog->GetState();
-					if (DogHip != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND) {
-						pDog->SetState(CExtenddog::STATE::RETURN);
+					if (DogHip != COLLI_ROT::OVER && Player.bExtendDog && state == CExtenddog::STATE::DOWN_LAND) {
+						Player.bExtendDog = false;
 					}						
 				}
 				break;
@@ -631,6 +640,14 @@ void CPlayer::WholeCollision(void)
 						pDogColli = NULL;
 					}
 				}
+			}
+
+			// ヌイの状態設定
+			CExtenddog *pDog = (CExtenddog *)stageObj;
+			CExtenddog::STATE state = pDog->GetState();
+			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog && state == CExtenddog::STATE::DOWN_LAND)
+			{
+				pDog->SetState(CExtenddog::STATE::RETURN);
 			}
 		}
 	}
@@ -1267,6 +1284,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 			}
 
 			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
+			pInfo->bExtendDog = true;
 			break;
 
 			//*********************************
@@ -1284,6 +1302,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 			}
 
 			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
+			pInfo->bExtendDog = true;
 			break;
 
 			//*********************************
