@@ -103,7 +103,7 @@ HRESULT CPlayer::Init(void)
 	s_nSwapMarkTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Circle_005.png");
 	s_nSwapParticle = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 
-	m_jumpSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp_01.wav");
+	m_jumpSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp.wav");
 
 	//‰Šúî•ñİ’è
 	Death(NULL);
