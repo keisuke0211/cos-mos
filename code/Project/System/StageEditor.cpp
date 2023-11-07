@@ -469,7 +469,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->SpikeCreate(pos);
 		break;
 	case TYPE_LIFT:
-		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0.0f);
+		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(1.0f, 0.0f, 0.0f), 100.0f);
 		break;
 	case TYPE_Meteor:
 		pos.x += fSizeX;
