@@ -183,7 +183,7 @@ private:
 	void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock,D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
 	void CollisionMeteor(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
 	void CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot, COLLI_ROT LaserColli);
-	void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *MinPos, D3DXVECTOR3 *MaxPos, COLLI_ROT HeadColli, COLLI_ROT BodyColli, COLLI_ROT HipColli);
+	void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *MinPos, D3DXVECTOR3 *MaxPos, COLLI_ROT ColliRot, COLLI_ROT HeadColli, COLLI_ROT BodyColli, COLLI_ROT HipColli);
 	void CollisionParts(Info *pInfo, CParts *pParts);
 	void CollisionRocket(Info *pInfo, CRocket *pRocket);
 
