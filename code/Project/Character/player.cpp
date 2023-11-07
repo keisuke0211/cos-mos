@@ -675,30 +675,15 @@ void CPlayer::CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
 	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 
-	//ìñÇΩÇ¡ÇΩï˚å¸Ç≤Ç∆Ç…èàóùÇêÿÇËë÷Ç¶
-	switch (ColliRot)
+	Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 	{
-		//*********************************
-		//è„â∫ç∂âEÇ«ÇøÇÁÇ©Ç…ìñÇΩÇ¡ÇΩ or ñÑÇ‹Ç¡ÇΩÇÁ
-		//*********************************
-	case COLLI_ROT::OVER:
-	case COLLI_ROT::UNDER:
-	case COLLI_ROT::LEFT:
-	case COLLI_ROT::RIGHT:
-	case COLLI_ROT::UNKNOWN:
-		Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-		{
-
-			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-		}
-
-		//éÄñSèàóù
-		Death(NULL);
-
-		break;
+		Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
 	}
+
+	//éÄñSèàóù
+	Death(NULL);
 }
 
 //----------------------------
@@ -798,29 +783,15 @@ void CPlayer::CollisionMeteor(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPo
 	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
 	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 
-	//ìñÇΩÇ¡ÇΩï˚å¸Ç≤Ç∆Ç…èàóùÇêÿÇËë÷Ç¶
-	switch (ColliRot)
+	Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 	{
-		//*********************************
-		//è„â∫ç∂âEÇ«ÇøÇÁÇ©Ç…ìñÇΩÇ¡ÇΩ or ñÑÇ‹Ç¡ÇΩÇÁ
-		//*********************************
-	case COLLI_ROT::OVER:
-	case COLLI_ROT::UNDER:
-	case COLLI_ROT::LEFT:
-	case COLLI_ROT::RIGHT:
-	case COLLI_ROT::UNKNOWN:
-		Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-		{
-			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-		}
-
-		//éÄñSèàóù
-		Death(NULL);
-
-		break;
+		Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
 	}
+
+	//éÄñSèàóù
+	Death(NULL);
 }
 
 //----------------------------
@@ -892,30 +863,15 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 Mi
 
 	// ÉåÅ[ÉUÅ[
 	{
-		//ìñÇΩÇ¡ÇΩï˚å¸Ç≤Ç∆Ç…èàóùÇêÿÇËë÷Ç¶
-		switch (LaserColli)
+		Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
-			//*********************************
-			//è„â∫ç∂âEÇ«ÇøÇÁÇ©Ç…ìñÇΩÇ¡ÇΩ or ñÑÇ‹Ç¡ÇΩÇÁ
-			//*********************************
-		case COLLI_ROT::OVER:
-		case COLLI_ROT::UNDER:
-		case COLLI_ROT::LEFT:
-		case COLLI_ROT::RIGHT:
-		case COLLI_ROT::UNKNOWN:
-			Manager::EffectMgr()->EffectCreate(EffTex, pInfo->pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-			for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-			{
-
-				Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-			}
-
-			//éÄñSèàóù
-			Death(NULL);
-
-			break;
+			Manager::EffectMgr()->ParticleCreate(ParTex, pInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
 		}
+
+		//éÄñSèàóù
+		Death(NULL);
 	}
 }
 

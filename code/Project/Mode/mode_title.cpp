@@ -673,6 +673,7 @@ void CMode_Title::StageSelect(void)
 		if (m_nPlanetIdx != m_nOldnPlanet)
 		{
 			m_nOldnPlanet = m_nPlanetIdx;
+			m_PlanetAngle = 0.0f;
 
 			m_Menu[0]->Uninit();
 			m_Menu[0] = NULL;
