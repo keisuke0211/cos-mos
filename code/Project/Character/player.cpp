@@ -70,6 +70,8 @@ CPlayer::CPlayer()
 	m_aColli.MaxPos = INITD3DXVECTOR3;
 	m_aColli.fWidth = 0.0f;
 	m_aColli.fHeight = 0.0f;
+
+	pDogColli = NULL;
 }
 
 //=======================================
@@ -77,7 +79,10 @@ CPlayer::CPlayer()
 //=======================================
 CPlayer::~CPlayer()
 {
-
+	if (pDogColli != NULL) {
+		delete[] pDogColli;
+		pDogColli = NULL;
+	}
 }
 
 //=======================================
@@ -502,7 +507,6 @@ void CPlayer::WholeCollision(void)
 				COLLI_ROT DogHead = COLLI_ROT::NONE;
 				COLLI_ROT DogBody = COLLI_ROT::NONE;
 				COLLI_ROT DogHip = COLLI_ROT::NONE;
-				Colli *pDogColli = NULL;
 
 				//移動するオブジェクトは、前回位置を特別に設定
 				switch (type)
@@ -549,6 +553,11 @@ void CPlayer::WholeCollision(void)
 				case CStageObject::TYPE::EXTEND_DOG:
 				{
 					CExtenddog *pDog = (CExtenddog *)stageObj;
+
+					if (pDogColli != NULL) {
+						delete[] pDogColli;
+						pDogColli = NULL;
+					}
 					pDogColli = new Colli[3];
 
 					for (int nCnt = 0; nCnt < 3; nCnt++){
@@ -615,8 +624,9 @@ void CPlayer::WholeCollision(void)
 				if (type == CStageObject::TYPE::SPIKE || type == CStageObject::TYPE::METEOR || type == CStageObject::TYPE::LASER)
 					break;
 
-				if (type == CStageObject::TYPE::EXTEND_DOG){
-					if (pDogColli != NULL){
+				if (type == CStageObject::TYPE::EXTEND_DOG)
+				{
+					if (pDogColli != NULL) {
 						delete[] pDogColli;
 						pDogColli = NULL;
 					}
