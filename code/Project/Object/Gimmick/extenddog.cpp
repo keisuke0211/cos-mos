@@ -31,7 +31,7 @@ CExtenddog::CExtenddog(void) {
 	//‰Šúó‘Ô
 	m_type = TYPE::EXTENDDOG;
 	m_width = SIZE_OF_1_SQUARE;
-	m_height = SIZE_OF_1_SQUARE * 2.0f;
+	m_height = SIZE_OF_1_SQUARE;
 	m_state = STATE::NONE;
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_bLand = false;
@@ -128,14 +128,15 @@ void CExtenddog::Update(void) {
 	//yÀ•W‚ÌXV
 	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
 
-	RNLib::Model().Put(D3DXVECTOR3(m_fHipposx, m_pos.y - HIP_POS, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_fHipposx, m_pos.y - HIP_POS, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)// K
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)	// “ª
 		->SetOutLine(true);
 	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, m_pos.y + 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty + CORRECT_HEIGHT * 3, 1.0f), m_modelIdx[5], false)
 		->SetOutLine(true);
+
 	//“–‚½‚è”»’è
-	Collision();
+	//Collision();
 }
 //========================================
 // •`‰æˆ—

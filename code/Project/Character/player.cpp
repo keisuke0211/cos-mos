@@ -448,6 +448,11 @@ void CPlayer::WholeCollision(void)
 				// レーザー用の当たり判定
 				COLLI_ROT LaserColli = COLLI_ROT::NONE;
 
+				// ヌイ用の当たり判定
+				COLLI_ROT DogHead = COLLI_ROT::NONE;
+				COLLI_ROT DogBody = COLLI_ROT::NONE;
+				COLLI_ROT DogHip = COLLI_ROT::NONE;
+
 				//移動するオブジェクトは、前回位置を特別に設定
 				switch (type)
 				{
@@ -488,13 +493,65 @@ void CPlayer::WholeCollision(void)
 					LaserColli = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, LaserPOS, LaserPosOld, LaserWIDTH, LaserHEIGHT, vec);
 				}
 				break;
+
+				//ヌイ
+				case CStageObject::TYPE::EXTEND_DOG:
+				{
+					CExtenddog *pDog = (CExtenddog *)stageObj;
+
+					// 頭
+					{
+						D3DXVECTOR3 HeadPos = pDog->GetPos();
+						D3DXVECTOR3 HeadPosOld = HeadPos;
+						const float HeadWidth = pDog->GetWidth() * 0.5f;
+						const float HeadHeight = pDog->GetHeight() * 0.5f;
+
+						//オブジェクトの最小・最大位置
+						const D3DXVECTOR3 MinPos = D3DXVECTOR3(HeadPos.x - HeadWidth, HeadPos.y - HeadHeight, 0.0f);
+						const D3DXVECTOR3 MaxPos = D3DXVECTOR3(HeadPos.x + HeadWidth, HeadPos.y + HeadHeight, 0.0f);
+
+						//当たった方向を格納
+						DogHead = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, HeadPos, HeadPosOld, HeadWidth, HeadHeight, vec);
+					}
+
+					// 体
+					{
+						D3DXVECTOR3 BodyPos = pDog->GetPos();
+						D3DXVECTOR3 BodyPosOld = BodyPos;
+						const float BodyWidth = pDog->GetWidth() * 0.5f;
+						const float BodyHeight = pDog->GetHeight() * 0.5f;
+
+						//オブジェクトの最小・最大位置
+						const D3DXVECTOR3 MinPos = D3DXVECTOR3(BodyPos.x - BodyWidth, BodyPos.y - BodyHeight, 0.0f);
+						const D3DXVECTOR3 MaxPos = D3DXVECTOR3(BodyPos.x + BodyWidth, BodyPos.y + BodyHeight, 0.0f);
+
+						//当たった方向を格納
+						DogBody = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, BodyPos, BodyPosOld, BodyWidth, BodyHeight, vec);
+					}
+
+					// 尻
+					{
+						D3DXVECTOR3 HipPos = pDog->GetPos();
+						D3DXVECTOR3 HipPosOld = HipPos;
+						const float HipWidth = pDog->GetWidth() * 0.5f;
+						const float HipHeight = pDog->GetHeight() * 0.5f;
+
+						//オブジェクトの最小・最大位置
+						const D3DXVECTOR3 MinPos = D3DXVECTOR3(HipPos.x - HipWidth, HipPos.y - HipHeight, 0.0f);
+						const D3DXVECTOR3 MaxPos = D3DXVECTOR3(HipPos.x + HipWidth, HipPos.y + HipHeight, 0.0f);
+
+						//当たった方向を格納
+						DogHip = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, HipPos, HipPosOld, HipWidth, HipHeight, vec);
+					}
+				}
+				break;
 				}
 
 				//当たった方向を格納
 				const COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, POS, PosOld, WIDTH, HEIGHT, vec);
 
 				//当たっていなければスキップ
-				if (ColliRot == COLLI_ROT::NONE && LaserColli == COLLI_ROT::NONE) continue;
+				if (ColliRot == COLLI_ROT::NONE && LaserColli == COLLI_ROT::NONE && DogHead == COLLI_ROT::NONE && DogBody == COLLI_ROT::NONE && DogHip == COLLI_ROT::NONE) continue;
 
 				//種類ごとに関数分け
 				switch (type)
@@ -506,6 +563,7 @@ void CPlayer::WholeCollision(void)
 				case CStageObject::TYPE::MOVE_BLOCK:	CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::METEOR:		CollisionMeteor(&Player, MinPos, MaxPos, ColliRot); break;
 				case CStageObject::TYPE::LASER:			CollisionLaser(&Player, (CRoadTripLaser *)stageObj, MinPos, MaxPos, ColliRot, LaserColli);	break;
+				case CStageObject::TYPE::EXTEND_DOG:	CollisionDog(&Player, MinPos, MaxPos, ColliRot); break;
 				case CStageObject::TYPE::PARTS:			CollisionParts(&Player, (CParts *)stageObj); break;
 				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
 				}
@@ -872,6 +930,68 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pLaser, D3DXVECTOR3 Mi
 
 		//死亡処理
 		Death(NULL);
+	}
+}
+
+//----------------------------
+// ヌイの当たり判定処理
+// Author:KEISUKE OTONO
+//----------------------------
+void CPlayer::CollisionDog(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot)
+{
+	//当たった方向ごとに処理を切り替え
+	switch (ColliRot)
+	{
+		//*********************************
+		//上に当たった
+		//*********************************
+	case COLLI_ROT::OVER:
+		//位置・移動量修正
+		FixPos_OVER(&pInfo->pos.y, MaxPos.y, &pInfo->move.y);
+
+		//表の世界のプレイヤー
+		if (pInfo->side == WORLD_SIDE::FACE) {
+			pInfo->bGround = true;	//地面に接している
+			pInfo->bJump = false;	//ジャンプ可能
+			pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
+		}
+		break;
+
+		//*********************************
+		//下に当たった
+		//*********************************
+	case COLLI_ROT::UNDER:
+		//位置・移動量修正
+		FixPos_UNDER(&pInfo->pos.y, MinPos.y, &pInfo->move.y);
+
+		//裏の世界のプレイヤーならジャンプ可能
+		if (pInfo->side == WORLD_SIDE::BEHIND) {
+			pInfo->bGround = true;
+			pInfo->bJump = false;	//ジャンプ可能
+			pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
+		}
+		break;
+
+		//*********************************
+		//左に当たった
+		//*********************************
+	case COLLI_ROT::LEFT:
+		//位置・移動量修正
+		FixPos_LEFT(&pInfo->pos.x, MinPos.x, &pInfo->move.x);
+		break;
+
+		//*********************************
+		//右に当たった
+		//*********************************
+	case COLLI_ROT::RIGHT:
+		//位置・移動量修正
+		FixPos_RIGHT(&pInfo->pos.x, MaxPos.x, &pInfo->move.x);
+		break;
+
+		//*********************************
+		//埋まった
+		//*********************************
+	case COLLI_ROT::UNKNOWN: Death(NULL); break;
 	}
 }
 

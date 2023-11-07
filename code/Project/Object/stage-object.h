@@ -27,11 +27,11 @@ public:
 		METEOR	   = 5,	//隕石
 		LASER      = 6,	//レーザー
 		EXTEND_DOG = 7,	//ヌイ
-		GOALGATE   = 6, //ゴールゲート
-		PARTS      = 7,	//ロケットパーツ
-		ROCKET	   = 8,	//ロケット本体
-		BACKGROUND = 9,	//背景
-		EXTENDDOG  = 10,//動く犬
+		GOALGATE   = 8, //ゴールゲート
+		PARTS      = 9,	//ロケットパーツ
+		ROCKET	   = 10,//ロケット本体
+		BACKGROUND = 11,//背景
+		EXTENDDOG  = 12,//動く犬
 		MAX,
 	};
 
