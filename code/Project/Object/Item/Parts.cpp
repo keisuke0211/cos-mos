@@ -88,14 +88,14 @@ void CParts::Update(void) {
 		->SetCol(Color{ (int)(255 * fBrightness),(int)(255 * fBrightness),(int)(255 * fBrightness),255 })
 		->SetOutLine(true);
 
-	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+	//int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 
-	m_nEffctAnimCnt++;
+	//m_nEffctAnimCnt++;
 
-	if (m_nEffctAnimCnt % 6 == 1)
-	{
-		Manager::EffectMgr()->EffectCreate(ParTex, m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-	}
+	//if (m_nEffctAnimCnt % 6 == 1)
+	//{
+	//	Manager::EffectMgr()->EffectCreate(ParTex, m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+	//}
 }
 
 //---------------------------
