@@ -464,7 +464,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),0.0f);
 		break;
 	case TYPE_Extenddog:
-		Manager::BlockMgr()->ExtenddogCreate(pos, pos.x, pos.x, true);
+		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos, true);
 		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);

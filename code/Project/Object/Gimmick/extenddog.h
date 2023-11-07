@@ -15,6 +15,10 @@
 class CExtenddog : public CStageObject {
 public:
 
+	static const int MAX_COUNT = 40;	// 最大カウント数
+	static const int HEAD_POS = 16;		// 頭の位置
+	static const int HIP_POS = 7;		// 尻の位置
+
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
 		NONE = 0,		//乗っていない
@@ -34,9 +38,13 @@ public:
 	void   SetState(STATE state) { m_state = state; }			//種類設定
 	void   SetScale(D3DXVECTOR3 scale) { m_scale = scale; }		//拡縮設定
 	void   SetShrink(bool shrink) { m_bShrink = shrink; }		//伸縮設定
-	void   SetHead(float headposx) { m_fHeadposx = headposx; }	//頭の位置設定
-	void   SetHip(float hipposx) { m_fHipposx = hipposx; }		//お尻の位置設定
+	void   SetHead(D3DXVECTOR3 pos) { m_HeadPos = pos; }		//頭の位置設定
+	void   SetHip(D3DXVECTOR3 pos) { m_HipPos = pos; }			//お尻の位置設定
+
 	STATE  GetState(void) { return m_state; }					//種類取得
+	D3DXVECTOR3 GetHeadPos(void) { return m_HeadPos; }
+	D3DXVECTOR3 GetBodyPos(void) { return m_BodyPos; }
+	D3DXVECTOR3 GetHipPos(void) { return m_HipPos; }
 
 protected:
 
@@ -46,13 +54,15 @@ private:
 	void   Collision(void);	//当たり判定処理
 
 	//========== [[[ 変数宣言 ]]]
-	STATE m_state;			// 種類
-	int m_modelIdx[6];		// モデル番号
-	D3DXVECTOR3 m_scale;	// 大きさ
-	bool		m_bLand;	// 着地した？
-	bool		m_bShrink;	// 縮む?
-	int			m_nCntShrink;		// 縮むカウント
-	float		m_fcurrenty;		// 現在のy座標
-	float		m_fHeadposx;		// 頭の位置
-	float		m_fHipposx;			// お尻の位置
+	STATE m_state;				// 種類
+	int m_modelIdx[6];			// モデル番号
+	D3DXVECTOR3 m_scale;		// 大きさ
+	bool		m_bLand;		// 着地した？
+	bool		m_bShrink;		// 縮む?
+	int			m_nCntShrink;	// 縮むカウント
+	float		m_fcurrenty;	// 現在のy座標
+
+	D3DXVECTOR3 m_HeadPos;	// 頭の位置
+	D3DXVECTOR3 m_BodyPos;	// 体の位置
+	D3DXVECTOR3 m_HipPos;	// 尻の位置
 };

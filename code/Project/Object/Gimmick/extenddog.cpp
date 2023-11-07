@@ -10,11 +10,9 @@
 #include "../../Character/player.h"
 
 
-#define MAX_COUNT		(40)	//Å‘åƒJƒEƒ“ƒg”
 #define RADIUS_WIDTH	(0.5f)	//‰¡”¼Œa
 #define RADIUS_HEIGHT	(0.5f)	//c”¼Œa
 #define CORRECT_HEIGHT	(15.0f)	//‚‚³•â³
-#define HIP_POS			(7.0f)	//K‚ÌˆÊ’u
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -29,7 +27,7 @@ CExtenddog::CExtenddog(void) {
 	Manager::BlockMgr()->AddList(this);
 
 	//‰Šúó‘Ô
-	m_type = TYPE::EXTENDDOG;
+	m_type = TYPE::EXTEND_DOG;
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE;
 	m_state = STATE::NONE;
@@ -44,8 +42,10 @@ CExtenddog::CExtenddog(void) {
 	m_modelIdx[5] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Body.x");
 	m_nCntShrink = 0;
 	m_fcurrenty = 0.0f;
-	m_fHeadposx = 0.0f;
-	m_fHipposx = 0.0f;
+
+	m_HeadPos = INITD3DXVECTOR3;
+	m_BodyPos = INITD3DXVECTOR3;
+	m_HipPos = INITD3DXVECTOR3;
 }
 
 //========================================
@@ -60,7 +60,7 @@ CExtenddog::~CExtenddog(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Init(void) {
-
+	m_BodyPos = m_HeadPos;
 }
 
 //========================================
@@ -128,11 +128,16 @@ void CExtenddog::Update(void) {
 	//yÀ•W‚ÌXV
 	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
 
-	RNLib::Model().Put(D3DXVECTOR3(m_fHipposx, m_pos.y - HIP_POS, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)// K
+	m_HipPos.y = m_pos.y - HIP_POS;
+	RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)// K
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)	// “ª
+
+	m_HeadPos.y = fDowncurrenty;
+	RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)	// “ª
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, m_pos.y + 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty + CORRECT_HEIGHT * 3, 1.0f), m_modelIdx[5], false)
+
+	m_BodyPos.y = m_pos.y + 10;
+	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty + CORRECT_HEIGHT * 3, 1.0f), m_modelIdx[5], false)
 		->SetOutLine(true);
 
 	//“–‚½‚è”»’è
