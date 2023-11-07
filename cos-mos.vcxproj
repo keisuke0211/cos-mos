@@ -179,6 +179,7 @@
     <ClCompile Include="code\Project\Object\Item\Parts.cpp" />
     <ClCompile Include="code\Project\Object\stage-object-manager.cpp" />
     <ClCompile Include="code\Project\Object\stage-object.cpp" />
+    <ClCompile Include="code\Project\Object\UI\rocket-parts.cpp" />
     <ClCompile Include="code\Project\precompile.cpp" />
     <ClCompile Include="code\Project\System\csv_file.cpp" />
     <ClCompile Include="code\Project\System\StageEditor.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="code\Project\Object\Item\Parts.h" />
     <ClInclude Include="code\Project\Object\stage-object-manager.h" />
     <ClInclude Include="code\Project\Object\stage-object.h" />
+    <ClInclude Include="code\Project\Object\UI\rocket-parts.h" />
     <ClInclude Include="code\Project\precompile.h" />
     <ClInclude Include="code\Project\System\csv_file.h" />
     <ClInclude Include="code\Project\System\StageEditor.h" />
