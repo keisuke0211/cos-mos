@@ -20,8 +20,8 @@ PLANET = 3 data\MODEL\Sirius.x シリウス
 #========================================
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE00.csv 始まりの地
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE01.csv 死者の大地
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE02.csv 謎の物体
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE03.csv ？？？
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE02.csv ？？？
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE03.csv 謎の物体
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE04.csv ？？？
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE05.csv ？？？
 STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE06.csv ？？？
