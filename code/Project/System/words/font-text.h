@@ -78,10 +78,11 @@ public:
 	// 引数4  : const char *Text　　/ テキスト
 	// 引数5  : CFont::FONT Type　　/ フォント種類
 	// 引数6  : FormFont *pFont		/ フォント関連の情報(色・時間など) 無くても大丈夫
-	// 引数7  : bool bTextBox　　　 / メッセージボックスの表示・非表示 (初期値 true)
-	// 引数8  : FormShadow *Shadow  / フォントの影の情報 無くても大丈夫
+	// 引数7  : bool bBoxSize		/ メッセージボックスのサイズ調整の無効・有効（初期値 false）
+	// 引数8  : bool bTextBox　　　 / メッセージボックスの表示・非表示 (初期値 true)
+	// 引数9  : FormShadow *Shadow  / フォントの影の情報 無くても大丈夫
 	//--------------------------------------------------
-	static CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bTextBox = true, FormShadow *Shadow = NULL);
+	static CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FormShadow *Shadow = NULL);
 
 	/* 削除 */void Disap(bool bDisap,int nTime);
 

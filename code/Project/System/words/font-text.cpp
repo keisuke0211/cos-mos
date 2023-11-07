@@ -164,7 +164,7 @@ void CFontText::Draw()
 //========================================
 // 生成
 //========================================
-CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bTextBok, FormShadow *Shadow)
+CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow)
 {
 	CFontText *pText = new CFontText;
 
@@ -191,7 +191,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		}
 		pText->m_Info.TexPos = pos;
 		pText->m_Info.TexSize = size;
-		pText->m_Info.bTextBok = bTextBok;
+		pText->m_Info.bTextBok = bTextBox;
 
 		// -- テキスト -----------------------
 		pText->m_Info.FontType = FontType;
@@ -213,11 +213,11 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 			pText->TextLetter(Text, 1);
 		}
 
-		// BOX_SIZE
 
-
-		//pText->m_Info.TexSize.x = BOX_SIZE * (pText->m_Info.nTextLength * 0.5f + 2);
-
+		if (bBoxSize)
+		{
+			pText->m_Info.TexSize.x = BOX_SIZE * (pText->m_Info.nTextLength * 0.5f + 2);
+		}
 
 		if (Shadow == NULL)
 		{
