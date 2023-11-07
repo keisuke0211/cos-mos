@@ -360,3 +360,21 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHipp
 
 	return pObj;
 }
+//========================================
+//  隕石ジェネレーター
+//========================================
+CMeteorGenerator *CStageObjectMgr::MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval)
+{
+	CMeteorGenerator *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CMeteorGenerator;
+
+	// 初期化処理
+	pObj->SetPos(pos);
+	pObj->SetMove(move);
+	pObj->SetInterval(nSummonInterval);
+	pObj->Init();
+
+	return pObj;
+}
