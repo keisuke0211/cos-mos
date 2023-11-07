@@ -196,7 +196,8 @@ private:
 	Info m_aInfo[NUM_PLAYER];	//各プレイヤーの情報
 	static int s_nSwapMarkTex;  //スワップ先のマークテクスチャ番号
 	static int s_nSwapParticle; //スワップ時のパーティクルテクスチャ番号
-	short m_jumpSEIdx;
+	short m_jumpSEIdx;			//ジャンプ時のSE番号
+	short m_landingSEIdx;		//着地時のSE番号
 };
 
 #endif
