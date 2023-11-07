@@ -164,7 +164,7 @@ void CFontText::Draw()
 //========================================
 // 生成
 //========================================
-CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bTextBok, FormShadow *Shadow)
+CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow)
 {
 	CFontText *pText = new CFontText;
 
@@ -191,8 +191,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		}
 		pText->m_Info.TexPos = pos;
 		pText->m_Info.TexSize = size;
-
-		pText->m_Info.bTextBok = bTextBok;
+		pText->m_Info.bTextBok = bTextBox;
 
 		// -- テキスト -----------------------
 		pText->m_Info.FontType = FontType;
@@ -212,6 +211,12 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 			pText->SetStandTime(10);
 			pText->EraseTime(1);
 			pText->TextLetter(Text, 1);
+		}
+
+
+		if (bBoxSize)
+		{
+			pText->m_Info.TexSize.x = BOX_SIZE * (pText->m_Info.nTextLength * 0.5f + 2);
 		}
 
 		if (Shadow == NULL)
@@ -285,13 +290,13 @@ void CFontText::LetterForm(void)
 						D3DXVECTOR2 AddSize = m_Info.aShadow.AddSize;
 
 						m_Info.aShadow.shadow[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-							D3DXVECTOR3((pos.x + (10.0f + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + 1)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
+							D3DXVECTOR3((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
 							D3DXVECTOR3(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 							m_Info.FontType, m_Info.aShadow.col);
 					}
 
 					m_Info.words[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-						D3DXVECTOR3((pos.x + 10.0f) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + 1)), pos.y + m_Info.nNiCount*40.0f, pos.z),
+						D3DXVECTOR3((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
 						D3DXVECTOR3(fTxtSize, fTxtSize, 0.0f),
 						m_Info.FontType, m_Info.FontCol);
 
@@ -321,13 +326,13 @@ void CFontText::LetterForm(void)
 							D3DXVECTOR2 AddSize = m_Info.aShadow.AddSize;
 
 							m_Info.aShadow.shadow[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-								D3DXVECTOR3((pos.x + (10.0f + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + 1)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
+								D3DXVECTOR3((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
 								D3DXVECTOR3(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 								m_Info.FontType, m_Info.aShadow.col);
 						}
 
 						m_Info.words[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-							D3DXVECTOR3((pos.x + 10.0f) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + 1)), pos.y + m_Info.nNiCount*40.0f, pos.z),
+							D3DXVECTOR3((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
 							D3DXVECTOR3(fTxtSize, fTxtSize, 0.0f),
 							m_Info.FontType, m_Info.FontCol);
 

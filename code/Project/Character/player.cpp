@@ -35,11 +35,13 @@ int CPlayer::s_nSwapParticle = 0; //スワップ時のパーティクルテクスチャ番号
 //=======================================
 CPlayer::CPlayer()
 {
-	s_nSwapMarkTex = 0;  //スワップ先のマークテクスチャ番号
-	s_nSwapParticle = 0; //スワップ時のパーティクルテクスチャ番号
-	s_nSwapInterval = 0;//残りスワップインターバル
-	s_nNumGetParts = 0;	//取得したパーツの数
-	s_bRideRocket = false;//ロケットに乗れるかどうか
+	s_nSwapMarkTex = 0;		//スワップ先のマークテクスチャ番号
+	s_nSwapParticle = 0;	//スワップ時のパーティクルテクスチャ番号
+	m_jumpSEIdx = 0;		//ジャンプ時のSE番号
+	m_landingSEIdx = 0;		//着地時のSE番号
+	s_nSwapInterval = 0;	//残りスワップインターバル
+	s_nNumGetParts = 0;		//取得したパーツの数
+	s_bRideRocket = false;	//ロケットに乗れるかどうか
 
 	for each(Info &Player in m_aInfo)
 	{
@@ -101,6 +103,9 @@ HRESULT CPlayer::Init(void)
 
 	s_nSwapMarkTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Circle_005.png");
 	s_nSwapParticle = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
+
+	m_jumpSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp_01.wav");
+	m_landingSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp.wav");
 
 	//初期情報設定
 	Death(NULL);
@@ -265,6 +270,9 @@ void CPlayer::ActionControl(void)
 			Player.bGround = false;				//地面から離れた
 			Player.move.y = Player.fJumpPower;	//ジャンプ量代入
 			Player.bJump = true;				//ジャンプした
+
+			//SE再生
+			RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 		}
 
 		//右に移動
@@ -345,7 +353,7 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 		Player.posOLd = Player.pos = Player.StartPos;
 		Player.move = INITD3DXVECTOR3;
 		Player.bGround = false;
-		Player.bJump = true;
+		Player.bJump = false;	//SEの関係でfalseにしました。問題あったら戻してねby IIda
 		Player.bRide = false;
 		Player.bTramJump = false;
 	}
@@ -437,7 +445,7 @@ void CPlayer::WholeCollision(void)
 
 				//プレイヤーの近くにオブジェクトがあるか判定
 				//レーザー以外の判定
-				if (type != CStageObject::TYPE::LASER) {
+				if (type != CStageObject::TYPE::LASER && type != CStageObject::TYPE::EXTEND_DOG) {
 					if (D3DXVec3Length(&(POS - Player.pos)) >
 						D3DXVec2Length(&D3DXVECTOR2(WIDTH + SIZE_WIDTH, HEIGHT + SIZE_HEIGHT))) continue;
 				}
@@ -501,8 +509,11 @@ void CPlayer::WholeCollision(void)
 				{
 					CExtenddog *pDog = (CExtenddog *)stageObj;
 
-					DogMinPos = new D3DXVECTOR3[3];
-					DogMaxPos = new D3DXVECTOR3[3];
+					DogMinPos = new D3DXVECTOR3[4];
+					DogMaxPos = new D3DXVECTOR3[4];
+
+					DogMinPos[0] = MinPos;
+					DogMaxPos[0] = MaxPos;
 
 					// 頭
 					{
@@ -512,8 +523,8 @@ void CPlayer::WholeCollision(void)
 						const float HeadHeight = pDog->GetHeight() * 0.5f;
 
 						//オブジェクトの最小・最大位置
-						DogMinPos[0] = D3DXVECTOR3(HeadPos.x - HeadWidth, HeadPos.y - HeadHeight, 0.0f);
-						DogMaxPos[0] = D3DXVECTOR3(HeadPos.x + HeadWidth, HeadPos.y + HeadHeight, 0.0f);
+						DogMinPos[1] = D3DXVECTOR3(HeadPos.x - HeadWidth, HeadPos.y - HeadHeight, 0.0f);
+						DogMaxPos[1] = D3DXVECTOR3(HeadPos.x + HeadWidth, HeadPos.y + HeadHeight, 0.0f);
 
 						//当たった方向を格納
 						DogHead = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, HeadPos, HeadPosOld, HeadWidth, HeadHeight, vec);
@@ -527,11 +538,11 @@ void CPlayer::WholeCollision(void)
 						const float BodyHeight = pDog->GetHeight() * 0.5f;
 
 						//オブジェクトの最小・最大位置
-						DogMinPos[1] = D3DXVECTOR3(BodyPos.x - BodyWidth, BodyPos.y - BodyHeight, 0.0f);
-						DogMaxPos[1] = D3DXVECTOR3(BodyPos.x + BodyWidth, BodyPos.y + BodyHeight, 0.0f);
+						DogMinPos[2] = D3DXVECTOR3(BodyPos.x - BodyWidth, BodyPos.y - BodyHeight, 0.0f);
+						DogMaxPos[2] = D3DXVECTOR3(BodyPos.x + BodyWidth, BodyPos.y + BodyHeight, 0.0f);
 
 						//当たった方向を格納
-						//DogBody = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, BodyPos, BodyPosOld, BodyWidth, BodyHeight, vec);
+						DogBody = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, BodyPos, BodyPosOld, BodyWidth, BodyHeight, vec);
 					}
 
 					// 尻
@@ -542,11 +553,18 @@ void CPlayer::WholeCollision(void)
 						const float HipHeight = pDog->GetHeight() * 0.5f;
 
 						//オブジェクトの最小・最大位置
-						DogMinPos[2] = D3DXVECTOR3(HipPos.x - HipWidth, HipPos.y - HipHeight, 0.0f);
-						DogMaxPos[2] = D3DXVECTOR3(HipPos.x + HipWidth, HipPos.y + HipHeight, 0.0f);
+						DogMinPos[3] = D3DXVECTOR3(HipPos.x - HipWidth, HipPos.y - HipHeight, 0.0f);
+						DogMaxPos[3] = D3DXVECTOR3(HipPos.x + HipWidth, HipPos.y + HipHeight, 0.0f);
 
 						//当たった方向を格納
 						DogHip = IsBoxCollider(Player.pos, Player.posOLd, SIZE_WIDTH, SIZE_HEIGHT, HipPos, HipPosOld, HipWidth, HipHeight, vec);
+
+
+						CExtenddog::STATE state = pDog->GetState();
+						if (DogHip != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)
+						{
+							pDog->SetState(CExtenddog::STATE::NONE);
+						}
 					}
 				}
 				break;
@@ -569,7 +587,7 @@ void CPlayer::WholeCollision(void)
 				case CStageObject::TYPE::MOVE_BLOCK:	CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, MinPos, MaxPos, ColliRot);	break;
 				case CStageObject::TYPE::METEOR:		CollisionMeteor(&Player, MinPos, MaxPos, ColliRot); break;
 				case CStageObject::TYPE::LASER:			CollisionLaser(&Player, MinPos, MaxPos, ColliRot, LaserColli);	break;
-				case CStageObject::TYPE::EXTEND_DOG:	CollisionDog(&Player, (CExtenddog *)stageObj,DogMinPos, DogMaxPos, DogHead, DogBody, DogHip); break;
+				case CStageObject::TYPE::EXTEND_DOG:	CollisionDog(&Player, (CExtenddog *)stageObj,DogMinPos, DogMaxPos, ColliRot, DogHead, DogBody, DogHip); break;
 				case CStageObject::TYPE::PARTS:			CollisionParts(&Player, (CParts *)stageObj); break;
 				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
 				}
@@ -653,9 +671,14 @@ void CPlayer::CollisionBlock(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 
 		//表の世界のプレイヤー
 		if (pInfo->side == WORLD_SIDE::FACE) {
+			if (pInfo->bJump == true)
+			{//着地した
+				//SE再生
+				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+			}
 			pInfo->bGround = true;	//地面に接している
 			pInfo->bJump = false;	//ジャンプ可能
-			pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
+			pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定pInfo->bJump = false
 		}
 		break;
 
@@ -668,6 +691,11 @@ void CPlayer::CollisionBlock(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 
 		//裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND) {
+			if (pInfo->bJump == true)
+			{//着地した
+				//SE再生
+				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+			}
 			pInfo->bGround = true;	//地面に接している
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
@@ -722,6 +750,11 @@ void CPlayer::CollisionTrampoline(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 M
 
 		//表の世界のプレイヤー
 		if (pInfo->side == WORLD_SIDE::FACE) {
+			if (pInfo->bJump == true)
+			{//着地した
+			 //SE再生
+				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+			}
 			pInfo->bGround = true;
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
@@ -737,6 +770,11 @@ void CPlayer::CollisionTrampoline(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 M
 
 		//裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND) {
+			if (pInfo->bJump == true)
+			{//着地した
+			 //SE再生
+				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+			}
 			pInfo->bGround = true;
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
@@ -782,6 +820,11 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR
 		if (pInfo->side == WORLD_SIDE::FACE)
 		{
 			pInfo->pos += pMoveBlock->GetMove();
+			if (pInfo->bJump == true)
+			{//着地した
+			 //SE再生
+				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+			}
 			pInfo->bGround = true;	//地面に接している
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
@@ -799,6 +842,11 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, D3DXVECTOR
 		if (pInfo->side == WORLD_SIDE::BEHIND)
 		{
 			pInfo->pos += pMoveBlock->GetMove();
+			if (pInfo->bJump == true)
+			{//着地した
+			 //SE再生
+				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+			}
 			pInfo->bGround = true;	//地面に接している
 			pInfo->bJump = false;	//ジャンプ可能
 			pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
@@ -895,6 +943,11 @@ void CPlayer::CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MaxPos.y;//最高Ｙ座標設定
@@ -910,6 +963,11 @@ void CPlayer::CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MinPos.y;//最高Ｙ座標設定
@@ -957,13 +1015,13 @@ void CPlayer::CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos
 // ヌイの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *MinPos, D3DXVECTOR3 *MaxPos, COLLI_ROT HeadColli, COLLI_ROT BodyColli, COLLI_ROT HipColli)
+void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *MinPos, D3DXVECTOR3 *MaxPos, COLLI_ROT ColliRot, COLLI_ROT HeadColli, COLLI_ROT BodyColli, COLLI_ROT HipColli)
 {
 	//当たった方向ごとに処理を切り替え
 
-	// 頭
+	// ハウス
 	{
-		switch (HeadColli)
+		switch (ColliRot)
 		{
 			//*********************************
 			//上に当たった
@@ -974,6 +1032,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MaxPos[0].y;//最高Ｙ座標設定
@@ -989,6 +1052,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MinPos[0].y;//最高Ｙ座標設定
@@ -1014,15 +1082,13 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: 
-			//位置・移動量修正
-			break;
+		case COLLI_ROT::UNKNOWN: Death(NULL); break;
 		}
 	}
 
-	// 体
+	// 頭
 	{
-		switch (BodyColli)
+		switch (HeadColli)
 		{
 			//*********************************
 			//上に当たった
@@ -1033,6 +1099,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MaxPos[1].y;//最高Ｙ座標設定
@@ -1048,6 +1119,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MinPos[1].y;//最高Ｙ座標設定
@@ -1073,13 +1149,13 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: break;
+		case COLLI_ROT::UNKNOWN: Death(NULL); break;
 		}
 	}
 
-	// 尻
+	// 体
 	{
-		switch (HipColli)
+		switch (BodyColli)
 		{
 			//*********************************
 			//上に当たった
@@ -1090,6 +1166,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MaxPos[2].y;//最高Ｙ座標設定
@@ -1105,6 +1186,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
+				if (pInfo->bJump == true)
+				{//着地した
+				 //SE再生
+					RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = MinPos[2].y;//最高Ｙ座標設定
@@ -1130,7 +1216,68 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *Min
 			//*********************************
 			//埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND); break;
+		case COLLI_ROT::UNKNOWN: break;
+		}
+	}
+
+	// 尻
+	{
+		switch (HipColli)
+		{
+			//*********************************
+			//上に当たった
+			//*********************************
+		case COLLI_ROT::OVER:
+			//位置・移動量修正
+			FixPos_OVER(&pInfo->pos.y, MaxPos[3].y, &pInfo->move.y);
+
+			//表の世界のプレイヤー
+			if (pInfo->side == WORLD_SIDE::FACE) {
+				pInfo->bGround = true;	//地面に接している
+				pInfo->bJump = false;	//ジャンプ可能
+				pInfo->fMaxHeight = MaxPos[3].y;//最高Ｙ座標設定
+			}
+
+			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
+			break;
+
+			//*********************************
+			//下に当たった
+			//*********************************
+		case COLLI_ROT::UNDER:
+			//位置・移動量修正
+			FixPos_UNDER(&pInfo->pos.y, MinPos[3].y, &pInfo->move.y);
+
+			//裏の世界のプレイヤーならジャンプ可能
+			if (pInfo->side == WORLD_SIDE::BEHIND) {
+				pInfo->bGround = true;
+				pInfo->bJump = false;	//ジャンプ可能
+				pInfo->fMaxHeight = MinPos[3].y;//最高Ｙ座標設定
+			}
+
+			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
+			break;
+
+			//*********************************
+			//左に当たった
+			//*********************************
+		case COLLI_ROT::LEFT:
+			//位置・移動量修正
+			FixPos_LEFT(&pInfo->pos.x, MinPos[3].x, &pInfo->move.x);
+			break;
+
+			//*********************************
+			//右に当たった
+			//*********************************
+		case COLLI_ROT::RIGHT:
+			//位置・移動量修正
+			FixPos_RIGHT(&pInfo->pos.x, MaxPos[3].x, &pInfo->move.x);
+			break;
+
+			//*********************************
+			//埋まった
+			//*********************************
+		case COLLI_ROT::UNKNOWN: Death(NULL); break;
 		}
 	}
 }
