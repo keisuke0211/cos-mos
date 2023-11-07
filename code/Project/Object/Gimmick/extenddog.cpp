@@ -132,7 +132,7 @@ void CExtenddog::Update(void) {
 		->SetOutLine(true);
 	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, fDowncurrenty, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)	// “ª
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, m_pos.y + 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, 50.0f, 1.0f), m_modelIdx[5], false) // ‘Ì
+	RNLib::Model().Put(D3DXVECTOR3(m_fHeadposx, m_pos.y + 10.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty + CORRECT_HEIGHT * 3, 1.0f), m_modelIdx[5], false)
 		->SetOutLine(true);
 
 	//“–‚½‚è”»’è
