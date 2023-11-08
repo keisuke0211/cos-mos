@@ -9,6 +9,7 @@
 #include "../System/StageEditor.h"
 #include "../System/words/font-text.h"
 #include "../Mode/mode_title.h"
+#include "../UI/rocket-parts.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -83,6 +84,10 @@ void CMode_Game::Init(void) {
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
+	m_rocketparts = new CRocketPartsUI;
+
+	m_rocketparts = CRocketPartsUI::Create();
+
 	if (s_pPlayer == NULL)
 		s_pPlayer = CPlayer::Create();
 
@@ -114,6 +119,8 @@ void CMode_Game::Uninit(void) {
 	}
 
 	Manager::BlockMgr()->ReleaseAll();
+
+	m_rocketparts->Uninit();
 }
 
 //========================================
@@ -122,6 +129,8 @@ void CMode_Game::Uninit(void) {
 //========================================
 void CMode_Game::Update(void) {
 	CMode::Update();
+
+	m_rocketparts->Update();
 
 	if (m_state != (int)STATE::PAUSE)
 	{
