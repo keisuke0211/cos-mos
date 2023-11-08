@@ -36,7 +36,7 @@ public:
 	CStageObjectMgr();
 	virtual~CStageObjectMgr();
 	virtual void Update(void);	void Load(void);
-	CBlock      *BlockCreate	 (D3DXVECTOR3 pos, Color color);
+	CBlock      *BlockCreate	 (D3DXVECTOR3 pos,CBlock::BLOCK_TYPE type,Color color = INITCOLOR);
 	CMagmaBlock *MagmaBlockCreate(D3DXVECTOR3 pos,Color color);
 	CFillBlock  *FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::FILL_TYPE type, Color color);
 	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos);
