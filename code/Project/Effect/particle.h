@@ -21,6 +21,7 @@ public:
 		D3DXVECTOR3 scale;		// 拡縮
 		Color col;				// 頂点カラー
 		int nCount;
+		int nCountMax;
 		int nTex;
 	};
 
@@ -28,7 +29,7 @@ public:
 	CParticle();
 	~CParticle();
 
-	/* 初期化	*/HRESULT Init(int nTex);
+	/* 初期化	*/HRESULT Init(int nTex,int nCount);
 	/* 終了		*/void Uninit(void);
 	/* 更新		*/void Update(void);
 	/* 描画		*/void Draw(void);

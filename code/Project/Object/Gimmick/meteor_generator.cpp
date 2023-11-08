@@ -8,15 +8,10 @@
 #include "../../manager.h"
 #include "../stage-object.h"
 #include "../Gimmick/meteor.h"
-//=======================================
-//マクロ定義
-//=======================================
-#define SUMMON_INTERVAL		(120)		// 出現の間隔
 
 //=======================================
 //静的メンバ変数
 //=======================================
-CMeteor *CMeteorGenerator::pMeteor = NULL;	
 
 //=======================================
 //コンストラクタ
@@ -29,6 +24,7 @@ CMeteorGenerator::CMeteorGenerator()
 	m_move = INITD3DXVECTOR3;
 	m_nCntSummon = 0;
 	m_nSummoninterval = 0;
+	m_bLive = false;
 }
 
 //=======================================
@@ -36,7 +32,6 @@ CMeteorGenerator::CMeteorGenerator()
 //=======================================
 CMeteorGenerator::~CMeteorGenerator()
 {
-	pMeteor = NULL;
 }
 
 //=======================================
@@ -45,7 +40,7 @@ CMeteorGenerator::~CMeteorGenerator()
 void CMeteorGenerator::Init(void)
 {
 	// 隕石の生成
-	pMeteor = Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
+	Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
 }
 
 //=======================================
@@ -61,15 +56,35 @@ void CMeteorGenerator::Uninit(void)
 //=======================================
 void CMeteorGenerator::Update(void)
 {
-	if (pMeteor == NULL)
-	{// 隕石が使用されていないとき
+	m_bLive = false;
+
+	//オブジェクトのポインタを格納
+	CObject *obj = NULL;
+
+	//オブジェクトを取得
+	while (Manager::BlockMgr()->ListLoop(&obj)) {
+		//取得したオブジェクトをキャスト
+		CStageObject* stageObj = (CStageObject*)obj;
+
+		//種類取得
+		const CStageObject::TYPE type = stageObj->GetType();
+
+		if (type == CStageObject::TYPE::METEOR)
+		{
+			m_bLive = true;	// 生きてる
+		}
+	}
+
+	if (m_bLive == false)
+	{// 隕石が生きていないとき
 		m_nCntSummon++;	// 増加
 
 		if (m_nCntSummon >= m_nSummoninterval)
 		{// 生成の間隔を超えたとき
 
 			// 隕石の生成
-			pMeteor = Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
+			Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
+			m_nCntSummon = 0;	// カウントの初期化
 		}
 	}
 }

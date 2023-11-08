@@ -167,6 +167,7 @@
     <ClCompile Include="code\Project\Object\BackGround\Star.cpp" />
     <ClCompile Include="code\Project\Object\Block\block.cpp" />
     <ClCompile Include="code\Project\Object\Block\fill-block.cpp" />
+    <ClCompile Include="code\Project\Object\Block\magma-block.cpp" />
     <ClCompile Include="code\Project\Object\Block\move-block.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\extenddog.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="code\Project\Object\BackGround\Star.h" />
     <ClInclude Include="code\Project\Object\Block\block.h" />
     <ClInclude Include="code\Project\Object\Block\fill-block.h" />
+    <ClInclude Include="code\Project\Object\Block\magma-block.h" />
     <ClInclude Include="code\Project\Object\Block\move-block.h" />
     <ClInclude Include="code\Project\Object\Gimmick\extenddog.h" />
     <ClInclude Include="code\Project\Object\Gimmick\goalgate.h" />

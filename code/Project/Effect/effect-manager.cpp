@@ -36,7 +36,7 @@ void CEffectMgr::Update(void)
 //========================================
 // エフェクト
 //========================================
-CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col)
+CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount)
 {
 	CEffect *pObj = NULL;
 
@@ -44,7 +44,7 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 	pObj = new CEffect;
 
 	// 初期化処理
-	pObj->Init(nTex);
+	pObj->Init(nTex, nCount);
 	pObj->SetPos(pos);
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
@@ -57,7 +57,7 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 //========================================
 // パーティクル
 //========================================
-CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col)
+CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount)
 {
 	CParticle *pObj = NULL;
 
@@ -65,7 +65,7 @@ CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 sca
 	pObj = new CParticle;
 
 	// 初期化処理
-	pObj->Init(nTex);
+	pObj->Init(nTex, nCount);
 	pObj->SetPos(pos);
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
