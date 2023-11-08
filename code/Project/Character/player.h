@@ -82,6 +82,8 @@ public:
 		bool		bJump;        //ジャンプ
 		bool		bRide;        //ロケットに乗っているかどうか
 		bool		bGoal;		  //ゴールしたかどうか
+		bool		bStep;		  //移動しているかどうか
+		bool		bStepOld;	  //前回移動していたかどうか
 		float		fJumpPower;   //ジャンプ量
 		float		fGravity;     //重力
 		float		fMaxHeight;   //最高Ｙ座標
@@ -227,6 +229,8 @@ private:
 	short m_jumpSEIdx;			//ジャンプ時のSE番号
 	short m_landingSEIdx;		//着地時のSE番号
 	short m_dogSEIdx[4];		//壁ギミック用SE番号
+	short m_stepSEIdx;		    //歩き用SE番号
+	CSound::CPlay* play;		//サウンドプレイヤー
 };
 
 #endif
