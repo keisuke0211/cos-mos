@@ -26,8 +26,8 @@ CRoadTripLaser::CRoadTripLaser(void) {
 
 	// 各情報の初期化
 	m_pos = INITD3DXVECTOR3;
-	m_refPos = INITD3DXVECTOR3;
-	m_frefdef = 0.0f;
+	m_posL = INITD3DXVECTOR3;
+	m_posV = INITD3DXVECTOR3;
 	m_fGroundDis = 0.0f;
 	m_LaserSize = D3DXVECTOR2(5.0f, 50.0f);
 }
@@ -46,7 +46,8 @@ CRoadTripLaser::~CRoadTripLaser(void) {
 void CRoadTripLaser::Init(void) {
 	ModelIdx = RNLib::Model().Load("data\\MODEL\\Laser_0.x");
 
-	m_refPos = m_pos;
+	m_pos = m_posV;	// 始点に位置を設定
+	// 地面までの距離を求める
 	m_fGroundDis = m_pos.y - 0.0f;
 	m_fGroundDis = fabsf(m_fGroundDis);
 }
@@ -93,12 +94,12 @@ void CRoadTripLaser::Update(void) {
 	}
 
 	// xの移動量の反転
-	if (m_refPos.x + m_frefdef <= m_pos.x || m_refPos.x - m_frefdef >= m_pos.x)
+	if (m_posV.x >= m_pos.x || m_posL.x <= m_pos.x)
 	{
 		m_move.x *= -1;
 	}
 	// yの移動量の反転
-	if (m_refPos.y + m_frefdef <= m_pos.y || m_refPos.y - m_frefdef >= m_pos.y)
+	if (m_posV.y >= m_pos.y || m_posL.y <= m_pos.y)
 	{
 		m_move.y *= -1;
 	}

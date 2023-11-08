@@ -16,7 +16,6 @@ class CExtenddog : public CStageObject {
 public:
 
 	static const int MAX_COUNT = 40;	// 最大カウント数
-	static const int HEAD_POS = 16;		// 頭の位置
 	static const int HIP_POS = 7;		// 尻の位置
 
 	//========== [[[ 列挙型定義 ]]]
@@ -41,7 +40,7 @@ public:
 	void   SetShrink(bool shrink) { m_bShrink = shrink; }		//伸縮設定
 	void   SetHead(D3DXVECTOR3 pos) { m_HeadPos = pos; }		//頭の位置設定
 	void   SetHip(D3DXVECTOR3 pos) { m_HipPos = pos; }			//お尻の位置設定
-
+	void   SetHeadHeight(int height) { m_nHeight = height; }	//頭の高さ
 	STATE  GetState(void) { return m_state; }					//種類取得
 	D3DXVECTOR3 GetHeadPos(void) { return m_HeadPos; }
 	D3DXVECTOR3 GetHeadPosOid(void) { return m_HeadPosOid; }
@@ -60,6 +59,7 @@ private:
 	bool		m_bShrink;		// 縮む?
 	int			m_nCntShrink;	// 縮むカウント
 	float		m_fcurrenty;	// 現在のy座標
+	int			m_nHeight;		// 高さ
 
 	D3DXVECTOR3 m_HeadPos;		// 頭の位置
 	D3DXVECTOR3 m_HeadPosOid;	// 頭の過去位置

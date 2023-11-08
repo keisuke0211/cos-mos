@@ -469,7 +469,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->SpikeCreate(pos);
 		break;
 	case TYPE_LIFT:
-		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(1.0f, 0.0f, 0.0f), 20.0f);
+		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Meteor:
 		pos.x += fSizeX;
@@ -477,10 +477,10 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->MeteorCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Laser:
-		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),0.0f);
+		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Extenddog:
-		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos, true);
+		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos,2, true);
 		Manager::BlockMgr()->BlockCreate(pos,CBlock::BLOCK_TYPE::BLOCK_NUI);
 		break;
 	case TYPE_FILL_BLOCK_11:
