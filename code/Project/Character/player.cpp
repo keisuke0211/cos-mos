@@ -701,6 +701,7 @@ void CPlayer::WholeCollision(void)
 			{
 				pDog->SetState(CExtenddog::STATE::RETURN);
 			}
+
 		}
 	}
 }
