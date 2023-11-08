@@ -9,7 +9,6 @@
 #include "particle.h"
 #include "../main.h"
 
-#define MAX_COUNT		(60)		//ÉJÉEÉìÉg
 #define PI				(628)		//â~é¸
 #define HARF_PI			(314)		//îºâ~é¸
 #define MAGNI			(100.0f)	//î{ó¶
@@ -30,7 +29,6 @@ CParticle::CParticle(void)
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
 	m_Info.col = INITCOLOR;
-	m_Info.nCount = MAX_COUNT;
 	m_nNumAll++;
 }
 
@@ -45,7 +43,7 @@ CParticle::~CParticle()
 //========================================
 // èâä˙âª
 //========================================
-HRESULT CParticle::Init(int nTex)
+HRESULT CParticle::Init(int nTex,int nCount)
 {
 	m_Info.move = D3DXVECTOR3(
 	sinf((float)(rand() % PI - HARF_PI) / MAGNI) * (float)(rand() % RANDOM_MAGNI - RANDOM_MAGNI * 0.5f),	//xÇÃà⁄ìÆó 
@@ -54,7 +52,7 @@ HRESULT CParticle::Init(int nTex)
 
 	m_Info.col = INITCOLOR;
 	m_Info.nTex = nTex;
-	m_Info.nCount = MAX_COUNT;
+	m_Info.nCount = m_Info.nCountMax = nCount;
 
 	return S_OK;
 }
@@ -88,7 +86,7 @@ void CParticle::Update(void)
 	m_Info.move.y += (0.0f - m_Info.move.y) * ATTEN_RATE;
 
 	//äÑçáåvéZ
-	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, MAX_COUNT);
+	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
 
 	//ìßñæÇ…ÇµÇƒÇ¢Ç≠
 	m_Info.col.a = m_Info.col.a * fCountRate;
