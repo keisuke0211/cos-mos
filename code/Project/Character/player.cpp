@@ -80,10 +80,6 @@ CPlayer::~CPlayer()
 		delete[] pOthColli;
 		pOthColli = NULL;
 	}
-
-	if (play != NULL) {
-		play = NULL;
-	}
 }
 
 //=======================================
@@ -126,8 +122,6 @@ HRESULT CPlayer::Init(void)
 	m_dogSEIdx[1] = RNLib::Sound().Load("data\\SOUND\\SE\\shrink.wav");	//縮む
 	m_dogSEIdx[2] = RNLib::Sound().Load("data\\SOUND\\SE\\extend.wav");	//伸びる
 	m_dogSEIdx[3] = RNLib::Sound().Load("data\\SOUND\\SE\\vibration.wav");	//震える
-
-	m_stepSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\step.wav");
 
 	//初期情報設定
 	Death(NULL);
@@ -308,14 +302,6 @@ void CPlayer::ActionControl(void)
 		//ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal) continue;
 
-		if (Player.move.x != 0.0f && Player.bGround == true) {//前回歩いていた
-			
-			Player.bStepOld = true;	
-		}
-		if (Player.move.x == 0.0f || Player.bGround == false) {//前回歩いていない
-			Player.bStepOld = false;
-		}
-
 		//ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
@@ -336,27 +322,6 @@ void CPlayer::ActionControl(void)
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
 			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
 			Player.move.x -= MOVE_SPEED;
-
-		if (Player.move.x != 0.0f && Player.bGround == true){
-
-			Player.bStep = true;
-		}
-		if (Player.move.x == 0.0f || Player.bGround == false) {
-
-			Player.bStep = false;
-		}
-
-		
-		//if (Player.bStep == true && Player.bStepOld == false) {//今歩き出した
-		//	if (play == NULL) {
-		//		play = RNLib::Sound().Play(m_stepSEIdx, CSound::CATEGORY::SE, true, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-		//	}
-		//}
-		//if (Player.bStep == false) {//今止まった
-		//	if (play != NULL) {
-		//		play->Delete();
-		//	}
-		//}
 
 		//スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
@@ -447,7 +412,7 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 		Player.posOLd = Player.pos = Player.StartPos;
 		Player.move = INITD3DXVECTOR3;
 		Player.bGround = false;
-		Player.bJump = false;	//SEの関係でfalseにしました。問題あったら戻してねby IIda
+		Player.bJump = true;
 		Player.bRide = false;
 		Player.bGoal = false;
 		Player.bTramJump = false;
@@ -485,14 +450,18 @@ void CPlayer::Move(COLLI_VEC vec)
 			//トランポリンによる特殊ジャンプ中
 			if (Player.bTramJump)
 			{//カウンターを減らして、０になったら特殊ジャンプ終了
+				
+				float diff = Player.fTramTargetPosY - Player.pos.y;
+
 				if (--Player.nTramJumpCounter <= 0)
 				{
 					Player.bTramJump = false;
+					Player.move.y = diff / 1;
 				}
-
-				float diff = Player.fTramTargetPosY - Player.pos.y;
-				Player.move.y = Player.move.y = diff / TRAMPOLINE_JUMP_COUNTER;
-
+				else
+				{
+					Player.move.y = diff / Player.nTramJumpCounter;
+				}
 			}
 			//通常時なら、重力処理でＹの移動量を計算
 			else Player.move.y += Player.fGravity;
@@ -1356,11 +1325,6 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
-				if (pInfo->bJump == true)
-				{//着地した
-				 //SE再生
-					RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-				}
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[1].MaxPos.y;//最高Ｙ座標設定
@@ -1376,11 +1340,6 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
-				if (pInfo->bJump == true)
-				{//着地した
-				 //SE再生
-					RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[1].MinPos.y;//最高Ｙ座標設定
@@ -1633,6 +1592,8 @@ void CPlayer::SetInfo(Info p1, Info p2)
 void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 {
 	SetSwapInterval();
+
+	fMaxHeight += 20.0f;
 
 	//ジャンプ量を継承
 	float diff = -fMaxHeight - pInfo->pos.y;
