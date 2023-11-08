@@ -456,7 +456,7 @@ void CPlayer::Move(COLLI_VEC vec)
 				if (--Player.nTramJumpCounter <= 0)
 				{
 					Player.bTramJump = false;
-					Player.move.y = diff / 1;
+					Player.move.y = diff;
 				}
 				else
 				{
