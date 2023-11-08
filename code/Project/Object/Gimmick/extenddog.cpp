@@ -158,17 +158,17 @@ void CExtenddog::Update(void) {
 
 		// K
 		m_HipPos.y = m_pos.y + HIP_POS;
-		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
+		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[3], false)
 			->SetOutLine(true);
 
 		// “ª
 		m_HeadPos.y = fDowncurrenty;
-		RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
+		RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[4], false)
 			->SetOutLine(true);
 
 		// ‘Ì
-		m_BodyPos.y = m_pos.y - fDowncurrenty * 0.5f - SIZE_OF_1_SQUARE * 0.4f;
-		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 9, 1.0f), m_modelIdx[5], false)
+		m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f - SIZE_OF_1_SQUARE * 0.5f + 5.0f;
+		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1)))) * 8.0f, 1.0f), m_modelIdx[5], false)
 			->SetOutLine(true);
 	}
 }
