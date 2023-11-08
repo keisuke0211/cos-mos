@@ -2,13 +2,13 @@ Metasequoia Document
 Format Text Ver 1.0
 
 Scene {
-	pos 2.2264 -2.8966 937.5000
+	pos 2.2264 -2.8966 585.9375
 	lookat 0.0000 0.0000 0.0000
-	head 56.0069
-	pich 0.0308
+	head 56.8968
+	pich 0.1508
 	bank 0.0000
 	ortho 0
-	zoom2 8.0000
+	zoom2 12.8000
 	amb 0.250 0.250 0.250
 	dirlights 1 {
 		light {

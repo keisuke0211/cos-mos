@@ -13,6 +13,7 @@
 //****************************************
 class CPlayer;
 class CFontText;
+class CRocketPartsUI;
 
 //****************************************
 // ƒNƒ‰ƒX’è‹`
@@ -67,6 +68,7 @@ private:
 	static int m_nStageIdx;
 	int m_nSelect;
 	CFontText *m_Menu[MENU_MAX];
+	CRocketPartsUI *m_rocketparts;
 
 	static Color m_BgColorUp, m_BgColorDown;
 };

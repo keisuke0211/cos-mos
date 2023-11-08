@@ -142,6 +142,9 @@ public:
 	//指定された世界にいるプレイヤーの情報を返します
 	Info *GetInfo(WORLD_SIDE side);
 
+	//取得したパーツ数
+	int GetNumParts(void) { return s_nNumGetParts; }
+
 	//スワップインターバルを設定
 	//既にインターバルがあれば設定しない
 	static void SetSwapInterval(void) { s_nSwapInterval = s_nSwapInterval == 0 ? SWAP_INTERVAL : s_nSwapInterval; }
