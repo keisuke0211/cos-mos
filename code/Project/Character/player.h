@@ -86,6 +86,7 @@ public:
 		float		fGravity;     //重力
 		float		fMaxHeight;   //最高Ｙ座標
 		int			nTramJumpCounter;	//トランポリンによって跳ね上がる時間
+		float		fTramTargetPosY;	//トランポリン用の目標位置
 		bool		bTramJump;			//トランポリン用の特殊ジャンプ
 		COLLI_ROT	TramColliRot;		//トランポリン用の当たり判定
 		bool		bExtendDog;	  //ヌイ用の接触フラグ

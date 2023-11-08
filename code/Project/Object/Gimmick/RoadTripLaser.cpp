@@ -47,8 +47,8 @@ CRoadTripLaser::~CRoadTripLaser(void) {
 void CRoadTripLaser::Init(void) {
 	ModelIdx = RNLib::Model().Load("data\\MODEL\\Laser_0.x");
 
-	m_LaserPos = m_pos;
 	m_pos = m_posV;	// 始点に位置を設定
+	m_LaserPos = m_pos;
 	// 地面までの距離を求める
 	m_fGroundDis = m_pos.y - 0.0f;
 	m_fGroundDis = fabsf(m_fGroundDis);

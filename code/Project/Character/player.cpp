@@ -59,6 +59,7 @@ CPlayer::CPlayer()
 		Player.fGravity = 0.0f;					//重力
 		Player.fMaxHeight = 0.0f;				//最高Ｙ座標
 		Player.nTramJumpCounter = 0;			//トランポリンによって跳ね上がる最高到達地点
+		Player.fTramTargetPosY = 0.0f;			//トランポリン用の目標位置
 		Player.bTramJump = false;				//トランポリン用の特殊ジャンプ
 		Player.TramColliRot = COLLI_ROT::NONE;	//トランポリン用の判定
 		Player.bExtendDog = false;				//ヌイ用の接触フラグ
@@ -224,7 +225,8 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		int stage = Manager::StgEd()->GetType()->nStageIdx;
+		int planet = Manager::StgEd()->GetPlanetIdx();
+		int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
 		Manager::StgEd()->SwapStage(stage + 1);
 	}
 
@@ -444,17 +446,25 @@ void CPlayer::Move(COLLI_VEC vec)
 
 			//重力処理
 		case COLLI_VEC::Y:
+
 			//トランポリンによる特殊ジャンプ中
 			if (Player.bTramJump)
 			{//カウンターを減らして、０になったら特殊ジャンプ終了
-				if(--Player.nTramJumpCounter <= 0)
-				Player.bTramJump = false;
+				if (--Player.nTramJumpCounter <= 0)
+				{
+					Player.bTramJump = false;
+				}
+
+				float diff = Player.fTramTargetPosY - Player.pos.y;
+				Player.move.y = Player.move.y = diff / TRAMPOLINE_JUMP_COUNTER;
+
 			}
 			//通常時なら、重力処理でＹの移動量を計算
 			else Player.move.y += Player.fGravity;
 
 			//位置更新
 			Player.pos.y += Player.move.y;
+
 			break;
 		}
 	}
@@ -498,7 +508,6 @@ void CPlayer::WholeCollision(void)
 
 			for each(Info& Player in m_aInfo)
 			{
-
 				//ロケットに乗ってたら　or ゴールしていたらスキップ
 				if (Player.bRide || Player.bGoal) continue;
 
@@ -540,6 +549,13 @@ void CPlayer::WholeCollision(void)
 
 						pOthColli[nCnt].pos = pTrampoline->GetSpringPos(nCnt);
 						pOthColli[nCnt].posOLd = pOthColli[nCnt].pos;
+						pOthColli[nCnt].fWidth = pTrampoline->GetWidth() * 1.0f;
+						pOthColli[nCnt].fHeight = pTrampoline->GetHeight() * 1.0f;
+						pOthColli[nCnt].ColliRot = COLLI_ROT::NONE;
+
+						if (D3DXVec3Length(&(pOthColli[nCnt].pos - Player.pos)) >
+							D3DXVec2Length(&D3DXVECTOR2(pOthColli[nCnt].fWidth + SIZE_WIDTH, pOthColli[nCnt].fHeight + SIZE_HEIGHT))) continue;
+
 						pOthColli[nCnt].fWidth = pTrampoline->GetWidth() * 0.5f;
 						pOthColli[nCnt].fHeight = pTrampoline->GetHeight() * 0.5f;
 
@@ -548,13 +564,14 @@ void CPlayer::WholeCollision(void)
 						pOthColli[nCnt].MaxPos = D3DXVECTOR3(pOthColli[nCnt].pos.x + pOthColli[nCnt].fWidth, pOthColli[nCnt].pos.y + pOthColli[nCnt].fHeight, 0.0f);
 
 						//当たった方向を格納
-						pOthColli[nCnt].ColliRot = IsBoxCollider(Player.pos, Player.posOLd, m_aColli.fWidth, m_aColli.fHeight, pOthColli[nCnt].pos, pOthColli[nCnt].posOLd, pOthColli[nCnt].fWidth, pOthColli[nCnt].fHeight, vec);
+						COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOLd, m_aColli.fWidth, m_aColli.fHeight, pOthColli[nCnt].pos, pOthColli[nCnt].posOLd, pOthColli[nCnt].fWidth, pOthColli[nCnt].fHeight, vec);
 
-						if (pOthColli[nCnt].ColliRot != COLLI_ROT::NONE && !bOtherColl) {
+						if (ColliRot != COLLI_ROT::NONE && !bOtherColl) {
 							bOtherColl = true;
-							Player.TramColliRot = pOthColli[nCnt].ColliRot;
+							Player.TramColliRot = ColliRot;
+							pOthColli[nCnt].ColliRot = ColliRot;
 						}
-						else if (pOthColli[nCnt].ColliRot != COLLI_ROT::NONE && !bOtherColl){
+						else if (ColliRot == COLLI_ROT::NONE && !bOtherColl){
 							Player.TramColliRot = COLLI_ROT::NONE;
 						}
 					}
@@ -580,6 +597,9 @@ void CPlayer::WholeCollision(void)
 					pOthColli->posOLd = pOthColli->pos;
 					pOthColli->fWidth = pLaser->GetLaserSize().x * 0.5f;
 					pOthColli->fHeight = pLaser->GetLaserSize().y * 0.5f;
+
+					if (D3DXVec3Length(&(pOthColli->pos - Player.pos)) >
+						D3DXVec2Length(&D3DXVECTOR2(pOthColli->fWidth + SIZE_WIDTH, pOthColli->fHeight + SIZE_HEIGHT))) continue;
 
 					//オブジェクトの最小・最大位置
 					pOthColli->MinPos = D3DXVECTOR3(pOthColli->pos.x - pOthColli->fWidth, pOthColli->pos.y - pOthColli->fHeight, 0.0f);
@@ -620,6 +640,9 @@ void CPlayer::WholeCollision(void)
 
 						pOthColli[nCnt].fWidth = pDog->GetWidth() * 0.5f;
 						pOthColli[nCnt].fHeight = pDog->GetHeight() * 0.5f;
+
+						if (D3DXVec3Length(&(pOthColli[nCnt].pos - Player.pos)) >
+							D3DXVec2Length(&D3DXVECTOR2(pOthColli[nCnt].fWidth + SIZE_WIDTH, pOthColli[nCnt].fHeight + SIZE_HEIGHT))) continue;
 
 						//オブジェクトの最小・最大位置
 						pOthColli[nCnt].MinPos = D3DXVECTOR3(pOthColli[nCnt].pos.x - pOthColli[nCnt].fWidth, pOthColli[nCnt].pos.y - pOthColli[nCnt].fHeight, 0.0f);
@@ -1577,9 +1600,10 @@ void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 	SetSwapInterval();
 
 	//ジャンプ量を継承
-	float posy = pInfo->pos.y;
 	float diff = -fMaxHeight - pInfo->pos.y;
-	float movey = pInfo->move.y = (-fMaxHeight - pInfo->pos.y) / TRAMPOLINE_JUMP_COUNTER;
+	pInfo->move.y = pInfo->move.y = diff / TRAMPOLINE_JUMP_COUNTER;
+
+	pInfo->fTramTargetPosY = -fMaxHeight;
 	pInfo->nTramJumpCounter = TRAMPOLINE_JUMP_COUNTER;
 	pInfo->bTramJump = true;
 	pInfo->bGround = false;
