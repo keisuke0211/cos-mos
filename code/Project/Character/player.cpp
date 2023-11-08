@@ -55,6 +55,8 @@ CPlayer::CPlayer()
 		Player.bJump = false;				//ジャンプ
 		Player.bRide = false;				//ロケットに乗っているかどうか
 		Player.bGoal = false;				//ゴールしたかどうか
+		Player.bStep = false;				//移動しているかどうか
+		Player.bStepOld = false;			//前回移動しているかどうか
 		Player.fJumpPower = 0.0f;			//ジャンプ量
 		Player.fGravity = 0.0f;				//重力
 		Player.fMaxHeight = 0.0f;			//最高Ｙ座標
@@ -64,6 +66,8 @@ CPlayer::CPlayer()
 		Player.nModelIdx = NONEDATA;		//モデル番号
 		Player.side = WORLD_SIDE::FACE;		//どちらの世界に存在するか
 	}
+
+	CSound::CPlay* play = NULL;			//サウンドプレイヤー
 
 	m_aColli.pos = INITD3DXVECTOR3;
 	m_aColli.posOLd = INITD3DXVECTOR3;
@@ -83,6 +87,10 @@ CPlayer::~CPlayer()
 	if (pDogColli != NULL) {
 		delete[] pDogColli;
 		pDogColli = NULL;
+	}
+
+	if (play != NULL) {
+		play = NULL;
 	}
 }
 
@@ -126,6 +134,8 @@ HRESULT CPlayer::Init(void)
 	m_dogSEIdx[1] = RNLib::Sound().Load("data\\SOUND\\SE\\shrink.wav");	//縮む
 	m_dogSEIdx[2] = RNLib::Sound().Load("data\\SOUND\\SE\\extend.wav");	//伸びる
 	m_dogSEIdx[3] = RNLib::Sound().Load("data\\SOUND\\SE\\vibration.wav");	//震える
+
+	m_stepSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\step.wav");
 
 	//初期情報設定
 	Death(NULL);
@@ -305,6 +315,14 @@ void CPlayer::ActionControl(void)
 		//ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal) continue;
 
+		if (Player.move.x != 0.0f && Player.bGround == true) {//前回歩いていた
+			
+			Player.bStepOld = true;	
+		}
+		if (Player.move.x == 0.0f || Player.bGround == false) {//前回歩いていない
+			Player.bStepOld = false;
+		}
+
 		//ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
@@ -325,6 +343,27 @@ void CPlayer::ActionControl(void)
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
 			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
 			Player.move.x -= MOVE_SPEED;
+
+		if (Player.move.x != 0.0f && Player.bGround == true){
+
+			Player.bStep = true;
+		}
+		if (Player.move.x == 0.0f || Player.bGround == false) {
+
+			Player.bStep = false;
+		}
+
+		
+		//if (Player.bStep == true && Player.bStepOld == false) {//今歩き出した
+		//	if (play == NULL) {
+		//		play = RNLib::Sound().Play(m_stepSEIdx, CSound::CATEGORY::SE, true, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+		//	}
+		//}
+		//if (Player.bStep == false) {//今止まった
+		//	if (play != NULL) {
+		//		play->Delete();
+		//	}
+		//}
 
 		//スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
