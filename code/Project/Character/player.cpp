@@ -59,6 +59,7 @@ CPlayer::CPlayer()
 		Player.fGravity = 0.0f;					//重力
 		Player.fMaxHeight = 0.0f;				//最高Ｙ座標
 		Player.nTramJumpCounter = 0;			//トランポリンによって跳ね上がる最高到達地点
+		Player.fTramTargetPosY = 0.0f;			//トランポリン用の目標位置
 		Player.bTramJump = false;				//トランポリン用の特殊ジャンプ
 		Player.TramColliRot = COLLI_ROT::NONE;	//トランポリン用の判定
 		Player.bExtendDog = false;				//ヌイ用の接触フラグ
@@ -224,7 +225,8 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		int stage = Manager::StgEd()->GetType()->nStageIdx;
+		int planet = Manager::StgEd()->GetPlanetIdx();
+		int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
 		Manager::StgEd()->SwapStage(stage + 1);
 	}
 
@@ -410,7 +412,7 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 		Player.posOLd = Player.pos = Player.StartPos;
 		Player.move = INITD3DXVECTOR3;
 		Player.bGround = false;
-		Player.bJump = false;	//SEの関係でfalseにしました。問題あったら戻してねby IIda
+		Player.bJump = true;
 		Player.bRide = false;
 		Player.bGoal = false;
 		Player.bTramJump = false;
@@ -444,17 +446,29 @@ void CPlayer::Move(COLLI_VEC vec)
 
 			//重力処理
 		case COLLI_VEC::Y:
+
 			//トランポリンによる特殊ジャンプ中
 			if (Player.bTramJump)
 			{//カウンターを減らして、０になったら特殊ジャンプ終了
-				if(--Player.nTramJumpCounter <= 0)
-				Player.bTramJump = false;
+				
+				float diff = Player.fTramTargetPosY - Player.pos.y;
+
+				if (--Player.nTramJumpCounter <= 0)
+				{
+					Player.bTramJump = false;
+					Player.move.y = diff;
+				}
+				else
+				{
+					Player.move.y = diff / Player.nTramJumpCounter;
+				}
 			}
 			//通常時なら、重力処理でＹの移動量を計算
 			else Player.move.y += Player.fGravity;
 
 			//位置更新
 			Player.pos.y += Player.move.y;
+
 			break;
 		}
 	}
@@ -498,7 +512,6 @@ void CPlayer::WholeCollision(void)
 
 			for each(Info& Player in m_aInfo)
 			{
-
 				//ロケットに乗ってたら　or ゴールしていたらスキップ
 				if (Player.bRide || Player.bGoal) continue;
 
@@ -540,6 +553,13 @@ void CPlayer::WholeCollision(void)
 
 						pOthColli[nCnt].pos = pTrampoline->GetSpringPos(nCnt);
 						pOthColli[nCnt].posOLd = pOthColli[nCnt].pos;
+						pOthColli[nCnt].fWidth = pTrampoline->GetWidth() * 1.0f;
+						pOthColli[nCnt].fHeight = pTrampoline->GetHeight() * 1.0f;
+						pOthColli[nCnt].ColliRot = COLLI_ROT::NONE;
+
+						if (D3DXVec3Length(&(pOthColli[nCnt].pos - Player.pos)) >
+							D3DXVec2Length(&D3DXVECTOR2(pOthColli[nCnt].fWidth + SIZE_WIDTH, pOthColli[nCnt].fHeight + SIZE_HEIGHT))) continue;
+
 						pOthColli[nCnt].fWidth = pTrampoline->GetWidth() * 0.5f;
 						pOthColli[nCnt].fHeight = pTrampoline->GetHeight() * 0.5f;
 
@@ -548,13 +568,14 @@ void CPlayer::WholeCollision(void)
 						pOthColli[nCnt].MaxPos = D3DXVECTOR3(pOthColli[nCnt].pos.x + pOthColli[nCnt].fWidth, pOthColli[nCnt].pos.y + pOthColli[nCnt].fHeight, 0.0f);
 
 						//当たった方向を格納
-						pOthColli[nCnt].ColliRot = IsBoxCollider(Player.pos, Player.posOLd, m_aColli.fWidth, m_aColli.fHeight, pOthColli[nCnt].pos, pOthColli[nCnt].posOLd, pOthColli[nCnt].fWidth, pOthColli[nCnt].fHeight, vec);
+						COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOLd, m_aColli.fWidth, m_aColli.fHeight, pOthColli[nCnt].pos, pOthColli[nCnt].posOLd, pOthColli[nCnt].fWidth, pOthColli[nCnt].fHeight, vec);
 
-						if (pOthColli[nCnt].ColliRot != COLLI_ROT::NONE && !bOtherColl) {
+						if (ColliRot != COLLI_ROT::NONE && !bOtherColl) {
 							bOtherColl = true;
-							Player.TramColliRot = pOthColli[nCnt].ColliRot;
+							Player.TramColliRot = ColliRot;
+							pOthColli[nCnt].ColliRot = ColliRot;
 						}
-						else if (pOthColli[nCnt].ColliRot != COLLI_ROT::NONE && !bOtherColl){
+						else if (ColliRot == COLLI_ROT::NONE && !bOtherColl){
 							Player.TramColliRot = COLLI_ROT::NONE;
 						}
 					}
@@ -620,6 +641,9 @@ void CPlayer::WholeCollision(void)
 
 						pOthColli[nCnt].fWidth = pDog->GetWidth() * 0.5f;
 						pOthColli[nCnt].fHeight = pDog->GetHeight() * 0.5f;
+
+						if (D3DXVec3Length(&(pOthColli[nCnt].pos - Player.pos)) >
+							D3DXVec2Length(&D3DXVECTOR2(pOthColli[nCnt].fWidth + SIZE_WIDTH, pOthColli[nCnt].fHeight + SIZE_HEIGHT))) continue;
 
 						//オブジェクトの最小・最大位置
 						pOthColli[nCnt].MinPos = D3DXVECTOR3(pOthColli[nCnt].pos.x - pOthColli[nCnt].fWidth, pOthColli[nCnt].pos.y - pOthColli[nCnt].fHeight, 0.0f);
@@ -1298,11 +1322,6 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
-				if (pInfo->bJump == true)
-				{//着地した
-				 //SE再生
-					RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-				}
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[1].MaxPos.y;//最高Ｙ座標設定
@@ -1318,11 +1337,6 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
-				if (pInfo->bJump == true)
-				{//着地した
-				 //SE再生
-					RNLib::Sound().Play(m_jumpSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[1].MinPos.y;//最高Ｙ座標設定
@@ -1577,9 +1591,10 @@ void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 	SetSwapInterval();
 
 	//ジャンプ量を継承
-	float posy = pInfo->pos.y;
 	float diff = -fMaxHeight - pInfo->pos.y;
-	float movey = pInfo->move.y = (-fMaxHeight - pInfo->pos.y) / TRAMPOLINE_JUMP_COUNTER;
+	pInfo->move.y = pInfo->move.y = diff / TRAMPOLINE_JUMP_COUNTER;
+
+	pInfo->fTramTargetPosY = -fMaxHeight;
 	pInfo->nTramJumpCounter = TRAMPOLINE_JUMP_COUNTER;
 	pInfo->bTramJump = true;
 	pInfo->bGround = false;
