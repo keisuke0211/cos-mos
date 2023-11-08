@@ -40,6 +40,11 @@ CTrampoline::CTrampoline(void) {
 	m_modelIdx[3] = RNLib::Model().Load("data\\MODEL\\Spring_Eye.x");
 	m_fJamp = 8.0f;
 	m_nCnt = 1;
+
+	for (int nCnt = 0; nCnt < 2; nCnt++)
+	{
+		m_SpringPos[nCnt] = INITD3DXVECTOR3;
+	}
 }
 
 //========================================
@@ -54,7 +59,8 @@ CTrampoline::~CTrampoline(void) {
 // Author:RYUKI FUJIWARA
 //========================================
 void CTrampoline::Init(void) {
-
+	m_SpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
+	m_SpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
 }
 
 //========================================
@@ -87,8 +93,11 @@ void CTrampoline::Update(void) {
 	if (m_nCnt > 0) 
 	{
 		m_nCnt--;
-		if(m_nCnt == 0)
+		if (m_nCnt == 0) {
 			m_state = STATE::NONE;
+			m_SpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
+			m_SpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
+		}
 	}
 
 	if (m_state != STATE::NONE)
@@ -100,9 +109,11 @@ void CTrampoline::Update(void) {
 		if (m_state == STATE::UP_LAND)
 		{
 			//キノコ
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
+			RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
 				->SetOutLine(true);
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT - m_fJamp * fCountRate, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
+
+			m_SpringPos[1].y = m_pos.y - CORRECT_HEIGHT - m_fJamp * fCountRate;
+			RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
 				->SetOutLine(true);
 
 			//ばね
@@ -112,9 +123,11 @@ void CTrampoline::Update(void) {
 		else if (m_state == STATE::DOWN_LAND)
 		{
 			//キノコ
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT + m_fJamp * fCountRate, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
+			m_SpringPos[0].y = m_pos.y + CORRECT_HEIGHT + m_fJamp * fCountRate;
+			RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
 				->SetOutLine(true);
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f,D3DX_PI), m_modelIdx[1], false)
+
+			RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f,D3DX_PI), m_modelIdx[1], false)
 				->SetOutLine(true);
 
 			//ばね
@@ -124,9 +137,9 @@ void CTrampoline::Update(void) {
 	}
 	else if (m_state == STATE::NONE)
 	{//トランポリンが作動していない
-		RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
+		RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
 			->SetOutLine(true);
-		RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
+		RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
 			->SetOutLine(true);
 	}
 
@@ -162,50 +175,45 @@ void CTrampoline::Collision(void) {
 	//1pトランポリン当たり判定
 	//**************************************
 	if (p1->bGround == false
-		&& p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height)
-	{//土台の範囲内に着地で入った
+		&& p1->TramColliRot == CPlayer::COLLI_ROT::NONE)
+	{// 空中にいる時
 
-		if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - height
-			&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-		{//2pが乗っているか
+		//2pがばねに乗っているか
+		if (p2->TramColliRot == CPlayer::COLLI_ROT::UNDER && p2->side == CPlayer::WORLD_SIDE::BEHIND)
+		{
 
 			pPlayer->SetTrampolineJump(p2, p1->fMaxHeight);
+
+			if (m_state == STATE::NONE
+				&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
+			{
+				m_state = STATE::DOWN_LAND;
+				m_nCnt = MAX_COUNT;
+			}
 		}
-		else if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + height
-			&& p2->side == CPlayer::WORLD_SIDE::FACE)
+		else if (p2->TramColliRot == CPlayer::COLLI_ROT::OVER && p2->side == CPlayer::WORLD_SIDE::FACE)
 		{
 			pPlayer->SetTrampolineJump(p2, p1->fMaxHeight);
-		}
 
-		if (m_state == STATE::NONE
-			&& p1->side == CPlayer::WORLD_SIDE::FACE)
-		{//トランポリンが作動していない
+			if (m_state == STATE::NONE
+				&& p1->side == CPlayer::WORLD_SIDE::FACE)
+			{//トランポリンが作動していない
 
-			m_state = STATE::UP_LAND;
-			m_nCnt = MAX_COUNT;
-		}
-		else if (m_state == STATE::NONE
-			&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-		{
-			m_state = STATE::DOWN_LAND;
-			m_nCnt = MAX_COUNT;
+				m_state = STATE::UP_LAND;
+				m_nCnt = MAX_COUNT;
+			}
 		}
 	}
 	//**************************************
 	//2pトランポリン当たり判定
 	//**************************************
 	else if (p2->bGround == false
-		&& p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height)
-	{//土台の範囲内に着地で入った
+		&& p2->TramColliRot == CPlayer::COLLI_ROT::NONE)
+	{// 空中にいる時
 
-		if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + height
-			&& p1->side == CPlayer::WORLD_SIDE::FACE)
-		{//1pが乗っているか
+		// 1pがばねに乗っていたら
+		if (p2->TramColliRot == CPlayer::COLLI_ROT::UNDER && p2->side == CPlayer::WORLD_SIDE::BEHIND)
+		{
 
 			pPlayer->SetTrampolineJump(p1, p2->fMaxHeight);
 		}

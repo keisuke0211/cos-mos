@@ -38,6 +38,7 @@ public:
 	void	SetRefdef(const float refdef) { m_frefdef = refdef; }
 	void	SetLaserSize(const D3DXVECTOR2 size) { m_LaserSize = size; }
 
+	D3DXVECTOR3 GetLaserPos(void) { return m_LaserPos; }
 	D3DXVECTOR2	GetLaserSize(void) { return m_LaserSize; }
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 
@@ -53,6 +54,7 @@ private:
 	Color m_col;				// 色
 	float m_frefdef;			// 反射する距離
 	float m_fGroundDis;			// 地面までの距離
+	D3DXVECTOR3 m_LaserPos;		// レーザーの位置
 	D3DXVECTOR2 m_LaserSize;	// レーザーの大きさ
 	int ModelIdx;
 };
