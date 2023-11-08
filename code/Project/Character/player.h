@@ -225,6 +225,7 @@ private:
 	static int s_nSwapParticle; //スワップ時のパーティクルテクスチャ番号
 	short m_jumpSEIdx;			//ジャンプ時のSE番号
 	short m_landingSEIdx;		//着地時のSE番号
+	short m_dogSEIdx[4];		//壁ギミック用SE番号
 };
 
 #endif

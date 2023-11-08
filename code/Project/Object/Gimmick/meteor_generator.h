@@ -29,10 +29,10 @@ public:
 	void SetMove(D3DXVECTOR3 move) { m_move = move; };	// ˆÚ“®—Ê‚Ìİ’è
 	void SetInterval(int nSummonInteval) { m_nSummoninterval = nSummonInteval; }	// ŠÔŠu‚Ìİ’è
 private:
-	static CMeteor *pMeteor;
-	D3DXVECTOR3 m_move;
-	int m_nSummoninterval;
-	int m_nCntSummon;
+	D3DXVECTOR3 m_move;		// ˆÚ“®—Ê
+	int m_nSummoninterval;	// ¶‚Ü‚ê‚éŠÔŠu
+	int m_nCntSummon;		// ¶‚Ü‚ê‚éƒJƒEƒ“ƒg
+	bool m_bLive;			// ¶‚«‚Ä‚é‚©‚Ç‚¤‚©
 };
 
 #endif

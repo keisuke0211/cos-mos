@@ -1,10 +1,10 @@
 //========================================
 // 
-// ブロック処理
-// Author:KEISUKE OTONO
+// マグマブロック処理
+// Author:RYUKI FUJIWARA
 // 
 //========================================
-// *** block.h ***
+// *** magma-block.h ***
 //========================================
 #pragma once
 
@@ -14,7 +14,7 @@
 //****************************************
 // クラス
 //****************************************
-class CBlock : public CStageObject {
+class CMagmaBlock : public CStageObject {
 public:
 
 	// 共通情報
@@ -24,21 +24,14 @@ public:
 		int nType;				// 種類
 		short nModelIdx;		// モデル番号
 		int nID;				// ID
-	};
-
-	// 穴埋めブロック種類
-	enum class BLOCK_TYPE
-	{
-		BLOCK_NORMAL = 0,
-		BLOCK_NUI,
-		BLOCK_MAX
+		int nCnt;				// カウント
 	};
 
 	// *** 関数 ***
-	CBlock();
-	~CBlock();
+	CMagmaBlock();
+	~CMagmaBlock();
 
-	/* 初期化	*/HRESULT Init(BLOCK_TYPE type);
+	/* 初期化	*/HRESULT Init(void);
 	/* 終了		*/void Uninit(void);
 	/* 更新		*/void Update(void);
 	/* 描画		*/void Draw(void);

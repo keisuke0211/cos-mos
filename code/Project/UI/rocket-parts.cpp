@@ -5,8 +5,13 @@
 // 
 //========================================
 #include "rocket-parts.h"
+#include "../main.h"
+#include "../Character/player.h"
 
 #define NUM (3)	//数
+
+//静的メンバ変数
+bool CRocketPartsUI::m_bRocketStg = false;
 //========================================
 // コンストラクタ
 //========================================
@@ -54,26 +59,31 @@ void CRocketPartsUI::Uninit(void) {
 //========================================
 void CRocketPartsUI::Update(void) {
 
-	if (RNLib::Input().GetKeyTrigger(DIK_J))
+	if (m_bRocketStg == true)
 	{
-		m_state[m_num++] = STATE::OBTAIN;
-	}
+		CPlayer *pPlayer = CMode_Game::GetPlayer();
 
-	for (int nUI = 0; nUI < NUM; nUI++)
-	{
-		if (m_state[nUI] == STATE::NONE)
+		if (pPlayer->GetNumParts() > m_num)
 		{
-			m_colorA = 100;
-		}
-		else if (m_state[nUI] == STATE::OBTAIN)
-		{
-			m_colorA = INITCOLOR.a;
+			m_state[m_num++] = STATE::OBTAIN;
 		}
 
-		RNLib::Polygon2D().Put(D3DXVECTOR3(m_pos.x + m_scale.x * (nUI + 1), m_pos.y, m_pos.z), 0.0f)
-			->SetSize(m_scale.x, m_scale.y)
-			->SetTex(m_TexIdx)
-			->SetCol(Color{ INITCOLOR.r,INITCOLOR.g,INITCOLOR.b,(int)m_colorA});
+		for (int nUI = 0; nUI < NUM; nUI++)
+		{
+			if (m_state[nUI] == STATE::NONE)
+			{
+				m_colorA = 100;
+			}
+			else if (m_state[nUI] == STATE::OBTAIN)
+			{
+				m_colorA = INITCOLOR.a;
+			}
+
+			RNLib::Polygon2D().Put(D3DXVECTOR3(m_pos.x + m_scale.x * (nUI + 1), m_pos.y, m_pos.z), 0.0f)
+				->SetSize(m_scale.x, m_scale.y)
+				->SetTex(m_TexIdx)
+				->SetCol(Color{ INITCOLOR.r,INITCOLOR.g,INITCOLOR.b,(int)m_colorA });
+		}
 	}
 }
 

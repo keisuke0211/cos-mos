@@ -1,45 +1,42 @@
 //========================================
 // 
-// ブロック処理
-// Author:KEISUKE OTONO
+// マグマブロック処理
+// Author:RYUKI FUJIWARA
 // 
 //========================================
-// *** block.cpp ***
+// *** magma-block.cpp ***
 //========================================
-#include "block.h"
+#include "magma-block.h"
 #include "../../main.h"
 
+#define COUNT (30)
 //========================================
 // 静的変数
 //========================================
-int CBlock::m_nNumAll = 0;
-
-//パス読み込み
-static const char* s_Path[8] = {
-	"data\\MODEL\\Block_Chocolate.x",
-	"data\\MODEL\\WallDog\\WallDog_House.x",
-};
+int CMagmaBlock::m_nNumAll = 0;
 
 //========================================
 // コンストラクタ
 //========================================
-CBlock::CBlock(void)
+CMagmaBlock::CMagmaBlock(void)
 {
 	Manager::BlockMgr()->AddList(this);
 
-	m_type   = TYPE::BLOCK;
-	m_width  = SIZE_OF_1_SQUARE;
+	m_type = TYPE::BLOCK;
+	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE;
 
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.nType = 0;
+	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\maguma.x");
 	m_Info.nID = m_nNumAll;
+	m_Info.nCnt = 0;
 }
 
 //========================================
 // デストラクタ
 //========================================
-CBlock::~CBlock()
+CMagmaBlock::~CMagmaBlock()
 {
 
 }
@@ -47,13 +44,10 @@ CBlock::~CBlock()
 //========================================
 // 初期化
 //========================================
-HRESULT CBlock::Init(BLOCK_TYPE type)
+HRESULT CMagmaBlock::Init(void)
 {
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.nType = 0;
-
-	//モデル番号読み込み
-	m_Info.nModelIdx = RNLib::Model().Load(s_Path[(int)type]);
 
 	return S_OK;
 }
@@ -61,16 +55,25 @@ HRESULT CBlock::Init(BLOCK_TYPE type)
 //========================================
 // 終了
 //========================================
-void CBlock::Uninit(void)
+void CMagmaBlock::Uninit(void)
 {
-	
+
 }
 
 //========================================
 // 更新
 //========================================
-void CBlock::Update(void)
+void CMagmaBlock::Update(void)
 {
+	m_Info.nCnt++;
+
+	if ((m_Info.nCnt % COUNT) == 0)
+	{
+		int Tex = RNLib::Texture().Load("data\\TEXTURE\\maguma2.png");
+
+		Manager::EffectMgr()->EffectCreate(Tex, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z - SIZE_OF_1_SQUARE), D3DXVECTOR3(16.0f, 16.0f, 0.0f), INITCOLOR,1200);
+	}
+
 	// 過去の位置
 	RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_Info.nModelIdx, false)
 		->SetOutLine(true)
@@ -80,7 +83,7 @@ void CBlock::Update(void)
 //========================================
 // 描画
 //========================================
-void CBlock::Draw(void)
+void CMagmaBlock::Draw(void)
 {
 
 }

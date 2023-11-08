@@ -33,9 +33,9 @@ public:
 
 	void	SetModelIdx(int idx) { ModelIdx = idx; }
 	void	SetPos(D3DXVECTOR3 pos) { m_pos = pos; }
+	void	SetPosInfo(const D3DXVECTOR3 posV, const D3DXVECTOR3 posL) { m_posV = posV, m_posL = posL; }	// 位置の各種設定
 	void	SetCol(Color col) { m_col = col; }
 	void	SetMove(const D3DXVECTOR3 move) { m_move = move; }
-	void	SetRefdef(const float refdef) { m_frefdef = refdef; }
 	void	SetLaserSize(const D3DXVECTOR2 size) { m_LaserSize = size; }
 
 	D3DXVECTOR3 GetLaserPos(void) { return m_LaserPos; }
@@ -48,11 +48,10 @@ protected:
 private:
 	//========== [[[ 変数宣言 ]]]
 	D3DXMATRIX mtx;				// マトリックス
-	D3DXVECTOR3 m_posOld;		// 前の位置
-	D3DXVECTOR3 m_refPos;		// 位置(過去)
+	D3DXVECTOR3 m_posV;			// 始点位置
+	D3DXVECTOR3 m_posL;			// 終点位置
 	D3DXVECTOR3 m_move;			// 移動量
 	Color m_col;				// 色
-	float m_frefdef;			// 反射する距離
 	float m_fGroundDis;			// 地面までの距離
 	D3DXVECTOR3 m_LaserPos;		// レーザーの位置
 	D3DXVECTOR2 m_LaserSize;	// レーザーの大きさ

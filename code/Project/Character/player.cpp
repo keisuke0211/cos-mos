@@ -117,6 +117,11 @@ HRESULT CPlayer::Init(void)
 	m_jumpSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp_01.wav");
 	m_landingSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp.wav");
 
+	m_dogSEIdx[0] = RNLib::Sound().Load("data\\SOUND\\SE\\heron2.wav");	//‰Ÿ‚·
+	m_dogSEIdx[1] = RNLib::Sound().Load("data\\SOUND\\SE\\shrink.wav");	//k‚Þ
+	m_dogSEIdx[2] = RNLib::Sound().Load("data\\SOUND\\SE\\extend.wav");	//L‚Ñ‚é
+	m_dogSEIdx[3] = RNLib::Sound().Load("data\\SOUND\\SE\\vibration.wav");	//k‚¦‚é
+
 	//‰Šúî•ñÝ’è
 	Death(NULL);
 
@@ -1139,6 +1144,8 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 {
 	//“–‚½‚Á‚½•ûŒü‚²‚Æ‚Éˆ—‚ðØ‚è‘Ö‚¦
 
+	CExtenddog::STATE State = pExtenddog->GetState();
+
 	// ƒnƒEƒX
 	{
 		switch (pColli->ColliRot)
@@ -1363,7 +1370,11 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 				pInfo->fMaxHeight = pOthColli[2].MaxPos.y;//Å‚‚xÀ•WÝ’è
 			}
 
-			pExtenddog->SetState(CExtenddog::STATE::UP_LAND);
+			if (State == CExtenddog::STATE::NONE)
+				//SEÄ¶
+				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+
+			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
 			pInfo->bExtendDog = true;
 			break;
 
@@ -1380,6 +1391,10 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 				pInfo->bJump = false;	//ƒWƒƒƒ“ƒv‰Â”\
 				pInfo->fMaxHeight = pOthColli[2].MinPos.y;//Å‚‚xÀ•WÝ’è
 			}
+
+			if (State == CExtenddog::STATE::NONE)
+				//SEÄ¶
+				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 
 			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
 			pInfo->bExtendDog = true;

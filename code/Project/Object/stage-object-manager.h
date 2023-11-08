@@ -10,6 +10,7 @@
 #include "../../_RNLib/RNlib.h"
 #include "Block/block.h"
 #include "Block\fill-block.h"
+#include "Block/magma-block.h"
 #include "Gimmick\Spike.h"
 #include "Block/move-block.h"
 #include "Gimmick/trampoline.h"
@@ -35,20 +36,21 @@ public:
 	CStageObjectMgr();
 	virtual~CStageObjectMgr();
 	virtual void Update(void);	void Load(void);
-	CBlock      *BlockCreate     (D3DXVECTOR3 pos,Color color);
+	CBlock      *BlockCreate	 (D3DXVECTOR3 pos,CBlock::BLOCK_TYPE type,Color color = INITCOLOR);
+	CMagmaBlock *MagmaBlockCreate(D3DXVECTOR3 pos,Color color);
 	CFillBlock  *FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::FILL_TYPE type, Color color);
 	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos);
 	CTrampoline *TrampolineCreate(D3DXVECTOR3 pos);
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
-	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 pos, D3DXVECTOR3 move,float fRefdef);
+	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move);
 	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
 	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos);
 	CRocket     *RocketCreate    (D3DXVECTOR3 pos);
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 	CShiningWave*ShiningWaveCreate(void);
-	CRoadTripLaser* RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRefdef);
-	CExtenddog	 *ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos, bool bShrink);
+	CRoadTripLaser*RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,D3DXVECTOR3 move);
+	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bShrink,bool bReturn);
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 private:
 
