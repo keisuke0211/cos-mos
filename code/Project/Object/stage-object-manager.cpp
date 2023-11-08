@@ -185,8 +185,8 @@ CTrampoline *CStageObjectMgr::TrampolineCreate(D3DXVECTOR3 pos)
 	pObj = new CTrampoline;
 
 	// ‰Šú‰»ˆ—
-	pObj->Init();
 	pObj->SetPos(pos);
+	pObj->Init();
 
 	return pObj;
 }

@@ -30,6 +30,7 @@ CRoadTripLaser::CRoadTripLaser(void) {
 	m_posV = INITD3DXVECTOR3;
 	m_fGroundDis = 0.0f;
 	m_LaserSize = D3DXVECTOR2(5.0f, 50.0f);
+	m_LaserPos = INITD3DXVECTOR3;
 }
 
 //========================================
@@ -46,6 +47,7 @@ CRoadTripLaser::~CRoadTripLaser(void) {
 void CRoadTripLaser::Init(void) {
 	ModelIdx = RNLib::Model().Load("data\\MODEL\\Laser_0.x");
 
+	m_LaserPos = m_pos;
 	m_pos = m_posV;	// 始点に位置を設定
 	// 地面までの距離を求める
 	m_fGroundDis = m_pos.y - 0.0f;
@@ -93,6 +95,12 @@ void CRoadTripLaser::Update(void) {
 		}
 	}
 
+	// -1以下の数値を反転させる
+	if (m_LaserSize.y <= -1)
+	{
+		m_LaserSize.y *= -1;
+	}
+
 	// xの移動量の反転
 	if (m_posV.x >= m_pos.x || m_posL.x <= m_pos.x)
 	{
@@ -112,13 +120,14 @@ void CRoadTripLaser::Update(void) {
 
 	// ビーム
 	if (m_rot.z == 0.0f)
-		RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y - m_LaserSize.y * 0.5f), m_pos.z), m_rot, false)
-		->SetSize(m_LaserSize.x, m_LaserSize.y)
-		->SetCol(Color{ 255,0,0,255 });
+		m_LaserPos.y = (Block.y - m_LaserSize.y * 0.5f);
 	else if (m_rot.z == D3DX_PI)
-		RNLib::Polygon3D().Put(D3DXVECTOR3(m_pos.x, (Block.y + m_LaserSize.y * 0.5f), m_pos.z), m_rot, false)
+		m_LaserPos.y = (Block.y + m_LaserSize.y * 0.5f);
+
+	RNLib::Polygon3D().Put(m_LaserPos, INITD3DXVECTOR3, false)
 		->SetSize(m_LaserSize.x, m_LaserSize.y)
-		->SetCol(Color{ 255,0,0,255 });
+		->SetCol(Color{ 255,0,0,255 })
+		->SetPriority(1);
 }
 
 //========================================

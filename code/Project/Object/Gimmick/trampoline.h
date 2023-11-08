@@ -35,6 +35,8 @@ public:
 
 	STATE  GetState(void) { return m_state; }					//種類取得
 
+	D3DXVECTOR3 GetSpringPos(int dex) { return m_SpringPos[dex]; }	// ばねの位置取得
+
 protected:
 	
 private:
@@ -43,8 +45,9 @@ private:
 	void   Collision(void);	//当たり判定処理
 
 	//========== [[[ 変数宣言 ]]]
-	STATE m_state;			//種類
-	int m_modelIdx[4];		//モデル番号
-	float		m_fJamp;	//差分
-	int			m_nCnt;		//カウント
+	STATE m_state;				//種類
+	D3DXVECTOR3 m_SpringPos[2];	//ばねの位置
+	int m_modelIdx[4];			//モデル番号
+	float		m_fJamp;		//差分
+	int			m_nCnt;			//カウント
 };
