@@ -42,7 +42,7 @@ CExtenddog::CExtenddog(void) {
 	m_modelIdx[5] = RNLib::Model().Load("data\\MODEL\\WallDog\\WallDog_Body.x");
 	m_nCntShrink = 0;
 	m_fcurrenty = 0.0f;
-
+	m_nHeight = 0;
 	m_HeadPos = INITD3DXVECTOR3;
 	m_HeadPosOid = INITD3DXVECTOR3;
 	m_BodyPos = INITD3DXVECTOR3;
@@ -61,6 +61,7 @@ CExtenddog::~CExtenddog(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Init(void) {
+	m_HeadPos.y = m_nHeight * SIZE_OF_1_SQUARE;
 	m_BodyPos = m_HeadPos;
 }
 
@@ -131,7 +132,7 @@ void CExtenddog::Update(void) {
 	float fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
 
 	//yÀ•W‚ÌXV
-	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
+	float fDowncurrenty = m_pos.y + (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 	// K
 	m_HipPos.y = m_pos.y - HIP_POS;
@@ -144,8 +145,8 @@ void CExtenddog::Update(void) {
 		->SetOutLine(true);
 
 	// ‘Ì
-	m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f;
-	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 10, 1.0f), m_modelIdx[5], false)
+	m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f + SIZE_OF_1_SQUARE * 0.4f;
+	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 9, 1.0f), m_modelIdx[5], false)
 		->SetOutLine(true);
 }
 //========================================

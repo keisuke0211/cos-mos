@@ -212,7 +212,7 @@ CMeteor *CStageObjectMgr::MeteorCreate(D3DXVECTOR3 pos,D3DXVECTOR3 move)
 //========================================
 // ˆÚ“®°
 //========================================
-CMoveBlock *CStageObjectMgr::MoveBlockCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRefdef)
+CMoveBlock *CStageObjectMgr::MoveBlockCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move)
 {
 	CMoveBlock *pObj = NULL;
 
@@ -221,9 +221,9 @@ CMoveBlock *CStageObjectMgr::MoveBlockCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, 
 
 	// ‰Šú‰»ˆ—
 	pObj->Init();
-	pObj->SetPos(pos);
+	pObj->SetPos(posV);
 	pObj->SetMove(move);
-	pObj->SetRefdef(fRefdef);
+	pObj->SetPosInfo(posV,posL);
 
 	return pObj;
 }
@@ -341,7 +341,7 @@ CShiningWave *CStageObjectMgr::ShiningWaveCreate(void)
 //========================================
 // ‰•œƒŒ[ƒU[
 //========================================
-CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fRefdef)
+CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move)
 {
 	CRoadTripLaser *pObj = NULL;
 
@@ -349,14 +349,13 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 	pObj = new CRoadTripLaser;
 
 	// ‰Šú‰»ˆ—
-	pObj->SetPos(pos);
 
-	if (pos.y <= 0) {
+	if (posV.y <= 0) {
 		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
 	}
 
 	pObj->SetMove(move);
-	pObj->SetRefdef(fRefdef);
+	pObj->SetPosInfo(posV,posL);
 	pObj->Init();
 	
 
@@ -365,7 +364,7 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 //========================================
 //  “®‚­Œ¢
 //========================================
-CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos, bool bShrink)
+CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int fHeadheight, bool bShrink)
 {
 	CExtenddog *pObj = NULL;
 
@@ -377,6 +376,7 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHead
 	pObj->SetShrink(bShrink);
 	pObj->SetHead(fHeadpos);
 	pObj->SetHip(fHippos);
+	pObj->SetHeadHeight(fHeadheight);
 	pObj->Init();
 
 
