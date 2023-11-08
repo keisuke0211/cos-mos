@@ -602,9 +602,6 @@ void CPlayer::WholeCollision(void)
 					pOthColli->fWidth = pLaser->GetLaserSize().x * 0.5f;
 					pOthColli->fHeight = pLaser->GetLaserSize().y * 0.5f;
 
-					if (D3DXVec3Length(&(pOthColli->pos - Player.pos)) >
-						D3DXVec2Length(&D3DXVECTOR2(pOthColli->fWidth + SIZE_WIDTH, pOthColli->fHeight + SIZE_HEIGHT))) continue;
-
 					//オブジェクトの最小・最大位置
 					pOthColli->MinPos = D3DXVECTOR3(pOthColli->pos.x - pOthColli->fWidth, pOthColli->pos.y - pOthColli->fHeight, 0.0f);
 					pOthColli->MaxPos = D3DXVECTOR3(pOthColli->pos.x + pOthColli->fWidth, pOthColli->pos.y + pOthColli->fHeight, 0.0f);
@@ -1592,8 +1589,6 @@ void CPlayer::SetInfo(Info p1, Info p2)
 void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 {
 	SetSwapInterval();
-
-	fMaxHeight += 20.0f;
 
 	//ジャンプ量を継承
 	float diff = -fMaxHeight - pInfo->pos.y;

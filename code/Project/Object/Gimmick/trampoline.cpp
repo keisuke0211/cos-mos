@@ -182,28 +182,31 @@ void CTrampoline::Collision(void) {
 	{// ばねの範囲内に着地で入った時
 
 		//2pがばねに乗っているか
-		if (p2->TramColliRot == CPlayer::COLLI_ROT::UNDER && p2->side == CPlayer::WORLD_SIDE::BEHIND && p1->nTramJumpCounter == 0)
+		if (p2->TramColliRot == CPlayer::COLLI_ROT::UNDER && p2->side == CPlayer::WORLD_SIDE::BEHIND && p1->nTramJumpCounter == 0
+			&& p2->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[1].x - width && p2->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[1].x + width
+			&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[1].y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[1].y - m_height)
 		{
 			pPlayer->SetTrampolineJump(p2, p1->fMaxHeight);
-
-			if (m_state == STATE::NONE
-				&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-			{
-				m_state = STATE::DOWN_LAND;
-				m_nCnt = MAX_COUNT;
-			}
 		}
-		else if (p2->TramColliRot == CPlayer::COLLI_ROT::OVER && p2->side == CPlayer::WORLD_SIDE::FACE && p1->nTramJumpCounter == 0)
+		else if (p2->TramColliRot == CPlayer::COLLI_ROT::OVER && p2->side == CPlayer::WORLD_SIDE::FACE && p1->nTramJumpCounter == 0
+			&& p2->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[0].x - width && p2->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[0].x + width
+			&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[0].y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[0].y - m_height)
 		{
 			pPlayer->SetTrampolineJump(p2, p1->fMaxHeight);
+		}
 
-			if (m_state == STATE::NONE
-				&& p1->side == CPlayer::WORLD_SIDE::FACE)
-			{//トランポリンが作動していない
+		if (m_state == STATE::NONE
+			&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
+		{
+			m_state = STATE::DOWN_LAND;
+			m_nCnt = MAX_COUNT;
+		}
+		else if (m_state == STATE::NONE
+			&& p1->side == CPlayer::WORLD_SIDE::FACE)
+		{//トランポリンが作動していない
 
-				m_state = STATE::UP_LAND;
-				m_nCnt = MAX_COUNT;
-			}
+			m_state = STATE::UP_LAND;
+			m_nCnt = MAX_COUNT;
 		}
 	}
 	//**************************************
@@ -217,28 +220,31 @@ void CTrampoline::Collision(void) {
 	{// ばねの範囲内に着地で入った時
 
 		// 1pがばねに乗っていたら
-		if (p1->TramColliRot == CPlayer::COLLI_ROT::UNDER && p1->side == CPlayer::WORLD_SIDE::BEHIND && p2->nTramJumpCounter == 0)
+		if (p1->TramColliRot == CPlayer::COLLI_ROT::UNDER && p1->side == CPlayer::WORLD_SIDE::BEHIND && p2->nTramJumpCounter == 0
+			 && p1->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[1].x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[1].x + width
+			&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[1].y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[1].y - m_height)
 		{
 			pPlayer->SetTrampolineJump(p1, p2->fMaxHeight);
-
-			if (m_state == STATE::NONE
-				&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-			{
-				m_state = STATE::DOWN_LAND;
-				m_nCnt = MAX_COUNT;
-			}
 		}
-		else if (p1->TramColliRot == CPlayer::COLLI_ROT::OVER && p1->side == CPlayer::WORLD_SIDE::FACE && p2->nTramJumpCounter == 0)
+		else if (p1->TramColliRot == CPlayer::COLLI_ROT::OVER && p1->side == CPlayer::WORLD_SIDE::FACE && p2->nTramJumpCounter == 0
+			&& p1->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[0].x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[0].x + width
+			&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[0].y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[0].y - m_height)
 		{
 			pPlayer->SetTrampolineJump(p1, p2->fMaxHeight);
+		}
 
-			if (m_state == STATE::NONE
-				&& p2->side == CPlayer::WORLD_SIDE::FACE)
-			{//トランポリンが作動していない
+		if (m_state == STATE::NONE
+			&& p2->side == CPlayer::WORLD_SIDE::FACE)
+		{//トランポリンが作動していない
 
-				m_state = STATE::UP_LAND;
-				m_nCnt = MAX_COUNT;
-			}
+			m_state = STATE::UP_LAND;
+			m_nCnt = MAX_COUNT;
+		}
+		else if (m_state == STATE::NONE
+			&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
+		{
+			m_state = STATE::DOWN_LAND;
+			m_nCnt = MAX_COUNT;
 		}
 	}
 
