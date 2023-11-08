@@ -25,7 +25,7 @@ CMoveBlock::CMoveBlock(void)
 
 	// ëÂÇ´Ç≥ÇÃê›íË
 	m_width = SIZE_OF_1_SQUARE * 2.0f;
-	m_height = SIZE_OF_1_SQUARE * 0.5f;
+	m_height = SIZE_OF_1_SQUARE * 0.35f;
 
 	m_Info.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_Info.posOld = INITD3DXVECTOR3;

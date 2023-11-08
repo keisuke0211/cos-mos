@@ -144,7 +144,7 @@ CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos)
 	pObj->Init();
 
 	if (pos.y <= 0) {
-		pObj->SetRot(D3DXVECTOR3(0.0f,0.0f, 3.24f));
+		pObj->SetRot(D3DXVECTOR3(0.0f,0.0f, D3DX_PI));
 		pos.y += CStageObject::SIZE_OF_1_SQUARE * 0.25f;
 	}
 	else {
@@ -241,9 +241,8 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 	pObj->Init();
 	pObj->SetPos(pos);
 
-	if (pos.y <= 0)
-	{
-		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, 3.24f));
+	if (pos.y <= 0) {
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
 	}
 
 	return pObj;
@@ -333,6 +332,11 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 
 	// 初期化処理
 	pObj->SetPos(pos);
+
+	if (pos.y <= 0) {
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
+	}
+
 	pObj->SetMove(move);
 	pObj->SetRefdef(fRefdef);
 	pObj->Init();
@@ -343,7 +347,7 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 pos, D3DXVECTOR
 //========================================
 //  動く犬
 //========================================
-CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHippos, D3DXVECTOR3 fHeadpos, bool bShrink)
+CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos, bool bShrink)
 {
 	CExtenddog *pObj = NULL;
 
@@ -357,6 +361,24 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHipp
 	pObj->SetHip(fHippos);
 	pObj->Init();
 
+
+	return pObj;
+}
+//========================================
+//  隕石ジェネレーター
+//========================================
+CMeteorGenerator *CStageObjectMgr::MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval)
+{
+	CMeteorGenerator *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CMeteorGenerator;
+
+	// 初期化処理
+	pObj->SetPos(pos);
+	pObj->SetMove(move);
+	pObj->SetInterval(nSummonInterval);
+	pObj->Init();
 
 	return pObj;
 }

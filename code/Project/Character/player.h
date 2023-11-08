@@ -12,6 +12,7 @@ class CStageObject;
 class CMoveBlock;
 class CParts;
 class CRocket;
+class CRoadTripLaser;
 class CExtenddog;
 
 //プレイヤークラス
@@ -54,6 +55,17 @@ public:
 		MAX
 	};
 
+	//当たり判定情報
+	struct Colli
+	{
+		D3DXVECTOR3 pos;        //位置
+		D3DXVECTOR3 posOLd;     //前回位置
+		D3DXVECTOR3 MinPos;		// 最小位置
+		D3DXVECTOR3 MaxPos;		// 最大位置
+		float		fWidth;		// 幅
+		float		fHeight;	// 高さ
+	};
+
 	//プレイヤー情報
 	struct Info
 	{
@@ -67,11 +79,13 @@ public:
 		bool		bGround;      //地面に接しているか
 		bool		bJump;        //ジャンプ
 		bool		bRide;        //ロケットに乗っているかどうか
+		bool		bGoal;		  //ゴールしたかどうか
 		float		fJumpPower;   //ジャンプ量
 		float		fGravity;     //重力
 		float		fMaxHeight;   //最高Ｙ座標
 		int			nTramJumpCounter;//トランポリンによって跳ね上がる時間
 		bool		bTramJump;    //トランポリン用の特殊ジャンプ
+		bool		bExtendDog;	  //ヌイ用の接触フラグ
 		int			nModelIdx;    //モデル番号
 		WORLD_SIDE  side;         //どちらの世界に存在するか
 		int             Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; //キーボードのキー配置
@@ -171,19 +185,20 @@ private:
 	//========================
 	COLLI_ROT IsBoxCollider(D3DXVECTOR3 pos, D3DXVECTOR3 posOld, float fWidth, float fHeight, D3DXVECTOR3 TargetPos, D3DXVECTOR3 TargetPosOld, float TargetWidth, float TargetHeight, COLLI_VEC value);
 
-	void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY);	//上からの当たり判定による位置・移動量修正
-	void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY);//下からの当たり判定による位置・移動量修正
-	void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX);	//左からの当たり判定による位置・移動量修正
-	void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX);//右からの当たり判定による位置・移動量修正
+	void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY,float fHeight);	//上からの当たり判定による位置・移動量修正
+	void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight);	//下からの当たり判定による位置・移動量修正
+	void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth);	//左からの当たり判定による位置・移動量修正
+	void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth);	//右からの当たり判定による位置・移動量修正
 
-	void CollisionBlock(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
-	void CollisionFillBlock(COLLI_ROT ColliRot);
-	void CollisionTrampoline(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
-	void CollisionSpike(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
-	void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock,D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
-	void CollisionMeteor(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot);
-	void CollisionLaser(Info *pInfo, D3DXVECTOR3 MinPos, D3DXVECTOR3 MaxPos, COLLI_ROT ColliRot, COLLI_ROT LaserColli);
-	void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, D3DXVECTOR3 *MinPos, D3DXVECTOR3 *MaxPos, COLLI_ROT ColliRot, COLLI_ROT HeadColli, COLLI_ROT BodyColli, COLLI_ROT HipColli);
+	void CollisionBlock(Info *pInfo, Colli *pColli, COLLI_ROT ColliRot);
+	void CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot);
+	void CollisionTrampoline(Info *pInfo, Colli *pColli, COLLI_ROT ColliRot);
+	void CollisionSpike(Info *pInfo, Colli *pColli, COLLI_ROT ColliRot);
+	void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, Colli *pColli, COLLI_ROT ColliRot);
+	void CollisionMeteor(Info *pInfo, Colli *pColli, COLLI_ROT ColliRot);
+	void CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, Colli *pColli, COLLI_ROT ColliRot, COLLI_ROT LaserColli);
+	void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, Colli *pDogColli, COLLI_ROT ColliRot, COLLI_ROT HeadColli, COLLI_ROT BodyColli, COLLI_ROT HipColli);
+	void CollisionGoalGate(Info *pInfo, Colli *pColli, COLLI_ROT ColliRot);
 	void CollisionParts(Info *pInfo, CParts *pParts);
 	void CollisionRocket(Info *pInfo, CRocket *pRocket);
 
@@ -194,6 +209,8 @@ private:
 	void UpdateInfo(void);
 
 	Info m_aInfo[NUM_PLAYER];	//各プレイヤーの情報
+	Colli m_aColli;				//当たり判定の情報
+	Colli *pDogColli;			//ヌイの当たり判定情報
 	static int s_nSwapMarkTex;  //スワップ先のマークテクスチャ番号
 	static int s_nSwapParticle; //スワップ時のパーティクルテクスチャ番号
 	short m_jumpSEIdx;			//ジャンプ時のSE番号

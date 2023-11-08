@@ -44,6 +44,7 @@ CExtenddog::CExtenddog(void) {
 	m_fcurrenty = 0.0f;
 
 	m_HeadPos = INITD3DXVECTOR3;
+	m_HeadPosOid = INITD3DXVECTOR3;
 	m_BodyPos = INITD3DXVECTOR3;
 	m_HipPos = INITD3DXVECTOR3;
 }
@@ -77,48 +78,51 @@ void CExtenddog::Uninit(void) {
 //========================================
 void CExtenddog::Update(void) {
 
+	m_HeadPosOid = m_HipPos;
+
 	//土台モデル
 	RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[0], false)
 		->SetCol(m_color)
 		->SetOutLine(true);
 
-	if (m_state != STATE::NONE)
+	if (m_state == STATE::DOWN_LAND)
 	{//伸びる犬が作動している
 
-		if (m_state == STATE::DOWN_LAND)
-		{
-			if (m_bShrink = false)
-			{
-				// 縮むカウント
-				m_nCntShrink--;
-				if (m_nCntShrink <= 0)
-					m_nCntShrink = 0;
-			}
-			else
-			{
-				// 縮むカウント
-				m_nCntShrink++;
-				if (m_nCntShrink >= MAX_COUNT)
-					m_nCntShrink = MAX_COUNT;
-			}
-		}
-	}
-	else if (m_state == STATE::NONE)
-	{//伸びる犬が作動していない
-
 		if (m_bShrink = false)
+		{
+			// 縮むカウント
+			m_nCntShrink--;
+			if (m_nCntShrink <= 0)
+				m_nCntShrink = 0;
+		}
+		else
 		{
 			// 縮むカウント
 			m_nCntShrink++;
 			if (m_nCntShrink >= MAX_COUNT)
 				m_nCntShrink = MAX_COUNT;
 		}
+	}
+	else if (m_state == STATE::RETURN)
+	{//伸びる犬が作動していない
+
+		if (m_bShrink = false)
+		{
+			// 縮むカウント
+			m_nCntShrink++;
+			if (m_nCntShrink >= MAX_COUNT){
+				m_nCntShrink = MAX_COUNT;
+				m_state == STATE::NONE;
+			}
+		}
 		else
 		{
 			// 縮むカウント
 			m_nCntShrink--;
-			if (m_nCntShrink <= 0)
+			if (m_nCntShrink <= 0) {
 				m_nCntShrink = 0;
+				m_state == STATE::NONE;
+			}
 		}
 	}
 
@@ -128,20 +132,20 @@ void CExtenddog::Update(void) {
 	//y座標の更新
 	float fDowncurrenty = m_pos.y + (CORRECT_HEIGHT * 3 - (fCountRate * (CORRECT_HEIGHT * 2)));
 
+	// 尻
 	m_HipPos.y = m_pos.y - HIP_POS;
-	RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)// 尻
+	RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
 		->SetOutLine(true);
 
+	// 頭
 	m_HeadPos.y = fDowncurrenty;
-	RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)	// 頭
+	RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
 		->SetOutLine(true);
 
-	m_BodyPos.y = m_pos.y + 10;
-	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty + CORRECT_HEIGHT * 3, 1.0f), m_modelIdx[5], false)
+	// 体
+	m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f;
+	RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 10, 1.0f), m_modelIdx[5], false)
 		->SetOutLine(true);
-
-	//当たり判定
-	//Collision();
 }
 //========================================
 // 描画処理
@@ -149,68 +153,4 @@ void CExtenddog::Update(void) {
 //========================================
 void CExtenddog::Draw(void) {
 
-}
-//========================================
-// 当たり判定処理
-// Author:KOMURO HIROMU
-//========================================
-void CExtenddog::Collision(void) {
-
-	// 状態の設定
-	m_state = STATE::NONE;
-
-	//プレイヤー情報取得
-	CPlayer::Info *p1, *p2;
-	CPlayer *pPlayer = CMode_Game::GetPlayer();
-	if (pPlayer == NULL)
-		return;
-	pPlayer->GetInfo(p1, p2);
-
-	float width, height;
-
-	width = m_width * RADIUS_WIDTH;
-	height = m_height * RADIUS_HEIGHT;
-
-	//**************************************
-	//1p伸びる犬当たり判定
-	//**************************************
-	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
-		&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-	{
-		p1->pos.x = p1->posOLd.x;
-	}
-	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width)
-	{
-		m_state = STATE::DOWN_LAND;
-
-	}
-	if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
-		&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-	{//土台の範囲内に着地で入った
-
-
-	}
-	//**************************************
-	//2p伸びる犬当たり判定
-	//**************************************
-	if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
-		&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-	{
-		p2->pos.x = p2->posOLd.x;
-	}
-	if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height
-		&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-	{//土台の範囲内に着地で入った
-
-	
-
-		m_state = STATE::DOWN_LAND;
-
-
-
-	}
 }

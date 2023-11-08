@@ -44,7 +44,6 @@ CMode_Title::CMode_Title(void) {
 	m_PlanetType = NULL;
 	m_bMenuAnime = false;
 	m_bBackMode = false;
-	s_bStageSelect = false;
 }
 
 //========================================
@@ -736,7 +735,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 			FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
 			m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(230.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-				"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, true, false, &pShadow);
+				"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 		}
 		else if (m_bBackMode)
 		{

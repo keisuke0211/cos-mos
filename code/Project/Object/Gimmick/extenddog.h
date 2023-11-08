@@ -22,6 +22,7 @@ public:
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
 		NONE = 0,		//乗っていない
+		RETURN,			//戻る
 		UP_LAND,		//上に着地
 		DOWN_LAND,		//下に着地
 		MAX,
@@ -43,15 +44,13 @@ public:
 
 	STATE  GetState(void) { return m_state; }					//種類取得
 	D3DXVECTOR3 GetHeadPos(void) { return m_HeadPos; }
+	D3DXVECTOR3 GetHeadPosOid(void) { return m_HeadPosOid; }
 	D3DXVECTOR3 GetBodyPos(void) { return m_BodyPos; }
 	D3DXVECTOR3 GetHipPos(void) { return m_HipPos; }
 
 protected:
 
 private:
-
-	//========== [[[ 関数宣言 ]]]
-	void   Collision(void);	//当たり判定処理
 
 	//========== [[[ 変数宣言 ]]]
 	STATE m_state;				// 種類
@@ -62,7 +61,8 @@ private:
 	int			m_nCntShrink;	// 縮むカウント
 	float		m_fcurrenty;	// 現在のy座標
 
-	D3DXVECTOR3 m_HeadPos;	// 頭の位置
-	D3DXVECTOR3 m_BodyPos;	// 体の位置
-	D3DXVECTOR3 m_HipPos;	// 尻の位置
+	D3DXVECTOR3 m_HeadPos;		// 頭の位置
+	D3DXVECTOR3 m_HeadPosOid;	// 頭の過去位置
+	D3DXVECTOR3 m_BodyPos;		// 体の位置
+	D3DXVECTOR3 m_HipPos;		// 尻の位置
 };
