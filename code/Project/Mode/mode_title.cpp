@@ -581,9 +581,10 @@ void CMode_Title::StageSelect(void)
 	int nTexIdx = 0;
 
 	// ˜f¯
-	RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 0.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0, false)
+	RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0, false)
 		->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
-		->SetPriority(1);
+		->SetPriority(1)
+		->SetOutLine(true);
 
 	// –îˆó
 	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
