@@ -48,7 +48,7 @@ void CMode_Logo::Init(void) {
 	// ó‘Ôİ’è
 	SetState((int)STATE::NONE);
 	// ‘JˆÚİ’è
-	RNLib::Transition().Set(CTransition::STATE::OPEN, CTransition::TYPE::FADE);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// ƒJƒƒ‰‚Ì‹“_/’‹“_‚ğİ’è
 	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
