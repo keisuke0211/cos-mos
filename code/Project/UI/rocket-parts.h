@@ -30,6 +30,9 @@ public:
 
 	static CRocketPartsUI *Create(void);
 
+	static void SetRocketstg(bool bRocketStg) { m_bRocketStg = bRocketStg; }
+	static bool GetRocketstg(void) { return m_bRocketStg; }
+
 protected:
 
 private:
@@ -40,4 +43,5 @@ private:
 	int			m_TexIdx;
 	int			m_colorA;
 	int			m_num;
+	static bool	m_bRocketStg;	//ロケットのあるステージ？
 };
