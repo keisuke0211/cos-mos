@@ -1374,7 +1374,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 				//SEÄ¶
 				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 
-			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
+			pExtenddog->SetState(CExtenddog::STATE::UP_LAND);
 			pInfo->bExtendDog = true;
 			break;
 
