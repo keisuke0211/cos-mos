@@ -88,7 +88,7 @@ void CExtenddog::Update(void) {
 	if (m_state == STATE::DOWN_LAND)
 	{//L‚Ñ‚éŒ¢‚ªì“®‚µ‚Ä‚¢‚é
 
-		if (m_bShrink = false)
+		if (m_bShrink == false)
 		{
 			// k‚ÞƒJƒEƒ“ƒg
 			m_nCntShrink--;
@@ -106,13 +106,13 @@ void CExtenddog::Update(void) {
 	else if (m_state == STATE::RETURN)
 	{//L‚Ñ‚éŒ¢‚ªì“®‚µ‚Ä‚¢‚È‚¢
 
-		if (m_bShrink = false)
+		if (m_bShrink == false)
 		{
 			// k‚ÞƒJƒEƒ“ƒg
 			m_nCntShrink++;
 			if (m_nCntShrink >= MAX_COUNT){
 				m_nCntShrink = MAX_COUNT;
-				m_state == STATE::NONE;
+				m_state = STATE::NONE;
 			}
 		}
 		else
@@ -121,7 +121,8 @@ void CExtenddog::Update(void) {
 			m_nCntShrink--;
 			if (m_nCntShrink <= 0) {
 				m_nCntShrink = 0;
-				m_state == STATE::NONE;
+				m_state = STATE::NONE;
+
 			}
 		}
 	}
