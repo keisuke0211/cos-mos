@@ -14,6 +14,12 @@
 //========================================
 int CBlock::m_nNumAll = 0;
 
+//パス読み込み
+static const char* s_Path[8] = {
+	"data\\MODEL\\Block_Chocolate.x",
+	"data\\MODEL\\WallDog\\WallDog_House.x",
+};
+
 //========================================
 // コンストラクタ
 //========================================
@@ -27,7 +33,6 @@ CBlock::CBlock(void)
 
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.nType = 0;
-	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Block_Chocolate.x");
 	m_Info.nID = m_nNumAll;
 }
 
@@ -42,10 +47,13 @@ CBlock::~CBlock()
 //========================================
 // 初期化
 //========================================
-HRESULT CBlock::Init(void)
+HRESULT CBlock::Init(BLOCK_TYPE type)
 {
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.nType = 0;
+
+	//モデル番号読み込み
+	m_Info.nModelIdx = RNLib::Model().Load(s_Path[(int)type]);
 
 	return S_OK;
 }
