@@ -41,6 +41,7 @@ public:
 	void   SetHead(D3DXVECTOR3 pos) { m_HeadPos = pos; }		//頭の位置設定
 	void   SetHip(D3DXVECTOR3 pos) { m_HipPos = pos; }			//お尻の位置設定
 	void   SetHeadHeight(int height) { m_nHeight = height; }	//頭の高さ
+	void   SetReturn(bool bretrun) { m_bInversion = bretrun; }	//反転の設定
 	STATE  GetState(void) { return m_state; }					//種類取得
 	D3DXVECTOR3 GetHeadPos(void) { return m_HeadPos; }
 	D3DXVECTOR3 GetHeadPosOid(void) { return m_HeadPosOid; }
@@ -57,6 +58,7 @@ private:
 	D3DXVECTOR3 m_scale;		// 大きさ
 	bool		m_bLand;		// 着地した？
 	bool		m_bShrink;		// 縮む?
+	bool		m_bInversion;	// 反転?
 	int			m_nCntShrink;	// 縮むカウント
 	float		m_fcurrenty;	// 現在のy座標
 	int			m_nHeight;		// 高さ
