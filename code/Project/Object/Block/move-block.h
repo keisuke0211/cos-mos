@@ -22,7 +22,8 @@ public:
 	{
 		D3DXVECTOR3 pos;		// 位置
 		D3DXVECTOR3 posOld;		// 位置(前回)
-		D3DXVECTOR3 refPos;		// 位置(過去)
+		D3DXVECTOR3 m_posV;		// 始点位置
+		D3DXVECTOR3 m_posL;		// 終点位置
 		D3DXVECTOR3 move;		// 移動量
 		D3DXVECTOR3 rot;		// 向き
 		D3DXVECTOR3	size;		// サイズ
@@ -42,7 +43,8 @@ public:
 	void Draw(void);
 
 	//設定
-	void SetPos(const D3DXVECTOR3 pos) { m_Info.pos = m_Info.posOld = m_Info.refPos = pos; }
+	void SetPos(const D3DXVECTOR3 pos) { m_Info.pos = m_Info.posOld = pos; }
+	void SetPosInfo(const D3DXVECTOR3 posV, const D3DXVECTOR3 posL) { m_Info.m_posV = posV, m_Info.m_posL = posL; }	// 位置の各種設定
 	void SetMove(const D3DXVECTOR3 move) { m_Info.move = move; }
 	void SetRefdef(const float refdef) { m_Info.frefdef = refdef; }
 	void SetRot(const D3DXVECTOR3 rot) { m_Info.rot = rot; }
