@@ -459,7 +459,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	switch (nType)
 	{
 	case TYPE_BLOCK:
-		Manager::BlockMgr()->BlockCreate(pos, m_StageColor.Block);
+		Manager::BlockMgr()->BlockCreate(pos,CBlock::BLOCK_TYPE::BLOCK_NORMAL, m_StageColor.Block);
 		break;
 	case TYPE_TRAMPOLINE:
 		pos.x += fSizeX / 2;
@@ -480,7 +480,8 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Extenddog:
-		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos, 2,true);
+		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos, true);
+		Manager::BlockMgr()->BlockCreate(pos,CBlock::BLOCK_TYPE::BLOCK_NUI);
 		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::BlockMgr()->FillBlockCreate(pos, CFillBlock::FILL_TYPE::FILL_1x1, m_StageColor.FillBlock);
@@ -536,9 +537,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->RocketCreate(pos);
 		break;
 	}
-
 }
-
 
 //========================================
 // •ÏŠ·

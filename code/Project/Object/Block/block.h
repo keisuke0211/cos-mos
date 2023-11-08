@@ -26,11 +26,19 @@ public:
 		int nID;				// ID
 	};
 
+	// 穴埋めブロック種類
+	enum class BLOCK_TYPE
+	{
+		BLOCK_NORMAL = 0,
+		BLOCK_NUI,
+		BLOCK_MAX
+	};
+
 	// *** 関数 ***
 	CBlock();
 	~CBlock();
 
-	/* 初期化	*/HRESULT Init(void);
+	/* 初期化	*/HRESULT Init(BLOCK_TYPE type);
 	/* 終了		*/void Uninit(void);
 	/* 更新		*/void Update(void);
 	/* 描画		*/void Draw(void);

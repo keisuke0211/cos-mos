@@ -97,7 +97,7 @@ void CStageObjectMgr::Load(void)
 //========================================
 // ƒuƒƒbƒN
 //========================================
-CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos, Color color)
+CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::BLOCK_TYPE type, Color color)
 {
 	CBlock *pObj = NULL;
 
@@ -105,7 +105,7 @@ CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos, Color color)
 	pObj = new CBlock;
 
 	// ‰Šú‰»ˆ—
-	pObj->Init();
+	pObj->Init(type);
 	pObj->SetPos(pos);
 	pObj->SetColor(color);
 
