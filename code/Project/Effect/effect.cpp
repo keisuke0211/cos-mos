@@ -9,8 +9,6 @@
 #include "effect.h"
 #include "../main.h"
 
-#define MAX_COUNT (60)	//カウント
-
 //========================================
 // 静的変数
 //========================================
@@ -25,7 +23,6 @@ CEffect::CEffect(void)
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
 	m_Info.col = INITCOLOR;
-	m_Info.nCount = MAX_COUNT;
 	m_nNumAll++;
 }
 
@@ -40,12 +37,12 @@ CEffect::~CEffect()
 //========================================
 // 初期化
 //========================================
-HRESULT CEffect::Init(int nTex)
+HRESULT CEffect::Init(int nTex, int nCount)
 {
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.col = INITCOLOR;
 	m_Info.nTex = nTex;
-	m_Info.nCount = MAX_COUNT;
+	m_Info.nCount = m_Info.nCountMax = nCount;
 
 	return S_OK;
 }
@@ -75,7 +72,7 @@ void CEffect::Update(void)
 	m_Info.nCount--;
 
 	//割合計算
-	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, MAX_COUNT);
+	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
 
 	m_Info.col.a = m_Info.col.a * fCountRate;
 

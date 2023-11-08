@@ -157,6 +157,24 @@ CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos)
 }
 
 //========================================
+// マグマブロック
+//========================================
+CMagmaBlock *CStageObjectMgr::MagmaBlockCreate(D3DXVECTOR3 pos, Color color)
+{
+	CMagmaBlock *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CMagmaBlock;
+
+	// 初期化処理
+	pObj->Init();
+	pObj->SetPos(pos);
+	pObj->SetColor(color);
+
+	return pObj;
+}
+
+//========================================
 // トランポリン
 //========================================
 CTrampoline *CStageObjectMgr::TrampolineCreate(D3DXVECTOR3 pos)

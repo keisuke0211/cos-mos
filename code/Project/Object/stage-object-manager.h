@@ -10,6 +10,7 @@
 #include "../../_RNLib/RNlib.h"
 #include "Block/block.h"
 #include "Block\fill-block.h"
+#include "Block/magma-block.h"
 #include "Gimmick\Spike.h"
 #include "Block/move-block.h"
 #include "Gimmick/trampoline.h"
@@ -35,7 +36,8 @@ public:
 	CStageObjectMgr();
 	virtual~CStageObjectMgr();
 	virtual void Update(void);	void Load(void);
-	CBlock      *BlockCreate     (D3DXVECTOR3 pos,Color color);
+	CBlock      *BlockCreate	 (D3DXVECTOR3 pos, Color color);
+	CMagmaBlock *MagmaBlockCreate(D3DXVECTOR3 pos,Color color);
 	CFillBlock  *FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::FILL_TYPE type, Color color);
 	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos);
 	CTrampoline *TrampolineCreate(D3DXVECTOR3 pos);
