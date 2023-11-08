@@ -1,13 +1,10 @@
 //========================================
 // 
-// 遷移のヘッダファイル
+// 遷移の処理
 // Author:RIKU NISHIMURA
 // 
 //========================================
-// [[[ transition.h ]]]
-//========================================
-#ifndef _TRANSITION_H_
-#define _TRANSITION_H_
+#pragma once
 
 //****************************************
 // クラス定義
@@ -16,26 +13,25 @@
 class CTransition {
 public:
 	//========== [[[ 列挙型定義 ]]]
-	enum class STATE {
-		NONE, OPEN, OPEN_WAIT, CLOSE, WAIT_SET_MODE,
-	};
-	enum class TYPE {
-		NONE,
-		FADE,
-	};
+	enum class STATE { NONE, OPEN, OPEN_WAIT, CLOSE, };
+	enum class TYPE { NONE, FADE, };
 
 	//========== [[[ 関数宣言 ]]]
 	CTransition();
 	~CTransition();
-	void Update(void);
-	void Set(STATE state, TYPE type);
-	STATE GetState(void) { return m_state; }
+	void   Update  (void);
+	bool   Open    (const TYPE& type, const UShort& time);
+	bool   Close   (const TYPE& type, const Color& col, const UShort& time);
+	STATE& GetState(void) { return m_state; }
 
 private:
-	//========== [[[ 変数宣言 ]]]
-	STATE m_state;
-	int   m_nStateCtr;
-	TYPE  m_type;
-};
+	//========== [[[ 関数宣言 ]]]
+	void FillScreen(const float& rate);
 
-#endif
+	//========== [[[ 変数宣言 ]]]
+	TYPE   m_type;
+	STATE  m_state;
+	UShort m_stateCounter;
+	UShort m_time;
+	Color  m_col;
+};

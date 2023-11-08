@@ -69,7 +69,7 @@ void Manager::Update(void) {
 
 	// 予約されている時、遷移がモード設定待ちならモードを設定する
 	if (m_reserveModeType != CMode::TYPE::NONE) {
-		if (RNLib::Transition().GetState() == CTransition::STATE::WAIT_SET_MODE) {
+		if (RNLib::Transition().GetState() == CTransition::STATE::OPEN_WAIT) {
 			SetMode(m_reserveModeType);
 		}
 	}
@@ -145,5 +145,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// 遷移設定
-	RNLib::Transition().Set(CTransition::STATE::CLOSE, transType);
+	RNLib::Transition().Close(transType, Color{ 0,0,0,255 }, 30);
 }

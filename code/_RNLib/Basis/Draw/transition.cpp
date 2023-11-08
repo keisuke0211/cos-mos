@@ -4,36 +4,34 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-// [[[ transition.cpp ]]]
-//========================================
 #include "../../RNLib.h"
 
 //****************************************
 // マクロ定義
 //****************************************
-#define TIME           (30)
-#define WAIT_TIME      (10)
+#define BLACK_TIME     (10)
 #define HOLE_SCALE_MAX (6.0f)
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| CTransitionクラスのメンバ関数
+//==========| [公開]遷移クラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
 
 //========================================
 // コンストラクタ
-// Author:RIKU NISHIMURA
 //========================================
 CTransition::CTransition() {
-	m_state = STATE::NONE;
-	m_nStateCtr = 0;
-	m_type = TYPE::NONE;
+
+	m_type         = TYPE::NONE;
+	m_state        = STATE::NONE;
+	m_stateCounter = 0;
+	m_time         = 0;
+	m_col          = INITCOLOR;
 }
 
 //========================================
 // デストラクタ
-// Author:RIKU NISHIMURA
 //========================================
 CTransition::~CTransition() {
 
@@ -41,62 +39,93 @@ CTransition::~CTransition() {
 
 //========================================
 // 更新処理
-// Author:RIKU NISHIMURA
 //========================================
 void CTransition::Update(void) {
 
-	//===== [[[ ローカル関数宣言 ]]]
-	struct LocalFunc {
-		static void FillScreen(const float& fRate) {
-			RNLib::Polygon2D().Put(RNLib::Window().GetCenterPos(), 0.0f)
-				->SetCol(Color{ 0,0,0,(int)(255 * fRate) })
-				->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());
-		}
-	};
+	float rate = 0.0f;	// 何もない 0 ~ 1 完全に埋まる
 
-	if (m_state == STATE::NONE) {
-		return;
-	}
-	else if (m_state == STATE::WAIT_SET_MODE) {
-		//LocalFunc::FillScreen(1.0f);
-		return;
-	}
-	else if (m_state == STATE::OPEN_WAIT) {
-		if (++m_nStateCtr >= WAIT_TIME) {
-			m_nStateCtr = 0;
-			m_state = STATE::OPEN;
+	switch (m_state) {
+		// [[[ 無し ]]]
+	case STATE::NONE: {
+
+	}break;
+		// [[[ オープン ]]]
+	case STATE::OPEN: {
+		rate = 1.0f - ((float)m_stateCounter / m_time);
+		
+		// 状態を無しに
+		if (++m_stateCounter >= m_time) {
+			m_stateCounter = 0;
+			m_state        = STATE::NONE;
 		}
-		LocalFunc::FillScreen(1.0f);
-		return;
-	}
-	else if (++m_nStateCtr >= TIME) {
-		if (m_state == STATE::CLOSE) {
-			m_state = STATE::WAIT_SET_MODE;
+	}break;
+		// [[[ オープン待ち ]]]
+	case STATE::OPEN_WAIT: {
+		rate = 1.0f;
+	}break;
+		// [[[ クローズ ]]]
+	case STATE::CLOSE: {
+		rate = ((float)m_stateCounter / m_time);
+
+		// 状態をオープン待ちに
+		if (++m_stateCounter >= m_time) {
+			m_stateCounter = 0;
+			m_state        = STATE::OPEN_WAIT;
 		}
-		else {
-			m_state = STATE::NONE;
-		}
-		return;
+	}break;
 	}
 
-	float fRate = (float)m_nStateCtr / TIME;
-	if (m_state == STATE::CLOSE) {
-		fRate = 1.0f - fRate;
-	}
-	float fRateOpp = 1.0f - fRate;
-
-	LocalFunc::FillScreen(fRateOpp);
+	// 画面埋め処理
+	FillScreen(rate);
 }
 
 //========================================
-// 設定処理
-// Author:RIKU NISHIMURA
+// オープン処理
 //========================================
-void CTransition::Set(STATE state, TYPE type) {
-	if (state == STATE::OPEN)
-		m_state = STATE::OPEN_WAIT;
-	else
-		m_state = state;
-	m_type = type;
-	m_nStateCtr = 0;
+bool CTransition::Open(const TYPE& type, const UShort& time) {
+
+	// 状態オープン待ちで無い時、
+	if (m_state != STATE::OPEN_WAIT)
+		return false;
+
+	m_stateCounter = 0;
+	m_state        = STATE::OPEN;
+	m_time         = time;
+
+	return true;
+}
+
+//========================================
+// クローズ処理
+//========================================
+bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) {
+
+	// 状態が無しで無い時、
+	if (m_state != STATE::NONE)
+		return false;
+
+	m_stateCounter = 0;
+	m_state        = STATE::CLOSE;
+	m_time         = time;
+	m_col          = col;
+
+	return true;
+}
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| [非公開]遷移クラスのメンバ関数
+//----------|---------------------------------------------------------------------
+//================================================================================
+
+//========================================
+// 画面埋め処理
+//========================================
+void CTransition::FillScreen(const float& rate) {
+	
+	// ポリゴン2Dの設置
+	RNLib::Polygon2D().Put(RNLib::Window().GetCenterPos(), 0.0f, true)
+		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(int)(m_col.a * rate) })
+		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight())
+		->SetPriority(1);
 }
