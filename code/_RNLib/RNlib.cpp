@@ -319,6 +319,7 @@ namespace {
 				{// [[[ ƒXƒNƒŠ[ƒ“•`‰æ ]]]
 					CCamera::StartRenderingScreen(device);
 					draw.m_drawMgr.Draw(device, NONEDATA, false, true);
+					CFontObject::DrawAll();
 				}
 
 				{// [[[ ƒJƒƒ‰•`‰æ ]]]
@@ -335,7 +336,6 @@ namespace {
 					while (draw.m_cameraMgr.ListLoop((CObject**)&camera)) {
 						camera->StartRendering(device);
 						draw.m_drawMgr.Draw(device, camera->GetID(), camera->GetClipping(), false);
-						CFontObject::DrawAll();
 						camera->EndRendering(device);
 					}
 

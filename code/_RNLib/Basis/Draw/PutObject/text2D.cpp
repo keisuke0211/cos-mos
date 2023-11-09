@@ -208,7 +208,8 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 			->SetSize(charWidth, charHeight)
 			->SetCol(m_col)
 			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
-			->SetZTest(m_isZtest);
+			->SetZTest(m_isZtest)
+			->SetPriority(1);
 	}
 
 	// wchar_tŒ^•¶Žš—ñ‚Ì‰ð•ú
