@@ -37,28 +37,30 @@ public:
 	}FontData;
 
 	//========== [[[ 関数宣言 ]]]
-	/* コンストラクタ         */CText();
-	/* デストラクタ           */~CText();
-	/* 終了処理               */void Uninit(void);
-	/* フォントの読み込み処理 */void LoadFont(void);
-	/* フォント存在チェック   */bool CheckFontExists(int nFont) {
+	CText();
+	~CText();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
+	void LoadFont(void);
+	bool CheckFontExists(int nFont) {
 		if (nFont < 0 || nFont >= m_nFontNum) {
 			return false;
 		}
 		return true;
 	}
-	/* フォントの情報を取得   */FontData GetFont(const int nFont) {
+	FontData GetFont(const int nFont) {
 		if (nFont < 0 || nFont >= m_nFontNum) {
 			FontData defFont = {};
 			return defFont;
 		}
 		return m_pFont[nFont];
 	};
-	/* フォントの数を取得    */int GetFontNum(void) { return m_nFontNum; }
-	/* フォントの幅取得      */float GetFontWidth   (int nFont);
-	/* フォントの幅取得      */float GetFontWidth2D (int nFont);
-	/* フォントの高さ取得    */float GetFontHeight  (int nFont);
-	/* フォントの高さ取得    */float GetFontHeight2D(int nFont);
+	int GetFontNum(void) { return m_nFontNum; }
+	float GetFontWidth   (int nFont);
+	float GetFontWidth2D (int nFont);
+	float GetFontHeight  (int nFont);
+	float GetFontHeight2D(int nFont);
 
 	//========== [[[ 変数宣言 ]]]
 	FontData* m_pFont;	// フォント情報のポインタ

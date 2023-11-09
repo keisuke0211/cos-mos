@@ -39,7 +39,7 @@ public:
 	CBlock      *BlockCreate	 (D3DXVECTOR3 pos,CBlock::BLOCK_TYPE type,Color color = INITCOLOR);
 	CMagmaBlock *MagmaBlockCreate(D3DXVECTOR3 pos,Color color);
 	CFillBlock  *FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::FILL_TYPE type, Color color);
-	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos);
+	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos, int nType);
 	CTrampoline *TrampolineCreate(D3DXVECTOR3 pos);
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
 	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move);

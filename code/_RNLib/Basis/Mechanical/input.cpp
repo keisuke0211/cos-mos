@@ -4,7 +4,7 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../RNlib.h"
+#include "../../RNlib.h"
 
 //****************************************
 // マクロ定義
@@ -51,15 +51,6 @@ const int CInput::BUTTON_MASK[(int)BUTTON::MAX] = {
 //========================================
 CInput::CInput() {
 
-	m_joyPads        = NULL;
-	m_joyPadNum      = 0;
-	m_inputDevice    = NULL;
-	m_keyboardDevice = NULL;
-	m_activeDevice   = ACTIVE_DEVICE::KEYBOARD;
-	m_isFixedCursor  = false;
-
-	// 入力情報をクリア
-	ClearInputInfo();
 }
 
 //========================================
@@ -73,6 +64,16 @@ CInput::~CInput() {
 // 初期化処理
 //========================================
 void CInput::Init(HINSTANCE& instanceHandle) {
+
+	m_joyPads = NULL;
+	m_joyPadNum = 0;
+	m_inputDevice = NULL;
+	m_keyboardDevice = NULL;
+	m_activeDevice = ACTIVE_DEVICE::KEYBOARD;
+	m_isFixedCursor = false;
+
+	// 入力情報をクリア
+	ClearInputInfo();
 
 	// マウスカーソルを表示
 	// (※最初からtrueだと、後から要求を無視される為一度falseにしてからtrueにする)
@@ -120,7 +121,7 @@ void CInput::Uninit(void) {
 	}
 
 	// ジョイパッド解放
-	RNLib::Memory().Release(&m_joyPads);
+	CMemory::Release(&m_joyPads);
 }
 
 //========================================
@@ -132,6 +133,9 @@ void CInput::Update(void) {
 	UpdateCursor();
 	UpdateMouseButton();
 	UpdateJoyPad();
+
+	// ホイールの回転をリセットする
+	SetWheelSpin(CInput::WHEELSPIN::NONE);
 }
 
 //========================================
@@ -243,7 +247,7 @@ void CInput::UpdateCursor(void) {
 		SetCursorPos(rc.right * 0.5f, rc.bottom * 0.5f);
 
 		// カーソル位置を保存
-		Pos3D centerPos = RNLib::Window().GetCenterPos();
+		Pos2D centerPos = RNLib::Window().GetCenterPos();
 		m_cursorInfo.pos.x = centerPos.x;
 		m_cursorInfo.pos.y = centerPos.y;
 	}
@@ -255,7 +259,7 @@ void CInput::UpdateCursor(void) {
 void CInput::SetJoyPadNum(const UShort& num) {
 
 	// メモリ再確保
-	RNLib::Memory().ReAlloc(&m_joyPads, m_joyPadNum, num);
+	CMemory::ReAlloc(&m_joyPads, m_joyPadNum, num);
 
 	// 数を代入
 	m_joyPadNum = num;

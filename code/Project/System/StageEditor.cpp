@@ -391,7 +391,7 @@ void CStageEditor::SetStage(int nType)
 	{
 		float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 		float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-		D3DXVECTOR3 pos = RNLib::Camera3D().GetPosR();
+		D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
 
 		pos.x += ((m_Info.nLineMax * -0.5f) + m_Info.nLine + 0.5f) * fSizeX;
 		pos.y -= ((m_Info.nRowMax * -0.5f) + m_Info.nRow + 0.5f) * fSizeY;
@@ -466,7 +466,13 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->TrampolineCreate(pos);
 		break;
 	case TYPE_SPIKE:
-		Manager::BlockMgr()->SpikeCreate(pos);
+		Manager::BlockMgr()->SpikeCreate(pos,0);
+		break;
+	case TYPE_SPIKE_L:
+		Manager::BlockMgr()->SpikeCreate(pos, 1);
+		break;
+	case TYPE_SPIKE_R:
+		Manager::BlockMgr()->SpikeCreate(pos, 2);
 		break;
 	case TYPE_LIFT:
 		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f));

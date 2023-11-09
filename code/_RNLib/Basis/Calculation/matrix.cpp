@@ -79,7 +79,7 @@ Rot3D CMatrix::ConvMtxToRot(const Matrix& mtx) {
 //========================================
 // [静的]マトリックスの拡大倍率を調べる
 //========================================
-Scale3D CMatrix::ConvMtxToScale(const D3DXMATRIX& mtx) {
+Scale3D CMatrix::ConvMtxToScale(const Matrix& mtx) {
 
 	const Vector3D vectorX = Vector3D(mtx._11, mtx._12, mtx._13);
 	const Vector3D vectorY = Vector3D(mtx._21, mtx._22, mtx._23);
@@ -100,4 +100,39 @@ Matrix CMatrix::MultiplyMtx(const Matrix& mtxA, const Matrix& mtxB) {
 	D3DXMatrixMultiply(&mtx, &mtxA, &mtxB);
 
 	return mtx;
+}
+
+//========================================
+// コンストラクタ
+//========================================
+CMatrix::CMatrix() {
+
+}
+
+//========================================
+// デストラクタ
+//========================================
+CMatrix::~CMatrix() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CMatrix::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CMatrix::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void CMatrix::Update(void) {
+
 }

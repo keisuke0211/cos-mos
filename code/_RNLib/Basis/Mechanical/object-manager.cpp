@@ -16,7 +16,7 @@
 // 静的メンバ変数定義
 //****************************************
 CObjectMgr** CObjectMgr::ms_objectMgrs = NULL;
-unsigned short CObjectMgr::ms_objectMgrNum = NULL;
+UShort CObjectMgr::ms_objectMgrNum = NULL;
 
 //========================================
 // [静的] 全マネージャー更新処理
@@ -56,7 +56,7 @@ void CObjectMgr::SubMgr(CObjectMgr* mgr) {
 
 	// 排除出来た時、メモリを再確保
 	if (isSub)
-		RNLib::Memory().ReAlloc<CObjectMgr*>(&ms_objectMgrs, ms_objectMgrNum + 1, ms_objectMgrNum);
+		CMemory::ReAlloc<CObjectMgr*>(&ms_objectMgrs, ms_objectMgrNum + 1, ms_objectMgrNum);
 }
 
 //========================================
@@ -66,7 +66,7 @@ CObjectMgr::CObjectMgr(void) {
 
 	{// オブジェクトマネージャー列に追加する
 		int numOld = ms_objectMgrNum++;
-		RNLib::Memory().ReAlloc<CObjectMgr*>(&ms_objectMgrs, numOld, ms_objectMgrNum, false);
+		CMemory::ReAlloc<CObjectMgr*>(&ms_objectMgrs, numOld, ms_objectMgrNum, false);
 		ms_objectMgrs[numOld] = this;
 	}
 
@@ -167,7 +167,7 @@ void CObjectMgr::Release(CObject* obj) {
 	SubList(obj);
 
 	// 解放
-	RNLib::Memory().Release(&obj);
+	CMemory::Release(&obj);
 }
 
 //========================================

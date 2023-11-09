@@ -27,7 +27,7 @@ namespace {
 //========================================
 void RNSettings::Release(void) {
 
-	RNLib::Memory().Release(&info.projectName);
+	CMemory::Release(&info.projectName);
 }
 
 //========================================

@@ -40,7 +40,7 @@ void CMode_Result::Init(void) {
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// ÉJÉÅÉâÇÃéãì_/íçéãì_Çê›íË
-	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// èÛë‘ê›íË
 	SetState((int)STATE::NONE);

@@ -27,11 +27,11 @@ void CCamera::ProcessState(const PROCESS process) {
 		switch (process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
-			RNLib::Memory().Alloc<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
+			CMemory::Alloc<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
-			RNLib::Memory().Release<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
+			CMemory::Release<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
@@ -50,9 +50,9 @@ void CCamera::ProcessState(const PROCESS process) {
 
 				// [[[ カーソルの移動量に応じて移動させる ]]]
 				if (RNLib::Input().GetMousePress(CInput::MOUSEBUTTON::LEFT)) {
-					D3DXVECTOR3 move = INITD3DXVECTOR3;					// 移動量
-					D3DXVECTOR2 cursorMove = RNLib::Input().GetCursorMove();	// カーソルの移動量
-					float       moveAngleX = m_rot.y - D3DX_PI_HALF;			// 移動向きX
+					const Vector2D cursorMove = RNLib::Input().GetCursorMove();
+					const float    moveAngleX = m_rot.y - D3DX_PI_HALF;
+					Vector3D       move       = INITVECTOR3D;
 
 					move.x = sinf(moveAngleX) * cursorMove.x;
 					move.z = cosf(moveAngleX) * cursorMove.x;
@@ -68,14 +68,14 @@ void CCamera::ProcessState(const PROCESS process) {
 
 				// [[[ ホイールの回転に応じてズームイン/アウト ]]]
 				if (RNLib::Input().GetWheelSpin() == CInput::WHEELSPIN::FRONT) {
-					float XZPlaneRate = 1.0f - fabsf(rotXRate);
+					const float XZPlaneRate = 1.0f - fabsf(rotXRate);
 					
 					m_posR.x += sinf(m_rot.y) * info->zoomForce * XZPlaneRate;
 					m_posR.z += cosf(m_rot.y) * info->zoomForce * XZPlaneRate;
 					m_posR.y += info->zoomForce * rotXRate;
 				}
 				else if (RNLib::Input().GetWheelSpin() == CInput::WHEELSPIN::BACK) {
-					float XZPlaneRate = 1.0f - fabsf(rotXRate);
+					const float XZPlaneRate = 1.0f - fabsf(rotXRate);
 
 					m_posR.x -= sinf(m_rot.y) * info->zoomForce * XZPlaneRate;
 					m_posR.z -= cosf(m_rot.y) * info->zoomForce * XZPlaneRate;
@@ -92,11 +92,11 @@ void CCamera::ProcessState(const PROCESS process) {
 		switch (process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
-			RNLib::Memory().Alloc<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
+			CMemory::Alloc<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
-			RNLib::Memory().Release<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
+			CMemory::Release<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
@@ -137,7 +137,7 @@ void CCamera::SetState(const STATE state) {
 //========================================
 // マウスで宙を掴む
 //========================================
-void CCamera::GrabAirMouse(const float moveForce, const float spinForce, const float zoomForce) {
+void CCamera::SetGrabAirMouse(const float moveForce, const float spinForce, const float zoomForce) {
 	
 	SetState(STATE::GRAB_AIR_MOUSE);
 	GrabAirMouseInfo* info = (GrabAirMouseInfo*)m_stateInfo;
@@ -149,7 +149,7 @@ void CCamera::GrabAirMouse(const float moveForce, const float spinForce, const f
 //========================================
 // 往復回転
 //========================================
-void CCamera::ReciprocateSpin(const D3DXVECTOR3 posR, const float dist, const D3DXVECTOR3 rotA, const D3DXVECTOR3 rotB, const int time) {
+void CCamera::SetReciprocateSpin(const Pos3D posR, const float dist, const Rot3D rotA, const Rot3D rotB, const int time) {
 
 	SetState(STATE::RECIPROCATE_SPIN);
 	m_posR = posR;

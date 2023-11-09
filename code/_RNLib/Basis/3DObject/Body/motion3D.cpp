@@ -35,8 +35,29 @@ CMotion3D::CMotion3D() {
 //========================================
 CMotion3D::~CMotion3D() {
 
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CMotion3D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CMotion3D::Uninit(void) {
+
 	// データを解放
-	RNLib::Memory().Release(&m_datas);
+	CMemory::Release(&m_datas);
+}
+
+//========================================
+// 更新処理
+//========================================
+void CMotion3D::Update(void) {
+
 }
 
 //========================================
@@ -50,7 +71,7 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 	if (CRegist::Load(loadPath, idx))
 	{// 読み込み成功
 		// データのメモリ再確保
-		RNLib::Memory().ReAlloc(&m_datas, numOld, m_num);
+		CMemory::ReAlloc(&m_datas, numOld, m_num);
 
 		// データの破棄(番号指定の場合)
 		if (idxOld != NONEDATA)
@@ -68,7 +89,7 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 					// ボーンの数を読み込み、
 					// ボーンモーションデータのメモリ確保
 					RNLib::File().Scan(CFile::SCAN::INT, &m_datas[idx].boneNum);
-					RNLib::Memory().Alloc<BoneMotionData>(&m_datas[idx].boneMotionDatas, m_datas[idx].boneNum);
+					CMemory::Alloc<BoneMotionData>(&m_datas[idx].boneMotionDatas, m_datas[idx].boneNum);
 
 					int cntBone = 0;
 					while (RNLib::File().SearchLoop("}")) {
@@ -233,7 +254,7 @@ void CMotion3D::InitMemory(const UShort& num) {
 	CRegist::InitMemory(num);
 
 	// データのメモリ確保
-	RNLib::Memory().Alloc(&m_datas, num);
+	CMemory::Alloc(&m_datas, num);
 }
 
 //================================================================================
@@ -270,9 +291,9 @@ void CMotion3D::CData::Release(void) {
 	// ボーンコマンドデータを解放
 	for (int cntParts = 0; cntParts < boneNum; cntParts++) {
 		for (int cntCmd = 0; cntCmd < boneMotionDatas[cntParts].commandDataNum; cntCmd++) {
-			RNLib::Memory().Release(&boneMotionDatas[cntParts].commandDatas[cntCmd].datas);
+			CMemory::Release(&boneMotionDatas[cntParts].commandDatas[cntCmd].datas);
 		}
-		RNLib::Memory().Release(&boneMotionDatas[cntParts].commandDatas);
+		CMemory::Release(&boneMotionDatas[cntParts].commandDatas);
 	}
-	RNLib::Memory().Release(&boneMotionDatas);
+	CMemory::Release(&boneMotionDatas);
 }

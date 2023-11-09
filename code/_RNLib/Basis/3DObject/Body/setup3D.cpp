@@ -25,8 +25,29 @@ CSetUp3D::CSetUp3D() {
 //========================================
 CSetUp3D::~CSetUp3D() {
 
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CSetUp3D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CSetUp3D::Uninit(void) {
+
 	// データの解放
-	RNLib::Memory().Release<CData>(&m_datas);
+	CMemory::Release(&m_datas);
+}
+
+//========================================
+// 更新処理
+//========================================
+void CSetUp3D::Update(void) {
+
 }
 
 //========================================
@@ -34,12 +55,12 @@ CSetUp3D::~CSetUp3D() {
 //========================================
 short CSetUp3D::Load(const char* loadPath, short idx) {
 
-	const unsigned short numOld(m_num);
+	const UShort numOld(m_num);
 
 	if (CRegist::Load(loadPath, idx))
 	{// 読み込み成功
 		// データのメモリ再確保
-		RNLib::Memory().ReAlloc(&m_datas, numOld, m_num);
+		CMemory::ReAlloc(&m_datas, numOld, m_num);
 
 		// データの破棄(番号指定の場合)
 		if (idx != NONEDATA)
@@ -52,13 +73,13 @@ short CSetUp3D::Load(const char* loadPath, short idx) {
 					BoneData*& boneDatas = m_datas[idx].m_boneDatas;
 					
 					// ボーンデータ群を解放
-					RNLib::Memory().Release(&boneDatas);
+					CMemory::Release(&boneDatas);
 
 					// ボーンデータ数読み込み
 					RNLib::File().Scan(CFile::SCAN::INT, &m_datas[idx].m_boneDataNum);
 
 					// ボーンデータ群のメモリ確保
-					RNLib::Memory().Alloc(&boneDatas, m_datas[idx].m_boneDataNum);
+					CMemory::Alloc(&boneDatas, m_datas[idx].m_boneDataNum);
 
 					// ボーンデータ群の読み込み
 					int cntBoneData(0);
@@ -147,11 +168,11 @@ void CSetUp3D::Save(const char* path, short idx) {
 //========================================
 // メモリを指定数に初期化
 //========================================
-void CSetUp3D::InitMemory(const unsigned short& num) {
+void CSetUp3D::InitMemory(const UShort& num) {
 	CRegist::InitMemory(num);
 
 	// データのメモリ確保
-	RNLib::Memory().Alloc(&m_datas, num);
+	CMemory::Alloc(&m_datas, num);
 }
 
 //================================================================================
@@ -183,5 +204,5 @@ CSetUp3D::CData::~CData() {
 //========================================
 void CSetUp3D::CData::Release(void) {
 
-	RNLib::Memory().Release(&m_boneDatas);
+	CMemory::Release(&m_boneDatas);
 }

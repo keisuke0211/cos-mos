@@ -6,7 +6,6 @@
 //================================================================================================
 #include "../main.h"
 #include "player.h"
-#include "../../_RNLib/Basis/input.h"
 #include "../../_RNLib/Basis/Calculation/number.h"
 
 //スワップインターバル
@@ -126,6 +125,11 @@ HRESULT CPlayer::Init(void)
 	//初期情報設定
 	Death(NULL);
 
+	// 初期値設定
+	// ※ 来れないとステージ入る前に一瞬着地SEがなる
+	m_aInfo[0].bJump = false;
+	m_aInfo[1].bJump = false;
+
 	//初期化成功
 	return S_OK;
 }
@@ -236,7 +240,7 @@ void CPlayer::Update(void)
 	//情報更新
 	UpdateInfo();
 
-	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNLib::GetFPSCount()));
+	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNSystem::GetFPSCount()));
 }
 
 //----------------------------
@@ -381,11 +385,12 @@ void CPlayer::Swap(void)
 //----------------------------
 void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 {
-	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
-	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
 	if (pDeathPos != NULL)
 	{
+		int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+		int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
+
 		Manager::EffectMgr()->EffectCreate(EffTex, *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
@@ -658,8 +663,11 @@ void CPlayer::WholeCollision(void)
 					}
 
 					CExtenddog::STATE state = pDog->GetState();
-					if (pOthColli[2].ColliRot != COLLI_ROT::OVER && Player.bExtendDog && state == CExtenddog::STATE::DOWN_LAND) {
-						Player.bExtendDog = false;
+					if (Player.bExtendDog) {
+						if ((pOthColli[2].ColliRot != COLLI_ROT::UNDER && state == CExtenddog::STATE::UP_LAND)
+							|| (pOthColli[2].ColliRot != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
+							Player.bExtendDog = false;
+						}
 					}
 				}
 				break;
@@ -1380,14 +1388,14 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
+
+				if (pInfo->bJump == true)
+					RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[2].MaxPos.y;//最高Ｙ座標設定
 			}
-
-			if (State == CExtenddog::STATE::NONE)
-				//SE再生
-				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 
 			pExtenddog->SetState(CExtenddog::STATE::UP_LAND);
 			pInfo->bExtendDog = true;
@@ -1402,14 +1410,14 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
+
+				if (pInfo->bJump == true)
+					RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[2].MinPos.y;//最高Ｙ座標設定
 			}
-
-			if (State == CExtenddog::STATE::NONE)
-				//SE再生
-				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 
 			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
 			pInfo->bExtendDog = true;

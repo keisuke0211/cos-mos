@@ -41,10 +41,13 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CSetUp3D();
 	~CSetUp3D();
+	void   Init(void);
+	void   Uninit(void);
+	void   Update(void);
 	short  Load      (const char* loadPath, short idx = NONEDATA);
 	void   Save      (const char* savePath, short idx);
 	CData& GetData   (const short& idx) { return m_datas[idx]; }
-	void   InitMemory(const unsigned short& num);
+	void   InitMemory(const UShort& num);
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]

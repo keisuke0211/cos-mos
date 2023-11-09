@@ -16,7 +16,7 @@ public:
 	CRegist();
 	virtual ~CRegist();
 	virtual bool Load(const char* loadPath, short& idx);
-	virtual void InitMemory(const unsigned short& num);
+	virtual void InitMemory(const UShort& num);
 
 protected:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
@@ -24,5 +24,5 @@ protected:
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	char** m_loadPaths;
-	unsigned short m_num;
+	UShort m_num;
 };
