@@ -201,7 +201,7 @@ void CCamera::StartRenderingScreen(Device& device) {
 	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
 
 	// [[[ ビューマトリックスの作成 ]]]
-	Matrix mtxView = INITMatrix; {
+	Matrix mtxView = INITMATRIX; {
 		Pos3D posV = Pos3D(0.0f, 0.0f, 0.0f);
 		Pos3D posR = Pos3D(0.0f, 0.0f, 1.0f);
 		Pos3D posU = Pos3D(0.0f, 1.0f, 0.0f);
@@ -234,7 +234,7 @@ void CCamera::StartRendering(Device& device) {
 	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), ColorToD3DXCOLOR(m_BGCol), 1.0f, 0);
 
 	// [[[ ビューマトリックスの作成 ]]]
-	Matrix mtxView = INITMatrix; {
+	Matrix mtxView = INITMATRIX; {
 		Pos3D posV = m_posV;
 		Pos3D posR = m_posR;
 
@@ -333,7 +333,7 @@ void CCamera::SetVib(const float& vibPower) {
 //========================================
 void CCamera::SetUpProjectionMatrix(Device& device, const Scale2D& scale, const float& radian) {
 
-	Matrix mtxProjection = INITMatrix;
+	Matrix mtxProjection = INITMATRIX;
 	D3DXMatrixPerspectiveFovLH(&mtxProjection, D3DXToRadian(radian), scale.x / scale.y, 10.0f, 4000.0f);
 
 	device->SetTransform(D3DTS_PROJECTION, &mtxProjection);

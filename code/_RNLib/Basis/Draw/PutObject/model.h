@@ -45,6 +45,7 @@ public:
 		void SetMaterial(Device& device, Material* mat, const Color& col);
 
 		// [[[ •Ï”éŒ¾ ]]]
+		static Material ms_outLineMat;
 		Matrix m_mtx;
 		Color  m_col;
 		short  m_modelIdx;

@@ -190,8 +190,8 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 		Matrix resultMtx; {
 
 			// 基準マトリックスとテキストマトリックスを求める
-			Matrix baseMtx = INITMatrix;
-			Matrix textMtx = INITMatrix;
+			Matrix baseMtx = INITMATRIX;
+			Matrix textMtx = INITMATRIX;
 
 			{// 通常の時、
 				D3DXVECTOR3 charPos = D3DXVECTOR3(setPos.x, setPos.y, 0.0f);

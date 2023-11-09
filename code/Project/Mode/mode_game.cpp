@@ -184,18 +184,6 @@ void CMode_Game::Update(void) {
 			Manager::StgEd()->SwapStage(stage + 1);
 		}
 	}
-
-	// ”wŒi(‰¼)
-	{
-		float width = RNLib::Window().GetWidth();
-		float height = RNLib::Window().GetHeight();
-		RNLib::Polygon3D().Put(D3DXVECTOR3(0.0f, -height*0.25f, 400.0f), INITD3DXVECTOR3)
-			->SetLighting(false)
-			->SetCol(m_BgColorDown)
-			->SetSize(width * 2.0f, height * 0.5f)
-			->SetPriority(-2)
-			->SetZTest(false);
-	}
 }
 
 //========================================

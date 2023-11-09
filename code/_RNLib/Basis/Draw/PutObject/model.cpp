@@ -113,8 +113,8 @@ short CModel::Load(const char* loadPath, short idx) {
 
 				// 頂点の縁取り情報構造体を定義
 				struct VertexOutLine {
-					Pos3D  addPos = INITPOS3D;
-					UShort count  = 0;
+					Pos3D  totalVec = INITPOS3D;
+					UShort count    = 0;
 				};
 
 				// 頂点の縁取り情報を生成
@@ -123,7 +123,6 @@ short CModel::Load(const char* loadPath, short idx) {
 				for (int cntVtx = 0; cntVtx < vtxNum; vertexOutLines[cntVtx] = {}, cntVtx++);
 
 				// 法線方向に加算
-				const float& modelOutLineAddDistance = RNSettings::GetInfo().modelOutLineAddDistance;
 				for (int cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
 					Vector3D* pos =  (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
 					Vector3D  nor = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
@@ -135,9 +134,6 @@ short CModel::Load(const char* loadPath, short idx) {
 							m_datas[idx]->m_radiusMax = dist;
 					}
 
-					// 輪郭の加算距離を計算
-					Vector3D addVec = nor * modelOutLineAddDistance;
-
 					// 重なっている頂点位置に輪郭の加算距離を加算
 					for (int cntVtx2 = 0; cntVtx2 < vtxNum; cntVtx2++) {
 
@@ -148,20 +144,21 @@ short CModel::Load(const char* loadPath, short idx) {
 						// 頂点が重なっている時、加算位置の値を加算
 						Pos3D* pos2 = (Pos3D*)(vtxBuff + (dwSizeFVF * cntVtx2));
 						if (*pos == *pos2) {
-							vertexOutLines[cntVtx2].addPos += addVec;
+							vertexOutLines[cntVtx2].totalVec += nor;
 							vertexOutLines[cntVtx2].count++;
 						}
 					}
 
 					// 現カウント頂点の加算位置の値を加算
-					vertexOutLines[cntVtx].addPos += addVec;
+					vertexOutLines[cntVtx].totalVec += nor;
 					vertexOutLines[cntVtx].count++;
 				}
 
 				// 頂点位置に加算位置を加算
 				for (int cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
 					Pos3D* pos = (Pos3D*)(vtxBuff + (dwSizeFVF * cntVtx));
-					*pos += vertexOutLines[cntVtx].addPos / vertexOutLines[cntVtx].count;
+					D3DXVec3Normalize(&vertexOutLines[cntVtx].totalVec, &vertexOutLines[cntVtx].totalVec);
+					*pos += vertexOutLines[cntVtx].totalVec * RNSettings::GetInfo().modelOutLineAddDistance;
 				}
 
 				// 頂点の縁取り情報を破棄
@@ -275,12 +272,23 @@ void CModel::CData::Release(void) {
 //----------|---------------------------------------------------------------------
 //================================================================================
 
+//****************************************
+// 静的変数定義
+//****************************************
+Material CModel::CDrawInfo::ms_outLineMat = {
+	{ 0.0f, 0.0f, 0.0f, 1.0f },
+	{ 0.0f, 0.0f, 0.0f, 0.0f },
+	{ 1.0f, 1.0f, 1.0f, 1.0f },
+	{ 0.0f, 0.0f, 0.0f, 0.0f },
+	0.0f
+};
+
 //========================================
 // コンストラクタ
 //========================================
 CModel::CDrawInfo::CDrawInfo() {
 
-	m_mtx                  = INITMatrix;
+	m_mtx                  = INITMATRIX;
 	m_col                  = INITCOLOR;
 	m_modelIdx             = NONEDATA;
 	m_texIdx               = NONEDATA;
@@ -323,11 +331,11 @@ void CModel::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 	// [[[ Zテストの設定 ]]]
 	RNLib::DrawStateMgr().SetZTestMode(m_isZTest, device);
 
+	//----------------------------------------
+	// 表面の描画
+	//----------------------------------------
 	for (int cntMat = 0; cntMat < modelData.m_matNum; cntMat++) {
 		
-		//----------------------------------------
-		// パラメーターに応じた設定
-		//----------------------------------------
 		{// [[[ マテリアルの設定 ]]]
 			Color setCol = m_col;
 
@@ -347,23 +355,20 @@ void CModel::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 		// [[[ テクスチャの設定 ]]]
 		RNLib::Texture().Set(device, (m_texIdx == NONEDATA) ? modelData.m_texIdxs[cntMat] : m_texIdx);
 
-		//----------------------------------------
 		// 描画
-		//----------------------------------------
-		// 表面を描画
-		RNLib::DrawStateMgr().SetCullingMode(CDrawState::CULLING_MODE::FRONT_SIDE, device);
 		modelData.m_mesh->DrawSubset(cntMat);
+	}
 
-		//----------------------------------------
-		// 輪郭線の描画
-		//----------------------------------------
-		if (m_isOutLine) {
+	//----------------------------------------
+	// 裏面の描画
+	//----------------------------------------
+	if (m_isOutLine) {
 
-			// マテリアルの設定
-			SetMaterial(device, &mats[cntMat].MatD3D, COLOR_BLACK);
+		// マテリアルの設定
+		device->SetMaterial(&ms_outLineMat);
+		RNLib::DrawStateMgr().SetCullingMode(CDrawState::CULLING_MODE::BACK_SIDE, device);
 
-			// 裏面を描画
-			RNLib::DrawStateMgr().SetCullingMode(CDrawState::CULLING_MODE::BACK_SIDE, device);
+		for (int cntMat = 0; cntMat < modelData.m_matNum; cntMat++) {
 			modelData.m_outLineMesh->DrawSubset(cntMat);
 		}
 	}
@@ -416,7 +421,7 @@ void CModel::CDrawInfo::SetMaterial(Device& device, Material* mat, const Color& 
 //========================================
 CModel::CRegistInfo::CRegistInfo() {
 
-	m_mtx                  = INITMatrix;
+	m_mtx                  = INITMATRIX;
 	m_col                  = INITCOLOR;
 	m_modelIdx             = NONEDATA;
 	m_texIdx               = NONEDATA;
@@ -439,7 +444,7 @@ CModel::CRegistInfo::~CRegistInfo() {
 //========================================
 void CModel::CRegistInfo::ClearParameter(void) {
 
-	m_mtx                  = INITMatrix;
+	m_mtx                  = INITMATRIX;
 	m_col                  = INITCOLOR;
 	m_modelIdx             = NONEDATA;
 	m_texIdx               = NONEDATA;
