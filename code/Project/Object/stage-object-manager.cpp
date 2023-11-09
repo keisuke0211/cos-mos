@@ -133,7 +133,7 @@ CFillBlock *CStageObjectMgr::FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::FILL_TY
 //========================================
 // 棘
 //========================================
-CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos)
+CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos, int nType)
 {
 	CSpike *pObj = NULL;
 
@@ -143,12 +143,25 @@ CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos)
 	// 初期化処理
 	pObj->Init();
 
-	if (pos.y <= 0) {
-		pObj->SetRot(D3DXVECTOR3(0.0f,0.0f, D3DX_PI));
-		pos.y += CStageObject::SIZE_OF_1_SQUARE * 0.25f;
-	}
-	else {
-		pos.y -= CStageObject::SIZE_OF_1_SQUARE * 0.25f;
+	switch (nType)
+	{
+	case 0:
+		if (pos.y <= 0) {
+			pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
+			pos.y += CStageObject::SIZE_OF_1_SQUARE * 0.25f;
+		}
+		else {
+			pos.y -= CStageObject::SIZE_OF_1_SQUARE * 0.25f;
+		}
+		break;
+	case 1:
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI/2));
+		pos.x -= CStageObject::SIZE_OF_1_SQUARE * 0.25f;
+		break;
+	case 2:
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, -D3DX_PI / 2));
+		pos.x += CStageObject::SIZE_OF_1_SQUARE * 0.25f;
+		break;
 	}
 
 	pObj->SetPos(pos);
@@ -269,6 +282,7 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 
 	return pObj;
 }
+
 //========================================
 // ゴールゲート
 //========================================
@@ -285,6 +299,7 @@ CGoalGate *CStageObjectMgr::GoalGateCreate(D3DXVECTOR3 pos)
 
 	return pObj;
 }
+
 //========================================
 // 惑星
 //========================================
@@ -365,6 +380,7 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTO
 
 	return pObj;
 }
+
 //========================================
 //  動く犬
 //========================================
@@ -387,6 +403,7 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHead
 
 	return pObj;
 }
+
 //========================================
 //  隕石ジェネレーター
 //========================================

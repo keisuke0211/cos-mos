@@ -91,7 +91,9 @@ private:
 		TYPE_BLOCK = 0,				// ブロック
 		TYPE_TRAMPOLINE,			// トランポリン
 		TYPE_SPIKE,					// 棘
-		TYPE_LIFT,					// リフト
+		TYPE_SPIKE_L	= 24,		// 棘左
+		TYPE_SPIKE_R	= 25,		// 棘右
+		TYPE_LIFT		= 3,		// リフト
 		TYPE_Meteor,				// 隕石
 		TYPE_Laser,					// レーザー
 		TYPE_Extenddog,				// ヌイ
