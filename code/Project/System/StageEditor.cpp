@@ -24,12 +24,10 @@ const char* CStageEditor::STAGE_INFO_FILE = "data\\GAMEDATA\\STAGE\\STAGE_FILE.t
 //========================================
 CStageEditor::CStageEditor(void)
 {
-	if (m_PlanetType != NULL)
-	{
+	if (m_PlanetType != NULL){
 		Uninit();
 	}
-	else
-	{
+	else{
 		m_PlanetType = NULL;
 	}
 
@@ -45,6 +43,25 @@ CStageEditor::CStageEditor(void)
 	m_Info.nLine = 0;
 	m_Info.nRowMax = 0;
 	m_Info.nLineMax = 0;
+	m_Info.nPlanetIdx = 0;
+
+	// 最大値
+	m_Info.nPlanetMax = 0;
+	m_Info.nLiftMax = 0;
+	m_Info.nMateorMax = 0;
+	m_Info.nLaserMax = 0;
+	m_Info.nDogMax = 0;
+
+	// カウント
+	m_Info.nCntLift = 0;
+	m_Info.nCntMateor = 0;
+	m_Info.nCntLaser = 0;
+	m_Info.nDogMax = 0;
+
+	m_LiftInfo = NULL;
+	m_MeteorInfo = NULL;
+	m_LaserInfo = NULL;
+	m_DogInfo = NULL;
 }
 
 //========================================
@@ -65,6 +82,26 @@ CStageEditor::~CStageEditor()
 
 		delete[] m_PlanetType;
 		m_PlanetType = NULL;
+	}
+
+	if (m_LiftInfo != NULL){
+		delete[] m_LiftInfo;
+		m_LiftInfo = NULL;
+	}
+
+	if (m_MeteorInfo != NULL){
+		delete[] m_MeteorInfo;
+		m_MeteorInfo = NULL;
+	}
+
+	if (m_LaserInfo != NULL){
+		delete[] m_LaserInfo;
+		m_LaserInfo = NULL;
+	}
+
+	if (m_DogInfo != NULL){
+		delete[] m_DogInfo;
+		m_DogInfo = NULL;
 	}
 }
 
@@ -87,6 +124,26 @@ void CStageEditor::Uninit(void)
 
 		delete[] m_PlanetType;
 		m_PlanetType = NULL;
+	}
+
+	if (m_LiftInfo != NULL) {
+		delete[] m_LiftInfo;
+		m_LiftInfo = NULL;
+	}
+
+	if (m_MeteorInfo != NULL) {
+		delete[] m_MeteorInfo;
+		m_MeteorInfo = NULL;
+	}
+
+	if (m_LaserInfo != NULL) {
+		delete[] m_LaserInfo;
+		m_LaserInfo = NULL;
+	}
+
+	if (m_DogInfo != NULL) {
+		delete[] m_DogInfo;
+		m_DogInfo = NULL;
 	}
 }
 
@@ -390,6 +447,19 @@ void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
 }
 
 //========================================
+// 色設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetColor(CSVFILE *pFile, int nRow, int nLine)
+{
+	nLine += 4;
+	ToData(m_StageColor.Set.r, pFile, nRow, nLine); nLine++;
+	ToData(m_StageColor.Set.g, pFile, nRow, nLine); nLine++;
+	ToData(m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
+	ToData(m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
+}
+
+//========================================
 // ステージ生成
 // Author:KEISUKE OTONO
 //========================================
@@ -446,19 +516,6 @@ void CStageEditor::SwapStage(int nStageIdx)
 }
 
 //========================================
-// 色設定
-// Author:KEISUKE OTONO
-//========================================
-void CStageEditor::SetColor(CSVFILE *pFile, int nRow, int nLine)
-{
-	nLine += 4;
-	ToData(m_StageColor.Set.r, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.g, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
-}
-
-//========================================
 // オブジェクト配置
 // Author:KEISUKE OTONO
 //========================================
@@ -483,7 +540,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->SpikeCreate(pos, 2);
 		break;
 	case TYPE_LIFT:
-		Manager::BlockMgr()->MoveBlockCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f));
+		Manager::BlockMgr()->MoveBlockCreate(pos, pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Meteor:
 		pos.x += fSizeX;
@@ -561,8 +618,7 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 {
 	while (1)
 	{
-		nLine = 0;
-		nRow++;
+		nLine = 0;	nRow++;
 		char *aDataSearch = NULL;	// データ検索用
 		string sData = pFile->GetData(nRow, nLine);
 		char* cstr = new char[sData.size() + 1]; // メモリ確保
@@ -576,11 +632,67 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 			}
 			break;
 		}
-		else if (!strcmp(aDataSearch, "1P")){
+		else if (!strcmp(aDataSearch, "LiftMax")) {
+			int Max = 0;
+			nLine++;
+			ToData(Max, pFile, nRow, nLine);
+
+			m_Info.nLiftMax = Max;
+			m_LiftInfo = new Liftinfo[Max];
+			assert(m_LiftInfo != NULL);
+		}
+		else if (!strcmp(aDataSearch, "SetLift")) {
+			int nLift = 0;
+			while (1)
+			{
+				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
+				string sData = pFile->GetData(nRow, nLine);
+				char* cstr = new char[sData.size() + 1]; // メモリ確保
+				std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+				aDataSearch = cstr;
+
+				if (!strcmp(aDataSearch, "EndLift")) {
+					if (cstr != NULL) {
+						delete[] cstr;
+						cstr = NULL;
+					}
+
+					if (nLift < m_Info.nLiftMax){
+						Manager::BlockMgr()->MoveBlockCreate(m_LiftInfo[nLift].posV, m_LiftInfo[nLift].posR, m_LiftInfo[nLift].move);
+					}
+
+					nLift++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "POS_V")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_LiftInfo[nLift].posV = GetCIe(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "POS_R")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_LiftInfo[nLift].posR = GetCIe(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "MOVE")) {
+					nLine++;
+					ToData(m_LiftInfo[nLift].move.x, pFile, nRow, nLine); nLine++;
+					ToData(m_LiftInfo[nLift].move.y, pFile, nRow, nLine); nLine++;
+					m_LiftInfo[nLift].move.z = 0.0f;
+				}
+
+				if (cstr != NULL) {
+					delete[] cstr;
+					cstr = NULL;
+				}
+			}
 		}
 
-		if (cstr != NULL)
-		{
+		if (cstr != NULL){
 			delete[] cstr;
 			cstr = NULL;
 		}
@@ -710,6 +822,7 @@ D3DXVECTOR3 CStageEditor::GetCIe(int nRow, int nLine)
 // 変換
 // Author:KEISUKE OTONO
 //========================================
+
 // int
 bool CStageEditor::ToData(int &val, CSVFILE *pFile, int nRow, int nLine)
 {
@@ -717,6 +830,36 @@ bool CStageEditor::ToData(int &val, CSVFILE *pFile, int nRow, int nLine)
 	{
 		string sData = pFile->GetData(nRow, nLine);
 		val = stoi(sData);
+		return true;
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+// float
+bool CStageEditor::ToData(float &val, CSVFILE *pFile, int nRow, int nLine)
+{
+	try
+	{
+		string sData = pFile->GetData(nRow, nLine);
+		val = stof(sData);
+		return true;
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+// double
+bool CStageEditor::ToData(double &val, CSVFILE *pFile, int nRow, int nLine)
+{
+	try
+	{
+		string sData = pFile->GetData(nRow, nLine);
+		val = stod(sData);
 		return true;
 	}
 	catch (...)

@@ -53,7 +53,19 @@ public:
 
 		// ステージ関連
 		int nPlanetIdx;	// 現在の惑星
+
+		// 最大値
 		int nPlanetMax;	// 最大惑星
+		int nLiftMax;	// リフトの最大
+		int nMateorMax;	// 隕石の最大
+		int nLaserMax;	// レーザーの最大
+		int nDogMax;	// 犬の最大値
+
+		// カウント
+		int nCntLift;	// リフト
+		int nCntMateor;	// 隕石
+		int nCntLaser;	// レーザー
+		int nCntDog;	// 犬
 	};
 
 	// 色
@@ -65,6 +77,39 @@ public:
 		Color Block;
 		Color FillBlock;
 	};
+
+	// リフト情報
+	struct Liftinfo
+	{
+		D3DXVECTOR3 posV;	// 視点位置
+		D3DXVECTOR3 posR;	// 終点位置
+		D3DXVECTOR3 move;	// 移動量
+	};
+
+	// 隕石情報
+	struct MeteorInfo
+	{
+		D3DXVECTOR3 pos;	// 位置
+		D3DXVECTOR3 move;	// 移動量
+		int inteval;		// 生成間隔
+	};
+
+	// レーザー情報
+	struct LaserInfo
+	{
+		D3DXVECTOR3 posV;	// 視点位置
+		D3DXVECTOR3 posR;	// 終点位置
+		D3DXVECTOR3 move;	// 移動量
+	};
+
+	// Dog情報
+	struct DogInfo
+	{
+		D3DXVECTOR3 Headpos;// 頭の位置
+		D3DXVECTOR3 HipPos;	// 尻の位置
+		int Height;			// 胴体の高さ
+	};
+
 
 	// *** 関数宣言 ***
 	CStageEditor();
@@ -79,8 +124,12 @@ public:
 	/* 最大値			*/int GetPlanetMax(void) { return m_Info.nPlanetMax; }
 	/* 現在のステージ	*/int GetPlanetIdx(void) { return m_Info.nPlanetIdx; }
 	/* 惑星種類情報		*/PlanetType *GetType(void) { return m_PlanetType; }
-	/* 変換				*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);
 	/* 座標				*/D3DXVECTOR3 GetCIe(int nRow, int nLine);
+
+	// -- 変換 ---------------------------------------------
+	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);
+	/* float	*/bool ToData(float &val, CSVFILE *pFile, int nRow, int nLine);
+	/* double	*/bool ToData(double &val, CSVFILE *pFile, int nRow, int nLine);
 
 	// -- 読込 ---------------------------------------------
 	/* ファイルパス	*/void FileLoad(void);
@@ -130,5 +179,10 @@ private:
 	// *** 変数宣言 ***
 	static PlanetType *m_PlanetType;	// 惑星情報
 	static StageColor m_StageColor;		// 色情報
+	Liftinfo *m_LiftInfo;				// リフト情報
+	MeteorInfo *m_MeteorInfo;			// 隕石情報
+	LaserInfo *m_LaserInfo;				// レーザー情報
+	DogInfo *m_DogInfo;					// 犬情報
+
 	StageInfo m_Info;					// ステージ情報
 };
