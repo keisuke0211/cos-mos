@@ -81,7 +81,6 @@ void CMode_Game::Init(void) {
 
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
-	Manager::BlockMgr()->MeteorGeneratorCreate(D3DXVECTOR3(-200.0f, 100.0f, 0.0f), D3DXVECTOR3(0.5f, 0.0f, 0.0f),120);
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
