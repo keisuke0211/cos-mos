@@ -126,6 +126,11 @@ HRESULT CPlayer::Init(void)
 	//初期情報設定
 	Death(NULL);
 
+	// 初期値設定
+	// ※ 来れないとステージ入る前に一瞬着地SEがなる
+	m_aInfo[0].bJump = false;
+	m_aInfo[1].bJump = false;
+
 	//初期化成功
 	return S_OK;
 }
