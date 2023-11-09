@@ -1389,14 +1389,14 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
+
+				if (pInfo->bJump == true)
+					RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+
 				pInfo->bGround = true;	//地面に接している
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[2].MaxPos.y;//最高Ｙ座標設定
 			}
-
-			if (State == CExtenddog::STATE::NONE)
-				//SE再生
-				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 
 			pExtenddog->SetState(CExtenddog::STATE::UP_LAND);
 			pInfo->bExtendDog = true;
@@ -1411,14 +1411,14 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 
 			//裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
+
+				if (pInfo->bJump == true)
+					RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+
 				pInfo->bGround = true;
 				pInfo->bJump = false;	//ジャンプ可能
 				pInfo->fMaxHeight = pOthColli[2].MinPos.y;//最高Ｙ座標設定
 			}
-
-			if (State == CExtenddog::STATE::NONE)
-				//SE再生
-				RNLib::Sound().Play(m_dogSEIdx[0], CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 
 			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
 			pInfo->bExtendDog = true;
