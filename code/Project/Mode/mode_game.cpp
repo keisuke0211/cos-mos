@@ -90,6 +90,7 @@ void CMode_Game::Init(void) {
 
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
+	Manager::BlockMgr()->MeteorGeneratorCreate(D3DXVECTOR3(-200.0f, 100.0f, 0.0f), D3DXVECTOR3(0.5f, 0.0f, 0.0f), 120);
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
@@ -190,18 +191,6 @@ void CMode_Game::Update(void) {
 			int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
 			Manager::StgEd()->SwapStage(stage + 1);
 		}
-	}
-
-	// ”wŒi(‰¼)
-	{
-		float width = RNLib::Window().GetWidth();
-		float height = RNLib::Window().GetHeight();
-		RNLib::Polygon3D().Put(D3DXVECTOR3(0.0f, -height*0.25f, 400.0f), INITD3DXVECTOR3)
-			->SetLighting(false)
-			->SetCol(m_BgColorDown)
-			->SetSize(width * 2.0f, height * 0.5f)
-			->SetPriority(-2)
-			->SetZTest(false);
 	}
 }
 

@@ -106,7 +106,7 @@ void CText3D::CRegistInfo::ClearParameter(void) {
 	m_scaleX      = 1.0f;
 	m_scaleY      = 1.0f;
 	m_isFactScale = false;
-	m_mtx         = INITMatrix;
+	m_mtx         = INITMATRIX;
 	m_col         = INITCOLOR;
 	m_isZtest     = true;
 	m_isLighting  = true;
@@ -180,8 +180,8 @@ void CText3D::CRegistInfo::PutPolygon3D(const bool& isOnScreen) {
 		Matrix resultMtx; {
 
 			// 基準マトリックスとテキストマトリックスを求める
-			Matrix baseMtx = INITMatrix;
-			Matrix textMtx = INITMatrix;
+			Matrix baseMtx = INITMATRIX;
+			Matrix textMtx = INITMATRIX;
 
 			if (m_isBillboard) 
 			{// ビルボードの時、

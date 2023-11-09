@@ -46,8 +46,6 @@
 #define FVF_VERTEX_2D         (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 #define FVF_VERTEX_3D         (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 // èâä˙íl (Å¶D3DånóÒ)
-#define INITMatrix        Matrix   (1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)
-#define INITViewport      Viewport {0,0,0,0,0.0f,0.0f}
 #define INITD3DCOLOR          D3DCOLOR_RGBA(255,255,255,255)
 #define INITD3DXVECTOR3       D3DXVECTOR3  (0.0f,0.0f,0.0f)
 #define INITD3DXVECTOR2       D3DXVECTOR2  (0.0f,0.0f)
