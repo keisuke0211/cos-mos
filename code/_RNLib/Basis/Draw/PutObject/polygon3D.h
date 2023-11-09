@@ -25,7 +25,7 @@ public:
 		~CDrawInfo();
 		void Draw(Device& device, const Matrix& viewMtx);
 		static void InitCreateVertexBuffer(void);
-		static void CreateVertexBuffer(const unsigned short& num);
+		static void CreateVertexBuffer(const UShort& num);
 		static void ReleaseVertexBuffer(void);
 
 		// [[[ ïœêîêÈåæ ]]]
@@ -39,7 +39,7 @@ public:
 		Vertex3D                     m_vtxs[4];
 
 		// [[[ ê√ìIïœêîêÈåæ ]]]
-		static LPDIRECT3DVERTEXBUFFER9 m_vtxBuff;
+		static VertexBuffer m_vtxBuff;
 		static UShort                  m_allocPower;
 		static UShort                  m_allocNum;
 		static UShort                  m_idxCount;
@@ -57,7 +57,7 @@ public:
 		CRegistInfo* SetMtx              (const Matrix& mtx);
 		CRegistInfo* SetVtxPos           (const Pos3D pos0, const Pos3D pos1, const Pos3D pos2, const Pos3D pos3);
 		CRegistInfo* SetCol              (const Color& col);
-		CRegistInfo* SetTex              (const short& texIdx, const unsigned short& ptn = 0, const unsigned short& ptnX = 1, const unsigned short& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
+		CRegistInfo* SetTex              (const short& texIdx, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
 		CRegistInfo* SetTex_Camera       (CCamera* camera);
 		CRegistInfo* SetSize             (const float& width, const float& height);
 		CRegistInfo* SetSize_TexBaseScale(const float& scaleX, const float& scaleY);
@@ -81,9 +81,9 @@ public:
 		Color                        m_col;
 		short                        m_texIdx;
 		CCamera*                     m_texCamera;
-		unsigned short               m_ptn;
-		unsigned short               m_ptnX;
-		unsigned short               m_ptnY;
+		UShort                       m_ptn;
+		UShort                       m_ptnX;
+		UShort                       m_ptnY;
 		float                        m_ptnScaleX;
 		float                        m_ptnScaleY;
 		Pos2D                        m_ptnPos;
@@ -96,6 +96,11 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
+	CPolygon3D();
+	~CPolygon3D();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	CRegistInfo* Put(const Matrix& mtx, const bool& isOnScreen = false);
 	CRegistInfo* Put(const Pos3D& pos, const Rot3D& rot, const bool& isOnScreen = false);
 };

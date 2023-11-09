@@ -53,7 +53,9 @@ public:
 	static void SetBgDownColor(Color color) { m_BgColorDown = color; }
 
 	// -- Žæ“¾ -------------------------------------------------------------------
-	static int GetStage(void) { return m_nStageIdx; }
+	static int GetStage(void)    { return m_nStageIdx;   }
+	CCamera& GetCameraUp(void)   { return *m_cameraUp;   }
+	CCamera& GetCameraDown(void) { return *m_cameraDown; }
 
 private:
 
@@ -69,6 +71,7 @@ private:
 	int m_nSelect;
 	CFontText *m_Menu[MENU_MAX];
 	CRocketPartsUI *m_rocketparts;
-
+	CCamera* m_cameraUp;
+	CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;
 };

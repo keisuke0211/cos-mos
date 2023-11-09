@@ -20,7 +20,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CDoll3D::CDoll3D(void) {
+CDoll3D::CDoll3D() {
 
 	m_pos			       = INITPOS3D;
 	m_rot			       = INITROT3D;
@@ -35,10 +35,10 @@ CDoll3D::CDoll3D(void) {
 //========================================
 // デストラクタ
 //========================================
-CDoll3D::~CDoll3D(void) {
+CDoll3D::~CDoll3D() {
 
 	// ボーン状態のメモリ解放
-	RNLib::Memory().Release(&m_boneStates);
+	CMemory::Release(&m_boneStates);
 }
 
 //========================================
@@ -73,9 +73,9 @@ void CDoll3D::SetUp(const short& setUpIdx) {
 	// 部品数が0以下         > メモリ解放
 	//----------------------------------------
 	if (setUp.m_boneDataNum > 0)
-		RNLib::Memory().Alloc<CBoneState>(&m_boneStates, setUp.m_boneDataNum);
+		CMemory::Alloc<CBoneState>(&m_boneStates, setUp.m_boneDataNum);
 	else
-		RNLib::Memory().Release<CBoneState>(&m_boneStates);
+		CMemory::Release<CBoneState>(&m_boneStates);
 }
 
 //========================================
@@ -282,7 +282,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 			else
 			{// 移動にかかる時間が0でない時、
 				// 移動アニメ状態メモリを確保
-				RNLib::Memory().Alloc(&m_animeStateSum.move);
+				CMemory::Alloc(&m_animeStateSum.move);
 
 				// 移動アニメ状態を設定
 				m_animeStateSum.move->posEase   = ease;
@@ -305,7 +305,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 			else
 			{// 回転にかかる時間が0でない時、
 				// 回転アニメ状態メモリを確保
-				RNLib::Memory().Alloc(&m_animeStateSum.spin);
+				CMemory::Alloc(&m_animeStateSum.spin);
 
 				// 回転アニメ状態を設定
 				m_animeStateSum.spin->rotEase   = ease;
@@ -328,7 +328,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 			else
 			{// 拡縮にかかる時間が0でない時、
 				// 拡縮アニメ状態メモリを確保
-				RNLib::Memory().Alloc(&m_animeStateSum.scaling);
+				CMemory::Alloc(&m_animeStateSum.scaling);
 
 				// 拡縮アニメ状態を設定
 				m_animeStateSum.scaling->scaleEase   = ease;
@@ -360,7 +360,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 
 		// カウンター到達時、メモリ解放
 		if (++m_animeStateSum.move->counter >= m_animeStateSum.move->time) {
-			RNLib::Memory().Release(&m_animeStateSum.move);
+			CMemory::Release(&m_animeStateSum.move);
 		}
 	}
 
@@ -375,7 +375,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 
 		// カウンター到達時、メモリ解放
 		if (++m_animeStateSum.spin->counter >= m_animeStateSum.spin->time) {
-			RNLib::Memory().Release(&m_animeStateSum.spin);
+			CMemory::Release(&m_animeStateSum.spin);
 		}
 	}
 
@@ -390,7 +390,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 
 		// カウンター到達時、メモリ解放
 		if (++m_animeStateSum.scaling->counter >= m_animeStateSum.scaling->time) {
-			RNLib::Memory().Release(&m_animeStateSum.scaling);
+			CMemory::Release(&m_animeStateSum.scaling);
 		}
 	}
 }
@@ -401,15 +401,15 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 void CDoll3D::CBoneState::PrepareMotion(const CMotion3D::BoneMotionData& boneMotionData) {
 
 	// メモリ解放
-	RNLib::Memory().Release(&m_animeStateSum.move);
-	RNLib::Memory().Release(&m_animeStateSum.spin);
-	RNLib::Memory().Release(&m_animeStateSum.scaling);
+	CMemory::Release(&m_animeStateSum.move);
+	CMemory::Release(&m_animeStateSum.spin);
+	CMemory::Release(&m_animeStateSum.scaling);
 
 	// 移動しないモーションの時、位置変更しているのであれば、
 	if (!boneMotionData.isMove && m_pos != INITPOS3D) {
 		
 		// 移動情報のメモリを確保し、
-		RNLib::Memory().Alloc(&m_animeStateSum.move);
+		CMemory::Alloc(&m_animeStateSum.move);
 
 		// 初期位置に移動させる
 		m_animeStateSum.move->oldPos    = m_pos;
@@ -422,7 +422,7 @@ void CDoll3D::CBoneState::PrepareMotion(const CMotion3D::BoneMotionData& boneMot
 	if (!boneMotionData.isSpin && m_rot != INITROT3D) {
 		
 		// 回転情報のメモリを確保し、
-		RNLib::Memory().Alloc(&m_animeStateSum.spin);
+		CMemory::Alloc(&m_animeStateSum.spin);
 
 		// 初期向きに回転させる
 		m_animeStateSum.spin->oldRot    = m_rot;
@@ -435,7 +435,7 @@ void CDoll3D::CBoneState::PrepareMotion(const CMotion3D::BoneMotionData& boneMot
 	if (!boneMotionData.isScale && m_scale != INITSCALE3D) {
 		
 		// 拡縮情報のメモリを確保し、
-		RNLib::Memory().Alloc(&m_animeStateSum.scaling);
+		CMemory::Alloc(&m_animeStateSum.scaling);
 
 		// 初期拡大倍率に拡縮させる
 		m_animeStateSum.scaling->oldScale    = m_scale;

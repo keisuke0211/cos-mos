@@ -23,17 +23,31 @@
 //========================================
 CTransition::CTransition() {
 
-	m_type         = TYPE::NONE;
-	m_state        = STATE::NONE;
+	m_type = TYPE::NONE;
+	m_state = STATE::NONE;
 	m_stateCounter = 0;
-	m_time         = 0;
-	m_col          = INITCOLOR;
+	m_time = 0;
+	m_col = INITCOLOR;
 }
 
 //========================================
 // デストラクタ
 //========================================
 CTransition::~CTransition() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CTransition::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CTransition::Uninit(void) {
 
 }
 
@@ -52,11 +66,11 @@ void CTransition::Update(void) {
 		// [[[ オープン ]]]
 	case STATE::OPEN: {
 		rate = 1.0f - ((float)m_stateCounter / m_time);
-		
+
 		// 状態を無しに
 		if (++m_stateCounter >= m_time) {
 			m_stateCounter = 0;
-			m_state        = STATE::NONE;
+			m_state = STATE::NONE;
 		}
 	}break;
 		// [[[ オープン待ち ]]]
@@ -70,10 +84,14 @@ void CTransition::Update(void) {
 		// 状態をオープン待ちに
 		if (++m_stateCounter >= m_time) {
 			m_stateCounter = 0;
-			m_state        = STATE::OPEN_WAIT;
+			m_state = STATE::OPEN_WAIT;
 		}
 	}break;
 	}
+
+	// 割合が0であれば終了
+	if (rate == 0.0f)
+		return;
 
 	// 画面埋め処理
 	FillScreen(rate);
@@ -89,8 +107,8 @@ bool CTransition::Open(const TYPE& type, const UShort& time) {
 		return false;
 
 	m_stateCounter = 0;
-	m_state        = STATE::OPEN;
-	m_time         = time;
+	m_state = STATE::OPEN;
+	m_time = time;
 
 	return true;
 }
@@ -105,9 +123,9 @@ bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) 
 		return false;
 
 	m_stateCounter = 0;
-	m_state        = STATE::CLOSE;
-	m_time         = time;
-	m_col          = col;
+	m_state = STATE::CLOSE;
+	m_time = time;
+	m_col = col;
 
 	return true;
 }
@@ -122,7 +140,7 @@ bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) 
 // 画面埋め処理
 //========================================
 void CTransition::FillScreen(const float& rate) {
-	
+
 	// ポリゴン2Dの設置
 	RNLib::Polygon2D().Put(RNLib::Window().GetCenterPos(), 0.0f, true)
 		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(int)(m_col.a * rate) })

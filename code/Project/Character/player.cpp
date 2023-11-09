@@ -6,7 +6,6 @@
 //================================================================================================
 #include "../main.h"
 #include "player.h"
-#include "../../_RNLib/Basis/input.h"
 #include "../../_RNLib/Basis/Calculation/number.h"
 
 //スワップインターバル
@@ -236,7 +235,7 @@ void CPlayer::Update(void)
 	//情報更新
 	UpdateInfo();
 
-	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNLib::GetFPSCount()));
+	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNSystem::GetFPSCount()));
 }
 
 //----------------------------

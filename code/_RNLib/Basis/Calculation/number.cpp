@@ -283,7 +283,7 @@ int OR(std::initializer_list<int> args) {
 //========================================
 int* CreateRandList(int num) {
 	int* pList = NULL;
-	RNLib::Memory().Alloc<int>(&pList, num);
+	CMemory::Alloc<int>(&pList, num);
 	for (int cnt = 0; cnt < num; cnt++) {
 		pList[cnt] = cnt;
 	}

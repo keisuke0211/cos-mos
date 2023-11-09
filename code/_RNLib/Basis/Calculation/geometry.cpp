@@ -38,14 +38,15 @@ float CGeometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {
 }
 
 //========================================
-// [静的]カメラ面までの垂直距離を調べる
+// [静的]面までの垂直距離を調べる
 //========================================
-float CGeometry::FindDistanceToCameraPlane(const Pos3D& pos, CCamera& camera) {
+float CGeometry::FindDistanceToPlane(const Pos3D& basePos, const Pos3D& targetPos, const Vector3D& targetNor) {
 
-	Vector3D camToPosVec = pos - camera.GetPosV();
-	Vector3D camPlaneVec = camera.GetVec();
+	Vector3D planeToPosVec = basePos - targetPos;
+	Vector3D planeNor = targetNor;
 
-	return fabsf(D3DXVec3Dot(&camToPosVec, &camPlaneVec));
+	D3DXVec3Normalize(&planeToPosVec, &planeToPosVec);
+	return fabsf(D3DXVec3Dot(&planeToPosVec, &planeNor));
 }
 
 //========================================
@@ -191,4 +192,39 @@ Normal3D CGeometry::GetRandomVec(void) {
 	}
 
 	return Normal3D(x, y, z);
+}
+
+//========================================
+// コンストラクタ
+//========================================
+CGeometry::CGeometry() {
+
+}
+
+//========================================
+// デストラクタ
+//========================================
+CGeometry::~CGeometry() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CGeometry::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CGeometry::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void CGeometry::Update(void) {
+
 }

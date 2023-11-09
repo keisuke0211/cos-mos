@@ -14,12 +14,14 @@ class CDefaultData {
 public:
 	//========== [[[ óÒãìå^íËã` ]]]
 	enum class SOUND { TEST_BGM, TEST_SE, MAX, };
-	enum class MODEL { PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
+	enum class MODEL { SPHERE, OBSERVER, PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CDefaultData();
 	~CDefaultData();
 	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	short& GetSoundIdx(const SOUND& sound) { return m_soundIdxes[(int)sound]; }
 	short& GetModelIdx(const MODEL& model) { return m_modelIdxes[(int)model]; }
 
