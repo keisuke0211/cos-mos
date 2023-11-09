@@ -480,6 +480,34 @@ void CPlayer::Move(COLLI_VEC vec)
 }
 
 //----------------------------
+//制御処理
+//----------------------------
+void CPlayer::CntrPos(void)
+{
+	int RowMax = Manager::StgEd()->GetRowMax() - 1;
+	int LineMax = Manager::StgEd()->GetLineMax() - 1;
+
+	D3DXVECTOR3 MinPos = Manager::StgEd()->GetCIe(0, 0);
+	D3DXVECTOR3 MaxPos = Manager::StgEd()->GetCIe(RowMax, LineMax);
+
+	// 1マスずらす
+	MinPos.x = MinPos.x; MinPos.y = MinPos.y - 8;
+	MaxPos.x = MaxPos.x; MaxPos.y = MaxPos.y + 8;
+
+
+	//プレイヤーの位置更新
+	for each (Info &Player in m_aInfo)
+	{
+		// X座標
+		if (Player.pos.x <= MinPos.x)
+			Player.pos.x = MinPos.x;
+		else if (Player.pos.x > MaxPos.x)
+			Player.pos.x = MaxPos.x;
+	}
+	
+}
+
+//----------------------------
 //当たり判定まとめ
 //----------------------------
 void CPlayer::WholeCollision(void)
@@ -494,6 +522,9 @@ void CPlayer::WholeCollision(void)
 
 		//移動処理
 		Move(vec);
+
+		//制御処理
+		CntrPos();
 
 		//オブジェクトのポインタを格納
 		CObject *obj = NULL;

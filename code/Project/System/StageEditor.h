@@ -74,10 +74,13 @@ public:
 	/* ステージ切り替え	*/void SwapStage(int nStageIdx);
 
 	// -- 取得 ---------------------------------------------
+	/* 行数の最大値		*/int GetRowMax(void) { return m_Info.nRowMax; }
+	/* 列数の最大値		*/int GetLineMax(void) { return m_Info.nLineMax; }
 	/* 最大値			*/int GetPlanetMax(void) { return m_Info.nPlanetMax; }
 	/* 現在のステージ	*/int GetPlanetIdx(void) { return m_Info.nPlanetIdx; }
 	/* 惑星種類情報		*/PlanetType *GetType(void) { return m_PlanetType; }
 	/* 変換				*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);
+	/* 座標				*/D3DXVECTOR3 GetCIe(int nRow, int nLine);
 
 	// -- 読込 ---------------------------------------------
 	/* ファイルパス	*/void FileLoad(void);
@@ -116,6 +119,10 @@ private:
 	// *** 関数宣言 ***
 	/* ステージ色	*/void StgColor(CSVFILE *pFile, int nRow, int nLine);
 	/* 色設定		*/void SetColor(CSVFILE *pFile, int nRow, int nLine);
+	/* リフト設定	*/void SetLiftInfo(CSVFILE *pFile, int nRow, int nLine);
+	/* 隕石設定		*/void SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine);
+	/* レーザー設定	*/void SetLaserInfo(CSVFILE *pFile, int nRow, int nLine);
+	/* ヌイ設定		*/void SetDogInfo(CSVFILE *pFile, int nRow, int nLine);
 	/* OBJ配置		*/void ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos,int nType);
 
 	/* ステージ生成 */void SetStage(int nType);
