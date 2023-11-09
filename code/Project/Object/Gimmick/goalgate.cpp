@@ -49,7 +49,7 @@ CGoalGate::~CGoalGate(void) {
 //========================================
 void CGoalGate::Init(void) {
 
-	m_state = STATE::SMALL;
+p	m_state = STATE::SMALL;
 }
 
 //========================================
