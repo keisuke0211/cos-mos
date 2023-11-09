@@ -381,11 +381,12 @@ void CPlayer::Swap(void)
 //----------------------------
 void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 {
-	int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
-	int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
 	if (pDeathPos != NULL)
 	{
+		int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+		int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+
+
 		Manager::EffectMgr()->EffectCreate(EffTex, *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
@@ -658,8 +659,11 @@ void CPlayer::WholeCollision(void)
 					}
 
 					CExtenddog::STATE state = pDog->GetState();
-					if (pOthColli[2].ColliRot != COLLI_ROT::OVER && Player.bExtendDog && state == CExtenddog::STATE::DOWN_LAND) {
-						Player.bExtendDog = false;
+					if (Player.bExtendDog) {
+						if ((pOthColli[2].ColliRot != COLLI_ROT::UNDER && state == CExtenddog::STATE::UP_LAND)
+							|| (pOthColli[2].ColliRot != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
+							Player.bExtendDog = false;
+						}
 					}
 				}
 				break;
