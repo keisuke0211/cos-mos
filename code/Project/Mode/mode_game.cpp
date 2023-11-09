@@ -61,6 +61,13 @@ CMode_Game::CMode_Game(void) {
 //========================================
 CMode_Game::~CMode_Game(void) {
 
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+	{
+		if (m_Menu[nCnt] != NULL){
+			m_Menu[nCnt]->Uninit();
+			m_Menu[nCnt] = NULL;
+		}
+	}
 }
 
 //========================================

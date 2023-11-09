@@ -106,8 +106,12 @@ void CFontText::Uninit()
 			m_Info.words[wordsCount]->Uninit();
 		}
 	}
-	delete[] m_Info.words;
-	m_Info.words = NULL;
+
+	if (m_Info.words != NULL)
+	{
+		delete[] m_Info.words;
+		m_Info.words = NULL;
+	}
 
 	if (m_Info.aShadow.bShadow)
 	{
@@ -119,8 +123,11 @@ void CFontText::Uninit()
 			}
 		}
 
-		delete[] m_Info.aShadow.shadow;
-		m_Info.aShadow.shadow = NULL;
+		if (m_Info.aShadow.shadow != NULL)
+		{
+			delete[] m_Info.aShadow.shadow;
+			m_Info.aShadow.shadow = NULL;
+		}
 	}
 
 	Release();
