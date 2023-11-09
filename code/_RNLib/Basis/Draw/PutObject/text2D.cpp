@@ -29,15 +29,37 @@ CText2D::~CText2D() {
 }
 
 //========================================
+// 初期化処理
+//========================================
+void CText2D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CText2D::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void CText2D::Update(void) {
+
+	m_debugLogLine = 0;
+}
+
+//========================================
 // 設置処理
 //========================================
 CText2D::CRegistInfo* CText2D::Put(const Pos3D& pos, const Angle& angle, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen) {
 
 	// 登録受付中でない時、終了
-	if (CDrawMng::GetProcessState() != CDrawMng::PROCESS_STATE::REGIST_ACCEPT)
+	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
-	return RNLib::DrawMng().PutText2D(pos, angle, isOnScreen)
+	return RNLib::DrawMgr().PutText2D(pos, angle, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)
 		->SetFontIdx(fontIdx);
@@ -81,7 +103,7 @@ CText2D::CRegistInfo::CRegistInfo() {
 CText2D::CRegistInfo::~CRegistInfo() {
 
 	// 文字列のメモリ解放
-	RNLib::Memory().Release(&m_string);
+	CMemory::Release(&m_string);
 }
 
 //========================================
@@ -89,7 +111,7 @@ CText2D::CRegistInfo::~CRegistInfo() {
 //========================================
 void CText2D::CRegistInfo::ClearParameter(void) {
 
-	RNLib::Memory().Release(&m_string);
+	CMemory::Release(&m_string);
 	m_alignment   = CText::ALIGNMENT::CENTER;
 	m_fontIdx     = NONEDATA;
 	m_scaleX      = 1.0f;
@@ -143,11 +165,11 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 	//----------------------------------------
 	// 一文字ずつ設置していく
 	//----------------------------------------
-	int strLen = (int)strlen(m_string);
+	int strLen = (int)wcslen(wstr);
 	for (int cntChar = 0; cntChar < strLen; cntChar++) {
 
 		// カウントの文字が空白の時、折り返す
-		if (m_string[cntChar] == ' ')
+		if (wstr[cntChar] == ' ')
 			continue;	
 
 		// [[[ 表示形式に応じた設定位置の設定 ]]]
@@ -165,11 +187,11 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 		}
 
 		// [[[ 結果マトリックスの算出 ]]]
-		D3DXMATRIX resultMtx; {
+		Matrix resultMtx; {
 
 			// 基準マトリックスとテキストマトリックスを求める
-			D3DXMATRIX baseMtx = INITD3DXMATRIX;
-			D3DXMATRIX textMtx = INITD3DXMATRIX;
+			Matrix baseMtx = INITMatrix;
+			Matrix textMtx = INITMatrix;
 
 			{// 通常の時、
 				D3DXVECTOR3 charPos = D3DXVECTOR3(setPos.x, setPos.y, 0.0f);
@@ -182,7 +204,7 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 		}
 
 		// ポリゴン2Dを設置
-		RNLib::DrawMng().PutPolygon2D(CMatrix::ConvMtxToPos(resultMtx), CMatrix::ConvMtxToRot(resultMtx).z, isOnScreen)
+		RNLib::DrawMgr().PutPolygon2D(CMatrix::ConvMtxToPos(resultMtx), CMatrix::ConvMtxToRot(resultMtx).z, isOnScreen)
 			->SetSize(charWidth, charHeight)
 			->SetCol(m_col)
 			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)

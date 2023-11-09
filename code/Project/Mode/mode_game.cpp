@@ -53,6 +53,8 @@ int CMode_Game::m_nPlanetIdx = 0;
 //========================================
 CMode_Game::CMode_Game(void) {
 
+	m_cameraUp   = NULL;
+	m_cameraDown = NULL;
 }
 
 //========================================
@@ -74,7 +76,7 @@ void CMode_Game::Init(void) {
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// カメラの視点/注視点を設定
-	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 状態設定
 	SetState((int)STATE::NONE);
@@ -98,6 +100,12 @@ void CMode_Game::Init(void) {
 	Manager::StgEd()->StageLoad(m_nPlanetIdx,m_nStageIdx);
 
 	SetBGColor(m_BgColorUp);
+
+	// 上下カメラの生成
+	m_cameraUp   = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
+	m_cameraDown = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
+	m_cameraUp->SetClipping(true);
+	m_cameraDown->SetClipping(true);
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
@@ -129,6 +137,31 @@ void CMode_Game::Uninit(void) {
 //========================================
 void CMode_Game::Update(void) {
 	CMode::Update();
+
+	{// [[[ 上下カメラ描画 ]]]
+		const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
+		const float windowWidth       = RNLib::Window().GetWidth();
+		const float windowHeight      = RNLib::Window().GetHeight();
+		const float windowHeightHalf  = windowHeight * 0.5f;
+		const float windowHeightHalf2 = windowHeightHalf * 0.5f;
+
+		// 背景のカラーを設定
+		m_cameraUp->SetBGCol(m_BgColorUp);
+		m_cameraDown->SetBGCol(m_BgColorDown);
+
+		// 上
+		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
+			->SetTex_Camera(m_cameraUp)
+			->SetSize(windowWidth, windowHeightHalf)
+			->SetPriority(-1);
+
+		// 下
+		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
+			->SetTex_Camera(m_cameraDown)
+			->SetCol(m_BgColorDown)
+			->SetSize(windowWidth, windowHeightHalf)
+			->SetPriority(-1);
+	}
 
 	m_rocketparts->Update();
 

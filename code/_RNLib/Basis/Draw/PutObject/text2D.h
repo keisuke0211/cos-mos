@@ -55,9 +55,11 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CText2D();
 	~CText2D();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	CRegistInfo* Put(const Pos3D& pos, const Angle& angle, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen = false);
 	void PutDebugLog(const char* string);
-	void ClearDebugLog(void) { m_debugLogLine = 0; }
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]

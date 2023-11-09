@@ -19,6 +19,8 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CTransition();
 	~CTransition();
+	void   Init    (void);
+	void   Uninit  (void);
 	void   Update  (void);
 	bool   Open    (const TYPE& type, const UShort& time);
 	bool   Close   (const TYPE& type, const Color& col, const UShort& time);

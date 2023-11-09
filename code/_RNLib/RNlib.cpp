@@ -5,8 +5,10 @@
 // 
 //========================================
 #include "RNlib.h"
+#include "RNobject.h"
 #include "RNsettings.h"
-#include "../Project/System/words/object/font-object.h"
+#include "Demo/demo.h"
+#include "../Project/../Project/System/words/object/font-object.h"
 
 //****************************************
 // プロトタイプ宣言
@@ -14,164 +16,214 @@
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 //****************************************
-// クラス定義
-//****************************************
-// 3Dオブジェクトクラス
-class C3DObject {
-public:
-	//========== [[[ 関数宣言 ]]]
-	void Init(void) {}
-	void Uninit(void) {}
-	void Update(void) {}
-
-	//========== [[[ 変数宣言 ]]]
-	CMotion3D m_motion3D;
-	CSetUp3D  m_setUp3D;
-};
-
-// 計算クラス
-class CCalculation {
-public:
-	//========== [[[ 関数宣言 ]]]
-	void Init(void) {}
-	void Uninit(void) {}
-	void Update(void) {}
-
-	//========== [[[ 変数宣言 ]]]
-	CEase     m_ease;
-	CGeometry m_geometry;
-	CMatrix   m_matrix;
-};
-
-// その他クラス
-class COther {
-public:
-	//========== [[[ 関数宣言 ]]]
-	void Init(void) {
-		m_defaultData.Init();
-	}
-	void Uninit(void) {}
-	void Update(void) {}
-
-	//========== [[[ 変数宣言 ]]]
-	CDefaultData m_defaultData;
-};
-
-//****************************************
 // 無名空間
 //****************************************
 namespace {
 
 	//========== [[[ 関数宣言 ]]]
-	void Init(HINSTANCE hInstance);
+	void Init(HINSTANCE& instanceHandle, const char* settingsPath, const bool& demo);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
-	void Load(void);
-	void Save(void);
 
 	//========== [[[ 変数宣言 ]]]
-	RNLib::SIGNAL  signal = RNLib::SIGNAL::NONE;
-	unsigned short m_nCount;
-	DWORD          m_dwCurrentTime;
-	DWORD          m_dwExecLastTime;
-	DWORD          m_dwFrameCount;
-	DWORD          m_dwFPSLastTime;
-	int            m_nFPSCount;
-	bool           m_bBlinkF2;
-	bool           m_bBlinkF4;
-	bool           m_bSpace3DStop;
-	bool           m_bSpace3DStopRsrv;
-	bool           m_bSceneSwap;
-	// RNオブジェクト
-	C3DObject      m_3DObject;
-	CCalculation   m_calculation;
-	COther         m_other;
+	RNSystem::SIGNAL signal = RNSystem::SIGNAL::NONE;
+	DWORD            currentTime;
+	DWORD            execLastTime;
+	DWORD            frameCount;
+	DWORD            FPSLastTime;
+	int              FPSCount;
+	bool             isSpace3DStop;
+	bool             isSpace3DStopReserve;
+	bool             isSceneSwap;
 
-	CText2D      m_text2D;
-	CPolygon2D   m_polygon2D;
-	CModel       m_model;
-	CText3D      m_text3D;
-	CPolygon3D   m_polygon3D;
-	CLight3D     m_light3D;
-	CCamera      m_camera;
-	CFile        m_file;
-	CInput       m_input;
-	CMemory      m_memory;
-	CSound       m_sound;
-	CWindow      m_window;
-	CText        m_text;
-	CTexture     m_texture;
-	CTransition  m_transition;
-	CDrawMng     m_drawMng;
-	CDrawState   m_drawState;
+	// RNオブジェクト
+	C3DObject    _3DObject;
+	CCalculation calculation;
+	CDraw        draw;
+	CMechanical  mechanical;
+	COther       other;
+	CDemo*       demo;
 }
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| RNLibの関数
+//==========| RNライブラリ
+//----------|---------------------------------------------------------------------
+//================================================================================
+CMotion3D&    RNLib::Motion3D      (void) { return _3DObject.m_motion3D;   }
+CSetUp3D&     RNLib::SetUp3D       (void) { return _3DObject.m_setUp3D;    }
+CEase&        RNLib::Ease          (void) { return calculation.m_ease;     }
+CGeometry&    RNLib::Geometry      (void) { return calculation.m_geometry; }
+CMatrix&      RNLib::Matrix        (void) { return calculation.m_matrix;   }
+CModel&       RNLib::Model         (void) { return draw.m_model;           }
+CPolygon2D&   RNLib::Polygon2D     (void) { return draw.m_polygon2D;       }
+CPolygon3D&   RNLib::Polygon3D     (void) { return draw.m_polygon3D;       }
+CText2D&      RNLib::Text2D        (void) { return draw.m_text2D;          }
+CText3D&      RNLib::Text3D        (void) { return draw.m_text3D;          }
+CCameraMgr&   RNLib::CameraMgr     (void) { return draw.m_cameraMgr;       }
+CDrawMgr&     RNLib::DrawMgr       (void) { return draw.m_drawMgr;         }
+CDrawState&   RNLib::DrawStateMgr  (void) { return draw.m_drawState;       }
+CLight3D&     RNLib::Light3D       (void) { return draw.m_light3D;         }
+CText&        RNLib::Text          (void) { return draw.m_text;            }
+CTexture&     RNLib::Texture       (void) { return draw.m_texture;         }
+CTransition&  RNLib::Transition    (void) { return draw.m_transition;      }
+CCount&       RNLib::Count         (void) { return mechanical.m_count;     }
+CFile&        RNLib::File          (void) { return mechanical.m_file;      }
+CInput&       RNLib::Input         (void) { return mechanical.m_input;     }
+CMemory&      RNLib::Memory        (void) { return mechanical.m_memory;    }
+CSound&       RNLib::Sound         (void) { return mechanical.m_sound;     }
+CWindow&      RNLib::Window        (void) { return mechanical.m_window;    }
+CDefaultData& RNLib::DefaultData   (void) { return other.m_defaultData;    }
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| RNシステム
 //----------|---------------------------------------------------------------------
 //================================================================================
 
 //========================================
-// 取得・設定系処理
-// Author:RIKU NISHIMURA
+// 設定/取得系関数
 //========================================
-RNLib::SIGNAL RNLib::GetSignal     (void)       { return signal;       }
-int           RNLib::GetCount      (void)       { return m_nCount;       }
-int           RNLib::GetFPSCount   (void)       { return m_nFPSCount;    }
-bool          RNLib::GetBlinkF2    (void)       { return m_bBlinkF2;     }
-bool          RNLib::GetBlinkF4    (void)       { return m_bBlinkF4;     }
-void          RNLib::SetSpace3DStop(bool bStop) { m_bSpace3DStopRsrv = bStop; }
-bool          RNLib::GetSpace3DStop(void)       { return m_bSpace3DStop; }
-bool          RNLib::GetSceneSwap  (void)       { return m_bSceneSwap;   }
-//========== [[[ RNオブジェクト ]]]
-// 3DObject    RNLib::              (void) { return                           }
-CMotion3D&     RNLib::Motion3D      (void) { return m_3DObject.m_motion3D;    }
-CSetUp3D&      RNLib::SetUp3D       (void) { return m_3DObject.m_setUp3D;     }
-// Calculation RNLib::              (void) { return                           }
-CEase&         RNLib::Ease          (void) { return m_calculation.m_ease;     }
-CGeometry&     RNLib::Geometry      (void) { return m_calculation.m_geometry; }
-CMatrix&       RNLib::Matrix        (void) { return m_calculation.m_matrix;   }
-// Other...    RNLib::              (void) { return                           }
-CDefaultData&  RNLib::DefaultData   (void) { return m_other.m_defaultData;    }
-
-CText2D&      RNLib::Text2D        (void)       { return m_text2D;       }
-CPolygon2D&   RNLib::Polygon2D     (void)       { return m_polygon2D;    }
-CModel&       RNLib::Model         (void)       { return m_model;        }
-CText3D&      RNLib::Text3D        (void)       { return m_text3D;       }
-CPolygon3D&   RNLib::Polygon3D     (void)       { return m_polygon3D;    }
-CLight3D&     RNLib::Light3D       (void)       { return m_light3D;      }
-CCamera&      RNLib::Camera3D      (void)       { return m_camera;       }
-CFile&        RNLib::File          (void)       { return m_file;         }
-CInput&       RNLib::Input         (void)       { return m_input;        }
-CMemory&      RNLib::Memory        (void)       { return m_memory;       }
-CSound&       RNLib::Sound         (void)       { return m_sound;        }
-CWindow&      RNLib::Window        (void)       { return m_window;       }
-CText&        RNLib::Text          (void)       { return m_text;         }
-CTexture&     RNLib::Texture       (void)       { return m_texture;      }
-CTransition&  RNLib::Transition    (void)       { return m_transition;   }
-CDrawMng&     RNLib::DrawMng       (void)       { return m_drawMng;      }
-CDrawState&   RNLib::DrawStateMng  (void)       { return m_drawState;    }
+RNSystem::SIGNAL RNSystem::GetSignal     (void)               { return demo == NULL ? signal : SIGNAL::NONE; }
+int              RNSystem::GetFPSCount   (void)               { return FPSCount; }
+void             RNSystem::SetSpace3DStop(const bool& isStop) { isSpace3DStopReserve = isStop; }
+bool             RNSystem::GetSpace3DStop(void)               { return isSpace3DStop; }
+bool             RNSystem::GetSceneSwap  (void)               { return isSceneSwap; }
 
 //========================================
 // メインループ
-// Author:RIKU NISHIMURA
 //========================================
-bool RNLib::MainLoop(HINSTANCE instanceHandle, const char* settingsPath) {
+bool RNSystem::MainLoop(HINSTANCE& instanceHandle, const char* settingsPath, const bool& isDemo) {
 
 	static bool isMessageLoop = false;
 	static MSG  msg;
 
-	// シグナルが無し(初回)の時、
-	if (signal == RNLib::SIGNAL::NONE) {
+	// [[[ メッセージループ ]]]
+	if (isMessageLoop) {
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0) 
+		{// Windowsの処理
+			if (msg.message == WM_QUIT) {
+				signal = SIGNAL::UNINIT_WAIT;
+				isMessageLoop = false;
+			}
+			else {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+
+			return true;
+		}
+		else {
+
+			// 現在時刻を取得
+			currentTime = timeGetTime();
+
+			if ((currentTime - FPSLastTime) >= 500)
+			{// 0.5秒経過
+				FPSCount    = (frameCount * 1000) / (currentTime - FPSLastTime);
+				FPSLastTime = currentTime;	// FPS測定時刻を保存
+				frameCount  = 0;
+			}
+
+			// 60/1秒経過していない時は抜ける
+			if ((currentTime - execLastTime) <= (1000 / 60))
+				return true;
+
+			// 現在時刻を保存
+			execLastTime = currentTime;
+			frameCount++;
+		}
+	}
+
+	// [[[ 現在の信号に応じて、新たに信号を設定 ]]]
+	switch (signal) {
+	case RNSystem::SIGNAL::NONE       :signal = RNSystem::SIGNAL::INIT       ; break;
+	case RNSystem::SIGNAL::INIT       :signal = RNSystem::SIGNAL::UPDATE_WAIT; break;
+	case RNSystem::SIGNAL::UNINIT     :signal = RNSystem::SIGNAL::END        ; break;
+	case RNSystem::SIGNAL::UNINIT_WAIT:signal = RNSystem::SIGNAL::UNINIT     ; break;
+	case RNSystem::SIGNAL::UPDATE     :signal = RNSystem::SIGNAL::DRAW       ; break;
+	case RNSystem::SIGNAL::UPDATE_WAIT:signal = RNSystem::SIGNAL::UPDATE     ; break;
+	case RNSystem::SIGNAL::DRAW       :signal = RNSystem::SIGNAL::UPDATE_WAIT; break;
+	}
+
+	// [[[ 信号に応じた処理 ]]]
+	switch (signal) {
+	case RNSystem::SIGNAL::INIT: {
+		Init(instanceHandle, settingsPath, isDemo);
+	}break;
+	case RNSystem::SIGNAL::UNINIT: {
+		Uninit();
+	}break;
+	case RNSystem::SIGNAL::UPDATE: {
+		Update();
+		isMessageLoop = false;
+	}break;
+	case RNSystem::SIGNAL::UPDATE_WAIT: {
+		isMessageLoop = true;
+	}break;
+	case RNSystem::SIGNAL::DRAW: {
+		Draw();
+	}break;
+	case RNSystem::SIGNAL::END: {
+		return false;
+	}break;
+	}
+
+	return true;
+}
+
+//========================================
+// シーン終了処理
+//========================================
+void RNSystem::EndScene(void) {
+
+	isSceneSwap          = true;
+	isSpace3DStopReserve = false;
+}
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| RNデモの関数
+//----------|---------------------------------------------------------------------
+//================================================================================
+CDemo& RNDemo::Get(void) { return *demo; }
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| 無名空間の関数
+//----------|---------------------------------------------------------------------
+//================================================================================
+namespace {
+	//========================================
+	// 初期処理
+	//========================================
+	void Init(HINSTANCE& instanceHandle, const char* settingsPath, const bool& isDemo) {
+
+		// 終了後にメモリリークを出力
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	
+		// 乱数の種を取得
+		srand((unsigned int)time(0));
+
+		// 分解能を設定
+		timeBeginPeriod(1);
+		
+		// 変数を初期化
+		currentTime          = 0;
+		execLastTime         = timeGetTime();
+		frameCount           = 0;
+		FPSLastTime          = timeGetTime();
+		isSpace3DStop        = false;
+		isSpace3DStopReserve = false;
+		isSceneSwap          = false;
 
 		// 設定ファイルを読み込み&書き出し
 		if (RNSettings::LoadAndSave(settingsPath))
 		{// 成功した時、
+			// 設定情報を元にウィンドウを生成
 			RNSettings::Info settingsInfo = RNSettings::GetInfo();
-
-			m_window.Create(
+			mechanical.m_window.Create(
 				instanceHandle,
 				{
 					WindowProc,						// ウィンドウプロシージャ
@@ -186,216 +238,41 @@ bool RNLib::MainLoop(HINSTANCE instanceHandle, const char* settingsPath) {
 		}
 		else
 		{// 失敗した時、シグナルを終了にする
-			signal = RNLib::SIGNAL::UNINIT;
+			signal = RNSystem::SIGNAL::UNINIT;
 		}
-	}
 
-	if (isMessageLoop) {
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
-		{// Windowsの処理
-			if (msg.message == WM_QUIT) {
-				signal = SIGNAL::SAVE;
-				isMessageLoop = false;
-			}
-			else {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-			return true;
+		// RNオブジェクトの初期化
+		_3DObject  .Init();
+		calculation.Init();
+		draw	   .Init(mechanical.m_window.GetD3DDevice());
+		mechanical .Init(instanceHandle);
+		other	   .Init();
+		if (isDemo) {
+			demo = NULL;
+			CMemory::Alloc(&demo);
+			demo->Init();
 		}
-		else
-		{// DirectXの処理
-			m_dwCurrentTime = timeGetTime(); // 現在時刻を取得
-
-			if ((m_dwCurrentTime - m_dwFPSLastTime) >= 500)
-			{// 0.5秒経過
-				// FPSを計測
-				m_nFPSCount     = (m_dwFrameCount * 1000) / (m_dwCurrentTime - m_dwFPSLastTime);
-				m_dwFPSLastTime = m_dwCurrentTime;	// FPSを測定した時刻を保存
-				m_dwFrameCount  = 0;						// フレームカウントをクリア
-			}
-
-			// 60/1秒経過していない時は抜ける
-			if ((m_dwCurrentTime - m_dwExecLastTime) <= (1000 / 60))
-				return true;
-
-			m_dwExecLastTime = m_dwCurrentTime;	// 処理開始時刻(現在時刻)を保存
-			m_dwFrameCount++;							// フレームカウントを加算
-		}
-	}
-
-	switch (signal) {
-	case RNLib::SIGNAL::NONE       :signal = RNLib::SIGNAL::LOAD       ; break;
-	case RNLib::SIGNAL::INIT       :signal = RNLib::SIGNAL::UPDATE_WAIT; break;
-	case RNLib::SIGNAL::UNINIT     :signal = RNLib::SIGNAL::END        ; break;
-	case RNLib::SIGNAL::UPDATE     :signal = RNLib::SIGNAL::DRAW       ; break;
-	case RNLib::SIGNAL::UPDATE_WAIT:signal = RNLib::SIGNAL::UPDATE     ; break;
-	case RNLib::SIGNAL::DRAW       :signal = RNLib::SIGNAL::UPDATE_WAIT; break;
-	case RNLib::SIGNAL::LOAD       :signal = RNLib::SIGNAL::INIT       ; break;
-	case RNLib::SIGNAL::SAVE       :signal = RNLib::SIGNAL::UNINIT     ; break;
-	}
-
-	switch (signal) {
-	case RNLib::SIGNAL::INIT:
-		Init(instanceHandle);
-		break;
-	case RNLib::SIGNAL::UNINIT:
-		Uninit();
-		break;
-	case RNLib::SIGNAL::UPDATE:
-		Update();
-		isMessageLoop = false;
-		break;
-	case RNLib::SIGNAL::UPDATE_WAIT:
-		isMessageLoop = true;
-		break;
-	case RNLib::SIGNAL::DRAW:
-		Draw();
-		break;
-	case RNLib::SIGNAL::LOAD:
-		Load();
-		break;
-	case RNLib::SIGNAL::SAVE:
-		Save();
-		break;
-	case RNLib::SIGNAL::END:
-		return false;
-	}
-
-	return true;
-}
-
-//========================================
-// シーン終了処理
-// Author:RIKU NISHIMURA
-//========================================
-void RNLib::UninitScene(void) {
-	m_sound   .Stop();
-	m_light3D .SetCol(INITCOLOR);
-	m_camera  .SetFixed(false);
-	m_bSceneSwap = true;
-	m_bSpace3DStopRsrv = false;
-}
-
-//========================================
-// ウィンドウプロシージャ
-// Author:RIKU NISHIMURA
-//========================================
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-
-	switch (uMsg) {
-
-	case WM_DESTROY: {
-		PostQuitMessage(0);
-	}break;
-
-	case WM_KEYDOWN: {
-
-		switch (wParam) {
-		case VK_ESCAPE:
-			if (MessageBox(hWnd, "終了しますか？", "終了メッセージ", MB_YESNO) == IDYES)
-				DestroyWindow(hWnd);
-			break;
-		}
-	}break;
-
-	case WM_CLOSE: {
-
-		if (MessageBox(hWnd, "終了しますか？", "終了メッセージ", MB_YESNO) == IDYES)
-			DestroyWindow(hWnd);
-		else
-			return 0;	// (※0を返さないと終了してしまう)
-	}break;
-	case WM_MOUSEWHEEL: {
-
-		// マウスホイールの前回転/後回転 状態設定
-		if (HIWORD(wParam) == WHEEL_DELTA)
-			m_input.SetWheelSpin(CInput::WHEELSPIN::FRONT);
-		else
-			m_input.SetWheelSpin(CInput::WHEELSPIN::BACK);
-	}break;
-	case WM_LBUTTONDOWN: {
-
-		SetFocus(hWnd); // マウスを左クリックしたウインドウにフォーカスを合わせ、アクティブにする
-	}break;
-	}
-
-	// 既定の処理を返す
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-//================================================================================
-//----------|---------------------------------------------------------------------
-//==========| 無名名前空間の関数
-//----------|---------------------------------------------------------------------
-//================================================================================
-namespace {
-	//========================================
-	// 初期化処理
-	// Author:RIKU NISHIMURA
-	//========================================
-	void Init(HINSTANCE hInstance) {
-		// 終了後にメモリリークを出力
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	
-		srand((unsigned int)time(0));	// 乱数の種を取得
-		timeBeginPeriod(1);				// 分解能を設定
-	
-		m_dwCurrentTime    = 0;				// 現在時刻を初期化
-		m_dwExecLastTime   = timeGetTime();	// 現在時刻を取得(保存)
-		m_dwFrameCount     = 0;				// フレームカウントを初期化
-		m_dwFPSLastTime    = timeGetTime();	// 現在時刻を取得(保存)
-		m_nCount           = 0;
-		m_bBlinkF2         = false;
-		m_bBlinkF4         = false;
-		m_bSpace3DStop     = false;
-		m_bSpace3DStopRsrv = false;
-		m_bSceneSwap       = false;
-
-		// デバイスを取得
-		LPDIRECT3DDEVICE9 device = m_window.GetD3DDevice();
-
-		// RNオブジェクト
-		m_3DObject   .Init();
-		m_calculation.Init();
-		m_other      .Init();
-
-		m_drawMng  .Init();
-		m_drawState.Init(device);
-		m_light3D  .Init();
-		m_camera   .Init();
-		m_input    .Init(hInstance);
-		m_sound    .Init();
-	
-		//;;
-		InitSetting();
 	}
 	
 	//========================================
 	// 終了処理
-	// Author:RIKU NISHIMURA
 	//========================================
 	void Uninit(void) {
 
-		// RNオブジェクト
-		m_3DObject   .Uninit();
-		m_calculation.Uninit();
-		m_other      .Uninit();
+		// RNオブジェクトの解放
+		_3DObject  .Uninit();
+		calculation.Uninit();
+		draw	   .Uninit();
+		mechanical .Uninit();
+		other	   .Uninit();
+		if (demo != NULL) {
+			demo->Uninit();
+			CMemory::Release(&demo);
+		}
 
-		m_drawMng    .Uninit();
-		m_drawState  .Uninit();
-		m_light3D    .Uninit();
-		m_camera     .Uninit();
-		m_text       .Uninit();
-		m_input      .Uninit();
-		m_window     .Uninit();
-	
-		//;;
-		UninitSetting();
+		// プリントの終了処理
 		UninitPrint();
-	
-		m_sound  .Uninit();
-
+		
 		// 設定情報の解放処理
 		RNSettings::Release();
 
@@ -405,97 +282,68 @@ namespace {
 	
 	//========================================
 	// 更新処理
-	// Author:RIKU NISHIMURA
 	//========================================
 	void Update(void) {
-		m_bSpace3DStop = m_bSpace3DStopRsrv;
 
-		// カウント加算
-		m_nCount   = (m_nCount + 1) % INT_MAX;
-		m_bBlinkF2 = (m_nCount % 4 < 2);
-		m_bBlinkF4 = (m_nCount % 8 < 4);
+		// 3D空間停止予約を適用する
+		isSpace3DStop = isSpace3DStopReserve;
 
 		// 全オブジェクトマネージャーの更新処理
 		CObjectMgr::UpdateAllMgrs();
 
 		// RNオブジェクト
-		m_3DObject   .Update();
-		m_calculation.Update();
-		m_other      .Update();
-
-		// デバッグログをクリア
-		m_text2D.ClearDebugLog();
-
-		m_input   .Update();
-		m_light3D .Update();
-
-		if (!m_bSpace3DStop) {
-			m_camera.Update();
-		}
-
-		//;;
-		UpdateSetting();
-	
-		m_window.Update();
+		_3DObject  .Update();
+		calculation.Update();
+		other	   .Update();
+		draw	   .Update();
+		mechanical .Update();
+		if (demo != NULL)
+			demo ->Update();
 		
-		m_input.SetWheelSpin(CInput::WHEELSPIN::NONE);
+		// 設定の更新処理
+		UpdateSetting();
 	}
 
 	//========================================
 	// 描画処理
-	// Author:RIKU NISHIMURA
 	//========================================
 	void Draw(void) {
 
-		// どうしても遷移は一番描画優先度を高くしたい。暫定対応
-		m_transition.Update();
-
 		// デバイスを取得
-		LPDIRECT3DDEVICE9 device = m_window.GetD3DDevice();
+		Device device = mechanical.m_window.GetD3DDevice();
 
-		m_polygon3D.Put(CMatrix::ConvPosRotToMtx(D3DXVECTOR3(0.0f, 0.0f, 43.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f)), true)
-			->SetSize(m_window.GetWidth() * 0.05f, m_window.GetHeight() * 0.05f)
-			->SetTex_Camera(&m_camera)
-			->SetLighting(false);
-
-		// 描画開始
-		if (SUCCEEDED(device->BeginScene())) {
-
-			if (m_drawMng.StartDraw()) {
-
-				{// [[[ スクリーンオブジェクト描画 ]]]
-					// スクリーンレンダリング開始
+		if (SUCCEEDED(device->BeginScene())) 
+		{// デバイスの描画開始成功
+			if (draw.m_drawMgr.StartDraw()) 
+			{// 描画開始成功
+				{// [[[ スクリーン描画 ]]]
 					CCamera::StartRenderingScreen(device);
+					draw.m_drawMgr.Draw(device, NONEDATA, false, true);
+				}
 
-					// 描画
-					m_drawMng.Draw(device, true);
-				}// <<< >>>
-
-				{// [[[ カメラオブジェクト描画 ]]]
-					// 現在のレンダリングターゲットとZバッファを保存
-					LPDIRECT3DSURFACE9 renderDef, ZBuffDef;
-					D3DVIEWPORT9 viewPortDef;
+				{// [[[ カメラ描画 ]]]
+					// レンダリングターゲット/Zバッファ/ビューポートを保存
+					Surface  renderDef;
+					Surface  ZBuffDef;
+					Viewport viewPortDef;
 					device->GetRenderTarget       (0, &renderDef);
 					device->GetDepthStencilSurface(&ZBuffDef);
 					device->GetViewport           (&viewPortDef);
 
-					// レンダリング開始
-					m_camera.StartRendering(device);
+					// カメラ1つ1つに対し描画していく
+					CCamera* camera = NULL;
+					while (draw.m_cameraMgr.ListLoop((CObject**)&camera)) {
+						camera->StartRendering(device);
+						draw.m_drawMgr.Draw(device, camera->GetID(), camera->GetClipping(), false);
+						CFontObject::DrawAll();
+						camera->EndRendering(device);
+					}
 
-					// 描画
-					m_drawMng.Draw(device, false);
-
-					// フォントオブジェクトの描画処理
-					CFontObject::DrawAll();
-
-					// レンダリング終了
-					m_camera.EndRendering(device);
-
-					// レンダリングターゲットとZバッファを元に戻す
+					// レンダリングターゲット/Zバッファ/ビューポートを元に戻す
 					device->SetRenderTarget       (0, renderDef);
 					device->SetDepthStencilSurface(ZBuffDef);
 					device->SetViewport           (&viewPortDef);
-				}// <<< >>>
+				}
 
 				// 描画終了
 				device->EndScene();
@@ -503,31 +351,71 @@ namespace {
 				// バックバッファをフロントバッファと入れ替え
 				device->Present(NULL, NULL, NULL, NULL);
 			}
-			else {
+			else 
+			{// 描画開始失敗
 				// 描画終了
 				device->EndScene();
 			}
 		}
 	
-		// 設定リセット
-		if ((!m_bSpace3DStop && !m_bSpace3DStopRsrv) || m_bSceneSwap) {
-			m_bSceneSwap = false;
+		// シーン入れ替えフラグをリセット
+		isSceneSwap = false;
+	}
+}
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| ウィンドウプロシージャ
+//----------|---------------------------------------------------------------------
+//================================================================================
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+
+	switch (uMsg) {
+		// [[[ 破棄 ]]]
+	case WM_DESTROY: {
+		
+		PostQuitMessage(0);
+
+	}break;
+		// [[[ キー押下 ]]]
+	case WM_KEYDOWN: {
+		
+		// エスケープキーだった時、終了確認
+		if (wParam == VK_ESCAPE) {
+			if (MessageBox(hWnd, "終了しますか？", "終了メッセージ", MB_YESNO) == IDYES)
+				DestroyWindow(hWnd);
 		}
+
+	}break;
+		// [[[ 閉じる ]]]
+	case WM_CLOSE: {
+
+		// 終了確認
+		if (MessageBox(hWnd, "終了しますか？", "終了メッセージ", MB_YESNO) == IDYES) {
+			DestroyWindow(hWnd);
+		}
+		else {
+			// (※0を返さないと終了してしまう)
+			return 0;
+		}
+
+	}break;
+		// [[[ マウスホイールの回転 ]]]
+	case WM_MOUSEWHEEL: {
+
+		// マウスホイールの前回転/後回転 状態設定
+		mechanical.m_input.SetWheelSpin(HIWORD(wParam) == WHEEL_DELTA ? CInput::WHEELSPIN::FRONT : CInput::WHEELSPIN::BACK);
+
+	}break;
+		// [[[ マウス左ボタン押下 ]]]
+	case WM_LBUTTONDOWN: {
+
+		// 左クリックしたウインドウにフォーカスを合わせ、アクティブ化
+		SetFocus(hWnd);
+
+	}break;
 	}
 
-	//========================================
-	// 読み込み処理
-	// Author:RIKU NISHIMURA
-	//========================================
-	void Load(void) {
-		m_text.LoadFont();
-	}
-
-	//========================================
-	// 書き出し処理
-	// Author:RIKU NISHIMURA
-	//========================================
-	void Save(void) {
-
-	}
+	// 既定の処理を返す
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }

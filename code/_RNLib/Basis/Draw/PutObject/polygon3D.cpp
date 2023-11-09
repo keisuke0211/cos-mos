@@ -13,15 +13,50 @@
 //================================================================================
 
 //========================================
+// コンストラクタ
+//========================================
+CPolygon3D::CPolygon3D() {
+
+}
+
+//========================================
+// デストラクタ
+//========================================
+CPolygon3D::~CPolygon3D() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CPolygon3D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CPolygon3D::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void CPolygon3D::Update(void) {
+
+}
+
+//========================================
 // 設置処理
 //========================================
 CPolygon3D::CRegistInfo* CPolygon3D::Put(const Matrix& mtx, const bool& isOnScreen) {
 
 	// 登録受付中でない時、終了
-	if (CDrawMng::GetProcessState() != CDrawMng::PROCESS_STATE::REGIST_ACCEPT)
+	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
-	return RNLib::DrawMng().PutPolygon3D(mtx, isOnScreen);
+	return RNLib::DrawMgr().PutPolygon3D(mtx, isOnScreen);
 }
 
 //========================================
@@ -41,17 +76,17 @@ CPolygon3D::CRegistInfo* CPolygon3D::Put(const Pos3D& pos, const Rot3D& rot, con
 //****************************************
 // 静的変数定義
 //****************************************
-LPDIRECT3DVERTEXBUFFER9 CPolygon3D::CDrawInfo::m_vtxBuff = NULL;
-unsigned short CPolygon3D::CDrawInfo::m_allocPower = 0;
-unsigned short CPolygon3D::CDrawInfo::m_allocNum   = 0;
-unsigned short CPolygon3D::CDrawInfo::m_idxCount   = 0;
+VertexBuffer CPolygon3D::CDrawInfo::m_vtxBuff = NULL;
+UShort CPolygon3D::CDrawInfo::m_allocPower = 0;
+UShort CPolygon3D::CDrawInfo::m_allocNum   = 0;
+UShort CPolygon3D::CDrawInfo::m_idxCount   = 0;
 
 //========================================
 // [静的] 頂点バッファ初期生成処理
 //========================================
 void CPolygon3D::CDrawInfo::InitCreateVertexBuffer(void) {
 
-	m_allocPower = CDrawMng::POLYGON3D_ALLOC_BASE_POWER;
+	m_allocPower = CDrawMgr::POLYGON3D_ALLOC_BASE_POWER;
 	m_allocNum   = pow(2, m_allocPower);
 	CreateVertexBuffer(m_allocNum);
 }
@@ -59,7 +94,7 @@ void CPolygon3D::CDrawInfo::InitCreateVertexBuffer(void) {
 //========================================
 // [静的] 頂点バッファ生成処理
 //========================================
-void CPolygon3D::CDrawInfo::CreateVertexBuffer(const unsigned short& num) {
+void CPolygon3D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
 
 	// 頂点バッファの生成
 	RNLib::Window().GetD3DDevice()->CreateVertexBuffer(
@@ -112,7 +147,7 @@ CPolygon3D::CDrawInfo::~CDrawInfo() {
 //========================================
 // 描画処理
 //========================================
-void CPolygon3D::CDrawInfo::Draw(LPDIRECT3DDEVICE9& device, const Matrix& viewMtx) {
+void CPolygon3D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 
 	// 頂点バッファがNULLの時、終了
 	if (m_vtxBuff == NULL)
@@ -130,19 +165,19 @@ void CPolygon3D::CDrawInfo::Draw(LPDIRECT3DDEVICE9& device, const Matrix& viewMt
 	//----------------------------------------
 	// 一時的な描画モード設定を開始
 	//----------------------------------------
-	RNLib::DrawStateMng().StartTemporarySetMode();
+	RNLib::DrawStateMgr().StartTemporarySetMode();
 
 	//----------------------------------------
 	// パラメーターに応じた設定
 	//----------------------------------------
 	// [[[ Zテストを有効/無効にする ]]]
-	RNLib::DrawStateMng().SetZTestMode(m_isZTest, device);
+	RNLib::DrawStateMgr().SetZTestMode(m_isZTest, device);
 
 	// [[[ ライティングを有効/無効にする ]]]
-	RNLib::DrawStateMng().SetLightingMode(m_isLighting, device);
+	RNLib::DrawStateMgr().SetLightingMode(m_isLighting, device);
 
 	// [[[ 加算合成を有効/無効にする ]]]
-	RNLib::DrawStateMng().SetAlphaBlendMode(m_alphaBlendMode, device);
+	RNLib::DrawStateMgr().SetAlphaBlendMode(m_alphaBlendMode, device);
 
 	{
 		Matrix mtxTrans(INITMATRIX);	// 計算用マトリックス
@@ -176,7 +211,7 @@ void CPolygon3D::CDrawInfo::Draw(LPDIRECT3DDEVICE9& device, const Matrix& viewMt
 	// [[[ テクスチャの設定 ]]]
 	if (m_texCamera != NULL) {
 		m_texCamera->SetTexture(device);
-		RNLib::DrawStateMng().SetTextureAlphaMode(false, device);	// テクスチャの透過を無効化
+		RNLib::DrawStateMgr().SetTextureAlphaMode(false, device);	// テクスチャの透過を無効化
 	}
 	else {
 		RNLib::Texture().Set(device, m_texIdx);
@@ -190,7 +225,7 @@ void CPolygon3D::CDrawInfo::Draw(LPDIRECT3DDEVICE9& device, const Matrix& viewMt
 	//----------------------------------------
 	// 一時的な描画モード設定を終了
 	//----------------------------------------
-	RNLib::DrawStateMng().EndTemporarySetMode(device);
+	RNLib::DrawStateMgr().EndTemporarySetMode(device);
 }
 
 //================================================================================
@@ -226,7 +261,7 @@ void CPolygon3D::CRegistInfo::ClearParameter(void) {
 	m_scaleY         = 1.0f;
 	m_isFactScale    = false;
 	m_mtx            = INITMATRIX;
-	RNLib::Memory().Release(&m_vtxPoses);
+	CMemory::Release(&m_vtxPoses);
 	m_col            = INITCOLOR;
 	m_texIdx         = NONEDATA;
 	m_texCamera      = NULL;
@@ -250,8 +285,8 @@ void CPolygon3D::CRegistInfo::ClearParameter(void) {
 CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 
 	// 描画情報のメモリ確保
-	CDrawInfo* drawInfo(NULL);
-	RNLib::Memory().Alloc(&drawInfo);
+	CDrawInfo* drawInfo = NULL;
+	CMemory::Alloc(&drawInfo);
 
 	// 情報を代入
 	// (基底)
@@ -266,7 +301,6 @@ CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 	drawInfo->m_isLighting     = m_isLighting;
 	drawInfo->m_isBillboard    = m_isBillboard;
 	drawInfo->m_alphaBlendMode = m_alphaBlendMode;
-	drawInfo->m_distance       = CGeometry::FindDistanceToCameraPlane(CMatrix::ConvMtxToPos(m_mtx), RNLib::Camera3D());
 
 	//----------------------------------------
 	// 頂点情報の設定
@@ -387,7 +421,7 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetVtxPos(const Pos3D pos0, co
 	if (this == NULL)
 		return NULL;
 
-	RNLib::Memory().Alloc(&m_vtxPoses, 4);
+	CMemory::Alloc(&m_vtxPoses, 4);
 	m_vtxPoses[0] = pos0;
 	m_vtxPoses[1] = pos1;
 	m_vtxPoses[2] = pos2;
@@ -442,7 +476,7 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetSize_TexBaseScale(const flo
 //========================================
 // テクスチャを設定
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTex(const short& texIdx, const unsigned short& ptn, const unsigned short& ptnX, const unsigned short& ptnY, const Pos2D& ptnPos) {
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
 		return NULL;

@@ -5,7 +5,7 @@
 // Arrange:RIKU NISHIMURA
 // 
 //========================================
-#include "../RNlib.h"
+#include "../../RNlib.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -18,13 +18,6 @@
 //========================================
 CSound::CSound() {
 
-	m_datas          = NULL;
-	m_playMgr        = NULL;
-	for (int cntCategory = 0; cntCategory < (int)CATEGORY::MAX; cntCategory++)
-		m_categoryStates[cntCategory] = {};
-	m_mic3DPos       = INITPOS3D;
-	m_XAudio2        = NULL;
-	m_masteringVoice = NULL;
 }
 
 //========================================
@@ -39,8 +32,15 @@ CSound::~CSound() {
 //========================================
 void CSound::Init(void) {
 
+	m_datas = NULL;
+	m_playMgr = NULL;
+	for (int cntCategory = 0; cntCategory < (int)CATEGORY::MAX; m_categoryStates[cntCategory] = {}, cntCategory++);
+	m_mic3DPos = INITPOS3D;
+	m_XAudio2 = NULL;
+	m_masteringVoice = NULL;
+
 	// 再生マネージャーを生成
-	RNLib::Memory().Alloc(&m_playMgr);
+	CMemory::Alloc(&m_playMgr);
 
 	// COMライブラリの初期化
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
@@ -78,14 +78,14 @@ void CSound::Init(void) {
 // 終了処理
 //========================================
 void CSound::Uninit(void) {
-	
+
 	// データの解放
 	for (int cntData = 0; cntData < m_num; cntData++)
-		RNLib::Memory().Release(&m_datas[cntData]);
-	RNLib::Memory().Release(&m_datas);
+		CMemory::Release(&m_datas[cntData]);
+	CMemory::Release(&m_datas);
 
 	// 再生マネージャーの解放
-	RNLib::Memory().Release(&m_playMgr);
+	CMemory::Release(&m_playMgr);
 
 	// マスターボイスの破棄
 	if (m_masteringVoice != NULL) {
@@ -104,6 +104,13 @@ void CSound::Uninit(void) {
 }
 
 //========================================
+// 更新処理
+//========================================
+void CSound::Update(void) {
+
+}
+
+//========================================
 // 読み込み処理
 //========================================
 short CSound::Load(const char* loadPath, short idx) {
@@ -114,7 +121,7 @@ short CSound::Load(const char* loadPath, short idx) {
 	if (CRegist::Load(loadPath, idx)) 
 	{// 読み込み成功
 		// データのメモリ再確保
-		RNLib::Memory().ReAllocDouble(&m_datas, oldNum, m_num);
+		CMemory::ReAllocDouble(&m_datas, oldNum, m_num);
 
 		// データの破棄(番号指定の場合)
 		if (idxOld != NONEDATA)

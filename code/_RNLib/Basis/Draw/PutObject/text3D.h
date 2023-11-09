@@ -23,7 +23,7 @@ public:
 		~CRegistInfo();
 		void ClearParameter(void);
 		void PutPolygon3D(const bool& isOnScreen);
-		CRegistInfo* SetMtx              (const D3DXMATRIX& mtx);
+		CRegistInfo* SetMtx              (const Matrix& mtx);
 		CRegistInfo* SetString           (const char* string);
 		CRegistInfo* SetAlignment        (const CText::ALIGNMENT& alignment);
 		CRegistInfo* SetFontIdx          (const short& fontIdx);
@@ -45,7 +45,7 @@ public:
 		float            m_scaleX;
 		float            m_scaleY;
 		bool             m_isFactScale;
-		D3DXMATRIX       m_mtx;
+		Matrix       m_mtx;
 		Color            m_col;
 		bool             m_isZtest;
 		bool             m_isLighting;
@@ -54,6 +54,11 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CRegistInfo* Put(const D3DXMATRIX& mtx, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen = false);
+	CText3D();
+	~CText3D();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
+	CRegistInfo* Put(const Matrix& mtx, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen = false);
 	CRegistInfo* Put(const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen = false);
 };

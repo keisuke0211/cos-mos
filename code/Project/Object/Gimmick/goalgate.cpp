@@ -6,7 +6,6 @@
 //========================================
 #include "goalgate.h"
 #include "../../main.h"
-#include "../../../_RNLib/Basis/input.h"
 #include "../../Character/player.h"
 
 //ƒ}ƒNƒ’è‹`

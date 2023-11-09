@@ -31,7 +31,7 @@ CDrawState::~CDrawState() {
 //========================================
 // 初期化処理
 //========================================
-void CDrawState::Init(LPDIRECT3DDEVICE9& device) {
+void CDrawState::Init(Device& device) {
 
 	//----------------------------------------
 	// テクスチャステージステートの初期設定
@@ -83,6 +83,13 @@ void CDrawState::Uninit(void) {
 }
 
 //========================================
+// 更新処理
+//========================================
+void CDrawState::Update(void) {
+
+}
+
+//========================================
 // 一時的なモード設定を開始
 //========================================
 void CDrawState::StartTemporarySetMode(void) {
@@ -94,7 +101,7 @@ void CDrawState::StartTemporarySetMode(void) {
 //========================================
 // 一時的なモード設定を終了
 //========================================
-void CDrawState::EndTemporarySetMode(LPDIRECT3DDEVICE9& device) {
+void CDrawState::EndTemporarySetMode(Device& device) {
 
 	// 元のモードで設定し直す
 	SetZTestMode(m_formerMode.ZTest, device);
@@ -110,7 +117,7 @@ void CDrawState::EndTemporarySetMode(LPDIRECT3DDEVICE9& device) {
 //========================================
 // Zテストモードの設定
 //========================================
-void CDrawState::SetZTestMode(const ZTEST_MODE& mode, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetZTestMode(const ZTEST_MODE& mode, Device& device) {
 
 	// 元のモードとして代入
 	if (m_isAssignFormerMode)
@@ -133,7 +140,7 @@ void CDrawState::SetZTestMode(const ZTEST_MODE& mode, LPDIRECT3DDEVICE9& device)
 //========================================
 // Zテストモードの設定(フラグ指定)
 //========================================
-void CDrawState::SetZTestMode(const bool& isZTest, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetZTestMode(const bool& isZTest, Device& device) {
 
 	SetZTestMode(isZTest ? ZTEST_MODE::ENABLED : ZTEST_MODE::DISABLED, device);
 }
@@ -141,7 +148,7 @@ void CDrawState::SetZTestMode(const bool& isZTest, LPDIRECT3DDEVICE9& device) {
 //========================================
 // カリングモードの設定
 //========================================
-void CDrawState::SetCullingMode(const CULLING_MODE& mode, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetCullingMode(const CULLING_MODE& mode, Device& device) {
 
 	// 元のモードとして代入
 	if (m_isAssignFormerMode)
@@ -166,7 +173,7 @@ void CDrawState::SetCullingMode(const CULLING_MODE& mode, LPDIRECT3DDEVICE9& dev
 //========================================
 // アルファブレンドモードの設定
 //========================================
-void CDrawState::SetAlphaBlendMode(const ALPHA_BLEND_MODE& mode, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetAlphaBlendMode(const ALPHA_BLEND_MODE& mode, Device& device) {
 
 	// 元のモードとして代入
 	if (m_isAssignFormerMode)
@@ -196,7 +203,7 @@ void CDrawState::SetAlphaBlendMode(const ALPHA_BLEND_MODE& mode, LPDIRECT3DDEVIC
 //========================================
 // テクスチャ透過モードの設定
 //========================================
-void CDrawState::SetTextureAlphaMode(const TEXTURE_ALPHA_MODE& mode, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetTextureAlphaMode(const TEXTURE_ALPHA_MODE& mode, Device& device) {
 
 	// 元のモードとして代入
 	if (m_isAssignFormerMode)
@@ -217,7 +224,7 @@ void CDrawState::SetTextureAlphaMode(const TEXTURE_ALPHA_MODE& mode, LPDIRECT3DD
 //========================================
 // テクスチャ透過モードの設定(フラグ指定)
 //========================================
-void CDrawState::SetTextureAlphaMode(const bool& isTextureAlpha, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetTextureAlphaMode(const bool& isTextureAlpha, Device& device) {
 
 	SetTextureAlphaMode(isTextureAlpha ? TEXTURE_ALPHA_MODE::ENABLED : TEXTURE_ALPHA_MODE::DISABLED, device);
 }
@@ -225,7 +232,7 @@ void CDrawState::SetTextureAlphaMode(const bool& isTextureAlpha, LPDIRECT3DDEVIC
 //========================================
 // ライティングモードの設定
 //========================================
-void CDrawState::SetLightingMode(const LIGHTING_MODE& mode, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetLightingMode(const LIGHTING_MODE& mode, Device& device) {
 
 	// 元のモードとして代入
 	if (m_isAssignFormerMode)
@@ -246,7 +253,7 @@ void CDrawState::SetLightingMode(const LIGHTING_MODE& mode, LPDIRECT3DDEVICE9& d
 //========================================
 // ライティングモードの設定(フラグ指定)
 //========================================
-void CDrawState::SetLightingMode(const bool& isLighting, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetLightingMode(const bool& isLighting, Device& device) {
 
 	SetLightingMode(isLighting ? LIGHTING_MODE::ENABLED : LIGHTING_MODE::DISABLED, device);
 }
@@ -254,7 +261,7 @@ void CDrawState::SetLightingMode(const bool& isLighting, LPDIRECT3DDEVICE9& devi
 //========================================
 // フォグモードの設定
 //========================================
-void CDrawState::SetFogMode(const FOG_MODE& mode, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetFogMode(const FOG_MODE& mode, Device& device) {
 
 	// 元のモードとして代入
 	if (m_isAssignFormerMode)
@@ -275,7 +282,7 @@ void CDrawState::SetFogMode(const FOG_MODE& mode, LPDIRECT3DDEVICE9& device) {
 //========================================
 // フォグモードの設定(フラグ指定)
 //========================================
-void CDrawState::SetFogMode(const bool& isFog, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetFogMode(const bool& isFog, Device& device) {
 
 	SetFogMode(isFog ? FOG_MODE::ENABLED : FOG_MODE::DISABLED, device);
 }
@@ -283,7 +290,7 @@ void CDrawState::SetFogMode(const bool& isFog, LPDIRECT3DDEVICE9& device) {
 //========================================
 // フォグモードの設定(フラグ指定)
 //========================================
-void CDrawState::SetFogParameter(const Color& col, const float& startDist, const float& endDist, LPDIRECT3DDEVICE9& device) {
+void CDrawState::SetFogParameter(const Color& col, const float& startDist, const float& endDist, Device& device) {
 
 	device->SetRenderState(D3DRS_FOGCOLOR, ColorToD3DCOLOR(col));
 	device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&startDist));

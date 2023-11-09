@@ -18,14 +18,15 @@
 //****************************************
 namespace Manager {
 	//========== [[[ ä÷êîêÈåæ ]]]
-	void        Init       (const CMode::TYPE mode);
-	void        Uninit     (void);
-	void        Update     (void);
-	void        Load       (void);
-	void        Save       (void);
-	void        SetMode    (const CMode::TYPE newMode);
-	CMode::TYPE GetMode    (void);
-	void        Transition (const CMode::TYPE newMode, const CTransition::TYPE transType);
+	void        Init         (const CMode::TYPE mode);
+	void        Uninit       (void);
+	void        Update       (void);
+	void        Load         (void);
+	void        Save         (void);
+	void        SetMode      (const CMode::TYPE newMode);
+	CMode::TYPE GetMode      (void);
+	void        Transition   (const CMode::TYPE newMode, const CTransition::TYPE transType);
+	CCamera*    GetMainCamera(void);
 	CStageObjectMgr*  BlockMgr   (void);
 	CEffectMgr*       EffectMgr(void);
 	CStageEditor* StgEd(void);

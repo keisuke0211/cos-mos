@@ -60,6 +60,9 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CMotion3D();
 	~CMotion3D();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	short  Load      (const char* loadPath, short idx = NONEDATA);
 	void   Save      (const char* savePath, const short& idx);
 	CData& GetData   (const short& idx) { return m_datas[idx]; }

@@ -48,21 +48,22 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CDrawState();
 	~CDrawState();
-	void Init                 (LPDIRECT3DDEVICE9& device);
-	void Uninit               (void);
+	void Init(Device& device);
+	void Uninit(void);
+	void Update(void);
 	void StartTemporarySetMode(void);
-	void EndTemporarySetMode  (LPDIRECT3DDEVICE9& device);
-	void SetZTestMode         (const ZTEST_MODE& mode, LPDIRECT3DDEVICE9& device);
-	void SetZTestMode         (const bool& isZTest, LPDIRECT3DDEVICE9& device);
-	void SetCullingMode       (const CULLING_MODE& mode, LPDIRECT3DDEVICE9& device);
-	void SetAlphaBlendMode    (const ALPHA_BLEND_MODE& mode, LPDIRECT3DDEVICE9& device);
-	void SetTextureAlphaMode  (const TEXTURE_ALPHA_MODE& mode, LPDIRECT3DDEVICE9& device);
-	void SetTextureAlphaMode  (const bool& isTextureAlpha, LPDIRECT3DDEVICE9& device);
-	void SetLightingMode      (const LIGHTING_MODE& mode, LPDIRECT3DDEVICE9& device);
-	void SetLightingMode      (const bool& isLighting, LPDIRECT3DDEVICE9& device);
-	void SetFogMode           (const FOG_MODE& mode, LPDIRECT3DDEVICE9& device);
-	void SetFogMode           (const bool& isFog, LPDIRECT3DDEVICE9& device);
-	void SetFogParameter      (const Color& col, const float& startDist, const float& endDist, LPDIRECT3DDEVICE9& device);
+	void EndTemporarySetMode  (Device& device);
+	void SetZTestMode         (const ZTEST_MODE& mode, Device& device);
+	void SetZTestMode         (const bool& isZTest, Device& device);
+	void SetCullingMode       (const CULLING_MODE& mode, Device& device);
+	void SetAlphaBlendMode    (const ALPHA_BLEND_MODE& mode, Device& device);
+	void SetTextureAlphaMode  (const TEXTURE_ALPHA_MODE& mode, Device& device);
+	void SetTextureAlphaMode  (const bool& isTextureAlpha, Device& device);
+	void SetLightingMode      (const LIGHTING_MODE& mode, Device& device);
+	void SetLightingMode      (const bool& isLighting, Device& device);
+	void SetFogMode           (const FOG_MODE& mode, Device& device);
+	void SetFogMode           (const bool& isFog, Device& device);
+	void SetFogParameter      (const Color& col, const float& startDist, const float& endDist, Device& device);
 
 private:
 	//========== [[[ ç\ë¢ëÃíËã` ]]]]

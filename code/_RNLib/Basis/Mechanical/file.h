@@ -33,8 +33,11 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	      CFile                   ();
-		  ~CFile                  ();
+	CFile();
+	~CFile();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	FILE* GetFile                 (void) { return files[fileNum-1]; }
 	char* GetSearchString         (void) { return searchString; }
 	bool  GetSelectOpenFileName   (char* fileName, const char* initDir, const char* fileType);
