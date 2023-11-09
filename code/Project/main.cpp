@@ -13,23 +13,17 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR IpCmdLine, int nCmdShow) {
 	int nEndCode = 0;
 
-	while (RNLib::MainLoop(hInstance, "Data\\RNSettings.txt")) {
+	while (RNSystem::MainLoop(hInstance, "Data\\RNSettings.txt", false)) {
 
-		switch (RNLib::GetSignal()) {
-		case RNLib::SIGNAL::INIT:
+		switch (RNSystem::GetSignal()) {
+		case RNSystem::SIGNAL::INIT:
 			Manager::Init(CMode::TYPE::TITLE);
 			break;
-		case RNLib::SIGNAL::UNINIT:
+		case RNSystem::SIGNAL::UNINIT:
 			Manager::Uninit();
 			break;
-		case RNLib::SIGNAL::UPDATE:
+		case RNSystem::SIGNAL::UPDATE:
 			Manager::Update();
-			break;
-		case RNLib::SIGNAL::LOAD:
-			Manager::Load();
-			break;
-		case RNLib::SIGNAL::SAVE:
-			Manager::Save();
 			break;
 		}
 	}

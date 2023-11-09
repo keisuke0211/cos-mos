@@ -12,12 +12,13 @@
 //****************************************
 namespace {
 	//========== [[[ 変数宣言 ]]]
-	CMode*      m_modeObj;
-	CMode::TYPE m_reserveModeType;
-	CStageObjectMgr   m_blockMgr;
-	CEffectMgr   m_effectMgr;
-	CStageEditor m_StgEd;
-	CFont m_Font;
+	CMode*          m_modeObj;
+	CMode::TYPE     m_reserveModeType;
+	CStageObjectMgr m_blockMgr;
+	CEffectMgr      m_effectMgr;
+	CStageEditor    m_StgEd;
+	CFont           m_Font;
+	CCamera*        m_camera;
 }
 
 //================================================================================
@@ -25,6 +26,7 @@ namespace {
 //==========| Managerの関数
 //----------|---------------------------------------------------------------------
 //================================================================================
+CCamera* Manager::GetMainCamera(void) { return m_camera; }
 CStageObjectMgr* Manager::BlockMgr(void) { return &m_blockMgr; }
 CEffectMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
@@ -36,10 +38,13 @@ CFont* Manager::Font(void) { return &m_Font; }
 //========================================
 void Manager::Init(CMode::TYPE mode) {
 
+	// カメラの生成
+	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
+
 	// モード設定
 	SetMode(mode);
 
-	//使用するコントローラーの数を指定する
+	// 使用するコントローラーの数を指定する
 	RNLib::Input().SetJoyPadNum(2);
 }
 
@@ -57,6 +62,9 @@ void Manager::Uninit(void) {
 
 	// フォントオブジェクトの終了処理
 	CFontObject::UpdateAll();
+
+	// カメラの破棄
+	RNLib::Memory().Release(&m_camera);
 }
 
 //========================================
@@ -64,6 +72,16 @@ void Manager::Uninit(void) {
 // Author:RIKU NISHIMURA
 //========================================
 void Manager::Update(void) {
+
+	{// [[[ カメラの描画 ]]]
+		const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
+		const float windowWidth       = RNLib::Window().GetWidth();
+		const float windowHeight      = RNLib::Window().GetHeight();
+
+		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
+			->SetTex_Camera(m_camera)
+			->SetSize(windowWidth, windowHeight);
+	}
 
 	m_blockMgr.Update();
 
@@ -109,7 +127,7 @@ void Manager::Save(void) {
 void Manager::SetMode(CMode::TYPE newMode) {
 
 	// シーンを終了
-	RNLib::UninitScene();
+	RNSystem::EndScene();
 
 	// モードオブジェクトの終了処理
 	if (m_modeObj != NULL) {

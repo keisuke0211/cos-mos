@@ -46,8 +46,8 @@
 #define FVF_VERTEX_2D         (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 #define FVF_VERTEX_3D         (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 // 初期値 (※D3D系列)
-#define INITD3DXMATRIX        D3DXMATRIX   (1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)
-#define INITD3DVIEWPORT9      D3DVIEWPORT9 {0,0,0,0,0.0f,0.0f}
+#define INITMatrix        Matrix   (1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)
+#define INITViewport      Viewport {0,0,0,0,0.0f,0.0f}
 #define INITD3DCOLOR          D3DCOLOR_RGBA(255,255,255,255)
 #define INITD3DXVECTOR3       D3DXVECTOR3  (0.0f,0.0f,0.0f)
 #define INITD3DXVECTOR2       D3DXVECTOR2  (0.0f,0.0f)
@@ -63,7 +63,6 @@
 #define INITVECTOR3D          Vector3D     (0.0f,0.0f,0.0f)
 #define INITNORMAL3D          Normal3D     (0.0f,0.0f,0.0f)
 #define INITSCALE3D           Scale3D      (1.0f,1.0f,1.0f)
-#define INITD3DXCOLOR         D3DXCOLOR    (1.0f,1.0f,1.0f,1.0f)
 #define INITBGCOLOR           Color        {0,0,0,255}
 #define INITCOLOR             Color        {255,255,255,255}
 // 円周率
@@ -118,26 +117,32 @@ struct Vertex3D {
 // 構造体変換
 //****************************************
 // unsigned
-typedef unsigned short    UShort;
-typedef unsigned int      UInt;
-typedef unsigned long     ULong;
+typedef unsigned short          UShort;
+typedef unsigned int            UInt;
+typedef unsigned long           ULong;
 // Vector2
-typedef D3DXVECTOR2       Pos2D;
-typedef D3DXVECTOR2       Rot2D;
-typedef D3DXVECTOR2       Vector2D;
-typedef D3DXVECTOR2       Normal2D;
-typedef D3DXVECTOR2       Scale2D;
+typedef D3DXVECTOR2             Pos2D;
+typedef D3DXVECTOR2             Rot2D;
+typedef D3DXVECTOR2             Vector2D;
+typedef D3DXVECTOR2             Normal2D;
+typedef D3DXVECTOR2             Scale2D;
 // Vector3
-typedef D3DXVECTOR3       Pos3D;
-typedef D3DXVECTOR3       Rot3D;
-typedef D3DXVECTOR3       Vector3D;
-typedef D3DXVECTOR3       Normal3D;
-typedef D3DXVECTOR3       Scale3D;
+typedef D3DXVECTOR3             Pos3D;
+typedef D3DXVECTOR3             Rot3D;
+typedef D3DXVECTOR3             Vector3D;
+typedef D3DXVECTOR3             Normal3D;
+typedef D3DXVECTOR3             Scale3D;
 // Other
-typedef float             Angle;
-typedef D3DXMATRIX        Matrix;
-typedef D3DMATERIAL9      Material;
-typedef LPDIRECT3DDEVICE9 Device;
+typedef float                   Angle;
+typedef D3DXMATRIX              Matrix;
+typedef D3DMATERIAL9            Material;
+typedef LPDIRECT3DDEVICE9       Device;
+typedef LPDIRECT3DVERTEXBUFFER9 VertexBuffer;
+typedef LPD3DXMESH              Mesh;
+typedef LPD3DXBUFFER            Buffer;
+typedef LPDIRECT3DTEXTURE9      Texture;
+typedef LPDIRECT3DSURFACE9      Surface;
+typedef D3DVIEWPORT9            Viewport;
 
 //****************************************
 // クラス定義

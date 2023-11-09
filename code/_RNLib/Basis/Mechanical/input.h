@@ -72,9 +72,9 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CInput();
 	~CInput();
-	void          Init                (HINSTANCE& instanceHandle);
-	void          Uninit              (void);
-	void          Update              (void);
+	void Init(HINSTANCE& instanceHandle);
+	void Uninit(void);
+	void Update(void);
 	void          ClearInputInfo      (void);
 	void          SetActiveDevice     (const ACTIVE_DEVICE& device)                                 { m_activeDevice = device; }
 	ACTIVE_DEVICE GetActiveDevice     (void)                                                        { return m_activeDevice; }

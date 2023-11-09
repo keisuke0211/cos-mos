@@ -39,20 +39,17 @@ CWindow::~CWindow(void) {
 }
 
 //========================================
-// 更新処理
-// Author:RIKU NISHIMURA
+// 初期化処理
 //========================================
-void CWindow::Update(void) {
-	RECT rec;
-	GetWindowRect(m_hWnd, &rec);
-	m_pos = D3DXVECTOR3(rec.left, rec.top, 0.0f);
+void CWindow::Init(void) {
+
 }
 
 //========================================
 // 終了処理
-// Author:RIKU NISHIMURA
 //========================================
 void CWindow::Uninit(void) {
+
 	// Direct3Dデバイスの破棄
 	if (m_pD3DDevice != NULL) {
 		m_pD3DDevice->Release();
@@ -69,6 +66,15 @@ void CWindow::Uninit(void) {
 	UnregisterClass(m_pClassName, m_hInstance);
 
 	ShowTaskBar(true);
+}
+
+//========================================
+// 更新処理
+//========================================
+void CWindow::Update(void) {
+	RECT rec;
+	GetWindowRect(m_hWnd, &rec);
+	m_pos = D3DXVECTOR3(rec.left, rec.top, 0.0f);
 }
 
 //========================================

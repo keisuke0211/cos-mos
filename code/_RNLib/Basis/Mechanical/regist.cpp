@@ -28,8 +28,8 @@ CRegist::~CRegist() {
 
 	// 読み込みパスの解放
 	for (int cnt = 0; cnt < m_num; cnt++)
-		RNLib::Memory().Release(&m_loadPaths[cnt]);
-	RNLib::Memory().Release(&m_loadPaths);
+		CMemory::Release(&m_loadPaths[cnt]);
+	CMemory::Release(&m_loadPaths);
 }
 
 //========================================
@@ -103,7 +103,7 @@ bool CRegist::Load(const char* loadPath, short& idx) {
 //========================================
 // メモリ初期化処理
 //========================================
-void CRegist::InitMemory(const unsigned short& num) {
+void CRegist::InitMemory(const UShort& num) {
 
 	// 数を代入
 	m_num = num;
@@ -113,8 +113,8 @@ void CRegist::InitMemory(const unsigned short& num) {
 
 		// 読み込みパスの解放
 		for (int cnt = 0; cnt < m_num; cnt++)
-			RNLib::Memory().Release<char>(&m_loadPaths[cnt]);
-		RNLib::Memory().Release<char*>(&m_loadPaths);
+			CMemory::Release<char>(&m_loadPaths[cnt]);
+		CMemory::Release<char*>(&m_loadPaths);
 
 		// 読み込みパスのポインタを入れ替える
 		m_loadPaths = newLoadPaths;
@@ -138,7 +138,7 @@ void CRegist::InitMemory(const unsigned short& num) {
 void CRegist::ReAllocLoadPath(const short& oldNum) {
 
 	for (int cnt = oldNum; cnt < m_num; cnt++) {
-		RNLib::Memory().Release(&m_loadPaths[cnt]);
+		CMemory::Release(&m_loadPaths[cnt]);
 	}
-	RNLib::Memory().ReAlloc(&m_loadPaths, m_num, oldNum);
+	CMemory::ReAlloc(&m_loadPaths, m_num, oldNum);
 }

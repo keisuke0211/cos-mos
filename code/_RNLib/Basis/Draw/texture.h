@@ -19,8 +19,10 @@ public:
 	CTexture();
 	~CTexture();
 	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	int Load(const char *loadPath);
-	void Set(LPDIRECT3DDEVICE9 pDevice, int nTex);
+	void Set(Device pDevice, int nTex);
 
 	// İ’èæ“¾
 	float GetWidth(int nTex) {
@@ -45,5 +47,5 @@ public:
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]
-	LPDIRECT3DTEXTURE9* m_texs;
+	Texture* m_texs;
 };
