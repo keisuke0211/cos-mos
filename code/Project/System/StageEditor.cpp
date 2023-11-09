@@ -236,8 +236,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 			
 
 			if (!strcmp(aDataSearch, "End")) { bEnd = true;}
-			else if (!strcmp(aDataSearch, "StageWidth"))
-			{
+			else if (!strcmp(aDataSearch, "StageWidth")){
 				nLine += 4;
 				int nWidth;
 				
@@ -245,8 +244,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 				m_Info.nLine = 0;
 				m_Info.nLineMax = nWidth;
 			}
-			else if (!strcmp(aDataSearch, "StageHeight"))
-			{
+			else if (!strcmp(aDataSearch, "StageHeight")){
 				nLine += 4;
 				int nHeight;
 
@@ -254,12 +252,10 @@ void CStageEditor::StageLoad(int planet, int stage)
 				m_Info.nRow = 0;
 				m_Info.nRowMax = nHeight;
 			}
-			else if (!strcmp(aDataSearch, "SetColor"))
-			{
+			else if (!strcmp(aDataSearch, "SetColor")){
 				StgColor(pFile,nRow,nLine);
 			}
-			else if (!strcmp(aDataSearch, "SetStage"))
-			{
+			else if (!strcmp(aDataSearch, "SetStage")){
 				nRow++;
 				// ステージ生成
 				while (1)
@@ -297,6 +293,18 @@ void CStageEditor::StageLoad(int planet, int stage)
 				}
 
 			}
+			else if (!strcmp(aDataSearch, "SetLiftInfo")) {
+				SetLiftInfo(pFile, nRow, nLine);
+			}
+			else if (!strcmp(aDataSearch, "SetMeteorInfo")) {
+				SetMeteorInfo(pFile, nRow, nLine);
+			}
+			else if (!strcmp(aDataSearch, "SetLaserInfo")) {
+				SetLaserInfo(pFile, nRow, nLine);
+			}
+			else if (!strcmp(aDataSearch, "SetDogInfo")){
+				SetDogInfo(pFile, nRow, nLine);
+			}
 
 			if (cstr != NULL)
 			{
@@ -318,7 +326,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 }
 
 //========================================
-// 色設定
+// 色情報
 // Author:KEISUKE OTONO
 //========================================
 void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
@@ -543,6 +551,159 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->RocketCreate(pos);
 		break;
 	}
+}
+
+//========================================
+// リフトの情報設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
+{
+	while (1)
+	{
+		nLine = 0;
+		nRow++;
+		char *aDataSearch = NULL;	// データ検索用
+		string sData = pFile->GetData(nRow, nLine);
+		char* cstr = new char[sData.size() + 1]; // メモリ確保
+		std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+		aDataSearch = cstr;
+
+		if (!strcmp(aDataSearch, "EndLiftInfo")) {
+			if (cstr != NULL) {
+				delete[] cstr;
+				cstr = NULL;
+			}
+			break;
+		}
+		else if (!strcmp(aDataSearch, "1P")){
+		}
+
+		if (cstr != NULL)
+		{
+			delete[] cstr;
+			cstr = NULL;
+		}
+	}
+}
+
+//========================================
+// 隕石の情報設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
+{
+	while (1)
+	{
+		nLine = 0;
+		nRow++;
+		char *aDataSearch = NULL;	// データ検索用
+		string sData = pFile->GetData(nRow, nLine);
+		char* cstr = new char[sData.size() + 1]; // メモリ確保
+		std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+		aDataSearch = cstr;
+
+		if (!strcmp(aDataSearch, "EndMeteorInfo")) {
+			if (cstr != NULL) {
+				delete[] cstr;
+				cstr = NULL;
+			}
+			break;
+		}
+		else if (!strcmp(aDataSearch, "1P")){
+
+		}
+
+		if (cstr != NULL){
+			delete[] cstr;
+			cstr = NULL;
+		}
+	}
+}
+
+//========================================
+// レーザーの情報設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
+{
+	while (1)
+	{
+		nLine = 0;
+		nRow++;
+		char *aDataSearch = NULL;	// データ検索用
+		string sData = pFile->GetData(nRow, nLine);
+		char* cstr = new char[sData.size() + 1]; // メモリ確保
+		std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+		aDataSearch = cstr;
+
+		if (!strcmp(aDataSearch, "EndLaserInfo")) {
+			if (cstr != NULL) {
+				delete[] cstr;
+				cstr = NULL;
+			}
+			break;
+		}
+		else if (!strcmp(aDataSearch, "1P")){
+		
+		}
+
+		if (cstr != NULL) {
+			delete[] cstr;
+			cstr = NULL;
+		}
+	}
+}
+
+//========================================
+// 犬の情報設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
+{
+	while (1)
+	{
+		nLine = 0;
+		nRow++;
+		char *aDataSearch = NULL;	// データ検索用
+		string sData = pFile->GetData(nRow, nLine);
+		char* cstr = new char[sData.size() + 1]; // メモリ確保
+		std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+		aDataSearch = cstr;
+
+		if (!strcmp(aDataSearch, "EndDogInfo")) {
+			if (cstr != NULL) {
+				delete[] cstr;
+				cstr = NULL;
+			}
+			break;
+		}
+		else if (!strcmp(aDataSearch, "1P")){
+
+		}
+
+		if (cstr != NULL) {
+			delete[] cstr;
+			cstr = NULL;
+		}
+	}
+}
+
+//========================================
+// 座標の取得
+// Author:KEISUKE OTONO
+//========================================
+D3DXVECTOR3 CStageEditor::GetCIe(int nRow, int nLine)
+{
+	float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
+	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
+	D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+
+	pos.x += ((m_Info.nLineMax * -0.5f) + nLine + 0.5f) * fSizeX;
+	pos.y -= ((m_Info.nRowMax * -0.5f) + nRow + 0.5f) * fSizeY;
+	pos.z = 0.0f;
+
+	return pos;
 }
 
 //========================================

@@ -155,11 +155,11 @@ CSpike *CStageObjectMgr::SpikeCreate(D3DXVECTOR3 pos, int nType)
 		}
 		break;
 	case 1:
-		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI/2));
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, -D3DX_PI/2));
 		pos.x -= CStageObject::SIZE_OF_1_SQUARE * 0.25f;
 		break;
 	case 2:
-		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, -D3DX_PI / 2));
+		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI / 2));
 		pos.x += CStageObject::SIZE_OF_1_SQUARE * 0.25f;
 		break;
 	}
