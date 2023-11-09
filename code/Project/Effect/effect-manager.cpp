@@ -55,6 +55,24 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 	return pObj;
 }
 //========================================
+// エフェクト
+//========================================
+CEffect_Meteor * CEffectMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
+{
+	CEffect_Meteor *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CEffect_Meteor;
+
+	// 初期化処理
+	pObj->SetPos(pos);
+	pObj->Init();
+
+	CObjectMgr::AddList((CObject*)pObj);
+
+	return pObj;
+}
+//========================================
 // パーティクル
 //========================================
 CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount)
