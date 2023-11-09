@@ -30,7 +30,7 @@ CEffect_Meteor::CEffect_Meteor(void)
 		m_Info[nCnt].col = INITCOLOR;
 	}
 	m_pos = INITD3DXVECTOR3;
-	m_nCount = 60;
+	m_nCount = 120;
 	m_nNumAll++;
 }
 
@@ -54,10 +54,12 @@ HRESULT CEffect_Meteor::Init(void)
 
 	for (int nCnt = 0; nCnt < 10; nCnt++)
 	{
-		m_Info[nCnt].pos.x = m_pos.x + (rand() % 10 - 5);
-		m_Info[nCnt].pos.y = m_pos.y + (rand() % 10 - 5);
-		m_Info[nCnt].move.x = (rand() % 4 - 2);
-		m_Info[nCnt].move.y = (rand() % 4 - 2);
+		m_Info[nCnt].pos.x = m_pos.x + (rand() % 30 - 20);
+		m_Info[nCnt].pos.y = m_pos.y + (rand() % 30 - 20);
+		m_Info[nCnt].pos.z = m_pos.z + (rand() % 30 - 20);
+		m_Info[nCnt].move.x = (rand() % 4 - 2) * 0.5f;
+		m_Info[nCnt].move.y = (rand() % 4 - 2) * 0.5f;
+		m_Info[nCnt].move.z = (rand() % 4 - 2) * 0.5f;
 		m_Info[nCnt].col = INITCOLOR;
 
 	}
@@ -77,17 +79,17 @@ void CEffect_Meteor::Uninit(void)
 //========================================
 void CEffect_Meteor::Update(void)
 {
-	m_nCount++;
+	m_nCount--;
 
 	//割合計算
-	float fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCount,60);
+	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCount,120);
 
 	for (int nCnt = 0; nCnt < 10; nCnt++)
 	{
-		//m_Info[nCnt].scale = Scale3D(1.0f,1.0f,1.0f) * fCountRate;	// スケールの倍率
+		m_Info[nCnt].scale = Scale3D(2.0f,2.0f,2.0f) * fCountRate;	// スケールの倍率
 
 		//モデル配置
-		RNLib::Model().Put(m_Info[nCnt].pos, m_Info[nCnt].rot,m_Info[nCnt].scale, s_nModelIdx[0], true)
+		RNLib::Model().Put(m_Info[nCnt].pos, m_Info[nCnt].rot,m_Info[nCnt].scale, s_nModelIdx[0], false)
 			->SetOutLine(true);
 
 		// 位置の増加
@@ -96,7 +98,7 @@ void CEffect_Meteor::Update(void)
 
 	if (m_nCount <= 0)
 	{
-		//CObject::Delete();
+		CObject::Delete();
 	}
 }
 
