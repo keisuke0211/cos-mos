@@ -7099,7 +7099,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\画像\\卒業制作\\Mushroom.png";
+    "data\\TEXTURE\\Mushroom.png";
    }
   }
   Material {
