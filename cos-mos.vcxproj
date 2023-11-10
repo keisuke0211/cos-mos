@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="code\Project\Character\player.cpp" />
     <ClCompile Include="code\Project\Effect\effect-manager.cpp" />
+    <ClCompile Include="code\Project\Effect\effect-meteor.cpp" />
     <ClCompile Include="code\Project\Effect\effect.cpp" />
     <ClCompile Include="code\Project\Effect\particle.cpp" />
     <ClCompile Include="code\Project\main.cpp" />
@@ -162,11 +163,14 @@
     <ClCompile Include="code\Project\Mode\mode_logo.cpp" />
     <ClCompile Include="code\Project\Mode\mode_result.cpp" />
     <ClCompile Include="code\Project\Mode\mode_title.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\BG-Editor.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\Planet.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\ShiningWave.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\Star.cpp" />
     <ClCompile Include="code\Project\Object\Block\block.cpp" />
     <ClCompile Include="code\Project\Object\Block\fill-block.cpp" />
+    <ClCompile Include="code\Project\Object\Block\magma-block.cpp" />
     <ClCompile Include="code\Project\Object\Block\move-block.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\extenddog.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp" />
@@ -179,7 +183,7 @@
     <ClCompile Include="code\Project\Object\Item\Parts.cpp" />
     <ClCompile Include="code\Project\Object\stage-object-manager.cpp" />
     <ClCompile Include="code\Project\Object\stage-object.cpp" />
-    <ClCompile Include="code\Project\Object\UI\rocket-parts.cpp" />
+    <ClCompile Include="code\Project\UI\rocket-parts.cpp" />
     <ClCompile Include="code\Project\precompile.cpp" />
     <ClCompile Include="code\Project\System\csv_file.cpp" />
     <ClCompile Include="code\Project\System\StageEditor.cpp" />
@@ -196,6 +200,7 @@
     <ClCompile Include="code\_RNLib\Basis\Calculation\matrix.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\number.cpp" />
     <ClCompile Include="code\_RNLib\Basis\default-data.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\camera-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\camera.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\camera_control.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\color.cpp" />
@@ -208,24 +213,30 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\text2D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\text3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\regist-info.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\text.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\texture.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\transition.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\input.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\count.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\file.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\input.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\memory.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\print.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Mechanical\sound.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\window.cpp" />
     <ClCompile Include="code\_RNLib\Basis\setting.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\sound.cpp" />
+    <ClCompile Include="code\_RNLib\Demo\demo.cpp" />
+    <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
     <ClInclude Include="code\Project\Effect\effect-manager.h" />
+    <ClInclude Include="code\Project\Effect\effect-meteor.h" />
     <ClInclude Include="code\Project\Effect\effect.h" />
     <ClInclude Include="code\Project\Effect\particle.h" />
     <ClInclude Include="code\Project\main.h" />
@@ -235,11 +246,14 @@
     <ClInclude Include="code\Project\Mode\mode_logo.h" />
     <ClInclude Include="code\Project\Mode\mode_result.h" />
     <ClInclude Include="code\Project\Mode\mode_title.h" />
+    <ClInclude Include="code\Project\Object\BackGround\BG-Editor.h" />
+    <ClInclude Include="code\Project\Object\BackGround\BG-object.h" />
     <ClInclude Include="code\Project\Object\BackGround\Planet.h" />
     <ClInclude Include="code\Project\Object\BackGround\Shiningwave.h" />
     <ClInclude Include="code\Project\Object\BackGround\Star.h" />
     <ClInclude Include="code\Project\Object\Block\block.h" />
     <ClInclude Include="code\Project\Object\Block\fill-block.h" />
+    <ClInclude Include="code\Project\Object\Block\magma-block.h" />
     <ClInclude Include="code\Project\Object\Block\move-block.h" />
     <ClInclude Include="code\Project\Object\Gimmick\extenddog.h" />
     <ClInclude Include="code\Project\Object\Gimmick\goalgate.h" />
@@ -252,7 +266,7 @@
     <ClInclude Include="code\Project\Object\Item\Parts.h" />
     <ClInclude Include="code\Project\Object\stage-object-manager.h" />
     <ClInclude Include="code\Project\Object\stage-object.h" />
-    <ClInclude Include="code\Project\Object\UI\rocket-parts.h" />
+    <ClInclude Include="code\Project\UI\rocket-parts.h" />
     <ClInclude Include="code\Project\precompile.h" />
     <ClInclude Include="code\Project\System\csv_file.h" />
     <ClInclude Include="code\Project\System\StageEditor.h" />
@@ -269,6 +283,7 @@
     <ClInclude Include="code\_RNLib\Basis\Calculation\matrix.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\number.h" />
     <ClInclude Include="code\_RNLib\Basis\default-data.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\camera-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\camera.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\color.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-info.h" />
@@ -280,21 +295,26 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\text2D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\text3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\regist-info.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\text.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\texture.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\transition.h" />
-    <ClInclude Include="code\_RNLib\Basis\input.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\count.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\file.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\input.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\memory.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\print.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\sound.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\window.h" />
     <ClInclude Include="code\_RNLib\Basis\setting.h" />
-    <ClInclude Include="code\_RNLib\Basis\sound.h" />
+    <ClInclude Include="code\_RNLib\Demo\demo.h" />
+    <ClInclude Include="code\_RNLib\Demo\demo_player.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />
+    <ClInclude Include="code\_RNLib\RNobject.h" />
     <ClInclude Include="code\_RNLib\RNsettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -38,5 +38,5 @@ private:
 	CObject* m_cur;	// ç≈å„îˆ
 	int m_num;
 	static CObjectMgr** ms_objectMgrs;
-	static unsigned short ms_objectMgrNum;
+	static UShort ms_objectMgrNum;
 };

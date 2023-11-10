@@ -6,6 +6,8 @@
 //========================================
 #pragma once
 
+#include "camera.h"
+
 //----------------------------------------
 // クラス定義
 //----------------------------------------
@@ -24,9 +26,10 @@ public:
 	//===== [[[ 関数宣言 ]]]
 	CDrawInfoBase();
 	virtual ~CDrawInfoBase();
-	virtual void Draw(LPDIRECT3DDEVICE9& device, const D3DXMATRIX& viewMtx) = 0;
+	virtual void Draw(Device& device, const Matrix& viewMtx) = 0;
 
 	//===== [[[ 変数定義 ]]]
 	TYPE  m_type;
 	short m_priority;
+	short m_clippingID;
 };

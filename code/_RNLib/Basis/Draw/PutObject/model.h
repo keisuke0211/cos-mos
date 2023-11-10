@@ -6,7 +6,9 @@
 //========================================
 #pragma once
 
+#include "../camera.h"
 #include "../draw-info.h"
+#include "../regist-info.h"
 #include "../../Mechanical/regist.h"
 
 //****************************************
@@ -25,12 +27,12 @@ public:
 		void Release(void);
 
 		// [[[ •Ï”éŒ¾ ]]]
-		short*       m_texIdxs;
-		LPD3DXMESH   m_mesh;
-		LPD3DXMESH   m_outLineMesh;
-		LPD3DXBUFFER m_matBuff;
-		UShort       m_matNum;
-		float        m_radiusMax;
+		short* m_texIdxs;
+		Mesh   m_mesh;
+		Mesh   m_outLineMesh;
+		Buffer m_matBuff;
+		UShort m_matNum;
+		float  m_radiusMax;
 	};
 
 	// •`‰æî•ñƒNƒ‰ƒX
@@ -43,6 +45,7 @@ public:
 		void SetMaterial(Device& device, Material* mat, const Color& col);
 
 		// [[[ •Ï”éŒ¾ ]]]
+		static Material ms_outLineMat;
 		Matrix m_mtx;
 		Color  m_col;
 		short  m_modelIdx;
@@ -55,13 +58,16 @@ public:
 	};
 
 	// “o˜^î•ñƒNƒ‰ƒX
-	class CRegistInfo {
+	class CRegistInfo : CRegistInfoBase {
 	public:
 		// [[[ ŠÖ”éŒ¾ ]]]
 		CRegistInfo();
 		~CRegistInfo();
 		void ClearParameter(void);
 		CDrawInfo* ConvToDrawInfo(void);
+		CRegistInfo* SetPriority            (const short& priority);
+		CRegistInfo* SetClippingCamera      (CCamera& camera); 
+		CRegistInfo* SetClippingCamera      (const short& ID);
 		CRegistInfo* SetMtx                 (const Matrix& mtx);
 		CRegistInfo* SetCol                 (const Color& col);
 		CRegistInfo* SetModel               (const short& modelIdx);
@@ -70,7 +76,6 @@ public:
 		CRegistInfo* SetLighting            (const bool& isLighting);
 		CRegistInfo* SetOutLine             (const bool& isOutLine);
 		CRegistInfo* SetBrightnessOfEmissive(const float& brightnessOfEmissive);
-		CRegistInfo* SetPriority            (const short& priority);
 
 	private:
 		// [[[ •Ï”éŒ¾ ]]]
@@ -82,12 +87,14 @@ public:
 		bool   m_isLighting;
 		bool   m_isOutLine;
 		float  m_brightnessOfEmissive;
-		short  m_priority;
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CModel();
 	~CModel();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
 	void         Release(void);
 	short        Load   (const char* loadPath, short idx = NONEDATA);
 	CData&       GetData(const short& idx) { return *m_datas[idx]; }

@@ -1,17 +1,30 @@
 //================================================================================================
 //
 //隕石生成器の処理[meteor_generator.cpp]
-//Author:Hirasawa Shion
+//Author:KOMURO HIROMU
 //
 //================================================================================================
 #include "meteor_generator.h"
+#include "../../manager.h"
+#include "../stage-object.h"
+#include "../Gimmick/meteor.h"
+
+//=======================================
+//静的メンバ変数
+//=======================================
 
 //=======================================
 //コンストラクタ
 //=======================================
 CMeteorGenerator::CMeteorGenerator()
 {
+	Manager::BlockMgr()->AddList(this);
 
+	m_pos = INITD3DXVECTOR3;
+	m_move = INITD3DXVECTOR3;
+	m_nCntSummon = 0;
+	m_nSummoninterval = 0;
+	m_bLive = false;
 }
 
 //=======================================
@@ -19,7 +32,6 @@ CMeteorGenerator::CMeteorGenerator()
 //=======================================
 CMeteorGenerator::~CMeteorGenerator()
 {
-
 }
 
 //=======================================
@@ -27,7 +39,8 @@ CMeteorGenerator::~CMeteorGenerator()
 //=======================================
 void CMeteorGenerator::Init(void)
 {
-
+	// 隕石の生成
+	Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
 }
 
 //=======================================
@@ -43,5 +56,36 @@ void CMeteorGenerator::Uninit(void)
 //=======================================
 void CMeteorGenerator::Update(void)
 {
+	m_bLive = false;
 
+	//オブジェクトのポインタを格納
+	CObject *obj = NULL;
+
+	//オブジェクトを取得
+	while (Manager::BlockMgr()->ListLoop(&obj)) {
+		//取得したオブジェクトをキャスト
+		CStageObject* stageObj = (CStageObject*)obj;
+
+		//種類取得
+		const CStageObject::TYPE type = stageObj->GetType();
+
+		if (type == CStageObject::TYPE::METEOR)
+		{
+			m_bLive = true;	// 生きてる
+		}
+	}
+
+	if (m_bLive == false)
+	{// 隕石が生きていないとき
+		m_nCntSummon++;	// 増加
+
+		if (m_nCntSummon >= m_nSummoninterval)
+		{// 生成の間隔を超えたとき
+
+			// 隕石の生成
+			Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
+			m_nCntSummon = 0;	// カウントの初期化
+		}
+	}
 }
+

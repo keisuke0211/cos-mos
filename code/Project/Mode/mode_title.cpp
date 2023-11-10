@@ -44,7 +44,6 @@ CMode_Title::CMode_Title(void) {
 	m_PlanetType = NULL;
 	m_bMenuAnime = false;
 	m_bBackMode = false;
-	s_bStageSelect = false;
 }
 
 //========================================
@@ -124,10 +123,10 @@ void CMode_Title::Init(void) {
 	m_TexIdx[3] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
 
 	// 遷移設定
-	RNLib::Transition().Set(CTransition::STATE::OPEN, CTransition::TYPE::FADE);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// カメラの視点/注視点を設定
-	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 状態設定
 	SetState((int)STATE::NONE);
@@ -479,15 +478,15 @@ void CMode_Title::MenuCreate(void)
 
 	m_Menu[0] = CFontText::Create(
 		CFontText::BOX_NORMAL_RECT, m_MenuPos[0],D3DXVECTOR2(360.0f, 80.0f),// 360,100
-		"ゲーム",CFont::FONT_ROND_B,&pFont,false,&pShadow);
+		"ゲーム",CFont::FONT_ROND_B,&pFont,false,false,&pShadow);
 
 	m_Menu[1] = CFontText::Create(
 		CFontText::BOX_NORMAL_RECT, m_MenuPos[1], D3DXVECTOR2(360.0f, 80.0f),
-		"オプション", CFont::FONT_ROND_B, &pFont,false,&pShadow);
+		"オプション", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 
 	m_Menu[2] = CFontText::Create(
 		CFontText::BOX_NORMAL_RECT, m_MenuPos[2], D3DXVECTOR2(360.0f, 80.0f),
-		"ゲームをやめる", CFont::FONT_ROND_B, &pFont,false,&pShadow);
+		"ゲームをやめる", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 }
 
 //========================================
@@ -582,9 +581,10 @@ void CMode_Title::StageSelect(void)
 	int nTexIdx = 0;
 
 	// 惑星
-	RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 0.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0, false)
+	RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0, false)
 		->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
-		->SetPriority(1);
+		->SetPriority(1)
+		->SetOutLine(true);
 
 	// 矢印
 	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
@@ -680,7 +680,7 @@ void CMode_Title::StageSelect(void)
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
 			m_Menu[0] = CFontText::Create(
 				CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
-				m_PlanetType[m_nPlanetIdx].Text, CFont::FONT_ROND_B, &pFont);
+				m_PlanetType[m_nPlanetIdx].Text, CFont::FONT_ROND_B, &pFont,true);
 		}
 	}
 
@@ -736,7 +736,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 			FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
 			m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(230.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-				"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, false, &pShadow);
+				"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 		}
 		else if (m_bBackMode)
 		{

@@ -37,8 +37,9 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CWindow();
 	~CWindow();
-	void Update(void);
+	void Init(void);
 	void Uninit(void);
+	void Update(void);
 	void Destroy(void);
 	int  Create       (HINSTANCE hInstance, CreateInfo ci);
 	void ShowTaskBar  (const bool bShow);
@@ -54,11 +55,11 @@ public:
 	float             GetHeight    (void) { return m_fHeight;     }
 	float             GetCenterX   (void) { return m_fCenterX;    }
 	float             GetCenterY   (void) { return m_fCenterY;    }
-	D3DXVECTOR3       GetCenterPos (void) { return D3DXVECTOR3(m_fCenterX, m_fCenterY, 0.0f); }
+	Pos2D             GetCenterPos (void) { return Pos2D(m_fCenterX, m_fCenterY); }
 	float             GetAreaWidth (void) { return m_fAreaWidth;  }
 	float             GetAreaHeight(void) { return m_fAreaHeight; }
 	float             GetResolution(void) { return m_fResolution; }
-	LPDIRECT3DDEVICE9 GetD3DDevice (void) { return m_pD3DDevice;  }
+	Device& GetD3DDevice (void) { return m_pD3DDevice;  }
 	HWND              GetHandle    (void) { return m_hWnd;        }
 
 private:
@@ -77,7 +78,7 @@ private:
 	float             m_fAreaHeight;	// óÃàÊÇÃçÇÇ≥
 	float             m_fResolution;	// âëúìx
 	LPDIRECT3D9       m_pD3D;
-	LPDIRECT3DDEVICE9 m_pD3DDevice;
+	Device m_pD3DDevice;
 	HWND              m_hWnd;
 };
 

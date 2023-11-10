@@ -6,7 +6,7 @@
 //========================================
 #include "meteor.h"
 #include "../../main.h"
-
+#include "../../Effect/effect-manager.h"
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CTrampolineƒNƒ‰ƒX‚Ìƒƒ“ƒoŠÖ”
@@ -147,6 +147,7 @@ void CMeteor::CollisionBlock(void)
 				MaxPos.y - HEIGHT> m_pos.y - m_height&&
 				MaxPos.y + HEIGHT< m_pos.y + m_height)
 			{
+				Manager::EffectMgr()->EffectMeteorCreate(m_pos);
 				// íœ
 				Delete();
 			}

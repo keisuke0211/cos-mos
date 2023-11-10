@@ -25,11 +25,10 @@ CMoveBlock::CMoveBlock(void)
 
 	// ëÂÇ´Ç≥ÇÃê›íË
 	m_width = SIZE_OF_1_SQUARE * 2.0f;
-	m_height = SIZE_OF_1_SQUARE * 0.5f;
+	m_height = SIZE_OF_1_SQUARE * 0.35f;
 
 	m_Info.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_Info.posOld = INITD3DXVECTOR3;
-	m_Info.refPos = INITD3DXVECTOR3;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.rot = INITD3DXVECTOR3;
 	m_Info.size = INITD3DXVECTOR3;
@@ -99,12 +98,12 @@ void CMoveBlock::Update(void)
 	}
 
 	// xÇÃà⁄ìÆó ÇÃîΩì]
-	if (m_Info.refPos.x + m_Info.frefdef <= m_Info.pos.x || m_Info.refPos.x - m_Info.frefdef >= m_Info.pos.x)
+	if (m_Info.m_posV.x >= m_Info.pos.x || m_Info.m_posL.x <= m_Info.pos.x)
 	{
 		m_Info.move.x *= -1;
 	}
 	// yÇÃà⁄ìÆó ÇÃîΩì]
-	if (m_Info.refPos.y + m_Info.frefdef <= m_Info.pos.y || m_Info.refPos.y - m_Info.frefdef >= m_Info.pos.y)
+	if (m_Info.m_posV.y <= m_Info.pos.y || m_Info.m_posL.y >= m_Info.pos.y)
 	{
 		m_Info.move.y *= -1;
 	}

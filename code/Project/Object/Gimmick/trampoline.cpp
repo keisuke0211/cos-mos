@@ -6,7 +6,6 @@
 //========================================
 #include "trampoline.h"
 #include "../../main.h"
-#include "../../../_RNLib/Basis/input.h"
 #include "../../Character/player.h"
 
 
@@ -40,6 +39,11 @@ CTrampoline::CTrampoline(void) {
 	m_modelIdx[3] = RNLib::Model().Load("data\\MODEL\\Spring_Eye.x");
 	m_fJamp = 8.0f;
 	m_nCnt = 1;
+
+	for (int nCnt = 0; nCnt < 2; nCnt++)
+	{
+		m_SpringPos[nCnt] = INITD3DXVECTOR3;
+	}
 }
 
 //========================================
@@ -54,7 +58,8 @@ CTrampoline::~CTrampoline(void) {
 // Author:RYUKI FUJIWARA
 //========================================
 void CTrampoline::Init(void) {
-
+	m_SpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
+	m_SpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
 }
 
 //========================================
@@ -87,8 +92,11 @@ void CTrampoline::Update(void) {
 	if (m_nCnt > 0) 
 	{
 		m_nCnt--;
-		if(m_nCnt == 0)
+		if (m_nCnt == 0) {
 			m_state = STATE::NONE;
+			m_SpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
+			m_SpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
+		}
 	}
 
 	if (m_state != STATE::NONE)
@@ -100,9 +108,11 @@ void CTrampoline::Update(void) {
 		if (m_state == STATE::UP_LAND)
 		{
 			//キノコ
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
+			RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
 				->SetOutLine(true);
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT - m_fJamp * fCountRate, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
+
+			m_SpringPos[1].y = m_pos.y - CORRECT_HEIGHT - m_fJamp * fCountRate;
+			RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
 				->SetOutLine(true);
 
 			//ばね
@@ -112,9 +122,11 @@ void CTrampoline::Update(void) {
 		else if (m_state == STATE::DOWN_LAND)
 		{
 			//キノコ
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT + m_fJamp * fCountRate, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
+			m_SpringPos[0].y = m_pos.y + CORRECT_HEIGHT + m_fJamp * fCountRate;
+			RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
 				->SetOutLine(true);
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f,D3DX_PI), m_modelIdx[1], false)
+
+			RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f,D3DX_PI), m_modelIdx[1], false)
 				->SetOutLine(true);
 
 			//ばね
@@ -124,9 +136,9 @@ void CTrampoline::Update(void) {
 	}
 	else if (m_state == STATE::NONE)
 	{//トランポリンが作動していない
-		RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
+		RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
 			->SetOutLine(true);
-		RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
+		RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
 			->SetOutLine(true);
 	}
 
@@ -147,88 +159,61 @@ void CTrampoline::Draw(void) {
 void CTrampoline::Collision(void) {
 
 	//プレイヤー情報取得
-	CPlayer::Info *p1, *p2;
+	CPlayer::Info *Player[2];
 	CPlayer *pPlayer = CMode_Game::GetPlayer();
 	if (pPlayer == NULL)
 		return;
-	pPlayer->GetInfo(p1, p2);
+	pPlayer->GetInfo(Player[0], Player[1]);
 
-	float width, height;
+	float width, height, SIZE_HEIGHT;
 
 	width = m_width * RADIUS_WIDTH;
-	height = m_height * RADIUS_HEIGHT;
+	height = m_height * 1.5f;
+	SIZE_HEIGHT = CPlayer::SIZE_HEIGHT * 1.5f;
 
 	//**************************************
-	//1pトランポリン当たり判定
+	//トランポリン当たり判定
 	//**************************************
-	if (p1->bGround == false
-		&& p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width && p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height)
-	{//土台の範囲内に着地で入った
+	for (int nCnt = 0; nCnt < 2; nCnt++)
+	{
+		if (Player[nCnt]->bGround == false && Player[nCnt]->TramColliRot == CPlayer::COLLI_ROT::NONE
+			&& ((Player[nCnt]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[0].x - width && Player[nCnt]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[0].x + width
+				&& Player[nCnt]->pos.y - SIZE_HEIGHT <= m_SpringPos[0].y + m_height && Player[nCnt]->pos.y + SIZE_HEIGHT >= m_SpringPos[0].y - m_height)
+			|| (Player[nCnt]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[1].x - width && Player[nCnt]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[1].x + width
+				&& Player[nCnt]->pos.y - SIZE_HEIGHT <= m_SpringPos[1].y + m_height && Player[nCnt]->pos.y + SIZE_HEIGHT >= m_SpringPos[1].y - m_height)))
+		{// ばねの範囲内に着地で入った時
+			int idx = nCnt + 1;
 
-		if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - height
-			&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-		{//2pが乗っているか
+			// ループ制御
+			IntLoopControl(&idx, 2, 0);
 
-			pPlayer->SetTrampolineJump(p2, p1->fMaxHeight);
-		}
-		else if (p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + height
-			&& p2->side == CPlayer::WORLD_SIDE::FACE)
-		{
-			pPlayer->SetTrampolineJump(p2, p1->fMaxHeight);
-		}
+			//相手がばねに乗っているか
+			if (Player[idx]->TramColliRot == CPlayer::COLLI_ROT::UNDER && Player[idx]->side == CPlayer::WORLD_SIDE::BEHIND
+				&& Player[idx]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[1].x - width && Player[idx]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[1].x + width
+				&& Player[idx]->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[1].y + m_height && Player[idx]->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[1].y - m_height)
+			{
+				pPlayer->SetTrampolineJump(Player[idx], Player[nCnt]->fMaxHeight);
+			}
+			else if (Player[idx]->TramColliRot == CPlayer::COLLI_ROT::OVER && Player[idx]->side == CPlayer::WORLD_SIDE::FACE
+				&& Player[idx]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[0].x - width && Player[idx]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[0].x + width
+				&& Player[idx]->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[0].y + m_height && Player[idx]->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[0].y - m_height)
+			{
+				pPlayer->SetTrampolineJump(Player[idx], Player[nCnt]->fMaxHeight);
+			}
 
-		if (m_state == STATE::NONE
-			&& p1->side == CPlayer::WORLD_SIDE::FACE)
-		{//トランポリンが作動していない
+			if (m_state == STATE::NONE
+				&& Player[nCnt]->side == CPlayer::WORLD_SIDE::BEHIND)
+			{
+				m_state = STATE::DOWN_LAND;
+				m_nCnt = MAX_COUNT;
+			}
+			else if (m_state == STATE::NONE
+				&& Player[nCnt]->side == CPlayer::WORLD_SIDE::FACE)
+			{//トランポリンが作動していない
 
-			m_state = STATE::UP_LAND;
-			m_nCnt = MAX_COUNT;
-		}
-		else if (m_state == STATE::NONE
-			&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-		{
-			m_state = STATE::DOWN_LAND;
-			m_nCnt = MAX_COUNT;
+				m_state = STATE::UP_LAND;
+				m_nCnt = MAX_COUNT;
+			}
 		}
 	}
-	//**************************************
-	//2pトランポリン当たり判定
-	//**************************************
-	else if (p2->bGround == false
-		&& p2->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p2->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-		&& p2->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + m_height && p2->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - m_height)
-	{//土台の範囲内に着地で入った
-
-		if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p1->pos.y - CPlayer::SIZE_HEIGHT <= m_pos.y + height
-			&& p1->side == CPlayer::WORLD_SIDE::FACE)
-		{//1pが乗っているか
-
-			pPlayer->SetTrampolineJump(p1, p2->fMaxHeight);
-		}
-		else if (p1->pos.x + CPlayer::SIZE_WIDTH >= m_pos.x - width&& p1->pos.x - CPlayer::SIZE_WIDTH <= m_pos.x + width
-			&& p1->pos.y + CPlayer::SIZE_HEIGHT >= m_pos.y - height
-			&& p1->side == CPlayer::WORLD_SIDE::BEHIND)
-		{
-			pPlayer->SetTrampolineJump(p1, p2->fMaxHeight);
-		}
-
-		if (m_state == STATE::NONE
-			&& p2->side == CPlayer::WORLD_SIDE::FACE)
-		{//トランポリンが作動していない
-
-			m_state = STATE::UP_LAND;
-			m_nCnt = MAX_COUNT;
-		}
-		else if (m_state == STATE::NONE
-			&& p2->side == CPlayer::WORLD_SIDE::BEHIND)
-		{
-			m_state = STATE::DOWN_LAND;
-			m_nCnt = MAX_COUNT;
-		}
-	}
-
 }

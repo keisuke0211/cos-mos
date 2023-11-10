@@ -14,9 +14,8 @@
 
 //========================================
 // コンストラクタ
-// Author:RIKU NISHIMURA
 //========================================
-CObject::CObject(void) {
+CObject::CObject() {
 
 	m_prev     = NULL;
 	m_next     = NULL;
@@ -25,8 +24,7 @@ CObject::CObject(void) {
 
 //========================================
 // デストラクタ
-// Author:RIKU NISHIMURA
 //========================================
-CObject::~CObject(void) {
+CObject::~CObject() {
 
 }

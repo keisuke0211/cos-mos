@@ -6,7 +6,6 @@
 //========================================
 #include "goalgate.h"
 #include "../../main.h"
-#include "../../../_RNLib/Basis/input.h"
 #include "../../Character/player.h"
 
 //É}ÉNÉçíËã`
@@ -31,8 +30,7 @@ CGoalGate::CGoalGate(void) {
 	m_type = TYPE::GOALGATE;
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
-	m_bGoal = false;
-	m_modelIdx = RNLib::Model().Load("data\\MODEL\\1P.x");
+	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 }
@@ -50,7 +48,7 @@ CGoalGate::~CGoalGate(void) {
 //========================================
 void CGoalGate::Init(void) {
 
-	m_state = STATE::SCALE_DOWN;
+	m_state = STATE::SMALL;
 }
 
 //========================================
@@ -71,28 +69,28 @@ void CGoalGate::Update(void) {
 
 	if (RNLib::Input().GetKeyTrigger(DIK_U))
 	{
-		m_state = STATE::SCALE_DELETE;
+		m_state = STATE::MAX;
 	}
 
-	if (m_state == STATE::SCALE_DOWN)
+	if (m_state == STATE::SMALL)
 	{
 		m_nCnt--;
 
 		if (m_nCnt < MAX_COUNT * 0.8)
 		{
-			m_state = STATE::SCALE_UP;
+			m_state = STATE::GROW;
 		}
 	}
-	else if (m_state == STATE::SCALE_UP)
+	else if (m_state == STATE::GROW)
 	{
 		m_nCnt++;
 
 		if (m_nCnt > MAX_COUNT)
 		{
-			m_state = STATE::SCALE_DOWN;
+			m_state = STATE::SMALL;
 		}
 	}
-	else if (m_state == STATE::SCALE_DELETE)
+	else if (m_state == STATE::MAX)
 	{
 		if (m_nCnt > 0)
 		{

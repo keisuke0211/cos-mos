@@ -17,10 +17,10 @@ public:
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
-		NONE = 0,		//何もない
-		SCALE_UP,		//大きくなる
-		SCALE_DOWN,		//小さくなる
-		SCALE_DELETE,	//消える
+		NONE = 0,	//何もない
+		GROW,		//大きくなる
+		SMALL,		//小さくなる
+		DISAPP,		//消える
 		MAX,
 	};
 
@@ -32,12 +32,6 @@ public:
 	virtual void   Update(void);
 	virtual void   Draw(void);
 
-	//設定
-	void   SetGoal(bool bGoal) { m_bGoal = bGoal; }				//ゴール
-
-	//取得
-	bool   GetGoal(void) { return m_bGoal; }					//ゴール
-
 protected:
 
 private:
@@ -46,7 +40,6 @@ private:
 	STATE m_state;			//種類
 	int m_modelIdx;			//モデル番号
 	int m_TexIdx[2];		//テクスチャ番号
-	bool m_bGoal;			//ゴールしたか
 	Scale3D m_scale;	//拡縮
 	int			m_nCnt;		//カウント
 };

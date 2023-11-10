@@ -9,6 +9,7 @@
 #include "../System/StageEditor.h"
 #include "../System/words/font-text.h"
 #include "../Mode/mode_title.h"
+#include "../UI/rocket-parts.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -52,6 +53,8 @@ int CMode_Game::m_nPlanetIdx = 0;
 //========================================
 CMode_Game::CMode_Game(void) {
 
+	m_cameraUp   = NULL;
+	m_cameraDown = NULL;
 }
 
 //========================================
@@ -60,6 +63,13 @@ CMode_Game::CMode_Game(void) {
 //========================================
 CMode_Game::~CMode_Game(void) {
 
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+	{
+		if (m_Menu[nCnt] != NULL){
+			m_Menu[nCnt]->Uninit();
+			m_Menu[nCnt] = NULL;
+		}
+	}
 }
 
 //========================================
@@ -70,10 +80,10 @@ void CMode_Game::Init(void) {
 	CMode::Init();
 
 	// ‘JˆÚÝ’è
-	RNLib::Transition().Set(CTransition::STATE::OPEN, CTransition::TYPE::FADE);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// ƒJƒƒ‰‚ÌŽ‹“_/’Ž‹“_‚ðÝ’è
-	RNLib::Camera3D().SetGeometryInfo(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// ó‘ÔÝ’è
 	SetState((int)STATE::NONE);
@@ -82,6 +92,10 @@ void CMode_Game::Init(void) {
 	Manager::BlockMgr()->ShiningWaveCreate();
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
+
+	m_rocketparts = new CRocketPartsUI;
+
+	m_rocketparts = CRocketPartsUI::Create();
 
 	if (s_pPlayer == NULL)
 		s_pPlayer = CPlayer::Create();
@@ -93,6 +107,12 @@ void CMode_Game::Init(void) {
 	Manager::StgEd()->StageLoad(m_nPlanetIdx,m_nStageIdx);
 
 	SetBGColor(m_BgColorUp);
+
+	// ã‰ºƒJƒƒ‰‚Ì¶¬
+	m_cameraUp   = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
+	m_cameraDown = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
+	m_cameraUp->SetClipping(true);
+	m_cameraDown->SetClipping(true);
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
@@ -114,6 +134,8 @@ void CMode_Game::Uninit(void) {
 	}
 
 	Manager::BlockMgr()->ReleaseAll();
+
+	m_rocketparts->Uninit();
 }
 
 //========================================
@@ -122,6 +144,33 @@ void CMode_Game::Uninit(void) {
 //========================================
 void CMode_Game::Update(void) {
 	CMode::Update();
+
+	{// [[[ ã‰ºƒJƒƒ‰•`‰æ ]]]
+		const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
+		const float windowWidth       = RNLib::Window().GetWidth();
+		const float windowHeight      = RNLib::Window().GetHeight();
+		const float windowHeightHalf  = windowHeight * 0.5f;
+		const float windowHeightHalf2 = windowHeightHalf * 0.5f;
+
+		// ”wŒi‚ÌƒJƒ‰[‚ðÝ’è
+		m_cameraUp->SetBGCol(m_BgColorUp);
+		m_cameraDown->SetBGCol(m_BgColorDown);
+
+		// ã
+		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
+			->SetTex_Camera(m_cameraUp)
+			->SetSize(windowWidth, windowHeightHalf)
+			->SetPriority(-1);
+
+		// ‰º
+		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
+			->SetTex_Camera(m_cameraDown)
+			->SetCol(m_BgColorDown)
+			->SetSize(windowWidth, windowHeightHalf)
+			->SetPriority(-1);
+	}
+
+	m_rocketparts->Update();
 
 	if (m_state != (int)STATE::PAUSE)
 	{
@@ -136,19 +185,11 @@ void CMode_Game::Update(void) {
 			s_pPlayer->Update();
 
 		if (RNLib::Input().GetKeyTrigger(DIK_0) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
-			Manager::Transition(CMode::TYPE::RESULT, CTransition::TYPE::FADE);
-	}
-
-	// ”wŒi(‰¼)
-	{
-		float width = RNLib::Window().GetWidth();
-		float height = RNLib::Window().GetHeight();
-		RNLib::Polygon3D().Put(D3DXVECTOR3(0.0f, -height*0.25f, 400.0f), INITD3DXVECTOR3)
-			->SetLighting(false)
-			->SetCol(m_BgColorDown)
-			->SetSize(width * 2.0f, height * 0.5f)
-			->SetPriority(-2)
-			->SetZTest(false);
+		{
+			int planet = Manager::StgEd()->GetPlanetIdx();
+			int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
+			Manager::StgEd()->SwapStage(stage + 1);
+		}
 	}
 }
 

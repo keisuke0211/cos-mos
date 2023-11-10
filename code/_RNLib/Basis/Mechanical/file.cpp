@@ -42,6 +42,27 @@ CFile::~CFile() {
 }
 
 //========================================
+// 初期化処理
+//========================================
+void CFile::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CFile::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void CFile::Update(void) {
+
+}
+
+//========================================
 // 選択した開くファイル名取得
 //========================================
 bool CFile::GetSelectOpenFileName(char* resultFileName, const char* initDir, const char* fileType) {
@@ -150,7 +171,7 @@ char* CFile::ConvPathToDataStartPath(const char* path) {
 bool CFile::OpenLoadFile(const char* path) {
 
 	int fileNumOld = fileNum++;
-	RNLib::Memory().ReAlloc<FILE*>(&files, fileNumOld, fileNum);
+	CMemory::ReAlloc<FILE*>(&files, fileNumOld, fileNum);
 	files[fileNumOld] = fopen(path, "r");
 	if (files[fileNumOld] == NULL) {
 
@@ -160,7 +181,7 @@ bool CFile::OpenLoadFile(const char* path) {
 		// ファイルを閉じる
 		CloseFile();
 
-		RNLib::Memory().ReAlloc<FILE*>(&files, fileNum, fileNumOld);
+		CMemory::ReAlloc<FILE*>(&files, fileNum, fileNumOld);
 
 		return false;
 	}
@@ -174,10 +195,10 @@ bool CFile::OpenLoadFile(const char* path) {
 bool CFile::OpenSaveFile(const char* path) {
 
 	int fileNumOld = fileNum++;
-	RNLib::Memory().ReAlloc<FILE*>(&files, fileNumOld, fileNum);
+	CMemory::ReAlloc<FILE*>(&files, fileNumOld, fileNum);
 	files[fileNumOld] = fopen(path, "w");
 	if (files[fileNumOld] == NULL) {
-		RNLib::Memory().ReAlloc<FILE*>(&files, fileNum, fileNumOld);
+		CMemory::ReAlloc<FILE*>(&files, fileNum, fileNumOld);
 
 		// エラーメッセージ
 		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
@@ -202,7 +223,7 @@ void CFile::CloseFile(void) {
 	if (files[fileNum-1] != NULL) {
 		fclose(files[fileNum-1]);
 		fileNum--;
-		RNLib::Memory().ReAlloc<FILE*>(&files, fileNum + 1, fileNum);
+		CMemory::ReAlloc<FILE*>(&files, fileNum + 1, fileNum);
 	}
 }
 
@@ -312,7 +333,7 @@ void CFile::ScanExecution(const SCAN scan, void* data, bool isCSV, bool isEnd) {
 
 			switch ((ANCHOR)cntAnchor) {
 			case ANCHOR::CENTER: {
-				*castData += RNLib::Window().GetCenterPos();
+				*castData += Vector3D(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f);
 			}break;
 			case ANCHOR::TOP: {
 				castData->x += RNLib::Window().GetCenterX();

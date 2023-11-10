@@ -14,15 +14,50 @@
 //================================================================================
 
 //========================================
+// コンストラクタ
+//========================================
+CText3D::CText3D() {
+
+}
+
+//========================================
+// デストラクタ
+//========================================
+CText3D::~CText3D() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CText3D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void CText3D::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void CText3D::Update(void) {
+
+}
+
+//========================================
 // 設置処理
 //========================================
-CText3D::CRegistInfo* CText3D::Put(const D3DXMATRIX& mtx, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen) {
+CText3D::CRegistInfo* CText3D::Put(const Matrix& mtx, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen) {
 
 	// 登録受付中でない時、終了
-	if (CDrawMng::GetProcessState() != CDrawMng::PROCESS_STATE::REGIST_ACCEPT)
+	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
-	return RNLib::DrawMng().PutText3D(mtx, isOnScreen)
+	return RNLib::DrawMgr().PutText3D(mtx, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)
 		->SetFontIdx(fontIdx);
@@ -57,7 +92,7 @@ CText3D::CRegistInfo::CRegistInfo() {
 CText3D::CRegistInfo::~CRegistInfo() {
 
 	// 文字列のメモリ解放
-	RNLib::Memory().Release(&m_string);
+	CMemory::Release(&m_string);
 }
 
 //========================================
@@ -65,13 +100,13 @@ CText3D::CRegistInfo::~CRegistInfo() {
 //========================================
 void CText3D::CRegistInfo::ClearParameter(void) {
 
-	RNLib::Memory().Release(&m_string);
+	CMemory::Release(&m_string);
 	m_alignment   = CText::ALIGNMENT::CENTER;
 	m_fontIdx     = NONEDATA;
 	m_scaleX      = 1.0f;
 	m_scaleY      = 1.0f;
 	m_isFactScale = false;
-	m_mtx         = INITD3DXMATRIX;
+	m_mtx         = INITMATRIX;
 	m_col         = INITCOLOR;
 	m_isZtest     = true;
 	m_isLighting  = true;
@@ -118,12 +153,12 @@ void CText3D::CRegistInfo::PutPolygon3D(const bool& isOnScreen) {
 	//----------------------------------------
 	// 一文字ずつ設置していく
 	//----------------------------------------
-	D3DXVECTOR3 cameraNorRToV = RNLib::Camera3D().GetNor();
-	int         strLen        = (int)strlen(m_string);
+	D3DXVECTOR3 cameraNorRToV = Vector3D(0.0f, 0.0f, -1.0f);//Manager::GetMainCamera()->GetNor();
+	int         strLen        = (int)wcslen(wstr);
 	for (int cntChar = 0; cntChar < strLen; cntChar++) {
 
 		// カウント文字が空白の時、折り返す
-		if (m_string[cntChar] == ' ') {
+		if (wstr[cntChar] == ' ') {
 			continue;	
 		}
 
@@ -142,11 +177,11 @@ void CText3D::CRegistInfo::PutPolygon3D(const bool& isOnScreen) {
 		}
 
 		// [[[ 結果マトリックスの算出 ]]]
-		D3DXMATRIX resultMtx; {
+		Matrix resultMtx; {
 
 			// 基準マトリックスとテキストマトリックスを求める
-			D3DXMATRIX baseMtx = INITD3DXMATRIX;
-			D3DXMATRIX textMtx = INITD3DXMATRIX;
+			Matrix baseMtx = INITMATRIX;
+			Matrix textMtx = INITMATRIX;
 
 			if (m_isBillboard) 
 			{// ビルボードの時、
@@ -167,7 +202,7 @@ void CText3D::CRegistInfo::PutPolygon3D(const bool& isOnScreen) {
 		}
 
 		// ポリゴン3Dを設置
-		RNLib::DrawMng().PutPolygon3D(resultMtx, isOnScreen)
+		RNLib::DrawMgr().PutPolygon3D(resultMtx, isOnScreen)
 			->SetSize(charWidth, charHeight)
 			->SetCol(m_col)
 			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
@@ -184,7 +219,7 @@ void CText3D::CRegistInfo::PutPolygon3D(const bool& isOnScreen) {
 //========================================
 // マトリックスを設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetMtx(const D3DXMATRIX& mtx) {
+CText3D::CRegistInfo* CText3D::CRegistInfo::SetMtx(const Matrix& mtx) {
 
 	if (this == NULL)
 		return NULL;

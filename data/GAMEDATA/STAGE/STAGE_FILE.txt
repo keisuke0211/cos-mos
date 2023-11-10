@@ -18,15 +18,15 @@ PLANET = 3 data\MODEL\Sirius.x シリウス
 #========================================
 # 惑星番号 / ステージのファイル名 / ステージ名
 #========================================
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE00.csv 始まりの地
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE01.csv 死者の大地
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE02.csv 謎の鉄塊
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE03.csv 謎の植物
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE04.csv 植物と珊瑚
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE05.csv ？？？
-STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE06.csv 謎の石塊
-STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE07.csv 光線と隕石
-STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE08.csv ？？？
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE00.csv 1-1
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE01.csv 1-2
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE02.csv 1-3
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE03.csv 2-1
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE04.csv 2-2
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE05.csv 2-3
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE06.csv 3-1
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE07.csv 3-2
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE08.csv 3-3
 
 #========================================
 #||||||||||||||||||||||||||||||||||||||||
