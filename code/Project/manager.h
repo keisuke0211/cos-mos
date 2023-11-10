@@ -28,6 +28,7 @@ namespace Manager {
 	void        Transition   (const CMode::TYPE newMode, const CTransition::TYPE transType);
 	CCamera*    GetMainCamera(void);
 	CStageObjectMgr*  BlockMgr   (void);
+	CObjectMgr*  BGMgr(void);
 	CEffectMgr*       EffectMgr(void);
 	CStageEditor* StgEd(void);
 	CFont* Font(void);
