@@ -22,8 +22,7 @@ public:
 	enum class STATE {
 		NONE = 0,		//æ‚Á‚Ä‚¢‚È‚¢
 		RETURN,			//–ß‚é
-		UP_LAND,		//ã‚É’…’n
-		DOWN_LAND,		//‰º‚É’…’n
+		DOWN_LAND,		//ì“®‚µ‚Ä‚¢‚é
 		MAX,
 	};
 

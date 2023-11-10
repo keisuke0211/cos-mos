@@ -40,9 +40,9 @@ private:
 	void BlinkAnimation(void);	//点滅アニメーション処理
 
 	//========== [[[ 変数宣言 ]]]
-	D3DXVECTOR3 m_move;	// 移動量
 	float m_fBlink;		// 点滅
 	int	  m_nBlinkAnim;	// 点滅アニメーション
+	D3DXVECTOR3 m_move;	// 移動量
 
 	int ModelIdx;
 };
