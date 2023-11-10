@@ -163,7 +163,7 @@
     <ClCompile Include="code\Project\Mode\mode_logo.cpp" />
     <ClCompile Include="code\Project\Mode\mode_result.cpp" />
     <ClCompile Include="code\Project\Mode\mode_title.cpp" />
-    <ClCompile Include="code\Project\Object\BackGround\BG-Editor.cpp" />
+    <ClCompile Include="code\Project\System\BG-Editor.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\Planet.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\ShiningWave.cpp" />
@@ -246,7 +246,7 @@
     <ClInclude Include="code\Project\Mode\mode_logo.h" />
     <ClInclude Include="code\Project\Mode\mode_result.h" />
     <ClInclude Include="code\Project\Mode\mode_title.h" />
-    <ClInclude Include="code\Project\Object\BackGround\BG-Editor.h" />
+    <ClInclude Include="code\Project\System\BG-Editor.h" />
     <ClInclude Include="code\Project\Object\BackGround\BG-object.h" />
     <ClInclude Include="code\Project\Object\BackGround\Planet.h" />
     <ClInclude Include="code\Project\Object\BackGround\Shiningwave.h" />

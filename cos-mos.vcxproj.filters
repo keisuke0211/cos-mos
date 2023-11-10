@@ -252,10 +252,10 @@
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Object\BackGround\BG-Editor.cpp">
+    <ClCompile Include="code\Project\Effect\effect-meteor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Effect\effect-meteor.cpp">
+    <ClCompile Include="code\Project\System\BG-Editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -500,10 +500,10 @@
     <ClInclude Include="code\Project\Object\BackGround\BG-object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Object\BackGround\BG-Editor.h">
+    <ClInclude Include="code\Project\Effect\effect-meteor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Effect\effect-meteor.h">
+    <ClInclude Include="code\Project\System\BG-Editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
