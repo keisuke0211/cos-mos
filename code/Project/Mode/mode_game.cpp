@@ -10,6 +10,7 @@
 #include "../System/words/font-text.h"
 #include "../Mode/mode_title.h"
 #include "../UI/rocket-parts.h"
+#include "../System/BG-Editor.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -44,6 +45,8 @@ Color CMode_Game::m_BgColorUp = INITCOLOR;
 Color CMode_Game::m_BgColorDown = INITCOLOR;
 CPlayer *CMode_Game::s_pPlayer = NULL;
 CPlayer* CMode_Game::GetPlayer(void) { return s_pPlayer; }
+CCamera* CMode_Game::m_cameraUp = NULL;
+CCamera* CMode_Game::m_cameraDown = NULL;
 int CMode_Game::m_nStageIdx = 0;
 int CMode_Game::m_nPlanetIdx = 0;
 
@@ -62,6 +65,9 @@ CMode_Game::CMode_Game(void) {
 // Author:RIKU NISHIMURA
 //========================================
 CMode_Game::~CMode_Game(void) {
+
+	delete m_cameraUp;
+	delete m_cameraDown;
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
@@ -93,8 +99,9 @@ void CMode_Game::Init(void) {
 
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
-	m_rocketparts = new CRocketPartsUI;
+	CBGEditor::Load("data\\GAMEDATA\\BG\\BG_FILE.txt");
 
+	m_rocketparts = new CRocketPartsUI;
 	m_rocketparts = CRocketPartsUI::Create();
 
 	if (s_pPlayer == NULL)
@@ -112,7 +119,9 @@ void CMode_Game::Init(void) {
 	m_cameraUp   = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
 	m_cameraDown = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
 	m_cameraUp->SetClipping(true);
+	m_cameraUp->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
 	m_cameraDown->SetClipping(true);
+	m_cameraDown->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
@@ -135,7 +144,11 @@ void CMode_Game::Uninit(void) {
 
 	Manager::BlockMgr()->ReleaseAll();
 
-	m_rocketparts->Uninit();
+	if (m_rocketparts != NULL) {
+		m_rocketparts->Uninit();
+		delete m_rocketparts;
+		m_rocketparts = NULL;
+	}
 }
 
 //========================================
@@ -165,7 +178,6 @@ void CMode_Game::Update(void) {
 		// ‰º
 		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
 			->SetTex_Camera(m_cameraDown)
-			->SetCol(m_BgColorDown)
 			->SetSize(windowWidth, windowHeightHalf)
 			->SetPriority(-1);
 	}

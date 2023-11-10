@@ -1,7 +1,7 @@
 //========================================
 // 
 // ロケットパーツUIの処理
-// Author:KOMURO HIROMU
+// Author: RYUKI FUJIWARA
 // 
 //========================================
 #include "rocket-parts.h"
@@ -33,7 +33,7 @@ CRocketPartsUI::~CRocketPartsUI(void) {
 
 //========================================
 // 初期化処理
-// Author:KOMURO HIROMU
+// Author: RYUKI FUJIWARA
 //========================================
 void CRocketPartsUI::Init(void) {
 
@@ -47,7 +47,7 @@ void CRocketPartsUI::Init(void) {
 
 //========================================
 // 終了処理
-// Author:KOMURO HIROMU
+// Author: RYUKI FUJIWARA
 //========================================
 void CRocketPartsUI::Uninit(void) {
 
@@ -55,7 +55,7 @@ void CRocketPartsUI::Uninit(void) {
 
 //========================================
 // 更新処理
-// Author:KOMURO HIROMU
+// Author: RYUKI FUJIWARA
 //========================================
 void CRocketPartsUI::Update(void) {
 
@@ -89,6 +89,7 @@ void CRocketPartsUI::Update(void) {
 
 //========================================
 // 生成処理
+// Author: RYUKI FUJIWARA
 //========================================
 CRocketPartsUI *CRocketPartsUI::Create(void)
 {
