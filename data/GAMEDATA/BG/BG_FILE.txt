@@ -1,0 +1,13 @@
+SCRIPT			# この行は絶対消さないこと！
+
+START_PATH data\\MODEL\\
+
+UP
+	POS 0.0,0.0,0.0 ROT 1.0,1.0,1.0 SPIN 0.001,0.0,0.0 COLOR 255,0,255,255 PATH data\\MODEL\\Yellow_Star.x
+END
+
+DOWN
+	POS 0.0,0.0,0.0 ROT 1.0,1.0,1.0 SPIN 0.0,0.0,0.001 COLOR 255,255,0,255 PATH data\\MODEL\\Yellow_Star.x
+END
+
+END_SCRIPT		# この行は絶対消さないこと！

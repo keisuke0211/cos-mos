@@ -6,7 +6,11 @@
 //========================================
 #pragma once
 #include "../../_RNLib/RNlib.h"
-
+//========================================
+// マクロ定義
+//========================================
+#define MAX_INFO	(20)		// 情報の最大
+#define MAX_MODEL	(3)			// モデルの最大
 //****************************************
 // クラス
 //****************************************
@@ -41,10 +45,10 @@ private:
 
 	// *** 静的変数 ***
 	static int m_nNumAll;		// 総数
-	static int s_nModelIdx[3];	// モデル
+	static int s_nModelIdx[MAX_MODEL];	// モデル
 
 	// *** 変数 ***
-	Info m_Info[10];		// 共通情報
+	Info m_Info[MAX_INFO];		// 共通情報
 	D3DXVECTOR3 m_pos;		// 位置
 	int m_nCount;
 
