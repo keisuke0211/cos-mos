@@ -30,8 +30,8 @@ CMeteor::CMeteor(void) {
 	m_type = TYPE::METEOR;
 
 	// 大きさの設定
-	m_width = SIZE_OF_1_SQUARE * 3;
-	m_height = SIZE_OF_1_SQUARE * 3;
+	m_width = SIZE_OF_1_SQUARE * 2;
+	m_height = SIZE_OF_1_SQUARE * 2;
 
 	// 各情報の初期化
 	ModelIdx = RNLib::Model().Load("data\\MODEL\\Meteorite.x");
@@ -72,11 +72,12 @@ void CMeteor::Uninit(void) {
 void CMeteor::Update(void) {
 
 	m_posOld = m_pos;		// 過去位置の更新
-	m_rot += METEOR_ADDROT;	// 向きの移動量の追加
-	m_pos += m_move;		// 移動量の追加
-
+	
 	//点滅アニメーション処理
 	BlinkAnimation();
+
+	m_rot += METEOR_ADDROT;	// 向きの移動量の追加
+	m_pos += m_move;		// 移動量の追加
 
 	// ブロックとの当たり判定処理
 	CollisionBlock();

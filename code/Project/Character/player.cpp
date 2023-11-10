@@ -695,7 +695,7 @@ void CPlayer::WholeCollision(void)
 
 					CExtenddog::STATE state = pDog->GetState();
 					if (Player.bExtendDog) {
-						if ((pOthColli[2].ColliRot != COLLI_ROT::UNDER && state == CExtenddog::STATE::UP_LAND)
+						if ((pOthColli[2].ColliRot != COLLI_ROT::UNDER)
 							|| (pOthColli[2].ColliRot != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
 							Player.bExtendDog = false;
 						}
@@ -736,7 +736,7 @@ void CPlayer::WholeCollision(void)
 			// ƒkƒC‚Ìó‘ÔÝ’è
 			CExtenddog *pDog = (CExtenddog *)stageObj;
 			CExtenddog::STATE state = pDog->GetState();
-			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog && state == CExtenddog::STATE::DOWN_LAND)
+			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
 			{
 				pDog->SetState(CExtenddog::STATE::RETURN);
 			}
@@ -1428,7 +1428,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, Colli *pColli, C
 				pInfo->fMaxHeight = pOthColli[2].MaxPos.y;//Å‚‚xÀ•WÝ’è
 			}
 
-			pExtenddog->SetState(CExtenddog::STATE::UP_LAND);
+			pExtenddog->SetState(CExtenddog::STATE::DOWN_LAND);
 			pInfo->bExtendDog = true;
 			break;
 
