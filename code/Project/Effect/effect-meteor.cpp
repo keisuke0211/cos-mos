@@ -8,7 +8,12 @@
 //========================================
 #include "effect-meteor.h"
 #include "../main.h"
-
+//========================================
+// マクロ定義
+//========================================
+#define MAX_DELTECNT	(20)		// 破片が消えるまでの時間
+#define MAX_RANDMOVE	(30)		// ランド関数で出る最大の移動量の値
+#define MAX_SCALE		(Scale3D(2.0f,2.0f,2.0f))	// 最大の大きさ
 //========================================
 // 静的変数
 //========================================
@@ -21,7 +26,7 @@ CEffect_Meteor::CEffect_Meteor(void)
 {
 	//Manager::BlockMgr()->AddList(this);
 
-	for (int nCnt = 0; nCnt < 10; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_INFO; nCnt++)
 	{
 		m_Info[nCnt].pos = INITD3DXVECTOR3;
 		m_Info[nCnt].rot = INITD3DXVECTOR3;
@@ -30,7 +35,7 @@ CEffect_Meteor::CEffect_Meteor(void)
 		m_Info[nCnt].col = INITCOLOR;
 	}
 	m_pos = INITD3DXVECTOR3;
-	m_nCount = 120;
+	m_nCount = MAX_DELTECNT;
 	m_nNumAll++;
 }
 
@@ -52,11 +57,11 @@ HRESULT CEffect_Meteor::Init(void)
 	s_nModelIdx[2] = RNLib::Model().Load("data\\MODEL\\MeteoriteFragment_2.x");
 
 
-	for (int nCnt = 0; nCnt < 10; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_INFO; nCnt++)
 	{
-		m_Info[nCnt].pos.x = m_pos.x + (rand() % 30 - 20);
-		m_Info[nCnt].pos.y = m_pos.y + (rand() % 30 - 20);
-		m_Info[nCnt].pos.z = m_pos.z + (rand() % 30 - 20);
+		m_Info[nCnt].pos.x = m_pos.x + (rand() % MAX_RANDMOVE - MAX_RANDMOVE + 10);
+		m_Info[nCnt].pos.y = m_pos.y + (rand() % MAX_RANDMOVE - MAX_RANDMOVE + 10);
+		m_Info[nCnt].pos.z = m_pos.z + (rand() % MAX_RANDMOVE - MAX_RANDMOVE + 10);
 		m_Info[nCnt].move.x = (rand() % 4 - 2) * 0.5f;
 		m_Info[nCnt].move.y = (rand() % 4 - 2) * 0.5f;
 		m_Info[nCnt].move.z = (rand() % 4 - 2) * 0.5f;
@@ -82,11 +87,11 @@ void CEffect_Meteor::Update(void)
 	m_nCount--;
 
 	//割合計算
-	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCount,120);
+	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCount, MAX_DELTECNT);
 
-	for (int nCnt = 0; nCnt < 10; nCnt++)
+	for (int nCnt = 0; nCnt < MAX_INFO; nCnt++)
 	{
-		m_Info[nCnt].scale = Scale3D(2.0f,2.0f,2.0f) * fCountRate;	// スケールの倍率
+		m_Info[nCnt].scale = MAX_SCALE * fCountRate;	// スケールの倍率
 
 		//モデル配置
 		RNLib::Model().Put(m_Info[nCnt].pos, m_Info[nCnt].rot,m_Info[nCnt].scale, s_nModelIdx[0], false)

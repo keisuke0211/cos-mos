@@ -54,8 +54,8 @@ public:
 
 	// -- Žæ“¾ -------------------------------------------------------------------
 	static int GetStage(void)    { return m_nStageIdx;   }
-	CCamera& GetCameraUp(void)   { return *m_cameraUp;   }
-	CCamera& GetCameraDown(void) { return *m_cameraDown; }
+	static CCamera& GetCameraUp(void)   { return *m_cameraUp;   }
+	static CCamera& GetCameraDown(void) { return *m_cameraDown; }
 
 private:
 
@@ -71,7 +71,7 @@ private:
 	int m_nSelect;
 	CFontText *m_Menu[MENU_MAX];
 	CRocketPartsUI *m_rocketparts;
-	CCamera* m_cameraUp;
-	CCamera* m_cameraDown;
+	static CCamera* m_cameraUp;
+	static CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;
 };

@@ -215,9 +215,10 @@ CMeteor *CStageObjectMgr::MeteorCreate(D3DXVECTOR3 pos,D3DXVECTOR3 move)
 	pObj = new CMeteor;
 
 	// ‰Šú‰»ˆ—
-	pObj->Init();
 	pObj->SetPos(pos);
 	pObj->SetMove(move);
+	pObj->Init();
+
 
 	return pObj;
 }
