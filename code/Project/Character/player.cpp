@@ -707,8 +707,8 @@ void CPlayer::CollisionToStageObject(void)
 
 					CExtenddog::STATE state = pDog->GetState();
 					if (Player.bExtendDog) {
-						if ((pOthColli[2].ColliRot != COLLI_ROT::UNDER)
-							|| (pOthColli[2].ColliRot != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
+						if ((m_pOthColli[2].ColliRot != COLLI_ROT::UNDER)
+							|| (m_pOthColli[2].ColliRot != COLLI_ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
 							Player.bExtendDog = false;
 						}
 					}
