@@ -613,7 +613,7 @@ void CPlayer::CollisionToStageObject(void)
 					m_pOthColli->maxPos = D3DXVECTOR3(m_pOthColli->pos.x + m_pOthColli->fWidth, m_pOthColli->pos.y + m_pOthColli->fHeight, 0.0f);
 
 					// “–‚½‚Á‚½•ûŒü‚ðŠi”[
-					COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOld, m_collInfo.fWidth, m_collInfo.fHeight, m_pOthColli->pos, m_pOthColli->posOld, m_pOthColli->fWidth, m_pOthColli->fHeight, vec);
+					COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_pOthColli->pos, m_pOthColli->posOld, m_pOthColli->fWidth, m_pOthColli->fHeight, vec);
 
 					if (vec == COLLI_VEC::Y) {
 						if (!Player.bGroundOld) {
@@ -717,17 +717,17 @@ void CPlayer::CollisionToStageObject(void)
 				// Ží—Þ‚²‚Æ‚ÉŠÖ”•ª‚¯
 				switch (type)
 				{
-				case CStageObject::TYPE::BLOCK:			CollisionBlock(&Player, &m_collInfo);	break;
-				case CStageObject::TYPE::FILLBLOCK:		CollisionFillBlock(&Player, m_collInfo.ColliRot); break;
-				case CStageObject::TYPE::TRAMPOLINE:	CollisionTrampoline(&Player, &m_collInfo, m_pOthColli);	break;
-				case CStageObject::TYPE::SPIKE:			CollisionSpike(&Player, &m_collInfo);	break;
-				case CStageObject::TYPE::MOVE_BLOCK:	CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, &m_collInfo);	break;
-				case CStageObject::TYPE::METEOR:		CollisionMeteor(&Player, &m_collInfo); break;
-				case CStageObject::TYPE::LASER:			CollisionLaser(&Player, (CRoadTripLaser *)stageObj,&m_collInfo, m_pOthColli);	break;
-				case CStageObject::TYPE::EXTEND_DOG:	CollisionDog(&Player, (CExtenddog *)stageObj, &m_collInfo, m_pOthColli); break;
-				case CStageObject::TYPE::GOALGATE:		CollisionGoalGate(&Player, &m_collInfo);	break;
-				case CStageObject::TYPE::PARTS:			CollisionParts(&Player, (CParts *)stageObj); break;
-				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
+				case CStageObject::TYPE::BLOCK:		CollisionBlock(&Player, &m_collInfo);	break;
+				case CStageObject::TYPE::FILLBLOCK:	CollisionFillBlock(&Player, m_collInfo.ColliRot); break;
+				case CStageObject::TYPE::TRAMPOLINE:CollisionTrampoline(&Player, &m_collInfo, m_pOthColli);	break;
+				case CStageObject::TYPE::SPIKE:		CollisionSpike(&Player, &m_collInfo);	break;
+				case CStageObject::TYPE::MOVE_BLOCK:CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, &m_collInfo);	break;
+				case CStageObject::TYPE::METEOR:	CollisionMeteor(&Player, &m_collInfo); break;
+				case CStageObject::TYPE::LASER:		CollisionLaser(&Player, (CRoadTripLaser *)stageObj,&m_collInfo, m_pOthColli);	break;
+				case CStageObject::TYPE::EXTEND_DOG:CollisionDog(&Player, (CExtenddog *)stageObj, &m_collInfo, m_pOthColli); break;
+				case CStageObject::TYPE::GOALGATE:	CollisionGoalGate(&Player, &m_collInfo);	break;
+				case CStageObject::TYPE::PARTS:		CollisionParts(&Player, (CParts *)stageObj); break;
+				case CStageObject::TYPE::ROCKET:	CollisionRocket(&Player, (CRocket *)stageObj); break;
 				}
 
 				//ƒƒ‚ƒŠŠJ•ú
@@ -739,13 +739,17 @@ void CPlayer::CollisionToStageObject(void)
 			}
 
 			// ƒkƒC‚Ìó‘ÔÝ’è
-			CExtenddog *pDog = (CExtenddog *)stageObj;
-			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
+			if (stageObj->GetType() == CStageObject::TYPE::EXTEND_DOG &&
+				!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
 			{
+				CExtenddog *pDog = (CExtenddog *)stageObj;
 				pDog->SetState(CExtenddog::STATE::RETURN);
 			}
 		}
 	}
+
+	//ƒƒ‚ƒŠŠJ•ú
+	OthColliDelete();
 }
 
 //----------------------------
@@ -923,7 +927,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CollInfo *pOthC
 void CPlayer::CollisionSpike(Info *pInfo, CollInfo *pColli)
 {
 	// Ž€–Sˆ—
-	//Death(&pInfo->pos);
+	Death(&pInfo->pos);
 }
 
 //----------------------------
