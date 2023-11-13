@@ -738,11 +738,11 @@ void CPlayer::CollisionToStageObject(void)
 				case CStageObject::TYPE::ROCKET:		CollisionRocket(&Player, (CRocket *)stageObj); break;
 				}
 
+				OthColliDelete();
+
 				// 当たれば即死のオブジェクトに当たっている
 				if (type == CStageObject::TYPE::SPIKE || type == CStageObject::TYPE::METEOR || type == CStageObject::TYPE::LASER)
 					break;
-
-				OthColliDelete();
 			}
 
 			// ヌイの状態設定
@@ -1631,14 +1631,7 @@ void CPlayer::OthColliDelete(void)
 {
 	if (m_pOthColli != NULL)
 	{
-		if (!bPluralColli)
-		{
-			delete m_pOthColli;
-		}
-		else if (bPluralColli)
-		{
-			delete[] m_pOthColli;
-		}
+		delete[] m_pOthColli;
 		m_pOthColli = NULL;
 	}
 }
