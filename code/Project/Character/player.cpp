@@ -847,22 +847,21 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
 
 		// 表の世界のプレイヤー
-		if (pInfo->side == WORLD_SIDE::FACE) {
+		if (pInfo->side == WORLD_SIDE::FACE)
+		{
 			if (pInfo->bJump == true)
 			{// 着地した
 				// SE再生
 				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 				pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
+				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
+				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
 			pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
 
-			if (!pInfo->bGroundOld) {
-				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
-				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-			}
-			else if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND) {
+			if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND) {
 				SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
 			}
 		}
@@ -876,22 +875,21 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
 
 		// 裏の世界のプレイヤーならジャンプ可能
-		if (pInfo->side == WORLD_SIDE::BEHIND) {
+		if (pInfo->side == WORLD_SIDE::BEHIND)
+		{
 			if (pInfo->bJump == true)
 			{// 着地した
 				// SE再生
 				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 				pTrampoline->SetState(CTrampoline::STATE::DOWN_LAND);
+				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
+				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
 			pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
 
-			if (!pInfo->bGroundOld) {
-				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
-				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-			}
-			else if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND) {
+			if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND) {
 				SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
 			}
 		}
@@ -1566,6 +1564,7 @@ void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 	pInfo->nTramJumpCounter = TRAMPOLINE_JUMP_COUNTER;
 	pInfo->bTramJump = true;
 	pInfo->bGround = false;
+	pInfo->bJump = true;
 }
 
 //----------------------------
