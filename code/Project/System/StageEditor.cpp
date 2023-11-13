@@ -44,6 +44,8 @@ CStageEditor::CStageEditor(void)
 	m_Info.nRowMax = 0;
 	m_Info.nLineMax = 0;
 	m_Info.nPlanetIdx = 0;
+	m_Info.aBgFile = NULL;
+	m_Info.aSoundFile = NULL;
 
 	// 最大値
 	m_Info.nPlanetMax = 0;
@@ -69,8 +71,7 @@ CStageEditor::CStageEditor(void)
 //========================================
 CStageEditor::~CStageEditor()
 {
-	if (m_PlanetType != NULL)
-	{
+	if (m_PlanetType != NULL){
 		for (int nPlanet = 0; nPlanet < m_Info.nPlanetMax; nPlanet++)
 		{
 			if (m_PlanetType[nPlanet].StageType != NULL)
@@ -102,6 +103,16 @@ CStageEditor::~CStageEditor()
 	if (m_DogInfo != NULL){
 		delete[] m_DogInfo;
 		m_DogInfo = NULL;
+	}
+
+	if (m_Info.aBgFile != NULL){
+		delete[] m_Info.aBgFile;
+		m_Info.aBgFile;
+	}
+
+	if (m_Info.aSoundFile != NULL){
+		delete[] m_Info.aSoundFile;
+		m_Info.aSoundFile;
 	}
 }
 
@@ -144,6 +155,16 @@ void CStageEditor::Uninit(void)
 	if (m_DogInfo != NULL) {
 		delete[] m_DogInfo;
 		m_DogInfo = NULL;
+	}
+
+	if (m_Info.aBgFile != NULL) {
+		delete[] m_Info.aBgFile;
+		m_Info.aBgFile = NULL;
+	}
+
+	if (m_Info.aSoundFile != NULL) {
+		delete[] m_Info.aSoundFile;
+		m_Info.aSoundFile = NULL;
 	}
 }
 
@@ -293,6 +314,26 @@ void CStageEditor::StageLoad(int planet, int stage)
 			
 
 			if (!strcmp(aDataSearch, "End")) { bEnd = true;}
+			else if (!strcmp(aDataSearch, "SetBg")) {
+				nLine += 4;
+
+				if (m_Info.aBgFile == NULL){
+					string sData = pFile->GetData(nRow, nLine);
+					m_Info.aBgFile = new char[sData.size() + 1]; // メモリ確保
+					std::char_traits<char>::copy(m_Info.aBgFile, sData.c_str(), sData.size() + 1);
+				}
+
+			}
+			else if (!strcmp(aDataSearch, "SetSound")) {
+				nLine += 4;
+
+				if (m_Info.aSoundFile == NULL) {
+					string sData = pFile->GetData(nRow, nLine);
+					m_Info.aSoundFile = new char[sData.size() + 1]; // メモリ確保
+					std::char_traits<char>::copy(m_Info.aSoundFile, sData.c_str(), sData.size() + 1);
+				}
+				
+			}
 			else if (!strcmp(aDataSearch, "StageWidth")){
 				nLine += 4;
 				int nWidth;
@@ -363,8 +404,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 				SetDogInfo(pFile, nRow, nLine);
 			}
 
-			if (cstr != NULL)
-			{
+			if (cstr != NULL){
 				delete[] cstr;
 				cstr = NULL;
 			}
@@ -548,10 +588,9 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::BlockMgr()->MeteorCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Laser:
-		Manager::BlockMgr()->RoadTripLaserCreate(pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		Manager::BlockMgr()->RoadTripLaserCreate(pos, pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Extenddog:
-		Manager::BlockMgr()->ExtenddogCreate(pos, pos, pos,2 ,true,true);
 		Manager::BlockMgr()->BlockCreate(pos,CBlock::BLOCK_TYPE::BLOCK_NUI);
 		break;
 	case TYPE_FILL_BLOCK_11:
@@ -616,6 +655,8 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 //========================================
 void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 {
+	int nLift = 0;
+
 	while (1)
 	{
 		nLine = 0;	nRow++;
@@ -642,7 +683,6 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 			assert(m_LiftInfo != NULL);
 		}
 		else if (!strcmp(aDataSearch, "SetLift")) {
-			int nLift = 0;
 			while (1)
 			{
 				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
@@ -664,21 +704,21 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 					nLift++;
 					break;
 				}
-				else if (!strcmp(aDataSearch, "POS_V")) {
+				else if (!strcmp(aDataSearch, "PosV")) {
 					int Row = 0; int Line = 0; nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_LiftInfo[nLift].posV = GetCIe(Row, Line);
+					m_LiftInfo[nLift].posV = GetPos(Row, Line);
 				}
-				else if (!strcmp(aDataSearch, "POS_R")) {
+				else if (!strcmp(aDataSearch, "PosR")) {
 					int Row = 0; int Line = 0; nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_LiftInfo[nLift].posR = GetCIe(Row, Line);
+					m_LiftInfo[nLift].posR = GetPos(Row, Line);
 				}
-				else if (!strcmp(aDataSearch, "MOVE")) {
+				else if (!strcmp(aDataSearch, "Move")) {
 					nLine++;
 					ToData(m_LiftInfo[nLift].move.x, pFile, nRow, nLine); nLine++;
 					ToData(m_LiftInfo[nLift].move.y, pFile, nRow, nLine); nLine++;
@@ -705,6 +745,8 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 //========================================
 void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 {
+	int nMeteor = 0;
+
 	while (1)
 	{
 		nLine = 0;	nRow++;
@@ -731,7 +773,6 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 			assert(m_MeteorInfo != NULL);
 		}
 		else if (!strcmp(aDataSearch, "SetMeteor")) {
-			int nMeteor = 0;
 			while (1)
 			{
 				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
@@ -753,22 +794,22 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 					nMeteor++;
 					break;
 				}
-				else if (!strcmp(aDataSearch, "POS")) {
+				else if (!strcmp(aDataSearch, "Pos")) {
 					int Row = 0; int Line = 0; nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_MeteorInfo[nMeteor].pos = GetCIe(Row, Line);
+					m_MeteorInfo[nMeteor].pos = GetPos(Row, Line);
 					m_MeteorInfo[nMeteor].pos.x += CStageObject::SIZE_OF_1_SQUARE;
 					m_MeteorInfo[nMeteor].pos.y -= CStageObject::SIZE_OF_1_SQUARE;
 				}
-				else if (!strcmp(aDataSearch, "MOVE")) {
+				else if (!strcmp(aDataSearch, "Move")) {
 					nLine++;
 					ToData(m_MeteorInfo[nMeteor].move.x, pFile, nRow, nLine); nLine++;
 					ToData(m_MeteorInfo[nMeteor].move.y, pFile, nRow, nLine); nLine++;
 					m_MeteorInfo[nMeteor].move.z = 0.0f;
 				}
-				else if (!strcmp(aDataSearch, "INTEVAL")) {
+				else if (!strcmp(aDataSearch, "Inteval")) {
 					int inteval = 0; nLine++;
 					ToData(inteval, pFile, nRow, nLine);
 
@@ -795,10 +836,11 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 //========================================
 void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 {
+	int nLaser = 0;
+
 	while (1)
 	{
-		nLine = 0;
-		nRow++;
+		nLine = 0;	nRow++;
 		char *aDataSearch = NULL;	// データ検索用
 		string sData = pFile->GetData(nRow, nLine);
 		char* cstr = new char[sData.size() + 1]; // メモリ確保
@@ -812,8 +854,63 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 			}
 			break;
 		}
-		else if (!strcmp(aDataSearch, "1P")){
-		
+		else if (!strcmp(aDataSearch, "LaserMax")) {
+			int Max = 0;
+			nLine++;
+			ToData(Max, pFile, nRow, nLine);
+
+			m_Info.nLaserMax = Max;
+			m_LaserInfo = new LaserInfo[Max];
+			assert(m_LaserInfo != NULL);
+		}
+		else if (!strcmp(aDataSearch, "SetLaser")) {
+			while (1)
+			{
+				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
+				string sData = pFile->GetData(nRow, nLine);
+				char* cstr = new char[sData.size() + 1]; // メモリ確保
+				std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+				aDataSearch = cstr;
+
+				if (!strcmp(aDataSearch, "EndLaser")) {
+					if (cstr != NULL) {
+						delete[] cstr;
+						cstr = NULL;
+					}
+
+					if (nLaser < m_Info.nLiftMax) {
+						Manager::BlockMgr()->RoadTripLaserCreate(m_LaserInfo[nLaser].posV, m_LaserInfo[nLaser].posR, m_LaserInfo[nLaser].move);
+					}
+
+					nLaser++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "PosV")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_LaserInfo[nLaser].posV = GetPos(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "PosR")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_LaserInfo[nLaser].posR = GetPos(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "Move")) {
+					nLine++;
+					ToData(m_LaserInfo[nLaser].move.x, pFile, nRow, nLine); nLine++;
+					ToData(m_LaserInfo[nLaser].move.y, pFile, nRow, nLine); nLine++;
+					m_LaserInfo[nLaser].move.z = 0.0f;
+				}
+
+				if (cstr != NULL) {
+					delete[] cstr;
+					cstr = NULL;
+				}
+			}
 		}
 
 		if (cstr != NULL) {
@@ -829,10 +926,11 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 //========================================
 void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 {
+	int nDog = 0;
+
 	while (1)
 	{
-		nLine = 0;
-		nRow++;
+		nLine = 0;	nRow++;
 		char *aDataSearch = NULL;	// データ検索用
 		string sData = pFile->GetData(nRow, nLine);
 		char* cstr = new char[sData.size() + 1]; // メモリ確保
@@ -846,8 +944,67 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 			}
 			break;
 		}
-		else if (!strcmp(aDataSearch, "1P")){
+		else if (!strcmp(aDataSearch, "DogMax")) {
+			int Max = 0;
+			nLine++;
+			ToData(Max, pFile, nRow, nLine);
 
+			m_Info.nLiftMax = Max;
+			m_DogInfo = new DogInfo[Max];
+			assert(m_DogInfo != NULL);
+		}
+		else if (!strcmp(aDataSearch, "SetDog")) {
+			while (1)
+			{
+				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
+				string sData = pFile->GetData(nRow, nLine);
+				char* cstr = new char[sData.size() + 1]; // メモリ確保
+				std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+				aDataSearch = cstr;
+
+				if (!strcmp(aDataSearch, "EndDog")) {
+					if (cstr != NULL) {
+						delete[] cstr;
+						cstr = NULL;
+					}
+
+					if (nDog < m_Info.nLiftMax) {
+						bool bReturn = false;
+
+						if (m_DogInfo[nDog].HeadPos.y <= 0) {
+							bReturn = true;
+						}
+
+						Manager::BlockMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, true, bReturn);
+					}
+
+					nDog++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "HeadPos")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_DogInfo[nDog].HeadPos = GetPos(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "HipPos")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_DogInfo[nDog].HipPos = GetPos(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "Height")) {
+					nLine++;
+					ToData(m_DogInfo[nDog].Height, pFile, nRow, nLine); nLine++;
+				}
+
+				if (cstr != NULL) {
+					delete[] cstr;
+					cstr = NULL;
+				}
+			}
 		}
 
 		if (cstr != NULL) {
@@ -861,7 +1018,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 // 座標の取得
 // Author:KEISUKE OTONO
 //========================================
-D3DXVECTOR3 CStageEditor::GetCIe(int nRow, int nLine)
+D3DXVECTOR3 CStageEditor::GetPos(int nRow, int nLine)
 {
 	float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;

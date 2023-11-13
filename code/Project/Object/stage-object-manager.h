@@ -50,7 +50,7 @@ public:
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 	CShiningWave*ShiningWaveCreate(void);
 	CRoadTripLaser*RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,D3DXVECTOR3 move);
-	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 pos, D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bShrink,bool bReturn);
+	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bShrink,bool bReturn);
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 private:
 

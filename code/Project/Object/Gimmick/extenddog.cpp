@@ -82,9 +82,10 @@ void CExtenddog::Update(void) {
 	m_HeadPosOid = m_HipPos;
 
 	//“y‘äƒ‚ƒfƒ‹
-	RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[0], false)
-		->SetCol(m_color)
-		->SetOutLine(true);
+
+	//RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[0], false)
+	//	->SetCol(m_color)
+	//	->SetOutLine(true);
 
 	if (m_state == STATE::DOWN_LAND)
 	{//L‚Ñ‚éŒ¢‚ªì“®‚µ‚Ä‚¢‚é

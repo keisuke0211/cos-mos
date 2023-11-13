@@ -98,7 +98,7 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	void Release(void);
+	void Release(void);	
 	bool StartDraw(void);
 	void Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
 	CPolygon2D::CRegistInfo* PutPolygon2D(const D3DXVECTOR3& pos, const float& angle, const bool& isOnScreen);

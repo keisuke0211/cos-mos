@@ -54,6 +54,9 @@ public:
 		// ステージ関連
 		int nPlanetIdx;	// 現在の惑星
 
+		char	*aBgFile;		// 背景
+		char	*aSoundFile;	// サウンド
+
 		// 最大値
 		int nPlanetMax;	// 最大惑星
 		int nLiftMax;	// リフトの最大
@@ -105,7 +108,7 @@ public:
 	// Dog情報
 	struct DogInfo
 	{
-		D3DXVECTOR3 Headpos;// 頭の位置
+		D3DXVECTOR3 HeadPos;// 頭の位置
 		D3DXVECTOR3 HipPos;	// 尻の位置
 		int Height;			// 胴体の高さ
 	};
@@ -124,7 +127,9 @@ public:
 	/* 最大値			*/int GetPlanetMax(void) { return m_Info.nPlanetMax; }
 	/* 現在のステージ	*/int GetPlanetIdx(void) { return m_Info.nPlanetIdx; }
 	/* 惑星種類情報		*/PlanetType *GetType(void) { return m_PlanetType; }
-	/* 座標				*/D3DXVECTOR3 GetCIe(int nRow, int nLine);
+	/* 背景				*/char *GetBgFile(void) { return m_Info.aBgFile; }
+	/* サウンド			*/char *GetSoundFile(void) { return m_Info.aSoundFile; }
+	/* 位置				*/D3DXVECTOR3 GetPos(int nRow, int nLine);
 
 	// -- 変換 ---------------------------------------------
 	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);
