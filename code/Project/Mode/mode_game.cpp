@@ -142,6 +142,7 @@ void CMode_Game::Uninit(void) {
 	}
 
 	Manager::BlockMgr()->ReleaseAll();
+	Manager::BGMgr()->ReleaseAll();
 
 	if (m_rocketparts != NULL) {
 		m_rocketparts->Uninit();

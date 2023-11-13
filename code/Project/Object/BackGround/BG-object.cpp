@@ -26,6 +26,8 @@ CBGObject::CBGObject() {
 //========================================
 CBGObject::~CBGObject() {
 
+	// ƒŠƒXƒg‚©‚çíœ
+	Manager::BGMgr()->SubList(this);
 }
 
 //========================================
@@ -33,7 +35,6 @@ CBGObject::~CBGObject() {
 //========================================
 void CBGObject::Uninit(void) {
 
-	Manager::BGMgr()->Release(this);
 }
 
 ////======================================
@@ -60,4 +61,5 @@ void CBGObject::Update(void) {
 			->SetClippingCamera(CMode_Game::GetCameraDown());
 	}
 	
+	Uninit();
 }
