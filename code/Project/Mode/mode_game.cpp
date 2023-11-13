@@ -66,8 +66,8 @@ CMode_Game::CMode_Game(void) {
 //========================================
 CMode_Game::~CMode_Game(void) {
 
-	delete m_cameraUp;
-	delete m_cameraDown;
+	m_cameraUp->Delete();
+	m_cameraDown->Delete();
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
@@ -99,8 +99,6 @@ void CMode_Game::Init(void) {
 	Manager::BlockMgr()->MeteorGeneratorCreate(D3DXVECTOR3(-160.0f, 100.0f, 0.0f), D3DXVECTOR3(1.0f, 0.0f, 0.0f), 120);
 	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
-	CBGEditor::Load("data\\GAMEDATA\\BG\\BG_FILE.txt");
-
 	m_rocketparts = CRocketPartsUI::Create();
 
 	if (s_pPlayer == NULL)
@@ -111,6 +109,12 @@ void CMode_Game::Init(void) {
 
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx,m_nStageIdx);
+
+	char *pBgFile = Manager::StgEd()->GetBgFile();
+
+	if (pBgFile != NULL){
+		CBGEditor::Load(pBgFile);
+	}
 
 	SetBGColor(m_BgColorUp);
 
@@ -142,6 +146,7 @@ void CMode_Game::Uninit(void) {
 	}
 
 	Manager::BlockMgr()->ReleaseAll();
+	Manager::BGMgr()->ReleaseAll();
 
 	if (m_rocketparts != NULL) {
 		m_rocketparts->Uninit();

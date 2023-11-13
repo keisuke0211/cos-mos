@@ -20,4 +20,5 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
+	void UpdateAll(void);
 };

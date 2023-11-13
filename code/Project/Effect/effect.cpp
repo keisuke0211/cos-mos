@@ -22,6 +22,7 @@ CEffect::CEffect(void)
 	m_Info.pos = INITD3DXVECTOR3;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
+	m_Info.rot =INITD3DXVECTOR3;
 	m_Info.col = INITCOLOR;
 	m_nNumAll++;
 }
@@ -37,12 +38,11 @@ CEffect::~CEffect()
 //========================================
 // ‰Šú‰»
 //========================================
-HRESULT CEffect::Init(int nTex, int nCount)
+HRESULT CEffect::Init(int nTex, int nCount, D3DXVECTOR3 spin)
 {
-	m_Info.move = INITD3DXVECTOR3;
-	m_Info.col = INITCOLOR;
 	m_Info.nTex = nTex;
 	m_Info.nCount = m_Info.nCountMax = nCount;
+	m_Info.spin = spin / m_Info.nCountMax;
 
 	return S_OK;
 }
@@ -61,7 +61,7 @@ void CEffect::Uninit(void)
 void CEffect::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Polygon3D().Put(m_Info.pos + m_Info.move, INITD3DXVECTOR3)
+	RNLib::Polygon3D().Put(m_Info.pos + m_Info.move,m_Info.rot)
 		->SetTex(m_Info.nTex)
 		->SetBillboard(true)
 		->SetCol(m_Info.col)
@@ -75,6 +75,8 @@ void CEffect::Update(void)
 	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
 
 	m_Info.col.a = m_Info.col.a * fCountRate;
+
+	m_Info.rot += m_Info.spin;
 
 	if (m_Info.nCount <= 0)
 	{
