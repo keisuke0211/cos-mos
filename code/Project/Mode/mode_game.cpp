@@ -101,7 +101,6 @@ void CMode_Game::Init(void) {
 
 	CBGEditor::Load("data\\GAMEDATA\\BG\\BG_FILE.txt");
 
-	m_rocketparts = new CRocketPartsUI;
 	m_rocketparts = CRocketPartsUI::Create();
 
 	if (s_pPlayer == NULL)

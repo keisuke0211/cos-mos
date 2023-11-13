@@ -55,7 +55,8 @@ CMoveBlock::~CMoveBlock()
 //========================================
 HRESULT CMoveBlock::Init(void)
 {
-
+	// Žn“_‚ðˆÊ’u‚É‘ã“ü
+	m_Info.pos = m_Info.m_posV;
 	return S_OK;
 }
 
