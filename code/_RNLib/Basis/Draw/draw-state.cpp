@@ -69,8 +69,8 @@ void CDrawState::Init(Device& device) {
 	//----------------------------------------
 	// サンプラーステートの初期設定
 	//----------------------------------------
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
