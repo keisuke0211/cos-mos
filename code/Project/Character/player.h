@@ -176,12 +176,11 @@ private:
 	void SetPosOld(void);
 	void ActionControl(void);
 	void Move(COLLI_VEC vec);
+	void CtrlPos(Info *pInfo, COLLI_VEC vec);	// 範囲外の制御
 	void Swap(void);
 	void Death(D3DXVECTOR3 *pDeathPos);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
-
-	void CntrPos(void);	// 範囲外の制御
 
 	//========================
 	// 対象物の中にめり込んでいるかどうか判定
@@ -225,8 +224,7 @@ private:
 	void OthColliDelete(void);
 
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
-	CollInfo *m_pOthColli;			// 他パーツの当たり判定情報
-	bool bPluralColli;			// パーツ種類　単体か複数か
+	CollInfo *m_pOthColli;		// 他パーツの当たり判定情報
 	short m_jumpSEIdx;			// ジャンプ時のSE番号
 	short m_landingSEIdx;		// 着地時のSE番号
 	short m_dogSEIdx[4];		// 壁ギミック用SE番号
