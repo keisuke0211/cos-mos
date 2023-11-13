@@ -154,6 +154,10 @@ public:
 
 private:
 	static int	s_nSwapInterval;// 残りスワップインターバル
+	static int s_nSwapMarkTex;  // スワップ先のマークテクスチャ番号
+	static int s_nSwapParticle; // スワップ時のパーティクルテクスチャ番号
+	static int s_nDeathMarkTex; // 死亡時のマークテクスチャ番号
+	static int s_nDeathParticle;// 死亡時のパーティクルテクスチャ番号
 
 	static const float MOVE_SPEED;		// 移動量
 	static const float MAX_MOVE_SPEED;	// 最大移動量
@@ -223,8 +227,6 @@ private:
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 	CollInfo *m_pOthColli;			// 他パーツの当たり判定情報
 	bool bPluralColli;			// パーツ種類　単体か複数か
-	static int s_nSwapMarkTex;  // スワップ先のマークテクスチャ番号
-	static int s_nSwapParticle; // スワップ時のパーティクルテクスチャ番号
 	short m_jumpSEIdx;			// ジャンプ時のSE番号
 	short m_landingSEIdx;		// 着地時のSE番号
 	short m_dogSEIdx[4];		// 壁ギミック用SE番号

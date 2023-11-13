@@ -29,6 +29,9 @@ bool		CPlayer::s_bRideRocket = false;	// ロケットに乗れるかどうか
 int CPlayer::s_nSwapMarkTex = 0;  // スワップ先のマークテクスチャ番号
 int CPlayer::s_nSwapParticle = 0; // スワップ時のパーティクルテクスチャ番号
 
+int CPlayer::s_nDeathMarkTex = 0; // 死亡時のマークテクスチャ番号
+int CPlayer::s_nDeathParticle = 0;// 死亡時のパーティクルテクスチャ番号
+
 //=======================================
 // コンストラクタ
 //=======================================
@@ -36,6 +39,8 @@ CPlayer::CPlayer()
 {
 	s_nSwapMarkTex = 0;		// スワップ先のマークテクスチャ番号
 	s_nSwapParticle = 0;	// スワップ時のパーティクルテクスチャ番号
+	s_nDeathMarkTex = 0;	// 死亡時のマークテクスチャ番号
+	s_nDeathParticle = 0;	// 死亡時のパーティクルテクスチャ番号
 	m_jumpSEIdx = 0;		// ジャンプ時のSE番号
 	m_landingSEIdx = 0;		// 着地時のSE番号
 	s_nSwapInterval = 0;	// 残りスワップインターバル
@@ -76,10 +81,7 @@ CPlayer::CPlayer()
 //=======================================
 CPlayer::~CPlayer()
 {
-	if (m_pOthColli != NULL) {
-		delete[] m_pOthColli;
-		m_pOthColli = NULL;
-	}
+	OthColliDelete();
 }
 
 //=======================================
@@ -114,6 +116,9 @@ HRESULT CPlayer::Init(void)
 
 	s_nSwapMarkTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Circle_005.png");
 	s_nSwapParticle = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
+
+	s_nDeathMarkTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
+	s_nDeathParticle = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 
 	m_jumpSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp_01.wav");
 	m_landingSEIdx = RNLib::Sound().Load("data\\SOUND\\SE\\jamp.wav");
@@ -390,15 +395,11 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 {
 	if (pDeathPos != NULL)
 	{
-		int EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
-		int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
-
-		Manager::EffectMgr()->EffectCreate(EffTex, *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+		Manager::EffectMgr()->EffectCreate(s_nDeathMarkTex, *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
-			Manager::EffectMgr()->ParticleCreate(ParTex, *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+			Manager::EffectMgr()->ParticleCreate(s_nDeathParticle, *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
 		}
 	}
 
