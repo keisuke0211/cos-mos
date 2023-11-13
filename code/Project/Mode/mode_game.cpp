@@ -66,8 +66,8 @@ CMode_Game::CMode_Game(void) {
 //========================================
 CMode_Game::~CMode_Game(void) {
 
-	delete m_cameraUp;
-	delete m_cameraDown;
+	m_cameraUp->Delete();
+	m_cameraDown->Delete();
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
