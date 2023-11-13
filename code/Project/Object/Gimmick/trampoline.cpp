@@ -29,7 +29,7 @@ CTrampoline::CTrampoline(void) {
 
 	//初期状態
 	m_type = TYPE::TRAMPOLINE;
-	m_width = SIZE_OF_1_SQUARE * 2;
+	m_width = SIZE_OF_1_SQUARE * 2.0f;
 	m_height = SIZE_OF_1_SQUARE;
 	m_state = STATE::NONE;
 	m_modelIdx[0] = RNLib::Model().Load("data\\MODEL\\Spring_Body.x");
@@ -38,11 +38,7 @@ CTrampoline::CTrampoline(void) {
 	m_modelIdx[3] = RNLib::Model().Load("data\\MODEL\\Spring_Eye.x");
 	m_fJamp = 8.0f;
 	m_nCnt = 1;
-
-	for (int nCnt = 0; nCnt < 2; nCnt++)
-	{
-		m_SpringPos[nCnt] = INITD3DXVECTOR3;
-	}
+	m_pSpringPos = NULL;
 	m_fSpringForce = 0.0f;
 }
 
@@ -51,6 +47,11 @@ CTrampoline::CTrampoline(void) {
 //========================================
 CTrampoline::~CTrampoline(void) {
 
+	//ばね位置格納変数開放
+	if (m_pSpringPos != NULL) {
+		delete[] m_pSpringPos;
+		m_pSpringPos = NULL;
+	}
 }
 
 //========================================
@@ -58,8 +59,17 @@ CTrampoline::~CTrampoline(void) {
 // Author:RYUKI FUJIWARA
 //========================================
 void CTrampoline::Init(void) {
-	m_SpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
-	m_SpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
+	//ばねの位置を保存する変数を確保
+	if (m_pSpringPos == NULL)
+		m_pSpringPos = new D3DXVECTOR3[(int)STATE::MAX];
+
+	for (int nCnt = 0; nCnt < (int)STATE::MAX; nCnt++)
+	{
+		m_pSpringPos[nCnt] = INITD3DXVECTOR3;
+	}
+
+	m_pSpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
+	m_pSpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
 }
 
 //========================================
@@ -76,96 +86,71 @@ void CTrampoline::Uninit(void) {
 //========================================
 void CTrampoline::Update(void) {
 
-	//土台モデル
-	RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[0], false)
-		->SetCol(m_color)
-		->SetOutLine(true);
-
-	//目玉モデル
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
-		->SetCol(m_color)
-		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
-		->SetCol(m_color)
-		->SetOutLine(true);
-
-	if (m_nCnt > 0) 
+	if (m_nCnt > 0)
 	{
 		m_nCnt--;
 		if (m_nCnt == 0) {
 			m_state = STATE::NONE;
-			m_SpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
-			m_SpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
+			m_pSpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
+			m_pSpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
 		}
 	}
 
-	if (m_state != STATE::NONE)
-	{//トランポリンが作動している
+	//割合計算
+	const float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
-		//割合計算
-		float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-		
-		if (m_state == STATE::UP_LAND)
-		{
-			//キノコ
-			RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
-				->SetOutLine(true);
-
-			m_SpringPos[1].y = m_pos.y - CORRECT_HEIGHT - m_fJamp * fCountRate;
-			RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
-				->SetOutLine(true);
-
-			//ばね
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y - m_fJamp * fCountRate, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[2], false)
-				->SetOutLine(true);
-		}
-		else if (m_state == STATE::DOWN_LAND)
-		{
-			//キノコ
-			m_SpringPos[0].y = m_pos.y + CORRECT_HEIGHT + m_fJamp * fCountRate;
-			RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
-				->SetOutLine(true);
-
-			RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f,D3DX_PI), m_modelIdx[1], false)
-				->SetOutLine(true);
-
-			//ばね
-			RNLib::Model().Put(D3DXVECTOR3(m_pos.x, m_pos.y + m_fJamp * fCountRate, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[2], false)
-				->SetOutLine(true);
-		}
+	if (m_state == STATE::UP_LAND)
+	{
+		m_pSpringPos[1].y = m_pos.y - CORRECT_HEIGHT - m_fJamp * fCountRate;
 	}
-	else if (m_state == STATE::NONE)
-	{//トランポリンが作動していない
-		RNLib::Model().Put(m_SpringPos[0], D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[1], false)
-			->SetOutLine(true);
-		RNLib::Model().Put(m_SpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
-			->SetOutLine(true);
+	else if (m_state == STATE::DOWN_LAND)
+	{
+		m_pSpringPos[0].y = m_pos.y + CORRECT_HEIGHT + m_fJamp * fCountRate;
 	}
 
-	//当たり判定
-	Collision();
+	//モデル配置
+	PutModel();
 }
-//========================================
-// 描画処理
-// Author:RYUKI FUJIWARA
-//========================================
-void CTrampoline::Draw(void) {
 
+//========================================
+// モデル配置処理
+// Author:HIRASAWA SHION
+//========================================
+void CTrampoline::PutModel(void)
+{
+	//土台モデル
+	RNLib::Model().Put(m_pos, INITD3DXVECTOR3, m_modelIdx[0], false)
+		->SetCol(m_color)
+		->SetOutLine(true);
+
+	//キノコ
+	RNLib::Model().Put(m_pSpringPos[0], INITD3DXVECTOR3, m_modelIdx[1], false)
+		->SetOutLine(true);
+	RNLib::Model().Put(m_pSpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
+		->SetOutLine(true);
+
+	//ばね
+	RNLib::Model().Put(m_pSpringPos[0], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[2], false)
+		->SetOutLine(true);
+	//ばね
+	RNLib::Model().Put(m_pSpringPos[1], INITD3DXVECTOR3, m_modelIdx[2], false)
+		->SetOutLine(true);
+
+	//目玉モデル
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[3], false)
+		->SetCol(m_color)
+		->SetOutLine(true);
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[3], false)
+		->SetCol(m_color)
+		->SetOutLine(true);
 }
+
 //========================================
-// 当たり判定処理
-// Author:RYUKI FUJIWARA
+// ばねの位置取得
+// Author:HIRASAWA SHION
 //========================================
-void CTrampoline::Collision(void) {
-
-	//プレイヤー情報取得
-	CPlayer::Info *Player[2];
-	CPlayer *pPlayer = CMode_Game::GetPlayer();
-	if (pPlayer == NULL)
-		return;
-	pPlayer->GetInfo(Player[0], Player[1]);
-
-	float widthHalf, height;
-
-	widthHalf = m_width * RADIUS_WIDTH;
+D3DXVECTOR3 CTrampoline::GetSpringPos(int nIdx)
+{
+	if (m_pSpringPos == NULL || nIdx >= (int)STATE::MAX) return INITD3DXVECTOR3;
+	return m_pSpringPos[nIdx];
 }
