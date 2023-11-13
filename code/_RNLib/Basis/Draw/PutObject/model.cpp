@@ -453,6 +453,8 @@ void CModel::CRegistInfo::ClearParameter(void) {
 	m_isOutLine            = false;
 	m_brightnessOfEmissive = 1.0f;
 	m_priority             = 0;
+	m_clippingID = NONEDATA;
+
 }
 
 //========================================

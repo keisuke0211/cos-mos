@@ -66,8 +66,8 @@ CMode_Game::CMode_Game(void) {
 //========================================
 CMode_Game::~CMode_Game(void) {
 
-	delete m_cameraUp;
-	delete m_cameraDown;
+	m_cameraUp->Delete();
+	m_cameraDown->Delete();
 
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
@@ -146,6 +146,7 @@ void CMode_Game::Uninit(void) {
 	}
 
 	Manager::BlockMgr()->ReleaseAll();
+	Manager::BGMgr()->ReleaseAll();
 
 	if (m_rocketparts != NULL) {
 		m_rocketparts->Uninit();
