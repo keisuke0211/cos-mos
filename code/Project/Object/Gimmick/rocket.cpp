@@ -15,11 +15,11 @@ const int   CRocket::s_RideAnimeMax = 25;	// 乗り込みアニメーションの最大数
 const float CRocket::s_RideAnimeMag = 1.3f;	// 大きさ1.0を基準にそこから加算される大きさ	
 const float CRocket::s_RideAnimeShrink = 20;// 乗り込みアニメーションの縮む倍率
 const float CRocket::s_RotAdd = 0.02f;		// 向きの増加量
-const int   CRocket::s_RotAnimeMax = 4;		// 小刻みアニメーションの最大 
+const int   CRocket::s_RotAnimeMax = 4;		// 小刻みアニメーションの最大
 const float CRocket::s_MoveMag = 1.05f;		// 移動量の倍率
 const float CRocket::s_MoveAdd = 0.01f;		// 移動量の増加量
 const int   CRocket::s_FadeModeCountMax = 120;	// フェードのモードのカウント最大
-int         CRocket::s_nCountPlayer = 0;	// プレイヤーのカウント
+int         CRocket::s_nCountPlayer = 0;		// プレイヤーのカウント
 
 //========================================
 // コンストラクタ
@@ -33,7 +33,6 @@ CRocket::CRocket(void)
 	m_type = TYPE::ROCKET;
 	m_width = SIZE_OF_1_SQUARE*3;
 	m_height = SIZE_OF_1_SQUARE*3;
-
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.col = INITD3DCOLOR;
 	m_Info.scale = Scale3D(1.0f,1.0f,1.0f);
@@ -42,6 +41,17 @@ CRocket::CRocket(void)
 	m_Info.fScaleMag = 1.0f;
 	m_Info.Animstate = CRocket::ANIME_STATE::NONE;
 	m_Info.nRideAnimeCounter = 0;
+	for(int nCnt = 0; nCnt < 10; nCnt++)
+	{
+		m_Info.Firetex[nCnt].TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Fire.png");
+		m_Info.Smoketex[nCnt].TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Smoke.png");
+		m_Info.Firetex[nCnt].col = Color{ 255,255,255,255 };
+		m_Info.Smoketex[nCnt].col = Color{ 255,255,255,255 };
+		m_Info.Firetex[nCnt].pos = INITD3DXVECTOR3;
+		m_Info.Smoketex[nCnt].pos = INITD3DXVECTOR3;
+		m_Info.Firetex[nCnt].move = D3DXVECTOR3(0.0f,-0.2f,0.0f);
+		m_Info.Smoketex[nCnt].move = D3DXVECTOR3(0.0f, -0.2f, 0.0f);
+	}
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 }
 
@@ -63,6 +73,11 @@ HRESULT CRocket::Init(void)
 	if (m_pos.y < 0)
 	{// 下の世界にいるとき反転させる
 		m_rot.z -= D3DX_PI;
+	}
+	for (int nCnt = 0; nCnt < 10; nCnt++)
+	{
+		m_Info.Firetex[nCnt].pos = m_pos;
+		m_Info.Smoketex[nCnt].pos = m_pos;
 	}
 	return S_OK;
 }
@@ -86,20 +101,31 @@ void CRocket::Update(void)
 		m_Info.Animstate = CRocket::ANIME_STATE::RIDE;
 		Ride();
 	}
-
+	
 	switch (m_Info.Animstate)
 	{
 	case CRocket::ANIME_STATE::NONE:
 		break;
 	case CRocket::ANIME_STATE::RIDE:
 		UpdateState_Ride();		// 飛び出し準備状態の更新
+		for (int nCnt = 0; nCnt < 10; nCnt++)
+		{
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, m_Info.Smoketex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Smoketex[nCnt].col);
+			m_Info.Smoketex[nCnt].pos += m_Info.Smoketex[nCnt].move;
+		}
 		break;
 	case CRocket::ANIME_STATE::FLY:
 		UpdateState_Fly();		// 飛び出し準備状態の更新
-		break;
+		for (int nCnt = 0; nCnt < 10; nCnt++)
+		{
+			Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, m_Info.Firetex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Firetex[nCnt].col);
+			m_Info.Firetex[nCnt].pos += m_Info.Firetex[nCnt].move;
+		}
 
+		break;
 	}
 
+	
 	RNLib::Model().Put(m_pos, m_rot, m_Info.scale * m_Info.fScaleMag, m_Info.nModelIdx, false)
 		->SetOutLine(true);
 
