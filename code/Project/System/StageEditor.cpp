@@ -159,12 +159,12 @@ void CStageEditor::Uninit(void)
 
 	if (m_Info.aBgFile != NULL) {
 		delete[] m_Info.aBgFile;
-		m_Info.aBgFile;
+		m_Info.aBgFile = NULL;
 	}
 
 	if (m_Info.aSoundFile != NULL) {
 		delete[] m_Info.aSoundFile;
-		m_Info.aSoundFile;
+		m_Info.aSoundFile = NULL;
 	}
 }
 
