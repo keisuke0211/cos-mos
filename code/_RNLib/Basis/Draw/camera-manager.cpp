@@ -46,3 +46,17 @@ void CCameraMgr::Uninit(void) {
 void CCameraMgr::Update(void) {
 
 }
+
+//========================================
+// 一括更新処理
+//========================================
+void CCameraMgr::UpdateAll(void) {
+
+	// 先頭から順番に最後尾まで更新していく
+	CObject* pList = NULL;
+	while (ListLoop(&pList)) {
+
+		if (!pList->GetDelete())
+			pList->Update();
+	}
+}

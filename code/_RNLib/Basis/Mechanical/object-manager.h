@@ -20,8 +20,9 @@ public:
 	             CObjectMgr();
 	virtual      ~CObjectMgr();
 	virtual void Update(void) {}
-	void         UpdateAll(void);
+	virtual void UpdateAll(void);
 	virtual void ReleaseAll(void);
+	void         ReleaseDeleteObj(void);
 	void         Release(CObject* obj);
 	void         AddList(CObject* obj);
 	void         SubList(CObject* obj);
@@ -30,9 +31,6 @@ public:
 	bool         ListLoop(CObject** obj);
 
 private:
-	//========== [[[ ŠÖ”éŒ¾ ]]]
-	void ReleaseDeleteObj(void);
-
 	//========== [[[ •Ï”éŒ¾ ]]]
 	CObject* m_top;	// æ“ª
 	CObject* m_cur;	// ÅŒã”ö
