@@ -9,7 +9,6 @@
 #include "../../Character/player.h"
 
 
-#define MAX_COUNT		(12)	//最大カウント数
 #define PLAYER_FLAME	(6)		//プレイヤーの高さ到達カウント
 #define RADIUS_WIDTH	(0.5f)	//横半径
 #define RADIUS_HEIGHT	(0.5f)	//縦半径
@@ -44,6 +43,7 @@ CTrampoline::CTrampoline(void) {
 	{
 		m_SpringPos[nCnt] = INITD3DXVECTOR3;
 	}
+	m_fSpringForce = 0.0f;
 }
 
 //========================================
@@ -165,55 +165,69 @@ void CTrampoline::Collision(void) {
 		return;
 	pPlayer->GetInfo(Player[0], Player[1]);
 
-	float width, height, SIZE_HEIGHT;
+	float widthHalf, height;
 
-	width = m_width * RADIUS_WIDTH;
-	height = m_height * 1.5f;
-	SIZE_HEIGHT = CPlayer::SIZE_HEIGHT * 1.5f;
+	widthHalf = m_width * RADIUS_WIDTH;
 
+	return;
 	//**************************************
-	//トランポリン当たり判定
+	// トランポリン当たり判定
+	// Arrange:RIKU NISHIMURA
 	//**************************************
-	for (int nCnt = 0; nCnt < 2; nCnt++)
-	{
-		if (Player[nCnt]->bGround == false && Player[nCnt]->TramColliRot == CPlayer::COLLI_ROT::NONE
-			&& ((Player[nCnt]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[0].x - width && Player[nCnt]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[0].x + width
-				&& Player[nCnt]->pos.y - SIZE_HEIGHT <= m_SpringPos[0].y + m_height && Player[nCnt]->pos.y + SIZE_HEIGHT >= m_SpringPos[0].y - m_height)
-			|| (Player[nCnt]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[1].x - width && Player[nCnt]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[1].x + width
-				&& Player[nCnt]->pos.y - SIZE_HEIGHT <= m_SpringPos[1].y + m_height && Player[nCnt]->pos.y + SIZE_HEIGHT >= m_SpringPos[1].y - m_height)))
-		{// ばねの範囲内に着地で入った時
-			int idx = nCnt + 1;
+	for (int nCnt = 0; nCnt < 2; nCnt++) {
+		// 情報変換
+		float&      fP_PosX    = Player[nCnt]->pos.x;
+		float&      fP_PosY    = Player[nCnt]->pos.y;
+		const float fP_Top     = fP_PosY + CPlayer::SIZE_HEIGHT;
+		const float fP_Bottom  = fP_PosY - CPlayer::SIZE_HEIGHT;
+		const float fP_Left    = fP_PosX - CPlayer::SIZE_WIDTH;
+		const float fP_Right   = fP_PosX + CPlayer::SIZE_WIDTH;
+		float&      fS0_PosX   = m_SpringPos[0].x;
+		float&      fS0_PosY   = m_SpringPos[0].y;
+		const float fS0_Top    = fS0_PosY + m_height;
+		const float fS0_Bottom = fS0_PosY - m_height;
+		const float fS0_Left   = fS0_PosX - widthHalf;
+		const float fS0_Right  = fS0_PosX + widthHalf;
+		float&      fS1_PosX   = m_SpringPos[1].x;
+		float&      fS1_PosY   = m_SpringPos[1].y;
+		const float fS1_Top    = fS0_PosY + m_height;
+		const float fS1_Bottom = fS0_PosY - m_height;
+		const float fS1_Left   = fS0_PosX - widthHalf;
+		const float fS1_Right  = fS0_PosX + widthHalf;
 
-			// ループ制御
-			IntLoopControl(&idx, 2, 0);
+		// ( 着地の瞬間かつ、トランポリンの方向設定済み )でなければ折り返す
+		if (!(Player[nCnt]->bGround == true && Player[nCnt]->bGroundOld == false && Player[nCnt]->TramColliRot == CPlayer::COLLI_ROT::NONE))
+			continue;
 
-			//相手がばねに乗っているか
-			if (Player[idx]->TramColliRot == CPlayer::COLLI_ROT::UNDER && Player[idx]->side == CPlayer::WORLD_SIDE::BEHIND
-				&& Player[idx]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[1].x - width && Player[idx]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[1].x + width
-				&& Player[idx]->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[1].y + m_height && Player[idx]->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[1].y - m_height)
-			{
-				pPlayer->SetTrampolineJump(Player[idx], Player[nCnt]->fMaxHeight);
-			}
-			else if (Player[idx]->TramColliRot == CPlayer::COLLI_ROT::OVER && Player[idx]->side == CPlayer::WORLD_SIDE::FACE
-				&& Player[idx]->pos.x + CPlayer::SIZE_WIDTH >= m_SpringPos[0].x - width && Player[idx]->pos.x - CPlayer::SIZE_WIDTH <= m_SpringPos[0].x + width
-				&& Player[idx]->pos.y - CPlayer::SIZE_HEIGHT <= m_SpringPos[0].y + m_height && Player[idx]->pos.y + CPlayer::SIZE_HEIGHT >= m_SpringPos[0].y - m_height)
-			{
-				pPlayer->SetTrampolineJump(Player[idx], Player[nCnt]->fMaxHeight);
-			}
+		// バネの上下どちらとも接触していなければ折り返す
+		const bool isColl0 = (fP_Right >= fS0_Left && fP_Left <= fS0_Right && fP_Bottom <= fS0_Top && fP_Top >= fS0_Bottom);
+		const bool isColl1 = (fP_Right >= fS1_Left && fP_Left <= fS1_Right && fP_Bottom <= fS1_Top && fP_Top >= fS1_Bottom);
+		if (!isColl0 && !isColl1)
+			continue;
 
-			if (m_state == STATE::NONE
-				&& Player[nCnt]->side == CPlayer::WORLD_SIDE::BEHIND)
-			{
-				m_state = STATE::DOWN_LAND;
-				m_nCnt = MAX_COUNT;
-			}
-			else if (m_state == STATE::NONE
-				&& Player[nCnt]->side == CPlayer::WORLD_SIDE::FACE)
-			{//トランポリンが作動していない
+		// 0(上)のバネに接触している時、
+		// 下方向に当たっていて、かつ上世界であれば、
+		if (isColl0 && Player[nCnt]->TramColliRot == CPlayer::COLLI_ROT::UNDER && Player[nCnt]->side == CPlayer::WORLD_SIDE::BEHIND) {
+			pPlayer->SetTrampolineJump(Player[nCnt], Player[nCnt]->fMaxHeight);
+		}
+		// 1(下)のバネに接触している時、
+		// 上方向に当たっていて、かつ下世界であれば、
+		else if (isColl0 && Player[nCnt]->TramColliRot == CPlayer::COLLI_ROT::OVER && Player[nCnt]->side == CPlayer::WORLD_SIDE::BEHIND) {
+			pPlayer->SetTrampolineJump(Player[nCnt], Player[nCnt]->fMaxHeight);
+		}
 
-				m_state = STATE::UP_LAND;
-				m_nCnt = MAX_COUNT;
-			}
+		if (m_state == STATE::NONE
+			&& Player[nCnt]->side == CPlayer::WORLD_SIDE::BEHIND)
+		{
+			m_state = STATE::DOWN_LAND;
+			m_nCnt = MAX_COUNT;
+		}
+		else if (m_state == STATE::NONE
+			&& Player[nCnt]->side == CPlayer::WORLD_SIDE::FACE)
+		{// トランポリンが作動していない
+
+			m_state = STATE::UP_LAND;
+			m_nCnt = MAX_COUNT;
 		}
 	}
 }
