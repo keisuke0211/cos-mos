@@ -45,6 +45,7 @@ public:
 		short nModelIdx;		// モデル番号
 		int	nRideAnimeCounter;	// ライドアニメーションカウンター
 		int	nFlyAnimeCounter;	// 飛行アニメーションカウンター
+		bool bEffect;			// エフェクトの発生
 	};
 	
 	CRocket();

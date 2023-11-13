@@ -41,6 +41,7 @@ CRocket::CRocket(void)
 	m_Info.fScaleMag = 1.0f;
 	m_Info.Animstate = CRocket::ANIME_STATE::NONE;
 	m_Info.nRideAnimeCounter = 0;
+	m_Info.bEffect = false;
 	for(int nCnt = 0; nCnt < 10; nCnt++)
 	{
 		m_Info.Firetex[nCnt].TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Fire.png");
@@ -107,24 +108,32 @@ void CRocket::Update(void)
 	case CRocket::ANIME_STATE::NONE:
 		break;
 	case CRocket::ANIME_STATE::RIDE:
+		m_Info.bEffect = true;
 		UpdateState_Ride();		// 飛び出し準備状態の更新
-		for (int nCnt = 0; nCnt < 10; nCnt++)
-		{
-			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, m_Info.Smoketex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Smoketex[nCnt].col);
-			m_Info.Smoketex[nCnt].pos += m_Info.Smoketex[nCnt].move;
-		}
+	
 		break;
 	case CRocket::ANIME_STATE::FLY:
 		UpdateState_Fly();		// 飛び出し準備状態の更新
-		for (int nCnt = 0; nCnt < 10; nCnt++)
-		{
-			Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, m_Info.Firetex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Firetex[nCnt].col);
-			m_Info.Firetex[nCnt].pos += m_Info.Firetex[nCnt].move;
-		}
-
+		
 		break;
 	}
 
+	if (m_Info.bEffect == true)
+	{
+		for (int nCnt = 0; nCnt < 10; nCnt++)
+		{
+			// 煙のエフェクト
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, m_Info.Smoketex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Smoketex[nCnt].col);
+			m_Info.Smoketex[nCnt].pos += m_Info.Smoketex[nCnt].move;
+			m_Info.Smoketex[nCnt].col.a -= 1;
+			// 炎のエフェクト
+			Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, m_Info.Firetex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Firetex[nCnt].col);
+			m_Info.Firetex[nCnt].pos += m_Info.Firetex[nCnt].move;
+			m_Info.Smoketex[nCnt].col.a -= 1;
+
+
+		}
+	}
 	
 	RNLib::Model().Put(m_pos, m_rot, m_Info.scale * m_Info.fScaleMag, m_Info.nModelIdx, false)
 		->SetOutLine(true);
