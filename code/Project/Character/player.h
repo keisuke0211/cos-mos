@@ -205,7 +205,7 @@ private:
 
 	void CollisionBlock(Info *pInfo, CollInfo *pColli);
 	void CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot);
-	void CollisionTrampoline(Info *pInfo, CollInfo *pColli, CollInfo *pOthColli);
+	void CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pTrampoline);
 	void CollisionSpike(Info *pInfo, CollInfo *pColli);
 	void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *pColli);
 	void CollisionMeteor(Info *pInfo, CollInfo *pColli);
