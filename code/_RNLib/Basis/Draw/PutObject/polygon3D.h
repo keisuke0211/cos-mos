@@ -98,7 +98,7 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CPolygon3D();
 	~CPolygon3D();
-	void Init(void);
+	void Init  (void);
 	void Uninit(void);
 	void Update(void);
 	CRegistInfo* Put(const Matrix& mtx, const bool& isOnScreen = false);

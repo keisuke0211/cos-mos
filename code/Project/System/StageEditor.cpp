@@ -709,14 +709,14 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_LiftInfo[nLift].posV = GetCIe(Row, Line);
+					m_LiftInfo[nLift].posV = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "PosR")) {
 					int Row = 0; int Line = 0; nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_LiftInfo[nLift].posR = GetCIe(Row, Line);
+					m_LiftInfo[nLift].posR = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "Move")) {
 					nLine++;
@@ -799,7 +799,7 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_MeteorInfo[nMeteor].pos = GetCIe(Row, Line);
+					m_MeteorInfo[nMeteor].pos = GetPos(Row, Line);
 					m_MeteorInfo[nMeteor].pos.x += CStageObject::SIZE_OF_1_SQUARE;
 					m_MeteorInfo[nMeteor].pos.y -= CStageObject::SIZE_OF_1_SQUARE;
 				}
@@ -890,14 +890,14 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_LaserInfo[nLaser].posV = GetCIe(Row, Line);
+					m_LaserInfo[nLaser].posV = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "PosR")) {
 					int Row = 0; int Line = 0; nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_LaserInfo[nLaser].posR = GetCIe(Row, Line);
+					m_LaserInfo[nLaser].posR = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "Move")) {
 					nLine++;
@@ -986,14 +986,14 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_DogInfo[nDog].HeadPos = GetCIe(Row, Line);
+					m_DogInfo[nDog].HeadPos = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "HipPos")) {
 					int Row = 0; int Line = 0; nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
 					ToData(Line, pFile, nRow, nLine);
 
-					m_DogInfo[nDog].HipPos = GetCIe(Row, Line);
+					m_DogInfo[nDog].HipPos = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "Height")) {
 					nLine++;
@@ -1018,7 +1018,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 // ç¿ïWÇÃéÊìæ
 // Author:KEISUKE OTONO
 //========================================
-D3DXVECTOR3 CStageEditor::GetCIe(int nRow, int nLine)
+D3DXVECTOR3 CStageEditor::GetPos(int nRow, int nLine)
 {
 	float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;

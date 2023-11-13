@@ -497,8 +497,8 @@ void CPlayer::CtrlPos(Info *pInfo, COLLI_VEC vec)
 	int RowMax = Manager::StgEd()->GetRowMax() - 1;
 	int LineMax = Manager::StgEd()->GetLineMax() - 1;
 
-	D3DXVECTOR3 MinPos = Manager::StgEd()->GetCIe(0, 0);
-	D3DXVECTOR3 MaxPos = Manager::StgEd()->GetCIe(RowMax, LineMax);
+	D3DXVECTOR3 MinPos = Manager::StgEd()->GetPos(0, 0);
+	D3DXVECTOR3 MaxPos = Manager::StgEd()->GetPos(RowMax, LineMax);
 
 	// 1É}ÉXÇ∏ÇÁÇ∑
 	MinPos.y = -MinPos.y - CStageObject::SIZE_OF_1_SQUARE * 0.5f;

@@ -129,7 +129,7 @@ public:
 	/* 惑星種類情報		*/PlanetType *GetType(void) { return m_PlanetType; }
 	/* 背景				*/char *GetBgFile(void) { return m_Info.aBgFile; }
 	/* サウンド			*/char *GetSoundFile(void) { return m_Info.aSoundFile; }
-	/* 座標				*/D3DXVECTOR3 GetCIe(int nRow, int nLine);
+	/* 位置				*/D3DXVECTOR3 GetPos(int nRow, int nLine);
 
 	// -- 変換 ---------------------------------------------
 	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);

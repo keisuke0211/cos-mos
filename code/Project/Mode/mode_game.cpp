@@ -162,6 +162,13 @@ void CMode_Game::Uninit(void) {
 void CMode_Game::Update(void) {
 	CMode::Update();
 
+	{// [[[ ƒJƒƒ‰§Œä ]]]
+		Pos3D pos = (s_pPlayer->GetInfo(0)->pos + s_pPlayer->GetInfo(1)->pos) * 0.5f;
+		pos.x *= 0.25f;
+		pos.y = 0.0f;
+		Manager::GetMainCamera()->SetPosVAndPosR(Manager::GetMainCamera()->GetPosV(), pos);
+	}
+
 	{// [[[ ã‰ºƒJƒƒ‰•`‰æ ]]]
 		const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
 		const float windowWidth       = RNLib::Window().GetWidth();
