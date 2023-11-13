@@ -707,8 +707,7 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 {
 	while (1)
 	{
-		nLine = 0;
-		nRow++;
+		nLine = 0;	nRow++;
 		char *aDataSearch = NULL;	// データ検索用
 		string sData = pFile->GetData(nRow, nLine);
 		char* cstr = new char[sData.size() + 1]; // メモリ確保
@@ -722,11 +721,68 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 			}
 			break;
 		}
-		else if (!strcmp(aDataSearch, "1P")){
+		else if (!strcmp(aDataSearch, "MeteorMax")) {
+			int Max = 0;
+			nLine++;
+			ToData(Max, pFile, nRow, nLine);
 
+			m_Info.nMateorMax = Max;
+			m_MeteorInfo = new MeteorInfo[Max];
+			assert(m_MeteorInfo != NULL);
+		}
+		else if (!strcmp(aDataSearch, "SetMeteor")) {
+			int nMeteor = 0;
+			while (1)
+			{
+				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
+				string sData = pFile->GetData(nRow, nLine);
+				char* cstr = new char[sData.size() + 1]; // メモリ確保
+				std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+				aDataSearch = cstr;
+
+				if (!strcmp(aDataSearch, "EndMeteor")) {
+					if (cstr != NULL) {
+						delete[] cstr;
+						cstr = NULL;
+					}
+
+					if (nMeteor < m_Info.nMateorMax) {
+						Manager::BlockMgr()->MeteorGeneratorCreate(m_MeteorInfo[nMeteor].pos, m_MeteorInfo[nMeteor].move, m_MeteorInfo[nMeteor].inteval);
+					}
+
+					nMeteor++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "POS")) {
+					int Row = 0; int Line = 0; nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+					ToData(Line, pFile, nRow, nLine);
+
+					m_MeteorInfo[nMeteor].pos = GetCIe(Row, Line);
+					m_MeteorInfo[nMeteor].pos.x += CStageObject::SIZE_OF_1_SQUARE;
+					m_MeteorInfo[nMeteor].pos.y -= CStageObject::SIZE_OF_1_SQUARE;
+				}
+				else if (!strcmp(aDataSearch, "MOVE")) {
+					nLine++;
+					ToData(m_MeteorInfo[nMeteor].move.x, pFile, nRow, nLine); nLine++;
+					ToData(m_MeteorInfo[nMeteor].move.y, pFile, nRow, nLine); nLine++;
+					m_MeteorInfo[nMeteor].move.z = 0.0f;
+				}
+				else if (!strcmp(aDataSearch, "INTEVAL")) {
+					int inteval = 0; nLine++;
+					ToData(inteval, pFile, nRow, nLine);
+
+					m_MeteorInfo[nMeteor].inteval = inteval;
+				}
+
+				if (cstr != NULL) {
+					delete[] cstr;
+					cstr = NULL;
+				}
+			}
 		}
 
-		if (cstr != NULL){
+		if (cstr != NULL) {
 			delete[] cstr;
 			cstr = NULL;
 		}
