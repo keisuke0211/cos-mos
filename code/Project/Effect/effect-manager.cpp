@@ -40,7 +40,6 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 {
 	CEffect *pObj = NULL;
 
-	if (pObj != NULL) { return pObj; }
 	pObj = new CEffect;
 
 	// ‰Šú‰»ˆ—
@@ -61,7 +60,6 @@ CEffect_Meteor * CEffectMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 {
 	CEffect_Meteor *pObj = NULL;
 
-	if (pObj != NULL) { return pObj; }
 	pObj = new CEffect_Meteor;
 
 	// ‰Šú‰»ˆ—
@@ -79,7 +77,6 @@ CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 sca
 {
 	CParticle *pObj = NULL;
 
-	if (pObj != NULL) { return pObj; }
 	pObj = new CParticle;
 
 	// ‰Šú‰»ˆ—

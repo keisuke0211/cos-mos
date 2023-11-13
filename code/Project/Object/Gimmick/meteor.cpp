@@ -133,8 +133,8 @@ void CMeteor::CollisionBlock(void)
 		const float HEIGHT = stageObj->GetHeight() * 0.5f;
 
 		//オブジェクトの最小・最大位置
-		const D3DXVECTOR3 MinPos = D3DXVECTOR3(POS.x - WIDTH, POS.y - HEIGHT, 0.0f);
-		const D3DXVECTOR3 MaxPos = D3DXVECTOR3(POS.x + WIDTH, POS.y + HEIGHT, 0.0f);
+		const D3DXVECTOR2 MinPos = D3DXVECTOR3(POS.x - WIDTH, POS.y - HEIGHT, 0.0f);
+		const D3DXVECTOR2 MaxPos = D3DXVECTOR3(POS.x + WIDTH, POS.y + HEIGHT, 0.0f);
 
 		//種類取得
 		const CStageObject::TYPE type = stageObj->GetType();
@@ -143,14 +143,16 @@ void CMeteor::CollisionBlock(void)
 		switch (type)
 		{
 		case CStageObject::TYPE::BLOCK:
-			if (MaxPos.x + WIDTH > m_pos.x - m_width &&
-				MaxPos.x - WIDTH < m_pos.x + m_width &&
-				MaxPos.y - HEIGHT> m_pos.y - m_height&&
-				MaxPos.y + HEIGHT< m_pos.y + m_height)
+			if (MaxPos.x> m_pos.x - m_width &&
+				MinPos.x< m_pos.x + m_width &&
+				MaxPos.y> m_pos.y - m_height&&
+				MinPos.y< m_pos.y + m_height)
 			{
+				// エフェクトの生成
 				Manager::EffectMgr()->EffectMeteorCreate(m_pos);
 				// 削除
 				Delete();
+				return;
 			}
 			break;
 		}
