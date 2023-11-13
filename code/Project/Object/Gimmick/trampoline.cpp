@@ -8,8 +8,6 @@
 #include "../../main.h"
 #include "../../Character/player.h"
 
-
-#define PLAYER_FLAME	(6)		//ƒvƒŒƒCƒ„[‚Ì‚‚³“ž’BƒJƒEƒ“ƒg
 #define RADIUS_WIDTH	(0.5f)	//‰¡”¼Œa
 #define RADIUS_HEIGHT	(0.5f)	//c”¼Œa
 #define CORRECT_WIDTH	(8.0f)	//‚‚³•â³
@@ -32,12 +30,12 @@ CTrampoline::CTrampoline(void) {
 	m_width = SIZE_OF_1_SQUARE * 2.0f;
 	m_height = SIZE_OF_1_SQUARE;
 	m_state = STATE::NONE;
-	m_modelIdx[0] = RNLib::Model().Load("data\\MODEL\\Spring_Body.x");
-	m_modelIdx[1] = RNLib::Model().Load("data\\MODEL\\Spring_Footing.x");
-	m_modelIdx[2] = RNLib::Model().Load("data\\MODEL\\Spring_Spring.x");
-	m_modelIdx[3] = RNLib::Model().Load("data\\MODEL\\Spring_Eye.x");
+	m_modelIdx[Parts_BASE] = RNLib::Model().Load("data\\MODEL\\Spring_Body.x");
+	m_modelIdx[Parts_MASH] = RNLib::Model().Load("data\\MODEL\\Spring_Footing.x");
+	m_modelIdx[Parts_SPRING] = RNLib::Model().Load("data\\MODEL\\Spring_Spring.x");
+	m_modelIdx[Parts_EYE] = RNLib::Model().Load("data\\MODEL\\Spring_Eye.x");
 	m_fJamp = 8.0f;
-	m_nCnt = 1;
+	m_nSpringCounter = 0;
 	m_pSpringPos = NULL;
 	m_fSpringForce = 0.0f;
 }
@@ -86,10 +84,10 @@ void CTrampoline::Uninit(void) {
 //========================================
 void CTrampoline::Update(void) {
 
-	if (m_nCnt > 0)
+	if (m_nSpringCounter > 0)
 	{
-		m_nCnt--;
-		if (m_nCnt == 0) {
+		m_nSpringCounter--;
+		if (m_nSpringCounter == 0) {
 			m_state = STATE::NONE;
 			m_pSpringPos[0] = D3DXVECTOR3(m_pos.x, m_pos.y + CORRECT_HEIGHT, m_pos.z);
 			m_pSpringPos[1] = D3DXVECTOR3(m_pos.x, m_pos.y - CORRECT_HEIGHT, m_pos.z);
@@ -97,7 +95,7 @@ void CTrampoline::Update(void) {
 	}
 
 	//Š„‡ŒvŽZ
-	const float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	const float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nSpringCounter, MAX_COUNT);
 
 	if (m_state == STATE::UP_LAND)
 	{
@@ -119,38 +117,27 @@ void CTrampoline::Update(void) {
 void CTrampoline::PutModel(void)
 {
 	//“y‘äƒ‚ƒfƒ‹
-	RNLib::Model().Put(m_pos, INITD3DXVECTOR3, m_modelIdx[0], false)
+	RNLib::Model().Put(m_pos, INITD3DXVECTOR3, m_modelIdx[Parts_BASE], false)
 		->SetCol(m_color)
 		->SetOutLine(true);
 
 	//ƒLƒmƒR
-	RNLib::Model().Put(m_pSpringPos[0], INITD3DXVECTOR3, m_modelIdx[1], false)
+	RNLib::Model().Put(m_pSpringPos[0], INITD3DXVECTOR3, m_modelIdx[Parts_MASH], false)
 		->SetOutLine(true);
-	RNLib::Model().Put(m_pSpringPos[1], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[1], false)
+	RNLib::Model().Put(m_pSpringPos[1], INVERSEVECTOR3, m_modelIdx[Parts_MASH], false)
 		->SetOutLine(true);
 
 	//‚Î‚Ë
-	RNLib::Model().Put(m_pSpringPos[0], D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[2], false)
+	RNLib::Model().Put(m_pSpringPos[0], INVERSEVECTOR3, m_modelIdx[Parts_SPRING], false)
 		->SetOutLine(true);
-	//‚Î‚Ë
-	RNLib::Model().Put(m_pSpringPos[1], INITD3DXVECTOR3, m_modelIdx[2], false)
+	RNLib::Model().Put(m_pSpringPos[1], INITD3DXVECTOR3, m_modelIdx[Parts_SPRING], false)
 		->SetOutLine(true);
 
 	//–Ú‹Êƒ‚ƒfƒ‹
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[3], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[Parts_EYE], false)
 		->SetCol(m_color)
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[3], false)
+	RNLib::Model().Put(D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[Parts_EYE], false)
 		->SetCol(m_color)
 		->SetOutLine(true);
-}
-
-//========================================
-// ‚Î‚Ë‚ÌˆÊ’uŽæ“¾
-// Author:HIRASAWA SHION
-//========================================
-D3DXVECTOR3 CTrampoline::GetSpringPos(int nIdx)
-{
-	if (m_pSpringPos == NULL || nIdx >= (int)STATE::MAX) return INITD3DXVECTOR3;
-	return m_pSpringPos[nIdx];
 }

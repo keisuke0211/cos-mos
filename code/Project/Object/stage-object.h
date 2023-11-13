@@ -15,6 +15,7 @@ class CStageObject : public CObject {
 public:
 	//========== [[[ ’è”’è‹` ]]]
 	static const float SIZE_OF_1_SQUARE;
+	static const Pos3D INVERSEVECTOR3;
 
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
 	enum class TYPE {

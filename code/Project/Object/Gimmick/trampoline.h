@@ -18,11 +18,22 @@ public:
 	static const int MAX_COUNT = 10;
 
 	//========== [[[ 列挙型定義 ]]]
+	//トランポリンの状態列挙
 	enum class STATE {
 		NONE = -1,	//乗っていない
 		UP_LAND,	//上に着地
 		DOWN_LAND,	//下に着地
 		MAX,
+	};
+
+	//パーツ名列挙
+	enum Parts
+	{
+		Parts_BASE = 0,	//土台
+		Parts_MASH,		//キノコ
+		Parts_SPRING,	//ばね
+		Parts_EYE,		//目玉
+		Parts_MAX,
 	};
 
 	//========== [[[ 関数宣言 ]]]
@@ -32,11 +43,10 @@ public:
 	virtual void   Uninit(void);
 	virtual void   Update(void);
 
-	void   SetState(STATE state) { m_state = state; }			//種類設定
-	STATE  GetState(void) { return m_state; }					//種類取得
-	void SetCount(int nCount) { m_nCnt = nCount; }
+	void   SetState(STATE state) { m_state = state; }	//種類設定
+	STATE  GetState(void) { return m_state; }			//種類取得
+	void SetCount(int nCount) { m_nSpringCounter = nCount; }
 
-	D3DXVECTOR3 GetSpringPos(int nIdx);	// ばねの位置取得
 	void SetSpringForce(float fForce) { m_fSpringForce = fForce; }
 	float GetSpringForce(void) { return m_fSpringForce; }
 
@@ -48,7 +58,7 @@ private:
 	STATE       m_state;		// 種類
 	D3DXVECTOR3 *m_pSpringPos;	// ばねの位置
 	float       m_fSpringForce;
-	int         m_modelIdx[4];	// モデル番号
 	float		m_fJamp;		// 差分
-	int			m_nCnt;			// カウント
+	int         m_modelIdx[Parts_MAX];	// モデル番号
+	int			m_nSpringCounter;		// ばねのカウンター
 };

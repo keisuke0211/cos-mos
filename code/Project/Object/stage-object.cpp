@@ -13,6 +13,7 @@
 //================================================================================
 
 const float CStageObject::SIZE_OF_1_SQUARE = 16.0f;
+const Pos3D CStageObject::INVERSEVECTOR3 = Pos3D(0.0f, 0.0f, D3DX_PI);
 
 //========================================
 // コンストラクタ

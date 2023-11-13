@@ -108,7 +108,7 @@ HRESULT CPlayer::Init(void)
 
 	// ２Ｐ初期情報
 	m_aInfo[1].nModelIdx = RNLib::Model().Load("data\\MODEL\\Player_Octopus.x");
-	m_aInfo[1].rot.z = D3DX_PI;
+	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 
 	// キーコンフィグ初期化
 	InitKeyConfig();
