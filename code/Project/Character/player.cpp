@@ -494,8 +494,8 @@ void CPlayer::CntrPos(void)
 	int RowMax = Manager::StgEd()->GetRowMax() - 1;
 	int LineMax = Manager::StgEd()->GetLineMax() - 1;
 
-	D3DXVECTOR3 MinPos = Manager::StgEd()->GetCIe(0, 0);
-	D3DXVECTOR3 MaxPos = Manager::StgEd()->GetCIe(RowMax, LineMax);
+	D3DXVECTOR3 MinPos = Manager::StgEd()->GetPos(0, 0);
+	D3DXVECTOR3 MaxPos = Manager::StgEd()->GetPos(RowMax, LineMax);
 
 	// 1É}ÉXÇ∏ÇÁÇ∑
 	MinPos.x = MinPos.x; MinPos.y = MinPos.y - 8;
