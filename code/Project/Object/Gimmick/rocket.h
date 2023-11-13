@@ -24,8 +24,17 @@ public:
 		MAX,
 	};
 	// 共通情報
+	struct TexInfo
+	{
+		D3DXVECTOR3 pos;		// 位置
+		D3DXVECTOR3 move;		// 移動量
+		Color col;				// 頂点カラー
+		int TexIdx;				// テクスチャ番号
+	};
 	struct Info
 	{
+		TexInfo Firetex[10];	// 炎テクスチャ情報
+		TexInfo Smoketex[10];	// 煙テクスチャ情報
 		D3DXVECTOR3 move;		// 移動量
 		D3DXCOLOR col;			// 頂点カラー
 		ANIME_STATE Animstate;	// アニメーションの状態
@@ -38,7 +47,6 @@ public:
 		int	nFlyAnimeCounter;	// 飛行アニメーションカウンター
 	};
 	
-	// *** 関数 ***
 	CRocket();
 	~CRocket();
 
@@ -57,7 +65,7 @@ public:
 
 	// -- 所得 ---------------------------------------------
 	/* 色		*/D3DXCOLOR GetColor(void) { return m_Info.col; }
-
+	/*位置		*/D3DXVECTOR3& GetFirePos(void) { return m_Info.Firetex[0].pos; }
 private:
 
 	// *** 変数 ***

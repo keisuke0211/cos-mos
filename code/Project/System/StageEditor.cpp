@@ -375,7 +375,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 					{
 						for (m_Info.nLine = 0; m_Info.nLine < m_Info.nLineMax; m_Info.nLine++)
 						{
-							int nType = -1;
+						int nType = -1;
 							ToData(nType, pFile, nRow, m_Info.nLine);
 							SetStage(nType);
 						}

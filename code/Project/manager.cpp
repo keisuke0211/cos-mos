@@ -85,8 +85,6 @@ void Manager::Update(void) {
 			->SetSize(windowWidth, windowHeight);
 	}
 
-	m_blockMgr.Update();
-
 	// 予約されている時、遷移がモード設定待ちならモードを設定する
 	if (m_reserveModeType != CMode::TYPE::NONE) {
 		if (RNLib::Transition().GetState() == CTransition::STATE::OPEN_WAIT) {
