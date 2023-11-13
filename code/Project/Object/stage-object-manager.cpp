@@ -234,10 +234,10 @@ CMoveBlock *CStageObjectMgr::MoveBlockCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,
 	pObj = new CMoveBlock;
 
 	// ‰Šú‰»ˆ—
-	pObj->Init();
 	pObj->SetPos(posV);
 	pObj->SetMove(move);
 	pObj->SetPosInfo(posV,posL);
+	pObj->Init();
 
 	return pObj;
 }
