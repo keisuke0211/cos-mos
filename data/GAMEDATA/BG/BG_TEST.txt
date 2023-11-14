@@ -1,0 +1,30 @@
+BG_FILE
+
+UP
+	OBJECT{
+		POS 0.0 -15.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+END
+
+DOWN
+	OBJECT{
+		POS 0.0 -15.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+	OBJECT{
+		POS 0.0 -15.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+END
+
+END

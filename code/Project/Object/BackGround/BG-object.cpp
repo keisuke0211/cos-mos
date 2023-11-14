@@ -37,25 +37,23 @@ void CBGObject::Uninit(void) {
 
 }
 
-////======================================
-// I—¹ˆ—
+//========================================
+// XVˆ—
 //========================================
 void CBGObject::Update(void) {
-
-	int ModelIdx = RNLib::Model().Load(m_Info.ModelPath);
 
 	m_Info.rot += m_Info.spin;
 
 	if (m_Info.side == CBGEditor::WORLD_SIDE::UP)
 	{
-		RNLib::Model().Put(m_Info.pos, m_Info.rot, ModelIdx)
+		RNLib::Model().Put(m_Info.pos, m_Info.rot, m_Info.modelIdx)
 			->SetCol(m_Info.col)
 			->SetOutLine(true)
 			->SetClippingCamera(CMode_Game::GetCameraUp());
 	}
 	if (m_Info.side == CBGEditor::WORLD_SIDE::DOWN)
 	{
-		RNLib::Model().Put(m_Info.pos, m_Info.rot, ModelIdx)
+		RNLib::Model().Put(m_Info.pos, m_Info.rot, m_Info.modelIdx)
 			->SetCol(m_Info.col)
 			->SetOutLine(true)
 			->SetClippingCamera(CMode_Game::GetCameraDown());
