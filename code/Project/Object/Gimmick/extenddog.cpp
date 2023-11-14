@@ -134,10 +134,10 @@ void CExtenddog::Update(void) {
 	if (m_bInversion == false)
 	{
 		//y座標の更新
-		float fDowncurrenty = m_pos.y + (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
+		float fDowncurrenty = m_HeadPos.y + (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		// 尻
-		m_HipPos.y = m_pos.y - HIP_POS;
+		//m_HipPos.y = m_pos.y - HIP_POS;
 		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
 			->SetOutLine(true);
 
@@ -147,13 +147,13 @@ void CExtenddog::Update(void) {
 			->SetOutLine(true);
 
 		// 体
-		m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f + SIZE_OF_1_SQUARE * 0.4f;
+		m_BodyPos.y = m_HeadPos.y + fDowncurrenty * 0.5f + SIZE_OF_1_SQUARE * 0.4f;
 		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 9, 1.0f), m_modelIdx[5], false)
 			->SetOutLine(true);
 	}
 	else
 	{// 反転状態の時
-		//y座標の更新
+		// y座標の更新
 		float fDowncurrenty = m_pos.y - (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		// 尻
@@ -162,13 +162,13 @@ void CExtenddog::Update(void) {
 			->SetOutLine(true);
 
 		// 頭
-		m_HeadPos.y = fDowncurrenty;
+		//m_HeadPos.y = fDowncurrenty;
 		RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[4], false)
 			->SetOutLine(true);
 
 		// 体
-		m_BodyPos.y = m_pos.y + fDowncurrenty * 0.5f - SIZE_OF_1_SQUARE * 0.4f;
-		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, -fDowncurrenty * 9, 1.0f), m_modelIdx[5], false)
+		m_BodyPos.y = (m_HeadPos.y - 0.0f) * 0.5f;
+		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y - 0.0f * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight) * 9, 1.0f), m_modelIdx[5], false)
 			->SetOutLine(true);
 	}
 }
