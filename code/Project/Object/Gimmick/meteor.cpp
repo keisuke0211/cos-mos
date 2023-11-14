@@ -143,10 +143,10 @@ void CMeteor::CollisionBlock(void)
 		switch (type)
 		{
 		case CStageObject::TYPE::BLOCK:
-			if (MaxPos.x> m_pos.x - m_width &&
-				MinPos.x< m_pos.x + m_width &&
-				MaxPos.y> m_pos.y - m_height&&
-				MinPos.y< m_pos.y + m_height)
+			if (MaxPos.x > m_pos.x - m_width  * 0.5f&&
+				MinPos.x < m_pos.x + m_width  * 0.5f&&
+				MaxPos.y > m_pos.y - m_height * 0.5f&&
+				MinPos.y < m_pos.y + m_height * 0.5f)
 			{
 				// エフェクトの生成
 				Manager::EffectMgr()->EffectMeteorCreate(m_pos);

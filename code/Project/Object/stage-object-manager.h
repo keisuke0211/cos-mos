@@ -22,6 +22,7 @@
 #include "BackGround/Shiningwave.h"
 #include "Gimmick/RoadTripLaser.h"
 #include "Gimmick/extenddog.h"
+#include "Gimmick\pile.h"
 #include "Gimmick/goalgate.h"
 #include "Gimmick/meteor_generator.h"
 //****************************************
@@ -43,6 +44,7 @@ public:
 	CTrampoline *TrampolineCreate(D3DXVECTOR3 pos);
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
 	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move);
+	CPile       *PileCreate(D3DXVECTOR3 pos, int nNumPile, float fCaveIn);
 	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
 	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos);
 	CRocket     *RocketCreate    (D3DXVECTOR3 pos);

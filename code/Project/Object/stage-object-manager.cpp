@@ -243,6 +243,23 @@ CMoveBlock *CStageObjectMgr::MoveBlockCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,
 }
 
 //========================================
+// çY
+//========================================
+CPile *CStageObjectMgr::PileCreate(D3DXVECTOR3 pos, int nNumPile, float fCaveIn)
+{
+	CPile *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CPile;
+
+	// èâä˙âªèàóù
+	pObj->Init();
+	pObj->Set(pos, nNumPile, fCaveIn);
+
+	return pObj;
+}
+
+//========================================
 // ÉpÅ[Éc
 //========================================
 CParts *CStageObjectMgr::PartsCreate(D3DXVECTOR3 pos)

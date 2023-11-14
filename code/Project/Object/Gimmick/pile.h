@@ -31,12 +31,28 @@ public:
 	//===============================
 	void Set(Pos3D pos, int NumTrunk, float TrunkHeight);
 
+	//===============================
+	//めり込み量反映処理（Cave in  ==  へこむ
+	//===============================
+	void CaveInTrunkHeight(float fCaveInHeight);
+
+	//===============================
+	//位置取得（めり込み量も含める）
+	//===============================
+	D3DXVECTOR3 GetPosCaveIn(void);
+
+	//===============================
+	//前回位置取得（めり込み量も含める）
+	//===============================
+	D3DXVECTOR3 GetPosOldCaveIn(void);
+
 private:
-	void SetModel(void);//モデル配置
+	void PutModel(void);//モデル配置
 
 	int m_BodyModelID;	//本体のモデル番号
 	int m_TrunkModelID;	//幹部分のモデル番号
 	Pos3D m_pos;		//本体座標
-	float m_TrunkHeight;//幹座標
 	int   m_NumTrunk;	//幹の数（最低３個）
+	float m_TrunkHeight;	//幹座標
+	float m_TrunkHeightOld;	//前回の幹座標
 };

@@ -1,4 +1,4 @@
-SCRIPT			# この行は絶対消さないこと！
+BG_FILE			# この行は絶対消さないこと！
 
 START_PATH data\\MODEL\\
 
@@ -14,4 +14,52 @@ DOWN
 	POS 30.0,-15.0,0.0 ROT 0.0,0.0,0.0 SPIN 0.0,0.005,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\StoneSword.x
 END
 
-END_SCRIPT		# この行は絶対消さないこと！
+UP
+	OBJECT{
+		POS 0.0 -15.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+	OBJECT{
+		POS 50.0 10.0 0.0
+		ROT 1.0 1.0 1.0
+		SPIN 0.005 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\StoneBird.x
+	}
+	OBJECT{
+		POS -30.0 0.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.005
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\StoneDragon.x
+	}
+END
+
+DOWN
+	OBJECT{
+		POS 0.0 15.0 0.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+	OBJECT{
+		POS -30.0 -5.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.005 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+	OBJECT{
+		POS 30.0 -15.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.005 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\RockTower.x
+	}
+END
+
+END     		# この行は絶対消さないこと！
