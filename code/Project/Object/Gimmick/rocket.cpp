@@ -50,8 +50,9 @@ CRocket::CRocket(void)
 		m_Info.Smoketex[nCnt].col = Color{ 255,255,255,255 };
 		m_Info.Firetex[nCnt].pos = INITD3DXVECTOR3;
 		m_Info.Smoketex[nCnt].pos = INITD3DXVECTOR3;
-		m_Info.Firetex[nCnt].move = D3DXVECTOR3(0.0f,-0.2f,0.0f);
-		m_Info.Smoketex[nCnt].move = D3DXVECTOR3(0.0f, -0.2f, 0.0f);
+		m_Info.Firetex[nCnt].move = CGeometry::GetRandomVec() * 0.05f;
+		m_Info.Smoketex[nCnt].move = D3DXVECTOR3(CGeometry::GetRandomVec().x * 0.05f, CGeometry::GetRandomVec().y * 0.05f, CGeometry::GetRandomVec().z * 0.05f);
+		
 	}
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 }
@@ -123,15 +124,20 @@ void CRocket::Update(void)
 		for (int nCnt = 0; nCnt < 10; nCnt++)
 		{
 			// 煙のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, m_Info.Smoketex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Smoketex[nCnt].col);
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, D3DXVECTOR3(m_Info.Smoketex[nCnt].pos.x - 10.0f, m_Info.Smoketex[nCnt].pos.y - 20.0f, m_Info.Smoketex[nCnt].pos.z), Scale3D(10.0f, 10.0f, 10.0f), m_Info.Smoketex[nCnt].col,60,D3DXVECTOR3(3.14f,3.14f,3.14f));
+			m_Info.Smoketex[nCnt].col.a -= 1;
 			m_Info.Smoketex[nCnt].pos += m_Info.Smoketex[nCnt].move;
-			m_Info.Smoketex[nCnt].col.a -= 1;
+
 			// 炎のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, m_Info.Firetex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Firetex[nCnt].col);
-			m_Info.Firetex[nCnt].pos += m_Info.Firetex[nCnt].move;
-			m_Info.Smoketex[nCnt].col.a -= 1;
+			//Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, m_Info.Firetex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Firetex[nCnt].col);
+			//m_Info.Firetex[nCnt].pos += m_Info.Firetex[nCnt].move;
+			//m_Info.Smoketex[nCnt].col.a -= 1;
 
-
+			if (m_Info.Smoketex[nCnt].col.a <= 0.0f)
+			{
+				m_Info.Smoketex[nCnt].pos = m_pos;
+				m_Info.Smoketex[nCnt].col.a = 255;
+			}
 		}
 	}
 	
