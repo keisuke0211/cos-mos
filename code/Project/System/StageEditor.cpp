@@ -675,7 +675,7 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 		}
 		else if (!strcmp(aDataSearch, "LiftMax")) {
 			int Max = 0;
-			nLine++;
+			nLine += 4;
 			ToData(Max, pFile, nRow, nLine);
 
 			m_Info.nLiftMax = Max;
@@ -705,21 +705,21 @@ void CStageEditor::SetLiftInfo(CSVFILE *pFile, int nRow, int nLine)
 					break;
 				}
 				else if (!strcmp(aDataSearch, "PosV")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 4; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_LiftInfo[nLift].posV = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "PosR")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_LiftInfo[nLift].posR = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "Move")) {
-					nLine++;
+					nLine += 4;
 					ToData(m_LiftInfo[nLift].move.x, pFile, nRow, nLine); nLine++;
 					ToData(m_LiftInfo[nLift].move.y, pFile, nRow, nLine); nLine++;
 					m_LiftInfo[nLift].move.z = 0.0f;
@@ -765,7 +765,7 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 		}
 		else if (!strcmp(aDataSearch, "MeteorMax")) {
 			int Max = 0;
-			nLine++;
+			nLine += 4;
 			ToData(Max, pFile, nRow, nLine);
 
 			m_Info.nMateorMax = Max;
@@ -795,22 +795,22 @@ void CStageEditor::SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine)
 					break;
 				}
 				else if (!strcmp(aDataSearch, "Pos")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_MeteorInfo[nMeteor].pos = GetPos(Row, Line);
 					m_MeteorInfo[nMeteor].pos.x += CStageObject::SIZE_OF_1_SQUARE;
 					m_MeteorInfo[nMeteor].pos.y -= CStageObject::SIZE_OF_1_SQUARE;
 				}
 				else if (!strcmp(aDataSearch, "Move")) {
-					nLine++;
+					nLine += 4;
 					ToData(m_MeteorInfo[nMeteor].move.x, pFile, nRow, nLine); nLine++;
 					ToData(m_MeteorInfo[nMeteor].move.y, pFile, nRow, nLine); nLine++;
 					m_MeteorInfo[nMeteor].move.z = 0.0f;
 				}
 				else if (!strcmp(aDataSearch, "Inteval")) {
-					int inteval = 0; nLine++;
+					int inteval = 0; nLine += 4;
 					ToData(inteval, pFile, nRow, nLine);
 
 					m_MeteorInfo[nMeteor].inteval = inteval;
@@ -856,7 +856,7 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 		}
 		else if (!strcmp(aDataSearch, "LaserMax")) {
 			int Max = 0;
-			nLine++;
+			nLine += 4;
 			ToData(Max, pFile, nRow, nLine);
 
 			m_Info.nLaserMax = Max;
@@ -886,21 +886,21 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 					break;
 				}
 				else if (!strcmp(aDataSearch, "PosV")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_LaserInfo[nLaser].posV = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "PosR")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_LaserInfo[nLaser].posR = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "Move")) {
-					nLine++;
+					nLine += 4;
 					ToData(m_LaserInfo[nLaser].move.x, pFile, nRow, nLine); nLine++;
 					ToData(m_LaserInfo[nLaser].move.y, pFile, nRow, nLine); nLine++;
 					m_LaserInfo[nLaser].move.z = 0.0f;
@@ -946,7 +946,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 		}
 		else if (!strcmp(aDataSearch, "DogMax")) {
 			int Max = 0;
-			nLine++;
+			nLine += 4;
 			ToData(Max, pFile, nRow, nLine);
 
 			m_Info.nLiftMax = Max;
@@ -982,21 +982,21 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					break;
 				}
 				else if (!strcmp(aDataSearch, "HeadPos")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_DogInfo[nDog].HeadPos = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "HipPos")) {
-					int Row = 0; int Line = 0; nLine++;
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
 					ToData(Row, pFile, nRow, nLine); nLine++;
-					ToData(Line, pFile, nRow, nLine);
 
 					m_DogInfo[nDog].HipPos = GetPos(Row, Line);
 				}
 				else if (!strcmp(aDataSearch, "Height")) {
-					nLine++;
+					nLine += 4;
 					ToData(m_DogInfo[nDog].Height, pFile, nRow, nLine); nLine++;
 				}
 
