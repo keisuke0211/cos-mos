@@ -15,6 +15,7 @@ class CStageObject : public CObject {
 public:
 	//========== [[[ 定数定義 ]]]
 	static const float SIZE_OF_1_SQUARE;
+	static const Pos3D INVERSEVECTOR3;
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class TYPE {
@@ -30,7 +31,8 @@ public:
 		GOALGATE   = 8, //ゴールゲート
 		PARTS      = 9,	//ロケットパーツ
 		ROCKET	   = 10,//ロケット本体
-		BACKGROUND = 11,//背景
+		PILE       = 11,//杭
+		BACKGROUND = 12,//背景
 		MAX,
 	};
 

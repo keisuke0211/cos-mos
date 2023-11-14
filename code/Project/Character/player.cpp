@@ -108,7 +108,7 @@ HRESULT CPlayer::Init(void)
 
 	// ２Ｐ初期情報
 	m_aInfo[1].nModelIdx = RNLib::Model().Load("data\\MODEL\\Player_Octopus.x");
-	m_aInfo[1].rot.z = D3DX_PI;
+	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 
 	// キーコンフィグ初期化
 	InitKeyConfig();
@@ -589,47 +589,6 @@ void CPlayer::CollisionToStageObject(void)
 					m_collInfo.posOld = pBlock->GetPosOld();
 				}
 				break;
-					// トランポリン
-				case CStageObject::TYPE::TRAMPOLINE:{
-					CTrampoline *pTrampoline = (CTrampoline*)stageObj;
-
-					m_pOthColli = new CollInfo;
-
-					m_pOthColli->pos = pTrampoline->GetPos();
-					m_pOthColli->posOld = m_pOthColli->pos;
-					m_pOthColli->fWidth = pTrampoline->GetWidth() * 1.0f;
-					m_pOthColli->fHeight = pTrampoline->GetHeight() * 1.0f;
-					m_pOthColli->ColliRot = COLLI_ROT::NONE;
-
-					if (D3DXVec3Length(&(m_pOthColli->pos - Player.pos)) >
-						D3DXVec2Length(&D3DXVECTOR2(m_pOthColli->fWidth + SIZE_WIDTH, m_pOthColli->fHeight + SIZE_HEIGHT)))
-						continue;
-
-					m_pOthColli->fWidth = pTrampoline->GetWidth() * 0.5f;
-					m_pOthColli->fHeight = pTrampoline->GetHeight() * 0.5f;
-
-					// オブジェクトの最小・最大位置
-					m_pOthColli->minPos = D3DXVECTOR3(m_pOthColli->pos.x - m_pOthColli->fWidth, m_pOthColli->pos.y - m_pOthColli->fHeight, 0.0f);
-					m_pOthColli->maxPos = D3DXVECTOR3(m_pOthColli->pos.x + m_pOthColli->fWidth, m_pOthColli->pos.y + m_pOthColli->fHeight, 0.0f);
-
-					// 当たった方向を格納
-					COLLI_ROT ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_pOthColli->pos, m_pOthColli->posOld, m_pOthColli->fWidth, m_pOthColli->fHeight, vec);
-
-					if (vec == COLLI_VEC::Y) {
-						if (!Player.bGroundOld) {
-							if (ColliRot == COLLI_ROT::OVER)		pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
-							else if (ColliRot == COLLI_ROT::UNDER)	pTrampoline->SetState(CTrampoline::STATE::DOWN_LAND);
-							pTrampoline->SetSpringForce(Player.fMaxHeight);
-							pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-						}
-						else if ((Player.side == WORLD_SIDE::FACE && ColliRot == COLLI_ROT::OVER && pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND) ||
-							(Player.side == WORLD_SIDE::BEHIND && ColliRot == COLLI_ROT::UNDER && pTrampoline->GetState() == CTrampoline::STATE::UP_LAND)) {
-							Info* info = &Player;
-							SetTrampolineJump(info, pTrampoline->GetSpringForce());
-						}
-					}
-				}
-				break;
 				// 隕石
 				case CStageObject::TYPE::METEOR:{
 					CMeteor *pMeteor = (CMeteor *)stageObj;
@@ -719,7 +678,7 @@ void CPlayer::CollisionToStageObject(void)
 				{
 				case CStageObject::TYPE::BLOCK:		CollisionBlock(&Player, &m_collInfo);	break;
 				case CStageObject::TYPE::FILLBLOCK:	CollisionFillBlock(&Player, m_collInfo.ColliRot); break;
-				case CStageObject::TYPE::TRAMPOLINE:CollisionTrampoline(&Player, &m_collInfo, m_pOthColli);	break;
+				case CStageObject::TYPE::TRAMPOLINE:CollisionTrampoline(&Player, &m_collInfo, (CTrampoline *)stageObj);	break;
 				case CStageObject::TYPE::SPIKE:		CollisionSpike(&Player, &m_collInfo);	break;
 				case CStageObject::TYPE::MOVE_BLOCK:CollisionMoveBlock(&Player, (CMoveBlock *)stageObj, &m_collInfo);	break;
 				case CStageObject::TYPE::METEOR:	CollisionMeteor(&Player, &m_collInfo); break;
@@ -874,7 +833,7 @@ void CPlayer::CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot)
 //----------------------------
 // トランポリンの当たり判定処理
 //----------------------------
-void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CollInfo *pOthColli)
+void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pTrampoline)
 {
 	// 当たった方向ごとに処理を切り替え
 	switch (pColli->ColliRot)
@@ -883,19 +842,28 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CollInfo *pOthC
 		// 上に当たった
 		//*********************************
 	case COLLI_ROT::OVER:
+
 		// 位置・移動量修正
 		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
 
 		// 表の世界のプレイヤー
-		if (pInfo->side == WORLD_SIDE::FACE) {
+		if (pInfo->side == WORLD_SIDE::FACE)
+		{
 			if (pInfo->bJump == true)
 			{// 着地した
 				// SE再生
 				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
+				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
+				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
 			pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
+
+			if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND) {
+				SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
+			}
 		}
 		break;
 
@@ -907,15 +875,23 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CollInfo *pOthC
 		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
 
 		// 裏の世界のプレイヤーならジャンプ可能
-		if (pInfo->side == WORLD_SIDE::BEHIND) {
+		if (pInfo->side == WORLD_SIDE::BEHIND)
+		{
 			if (pInfo->bJump == true)
 			{// 着地した
 				// SE再生
 				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
+				pTrampoline->SetState(CTrampoline::STATE::DOWN_LAND);
+				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
+				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
 			pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
+
+			if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND) {
+				SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
+			}
 		}
 		break;
 	}
@@ -1588,6 +1564,7 @@ void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 	pInfo->nTramJumpCounter = TRAMPOLINE_JUMP_COUNTER;
 	pInfo->bTramJump = true;
 	pInfo->bGround = false;
+	pInfo->bJump = true;
 }
 
 //----------------------------

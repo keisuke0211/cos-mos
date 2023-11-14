@@ -203,7 +203,7 @@ void CMode_Game::Update(void) {
 			SetState((int)STATE::PAUSE);
 		}
 
-		if (s_pPlayer != NULL);
+		if (s_pPlayer != NULL)
 			s_pPlayer->Update();
 
 		if (RNLib::Input().GetKeyTrigger(DIK_0) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
