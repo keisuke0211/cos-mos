@@ -13,6 +13,7 @@ class CParts;
 class CRocket;
 class CRoadTripLaser;
 class CExtenddog;
+class CPile;
 
 // プレイヤークラス
 class CPlayer {
@@ -214,6 +215,7 @@ private:
 	void CollisionGoalGate(Info *pInfo, CollInfo *pColli);
 	void CollisionParts(Info *pInfo, CParts *pParts);
 	void CollisionRocket(Info *pInfo, CRocket *pRocket);
+	void CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
