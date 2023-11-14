@@ -1074,7 +1074,7 @@ void CStageEditor::SetPileInfo(CSVFILE *pFile, int nRow, int nLine)
 					if (nPile < m_Info.nPileMax) {
 						bool bReturn = false;
 
-						/*Manager::BlockMgr()->ExtenddogCreate(m_DogInfo[nPile].HeadPos, m_DogInfo[nPile].HipPos, m_DogInfo[nPile].Height, true, bReturn);*/
+						Manager::BlockMgr()->PileCreate(m_PileInfo[nPile].pos, m_PileInfo[nPile].nNumPile, m_PileInfo[nPile].fCaveIn);
 					}
 
 					nPile++;
@@ -1089,7 +1089,14 @@ void CStageEditor::SetPileInfo(CSVFILE *pFile, int nRow, int nLine)
 				}
 				else if (!strcmp(aDataSearch, "NumPile")) {
 					nLine += 4;
-					ToData(m_PileInfo[nPile].nNumPile, pFile, nRow, nLine); nLine++;
+					int nNumPile = 0;
+					ToData(nNumPile, pFile, nRow, nLine); nLine++;
+
+					if (nNumPile <= 3){
+						nNumPile = 3;
+					}
+
+					m_PileInfo[nPile].nNumPile = nNumPile;
 				}
 				else if (!strcmp(aDataSearch, "CaveIn")) {
 					nLine += 4;
