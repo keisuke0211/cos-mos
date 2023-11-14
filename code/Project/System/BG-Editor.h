@@ -22,15 +22,25 @@ public:
 		MAX,
 	};
 
-	//ƒvƒŒƒCƒ„[î•ñ
-	struct INFO
-	{
+	// ˆÚ“®î•ñ
+	enum class MOVE_TYPE { NONE, AB, MAX, };
+	struct MOVE_AB {
+		D3DXVECTOR3 posB;
+		int         time;
+		int         counter;
+		bool        isReturn;
+	};
+
+	// î•ñ
+	struct INFO {
 		D3DXVECTOR3 pos;
 		D3DXVECTOR3 rot;
 		D3DXVECTOR3 spin;
 		Color		col;
 		short       modelIdx;
 		WORLD_SIDE  side;
+		void*       moveInfo = NULL;
+		MOVE_TYPE   moveType = MOVE_TYPE::NONE;
 	};
 
 	// *** ŠÖ”éŒ¾ ***
