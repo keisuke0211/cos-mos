@@ -38,5 +38,5 @@ protected:
 	Color       m_color;
 	float       m_width;
 	float       m_height;
-	CBGEditor::INFO	 m_Info;
+	CBGEditor::INFO m_Info;
 };
