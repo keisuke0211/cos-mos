@@ -31,7 +31,8 @@ public:
 		GOALGATE   = 8, //ゴールゲート
 		PARTS      = 9,	//ロケットパーツ
 		ROCKET	   = 10,//ロケット本体
-		BACKGROUND = 11,//背景
+		PILE       = 11,//杭
+		BACKGROUND = 12,//背景
 		MAX,
 	};
 
