@@ -63,12 +63,7 @@ public:
 		int nMateorMax;	// 隕石の最大
 		int nLaserMax;	// レーザーの最大
 		int nDogMax;	// 犬の最大値
-
-		// カウント
-		int nCntLift;	// リフト
-		int nCntMateor;	// 隕石
-		int nCntLaser;	// レーザー
-		int nCntDog;	// 犬
+		int nPileMax;	// 杭の最大値
 	};
 
 	// 色
@@ -111,6 +106,14 @@ public:
 		D3DXVECTOR3 HeadPos;// 頭の位置
 		D3DXVECTOR3 HipPos;	// 尻の位置
 		int Height;			// 胴体の高さ
+	};
+
+	// 杭の情報
+	struct PileInfo
+	{
+		D3DXVECTOR3 pos;		// 位置
+		int nNumPile;			// 杭の数
+		float fCaveIn;	// 減りこみ量
 	};
 
 
@@ -177,6 +180,7 @@ private:
 	/* 隕石設定		*/void SetMeteorInfo(CSVFILE *pFile, int nRow, int nLine);
 	/* レーザー設定	*/void SetLaserInfo(CSVFILE *pFile, int nRow, int nLine);
 	/* ヌイ設定		*/void SetDogInfo(CSVFILE *pFile, int nRow, int nLine);
+	/* 杭の設定		*/void SetPileInfo(CSVFILE *pFile, int nRow, int nLine);
 	/* OBJ配置		*/void ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos,int nType);
 
 	/* ステージ生成 */void SetStage(int nType);
@@ -187,7 +191,8 @@ private:
 	Liftinfo *m_LiftInfo;				// リフト情報
 	MeteorInfo *m_MeteorInfo;			// 隕石情報
 	LaserInfo *m_LaserInfo;				// レーザー情報
-	DogInfo *m_DogInfo;					// 犬情報
+	DogInfo *m_DogInfo;					// 犬の情報
+	PileInfo *m_PileInfo;				// 杭の情報
 
 	StageInfo m_Info;					// ステージ情報
 };
