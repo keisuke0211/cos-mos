@@ -1074,7 +1074,7 @@ void CStageEditor::SetPileInfo(CSVFILE *pFile, int nRow, int nLine)
 					if (nPile < m_Info.nPileMax) {
 						bool bReturn = false;
 
-						Manager::BlockMgr()->ExtenddogCreate(m_DogInfo[nPile].HeadPos, m_DogInfo[nPile].HipPos, m_DogInfo[nPile].Height, true, bReturn);
+						/*Manager::BlockMgr()->ExtenddogCreate(m_DogInfo[nPile].HeadPos, m_DogInfo[nPile].HipPos, m_DogInfo[nPile].Height, true, bReturn);*/
 					}
 
 					nPile++;
