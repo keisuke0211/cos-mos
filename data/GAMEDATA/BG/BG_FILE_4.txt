@@ -1,4 +1,4 @@
-SCRIPT			# この行は絶対消さないこと！
+BG_FILE			# この行は絶対消さないこと！
 
 START_PATH data\\MODEL\\
 
@@ -17,4 +17,73 @@ DOWN
 	POS 40.0,15.0,0.0 ROT 0.0,0.0,3.14 SPIN 0.0,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\Wood.x
 END
 
-END_SCRIPT		# この行は絶対消さないこと！
+UP
+	OBJECT{
+		POS 0.0 -17.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Red_Flower.x
+	}
+	OBJECT{
+		POS -20.0 -17.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Blue_Flower.x
+	}
+	OBJECT{
+		POS -40.0 -17.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Yellow_Flower.x
+	}
+	OBJECT{
+		POS 40.0 -17.0 0.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Pink_Flower.x
+	}
+END
+
+DOWN
+	OBJECT{
+		POS 0.0 15.0 0.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Wood.x
+	}
+	OBJECT{
+		POS -20.0 15.0 0.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Wood.x
+	}
+	OBJECT{
+		POS -40.0 15.0 0.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Wood.x
+	}
+	OBJECT{
+		POS 20.0 15.0 0.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Wood.x
+	}
+	OBJECT{
+		POS 40.0 15.0 0.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Wood.x
+	}
+END
+
+END     		# この行は絶対消さないこと！

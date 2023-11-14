@@ -37,6 +37,18 @@ void CBGEditor::Load(const char* loadPath) {
 				RNLib::File().Scan(CFile::SCAN::ROT, &info.spin, "SPIN");
 				RNLib::File().Scan(CFile::SCAN::COLOR, &info.col, "COLOR");
 				RNLib::File().Scan(CFile::SCAN::MODELIDX, &info.modelIdx, "PATH");
+				if (RNLib::File().CheckIdentifier("MOVE_AB{")) {
+					CMemory::Alloc((MOVE_AB**)&info.moveInfo);
+					info.moveType = MOVE_TYPE::AB;
+					MOVE_AB* moveInfo = (MOVE_AB*)info.moveInfo;
+					moveInfo->counter = 0;
+					moveInfo->isReturn = false;
+
+					while (RNLib::File().SearchLoop("}")) {
+						RNLib::File().Scan(CFile::SCAN::POS3D, &moveInfo->posB, "POSB");
+						RNLib::File().Scan(CFile::SCAN::INT, &moveInfo->time, "TIME");
+					}
+				}
 			}
 			return info;
 		}
