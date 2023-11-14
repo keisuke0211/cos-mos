@@ -14,11 +14,7 @@ CBGObject::CBGObject() {
 
 	Manager::BGMgr()->AddList(this);
 	m_pos = INITD3DXVECTOR3;
-	m_posOld = INITD3DXVECTOR3;
 	m_rot = INITD3DXVECTOR3;
-	m_color = INITCOLOR;
-	m_width = 0.0f;
-	m_height = 0.0f;
 }
 
 //========================================
@@ -34,19 +30,14 @@ CBGObject::~CBGObject() {
 }
 
 //========================================
-// I—¹ˆ—
-//========================================
-void CBGObject::Uninit(void) {
-
-}
-
-//========================================
 // XVˆ—
 //========================================
 void CBGObject::Update(void) {
 
+	// [[[ ‰ñ“]ˆ— ]]]
 	m_Info.rot += m_Info.spin;
 
+	// [[[ ˆÚ“®ˆ— ]]]
 	if (m_Info.moveType == CBGEditor::MOVE_TYPE::AB) {
 		CBGEditor::MOVE_AB* moveInfo = (CBGEditor::MOVE_AB*)m_Info.moveInfo;
 		if (++moveInfo->counter == moveInfo->time) {
@@ -61,23 +52,25 @@ void CBGObject::Update(void) {
 		m_pos = (m_Info.pos * rate) + (moveInfo->posB * (1.0f - rate));
 	}
 	else {
-		m_pos = m_Info.pos;
+		m_pos += m_Info.move;
 	}
 
-	if (m_Info.side == CBGEditor::WORLD_SIDE::UP)
-	{
+	// [[[ •`‰æ ]]]
+	if (m_Info.side == CBGEditor::WORLD_SIDE::UP) {
 		RNLib::Model().Put(m_pos, m_Info.rot, m_Info.modelIdx)
 			->SetCol(m_Info.col)
-			->SetOutLine(true)
 			->SetClippingCamera(CMode_Game::GetCameraUp());
 	}
-	if (m_Info.side == CBGEditor::WORLD_SIDE::DOWN)
-	{
+	else if (m_Info.side == CBGEditor::WORLD_SIDE::DOWN) {
 		RNLib::Model().Put(m_pos, m_Info.rot, m_Info.modelIdx)
 			->SetCol(m_Info.col)
-			->SetOutLine(true)
 			->SetClippingCamera(CMode_Game::GetCameraDown());
 	}
-	
-	Uninit();
+
+	// [[[ õ–½ˆ— ]]]
+	if (m_Info.life != NONEDATA) {
+		if (--m_Info.life == 0) {
+			Delete();
+		}
+	}
 }
