@@ -29,7 +29,7 @@ public:
 		D3DXVECTOR3 rot;
 		D3DXVECTOR3 spin;
 		Color		col;
-		char		ModelPath[128];
+		short       modelIdx;
 		WORLD_SIDE  side;
 	};
 
