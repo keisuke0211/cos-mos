@@ -481,7 +481,6 @@ void CPlayer::Move(COLLI_VEC vec)
 
 			// 位置更新
 			Player.pos.y += Player.move.y;
-
 			break;
 		}
 
@@ -550,6 +549,7 @@ void CPlayer::CollisionToStageObject(void)
 			// オブジェクトの当たり判定情報を設定
 			CollInfo m_collInfo;
 			m_collInfo.pos     = stageObj->GetPos();
+			m_collInfo.posOld  = m_collInfo.pos;
 			m_collInfo.fWidth  = stageObj->GetWidth() * 0.5f;
 			m_collInfo.fHeight = stageObj->GetHeight() * 0.5f;
 			m_collInfo.minPos  = D3DXVECTOR3(m_collInfo.pos.x - m_collInfo.fWidth, m_collInfo.pos.y - m_collInfo.fHeight, 0.0f);
@@ -614,7 +614,7 @@ void CPlayer::CollisionToStageObject(void)
 					m_pOthColli->maxPos = D3DXVECTOR3(m_pOthColli->pos.x + m_pOthColli->fWidth, m_pOthColli->pos.y + m_pOthColli->fHeight, 0.0f);
 
 					// 当たった方向を格納
-					m_pOthColli->ColliRot = IsBoxCollider(Player.pos, Player.posOld, m_collInfo.fWidth, m_collInfo.fHeight, m_pOthColli->pos, m_pOthColli->posOld, m_pOthColli->fWidth, m_pOthColli->fHeight, vec);
+					m_pOthColli->ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_pOthColli->pos, m_pOthColli->posOld, m_pOthColli->fWidth, m_pOthColli->fHeight, vec);
 
 					//if (m_pOthColli->ColliRot != COLLI_ROT::NONE) {
 					//	bOtherColl = true;
@@ -655,7 +655,7 @@ void CPlayer::CollisionToStageObject(void)
 						m_pOthColli[nCnt].maxPos = D3DXVECTOR3(m_pOthColli[nCnt].pos.x + m_pOthColli[nCnt].fWidth, m_pOthColli[nCnt].pos.y + m_pOthColli[nCnt].fHeight, 0.0f);
 
 						// 当たった方向を格納
-						m_pOthColli[nCnt].ColliRot = IsBoxCollider(Player.pos, Player.posOld, m_collInfo.fWidth, m_collInfo.fHeight, m_pOthColli[nCnt].pos, m_pOthColli[nCnt].posOld, m_pOthColli[nCnt].fWidth, m_pOthColli[nCnt].fHeight, vec);
+						m_pOthColli[nCnt].ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_pOthColli[nCnt].pos, m_pOthColli[nCnt].posOld, m_pOthColli[nCnt].fWidth, m_pOthColli[nCnt].fHeight, vec);
 
 						//if (m_pOthColli[nCnt].ColliRot != COLLI_ROT::NONE){
 						//	bOtherColl = true;
@@ -681,10 +681,23 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// 当たった方向を格納
-				m_collInfo.ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_collInfo.pos, m_collInfo.pos, m_collInfo.fWidth, m_collInfo.fHeight, vec);
+				m_collInfo.ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_collInfo.pos, m_collInfo.posOld, m_collInfo.fWidth, m_collInfo.fHeight, vec);
 
 				// 当たっていなければスキップ
 				if (m_collInfo.ColliRot == COLLI_ROT::NONE) continue;
+				//当たった方向が不明なら別ベクトルから判定する
+				else if (m_collInfo.ColliRot == COLLI_ROT::UNKNOWN)
+				{
+					const COLLI_VEC OtherVec = (COLLI_VEC)((nCntVec + 1) % (int)COLLI_VEC::MAX);
+
+					const D3DXVECTOR3 PosTmp = Player.pos;
+					const D3DXVECTOR3 MoveTmp = Player.move;
+
+					Move(OtherVec);
+					m_collInfo.ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_collInfo.pos, m_collInfo.posOld, m_collInfo.fWidth, m_collInfo.fHeight, OtherVec);
+					Player.pos = PosTmp;
+					Player.move = MoveTmp;
+				}
 
 				// 種類ごとに関数分け
 				switch (type)
@@ -1493,15 +1506,21 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			{
 				pInfo->move.y = 0.0f;
 
-				if (pInfo->bJump == true)
+				if (pInfo->posOld.y > pInfo->pos.y)
 				{// 着地した
 				 // SE再生
 					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-					pPile->CaveInTrunkHeight(pColli->pos.y - pInfo->pos.y);
+				}
+
+				//ある程度の高さから落下してきた
+				if (pInfo->fMaxHeight - pColli->maxPos.y >= CPile::CAVEIN_DIFF_HEIGHT)
+				{
+					pPile->CaveInTrunkHeight(pColli->maxPos.y - pInfo->pos.y);
 				}
 				else
 				{
-					pInfo->pos.y = pPile->GetPosCaveIn().y;
+					//杭に乗る
+					pInfo->pos.y = pColli->maxPos.y + SIZE_HEIGHT;
 				}
 
 				pInfo->bGround = true;	// 地面に接している
@@ -1514,23 +1533,26 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			// 下に当たった
 			//*********************************
 		case COLLI_ROT::UNDER:
-			// 位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
-
-			// 裏の世界のプレイヤーならジャンプ可能
+			// 裏の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::BEHIND)
 			{
 				pInfo->move.y = 0.0f;
 
-				if (pInfo->bJump == true)
+				if (pInfo->posOld.y < pInfo->pos.y)
 				{// 着地した
 				 // SE再生
 					RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
-					pPile->CaveInTrunkHeight(pColli->pos.y - pInfo->pos.y);
+				}
+
+				//ある程度の高さから落下してきた
+				if (pInfo->fMaxHeight - pColli->minPos.y <= -CPile::CAVEIN_DIFF_HEIGHT)
+				{
+					pPile->CaveInTrunkHeight(pColli->minPos.y - pInfo->pos.y);
 				}
 				else
 				{
-					pInfo->pos.y = pPile->GetPosCaveIn().y;
+					//杭に乗る
+					pInfo->pos.y = pColli->minPos.y - SIZE_HEIGHT;
 				}
 
 				pInfo->bGround = true;	// 地面に接している
@@ -1558,7 +1580,8 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			//*********************************
 			// 埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
+		case COLLI_ROT::UNKNOWN:
+				Death(&pInfo->pos); break;
 	}
 }
 
@@ -1583,8 +1606,8 @@ CPlayer::COLLI_ROT CPlayer::IsBoxCollider(D3DXVECTOR3 pos, D3DXVECTOR3 posOld, f
 	const D3DXVECTOR2 MaxPos = D3DXVECTOR2(pos.x + fWidth, pos.y + fHeight);
 
 	// 対象の現在の最小・最大位置
-	const D3DXVECTOR2 TARGET_MinPos = D3DXVECTOR2(TargetPos.x - fWidth, TargetPos.y - fHeight);
-	const D3DXVECTOR2 TARGET_MaxPos = D3DXVECTOR2(TargetPos.x + fWidth, TargetPos.y + fHeight);
+	const D3DXVECTOR2 TARGET_MinPos = D3DXVECTOR2(TargetPos.x - TargetWidth, TargetPos.y - TargetHeight);
+	const D3DXVECTOR2 TARGET_MaxPos = D3DXVECTOR2(TargetPos.x + TargetWidth, TargetPos.y + TargetHeight);
 
 	// めり込んでいるか判定
 	if (MinPos.x < TARGET_MaxPos.x && TARGET_MinPos.x < MaxPos.x &&
@@ -1595,8 +1618,8 @@ CPlayer::COLLI_ROT CPlayer::IsBoxCollider(D3DXVECTOR3 pos, D3DXVECTOR3 posOld, f
 		const D3DXVECTOR2 OLD_MAXPOS = D3DXVECTOR2(posOld.x + fWidth, posOld.y + fHeight);
 
 		// 対象の前回の最小・最大位置
-		const D3DXVECTOR2 TARGET_MinPosOld = D3DXVECTOR2(TargetPosOld.x - fWidth, TargetPosOld.y - fHeight);
-		const D3DXVECTOR2 TARGET_MaxPosOld = D3DXVECTOR2(TargetPosOld.x + fWidth, TargetPosOld.y + fHeight);
+		const D3DXVECTOR2 TARGET_MinPosOld = D3DXVECTOR2(TargetPosOld.x - TargetWidth, TargetPosOld.y - TargetHeight);
+		const D3DXVECTOR2 TARGET_MaxPosOld = D3DXVECTOR2(TargetPosOld.x + TargetWidth, TargetPosOld.y + TargetHeight);
 
 		// 衝突ベクトルで処理分け
 		switch (value)
@@ -1607,6 +1630,12 @@ CPlayer::COLLI_ROT CPlayer::IsBoxCollider(D3DXVECTOR3 pos, D3DXVECTOR3 posOld, f
 
 			// 前回は右からめり込んでいない（今はめり込んだ
 			else if (OLD_MINPOS.x >= TARGET_MaxPosOld.x)	return COLLI_ROT::RIGHT;
+
+			//対象が左に動いている
+			else if (TargetPosOld.x > TargetPos.x) return COLLI_ROT::RIGHT;
+
+			//対象が右に動いている
+			else if (TargetPosOld.x < TargetPos.x) return COLLI_ROT::LEFT;
 			break;
 
 		case COLLI_VEC::Y:
@@ -1615,6 +1644,12 @@ CPlayer::COLLI_ROT CPlayer::IsBoxCollider(D3DXVECTOR3 pos, D3DXVECTOR3 posOld, f
 
 			// 前回は下からめり込んでいない（今はめり込んだ
 			else if (OLD_MAXPOS.y <= TARGET_MinPosOld.y)	return COLLI_ROT::UNDER;
+
+			//対象が上に動いている
+			else if (TargetPosOld.y < TargetPos.y) return COLLI_ROT::OVER;
+
+			//対象が下に動いている
+			else if (TargetPosOld.y > TargetPos.y) return COLLI_ROT::UNDER;
 			break;
 		}
 
