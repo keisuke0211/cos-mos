@@ -129,6 +129,10 @@ void CMode_Game::Init(void) {
 	{
 		m_Menu[nCnt] = NULL;
 	}
+
+	// •Çƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
+	m_wallModelIdx[0] = RNLib::Model().Load("data\\MODEL\\Wall_Left.x");
+	m_wallModelIdx[1] = RNLib::Model().Load("data\\MODEL\\Wall_Right.x");
 }
 
 //========================================
@@ -191,6 +195,10 @@ void CMode_Game::Update(void) {
 			->SetSize(windowWidth, windowHeightHalf)
 			->SetPriority(-1);
 	}
+
+	// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
+	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0]);
+	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1]);
 
 	m_rocketparts->Update();
 
