@@ -17,7 +17,7 @@ UP
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\onnpu_1.x
 		MOVE_AB{
-			POSB 0.0 0.0 0.0
+			POSB -40.0 0.0 0.0
 			TIME 60
 		}
 	}
@@ -28,7 +28,7 @@ UP
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\onnpu_2.x
 		MOVE_AB{
-			POSB 0.0 0.0 0.0
+			POSB 40.0 0.0 0.0
 			TIME 60
 		}
 	}
@@ -43,24 +43,24 @@ DOWN
 		PATH data\\MODEL\\Recorder.x
 	}
 	OBJECT{
-		POS 0.0 -10.0 0.0
+		POS 40.0 -10.0 0.0
 		ROT 0.0 0.0 0.0
 		SPIN 0.0 0.0 0.05
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\onnpu_1.x
 		MOVE_AB{
-			POSB 0.0 0.0 0.0
+			POSB 40.0 0.0 0.0
 			TIME 60
 		}
 	}
 	OBJECT{
-		POS 0.0 -10.0 0.0
+		POS -40.0 -10.0 0.0
 		ROT 0.0 0.0 0.0
 		SPIN 0.0 0.0 0.05
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\onnpu_2.x
 		MOVE_AB{
-			POSB 0.0 0.0 0.0
+			POSB -40.0 0.0 0.0
 			TIME 60
 		}
 	}

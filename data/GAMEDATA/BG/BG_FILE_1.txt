@@ -4,30 +4,30 @@ START_PATH data\\MODEL\\
 
 UP
 	OBJECT{
-		POS 0.0 -17.0 0.0
+		POS 17.0 -17.0 0.0
 		ROT 0.0 0.0 0.0
-		SPIN 0.0 0.0 0.0
+		SPIN 0.0 0.003 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\Red_Flower.x
 	}
 	OBJECT{
 		POS -20.0 -17.0 0.0
 		ROT 0.0 0.0 0.0
-		SPIN 0.0 0.0 0.0
+		SPIN 0.0 0.003 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\Blue_Flower.x
 	}
 	OBJECT{
 		POS -40.0 -17.0 0.0
 		ROT 0.0 0.0 0.0
-		SPIN 0.0 0.0 0.0
+		SPIN 0.0 0.003 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\Yellow_Flower.x
 	}
 	OBJECT{
-		POS 40.0 -17.0 0.0
+		POS 35.0 -10.0 0.0
 		ROT 0.0 0.0 0.0
-		SPIN 0.0 0.0 0.0
+		SPIN 0.0 0.003 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\Pink_Flower.x
 	}
