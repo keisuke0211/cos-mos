@@ -53,17 +53,13 @@ CStageEditor::CStageEditor(void)
 	m_Info.nMateorMax = 0;
 	m_Info.nLaserMax = 0;
 	m_Info.nDogMax = 0;
-
-	// カウント
-	m_Info.nCntLift = 0;
-	m_Info.nCntMateor = 0;
-	m_Info.nCntLaser = 0;
-	m_Info.nDogMax = 0;
+	m_Info.nPileMax = 0;
 
 	m_LiftInfo = NULL;
 	m_MeteorInfo = NULL;
 	m_LaserInfo = NULL;
 	m_DogInfo = NULL;
+	m_PileInfo = NULL;
 }
 
 //========================================
@@ -103,6 +99,11 @@ CStageEditor::~CStageEditor()
 	if (m_DogInfo != NULL){
 		delete[] m_DogInfo;
 		m_DogInfo = NULL;
+	}
+
+	if (m_PileInfo != NULL) {
+		delete[] m_PileInfo;
+		m_PileInfo = NULL;
 	}
 
 	if (m_Info.aBgFile != NULL){
@@ -155,6 +156,11 @@ void CStageEditor::Uninit(void)
 	if (m_DogInfo != NULL) {
 		delete[] m_DogInfo;
 		m_DogInfo = NULL;
+	}
+
+	if (m_PileInfo != NULL) {
+		delete[] m_PileInfo;
+		m_PileInfo = NULL;
 	}
 
 	if (m_Info.aBgFile != NULL) {
@@ -402,6 +408,9 @@ void CStageEditor::StageLoad(int planet, int stage)
 			}
 			else if (!strcmp(aDataSearch, "SetDogInfo")){
 				SetDogInfo(pFile, nRow, nLine);
+			}
+			else if (!strcmp(aDataSearch, "SetPileInfo")) {
+				SetPileInfo(pFile, nRow, nLine);
 			}
 
 			if (cstr != NULL){
@@ -878,7 +887,7 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 						cstr = NULL;
 					}
 
-					if (nLaser < m_Info.nLiftMax) {
+					if (nLaser < m_Info.nLaserMax) {
 						Manager::BlockMgr()->RoadTripLaserCreate(m_LaserInfo[nLaser].posV, m_LaserInfo[nLaser].posR, m_LaserInfo[nLaser].move);
 					}
 
@@ -949,7 +958,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 			nLine += 4;
 			ToData(Max, pFile, nRow, nLine);
 
-			m_Info.nLiftMax = Max;
+			m_Info.nDogMax = Max;
 			m_DogInfo = new DogInfo[Max];
 			assert(m_DogInfo != NULL);
 		}
@@ -968,7 +977,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 						cstr = NULL;
 					}
 
-					if (nDog < m_Info.nLiftMax) {
+					if (nDog < m_Info.nDogMax) {
 						bool bReturn = false;
 
 						if (m_DogInfo[nDog].HeadPos.y <= 0) {
@@ -998,6 +1007,100 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 				else if (!strcmp(aDataSearch, "Height")) {
 					nLine += 4;
 					ToData(m_DogInfo[nDog].Height, pFile, nRow, nLine); nLine++;
+				}
+
+				if (cstr != NULL) {
+					delete[] cstr;
+					cstr = NULL;
+				}
+			}
+		}
+
+		if (cstr != NULL) {
+			delete[] cstr;
+			cstr = NULL;
+		}
+	}
+}
+
+//========================================
+// 杭の情報設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetPileInfo(CSVFILE *pFile, int nRow, int nLine)
+{
+	int nPile = 0;
+
+	while (1)
+	{
+		nLine = 0;	nRow++;
+		char *aDataSearch = NULL;	// データ検索用
+		string sData = pFile->GetData(nRow, nLine);
+		char* cstr = new char[sData.size() + 1]; // メモリ確保
+		std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+		aDataSearch = cstr;
+
+		if (!strcmp(aDataSearch, "EndPileInfo")) {
+			if (cstr != NULL) {
+				delete[] cstr;
+				cstr = NULL;
+			}
+			break;
+		}
+		else if (!strcmp(aDataSearch, "PileMax")) {
+			int Max = 0;
+			nLine += 4;
+			ToData(Max, pFile, nRow, nLine);
+
+			m_Info.nPileMax = Max;
+			m_PileInfo = new PileInfo[Max];
+			assert(m_PileInfo != NULL);
+		}
+		else if (!strcmp(aDataSearch, "SetPile")) {
+			while (1)
+			{
+				nLine = 0;	nRow++;				char *aDataSearch = NULL;	// データ検索用
+				string sData = pFile->GetData(nRow, nLine);
+				char* cstr = new char[sData.size() + 1]; // メモリ確保
+				std::char_traits<char>::copy(cstr, sData.c_str(), sData.size() + 1);
+				aDataSearch = cstr;
+
+				if (!strcmp(aDataSearch, "EndPile")) {
+					if (cstr != NULL) {
+						delete[] cstr;
+						cstr = NULL;
+					}
+
+					if (nPile < m_Info.nPileMax) {
+						bool bReturn = false;
+
+						Manager::BlockMgr()->PileCreate(m_PileInfo[nPile].pos, m_PileInfo[nPile].nNumPile, m_PileInfo[nPile].fCaveIn);
+					}
+
+					nPile++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "Pos")) {
+					int Row = 0; int Line = 0; nLine += 4;
+					ToData(Line, pFile, nRow, nLine); nLine++;
+					ToData(Row, pFile, nRow, nLine); nLine++;
+
+					m_PileInfo[nPile].pos = GetPos(Row, Line);
+				}
+				else if (!strcmp(aDataSearch, "NumPile")) {
+					nLine += 4;
+					int nNumPile = 0;
+					ToData(nNumPile, pFile, nRow, nLine); nLine++;
+
+					if (nNumPile <= 3){
+						nNumPile = 3;
+					}
+
+					m_PileInfo[nPile].nNumPile = nNumPile;
+				}
+				else if (!strcmp(aDataSearch, "CaveIn")) {
+					nLine += 4;
+					ToData(m_PileInfo[nPile].fCaveIn, pFile, nRow, nLine); nLine++;
 				}
 
 				if (cstr != NULL) {
