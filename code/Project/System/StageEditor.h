@@ -106,6 +106,7 @@ public:
 		D3DXVECTOR3 HeadPos;// 頭の位置
 		D3DXVECTOR3 HipPos;	// 尻の位置
 		int Height;			// 胴体の高さ
+		bool bShrink;		// 伸縮フラグ
 	};
 
 	// 杭の情報

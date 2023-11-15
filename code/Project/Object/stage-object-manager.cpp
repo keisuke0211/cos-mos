@@ -237,6 +237,10 @@ CMoveBlock *CStageObjectMgr::MoveBlockCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,
 	pObj->SetPos(posV);
 	pObj->SetMove(move);
 	pObj->SetPosInfo(posV,posL);
+
+	if (move.x <= 0)
+		bxRetrurn = true;
+
 	pObj->SetXReturn(bxRetrurn);
 
 	pObj->Init();
@@ -395,6 +399,10 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTO
 
 	pObj->SetMove(move);
 	pObj->SetPosInfo(posV,posL);
+
+	if (move.x <= 0)
+		bXReturn = true;
+
 	pObj->SetXMoveReturn(bXReturn);
 
 	pObj->Init();
@@ -413,7 +421,7 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 
 	pObj = new CExtenddog;
 
 	// ‰Šú‰»ˆ—
-	pObj->SetPos(INITD3DXVECTOR3);
+	pObj->SetPos(fHeadpos);
 	pObj->SetShrink(bShrink);
 	pObj->SetHead(fHeadpos);
 	pObj->SetHip(fHippos);

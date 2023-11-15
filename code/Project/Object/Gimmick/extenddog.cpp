@@ -79,9 +79,10 @@ void CExtenddog::Uninit(void) {
 //========================================
 void CExtenddog::Update(void) {
 
-	m_HeadPosOid = m_HipPos;
+	m_HeadPosOid = m_HeadPos;
 	
 	CObject *obj = NULL;
+
 	while (Manager::BlockMgr()->ListLoop(&obj)) {
 		//取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
@@ -161,7 +162,6 @@ void CExtenddog::Update(void) {
 		float fDowncurrenty = (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		// 尻
-	//	m_HipPos.y = m_pos.y - HIP_POS;
 		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
 			->SetOutLine(true);
 
@@ -171,7 +171,6 @@ void CExtenddog::Update(void) {
 			->SetOutLine(true);
 
 		// 体
-	/*	m_BodyPos.y = m_HeadPos.y + fDowncurrenty * 0.5f + SIZE_OF_1_SQUARE * 0.4f;*/
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) / 2;
 		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 7, 1.0f), m_modelIdx[5], false)
 			->SetOutLine(true);
@@ -182,7 +181,6 @@ void CExtenddog::Update(void) {
 		float fDowncurrenty = -(SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		// 尻
-	//	m_HipPos.y = m_pos.y + HIP_POS;
 		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[3], false)
 			->SetOutLine(true);
 

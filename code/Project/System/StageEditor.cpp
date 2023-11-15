@@ -980,7 +980,11 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					if (nDog < m_Info.nDogMax) {
 						bool bReturn = false;
 
-						if (m_DogInfo[nDog].HeadPos.y <= 0) {
+						if (m_DogInfo[nDog].HeadPos.y >= 0) {
+							m_DogInfo[nDog].HipPos.y == m_DogInfo[nDog].HipPos.y + (CStageObject::SIZE_OF_1_SQUARE * 0.5f);
+						}
+						else if (m_DogInfo[nDog].HeadPos.y <= 0) {
+							m_DogInfo[nDog].HipPos.y == m_DogInfo[nDog].HipPos.y - (CStageObject::SIZE_OF_1_SQUARE * 0.5f);
 							bReturn = true;
 						}
 
@@ -1007,6 +1011,15 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 				else if (!strcmp(aDataSearch, "Height")) {
 					nLine += 4;
 					ToData(m_DogInfo[nDog].Height, pFile, nRow, nLine); nLine++;
+				}
+				else if (!strcmp(aDataSearch, "Shrink")) {
+					nLine += 4; int nShrink = 0;
+					ToData(nShrink, pFile, nRow, nLine); nLine++;
+
+					if (nShrink <= 0)
+						m_DogInfo[nDog].bShrink = false;
+					else
+						m_DogInfo[nDog].bShrink = true;
 				}
 
 				if (cstr != NULL) {
