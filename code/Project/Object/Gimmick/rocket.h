@@ -28,6 +28,7 @@ public:
 	{
 		D3DXVECTOR3 pos;		// 位置
 		D3DXVECTOR3 move;		// 移動量
+		D3DXVECTOR3 rot;		// 向き
 		Color col;				// 頂点カラー
 		int TexIdx;				// テクスチャ番号
 	};
@@ -45,6 +46,7 @@ public:
 		short nModelIdx;		// モデル番号
 		int	nRideAnimeCounter;	// ライドアニメーションカウンター
 		int	nFlyAnimeCounter;	// 飛行アニメーションカウンター
+		int nEffectAnimCounter;	// エフェクトアニメーションカウント
 		bool bEffect;			// エフェクトの発生
 	};
 	
