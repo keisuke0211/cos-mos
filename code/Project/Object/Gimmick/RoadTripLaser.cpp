@@ -102,12 +102,12 @@ void CRoadTripLaser::Update(void) {
 	}
 
 	// xの移動量の反転
-	if (m_posV.x >= m_pos.x || m_posL.x <= m_pos.x)
+	if (m_posV.x > m_pos.x || m_posL.x < m_pos.x)
 	{
 		m_move.x *= -1;
 	}
 	// yの移動量の反転
-	if (m_posV.y >= m_pos.y || m_posL.y <= m_pos.y)
+	if (m_posV.y > m_pos.y || m_posL.y < m_pos.y)
 	{
 		m_move.y *= -1;
 	}
@@ -118,6 +118,7 @@ void CRoadTripLaser::Update(void) {
 	// ブロック
 	RNLib::Model().Put(Block, m_rot, ModelIdx, false);
 
+	m_LaserPos = Block;
 	// ビーム
 	if (m_rot.z == 0.0f)
 		m_LaserPos.y = (Block.y - m_LaserSize.y * 0.5f);
