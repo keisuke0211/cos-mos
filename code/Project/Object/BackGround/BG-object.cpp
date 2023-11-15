@@ -26,13 +26,27 @@ CBGObject::~CBGObject() {
 	Manager::BGMgr()->SubList(this);
 
 	// ‰ğ•ú
-	CMemory::Release(&m_Info.moveInfo);
+	if (m_Info.createTime != NONEDATA) {
+		CMemory::Release(&m_Info.moveInfo);
+	}
 }
 
 //========================================
 // XVˆ—
 //========================================
 void CBGObject::Update(void) {
+
+	// [[[ ¶¬ˆ— ]]]
+	if (m_Info.createTime > 0) {
+		if (RNLib::Count().GetCount() % m_Info.createTime == 0) {
+			CBGEditor::INFO info = m_Info;
+			CBGObject* pBGObj = new CBGObject;
+			info.createTime = NONEDATA;
+			pBGObj->SetInfo(info);
+		}
+
+		return;
+	}
 
 	// [[[ ‰ñ“]ˆ— ]]]
 	m_Info.rot += m_Info.spin;
@@ -55,22 +69,28 @@ void CBGObject::Update(void) {
 		m_pos += m_Info.move;
 	}
 
+	// [[[ õ–½ˆ— ]]]
+	float lifeRate = 1.0f;
+	if (m_Info.life != NONEDATA) {
+		if (--m_Info.life == 0) {
+			Delete();
+			return;
+		}
+		
+		lifeRate = CEase::Easing(CEase::TYPE::LINEAR, m_Info.life, m_Info.lifeMax);
+	}
+
 	// [[[ •`‰æ ]]]
+	Color putCol = m_Info.col;
+	putCol.a *= lifeRate;
 	if (m_Info.side == CBGEditor::WORLD_SIDE::UP) {
 		RNLib::Model().Put(m_pos, m_Info.rot, m_Info.modelIdx)
-			->SetCol(m_Info.col)
+			->SetCol(putCol)
 			->SetClippingCamera(CMode_Game::GetCameraUp());
 	}
 	else if (m_Info.side == CBGEditor::WORLD_SIDE::DOWN) {
 		RNLib::Model().Put(m_pos, m_Info.rot, m_Info.modelIdx)
-			->SetCol(m_Info.col)
+			->SetCol(putCol)
 			->SetClippingCamera(CMode_Game::GetCameraDown());
-	}
-
-	// [[[ õ–½ˆ— ]]]
-	if (m_Info.life != NONEDATA) {
-		if (--m_Info.life == 0) {
-			Delete();
-		}
 	}
 }

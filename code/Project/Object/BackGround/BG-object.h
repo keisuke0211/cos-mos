@@ -20,9 +20,21 @@ public:
 	virtual ~CBGObject();
 	virtual void Update(void);
 	D3DXVECTOR3& GetPos(void) { return m_pos; }
-	void SetRot(const D3DXVECTOR3& rot) { m_rot = rot; }
+	void         SetRot(const D3DXVECTOR3& rot) { m_rot = rot; }
 	D3DXVECTOR3& GetRot(void) { return m_rot; }
-	void SetInfo(CBGEditor::INFO info) { m_Info = info; m_pos = m_Info.pos; }
+	void         SetInfo(CBGEditor::INFO info) {
+		m_Info = info;
+		if (m_Info.createTime > 0)
+			return;
+		m_Info.lifeMax = m_Info.life;
+		m_pos  = m_Info.pos;
+		m_pos.x += m_Info.posAdd.x * fRand();
+		m_pos.y += m_Info.posAdd.y * fRand();
+		m_pos.z += m_Info.posAdd.z * fRand();
+		m_Info.spin.x += m_Info.spinAdd.x * fRand();
+		m_Info.spin.y += m_Info.spinAdd.y * fRand();
+		m_Info.spin.z += m_Info.spinAdd.z * fRand();
+	}
 
 protected:
 	//========== [[[ ïœêîêÈåæ ]]]
