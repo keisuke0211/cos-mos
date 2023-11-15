@@ -427,6 +427,9 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 		Player.bGoal = false;
 		Player.bTramJump = false;
 	}
+
+	//搭乗しているプレイヤーの数リセット
+	CRocket::ResetCounter();
 }
 
 //----------------------------
