@@ -67,6 +67,7 @@ void CEffect::Update(void)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x,m_Info.scale.y)
 		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD)
+		->SetZTest(false)
 		->SetPriority(1);
 
 	m_Info.nCount--;
