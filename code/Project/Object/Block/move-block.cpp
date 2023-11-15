@@ -35,6 +35,7 @@ CMoveBlock::CMoveBlock(void)
 	m_Info.frefdef = 0.0f;
 	m_Info.nType = 0;
 	m_Info.nID = m_nNumAll;
+	m_Info.bXReturn = false;
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Lift.x");
 	nModelIdx = RNLib::Model().Load("data\\MODEL\\Lift_Gear.x");
 	m_nNumAll++;
@@ -98,10 +99,21 @@ void CMoveBlock::Update(void)
 		m_rot.z += f * ROT_MAG * -1;
 	}
 
-	// x‚ÌˆÚ“®—Ê‚Ì”½“]
-	if (m_Info.m_posV.x >= m_Info.pos.x || m_Info.m_posL.x <= m_Info.pos.x)
+	if (m_Info.bXReturn == false)
 	{
-		m_Info.move.x *= -1;
+		// x‚ÌˆÚ“®—Ê‚Ì”½“]
+		if (m_Info.m_posV.x >= m_Info.pos.x || m_Info.m_posL.x <= m_Info.pos.x)
+		{
+			m_Info.move.x *= -1;
+		}
+	}
+	else
+	{
+		// x‚ÌˆÚ“®—Ê‚Ì”½“]
+		if (m_Info.m_posV.x <= m_Info.pos.x || m_Info.m_posL.x >= m_Info.pos.x)
+		{
+			m_Info.move.x *= -1;
+		}
 	}
 	// y‚ÌˆÚ“®—Ê‚Ì”½“]
 	if (m_Info.m_posV.y <= m_Info.pos.y || m_Info.m_posL.y >= m_Info.pos.y)

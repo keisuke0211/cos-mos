@@ -31,6 +31,7 @@ public:
 		int nType;				// í—Ş
 		int nID;				// ID
 		int nModelIdx;
+		bool bXReturn;
 	};
 
 	//ŠÖ”
@@ -49,6 +50,8 @@ public:
 	void SetRefdef(const float refdef) { m_Info.frefdef = refdef; }
 	void SetRot(const D3DXVECTOR3 rot) { m_Info.rot = rot; }
 	void SetSize(const D3DXVECTOR3 size) { m_Info.size = size; }
+	void SetXReturn(const bool bXReturn) { m_Info.bXReturn = bXReturn; }
+
 	/* ƒ‚ƒfƒ‹”Ô†	*/void SetModelIdx(const int nIdx) { m_Info.nModelIdx = nIdx; }
 
 	//æ“¾

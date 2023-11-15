@@ -3,18 +3,6 @@ BG_FILE			# この行は絶対消さないこと！
 START_PATH data\\MODEL\\
 
 UP
-	POS 0.0,-15.0,0.0 ROT 0.0,0.0,0.0 SPIN 0.0,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\RockTower.x
-	POS 50.0,10.0,0.0 ROT 1.0,1.0,1.0 SPIN 0.005,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\StoneBird.x
-	POS -30.0,0.0,0.0 ROT 0.0,0.0,0.0 SPIN 0.0,0.0,0.005 COLOR 255,255,255,255 PATH data\\MODEL\\StoneDragon.x
-END
-
-DOWN
-	POS 0.0,15.0,0.0 ROT 0.0,0.0,3.14 SPIN 0.0,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\RockTower.x
-	POS -30.0,-5.0,0.0 ROT 0.0,0.0,0.0 SPIN 0.005,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\StonePegasus.x
-	POS 30.0,-15.0,0.0 ROT 0.0,0.0,0.0 SPIN 0.0,0.005,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\StoneSword.x
-END
-
-UP
 	OBJECT{
 		POS 0.0 -15.0 0.0
 		ROT 0.0 0.0 0.0
@@ -36,6 +24,21 @@ UP
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\StoneDragon.x
 	}
+	GENERATOR{
+		CREATE_TIME 60
+		
+	OBJECT{
+			POS     -100.0 30.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    360			※ないと一生出続ける！
+			MOVE    0.0 -0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.1 0.1 0.1
+			COLOR   255 0 255 255
+			PATH    data\\MODEL\\MeteoriteFragment.x
+		}
+	}
 END
 
 DOWN
@@ -51,14 +54,29 @@ DOWN
 		ROT 0.0 0.0 0.0
 		SPIN 0.005 0.0 0.0
 		COLOR 255 255 255 255
-		PATH data\\MODEL\\RockTower.x
+		PATH data\\MODEL\\StonePegasus.x
 	}
 	OBJECT{
 		POS 30.0 -15.0 0.0
 		ROT 0.0 0.0 0.0
 		SPIN 0.0 0.005 0.0
 		COLOR 255 255 255 255
-		PATH data\\MODEL\\RockTower.x
+		PATH data\\MODEL\\StoneSword.x
+	}
+	GENERATOR{
+		CREATE_TIME 60
+		
+	OBJECT{
+			POS     -100.0 -30.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    360			※ないと一生出続ける！
+			MOVE    0.0 0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.1 0.1 0.1
+			COLOR   255 0 0 255
+			PATH    data\\MODEL\\MeteoriteFragment.x
+		}
 	}
 END
 

@@ -25,6 +25,7 @@ public:
 		int nCount;
 		int nCountMax;
 		int nTex;
+		bool Billboard;
 	};
 
 	// *** 関数 ***
@@ -39,7 +40,9 @@ public:
 	// -- 設定 ---------------------------------------------
 	/* 色		*/void SetColor(const Color col) { m_Info.col = col; }
 	/* 位置		*/void SetPos(const D3DXVECTOR3 pos) { m_Info.pos = pos; }
+	/* 位置		*/void SetMove(const D3DXVECTOR3 move) { m_Info.move = move; }
 	/* 位置		*/void SetScale(const D3DXVECTOR3 scale) { m_Info.scale = scale; }
+	/* 位置		*/void SetBillboard(const bool billboard) { m_Info.Billboard = billboard; }
 
 	// -- 所得 ---------------------------------------------
 	/* 色		*/Color GetColor(void) { return m_Info.col; }

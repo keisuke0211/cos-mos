@@ -31,6 +31,7 @@ CRoadTripLaser::CRoadTripLaser(void) {
 	m_fGroundDis = 0.0f;
 	m_LaserSize = D3DXVECTOR2(5.0f, 50.0f);
 	m_LaserPos = INITD3DXVECTOR3;
+	m_bXMoveReturn = false;
 }
 
 //========================================
@@ -101,13 +102,25 @@ void CRoadTripLaser::Update(void) {
 		m_LaserSize.y *= -1;
 	}
 
-	// x‚ÌˆÚ“®—Ê‚Ì”½“]
-	if (m_posV.x >= m_pos.x || m_posL.x <= m_pos.x)
+	if (m_bXMoveReturn == false)
 	{
-		m_move.x *= -1;
+		// x‚ÌˆÚ“®—Ê‚Ì”½“]
+		if (m_posV.x > m_pos.x || m_posL.x < m_pos.x)
+		{
+			m_move.x *= -1;
+		}	
+	}
+	else
+	{
+		// x‚ÌˆÚ“®—Ê‚Ì”½“]
+		if (m_posV.x < m_pos.x || m_posL.x > m_pos.x)
+		{
+			m_move.x *= -1;
+		}
+	
 	}
 	// y‚ÌˆÚ“®—Ê‚Ì”½“]
-	if (m_posV.y >= m_pos.y || m_posL.y <= m_pos.y)
+	if (m_posV.y > m_pos.y || m_posL.y < m_pos.y)
 	{
 		m_move.y *= -1;
 	}
@@ -118,6 +131,7 @@ void CRoadTripLaser::Update(void) {
 	// ƒuƒƒbƒN
 	RNLib::Model().Put(Block, m_rot, ModelIdx, false);
 
+	m_LaserPos = Block;
 	// ƒr[ƒ€
 	if (m_rot.z == 0.0f)
 		m_LaserPos.y = (Block.y - m_LaserSize.y * 0.5f);

@@ -37,6 +37,7 @@ public:
 	void	SetCol(Color col) { m_col = col; }
 	void	SetMove(const D3DXVECTOR3 move) { m_move = move; }
 	void	SetLaserSize(const D3DXVECTOR2 size) { m_LaserSize = size; }
+	void	SetXMoveReturn(const bool xReturn) { m_bXMoveReturn = xReturn; }
 
 	D3DXVECTOR3 GetLaserPos(void) { return m_LaserPos; }
 	D3DXVECTOR2	GetLaserSize(void) { return m_LaserSize; }
@@ -56,4 +57,5 @@ private:
 	D3DXVECTOR3 m_LaserPos;		// レーザーの位置
 	D3DXVECTOR2 m_LaserSize;	// レーザーの大きさ
 	int ModelIdx;
+	bool m_bXMoveReturn;			// xの移動の反転
 };
