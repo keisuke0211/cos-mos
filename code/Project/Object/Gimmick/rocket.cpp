@@ -28,7 +28,7 @@ CRocket::CRocket(void)
 {
 	Manager::BlockMgr()->AddList(this);
 
-	s_nCountPlayer = 0;
+	ResetCounter();
 
 	m_type = TYPE::ROCKET;
 	m_width = SIZE_OF_1_SQUARE * 3;
@@ -62,7 +62,7 @@ CRocket::CRocket(void)
 //========================================
 CRocket::~CRocket()
 {
-	s_nCountPlayer = 0;
+	ResetCounter();
 }
 
 //========================================

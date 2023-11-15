@@ -90,6 +90,7 @@ public:
 		bool		bTramJump;			// トランポリン用の特殊ジャンプ
 		COLLI_ROT	TramColliRot;		// トランポリン用の当たり判定
 		bool		bExtendDog;	  // ヌイ用の接触フラグ
+		bool		bLandPile;	  // 杭に乗っているかどうか
 		int			nModelIdx;    // モデル番号
 		WORLD_SIDE  side;         // どちらの世界に存在するか
 		int             Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
@@ -154,7 +155,7 @@ public:
 	static void SetSwapInterval(void) { s_nSwapInterval = s_nSwapInterval == 0 ? SWAP_INTERVAL : s_nSwapInterval; }
 
 private:
-	static int	s_nSwapInterval;// 残りスワップインターバル
+	static int s_nSwapInterval; // 残りスワップインターバル
 	static int s_nSwapMarkTex;  // スワップ先のマークテクスチャ番号
 	static int s_nSwapParticle; // スワップ時のパーティクルテクスチャ番号
 	static int s_nDeathMarkTex; // 死亡時のマークテクスチャ番号
@@ -182,6 +183,9 @@ private:
 	void Death(D3DXVECTOR3 *pDeathPos);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
+
+	// 各プレイヤーの当たり判定が終わった後の処理
+	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type);
 
 	//========================
 	// 対象物の中にめり込んでいるかどうか判定
