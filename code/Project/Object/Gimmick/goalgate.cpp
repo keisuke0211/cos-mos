@@ -111,8 +111,7 @@ void CGoalGate::Update(void) {
 	//Š„‡ŒvZ
 	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
-	RNLib::Model().Put(m_pos, m_rot,Scale3D(m_scale.x * fCountRate, m_scale.y * fCountRate,m_scale.z), m_modelIdx, false)
-		->SetOutLine(true);
+	RNLib::Model().Put(m_pos, m_rot, Scale3D(m_scale.x * fCountRate, m_scale.y * fCountRate, m_scale.z), m_modelIdx, false);
 }
 //========================================
 // •`‰æˆ—
