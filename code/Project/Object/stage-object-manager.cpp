@@ -378,7 +378,7 @@ CShiningWave *CStageObjectMgr::ShiningWaveCreate(void)
 //========================================
 // ‰•œƒŒ[ƒU[
 //========================================
-CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move)
+CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move,bool bXReturn)
 {
 	CRoadTripLaser *pObj = NULL;
 
@@ -393,8 +393,9 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTO
 
 	pObj->SetMove(move);
 	pObj->SetPosInfo(posV,posL);
+	pObj->SetXMoveReturn(bXReturn);
+
 	pObj->Init();
-	
 
 	return pObj;
 }
