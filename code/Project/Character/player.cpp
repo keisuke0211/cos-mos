@@ -69,6 +69,7 @@ CPlayer::CPlayer()
 		Player.bTramJump = false;				// トランポリン用の特殊ジャンプ
 		Player.TramColliRot = COLLI_ROT::NONE;	// トランポリン用の判定
 		Player.bExtendDog = false;				// ヌイ用の接触フラグ
+		Player.bLandPile = false;				// 杭に乗っているかどうか
 		Player.nModelIdx = NONEDATA;			// モデル番号
 		Player.side = WORLD_SIDE::FACE;			// どちらの世界に存在するか
 	}
@@ -352,7 +353,6 @@ void CPlayer::Swap(void)
 		return;
 	}
 
-
 	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
@@ -427,6 +427,9 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 		Player.bGoal = false;
 		Player.bTramJump = false;
 	}
+
+	//搭乗しているプレイヤーの数リセット
+	CRocket::ResetCounter();
 }
 
 //----------------------------
@@ -546,6 +549,9 @@ void CPlayer::CollisionToStageObject(void)
 			// 取得したオブジェクトをキャスト
 			CStageObject* stageObj = (CStageObject*)obj;
 
+			// 種類取得
+			const CStageObject::TYPE type = stageObj->GetType();
+
 			// オブジェクトの当たり判定情報を設定
 			CollInfo m_collInfo;
 			m_collInfo.pos     = stageObj->GetPos();
@@ -563,9 +569,6 @@ void CPlayer::CollisionToStageObject(void)
 				// ロケットに乗ってるかゴールしていたら折り返す
 				if (Player.bRide || Player.bGoal)
 					continue;
-
-				// 種類取得
-				const CStageObject::TYPE type = stageObj->GetType();
 
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
@@ -675,6 +678,7 @@ void CPlayer::CollisionToStageObject(void)
 				{
 					CPile *pPile = (CPile *)stageObj;
 
+					m_collInfo.pos = pPile->GetPos();
 					m_collInfo.posOld = pPile->GetPosOld();
 				}
 				break;
@@ -683,20 +687,13 @@ void CPlayer::CollisionToStageObject(void)
 				// 当たった方向を格納
 				m_collInfo.ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_collInfo.pos, m_collInfo.posOld, m_collInfo.fWidth, m_collInfo.fHeight, vec);
 
-				// 当たっていなければスキップ
-				if (m_collInfo.ColliRot == COLLI_ROT::NONE) continue;
-				//当たった方向が不明なら別ベクトルから判定する
-				else if (m_collInfo.ColliRot == COLLI_ROT::UNKNOWN)
+				// 当たっていない
+				if (m_collInfo.ColliRot == COLLI_ROT::NONE)
 				{
-					const COLLI_VEC OtherVec = (COLLI_VEC)((nCntVec + 1) % (int)COLLI_VEC::MAX);
-
-					const D3DXVECTOR3 PosTmp = Player.pos;
-					const D3DXVECTOR3 MoveTmp = Player.move;
-
-					Move(OtherVec);
-					m_collInfo.ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_collInfo.pos, m_collInfo.posOld, m_collInfo.fWidth, m_collInfo.fHeight, OtherVec);
-					Player.pos = PosTmp;
-					Player.move = MoveTmp;
+					//杭に当たっていないなら乗っていない
+					if (type == CStageObject::TYPE::PILE)
+						Player.bLandPile = false;
+					continue;
 				}
 
 				// 種類ごとに関数分け
@@ -724,18 +721,55 @@ void CPlayer::CollisionToStageObject(void)
 					break;
 			}
 
-			// ヌイの状態設定
-			if (stageObj->GetType() == CStageObject::TYPE::EXTEND_DOG &&
-				!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
-			{
-				CExtenddog *pDog = (CExtenddog *)stageObj;
-				pDog->SetState(CExtenddog::STATE::RETURN);
-			}
+			//当たり判定の事後処理
+			CollisionAfter(stageObj, type);
 		}
 	}
 
 	//メモリ開放
 	OthColliDelete();
+}
+
+//----------------------------
+// 各プレイヤーの当たり判定が終わった後の処理
+//----------------------------
+void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type)
+{
+	// 種類ごとに関数分け
+	switch (type)
+	{
+		// ヌイの状態設定
+		case CStageObject::TYPE::EXTEND_DOG:
+		{
+			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
+			{
+				CExtenddog *pDog = (CExtenddog *)pStageObj;
+				pDog->SetState(CExtenddog::STATE::RETURN);
+			}
+
+			break;
+		}
+
+		//杭に乗っているプレイヤー
+		case CStageObject::TYPE::PILE:
+		{
+			CPile *pPile = (CPile *)pStageObj;
+			const float CaveInPos = pPile->GetPosCaveIn().y;
+			const float Height = pPile->GetHeight();
+
+			for each (Info &Player in m_aInfo)
+			{
+				if(!Player.bLandPile) continue;
+
+				switch (Player.side)
+				{
+					case WORLD_SIDE::FACE:	Player.pos.y = CaveInPos + Height + SIZE_HEIGHT;	break;
+					case WORLD_SIDE::BEHIND:Player.pos.y = CaveInPos - Height - SIZE_HEIGHT;	break;
+				}
+			}
+			break;
+		}
+	}
 }
 
 //----------------------------
@@ -802,7 +836,8 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
-			pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定pInfo->bJump = false
+			pInfo->bLandPile = true;// 乗った
+			pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
 		}
 		break;
 
@@ -822,6 +857,7 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
+			pInfo->bLandPile = true;// 乗った
 			pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
 		}
 		break;
@@ -1517,11 +1553,6 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 				{
 					pPile->CaveInTrunkHeight(pColli->maxPos.y - pInfo->pos.y);
 				}
-				else
-				{
-					//杭に乗る
-					pInfo->pos.y = pColli->maxPos.y + SIZE_HEIGHT;
-				}
 
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1580,8 +1611,7 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			//*********************************
 			// 埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN:
-				Death(&pInfo->pos); break;
+		case COLLI_ROT::UNKNOWN: if(s_nSwapInterval != 0)	Death(&pInfo->pos); break;
 	}
 }
 
@@ -1693,8 +1723,8 @@ void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 	SetSwapInterval();
 
 	// ジャンプ量を継承
-	float diff = -fMaxHeight - pInfo->pos.y;
-	pInfo->move.y = pInfo->move.y = diff / TRAMPOLINE_JUMP_COUNTER;
+	const float diff = -fMaxHeight - pInfo->pos.y;
+	pInfo->move.y = diff / TRAMPOLINE_JUMP_COUNTER;
 
 	pInfo->fTramTargetPosY = -fMaxHeight;
 	pInfo->nTramJumpCounter = TRAMPOLINE_JUMP_COUNTER;
@@ -1737,9 +1767,7 @@ bool CPlayer::IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG
 //----------------------------
 void CPlayer::OthColliDelete(void)
 {
-	if (m_pOthColli != NULL)
-	{
-		delete[] m_pOthColli;
-		m_pOthColli = NULL;
-	}
+	if (m_pOthColli == NULL) return;
+	delete[] m_pOthColli;
+	m_pOthColli = NULL;
 }

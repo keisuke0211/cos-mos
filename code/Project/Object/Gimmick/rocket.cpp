@@ -28,14 +28,14 @@ CRocket::CRocket(void)
 {
 	Manager::BlockMgr()->AddList(this);
 
-	s_nCountPlayer = 0;
+	ResetCounter();
 
 	m_type = TYPE::ROCKET;
-	m_width = SIZE_OF_1_SQUARE*3;
-	m_height = SIZE_OF_1_SQUARE*3;
+	m_width = SIZE_OF_1_SQUARE * 3;
+	m_height = SIZE_OF_1_SQUARE * 3;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.col = INITD3DCOLOR;
-	m_Info.scale = Scale3D(1.0f,1.0f,1.0f);
+	m_Info.scale = Scale3D(1.0f, 1.0f, 1.0f);
 	m_Info.nFlyAnimeCounter = 0;
 	m_Info.SmallSpeed = 0.0f;
 	m_Info.fScaleMag = 1.0f;
@@ -43,21 +43,18 @@ CRocket::CRocket(void)
 	m_Info.nRideAnimeCounter = 0;
 	m_Info.nEffectAnimCounter = 0;
 	m_Info.bEffect = false;
-	for(int nCnt = 0; nCnt < 10; nCnt++)
-	{
-		m_Info.Firetex[nCnt].TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Fire.png");
-		m_Info.Smoketex[nCnt].TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Smoke.png");
-		m_Info.Firetex[nCnt].col = Color{ 255,255,255,255 };
-		m_Info.Smoketex[nCnt].col = Color{ 255,255,255,255 };
-		m_Info.Firetex[nCnt].pos = INITD3DXVECTOR3;
-		m_Info.Smoketex[nCnt].pos = INITD3DXVECTOR3;
-		m_Info.Firetex[nCnt].move = D3DXVECTOR3(rand()% 2- 1 * 0.1f, -0.1f, 0.0f);
-		m_Info.Smoketex[nCnt].move = D3DXVECTOR3(rand() % 2 - 1 * 0.1f, -0.1f, 0.0f);
-		m_Info.Firetex[nCnt].rot = INITD3DXVECTOR3;
-		m_Info.Smoketex[nCnt].rot = INITD3DXVECTOR3;
-		
-	}
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
+
+	m_Info.Firetex.TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Fire_002.png");
+	m_Info.Smoketex.TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Smoke.png");
+	m_Info.Firetex.col = Color{ 255,100,0,255 };
+	m_Info.Smoketex.col = Color{ 255,255,255,255 };
+	m_Info.Firetex.pos = INITD3DXVECTOR3;
+	m_Info.Smoketex.pos = INITD3DXVECTOR3;
+	m_Info.Firetex.move = D3DXVECTOR3(rand() % 2 - 1 * 0.1f, -0.1f, 0.0f);
+	m_Info.Smoketex.move = D3DXVECTOR3(rand() % 2 - 1 * 0.1f, -0.1f, 0.0f);
+	m_Info.Firetex.rot = INITD3DXVECTOR3;
+	m_Info.Smoketex.rot = INITD3DXVECTOR3;
 }
 
 //========================================
@@ -65,7 +62,7 @@ CRocket::CRocket(void)
 //========================================
 CRocket::~CRocket()
 {
-	s_nCountPlayer = 0;
+	ResetCounter();
 }
 
 //========================================
@@ -81,8 +78,8 @@ HRESULT CRocket::Init(void)
 	}
 	for (int nCnt = 0; nCnt < 10; nCnt++)
 	{
-		m_Info.Firetex[nCnt].pos = m_pos;
-		m_Info.Smoketex[nCnt].pos = m_pos;
+		m_Info.Firetex.pos = m_pos;
+		m_Info.Smoketex.pos = m_pos;
 	}
 	return S_OK;
 }
@@ -129,24 +126,19 @@ void CRocket::Update(void)
 	if (m_Info.bEffect == true)
 	{
 		m_Info.nEffectAnimCounter++;
-		for (int nCnt = 0; nCnt < 1; nCnt++)
+		if (m_Info.nEffectAnimCounter % 6 == 0)
 		{
-			if (m_Info.nEffectAnimCounter % 6 == 0 && m_Info.Animstate == CRocket::ANIME_STATE::RIDE)
-			{
-				m_Info.Smoketex[nCnt].move = D3DXVECTOR3(rand() % 3 - 1, -0.1f, 0.0f);
+			m_Info.Smoketex.move = D3DXVECTOR3(rand() % 3 - 1, -0.1f, 0.0f);
 
-				// 煙のエフェクト
-				Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, D3DXVECTOR3(m_pos.x - 7.0f, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Smoketex[nCnt].col, 30,D3DXVECTOR3(0.1f,0.1f,0.1f),m_Info.Smoketex[nCnt].move);
+			// 煙のエフェクト
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 7.0f, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Smoketex.col, 120, D3DXVECTOR3(0.1f, 0.1f, 0.1f), m_Info.Smoketex.move, false);
+		}
+		if (m_Info.nEffectAnimCounter % 4 == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
+		{
+			m_Info.Firetex.move = D3DXVECTOR3(0.0f, -0.1f, 0.0f);
 
-			}
-			if (m_Info.nEffectAnimCounter % 4 == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
-			{
-				m_Info.Firetex[nCnt].move = D3DXVECTOR3((rand() % 3 - 1 ), -0.1f, 0.0f);
-
-				// 炎のエフェクト
-				Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, D3DXVECTOR3(m_pos.x - rand() % 10 - 5, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Firetex[nCnt].col, 160, D3DXVECTOR3(0.1f, 0.1f, 0.1f), m_Info.Firetex[nCnt].move);
-			}
-			
+			// 炎のエフェクト
+			Manager::EffectMgr()->EffectCreate(m_Info.Firetex.TexIdx, D3DXVECTOR3(m_pos.x - rand() % 10 - 5, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Firetex.col, 160, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Firetex.move, false);
 		}
 	}
 	

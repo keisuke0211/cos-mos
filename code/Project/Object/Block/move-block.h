@@ -5,8 +5,7 @@
 // 
 //========================================
 
-#ifndef _MOVEBLOCK_H_
-#define _MOVEBLOCK_H_
+#pragma once
 
 #include "../../../_RNLib/RNlib.h"
 
@@ -72,4 +71,3 @@ private:
 	int nModelIdx;
 
 };
-#endif
