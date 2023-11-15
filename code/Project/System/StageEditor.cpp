@@ -980,15 +980,16 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					if (nDog < m_Info.nDogMax) {
 						bool bReturn = false;
 
-						if (m_DogInfo[nDog].HeadPos.y >= 0) {
-							m_DogInfo[nDog].HipPos.y == m_DogInfo[nDog].HipPos.y + (CStageObject::SIZE_OF_1_SQUARE * 0.5f);
-						}
-						else if (m_DogInfo[nDog].HeadPos.y <= 0) {
-							m_DogInfo[nDog].HipPos.y == m_DogInfo[nDog].HipPos.y - (CStageObject::SIZE_OF_1_SQUARE * 0.5f);
+						float AddPosY = CStageObject::SIZE_OF_1_SQUARE * 0.5f;
+						if (m_DogInfo[nDog].HipPos.y >= 0) {
+							m_DogInfo[nDog].HipPos.y = m_DogInfo[nDog].HipPos.y - AddPosY;
 							bReturn = true;
 						}
+						else if (m_DogInfo[nDog].HipPos.y <= 0) {
+							m_DogInfo[nDog].HipPos.y = m_DogInfo[nDog].HipPos.y + AddPosY;
+						}
 
-						Manager::BlockMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, true, bReturn);
+						Manager::BlockMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, m_DogInfo[nDog].bShrink, bReturn);
 					}
 
 					nDog++;
