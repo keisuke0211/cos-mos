@@ -15,6 +15,9 @@ public:
 	//最低幹数
 	static const int MIN_TRUNK = 3;
 
+	//杭をめり込ませる最低高さ
+	static const float CAVEIN_DIFF_HEIGHT;
+
 	CPile();
 	virtual      ~CPile();
 	virtual void Init(void);
@@ -47,11 +50,12 @@ public:
 	D3DXVECTOR3 GetPosOldCaveIn(void);
 
 private:
+	void SetOld(float fCaveInHeight);	//前回情報を保存
 	void PutModel(void);//モデル配置
 
 	int m_BodyModelID;	//本体のモデル番号
 	int m_TrunkModelID;	//幹部分のモデル番号
-	Pos3D m_pos;		//本体座標
+	Pos3D m_PilePos;	//本体座標
 	int   m_NumTrunk;	//幹の数（最低３個）
 	float m_TrunkHeight;	//幹座標
 	float m_TrunkHeightOld;	//前回の幹座標

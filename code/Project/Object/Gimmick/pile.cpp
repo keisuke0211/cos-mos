@@ -7,6 +7,9 @@
 #include "pile.h"
 #include "../../main.h"
 
+//杭をめり込ませる最低高さ
+const float CPile::CAVEIN_DIFF_HEIGHT = 35.0f;
+
 //=======================================
 // コンストラクタ
 //=======================================
@@ -21,7 +24,7 @@ CPile::CPile()
 
 	m_BodyModelID = NONEDATA;
 	m_TrunkModelID = NONEDATA;
-	m_pos = INITVECTOR3D;	//本体座標
+	m_PilePos = INITVECTOR3D;	//本体座標
 	m_NumTrunk = 0;			//幹の数（最低３個）
 	m_TrunkHeight = 0.0f;	//幹座標
 	m_TrunkHeightOld = 0.0f;//幹座標
@@ -42,6 +45,9 @@ void CPile::Init(void)
 {
 	m_BodyModelID = RNLib::Model().Load("data\\MODEL\\Block.x");
 	m_TrunkModelID = RNLib::Model().Load("data\\MODEL\\Trunk.x");
+
+	//前回情報を保存
+	SetOld(0.0f);
 }
 
 //=======================================
@@ -57,10 +63,11 @@ void CPile::Uninit(void)
 //=======================================
 void CPile::Update(void)
 {
-	//前回の高さを保存
-	m_TrunkHeightOld = m_TrunkHeight;
+	//めり込みリセット
+	if (RNLib::Input().GetKeyTrigger(DIK_L)) m_TrunkHeight = 0.0f;
 
-	SetPos(D3DXVECTOR3(m_pos.x, m_pos.y + m_TrunkHeight, 0.0f));
+	//前回情報を保存
+	SetOld(m_TrunkHeight);
 
 	//モデル配置
 	PutModel();
@@ -72,10 +79,10 @@ void CPile::Update(void)
 void CPile::PutModel(void)
 {
 	//本体モデル
-	RNLib::Model().Put(m_pos, INITD3DXVECTOR3, m_BodyModelID, false);
+	RNLib::Model().Put(m_PilePos, INITD3DXVECTOR3, m_BodyModelID, false);
 
 	//幹座標
-	Pos3D PilePos = m_pos;
+	Pos3D PilePos = m_PilePos;
 
 	//一番上の幹から配置するため、配置する高さを計算
 	{
@@ -112,7 +119,7 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	if (NumTrunk < MIN_TRUNK) NumTrunk = MIN_TRUNK;
 
 	//情報設定
-	m_pos = pos;
+	m_PilePos = pos;
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = TrunkHeight;
 
@@ -137,14 +144,27 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 	const float fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
 
 	//杭が抜けないように調整
-	if (m_TrunkHeight < fMinHeight)		 m_TrunkHeight = fMinHeight;
-	else if (m_TrunkHeight > fMaxHeight) m_TrunkHeight = fMaxHeight;
+	if (fCaveInHeight < fMinHeight)		fCaveInHeight = fMinHeight;
+	else if (fCaveInHeight > fMaxHeight)fCaveInHeight = fMaxHeight;
 
-	//めり込み量を反映させる
-	m_TrunkHeight = fCaveInHeight;
+	//前回情報を保存
+	SetOld(fCaveInHeight);
 
 	//モデル配置
 	PutModel();
+}
+
+//===============================
+//前回情報を保存
+//===============================
+void CPile::SetOld(float fCaveInHeight)
+{
+	//めり込み量を反映させる
+	m_TrunkHeightOld = m_TrunkHeight;
+	m_TrunkHeight = fCaveInHeight;
+
+	m_pos = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight, 0.0f);
+	m_posOld = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld, 0.0f);
 }
 
 //===============================
@@ -152,7 +172,7 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 //===============================
 D3DXVECTOR3 CPile::GetPosCaveIn(void)
 {
-	D3DXVECTOR3 ReturnPos = m_pos;//現在座標を格納
+	D3DXVECTOR3 ReturnPos = m_PilePos;//現在座標を格納
 	ReturnPos.y += m_TrunkHeight; //めり込み量を反映
 	return ReturnPos;			  //座標を返す
 }
@@ -162,7 +182,7 @@ D3DXVECTOR3 CPile::GetPosCaveIn(void)
 //===============================
 D3DXVECTOR3 CPile::GetPosOldCaveIn(void)
 {
-	D3DXVECTOR3 ReturnPos = m_pos;	//現在座標を格納
+	D3DXVECTOR3 ReturnPos = m_PilePos;	//現在座標を格納
 	ReturnPos.y += m_TrunkHeightOld;//前回のめり込み量を反映
 	return ReturnPos;				//座標を返す
 }
