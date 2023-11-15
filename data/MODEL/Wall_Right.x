@@ -415,7 +415,7 @@ Mesh {
    0.100000;0.100000;0.100000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\data\\TEXTURE\\rock000.png";
+    "data\\TEXTURE\\rock000.png";
    }
   }
   Material {
