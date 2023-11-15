@@ -32,6 +32,36 @@ UP
 			TIME 60
 		}
 	}
+	GENERATOR{
+		CREATE_TIME 120
+		
+		OBJECT{
+			POS     -100.0 20.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    180			※ないと一生出続ける！
+			MOVE    0.0 -0.3 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.0 0.0
+			COLOR   255 255 255 255
+			PATH    data\\MODEL\\onnpu_1.x
+		}
+	}
+	GENERATOR{
+		CREATE_TIME 120
+		
+		OBJECT{
+			POS     -100.0 20.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    180			※ないと一生出続ける！
+			MOVE    0.0 -0.3 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.0 0.0
+			COLOR   255 255 255 255
+			PATH    data\\MODEL\\onnpu_2.x
+		}
+	}
 END
 
 DOWN
@@ -62,6 +92,36 @@ DOWN
 		MOVE_AB{
 			POSB -40.0 0.0 0.0
 			TIME 60
+		}
+	}
+	GENERATOR{
+		CREATE_TIME 120
+		
+		OBJECT{
+			POS     -100.0 -20.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    180			※ないと一生出続ける！
+			MOVE    0.0 0.3 0.0
+			ROT     0.0 0.0 3.14
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.0 0.0
+			COLOR   255 255 255 255
+			PATH    data\\MODEL\\onnpu_1.x
+		}
+	}
+	GENERATOR{
+		CREATE_TIME 120
+		
+		OBJECT{
+			POS     -100.0 -20.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    180			※ないと一生出続ける！
+			MOVE    0.0 0.3 0.0
+			ROT     0.0 0.0 3.14
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.0 0.0
+			COLOR   255 255 255 255
+			PATH    data\\MODEL\\onnpu_2.x
 		}
 	}
 END
