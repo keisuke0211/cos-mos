@@ -33,8 +33,12 @@ void CBGEditor::Load(const char* loadPath) {
 			CBGEditor::INFO info = {};
 			while (RNLib::File().SearchLoop("}")) {
 				RNLib::File().Scan(CFile::SCAN::POS3D, &info.pos, "POS");
+				RNLib::File().Scan(CFile::SCAN::POS3D, &info.posAdd, "POSADD");
+				RNLib::File().Scan(CFile::SCAN::POS3D, &info.move, "MOVE");
 				RNLib::File().Scan(CFile::SCAN::ROT, &info.rot, "ROT");
 				RNLib::File().Scan(CFile::SCAN::ROT, &info.spin, "SPIN");
+				RNLib::File().Scan(CFile::SCAN::ROT, &info.spinAdd, "SPINADD");
+				RNLib::File().Scan(CFile::SCAN::INT, &info.life, "LIFE");
 				RNLib::File().Scan(CFile::SCAN::COLOR, &info.col, "COLOR");
 				RNLib::File().Scan(CFile::SCAN::MODELIDX, &info.modelIdx, "PATH");
 				if (RNLib::File().CheckIdentifier("MOVE_AB{")) {
@@ -70,6 +74,22 @@ void CBGEditor::Load(const char* loadPath) {
 						CBGObject* pBGObj = new CBGObject;
 						pBGObj->SetInfo(info);
 					}
+					else if (RNLib::File().CheckIdentifier("GENERATOR{")) {
+						int time = 0;
+						CBGEditor::INFO info = {};
+
+						while (RNLib::File().SearchLoop("}")) {
+							if (RNLib::File().CheckIdentifier("OBJECT{")) {
+								info = LocalFunc::LoadBGInfo();
+								info.side = CBGEditor::WORLD_SIDE::UP;
+							}
+							RNLib::File().Scan(CFile::SCAN::INT, &time, "CREATE_TIME");
+						}
+
+						info.createTime = time;
+						CBGObject* pBGObj = new CBGObject;
+						pBGObj->SetInfo(info);
+					}
 				}
 			}
 			else if (RNLib::File().CheckIdentifier("DOWN")) {
@@ -78,6 +98,22 @@ void CBGEditor::Load(const char* loadPath) {
 						CBGEditor::INFO info = LocalFunc::LoadBGInfo();
 						info.side = CBGEditor::WORLD_SIDE::DOWN;
 
+						CBGObject* pBGObj = new CBGObject;
+						pBGObj->SetInfo(info);
+					}
+					else if (RNLib::File().CheckIdentifier("GENERATOR{")) {
+						int time = 0;
+						CBGEditor::INFO info = {};
+
+						while (RNLib::File().SearchLoop("}")) {
+							if (RNLib::File().CheckIdentifier("OBJECT{")) {
+								info = LocalFunc::LoadBGInfo();
+								info.side = CBGEditor::WORLD_SIDE::DOWN;
+							}
+							RNLib::File().Scan(CFile::SCAN::INT, &time, "CREATE_TIME");
+						}
+
+						info.createTime = time;
 						CBGObject* pBGObj = new CBGObject;
 						pBGObj->SetInfo(info);
 					}

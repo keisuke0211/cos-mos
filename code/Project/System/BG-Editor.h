@@ -33,14 +33,20 @@ public:
 
 	// èÓïÒ
 	struct INFO {
-		D3DXVECTOR3 pos;
-		D3DXVECTOR3 rot;
-		D3DXVECTOR3 spin;
-		Color		col;
-		short       modelIdx;
-		WORLD_SIDE  side;
-		void*       moveInfo = NULL;
-		MOVE_TYPE   moveType = MOVE_TYPE::NONE;
+		D3DXVECTOR3 pos        = INITD3DXVECTOR3;
+		D3DXVECTOR3 posAdd     = INITD3DXVECTOR3;
+		D3DXVECTOR3 rot        = INITD3DXVECTOR3;
+		D3DXVECTOR3 move       = INITD3DXVECTOR3;
+		short       life       = NONEDATA;
+		short       lifeMax    = NONEDATA;
+		D3DXVECTOR3 spin       = INITD3DXVECTOR3;
+		D3DXVECTOR3 spinAdd    = INITD3DXVECTOR3;
+		Color		col        = INITCOLOR;
+		short       modelIdx   = NONEDATA;
+		WORLD_SIDE  side       = WORLD_SIDE::NONE;
+		void*       moveInfo   = NULL;
+		MOVE_TYPE   moveType   = MOVE_TYPE::NONE;
+		int         createTime = 0;
 	};
 
 	// *** ä÷êîêÈåæ ***
