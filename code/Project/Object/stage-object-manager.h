@@ -43,7 +43,7 @@ public:
 	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos, int nType);
 	CTrampoline *TrampolineCreate(D3DXVECTOR3 pos);
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
-	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move);
+	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move, bool bxRetrurn = false);
 	CPile       *PileCreate(D3DXVECTOR3 pos, int nNumPile, float fCaveIn);
 	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
 	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos);
@@ -51,7 +51,7 @@ public:
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 	CShiningWave*ShiningWaveCreate(void);
-	CRoadTripLaser*RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,D3DXVECTOR3 move);
+	CRoadTripLaser*RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,D3DXVECTOR3 move,bool bxRetrurn = false);
 	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bShrink,bool bReturn);
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 private:

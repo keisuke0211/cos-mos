@@ -42,7 +42,7 @@ HRESULT CEffect::Init(int nTex, int nCount, D3DXVECTOR3 spin)
 {
 	m_Info.nTex = nTex;
 	m_Info.nCount = m_Info.nCountMax = nCount;
-	m_Info.spin = spin / m_Info.nCountMax;
+	m_Info.spin = spin;
 
 	return S_OK;
 }
@@ -61,9 +61,9 @@ void CEffect::Uninit(void)
 void CEffect::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Polygon3D().Put(m_Info.pos + m_Info.move,m_Info.rot)
+	RNLib::Polygon3D().Put(m_Info.pos,m_Info.rot)
 		->SetTex(m_Info.nTex)
-		->SetBillboard(true)
+		->SetBillboard(m_Info.Billboard)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x,m_Info.scale.y)
 		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD)
@@ -76,7 +76,9 @@ void CEffect::Update(void)
 
 	m_Info.col.a = m_Info.col.a * fCountRate;
 
-	m_Info.rot += m_Info.spin;
+	m_Info.rot += m_Info.spin * fCountRate;
+
+	m_Info.pos += m_Info.move;
 
 	if (m_Info.nCount <= 0)
 	{
@@ -89,5 +91,4 @@ void CEffect::Update(void)
 //========================================
 void CEffect::Draw(void)
 {
-
 }

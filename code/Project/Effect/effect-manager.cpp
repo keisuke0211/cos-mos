@@ -36,7 +36,7 @@ void CEffectMgr::Update(void)
 //========================================
 // エフェクト
 //========================================
-CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount, D3DXVECTOR3 spin)
+CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount, D3DXVECTOR3 spin, D3DXVECTOR3 move,bool bbilborad)
 {
 	CEffect *pObj = NULL;
 
@@ -47,14 +47,15 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 	pObj->SetPos(pos);
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
-
+	pObj->SetMove(move);
+	pObj->SetBillboard(bbilborad);
 
 	CObjectMgr::AddList((CObject*)pObj);
 
 	return pObj;
 }
 //========================================
-// エフェクト
+// 隕石エフェクト
 //========================================
 CEffect_Meteor * CEffectMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 {

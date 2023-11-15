@@ -241,7 +241,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\卒業制作\\cos-mos\\data\\TEXTURE\\IMG_5305.PNG";
+    "data\\TEXTURE\\IMG_5305.PNG";
    }
   }
   Material {

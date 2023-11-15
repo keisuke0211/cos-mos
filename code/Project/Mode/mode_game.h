@@ -74,4 +74,5 @@ private:
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;
+	short m_wallModelIdx[2];
 };
