@@ -18,7 +18,7 @@ Scene {
 	}
 }
 Material 1 {
-	"mat1" col(1.000 0.349 0.392 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("C:\Users\student\OneDrive\デスクトップ\卒業制作\cos-mos\data\TEXTURE\Stone.png")
+	"mat1" col(1.000 1.000 1.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("C:\Users\student\OneDrive\デスクトップ\卒業制作\cos-mos\data\TEXTURE\Stone.png")
 }
 Object "obj1" {
 	visible 0

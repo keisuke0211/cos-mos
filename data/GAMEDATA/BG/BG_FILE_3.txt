@@ -24,6 +24,21 @@ UP
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\StoneDragon.x
 	}
+	GENERATOR{
+		CREATE_TIME 60
+		
+	OBJECT{
+			POS     -100.0 30.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    360			※ないと一生出続ける！
+			MOVE    0.0 -0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.1 0.1 0.1
+			COLOR   255 0 255 255
+			PATH    data\\MODEL\\MeteoriteFragment.x
+		}
+	}
 END
 
 DOWN
@@ -47,6 +62,21 @@ DOWN
 		SPIN 0.0 0.005 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\StoneSword.x
+	}
+	GENERATOR{
+		CREATE_TIME 60
+		
+	OBJECT{
+			POS     -100.0 -30.0 0.0
+			POSADD  200.0 0.0 0.0
+			LIFE    360			※ないと一生出続ける！
+			MOVE    0.0 0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.1 0.1 0.1
+			COLOR   255 0 0 255
+			PATH    data\\MODEL\\MeteoriteFragment.x
+		}
 	}
 END
 
