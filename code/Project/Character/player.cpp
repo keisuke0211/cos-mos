@@ -16,8 +16,8 @@ int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
 const float CPlayer::SIZE_WIDTH = 8.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
-const float CPlayer::MOVE_SPEED = 0.5f;		// 移動量
-const float CPlayer::MAX_MOVE_SPEED = 2.7f;	// 最大移動量
+const float CPlayer::MOVE_SPEED = 0.3f;		// 移動量
+const float CPlayer::MAX_MOVE_SPEED = 2.3f;	// 最大移動量
 
 const float CPlayer::JUMP_POWER = 5.0f;		// 基本ジャンプ量
 const float CPlayer::GRAVITY_POWER = -0.3f;	// 基本重力加速度
@@ -188,7 +188,7 @@ void CPlayer::InitKeyConfig(void)
 		Player.JoyPad[(int)KEY_CONFIG::MOVE_LEFT]  = CInput::BUTTON::LEFT;  // 左移動
 		Player.JoyPad[(int)KEY_CONFIG::MOVE_RIGHT] = CInput::BUTTON::RIGHT; // 右移動
 		Player.JoyPad[(int)KEY_CONFIG::JUMP]       = CInput::BUTTON::A;     // ジャンプ
-		Player.JoyPad[(int)KEY_CONFIG::SWAP]       = CInput::BUTTON::Y;     // スワップ
+		Player.JoyPad[(int)KEY_CONFIG::SWAP]       = CInput::BUTTON::X;     // スワップ
 		Player.JoyPad[(int)KEY_CONFIG::DECIDE]     = CInput::BUTTON::A;     // 決定
 		Player.JoyPad[(int)KEY_CONFIG::PAUSE]      = CInput::BUTTON::START; // ポーズ
 	}
@@ -448,7 +448,7 @@ void CPlayer::Move(COLLI_VEC vec)
 		{
 		case COLLI_VEC::X:
 			// 慣性処理
-			Player.move.x += (0.0f - Player.move.x) * 0.1f;
+			Player.move.x += (0.0f - Player.move.x) * 0.13f;
 
 			// Ⅹの移動量を修正
 			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
@@ -863,14 +863,15 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 		// 表の世界のプレイヤー
 		if (pInfo->side == WORLD_SIDE::FACE)
 		{
-			if (pInfo->bJump == true)
+			if (pInfo->posOld.y > pInfo->pos.y)
 			{// 着地した
-				// SE再生
+			 // SE再生
 				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
 				pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
 				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
 				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
 			}
+
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
 			pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
@@ -891,7 +892,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 		// 裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND)
 		{
-			if (pInfo->bJump == true)
+			if (pInfo->posOld.y < pInfo->pos.y)
 			{// 着地した
 				// SE再生
 				RNLib::Sound().Play(m_landingSEIdx, CSound::CATEGORY::SE, false, CSound::SPACE::NONE, INITPOS3D, 0.0f);
