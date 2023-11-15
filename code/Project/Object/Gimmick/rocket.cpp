@@ -18,7 +18,7 @@ const float CRocket::s_RotAdd = 0.02f;		// 向きの増加量
 const int   CRocket::s_RotAnimeMax = 4;		// 小刻みアニメーションの最大
 const float CRocket::s_MoveMag = 1.05f;		// 移動量の倍率
 const float CRocket::s_MoveAdd = 0.01f;		// 移動量の増加量
-const int   CRocket::s_FadeModeCountMax = 120;	// フェードのモードのカウント最大
+const int   CRocket::s_FadeModeCountMax = 240;	// フェードのモードのカウント最大
 int         CRocket::s_nCountPlayer = 0;		// プレイヤーのカウント
 
 //========================================
@@ -41,6 +41,7 @@ CRocket::CRocket(void)
 	m_Info.fScaleMag = 1.0f;
 	m_Info.Animstate = CRocket::ANIME_STATE::NONE;
 	m_Info.nRideAnimeCounter = 0;
+	m_Info.nEffectAnimCounter = 0;
 	m_Info.bEffect = false;
 	for(int nCnt = 0; nCnt < 10; nCnt++)
 	{
@@ -50,8 +51,10 @@ CRocket::CRocket(void)
 		m_Info.Smoketex[nCnt].col = Color{ 255,255,255,255 };
 		m_Info.Firetex[nCnt].pos = INITD3DXVECTOR3;
 		m_Info.Smoketex[nCnt].pos = INITD3DXVECTOR3;
-		m_Info.Firetex[nCnt].move = CGeometry::GetRandomVec() * 0.05f;
-		m_Info.Smoketex[nCnt].move = D3DXVECTOR3(CGeometry::GetRandomVec().x * 0.05f, CGeometry::GetRandomVec().y * 0.05f, CGeometry::GetRandomVec().z * 0.05f);
+		m_Info.Firetex[nCnt].move = D3DXVECTOR3(rand()% 2- 1 * 0.1f, -0.1f, 0.0f);
+		m_Info.Smoketex[nCnt].move = D3DXVECTOR3(rand() % 2 - 1 * 0.1f, -0.1f, 0.0f);
+		m_Info.Firetex[nCnt].rot = INITD3DXVECTOR3;
+		m_Info.Smoketex[nCnt].rot = INITD3DXVECTOR3;
 		
 	}
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
@@ -98,12 +101,16 @@ void CRocket::Uninit(void)
 void CRocket::Update(void)
 {
 	//乗るアニメーションに移動
-	if (RNLib::Input().GetKeyPress(DIK_R))
+	if (RNLib::Input().GetKeyTrigger(DIK_R) && m_Info.Animstate == CRocket::ANIME_STATE::RIDE)
+	{
+		m_Info.Animstate = CRocket::ANIME_STATE::FLY;
+	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_R) && m_Info.Animstate == CRocket::ANIME_STATE::NONE)
 	{
 		m_Info.Animstate = CRocket::ANIME_STATE::RIDE;
 		Ride();
 	}
-	
+
 	switch (m_Info.Animstate)
 	{
 	case CRocket::ANIME_STATE::NONE:
@@ -121,23 +128,25 @@ void CRocket::Update(void)
 
 	if (m_Info.bEffect == true)
 	{
-		for (int nCnt = 0; nCnt < 10; nCnt++)
+		m_Info.nEffectAnimCounter++;
+		for (int nCnt = 0; nCnt < 1; nCnt++)
 		{
-			// 煙のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, D3DXVECTOR3(m_Info.Smoketex[nCnt].pos.x - 10.0f, m_Info.Smoketex[nCnt].pos.y - 20.0f, m_Info.Smoketex[nCnt].pos.z), Scale3D(10.0f, 10.0f, 10.0f), m_Info.Smoketex[nCnt].col,60,D3DXVECTOR3(3.14f,3.14f,3.14f));
-			m_Info.Smoketex[nCnt].col.a -= 1;
-			m_Info.Smoketex[nCnt].pos += m_Info.Smoketex[nCnt].move;
-
-			// 炎のエフェクト
-			//Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, m_Info.Firetex[nCnt].pos, Scale3D(2.0f, 2.0f, 2.0f), m_Info.Firetex[nCnt].col);
-			//m_Info.Firetex[nCnt].pos += m_Info.Firetex[nCnt].move;
-			//m_Info.Smoketex[nCnt].col.a -= 1;
-
-			if (m_Info.Smoketex[nCnt].col.a <= 0.0f)
+			if (m_Info.nEffectAnimCounter % 6 == 0 && m_Info.Animstate == CRocket::ANIME_STATE::RIDE)
 			{
-				m_Info.Smoketex[nCnt].pos = m_pos;
-				m_Info.Smoketex[nCnt].col.a = 255;
+				m_Info.Smoketex[nCnt].move = D3DXVECTOR3(rand() % 3 - 1, -0.1f, 0.0f);
+
+				// 煙のエフェクト
+				Manager::EffectMgr()->EffectCreate(m_Info.Smoketex[nCnt].TexIdx, D3DXVECTOR3(m_pos.x - 7.0f, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Smoketex[nCnt].col, 30,D3DXVECTOR3(0.1f,0.1f,0.1f),m_Info.Smoketex[nCnt].move);
+
 			}
+			if (m_Info.nEffectAnimCounter % 4 == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
+			{
+				m_Info.Firetex[nCnt].move = D3DXVECTOR3((rand() % 3 - 1 ), -0.1f, 0.0f);
+
+				// 炎のエフェクト
+				Manager::EffectMgr()->EffectCreate(m_Info.Firetex[nCnt].TexIdx, D3DXVECTOR3(m_pos.x - rand() % 10 - 5, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Firetex[nCnt].col, 160, D3DXVECTOR3(0.1f, 0.1f, 0.1f), m_Info.Firetex[nCnt].move);
+			}
+			
 		}
 	}
 	
@@ -167,7 +176,7 @@ void CRocket::UpdateState_Ride(void)
 	else if (m_Info.nRideAnimeCounter <= (s_RideAnimeMax + s_RideAnimeShrink) * 4)
 	{// アニメーションの移行
 
-		m_Info.Animstate = CRocket::ANIME_STATE::NONE;	// なしに変更	
+		//m_Info.Animstate = CRocket::ANIME_STATE::NONE;	// なしに変更	
 		m_Info.nRideAnimeCounter = 0;					// 乗るアニメーションカウンターを初期化
 	}
 }
