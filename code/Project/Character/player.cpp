@@ -314,7 +314,8 @@ void CPlayer::ActionControl(void)
 		nIdxPlayer++;
 
 		// èoÇÈ
-		if ((Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
+		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[0].bGoal && !m_aInfo[1].bGoal &&
+			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
 			Player.bRide = false;
 			Player.bGoal = false;
@@ -982,8 +983,32 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 //----------------------------
 void CPlayer::CollisionSpike(Info *pInfo, CollInfo *pColli)
 {
-	// éÄñSèàóù
-	Death(&pInfo->pos);
+	switch (pColli->ColliRot)
+	{
+		//è„â∫Ç«ÇøÇÁÇ©Ç…ìñÇΩÇÍÇŒéÄñS
+		case COLLI_ROT::OVER:
+		case COLLI_ROT::UNDER:
+			// éÄñSèàóù
+			Death(&pInfo->pos);
+			break;
+
+			//*********************************
+			// ç∂Ç…ìñÇΩÇ¡ÇΩ
+			//*********************************
+		case COLLI_ROT::LEFT:
+			// à íuÅEà⁄ìÆó èCê≥
+			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, pColli->fWidth);
+			break;
+
+			//*********************************
+			// âEÇ…ìñÇΩÇ¡ÇΩ
+			//*********************************
+		case COLLI_ROT::RIGHT:
+			// à íuÅEà⁄ìÆó èCê≥
+			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, pColli->fWidth);
+			break;
+
+	}
 }
 
 //----------------------------
