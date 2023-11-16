@@ -702,6 +702,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// 当たった方向を格納
+				COLLI_ROT rot = 
 				m_collInfo.ColliRot = IsBoxCollider(Player.pos, Player.posOld, SIZE_WIDTH, SIZE_HEIGHT, m_collInfo.pos, m_collInfo.posOld, m_collInfo.fWidth, m_collInfo.fHeight, vec);
 
 				// 当たっていない
@@ -772,7 +773,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		{
 			CPile *pPile = (CPile *)pStageObj;
 			const float CaveInPos = pPile->GetPosCaveIn().y;
-			const float Height = pPile->GetHeight();
+			const float Height = pPile->GetHeight() * 0.5f;
 
 			for each (Info &Player in m_aInfo)
 			{
@@ -783,6 +784,8 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 					case WORLD_SIDE::FACE:	Player.pos.y = CaveInPos + Height + SIZE_HEIGHT;	break;
 					case WORLD_SIDE::BEHIND:Player.pos.y = CaveInPos - Height - SIZE_HEIGHT;	break;
 				}
+				//次の杭で判定しないよう初期化
+				Player.bLandPile = false;
 			}
 			break;
 		}
@@ -853,7 +856,6 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
-			pInfo->bLandPile = true;// 乗った
 			pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
 		}
 		break;
@@ -874,7 +876,6 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
-			pInfo->bLandPile = true;// 乗った
 			pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
 		}
 		break;
@@ -1592,9 +1593,9 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 				//ある程度の高さから落下してきた
 				if (pInfo->fMaxHeight - pColli->maxPos.y >= CPile::CAVEIN_DIFF_HEIGHT)
 				{
-					pPile->CaveInTrunkHeight(pColli->maxPos.y - pInfo->pos.y);
+					pPile->CaveInTrunkHeight(pColli->maxPos.y - pInfo->pos.y - SIZE_HEIGHT);
 				}
-
+				pInfo->bLandPile = true;// 乗った
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
 				pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
@@ -1619,14 +1620,10 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 				//ある程度の高さから落下してきた
 				if (pInfo->fMaxHeight - pColli->minPos.y <= -CPile::CAVEIN_DIFF_HEIGHT)
 				{
-					pPile->CaveInTrunkHeight(pColli->minPos.y - pInfo->pos.y);
-				}
-				else
-				{
-					//杭に乗る
-					pInfo->pos.y = pColli->minPos.y - SIZE_HEIGHT;
+					pPile->CaveInTrunkHeight(pColli->minPos.y - pInfo->pos.y + SIZE_HEIGHT);
 				}
 
+				pInfo->bLandPile = true;// 乗った
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
 				pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
