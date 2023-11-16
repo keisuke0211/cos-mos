@@ -36,7 +36,7 @@ UP
 		CREATE_TIME 120
 		
 		OBJECT{
-			POS     -100.0 20.0 0.0
+			POS     -100.0 20.0 30.0
 			POSADD  200.0 0.0 0.0
 			LIFE    180			※ないと一生出続ける！
 			MOVE    0.0 -0.3 0.0
@@ -51,7 +51,7 @@ UP
 		CREATE_TIME 120
 		
 		OBJECT{
-			POS     -100.0 20.0 0.0
+			POS     -100.0 20.0 30.0
 			POSADD  200.0 0.0 0.0
 			LIFE    180			※ないと一生出続ける！
 			MOVE    0.0 -0.3 0.0
@@ -98,7 +98,7 @@ DOWN
 		CREATE_TIME 120
 		
 		OBJECT{
-			POS     -100.0 -20.0 0.0
+			POS     -100.0 -20.0 30.0
 			POSADD  200.0 0.0 0.0
 			LIFE    180			※ないと一生出続ける！
 			MOVE    0.0 0.3 0.0
@@ -113,7 +113,7 @@ DOWN
 		CREATE_TIME 120
 		
 		OBJECT{
-			POS     -100.0 -20.0 0.0
+			POS     -100.0 -20.0 30.0
 			POSADD  200.0 0.0 0.0
 			LIFE    180			※ないと一生出続ける！
 			MOVE    0.0 0.3 0.0
