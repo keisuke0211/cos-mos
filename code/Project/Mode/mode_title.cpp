@@ -514,7 +514,7 @@ void CMode_Title::Menu(void)
 	}
 
 	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
 		m_bBackMode = true;
 		SwapMode(TITLE_OUTSET);
@@ -624,7 +624,7 @@ void CMode_Title::StageSelect(void)
 
 	bool bInput = false;
 	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
 		TextClear();
 		SwapMode(TITLE_MENU_ANIME);
