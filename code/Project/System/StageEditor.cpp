@@ -1086,7 +1086,6 @@ void CStageEditor::SetPileInfo(CSVFILE *pFile, int nRow, int nLine)
 					}
 
 					if (nPile < m_Info.nPileMax) {
-						bool bReturn = false;
 
 						Manager::BlockMgr()->PileCreate(m_PileInfo[nPile].pos, m_PileInfo[nPile].nNumPile, m_PileInfo[nPile].fCaveIn);
 					}

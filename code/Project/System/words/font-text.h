@@ -55,8 +55,8 @@ public:
 	// テキストボックスの種類
 	enum Box
 	{
-		BOX_NORMAL_RECT = 0,	// ノーマル(長方形)
-		BOX_NORMAL_SQR,			// ノーマル(正方形)
+		BOX_NORMAL_GRAY = 0,	// ノーマル(灰色)
+		BOX_NORMAL_BLUE,		// ノーマル(青)
 		BOX_MAX
 	};
 
@@ -92,6 +92,7 @@ public:
 	/* ポーズ中の生成	*/void SetTetPause(bool bPause);
 	/* TextBoの表示		*/void SetTexBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
 	/* ボックスの色		*/void SetBoxColor(Color col);
+	/* ボックスの種類	*/void SetBoxType(Box type);
 	/* テキストの色		*/bool SetTextColor(D3DXCOLOR col);
 	/* 文字変更(単体)	*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
 	/* 文字変更(全体)	*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ

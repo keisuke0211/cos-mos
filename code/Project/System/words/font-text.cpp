@@ -190,10 +190,10 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		// テクスチャ設定
 		switch (type)
 		{
-		case CFontText::BOX_NORMAL_RECT:
-			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox.png");
+		case CFontText::BOX_NORMAL_GRAY:
+			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
 			break;
-		case CFontText::BOX_NORMAL_SQR:
+		case CFontText::BOX_NORMAL_BLUE:
 			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
 			break;
 		case CFontText::BOX_MAX:
@@ -535,11 +535,35 @@ void CFontText::SetTetPause(bool bPause)
 }
 
 //========================================
-// メッセージボックスの色設定
+// テキストボックスの色設定
 //========================================
 void CFontText::SetBoxColor(Color col)
 {
 	m_Info.TextBoxCol = col;
+}
+
+//========================================
+// テキストボックスの種類設定
+//========================================
+void CFontText::SetBoxType(Box type)
+{
+	// -- メッセージボックス ----------------
+
+	// テクスチャ設定
+	switch (type)
+	{
+	case CFontText::BOX_NORMAL_GRAY:
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
+		break;
+	case CFontText::BOX_NORMAL_BLUE:
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
+		break;
+	case CFontText::BOX_MAX:
+		m_Info.nTexIdx = -1;
+		break;
+	default:
+		break;
+	}
 }
 
 //========================================
