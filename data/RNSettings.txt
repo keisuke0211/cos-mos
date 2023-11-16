@@ -5,5 +5,5 @@ windowHeight			720.000000
 isFullScreen			0
 resolution				2.000000
 #OtherOption
-modelOutLineAddDistance	1.000000
+modelOutLineAddDistance	0.000000
 END
