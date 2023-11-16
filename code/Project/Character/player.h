@@ -77,6 +77,7 @@ public:
 		D3DXVECTOR3 rot;          // 向き
 		D3DXVECTOR3 move;         // 移動量
 		Color		color;		  // 色
+		int			nSwapAlpha;   // スワップマークのα値
 		bool		bGround;      // 地面に接しているか
 		bool		bGroundOld;   // 地面に接しているか(過去)
 		bool		bJump;        // ジャンプ
@@ -160,6 +161,7 @@ private:
 	static int s_nSwapParticle; // スワップ時のパーティクルテクスチャ番号
 	static int s_nDeathMarkTex; // 死亡時のマークテクスチャ番号
 	static int s_nDeathParticle;// 死亡時のパーティクルテクスチャ番号
+	static const int NORMAL_SWAP_ALPHA = 100;//通常時のスワップマークのα値
 
 	static const float MOVE_SPEED;		// 移動量
 	static const float MAX_MOVE_SPEED;	// 最大移動量
@@ -231,7 +233,15 @@ private:
 
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 	CollInfo *m_pOthColli;		// 他パーツの当たり判定情報
-	short m_jumpSEIdx;			// ジャンプ時のSE番号
-	short m_landingSEIdx;		// 着地時のSE番号
-	short m_dogSEIdx[4];		// 壁ギミック用SE番号
+
+	struct Sound
+	{
+		short jump;		// ジャンプSE
+		short landing;	// 着地SE
+		short dog[4];	// 壁ギミック用SE
+		short Swap;		// スワップSE
+
+		CSound *pSound;	// サウンドクラス保管用
+	};
+	static Sound s_Sound;		//サウンド用構造体
 };
