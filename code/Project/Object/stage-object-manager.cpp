@@ -115,7 +115,7 @@ CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::BLOCK_TYPE type, Co
 //========================================
 // ブロック(判定　無)
 //========================================
-CFillBlock *CStageObjectMgr::FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::FILL_TYPE type, Color color)
+CFillBlock *CStageObjectMgr::FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::BLOCKTYPE type, Color color)
 {
 	//プレイヤーインスタンスの生成
 	CFillBlock *pObj = new CFillBlock;
