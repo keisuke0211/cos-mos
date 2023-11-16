@@ -476,13 +476,13 @@ void CMode_Game::PauseSelect(void)
 			CMode_Title::SetSelect(true);
 			break;
 		}
-
-		ProcessState(PROCESS::UNINIT);
 	}
 
 	if(m_Pause.bClose){ 
 		m_Pause.LeftTargetPos *= -1;
 		m_Pause.RightTargetPos *= -1;
 		m_Pause.nCntAnime = 0;
+
+		ProcessState(PROCESS::UNINIT);
 	}
 }

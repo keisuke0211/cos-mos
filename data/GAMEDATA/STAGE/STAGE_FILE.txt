@@ -18,17 +18,17 @@ PLANET = 3 data\MODEL\Sirius.x シリウス
 #========================================
 # 惑星番号 / ステージのファイル名 / ステージ名
 #========================================
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE00.csv 1-1
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE01.csv 1-2
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE02.csv 1-3
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE03.csv 1-4
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE04.csv 1-5
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE05.csv 2-1
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE06.csv 2-2
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE07.csv 2-3
-STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE08.csv 3-1
-STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE09.csv 3-2
-STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE10.csv 3-3
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv 1-1
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-2.csv 1-2
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-3.csv 1-3
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv 1-4
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-5.csv 1-5
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv 2-1
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 2-2
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 2-3
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-1.csv 3-1
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-2.csv 3-2
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-3.csv 3-3
 
 #========================================
 #||||||||||||||||||||||||||||||||||||||||
