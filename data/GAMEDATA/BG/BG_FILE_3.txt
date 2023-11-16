@@ -24,6 +24,20 @@ UP
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\StoneDragon.x
 	}
+	OBJECT{
+		POS -50.0 -30.0 50.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Volcano.x
+	}
+	OBJECT{
+		POS 70.0 -30.0 50.0
+		ROT 0.0 0.0 0.0
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Volcano.x
+	}
 	GENERATOR{
 		CREATE_TIME 60
 		
@@ -62,6 +76,20 @@ DOWN
 		SPIN 0.0 0.005 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\StoneSword.x
+	}
+	OBJECT{
+		POS -50.0 30.0 50.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Volcano.x
+	}
+	OBJECT{
+		POS 70.0 30.0 50.0
+		ROT 0.0 0.0 3.14
+		SPIN 0.0 0.0 0.0
+		COLOR 255 255 255 255
+		PATH data\\MODEL\\Volcano.x
 	}
 	GENERATOR{
 		CREATE_TIME 60
