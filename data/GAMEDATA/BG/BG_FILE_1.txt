@@ -31,6 +31,36 @@ UP
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\Pink_Flower.x
 	}
+	GENERATOR{
+		CREATE_TIME 60
+		
+	OBJECT{
+			POS     -100.0 20.0 30.0
+			POSADD  200.0 0.0 0.0
+			LIFE    240			※ないと一生出続ける！
+			MOVE    0.0 -0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.05 0.01
+			COLOR   255 0 0 255
+			PATH    data\\MODEL\\petal.x
+		}
+	}
+	GENERATOR{
+		CREATE_TIME 60
+		
+	OBJECT{
+			POS     -100.0 20.0 30.0
+			POSADD  200.0 20.0 0.0
+			LIFE    240			※ないと一生出続ける！
+			MOVE    0.0 -0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.05 0.01
+			COLOR   0 0 255 255
+			PATH    data\\MODEL\\petal.x
+		}
+	}
 END
 
 DOWN
@@ -68,6 +98,21 @@ DOWN
 		SPIN 0.0 0.0 0.0
 		COLOR 255 255 255 255
 		PATH data\\MODEL\\Wood.x
+	}
+	GENERATOR{
+		CREATE_TIME 30
+		
+	OBJECT{
+			POS     -100.0 -30.0 30.0
+			POSADD  200.0 0.0 0.0
+			LIFE    240			※ないと一生出続ける！
+			MOVE    0.0 0.2 0.0
+			ROT     0.0 0.0 0.0
+			SPIN    0.0 0.0 0.0
+			SPINADD 0.0 0.05 0.01
+			COLOR   0 255 0 255
+			PATH    data\\MODEL\\petal.x
+		}
 	}
 END
 
