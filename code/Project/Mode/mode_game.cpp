@@ -337,23 +337,23 @@ void CMode_Game::PauseCreate(void)
 
 	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
-	m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+	m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 		D3DXVECTOR3(m_Pause.LeftPos.x, 150.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 
-	m_Menu[1] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+	m_Menu[1] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 		D3DXVECTOR3(m_Pause.LeftPos.x, 250.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 
-	m_Menu[2] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+	m_Menu[2] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 		D3DXVECTOR3(m_Pause.LeftPos.x, 350.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
 		"", CFont::FONT_ROND_B, &pFont);	
 
-	m_Menu[3] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+	m_Menu[3] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 		D3DXVECTOR3(m_Pause.LeftPos.x, 450.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 
-	m_Menu[4] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+	m_Menu[4] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 		D3DXVECTOR3(m_Pause.LeftPos.x, 550.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 }
@@ -364,14 +364,16 @@ void CMode_Game::PauseCreate(void)
 //========================================
 void CMode_Game::PauseMenu(void)
 {
-	// 色
+	// 選択・非選択
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
 		if (m_Menu[nCnt] != NULL) {
-			if (nCnt == m_Pause.nSelect)
-				m_Menu[nCnt]->SetBoxColor(Color{ 0,255,0,255 });
-			else
-				m_Menu[nCnt]->SetBoxColor(INITCOLOR);
+			if (nCnt == m_Pause.nSelect){ 
+				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
+			}
+			else{
+				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
+			}
 		}
 	}
 
