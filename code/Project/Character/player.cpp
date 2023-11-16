@@ -13,7 +13,7 @@
 const int	CPlayer::SWAP_INTERVAL = 30;	// スワップインターバル
 int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
 
-const float CPlayer::SIZE_WIDTH = 8.0f;	// 横幅
+const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
 const float CPlayer::MOVE_SPEED = 0.3f;		// 移動量
@@ -468,7 +468,7 @@ void CPlayer::Move(COLLI_VEC vec)
 		{
 		case COLLI_VEC::X:
 			// 慣性処理
-			Player.move.x += (0.0f - Player.move.x) * 0.13f;
+			Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 			// Ⅹの移動量を修正
 			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
