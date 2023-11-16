@@ -204,9 +204,7 @@ void CMode_Game::Update(void) {
 
 	if (m_state != (int)STATE::PAUSE)
 	{
-		bool isTest = RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START);
-
-		if (isTest)
+		if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START))
 		{
 			SetState((int)STATE::PAUSE);
 		}
@@ -267,8 +265,23 @@ void CMode_Game::ProcessState(const PROCESS process) {
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
-			PauseMenu();
-			PauseSelect();
+
+			RNLib::Polygon2D().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f), 0.0f, false)
+				->SetSize(RNLib::Window().GetCenterX() * 2, RNLib::Window().GetCenterY() * 2)
+				->SetCol(Color{ 0,0,0,120 })
+				->SetPriority(0);
+
+			RNLib::Polygon2D().Put(D3DXVECTOR3(m_Pause.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+				->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
+				->SetCol(Color{ 150,150,150,150 })
+				->SetPriority(0);
+
+			if (m_Pause.bMenu && !m_Pause.bClose) {
+				PauseMenu();
+				PauseSelect();
+			}
+			PauseAnime();
+
 		}break;
 		}
 	}break;
@@ -313,19 +326,36 @@ void CMode_Game::BackGroundPut(Color mincol, Color addcol) {
 //========================================
 void CMode_Game::PauseCreate(void)
 {
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),45.0f,1,1,-1, };
+	m_Pause.LeftPos = D3DXVECTOR3(-340.0f, 0.0f, 0.0f);
+	m_Pause.RightPos = D3DXVECTOR3(2000.0f, 0.0f, 0.0f);
+	m_Pause.LeftTargetPos = D3DXVECTOR3(300.0f, 0.0f, 0.0f);
+	m_Pause.RightTargetPos = D3DXVECTOR3(850.0f, 0.0f, 0.0f);
+	m_Pause.nCntAnime = 0;
+	m_Pause.nSelect = 0;
+	m_Pause.bMenu = false;
+	m_Pause.bClose = false;
+
+	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
 	m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
-		D3DXVECTOR3(640.0f, 200.0f, 0.0f), D3DXVECTOR2(460.0f, 100.0f),
-		"続ける", CFont::FONT_ROND_B, &pFont);
+		D3DXVECTOR3(m_Pause.LeftPos.x, 150.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+		"", CFont::FONT_ROND_B, &pFont);
 
 	m_Menu[1] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
-		D3DXVECTOR3(640.0f, 350.0f, 0.0f), D3DXVECTOR2(460.0f, 100.0f),
-		"やり直す", CFont::FONT_ROND_B, &pFont);
+		D3DXVECTOR3(m_Pause.LeftPos.x, 250.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+		"", CFont::FONT_ROND_B, &pFont);
 
 	m_Menu[2] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
-		D3DXVECTOR3(640.0f, 500.0f, 0.0f), D3DXVECTOR2(460.0f, 100.0f),
-		"選択画面に戻る", CFont::FONT_ROND_B, &pFont);
+		D3DXVECTOR3(m_Pause.LeftPos.x, 350.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+		"", CFont::FONT_ROND_B, &pFont);	
+
+	m_Menu[3] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+		D3DXVECTOR3(m_Pause.LeftPos.x, 450.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+		"", CFont::FONT_ROND_B, &pFont);
+
+	m_Menu[4] = CFontText::Create(CFontText::BOX_NORMAL_RECT,
+		D3DXVECTOR3(m_Pause.LeftPos.x, 550.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+		"", CFont::FONT_ROND_B, &pFont);
 }
 
 //========================================
@@ -337,31 +367,86 @@ void CMode_Game::PauseMenu(void)
 	// 色
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
-		if (m_Menu[nCnt] != NULL)
-		{
-			if (nCnt == m_nSelect)
-			{
+		if (m_Menu[nCnt] != NULL) {
+			if (nCnt == m_Pause.nSelect)
 				m_Menu[nCnt]->SetBoxColor(Color{ 0,255,0,255 });
-			}
 			else
-			{
 				m_Menu[nCnt]->SetBoxColor(INITCOLOR);
-			}
 		}
 	}
 
 	// -- メニュー選択 ---------------------------
 	if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::UP))
 	{
-		m_nSelect--;
+		m_Pause.nSelect--;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::DOWN))
 	{
-		m_nSelect++;
+		m_Pause.nSelect++;
+	}
+	// ループ制御
+	IntLoopControl(&m_Pause.nSelect, MENU_MAX, 0);
+}
+
+//========================================
+// ポーズアニメーションの処理
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Game::PauseAnime(void)
+{
+	// 左画面のアニメーション
+	if (!m_Pause.bMenu)
+	{
+		D3DXVECTOR3 move = INITD3DXVECTOR3;
+		move.x = (m_Pause.LeftTargetPos.x - m_Pause.LeftPos.x) * 0.3f;
+
+		m_Pause.LeftPos.x += move.x;
+		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+		{
+			if (m_Menu[nCnt] != NULL)
+			{
+				m_Menu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+			}
+		}
+
+		if (++m_Pause.nCntAnime == PAUSE_LEFT_ANIME) {
+			m_Pause.LeftPos = m_Pause.LeftTargetPos;
+			m_Pause.nCntAnime = 0;
+			m_Pause.bMenu = true;
+
+			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+			m_Menu[0]->Regeneration("続ける", CFont::FONT_ROND_B, &pFont);
+			m_Menu[1]->Regeneration("やり直す", CFont::FONT_ROND_B, &pFont);
+			m_Menu[2]->Regeneration("選択画面", CFont::FONT_ROND_B, &pFont);
+			m_Menu[3]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont);
+			m_Menu[4]->Regeneration("設定", CFont::FONT_ROND_B, &pFont);
+		}
 	}
 
-	// ループ制御
-	IntLoopControl(&m_nSelect, MENU_MAX, 0);
+	// 閉じるアニメーション
+	if (m_Pause.bClose)
+	{
+		D3DXVECTOR3 move = INITD3DXVECTOR3;
+		move.x = (m_Pause.LeftTargetPos.x - m_Pause.LeftPos.x) * 0.3f;
+
+		m_Pause.LeftPos.x += move.x;
+		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+		{
+			if (m_Menu[nCnt] != NULL)
+			{
+				m_Menu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+			}
+		}
+
+		if (++m_Pause.nCntAnime == PAUSE_LEFT_ANIME) {
+			m_Pause.LeftPos = m_Pause.LeftTargetPos;
+
+			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+			{
+				SetState((int)STATE::NONE);
+			}
+		}
+	}
 }
 
 //========================================
@@ -370,27 +455,34 @@ void CMode_Game::PauseMenu(void)
 //========================================
 void CMode_Game::PauseSelect(void)
 {
-	//if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START))
-	//{
-	//	SetState((int)STATE::NONE);
-	//}
-
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+	if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START) && !m_Pause.bClose)
 	{
-		switch (m_nSelect)
+		m_Pause.bClose = true;
+	}
+
+	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && !m_Pause.bClose)
+	{
+		switch (m_Pause.nSelect)
 		{
 		case MENU_RESUME:
-			SetState((int)STATE::NONE);
+			m_Pause.bClose = true;
 			break;
 		case MENU_RESET:
 			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+			m_Pause.bClose = true;
 			break;
-		case MENU_TITLE:
+		case MENU_SELECT:
 			Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
 			CMode_Title::SetSelect(true);
 			break;
 		}
 
 		ProcessState(PROCESS::UNINIT);
+	}
+
+	if(m_Pause.bClose){ 
+		m_Pause.LeftTargetPos *= -1;
+		m_Pause.RightTargetPos *= -1;
+		m_Pause.nCntAnime = 0;
 	}
 }

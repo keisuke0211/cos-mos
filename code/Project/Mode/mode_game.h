@@ -21,6 +21,9 @@ class CRocketPartsUI;
 // モード(ゲーム)クラス
 class CMode_Game :public CMode {
 public:
+	// *** 定義 ***
+	static const int PAUSE_LEFT_ANIME = 20;		// 画面左のアニメーション時間
+
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
 		NONE,
@@ -32,8 +35,23 @@ public:
 	{
 		MENU_RESUME = 0,// 続ける
 		MENU_RESET,		// やり直す
-		MENU_TITLE,		// タイトルに戻る
+		MENU_SELECT,	// ステージ選択
+		MENU_CONTROLLER,// 操作方法
+		MENU_SETTING,	// 設定
 		MENU_MAX
+	};
+
+	// ポーズ情報
+	struct Pause
+	{
+		D3DXVECTOR3 LeftPos;
+		D3DXVECTOR3 RightPos;
+		D3DXVECTOR3 LeftTargetPos;
+		D3DXVECTOR3 RightTargetPos;
+		int nCntAnime;
+		int nSelect;
+		bool bMenu;
+		bool bClose;
 	};
 
 	//========== [[[ 関数宣言 ]]]
@@ -62,17 +80,18 @@ private:
 	//========== [[[ 関数宣言 ]]]
 	void PauseCreate(void);
 	void PauseSelect(void);
+	void PauseAnime(void);
 	void PauseMenu(void);
 
 	//========== [[[ 変数宣言 ]]]
 	static CPlayer *s_pPlayer;
 	static int m_nPlanetIdx;
 	static int m_nStageIdx;
-	int m_nSelect;
 	CFontText *m_Menu[MENU_MAX];
 	CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;
 	short m_wallModelIdx[2];
+	Pause m_Pause;
 };

@@ -13,7 +13,9 @@
 //========================================
 CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 {
+	m_Info.TexPos = INITD3DXVECTOR3;
 	m_Info.TextBoxCol = INITCOLOR;
+	m_Info.TexMove = INITD3DXVECTOR3;
 	m_Info.FontCol = INITD3DCOLOR;
 	m_Info.TextBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;
@@ -140,11 +142,15 @@ void CFontText::Update()
 {
 	if (m_Info.bTextBok)
 	{
+		m_Info.TexPos += m_Info.TexMove;
+
 		RNLib::Polygon2D().Put(m_Info.TexPos, 0.0f, false)
 			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
 			->SetCol(m_Info.TextBoxCol)
 			->SetTex(m_Info.nTexIdx)
 			->SetPriority(1);
+
+		m_Info.TexMove = INITD3DXVECTOR3;
 	}
 
 	// テキスト生成
@@ -430,6 +436,24 @@ void CFontText::DisapTime(void)
 //================================================================================
 
 //========================================
+// 移動量
+//========================================
+void CFontText::SetMove(D3DXVECTOR3 move)
+{
+	m_Info.TexMove = move;
+
+
+	for (int nWords = 0; nWords < m_Info.nLetterPopCount; nWords++)
+	{
+		if (m_Info.words[nWords] != NULL)
+		{
+			m_Info.words[nWords]->SetMove(move);
+		}
+	}
+
+}
+
+//========================================
 // 文字サイズ
 //========================================
 void CFontText::SetTextSize(float TextSize)
@@ -451,6 +475,7 @@ void CFontText::SetStandTime(int StandTime)
 		StandTime = 0;
 	}
 	m_Info.nStandTime = StandTime;
+	m_Info.bStand = false;
 }
 
 //========================================
@@ -584,7 +609,7 @@ bool CFontText::ChgWords(char* Text, int nIdx, D3DXCOLOR col)
 //========================================
 // 文字変更(全体)　半角のみ
 //========================================
-bool CFontText::ChgText(char* Text, D3DXCOLOR col)
+bool CFontText::ChgHalfSizeText(char* Text, D3DXCOLOR col)
 {
 	int nDigit = strlen(Text);
 	char aString[TXT_MAX];
@@ -621,4 +646,74 @@ bool CFontText::ChgText(char* Text, D3DXCOLOR col)
 		}
 	}
 	return FALSE;
+}
+
+//========================================
+// テキストの再生成
+//========================================
+void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont, FormShadow *Shadow)
+{
+	// -- 破棄 -----------------------
+	{
+		for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++) {
+			if (m_Info.words[wordsCount] != NULL)
+				m_Info.words[wordsCount]->Uninit();
+		}
+
+		if (m_Info.words != NULL) {
+			delete[] m_Info.words;
+			m_Info.words = NULL;
+		}
+
+		if (m_Info.aShadow.bShadow) {
+			for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++) {
+				if (m_Info.aShadow.shadow[wordsCount] != NULL)
+					m_Info.aShadow.shadow[wordsCount]->Uninit();
+			}
+
+			if (m_Info.aShadow.shadow != NULL) {
+				delete[] m_Info.aShadow.shadow;
+				m_Info.aShadow.shadow = NULL;
+			}
+		}
+	}
+
+	// -- 生成 -----------------------
+	m_Info.FontType = FontType;
+
+	if (pFont != NULL){
+		m_Info.FontCol = pFont->col;
+		SetTextSize(pFont->fTextSize);
+		SetStandTime(pFont->nStandTime);
+		EraseTime(pFont->nEraseTime);
+		TextLetter(Text, pFont->nAppearTime);
+	}
+	else if (pFont == NULL){
+		m_Info.FontCol = INITD3DCOLOR;
+		SetTextSize(20.0f);
+		SetStandTime(10);
+		EraseTime(1);
+		TextLetter(Text, 1);
+	}
+
+	if (Shadow == NULL){
+		m_Info.aShadow.col = INITD3DCOLOR;
+		m_Info.aShadow.AddPos = INITD3DXVECTOR3;
+		m_Info.aShadow.AddSize = INITD3DXVECTOR2;
+		m_Info.aShadow.bShadow = false;
+	}
+	else if (Shadow != NULL){
+		if (Shadow->bShadow){
+			m_Info.aShadow.shadow = new CWords*[m_Info.nTextLength];
+
+			for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++){
+				m_Info.aShadow.shadow[wordsCount] = NULL;
+			}
+
+			m_Info.aShadow.col = Shadow->col;
+			m_Info.aShadow.AddPos = Shadow->AddPos;
+			m_Info.aShadow.AddSize = Shadow->AddSize;
+			m_Info.aShadow.bShadow = Shadow->bShadow;
+		}
+	}
 }
