@@ -71,7 +71,7 @@ public:
 	void Uninit(void);
 	void Update(void);
 	short         Load                (const char* loadPath, short idx = NONEDATA);
-	CPlay*        Play                (const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space, const Pos3D& pos, const float& dist);
+	CPlay*        Play                (const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space = SPACE::NONE, const Pos3D& pos = INITPOS3D, const float& dist = 0.0f);
 	void          Stop                (const CATEGORY& category);	// (•ª—ÞŽw’è)
 	void          Stop                (void);						// (‘S‚Ä)
 	void          ChangeCategoryVolume(const CATEGORY& category, float& volume);
