@@ -19,28 +19,7 @@
 //================================================================================
 static const int s_PlanetMaxSummon = 8;		// 出現する位置の最大数
 static const int s_StarMaxSummon = 10;		// 出現する位置の最大数
-static const D3DXVECTOR3 s_PlanetSummonPos[s_PlanetMaxSummon] = {	// 惑星の出現する位置
-	D3DXVECTOR3(-300.0f, 300.0f, 300.0f),
-	D3DXVECTOR3(0.0f,	 200.0f, 300.0f),
-	D3DXVECTOR3(200.0f,  300.0f, 300.0f),
-	D3DXVECTOR3(-100.0f, 100.0f,   300.0f),
-	D3DXVECTOR3(100.0f,	 100.0f,   300.0f),
-	D3DXVECTOR3(-300.0f, -200.0f,300.0f),
-	D3DXVECTOR3(0.0f,	 -200.0f,300.0f),
-	D3DXVECTOR3(100.0f,  -300.0f,300.0f),
-};
-static const D3DXVECTOR3 s_StarSummonPos[s_StarMaxSummon] = {	// 星の出現する位置
-	D3DXVECTOR3(-300.0f, 300.0f, 500.0f),
-	D3DXVECTOR3(0.0f,	 200.0f, 500.0f),
-	D3DXVECTOR3(200.0f,  300.0f, 500.0f),
-	D3DXVECTOR3(-100.0f, 100.0f, 500.0f),
-	D3DXVECTOR3(100.0f,	 100.0f, 500.0f),
-	D3DXVECTOR3(-300.0f, 200.0f,500.0f),
-	D3DXVECTOR3(0.0f,	 -200.0f,500.0f),
-	D3DXVECTOR3(-400.0f, -300.0f,500.0f),
-	D3DXVECTOR3(400.0f,  -100.0f ,500.0f),
-	D3DXVECTOR3(500.0f,  0.0f ,500.0f),
-};
+
 Color CMode_Game::m_BgColorUp = INITCOLOR;
 Color CMode_Game::m_BgColorDown = INITCOLOR;
 CPlayer *CMode_Game::s_pPlayer = NULL;
@@ -69,13 +48,7 @@ CMode_Game::~CMode_Game(void) {
 	m_cameraUp->Delete();
 	m_cameraDown->Delete();
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		if (m_Menu[nCnt] != NULL){
-			m_Menu[nCnt]->Uninit();
-			m_Menu[nCnt] = NULL;
-		}
-	}
+	TextRelease(TEXT_ALL);
 }
 
 //========================================
@@ -96,7 +69,6 @@ void CMode_Game::Init(void) {
 
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
-	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
 	m_rocketparts = CRocketPartsUI::Create();
 
@@ -125,9 +97,12 @@ void CMode_Game::Init(void) {
 	m_cameraDown->SetClipping(true);
 	m_cameraDown->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++){
 		m_Menu[nCnt] = NULL;
+	}
+
+	for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+		m_InputText[nCnt] = NULL;
 	}
 
 	// 壁モデル読み込み
@@ -257,17 +232,12 @@ void CMode_Game::ProcessState(const PROCESS process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
 			PauseCreate();
+
+			m_Pause.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
-			for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-			{
-				if (m_Menu[nCnt] != NULL)
-				{
-					m_Menu[nCnt]->Uninit();
-					m_Menu[nCnt] = NULL;
-				}
-			}
+			TextRelease(TEXT_ALL);
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
@@ -282,6 +252,19 @@ void CMode_Game::ProcessState(const PROCESS process) {
 				->SetCol(Color{ 150,150,150,150 })
 				->SetPriority(0);
 
+			RNLib::Polygon2D().Put(D3DXVECTOR3(m_Pause.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+				->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
+				->SetCol(Color{ 150,150,150,150 })
+				->SetPriority(0);
+
+			if (m_Pause.nSelect == MENU_CONTROLLER)
+			{
+				RNLib::Polygon2D().Put(D3DXVECTOR3(m_Pause.RightPos.x, 400.0f, 100.0f), 0.0f, false)
+					->SetSize(500.0f, 600.0f)
+					->SetTex(m_Pause.BoxTex)
+					->SetPriority(0);
+			}
+
 			if (m_Pause.bMenu && !m_Pause.bClose) {
 				PauseMenu();
 				PauseSelect();
@@ -295,51 +278,25 @@ void CMode_Game::ProcessState(const PROCESS process) {
 }
 
 //========================================
-// 背景の生成処理
-// Author:KOMURO HIROMU
-//========================================
-void CMode_Game::BackGroundPut(Color mincol, Color addcol) {
-
-	D3DXVECTOR3 Planpos,Starpos,rot;
-	Color col;
-	CPlanet::STAR_TYPE type;
-
-	for (int nCntPut = 0; nCntPut < s_PlanetMaxSummon; nCntPut++)
-	{
-		// 惑星の設定
-		Planpos = s_PlanetSummonPos[nCntPut];	// 出現する位置の設定
-		Planpos += D3DXVECTOR3(rand() % 100 - 100, rand() % 100 - 100, rand() % 150 - 50);	// 位置の設定
-
-		type = (CPlanet::STAR_TYPE)(rand() % (int)CPlanet::STAR_TYPE::MAX);	// 種類の設定
-		col = Color{ mincol.r + rand() % addcol.r,mincol.g + rand() % addcol.g,mincol.b + rand() % addcol.b,255 };	// 色の設定
-		rot = D3DXVECTOR3(rand() % 6 - 3, rand() % 6 - 3, rand() % 6 - 3);	// 向きの設定
-		//Manager::BlockMgr()->PlanetCreate(Planpos, rot, type, col);	// 惑星の生成
-	}
-
-	for (int nCntPut = 0; nCntPut < s_StarMaxSummon; nCntPut++)
-	{
-		// 星の設定
-		Starpos = s_StarSummonPos[nCntPut];	// 出現する位置の設定
-		Starpos += D3DXVECTOR3(rand() % 50 - 50, rand() % 50 - 50, 0.0f);	// 位置の設定
-
-		//Manager::BlockMgr()->StarCreate(Starpos, INITD3DXVECTOR3);	// 星の生成
-	}
-}
-
-//========================================
 // ポーズ生成の処理
 // Author:KEISUKE OTONO
 //========================================
 void CMode_Game::PauseCreate(void)
 {
 	m_Pause.LeftPos = D3DXVECTOR3(-340.0f, 0.0f, 0.0f);
-	m_Pause.RightPos = D3DXVECTOR3(2000.0f, 0.0f, 0.0f);
-	m_Pause.LeftTargetPos = D3DXVECTOR3(300.0f, 0.0f, 0.0f);
-	m_Pause.RightTargetPos = D3DXVECTOR3(850.0f, 0.0f, 0.0f);
-	m_Pause.nCntAnime = 0;
+	m_Pause.RightPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+	m_Pause.LeftTargetPos = D3DXVECTOR3(280.0f, 0.0f, 0.0f);
+	m_Pause.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+	m_Pause.nCntLeftAnime = 0;
+	m_Pause.nCntRightAnime = 0;
 	m_Pause.nSelect = 0;
 	m_Pause.bMenu = false;
+	m_Pause.bRightMove = false;
+	m_Pause.bRightDisp = false;
 	m_Pause.bClose = false;
+
+	m_Pause.bContRoller = false;
+	m_Pause.bSetting = false;
 
 	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
@@ -392,6 +349,20 @@ void CMode_Game::PauseMenu(void)
 	{
 		m_Pause.nSelect++;
 	}
+
+	// アニメーション
+	if ((m_Pause.nSelect == MENU_CONTROLLER && !m_Pause.bRightMove && !m_Pause.bRightDisp) ||
+		m_Pause.nSelect == MENU_SETTING && !m_Pause.bRightMove && !m_Pause.bRightDisp){
+		InputText();
+	}
+	else if(
+		(m_Pause.nSelect != MENU_CONTROLLER && m_Pause.nSelect != MENU_SETTING && !m_Pause.bRightMove && m_Pause.bRightDisp) ||
+		(m_Pause.nSelect == MENU_CONTROLLER && m_Pause.bSetting && !m_Pause.bRightMove && m_Pause.bRightDisp) ||
+		(m_Pause.nSelect == MENU_SETTING && m_Pause.bContRoller && !m_Pause.bRightMove && m_Pause.bRightDisp)){
+		TextRelease(TEXT_INPUT);
+		m_Pause.bRightMove = true;
+	}
+
 	// ループ制御
 	IntLoopControl(&m_Pause.nSelect, MENU_MAX, 0);
 }
@@ -403,7 +374,7 @@ void CMode_Game::PauseMenu(void)
 void CMode_Game::PauseAnime(void)
 {
 	// 左画面のアニメーション
-	if (!m_Pause.bMenu)
+	if (!m_Pause.bMenu || m_Pause.bClose)
 	{
 		D3DXVECTOR3 move = INITD3DXVECTOR3;
 		move.x = (m_Pause.LeftTargetPos.x - m_Pause.LeftPos.x) * 0.3f;
@@ -417,41 +388,71 @@ void CMode_Game::PauseAnime(void)
 			}
 		}
 
-		if (++m_Pause.nCntAnime == PAUSE_LEFT_ANIME) {
+		if (++m_Pause.nCntLeftAnime == PAUSE_LEFT_ANIME) {
 			m_Pause.LeftPos = m_Pause.LeftTargetPos;
-			m_Pause.nCntAnime = 0;
-			m_Pause.bMenu = true;
+			m_Pause.nCntLeftAnime = 0;
+			if (!m_Pause.bClose){
+				m_Pause.bMenu = true;
 
-			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-			m_Menu[0]->Regeneration("続ける", CFont::FONT_ROND_B, &pFont);
-			m_Menu[1]->Regeneration("やり直す", CFont::FONT_ROND_B, &pFont);
-			m_Menu[2]->Regeneration("選択画面", CFont::FONT_ROND_B, &pFont);
-			m_Menu[3]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont);
-			m_Menu[4]->Regeneration("設定", CFont::FONT_ROND_B, &pFont);
+				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+				m_Menu[0]->Regeneration("続ける", CFont::FONT_ROND_B, &pFont);
+				m_Menu[1]->Regeneration("やり直す", CFont::FONT_ROND_B, &pFont);
+				m_Menu[2]->Regeneration("選択画面", CFont::FONT_ROND_B, &pFont);
+				m_Menu[3]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont);
+				m_Menu[4]->Regeneration("設定", CFont::FONT_ROND_B, &pFont);
+			}
+			else if (m_Pause.bClose){
+				if (RNLib::Transition().GetState() == CTransition::STATE::NONE){
+					SetState((int)STATE::NONE);
+					TextRelease(TEXT_ALL);
+				}
+			}
 		}
 	}
 
-	// 閉じるアニメーション
-	if (m_Pause.bClose)
+	// 右画面のアニメーション
+	if (m_Pause.bRightMove || m_Pause.bClose)
 	{
 		D3DXVECTOR3 move = INITD3DXVECTOR3;
-		move.x = (m_Pause.LeftTargetPos.x - m_Pause.LeftPos.x) * 0.3f;
+		move.x = (m_Pause.RightTargetPos.x - m_Pause.RightPos.x) * 0.3f;
 
-		m_Pause.LeftPos.x += move.x;
-		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-		{
-			if (m_Menu[nCnt] != NULL)
-			{
-				m_Menu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+		m_Pause.RightPos.x += move.x;
+		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+			if (m_InputText[nCnt] != NULL) {
+				m_InputText[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
 			}
 		}
 
-		if (++m_Pause.nCntAnime == PAUSE_LEFT_ANIME) {
-			m_Pause.LeftPos = m_Pause.LeftTargetPos;
+		if (++m_Pause.nCntRightAnime == PAUSE_RIGHT_ANIME) {
+			m_Pause.RightPos = m_Pause.RightTargetPos;
+			m_Pause.bRightMove = false;
+			m_Pause.nCntRightAnime = 0;
 
-			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+			if (!m_Pause.bRightDisp)
 			{
-				SetState((int)STATE::NONE);
+				m_Pause.bRightDisp = true;
+				m_Pause.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+				if (m_Pause.nSelect == MENU_CONTROLLER) {
+					m_InputText[INPUT_TITLE]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_MOVE]->Regeneration("・移動　　：左スティック", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_JUMP]->Regeneration("・ジャンプ：Ｂ", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_SWAP]->Regeneration("・スワップ：Ｙ", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_DECISION]->Regeneration("・決定　　：Ａ", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_BACK]->Regeneration("・戻る　　：Ｂ", CFont::FONT_ROND_B, &pFont);
+				}
+				if (m_Pause.nSelect == MENU_SETTING) {
+					m_InputText[INPUT_TITLE]->Regeneration("設定", CFont::FONT_ROND_B, &pFont);
+				}
+			}
+			else if (m_Pause.bRightDisp) {
+				m_Pause.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+				m_Pause.bRightDisp = false;
+
+				if (m_Pause.bContRoller)
+					m_Pause.bContRoller = false;
+				else if (m_Pause.bSetting)
+					m_Pause.bSetting = false;
 			}
 		}
 	}
@@ -488,9 +489,95 @@ void CMode_Game::PauseSelect(void)
 
 	if(m_Pause.bClose){ 
 		m_Pause.LeftTargetPos *= -1;
-		m_Pause.RightTargetPos *= -1;
-		m_Pause.nCntAnime = 0;
+		m_Pause.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+		m_Pause.nCntLeftAnime = 0;
 
 		ProcessState(PROCESS::UNINIT);
+	}
+}
+
+//========================================
+// 操作方法のテキスト生成
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Game::InputText(void)
+{
+	m_Pause.bRightMove = true;
+
+	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
+
+	if (m_InputText != NULL)
+		TextRelease(TEXT_INPUT);
+
+	m_InputText[INPUT_TITLE] = CFontText::Create(
+		CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(m_Pause.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+		"", CFont::FONT_ROND_B, &pFont);
+
+	if (m_Pause.nSelect == MENU_CONTROLLER) {
+		m_InputText[INPUT_MOVE] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Pause.RightPos.x - 50, 150.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont, false, false);
+
+		m_InputText[INPUT_JUMP] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Pause.RightPos.x - 50, 200.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont, false, false);
+
+		m_InputText[INPUT_SWAP] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Pause.RightPos.x - 50, 250.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont, false, false);
+
+		m_InputText[INPUT_DECISION] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Pause.RightPos.x - 50, 300.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont, false, false);
+
+		m_InputText[INPUT_BACK] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Pause.RightPos.x - 50, 350.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont, false, false);
+
+		m_Pause.bContRoller = true;
+	}
+	else if (m_Pause.nSelect == MENU_SETTING) {
+		m_Pause.bSetting = true;
+	}
+}
+
+//========================================
+// テキストの開放
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Game::TextRelease(TEXT type)
+{
+	switch (type)
+	{
+	case CMode_Game::TEXT_MENU:
+		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
+			if (m_Menu[nCnt] != NULL) {
+				m_Menu[nCnt]->Uninit();
+				m_Menu[nCnt] = NULL;
+			}
+		}
+		break;
+	case CMode_Game::TEXT_INPUT:
+		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+			if (m_InputText[nCnt] != NULL) {
+				m_InputText[nCnt]->Uninit();
+				m_InputText[nCnt] = NULL;
+			}
+		}
+		break;
+	case CMode_Game::TEXT_ALL:
+		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
+			if (m_Menu[nCnt] != NULL) {
+				m_Menu[nCnt]->Uninit();
+				m_Menu[nCnt] = NULL;
+			}
+		}
+		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+			if (m_InputText[nCnt] != NULL) {
+				m_InputText[nCnt]->Uninit();
+				m_InputText[nCnt] = NULL;
+			}
+		}
+		break;
 	}
 }

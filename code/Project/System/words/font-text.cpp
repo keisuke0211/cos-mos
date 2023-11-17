@@ -140,18 +140,18 @@ void CFontText::Uninit()
 //========================================
 void CFontText::Update()
 {
+	m_Info.TexPos += m_Info.TexMove;
+
 	if (m_Info.bTextBok)
 	{
-		m_Info.TexPos += m_Info.TexMove;
-
 		RNLib::Polygon2D().Put(m_Info.TexPos, 0.0f, false)
 			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
 			->SetCol(m_Info.TextBoxCol)
 			->SetTex(m_Info.nTexIdx)
 			->SetPriority(1);
-
-		m_Info.TexMove = INITD3DXVECTOR3;
 	}
+
+	m_Info.TexMove = INITD3DXVECTOR3;
 
 	// テキスト生成
 	if (!m_Info.bStand)
@@ -229,7 +229,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 
 		if (bBoxSize)
 		{
-			pText->m_Info.TexSize.x = BOX_SIZE * (pText->m_Info.nTextLength * 0.5f + 2);
+			pText->m_Info.TexSize.x = pText->m_Info.fTextSize * (pText->m_Info.nTextLength * 0.5f + 1);
 		}
 
 		if (Shadow == NULL)
