@@ -375,7 +375,9 @@ void CPlayer::Swap(void)
 	{
 		// インターバル設定
 		s_nSwapInterval = SWAP_INTERVAL;
-		s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+
+		//ロケットに乗っていないときにサウンド再生
+		if(!s_bRideRocket)	s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
 
 		for each (Info &Player in m_aInfo)
 		{
