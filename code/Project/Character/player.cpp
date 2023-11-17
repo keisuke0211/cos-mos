@@ -319,7 +319,7 @@ void CPlayer::ActionControl(void)
 		{
 			Player.bRide = false;
 			Player.bGoal = false;
-			Player.pos.x = Player.pos.x - 20.0f;
+			Player.move.x *= -2.0f;
 		}
 
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
