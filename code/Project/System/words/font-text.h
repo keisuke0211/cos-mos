@@ -57,6 +57,9 @@ public:
 	{
 		BOX_NORMAL_GRAY = 0,	// ノーマル(灰色)
 		BOX_NORMAL_BLUE,		// ノーマル(青)
+		BOX_NORMAL_RED,			// ノーマル(赤)
+		BOX_NORMAL_GREEN,		// ノーマル(緑)
+		BOX_NONE,				// 無し
 		BOX_MAX
 	};
 

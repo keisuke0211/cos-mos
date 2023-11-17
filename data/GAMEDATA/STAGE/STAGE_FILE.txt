@@ -12,8 +12,8 @@ NUM_PLANET = 3
 # ステージ数 / モデル / 惑星名
 #========================================
 PLANET = 4 data\MODEL\Polaris.x ポラリス
-PLANET = 3 data\MODEL\Regulus.x パッパラパー星
-PLANET = 3 data\MODEL\Sirius.x シリウス
+PLANET = 5 data\MODEL\Regulus.x パッパラパー星
+PLANET = 5 data\MODEL\Sirius.x シリウス
 
 #========================================
 # 惑星番号 / ステージのファイル名 / ステージ名
@@ -25,9 +25,13 @@ STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-5.csv 1-5
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv 2-1
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 2-2
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 2-3
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-4.csv 2-4
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-5.csv 2-5
 STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-1.csv 3-1
 STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-2.csv 3-2
 STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-3.csv 3-3
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-4.csv 3-4
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-5.csv 3-5
 
 #========================================
 #||||||||||||||||||||||||||||||||||||||||
