@@ -73,13 +73,12 @@ public:
 		int nCntLeftAnime;
 		int nCntRightAnime;
 		int nSelect;
+		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
 		bool bClose;
 
-		bool bContRoller;
-		bool bSetting;
 		int BoxTex;
 	};
 
@@ -119,6 +118,8 @@ private:
 	static int m_nPlanetIdx;
 	static int m_nStageIdx;
 	CFontText *m_Menu[MENU_MAX];
+	CFontText *m_RightText[INPUT_MAX];
+	CRocketPartsUI *m_rocketparts;
 	CFontText *m_InputText[INPUT_MAX];
 	static CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
@@ -130,4 +131,15 @@ private:
 	short m_BGMIdx;
 
 	CSound::CPlay* play;
+
+
+	char m_RightTxt[INPUT_MAX][TXT_MAX] = {
+		{"操作方法"},
+		{"・移動　　：左スティック"},
+		{"・ジャンプ：Ｂ"},
+		{"・スワップ：Ｙ"},
+		{"・決定　　：Ａ"},
+		{"・戻る　　：Ｂ"},
+	};
+
 };

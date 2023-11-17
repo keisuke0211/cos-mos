@@ -177,6 +177,13 @@ void CMode_Game::Update(void) {
 			->SetPriority(-2);
 	}
 
+	// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
+	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0])
+		->SetPriority(-1);
+	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1])
+		->SetPriority(-1);
+
+	m_rocketparts->Update();
 	if (m_rocketparts != NULL)
 	{
 		m_rocketparts->Update();
