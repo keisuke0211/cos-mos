@@ -69,7 +69,6 @@ void CMode_Game::Init(void) {
 
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
-	BackGroundPut(Color{ 100,100,100,255 }, Color{ 100,100,100,255 });
 
 	m_rocketparts = CRocketPartsUI::Create();
 
