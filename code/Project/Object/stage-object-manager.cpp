@@ -301,8 +301,6 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 	pObj->SetPos(pos);
 	pObj->Init();
 
-	CRocketPartsUI::Create();
-
 	return pObj;
 }
 

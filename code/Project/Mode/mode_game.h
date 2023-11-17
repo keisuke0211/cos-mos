@@ -97,6 +97,7 @@ public:
 	static void SetStage(int planet, int stage) { m_nPlanetIdx = planet; m_nStageIdx = stage; }
 	static void SetBgUpColor(Color color) { m_BgColorUp = color; }
 	static void SetBgDownColor(Color color) { m_BgColorDown = color; }
+	static void SetRocketParts(CRocketPartsUI *rctpar) { m_rocketparts = rctpar; }
 
 	// -- Žæ“¾ -------------------------------------------------------------------
 	static int GetStage(void)    { return m_nStageIdx;   }
@@ -119,7 +120,7 @@ private:
 	static int m_nStageIdx;
 	CFontText *m_Menu[MENU_MAX];
 	CFontText *m_InputText[INPUT_MAX];
-	CRocketPartsUI *m_rocketparts;
+	static CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;

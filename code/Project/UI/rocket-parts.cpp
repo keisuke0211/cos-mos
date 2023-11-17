@@ -8,8 +8,6 @@
 #include "../main.h"
 #include "../Character/player.h"
 
-#define NUM (2)	//êî
-
 //ê√ìIÉÅÉìÉoïœêî
 bool CRocketPartsUI::m_bRocketStg = false;
 //========================================
@@ -22,6 +20,7 @@ CRocketPartsUI::CRocketPartsUI(void) {
 	m_TexIdx = RNLib::Texture().Load("data\\TEXTURE\\rocket_001.png");
 	m_colorA = 100;
 	m_num = 0;
+	m_state = NULL;
 }
 
 //========================================
@@ -39,7 +38,9 @@ void CRocketPartsUI::Init(void) {
 
 	m_pos = D3DXVECTOR3(1000.0f, 50.0f, 0.0f);
 
-	for (int nUI = 0; nUI < NUM; nUI++)
+	m_state = new STATE[CParts::GetNumAll()];
+
+	for (int nUI = 0; nUI < CParts::GetNumAll(); nUI++)
 	{
 		m_state[nUI] = STATE::NONE;
 	}
@@ -68,7 +69,7 @@ void CRocketPartsUI::Update(void) {
 			m_state[m_num++] = STATE::OBTAIN;
 		}
 
-		for (int nUI = 0; nUI < NUM; nUI++)
+		for (int nUI = 0; nUI < CParts::GetNumAll(); nUI++)
 		{
 			if (m_state[nUI] == STATE::NONE)
 			{
