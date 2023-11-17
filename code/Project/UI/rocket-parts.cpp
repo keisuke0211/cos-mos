@@ -73,7 +73,7 @@ void CRocketPartsUI::Update(void) {
 		{
 			if (m_state[nUI] == STATE::NONE)
 			{
-				m_colorA = 100;
+				m_colorA = 50;
 			}
 			else if (m_state[nUI] == STATE::OBTAIN)
 			{
