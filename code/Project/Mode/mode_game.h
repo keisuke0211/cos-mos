@@ -22,7 +22,8 @@ class CRocketPartsUI;
 class CMode_Game :public CMode {
 public:
 	// *** 定義 ***
-	static const int PAUSE_LEFT_ANIME = 20;		// 画面左のアニメーション時間
+	static const int PAUSE_LEFT_ANIME = 20;			// 画面左のアニメーション時間
+	static const int PAUSE_RIGHT_ANIME = 20;		// 画面右のアニメーション時間
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -41,6 +42,27 @@ public:
 		MENU_MAX
 	};
 
+	// 操作方法
+	enum CONTROLLER
+	{
+		INPUT_TITLE = 0,// タイトル
+		INPUT_MOVE,		// 移動
+		INPUT_JUMP,		// ジャンプ
+		INPUT_SWAP,		// スワップ
+		INPUT_DECISION,	// 決定
+		INPUT_BACK,		// 戻る
+		INPUT_MAX
+	};
+
+	// テキスト
+	enum TEXT
+	{
+		TEXT_MENU = 0,	// メニュー
+		TEXT_INPUT,		// 操作方法
+		TEXT_ALL,		// 全部
+		TEXT_MAX
+	};
+
 	// ポーズ情報
 	struct Pause
 	{
@@ -48,10 +70,17 @@ public:
 		D3DXVECTOR3 RightPos;
 		D3DXVECTOR3 LeftTargetPos;
 		D3DXVECTOR3 RightTargetPos;
-		int nCntAnime;
+		int nCntLeftAnime;
+		int nCntRightAnime;
 		int nSelect;
 		bool bMenu;
+		bool bRightMove;
+		bool bRightDisp;
 		bool bClose;
+
+		bool bContRoller;
+		bool bSetting;
+		int BoxTex;
 	};
 
 	//========== [[[ 関数宣言 ]]]
@@ -82,12 +111,15 @@ private:
 	void PauseSelect(void);
 	void PauseAnime(void);
 	void PauseMenu(void);
+	void InputText(void);
+	void TextRelease(TEXT type);
 
 	//========== [[[ 変数宣言 ]]]
 	static CPlayer *s_pPlayer;
 	static int m_nPlanetIdx;
 	static int m_nStageIdx;
 	CFontText *m_Menu[MENU_MAX];
+	CFontText *m_InputText[INPUT_MAX];
 	CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
