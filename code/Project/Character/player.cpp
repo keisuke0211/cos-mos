@@ -1582,8 +1582,7 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			// 表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE)
 			{
-				if (!pInfo->bLandPile &&
-					pInfo->posOld.y > pInfo->pos.y)
+				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
 					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
@@ -1610,9 +1609,7 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			// 裏の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::BEHIND)
 			{
-				pInfo->move.y = 0.0f;
-
-				if (pInfo->posOld.y < pInfo->pos.y)
+				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
 					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
@@ -1624,6 +1621,7 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 					pPile->CaveInTrunkHeight(pColli->minPos.y - pInfo->pos.y + SIZE_HEIGHT);
 				}
 
+				pInfo->move.y = 0.0f;
 				pInfo->bLandPile = true;// 乗った
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
