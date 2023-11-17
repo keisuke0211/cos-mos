@@ -168,18 +168,20 @@ void CMode_Game::Update(void) {
 		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
 			->SetTex_Camera(m_cameraUp)
 			->SetSize(windowWidth, windowHeightHalf)
-			->SetPriority(-1);
+			->SetPriority(-2);
 
 		// ‰º
 		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
 			->SetTex_Camera(m_cameraDown)
 			->SetSize(windowWidth, windowHeightHalf)
-			->SetPriority(-1);
+			->SetPriority(-2);
 	}
 
 	// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
-	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0]);
-	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1]);
+	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0])
+		->SetPriority(-1);
+	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1])
+		->SetPriority(-1);
 
 	m_rocketparts->Update();
 
