@@ -365,7 +365,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "RNData\\Texture\\PrufenMat_0.PNG";
+    "RNData\\Texture\\Tile.PNG";
    }
   }
   Material {
@@ -374,7 +374,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "RNData\\Texture\\PrufenMat_1.PNG";
+    "RNData\\Texture\\Grid.PNG";
    }
   }
   Material {
@@ -383,7 +383,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.500000;0.000000;;
    TextureFilename {
-    "RNData\\Texture\\PrufenMat_1.PNG";
+    "RNData\\Texture\\Grid.PNG";
    }
   }
   Material {
@@ -392,7 +392,7 @@ Mesh {
    0.500000;0.500000;0.500000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "RNData\\Texture\\PrufenMat_1.PNG";
+    "RNData\\Texture\\Grid.PNG";
    }
   }
  }

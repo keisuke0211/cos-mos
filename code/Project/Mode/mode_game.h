@@ -73,13 +73,12 @@ public:
 		int nCntLeftAnime;
 		int nCntRightAnime;
 		int nSelect;
+		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
 		bool bClose;
 
-		bool bContRoller;
-		bool bSetting;
 		int BoxTex;
 	};
 
@@ -97,6 +96,7 @@ public:
 	static void SetStage(int planet, int stage) { m_nPlanetIdx = planet; m_nStageIdx = stage; }
 	static void SetBgUpColor(Color color) { m_BgColorUp = color; }
 	static void SetBgDownColor(Color color) { m_BgColorDown = color; }
+	static void SetRocketParts(CRocketPartsUI *rctpar) { m_rocketparts = rctpar; }
 
 	// -- 取得 -------------------------------------------------------------------
 	static int GetStage(void)    { return m_nStageIdx;   }
@@ -118,8 +118,9 @@ private:
 	static int m_nPlanetIdx;
 	static int m_nStageIdx;
 	CFontText *m_Menu[MENU_MAX];
+	CFontText *m_RightText[INPUT_MAX];
 	CFontText *m_InputText[INPUT_MAX];
-	CRocketPartsUI *m_rocketparts;
+	static CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;
@@ -129,4 +130,15 @@ private:
 	short m_BGMIdx;
 
 	CSound::CPlay* play;
+
+
+	char m_RightTxt[INPUT_MAX][TXT_MAX] = {
+		{"操作方法"},
+		{"・移動　　：左スティック"},
+		{"・ジャンプ：Ｂ"},
+		{"・スワップ：Ｙ"},
+		{"・決定　　：Ａ"},
+		{"・戻る　　：Ｂ"},
+	};
+
 };

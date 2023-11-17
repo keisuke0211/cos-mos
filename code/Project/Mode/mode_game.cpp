@@ -28,6 +28,7 @@ CCamera* CMode_Game::m_cameraUp = NULL;
 CCamera* CMode_Game::m_cameraDown = NULL;
 int CMode_Game::m_nStageIdx = 0;
 int CMode_Game::m_nPlanetIdx = 0;
+CRocketPartsUI *CMode_Game::m_rocketparts = NULL;
 
 //========================================
 // コンストラクタ
@@ -37,6 +38,7 @@ CMode_Game::CMode_Game(void) {
 
 	m_cameraUp   = NULL;
 	m_cameraDown = NULL;
+	m_rocketparts = NULL;
 }
 
 //========================================
@@ -70,8 +72,6 @@ void CMode_Game::Init(void) {
 	Manager::BlockMgr()->Load();
 	Manager::BlockMgr()->ShiningWaveCreate();
 
-	m_rocketparts = CRocketPartsUI::Create();
-
 	if (s_pPlayer == NULL)
 		s_pPlayer = CPlayer::Create();
 
@@ -102,7 +102,7 @@ void CMode_Game::Init(void) {
 	}
 
 	for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
-		m_InputText[nCnt] = NULL;
+		m_RightText[nCnt] = NULL;
 	}
 
 	// 壁モデル読み込み
@@ -168,20 +168,31 @@ void CMode_Game::Update(void) {
 		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
 			->SetTex_Camera(m_cameraUp)
 			->SetSize(windowWidth, windowHeightHalf)
-			->SetPriority(-1);
+			->SetPriority(-2);
 
 		// 下
 		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
 			->SetTex_Camera(m_cameraDown)
 			->SetSize(windowWidth, windowHeightHalf)
-			->SetPriority(-1);
+			->SetPriority(-2);
 	}
 
 	// [[[ 壁モデル描画 ]]]
-	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0]);
-	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1]);
+	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0])
+		->SetPriority(-1);
+	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1])
+		->SetPriority(-1);
 
-	m_rocketparts->Update();
+	if (m_rocketparts != NULL)
+	{
+		m_rocketparts->Update();
+	}
+
+	// [[[ 壁モデル描画 ]]]
+	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0])
+		->SetPriority(-1);
+	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1])
+		->SetPriority(-1);
 
 	if (m_state != (int)STATE::PAUSE)
 	{
@@ -293,32 +304,16 @@ void CMode_Game::PauseCreate(void)
 	m_Pause.bMenu = false;
 	m_Pause.bRightMove = false;
 	m_Pause.bRightDisp = false;
+	m_Pause.nRightTextType = 0;
 	m_Pause.bClose = false;
-
-	m_Pause.bContRoller = false;
-	m_Pause.bSetting = false;
 
 	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
-	m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-		D3DXVECTOR3(m_Pause.LeftPos.x, 150.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-		"", CFont::FONT_ROND_B, &pFont);
-
-	m_Menu[1] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-		D3DXVECTOR3(m_Pause.LeftPos.x, 250.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-		"", CFont::FONT_ROND_B, &pFont);
-
-	m_Menu[2] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-		D3DXVECTOR3(m_Pause.LeftPos.x, 350.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-		"", CFont::FONT_ROND_B, &pFont);	
-
-	m_Menu[3] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-		D3DXVECTOR3(m_Pause.LeftPos.x, 450.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-		"", CFont::FONT_ROND_B, &pFont);
-
-	m_Menu[4] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-		D3DXVECTOR3(m_Pause.LeftPos.x, 550.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-		"", CFont::FONT_ROND_B, &pFont);
+	for (int nText = MENU_RESUME; nText < MENU_MAX; nText++) {
+		m_Menu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Pause.LeftPos.x - 50, 150.0f + (100.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont);
+	}
 }
 
 //========================================
@@ -355,10 +350,7 @@ void CMode_Game::PauseMenu(void)
 		m_Pause.nSelect == MENU_SETTING && !m_Pause.bRightMove && !m_Pause.bRightDisp){
 		InputText();
 	}
-	else if(
-		(m_Pause.nSelect != MENU_CONTROLLER && m_Pause.nSelect != MENU_SETTING && !m_Pause.bRightMove && m_Pause.bRightDisp) ||
-		(m_Pause.nSelect == MENU_CONTROLLER && m_Pause.bSetting && !m_Pause.bRightMove && m_Pause.bRightDisp) ||
-		(m_Pause.nSelect == MENU_SETTING && m_Pause.bContRoller && !m_Pause.bRightMove && m_Pause.bRightDisp)){
+	else if (m_Pause.nSelect != m_Pause.nRightTextType && !m_Pause.bRightMove && m_Pause.bRightDisp) {
 		TextRelease(TEXT_INPUT);
 		m_Pause.bRightMove = true;
 	}
@@ -420,8 +412,8 @@ void CMode_Game::PauseAnime(void)
 
 		m_Pause.RightPos.x += move.x;
 		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
-			if (m_InputText[nCnt] != NULL) {
-				m_InputText[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+			if (m_RightText[nCnt] != NULL) {
+				m_RightText[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
 			}
 		}
 
@@ -437,26 +429,21 @@ void CMode_Game::PauseAnime(void)
 				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
+				// テキストの再生成
 				if (m_Pause.nSelect == MENU_CONTROLLER) {
-					m_InputText[INPUT_TITLE]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont, &pShadow);
-					m_InputText[INPUT_MOVE]->Regeneration("・移動　　：左スティック", CFont::FONT_ROND_B, &pFont, &pShadow);
-					m_InputText[INPUT_JUMP]->Regeneration("・ジャンプ：Ｂ", CFont::FONT_ROND_B, &pFont, &pShadow);
-					m_InputText[INPUT_SWAP]->Regeneration("・スワップ：Ｙ", CFont::FONT_ROND_B, &pFont, &pShadow);
-					m_InputText[INPUT_DECISION]->Regeneration("・決定　　：Ａ", CFont::FONT_ROND_B, &pFont, &pShadow);
-					m_InputText[INPUT_BACK]->Regeneration("・戻る　　：Ｂ", CFont::FONT_ROND_B, &pFont, &pShadow);
+					for (int nText = INPUT_TITLE; nText < INPUT_MAX; nText++) {
+						if(m_RightText[nText] != NULL)
+						m_RightText[nText]->Regeneration(m_RightTxt[nText], CFont::FONT_ROND_B, &pFont, &pShadow);
+					}
 				}
 				if (m_Pause.nSelect == MENU_SETTING) {
-					m_InputText[INPUT_TITLE]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
+					if(m_RightText[INPUT_TITLE] != NULL)
+					m_RightText[INPUT_TITLE]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
 				}
 			}
 			else if (m_Pause.bRightDisp) {
 				m_Pause.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
 				m_Pause.bRightDisp = false;
-
-				if (m_Pause.bContRoller)
-					m_Pause.bContRoller = false;
-				else if (m_Pause.bSetting)
-					m_Pause.bSetting = false;
 			}
 		}
 	}
@@ -510,39 +497,23 @@ void CMode_Game::InputText(void)
 
 	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
-	if (m_InputText != NULL)
+	if (m_RightText != NULL)
 		TextRelease(TEXT_INPUT);
 
-	m_InputText[INPUT_TITLE] = CFontText::Create(
+	m_RightText[INPUT_TITLE] = CFontText::Create(
 		CFontText::BOX_NORMAL_BLUE, D3DXVECTOR3(m_Pause.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 
 	if (m_Pause.nSelect == MENU_CONTROLLER) {
-		m_InputText[INPUT_MOVE] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.RightPos.x - 50, 150.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont, false, false);
 
-		m_InputText[INPUT_JUMP] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.RightPos.x - 50, 200.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont, false, false);
-
-		m_InputText[INPUT_SWAP] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.RightPos.x - 50, 250.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont, false, false);
-
-		m_InputText[INPUT_DECISION] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.RightPos.x - 50, 300.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont, false, false);
-
-		m_InputText[INPUT_BACK] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.RightPos.x - 50, 350.0f, 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont, false, false);
-
-		m_Pause.bContRoller = true;
+		for (int nText = INPUT_MOVE; nText < INPUT_MAX; nText++) {
+			m_RightText[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+				D3DXVECTOR3(m_Pause.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+				"", CFont::FONT_ROND_B, &pFont, false, false);
+		}
 	}
-	else if (m_Pause.nSelect == MENU_SETTING) {
-		m_Pause.bSetting = true;
-	}
+
+	m_Pause.nRightTextType = m_Pause.nSelect;
 }
 
 //========================================
@@ -563,9 +534,9 @@ void CMode_Game::TextRelease(TEXT type)
 		break;
 	case CMode_Game::TEXT_INPUT:
 		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
-			if (m_InputText[nCnt] != NULL) {
-				m_InputText[nCnt]->Uninit();
-				m_InputText[nCnt] = NULL;
+			if (m_RightText[nCnt] != NULL) {
+				m_RightText[nCnt]->Uninit();
+				m_RightText[nCnt] = NULL;
 			}
 		}
 		break;
@@ -577,9 +548,9 @@ void CMode_Game::TextRelease(TEXT type)
 			}
 		}
 		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
-			if (m_InputText[nCnt] != NULL) {
-				m_InputText[nCnt]->Uninit();
-				m_InputText[nCnt] = NULL;
+			if (m_RightText[nCnt] != NULL) {
+				m_RightText[nCnt]->Uninit();
+				m_RightText[nCnt] = NULL;
 			}
 		}
 		break;

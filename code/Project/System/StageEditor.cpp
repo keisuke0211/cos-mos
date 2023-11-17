@@ -11,6 +11,7 @@
 #include "../Character/player.h"
 #include "StageEditor.h"
 #include "../Mode/mode_title.h"
+#include "../UI/rocket-parts.h"
 
 //========================================
 // Ã“I•Ï”
@@ -60,6 +61,8 @@ CStageEditor::CStageEditor(void)
 	m_LaserInfo = NULL;
 	m_DogInfo = NULL;
 	m_PileInfo = NULL;
+
+	bRocket = false;
 }
 
 //========================================
@@ -396,6 +399,11 @@ void CStageEditor::StageLoad(int planet, int stage)
 					}
 				}
 
+				if (bRocket == true)
+				{
+					CMode_Game::SetRocketParts(CRocketPartsUI::Create());
+				}
+				
 			}
 			else if (!strcmp(aDataSearch, "SetLiftInfo")) {
 				SetLiftInfo(pFile, nRow, nLine);
@@ -655,6 +663,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		pos.y -= CStageObject::SIZE_OF_1_SQUARE * ((7 * 0.5f) - 0.5f);
 		pos.z += CStageObject::SIZE_OF_1_SQUARE;
 		Manager::BlockMgr()->RocketCreate(pos);
+		bRocket = true;
 		break;
 	}
 }

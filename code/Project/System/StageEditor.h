@@ -196,4 +196,6 @@ private:
 	PileInfo *m_PileInfo;				// 杭の情報
 
 	StageInfo m_Info;					// ステージ情報
+
+	bool bRocket;
 };
