@@ -119,7 +119,6 @@ private:
 	static int m_nStageIdx;
 	CFontText *m_Menu[MENU_MAX];
 	CFontText *m_RightText[INPUT_MAX];
-	CRocketPartsUI *m_rocketparts;
 	CFontText *m_InputText[INPUT_MAX];
 	static CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
