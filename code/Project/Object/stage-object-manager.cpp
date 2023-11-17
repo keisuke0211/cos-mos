@@ -298,10 +298,6 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 
 	// ‰Šú‰»ˆ—
 	pObj->SetPos(pos);
-
-	if (pos.y <= 0) {
-		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
-	}
 	pObj->Init();
 
 	return pObj;

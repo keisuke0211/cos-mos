@@ -31,8 +31,8 @@ CRocket::CRocket(void)
 	ResetCounter();
 
 	m_type = TYPE::ROCKET;
-	m_width = SIZE_OF_1_SQUARE * 3;
-	m_height = SIZE_OF_1_SQUARE * 3;
+	m_width = SIZE_OF_1_SQUARE * 4;
+	m_height = SIZE_OF_1_SQUARE * 7;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.col = INITD3DCOLOR;
 	m_Info.scale = Scale3D(1.0f, 1.0f, 1.0f);
@@ -142,7 +142,7 @@ void CRocket::Update(void)
 		}
 	}
 	
-	RNLib::Model().Put(m_pos, m_rot, m_Info.scale * m_Info.fScaleMag, m_Info.nModelIdx, false)
+	RNLib::Model().Put(m_pos, m_rot + Rot3D(0.0f, D3DX_PI, 0.0f), m_Info.scale * m_Info.fScaleMag, m_Info.nModelIdx, false)
 		->SetOutLine(true);
 
 	RNLib::Text2D().PutDebugLog(CreateText("プレイヤーカウンター：%d", s_nCountPlayer));
