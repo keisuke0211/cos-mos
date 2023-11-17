@@ -91,7 +91,6 @@ public:
 	void  Update        (void);
 	void  ProcessState  (const PROCESS process);
 
-	void BackGroundPut  (Color mincol, Color addcol);
 	static CPlayer* GetPlayer(void);
 
 	// -- ê›íË -------------------------------------------------------------------
