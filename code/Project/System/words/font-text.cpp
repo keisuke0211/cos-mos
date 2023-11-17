@@ -188,20 +188,17 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		// -- メッセージボックス ----------------
 
 		// テクスチャ設定
-		switch (type)
-		{
-		case CFontText::BOX_NORMAL_GRAY:
+		if(type == BOX_NORMAL_GRAY)
 			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
-			break;
-		case CFontText::BOX_NORMAL_BLUE:
+		else if (type == BOX_NORMAL_BLUE)
 			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
-			break;
-		case CFontText::BOX_MAX:
+		else if (type == BOX_NORMAL_RED)
+			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+		else if (type == BOX_NORMAL_GREEN)
+			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox03.png");
+		else if(type == BOX_NONE || type == BOX_MAX)
 			pText->m_Info.nTexIdx = -1;
-			break;
-		default:
-			break;
-		}
+
 		pText->m_Info.TexPos = pos;
 		pText->m_Info.TexSize = size;
 		pText->m_Info.bTextBok = bTextBox;
@@ -550,20 +547,16 @@ void CFontText::SetBoxType(Box type)
 	// -- メッセージボックス ----------------
 
 	// テクスチャ設定
-	switch (type)
-	{
-	case CFontText::BOX_NORMAL_GRAY:
+	if (type == BOX_NORMAL_GRAY)
 		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
-		break;
-	case CFontText::BOX_NORMAL_BLUE:
+	else if (type == BOX_NORMAL_BLUE)
 		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
-		break;
-	case CFontText::BOX_MAX:
+	else if (type == BOX_NORMAL_RED)
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+	else if (type == BOX_NORMAL_GREEN)
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox03.png");
+	else if (type == BOX_NONE || type == BOX_MAX)
 		m_Info.nTexIdx = -1;
-		break;
-	default:
-		break;
-	}
 }
 
 //========================================
