@@ -653,6 +653,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_GOAL:
 		pos.x += CStageObject::SIZE_OF_1_SQUARE * ((4 * 0.5f) - 0.5f);
 		pos.y -= CStageObject::SIZE_OF_1_SQUARE * ((7 * 0.5f) - 0.5f);
+		pos.z += CStageObject::SIZE_OF_1_SQUARE;
 		Manager::BlockMgr()->RocketCreate(pos);
 		break;
 	}

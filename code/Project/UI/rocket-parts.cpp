@@ -8,7 +8,7 @@
 #include "../main.h"
 #include "../Character/player.h"
 
-#define NUM (3)	//”
+#define NUM (2)	//”
 
 //Ã“Iƒƒ“ƒo•Ï”
 bool CRocketPartsUI::m_bRocketStg = false;
@@ -100,6 +100,7 @@ CRocketPartsUI *CRocketPartsUI::Create(void)
 
 	// ‰Šú‰»ˆ—
 	pObj->Init();
+	pObj->SetRocketstg(true);
 
 	return pObj;
 }
