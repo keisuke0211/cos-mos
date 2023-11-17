@@ -234,7 +234,7 @@ private:
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 	CollInfo *m_pOthColli;		// 他パーツの当たり判定情報
 
-	struct Sound
+	struct SE
 	{
 		short jump;		// ジャンプSE
 		short landing;	// 着地SE
@@ -243,5 +243,5 @@ private:
 
 		CSound *pSound;	// サウンドクラス保管用
 	};
-	static Sound s_Sound;		//サウンド用構造体
+	static SE s_SE;		//サウンド用構造体
 };
