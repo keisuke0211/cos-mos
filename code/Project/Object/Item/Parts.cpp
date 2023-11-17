@@ -83,6 +83,7 @@ void CParts::Update(void) {
 	{
 		m_rot.y = -D3DX_PI;
 	}
+	fBrightness = 0.5f + fBrightness * 0.5f;
 
 	RNLib::Model().Put(m_pos, m_rot, ModelIdx, false)
 		->SetCol(Color{ (int)(255 * fBrightness),(int)(255 * fBrightness),(int)(255 * fBrightness),255 })

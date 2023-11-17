@@ -6,6 +6,7 @@
 // 
 //========================================
 #include "../main.h"
+#include "../UI/rocket-parts.h"
 
 //========================================
 // Ã“I•Ï”
@@ -299,6 +300,8 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 	// ‰Šú‰»ˆ—
 	pObj->SetPos(pos);
 	pObj->Init();
+
+	CRocketPartsUI::Create();
 
 	return pObj;
 }
