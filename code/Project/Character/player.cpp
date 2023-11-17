@@ -313,8 +313,8 @@ void CPlayer::ActionControl(void)
 		// 次のプレイヤー番号へ
 		nIdxPlayer++;
 
-		// 出る
-		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[0].bGoal && !m_aInfo[1].bGoal &&
+		// 相方がゴールしていなければ出る
+		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer +1) % NUM_PLAYER].bGoal &&
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
 			Player.bRide = false;
