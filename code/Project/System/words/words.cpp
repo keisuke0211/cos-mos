@@ -202,6 +202,34 @@ void CWords::SetWords(const char*text, CFont::FONT type)
 	if (Txt != "")
 	{
 		m_pTex = Manager::Font()->GetFont(text, type);
+
+		// デバイスの所得
+		LPDIRECT3DDEVICE9 pDevice = RNLib::Window().GetD3DDevice();
+
+		// テクスチャの変更
+		if (Txt == "Ａ") {
+			// テクスチャの読み込み
+			if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\TextBox\\button_a.png", &m_pTex)))
+				m_pTex = Manager::Font()->GetFont(text, type);
+		}
+		else if (Txt == "Ｂ") {
+			// テクスチャの読み込み
+			if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\TextBox\\button_b.png", &m_pTex)))
+				m_pTex = Manager::Font()->GetFont(text, type);
+		}
+		else if (Txt == "Ｙ") {
+			// テクスチャの読み込み
+			if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\TextBox\\button_y.png", &m_pTex)))
+				m_pTex = Manager::Font()->GetFont(text, type);
+		}
+		else if (Txt == "ｌ") {
+			// テクスチャの読み込み
+			if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\TextBox\\joystick2_left.png", &m_pTex)))
+				m_pTex = Manager::Font()->GetFont(text, type);
+		}
+
+
+		
 	}
 	else
 	{
