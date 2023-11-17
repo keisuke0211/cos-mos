@@ -22,12 +22,13 @@ CPile::CPile()
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE;
 
-	m_BodyModelID = NONEDATA;
 	m_TrunkModelID = NONEDATA;
 	m_PilePos = INITVECTOR3D;	//本体座標
 	m_NumTrunk = 0;			//幹の数（最低３個）
+	m_fEvenTrunkCorrHeight = 0.0f;//幹の数が偶数だった場合の補正値（奇数なら0.0f
 	m_TrunkHeight = 0.0f;	//幹座標
 	m_TrunkHeightOld = 0.0f;//幹座標
+	m_StartTrunkHeight = 0.0f;
 }
 
 //=======================================
@@ -43,7 +44,6 @@ CPile::~CPile()
 //=======================================
 void CPile::Init(void)
 {
-	m_BodyModelID = RNLib::Model().Load("data\\MODEL\\Block.x");
 	m_TrunkModelID = RNLib::Model().Load("data\\MODEL\\Trunk.x");
 
 	//前回情報を保存
@@ -64,7 +64,7 @@ void CPile::Uninit(void)
 void CPile::Update(void)
 {
 	//めり込みリセット
-	if (RNLib::Input().GetKeyTrigger(DIK_L)) m_TrunkHeight = 0.0f;
+	if (RNLib::Input().GetKeyTrigger(DIK_L)) m_TrunkHeight = m_StartTrunkHeight;
 
 	//前回情報を保存
 	SetOld(m_TrunkHeight);
@@ -78,9 +78,6 @@ void CPile::Update(void)
 //===============================
 void CPile::PutModel(void)
 {
-	//本体モデル
-	RNLib::Model().Put(m_PilePos, INITD3DXVECTOR3, m_BodyModelID, false);
-
 	//幹座標
 	Pos3D PilePos = m_PilePos;
 
@@ -92,7 +89,9 @@ void CPile::PutModel(void)
 		//本体サイズ  ＋  サイズ × 上の幹数  ＋  幹のめり込み量
 		PilePos.y = SIZE_OF_1_SQUARE * -0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight;
 
-		RNLib::Text2D().PutDebugLog(CreateText("杭位置  Y:%f  めり込み:%f", PilePos.y, m_TrunkHeight));
+		RNLib::Text2D().PutDebugLog(CreateText(
+			"杭Y位置:%.2f  めり込み:%.2f  高さ:%.2f  MaxY:%.2f  MinY:%.2f  補正値:%.2f",
+			PilePos.y,	 m_TrunkHeight, m_height, m_pos.y + m_height, m_pos.y - m_height, m_fEvenTrunkCorrHeight));
 	}
 
 	for (int nCntPile = 0; nCntPile < m_NumTrunk; nCntPile++)
@@ -122,6 +121,8 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	m_PilePos = pos;
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = TrunkHeight;
+	m_StartTrunkHeight = TrunkHeight;
+	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY == 0 ? SIZE_OF_1_SQUARE * 0.5f : 0.0f;
 
 	//当たり判定の高さを再設定
 	m_height = SIZE_OF_1_SQUARE * NumTrunk;
@@ -140,7 +141,7 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 
 	//杭の最大・最低高さを計算
 	const int nNumHalf = m_NumTrunk / EVENPARITY;
-	const float fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf;
+	const float fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf - m_fEvenTrunkCorrHeight * 2.0f;
 	const float fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
 
 	//杭が抜けないように調整
@@ -163,8 +164,12 @@ void CPile::SetOld(float fCaveInHeight)
 	m_TrunkHeightOld = m_TrunkHeight;
 	m_TrunkHeight = fCaveInHeight;
 
-	m_pos = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight, 0.0f);
-	m_posOld = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld, 0.0f);
+	m_pos = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight + m_fEvenTrunkCorrHeight, 0.0f);
+	m_posOld = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld + m_fEvenTrunkCorrHeight, 0.0f);
+
+	//D3DXVECTOR3 pos = m_pos;
+	//pos.z = -30.0f;
+	//Manager::EffectMgr()->EffectCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png"), pos, INIT_EFFECT_SCALE, INITCOLOR, 1);
 }
 
 //===============================
@@ -172,9 +177,9 @@ void CPile::SetOld(float fCaveInHeight)
 //===============================
 D3DXVECTOR3 CPile::GetPosCaveIn(void)
 {
-	D3DXVECTOR3 ReturnPos = m_PilePos;//現在座標を格納
-	ReturnPos.y += m_TrunkHeight; //めり込み量を反映
-	return ReturnPos;			  //座標を返す
+	D3DXVECTOR3 ReturnPos = m_pos;	//現在座標を格納
+	ReturnPos.y += m_fEvenTrunkCorrHeight;//補正値を反映
+	return m_pos;//座標を返す
 }
 
 //===============================
@@ -182,7 +187,8 @@ D3DXVECTOR3 CPile::GetPosCaveIn(void)
 //===============================
 D3DXVECTOR3 CPile::GetPosOldCaveIn(void)
 {
-	D3DXVECTOR3 ReturnPos = m_PilePos;	//現在座標を格納
+	D3DXVECTOR3 ReturnPos = m_pos;	//現在座標を格納
 	ReturnPos.y += m_TrunkHeightOld;//前回のめり込み量を反映
+	ReturnPos.y += m_fEvenTrunkCorrHeight;//補正値を反映
 	return ReturnPos;				//座標を返す
 }
