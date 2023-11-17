@@ -107,18 +107,18 @@ void CMode_Game::Init(void) {
 	/* ブロック	*/Manager::BlockMgr()->Load();
 
 	// ステージ生成
-	Manager::StgEd()->StageLoad(m_nPlanetIdx,m_nStageIdx);
+	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
 
 	char *pBgFile = Manager::StgEd()->GetBgFile();
 
-	if (pBgFile != NULL){
+	if (pBgFile != NULL) {
 		CBGEditor::Load(pBgFile);
 	}
 
 	SetBGColor(m_BgColorUp);
 
 	// 上下カメラの生成
-	m_cameraUp   = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
+	m_cameraUp = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
 	m_cameraDown = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
 	m_cameraUp->SetClipping(true);
 	m_cameraUp->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
@@ -133,6 +133,10 @@ void CMode_Game::Init(void) {
 	// 壁モデル読み込み
 	m_wallModelIdx[0] = RNLib::Model().Load("data\\MODEL\\Wall_Left.x");
 	m_wallModelIdx[1] = RNLib::Model().Load("data\\MODEL\\Wall_Right.x");
+
+	m_BGMIdx = RNLib::Sound().Load("data\\SOUND\\BGM\\STAGE1.wav");
+
+	play = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, true);
 }
 
 //========================================
@@ -141,6 +145,8 @@ void CMode_Game::Init(void) {
 //========================================
 void CMode_Game::Uninit(void) {
 	CMode::Uninit();
+
+	play->Delete();
 
 	if (s_pPlayer != NULL)	{
 		s_pPlayer->Uninit();
