@@ -33,7 +33,7 @@ int CPlayer::s_nSwapParticle = 0; // スワップ時のパーティクルテクスチャ番号
 int CPlayer::s_nDeathMarkTex = 0; // 死亡時のマークテクスチャ番号
 int CPlayer::s_nDeathParticle = 0;// 死亡時のパーティクルテクスチャ番号
 
-CPlayer::Sound CPlayer::s_Sound = {};	//サウンド用構造体
+CPlayer::SE CPlayer::s_SE = {};	//サウンド用構造体
 
 //=======================================
 // コンストラクタ
@@ -48,11 +48,11 @@ CPlayer::CPlayer()
 	s_nNumGetParts = 0;		// 取得したパーツの数
 	s_bRideRocket = false;	// ロケットに乗れるかどうか
 
-	s_Sound.pSound = NULL;
-	s_Sound.jump = 0;
-	s_Sound.landing = 0;
-	s_Sound.Swap = 0;
-	for each(short &dog in s_Sound.dog)
+	s_SE.pSound = NULL;
+	s_SE.jump = 0;
+	s_SE.landing = 0;
+	s_SE.Swap = 0;
+	for each(short &dog in s_SE.dog)
 	{
 		dog = 0;
 	}
@@ -131,14 +131,14 @@ HRESULT CPlayer::Init(void)
 	s_nDeathMarkTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_Skull_000.png");
 	s_nDeathParticle = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 
-	s_Sound.pSound	= &RNLib::Sound();
-	s_Sound.jump	= s_Sound.pSound->Load("data\\SOUND\\SE\\jamp_01.wav");
-	s_Sound.landing = s_Sound.pSound->Load("data\\SOUND\\SE\\jamp.wav");
-	s_Sound.dog[0]	= s_Sound.pSound->Load("data\\SOUND\\SE\\heron2.wav");	// 押す
-	s_Sound.dog[1]	= s_Sound.pSound->Load("data\\SOUND\\SE\\shrink.wav");	// 縮む
-	s_Sound.dog[2]	= s_Sound.pSound->Load("data\\SOUND\\SE\\extend.wav");	// 伸びる
-	s_Sound.dog[3]	= s_Sound.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// 震える
-	s_Sound.Swap	= s_Sound.pSound->Load("data\\SOUND\\SE\\swap.wav");
+	s_SE.pSound	= &RNLib::Sound();
+	s_SE.jump	= s_SE.pSound->Load("data\\SOUND\\SE\\jamp_01.wav");
+	s_SE.landing = s_SE.pSound->Load("data\\SOUND\\SE\\jamp.wav");
+	s_SE.dog[0]	= s_SE.pSound->Load("data\\SOUND\\SE\\heron2.wav");	// 押す
+	s_SE.dog[1]	= s_SE.pSound->Load("data\\SOUND\\SE\\shrink.wav");	// 縮む
+	s_SE.dog[2]	= s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");	// 伸びる
+	s_SE.dog[3]	= s_SE.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// 震える
+	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap.wav");
 
 	// 初期情報設定
 	Death(NULL);
@@ -333,7 +333,7 @@ void CPlayer::ActionControl(void)
 			Player.bJump = true;				// ジャンプした
 
 												// SE再生
-			s_Sound.pSound->Play(s_Sound.jump, CSound::CATEGORY::SE, false);
+			s_SE.pSound->Play(s_SE.jump, CSound::CATEGORY::SE, false);
 		}
 
 		// 右に移動
@@ -375,7 +375,7 @@ void CPlayer::Swap(void)
 	{
 		// インターバル設定
 		s_nSwapInterval = SWAP_INTERVAL;
-		s_Sound.pSound->Play(s_Sound.Swap, CSound::CATEGORY::SE, false);
+		s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
 
 		for each (Info &Player in m_aInfo)
 		{
@@ -852,7 +852,7 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 			if (pInfo->bJump == true)
 			{// 着地した
 				// SE再生
-				s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+				s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
@@ -872,7 +872,7 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 			if (pInfo->bJump == true)
 			{// 着地した
 				// SE再生
-				s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+				s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
@@ -933,7 +933,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 			if (pInfo->posOld.y > pInfo->pos.y)
 			{// 着地した
 			 // SE再生
-				s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+				s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
 				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
 				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
@@ -962,7 +962,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 			if (pInfo->posOld.y < pInfo->pos.y)
 			{// 着地した
 				// SE再生
-				s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+				s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				pTrampoline->SetState(CTrampoline::STATE::DOWN_LAND);
 				pTrampoline->SetSpringForce(pInfo->fMaxHeight);
 				pTrampoline->SetCount(CTrampoline::MAX_COUNT);
@@ -1033,7 +1033,7 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *
 			if (pInfo->bJump == true)
 			{// 着地した
 			 // SE再生
-				s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+				s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
@@ -1055,7 +1055,7 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *
 			if (pInfo->bJump == true)
 			{// 着地した
 			 // SE再生
-				s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+				s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 			}
 			pInfo->bGround = true;	// 地面に接している
 			pInfo->bJump = false;	// ジャンプ可能
@@ -1145,7 +1145,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1167,7 +1167,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1258,7 +1258,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1278,7 +1278,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 				pInfo->bGround = true;
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1326,7 +1326,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1346,7 +1346,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 				if (pInfo->bJump == true)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1453,7 +1453,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			if (pInfo->side == WORLD_SIDE::FACE) {
 
 				if (pInfo->bJump == true)
-					s_Sound.pSound->Play(s_Sound.dog[0], CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.dog[0], CSound::CATEGORY::SE, false);
 
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1475,7 +1475,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
 
 				if (pInfo->bJump == true)
-					s_Sound.pSound->Play(s_Sound.dog[0], CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.dog[0], CSound::CATEGORY::SE, false);
 
 				pInfo->bGround = true;
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1582,12 +1582,11 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			// 表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE)
 			{
-				pInfo->move.y = 0.0f;
-
-				if (pInfo->posOld.y > pInfo->pos.y)
+				if (!pInfo->bLandPile &&
+					pInfo->posOld.y > pInfo->pos.y)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 
 				//ある程度の高さから落下してきた
@@ -1595,6 +1594,8 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 				{
 					pPile->CaveInTrunkHeight(pColli->maxPos.y - pInfo->pos.y - SIZE_HEIGHT);
 				}
+
+				pInfo->move.y = 0.0f;
 				pInfo->bLandPile = true;// 乗った
 				pInfo->bGround = true;	// 地面に接している
 				pInfo->bJump = false;	// ジャンプ可能
@@ -1614,7 +1615,7 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 				if (pInfo->posOld.y < pInfo->pos.y)
 				{// 着地した
 				 // SE再生
-					s_Sound.pSound->Play(s_Sound.landing, CSound::CATEGORY::SE, false);
+					s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);
 				}
 
 				//ある程度の高さから落下してきた
