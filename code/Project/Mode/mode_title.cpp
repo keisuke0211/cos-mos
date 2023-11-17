@@ -113,9 +113,9 @@ void CMode_Title::Init(void) {
 	m_nSelect = 0;
 
 	// メニュー
-	m_MenuPos[0] = D3DXVECTOR3(280.0f, 150.0f, 1.0f);
+	m_MenuPos[0] = D3DXVECTOR3(280.0f, 200.0f, 1.0f);
 	m_MenuPos[1] = D3DXVECTOR3(280.0f, 300.0f, 1.0f);
-	m_MenuPos[2] = D3DXVECTOR3(280.0f, 450.0f, 1.0f);
+	m_MenuPos[2] = D3DXVECTOR3(280.0f, 400.0f, 1.0f);
 
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Planet\\blue.png");
@@ -478,15 +478,15 @@ void CMode_Title::MenuCreate(void)
 
 	m_Menu[0] = CFontText::Create(
 		CFontText::BOX_NORMAL_GRAY, m_MenuPos[0],D3DXVECTOR2(360.0f, 80.0f),// 360,100
-		"ゲーム",CFont::FONT_ROND_B,&pFont,false,false,&pShadow);
+		"ゲーム",CFont::FONT_ROND_B,&pFont,false,true,&pShadow);
 
 	m_Menu[1] = CFontText::Create(
 		CFontText::BOX_NORMAL_GRAY, m_MenuPos[1], D3DXVECTOR2(360.0f, 80.0f),
-		"オプション", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+		"オプション", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
 
 	m_Menu[2] = CFontText::Create(
 		CFontText::BOX_NORMAL_GRAY, m_MenuPos[2], D3DXVECTOR2(360.0f, 80.0f),
-		"ゲームをやめる", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+		"ゲームをやめる", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
 }
 
 //========================================
@@ -500,15 +500,13 @@ void CMode_Title::Menu(void)
 	{
 		if (m_Menu[nCnt] != NULL)
 		{
-			if (nCnt == m_nSelect)
-			{
-				m_Menu[nCnt]->SetTexBox(true);
-				m_Menu[nCnt]->SetTextColor(D3DXCOLOR(240,255,0,255));
+			if (nCnt == m_nSelect){
+				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
+				//m_Menu[nCnt]->SetTextColor(D3DXCOLOR(240,255,0,255));
 			}
-			else
-			{
-				m_Menu[nCnt]->SetTexBox(false);
+			else{
 				m_Menu[nCnt]->SetTextColor(INITD3DCOLOR);
+				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 			}
 		}
 	}
@@ -679,7 +677,7 @@ void CMode_Title::StageSelect(void)
 			m_Menu[0] = NULL;
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
 			m_Menu[0] = CFontText::Create(
-				CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
+				CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
 				m_PlanetType[m_nPlanetIdx].Text, CFont::FONT_ROND_B, &pFont,true);
 		}
 	}
@@ -770,7 +768,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 		m_Menu[0] = CFontText::Create(
-			CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
+			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
 			m_PlanetType[0].Text, CFont::FONT_ROND_B, &pFont);
 
 		m_Menu[1] = CFontText::Create(

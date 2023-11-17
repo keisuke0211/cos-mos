@@ -233,7 +233,7 @@ void CMode_Game::ProcessState(const PROCESS process) {
 		case PROCESS::INIT: {
 			PauseCreate();
 
-			m_Pause.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+			m_Pause.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
@@ -395,11 +395,13 @@ void CMode_Game::PauseAnime(void)
 				m_Pause.bMenu = true;
 
 				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-				m_Menu[0]->Regeneration("続ける", CFont::FONT_ROND_B, &pFont);
-				m_Menu[1]->Regeneration("やり直す", CFont::FONT_ROND_B, &pFont);
-				m_Menu[2]->Regeneration("選択画面", CFont::FONT_ROND_B, &pFont);
-				m_Menu[3]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont);
-				m_Menu[4]->Regeneration("設定", CFont::FONT_ROND_B, &pFont);
+				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+				m_Menu[0]->Regeneration("続ける", CFont::FONT_ROND_B, &pFont,&pShadow);
+				m_Menu[1]->Regeneration("やり直す", CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_Menu[2]->Regeneration("選択画面", CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_Menu[3]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_Menu[4]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
 			}
 			else if (m_Pause.bClose){
 				if (RNLib::Transition().GetState() == CTransition::STATE::NONE){
@@ -433,16 +435,18 @@ void CMode_Game::PauseAnime(void)
 				m_Pause.bRightDisp = true;
 				m_Pause.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
 				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
 				if (m_Pause.nSelect == MENU_CONTROLLER) {
-					m_InputText[INPUT_TITLE]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont);
-					m_InputText[INPUT_MOVE]->Regeneration("・移動　　：左スティック", CFont::FONT_ROND_B, &pFont);
-					m_InputText[INPUT_JUMP]->Regeneration("・ジャンプ：Ｂ", CFont::FONT_ROND_B, &pFont);
-					m_InputText[INPUT_SWAP]->Regeneration("・スワップ：Ｙ", CFont::FONT_ROND_B, &pFont);
-					m_InputText[INPUT_DECISION]->Regeneration("・決定　　：Ａ", CFont::FONT_ROND_B, &pFont);
-					m_InputText[INPUT_BACK]->Regeneration("・戻る　　：Ｂ", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_TITLE]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_InputText[INPUT_MOVE]->Regeneration("・移動　　：左スティック", CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_InputText[INPUT_JUMP]->Regeneration("・ジャンプ：Ｂ", CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_InputText[INPUT_SWAP]->Regeneration("・スワップ：Ｙ", CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_InputText[INPUT_DECISION]->Regeneration("・決定　　：Ａ", CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_InputText[INPUT_BACK]->Regeneration("・戻る　　：Ｂ", CFont::FONT_ROND_B, &pFont, &pShadow);
 				}
 				if (m_Pause.nSelect == MENU_SETTING) {
-					m_InputText[INPUT_TITLE]->Regeneration("設定", CFont::FONT_ROND_B, &pFont);
+					m_InputText[INPUT_TITLE]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
 				}
 			}
 			else if (m_Pause.bRightDisp) {
@@ -510,7 +514,7 @@ void CMode_Game::InputText(void)
 		TextRelease(TEXT_INPUT);
 
 	m_InputText[INPUT_TITLE] = CFontText::Create(
-		CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(m_Pause.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+		CFontText::BOX_NORMAL_BLUE, D3DXVECTOR3(m_Pause.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 
 	if (m_Pause.nSelect == MENU_CONTROLLER) {
