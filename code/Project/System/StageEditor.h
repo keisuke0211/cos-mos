@@ -138,6 +138,7 @@ public:
 	// -- ïœä∑ ---------------------------------------------
 	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);
 	/* float	*/bool ToData(float &val, CSVFILE *pFile, int nRow, int nLine);
+	/* ushort	*/bool ToData(UShort& val, CSVFILE* pFile, int nRow, int nLine);
 	/* double	*/bool ToData(double &val, CSVFILE *pFile, int nRow, int nLine);
 
 	// -- ì«çû ---------------------------------------------

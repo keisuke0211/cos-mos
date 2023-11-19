@@ -5,6 +5,7 @@
 // 
 //========================================
 #include "../../../RNlib.h"
+#include "../../../RNmode.h"
 
 //****************************************
 // マクロ定義
@@ -20,22 +21,27 @@
 //========================================
 // コンストラクタ
 //========================================
-CDoll3D::CDoll3D() {
+CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 
+	RNLib::Doll3DMgr().AddList(this);
+	m_priority             = priority;
 	m_pos			       = INITPOS3D;
+	m_isSetPos             = false;
 	m_rot			       = INITROT3D;
 	m_scale                = INITSCALE3D;
 	m_col                  = INITCOLOR;
-	m_brightnessOfEmission = 1.0f;
 	m_boneStates           = NULL;
-	m_setUpIdx             = NONEDATA;
 	m_motionInfo           = {};
+	m_brightnessOfEmission = 1.0f;
+	SetUp(setUpIdx);
 }
 
 //========================================
 // デストラクタ
 //========================================
 CDoll3D::~CDoll3D() {
+
+	RNLib::Doll3DMgr().SubList(this);
 
 	// ボーン状態のメモリ解放
 	CMemory::Release(&m_boneStates);
@@ -45,6 +51,10 @@ CDoll3D::~CDoll3D() {
 // 更新処理
 //========================================
 void CDoll3D::Update(void) {
+
+	// 位置が設定されていない時、処理を終了する
+	if (!m_isSetPos)
+		return;
 
 	if (m_setUpIdx != NONEDATA)
 	{// セットアップが設定されている時、
@@ -64,18 +74,44 @@ void CDoll3D::Update(void) {
 //========================================
 void CDoll3D::SetUp(const short& setUpIdx) {
 
-	// セットアップデータ取得
-	const CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(setUpIdx);
+	// セットアップ番号を設定
+	m_setUpIdx = setUpIdx;
 
-	//----------------------------------------
-	// ボーン状態メモリ
-	// 部品数が0を越えている > メモリ確保
-	// 部品数が0以下         > メモリ解放
-	//----------------------------------------
-	if (setUp.m_boneDataNum > 0)
-		CMemory::Alloc<CBoneState>(&m_boneStates, setUp.m_boneDataNum);
-	else
-		CMemory::Release<CBoneState>(&m_boneStates);
+	// セットアップ番号が無しの時、解放して終了
+	if (m_setUpIdx == NONEDATA) {
+		CMemory::Release(&m_boneStates);
+		return;
+	}
+
+	// セットアップデータ取得
+	const CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
+
+	// ボーン状態メモリ確保
+	if (&setUp == NULL) {
+		CMemory::Release(&m_boneStates);
+	}
+	else {
+		// 部品数が0を越えている > メモリ確保
+		// 部品数が0以下         > メモリ解放
+		setUp.m_boneDataNum > 0 ?
+			CMemory::Alloc(&m_boneStates, setUp.m_boneDataNum) :
+			CMemory::Release(&m_boneStates);
+
+		for (int cntBone = 0; cntBone < setUp.m_boneDataNum; cntBone++) {
+
+			// 親番号が無しの時、折り返す
+			if (setUp.m_boneDatas[cntBone].modelIdx == NONEDATA)
+				continue;
+
+			// 同じ番号のボーンを検索し、見つけたら親のポインタを設定する
+			for (int cntBone2 = 0; cntBone2 < setUp.m_boneDataNum; cntBone2++) {
+				if (setUp.m_boneDatas[cntBone].parentIdx == setUp.m_boneDatas[cntBone2].idx) {
+					m_boneStates[cntBone].SetParentBoneState(&m_boneStates[cntBone2]);
+					break;
+				}
+			}
+		}
+	}
 }
 
 //========================================
@@ -132,6 +168,10 @@ void CDoll3D::UpdateMotion(void) {
 //========================================
 void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 
+	// セットアップデータが存在しない時、処理を終了する
+	if (&setUp == NULL)
+		return;
+
 	// 部品数0以下の時、処理を終了する
 	if (setUp.m_boneDataNum <= 0)
 		return;
@@ -139,6 +179,13 @@ void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 	// 本体マトリックス
 	const Matrix selfMtx = CMatrix::ConvPosRotScaleToMtx(m_pos, m_rot, m_scale);
 
+	// 頂点情報
+	CModel::Vertex3DInfo** vtxInfo = NULL;
+	UInt* vtxNum = 0;
+	CMemory::Alloc(&vtxInfo, setUp.m_boneDataNum);
+	CMemory::Alloc(&vtxNum, setUp.m_boneDataNum);
+
+	// モデルの描画
 	for (int cntBone = 0; cntBone < setUp.m_boneDataNum; cntBone++) {
 
 		CBoneState& boneState = m_boneStates[cntBone];
@@ -152,11 +199,124 @@ void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 		const Matrix worldMtx = FindBoneWorldMtx(boneState, setUp.m_boneDatas[cntBone], selfMtx);
 
 		// モデルの設置処理
-		RNLib::Model().Put(worldMtx, setUp.m_boneDatas[cntBone].modelIdx)
+		RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
 			->SetCol(m_col)
-			->SetOutLine(true)
 			->SetBrightnessOfEmissive(m_brightnessOfEmission);
+
+		// 頂点情報を取得
+		vtxInfo[cntBone] = NULL;
+		RNLib::Model().StoreVtxInfo(&vtxNum[cntBone], &vtxInfo[cntBone], setUp.m_boneDatas[cntBone].modelIdx, worldMtx);
+
+		// 頂点番号の描画
+		if (RNLib::Doll3DMgr().GetEditDoll() == this &&
+			RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() &&
+			RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx() == cntBone &&
+			RNLib::Doll3DMgr().GetEditCamera() != NULL) {
+
+			// 頂点番号リストとカメラまでの距離リストを作成
+			UShort* vtxIdxs  = NULL;
+			float*  vtxDists = NULL;
+			CMemory::Alloc(&vtxIdxs, vtxNum[cntBone]);
+			CMemory::Alloc(&vtxDists, vtxNum[cntBone]);
+			const Pos3D& cameraPos = RNLib::Doll3DMgr().GetEditCamera()->GetPosV();
+			for (UShort cntVtx = 0; cntVtx < vtxNum[cntBone]; cntVtx++) {
+				vtxIdxs[cntVtx] = cntVtx;
+				vtxDists[cntVtx] = CGeometry::FindDistance(cameraPos, vtxInfo[cntBone][cntVtx].pos);
+			}
+
+			// バブルソートを使用して頂点番号リストをソート
+			for (UShort cntVtx = 0; cntVtx < vtxNum[cntBone] - 1; ++cntVtx) {
+				for (UShort cntVtx2 = 0; cntVtx2 < vtxNum[cntBone] - cntVtx - 1; ++cntVtx2) {
+					if (vtxDists[cntVtx2] > vtxDists[cntVtx2 + 1]) {
+
+						// 距離を交換
+						float temp = vtxDists[cntVtx2];
+						vtxDists[cntVtx2] = vtxDists[cntVtx2 + 1];
+						vtxDists[cntVtx2 + 1] = temp;
+
+						// 頂点番号も交換
+						int tempIndex = vtxIdxs[cntVtx2];
+						vtxIdxs[cntVtx2] = vtxIdxs[cntVtx2 + 1];
+						vtxIdxs[cntVtx2 + 1] = tempIndex;
+					}
+				}
+			}
+
+			UShort drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+			if (drawVtxIdxNum > vtxNum[cntBone])
+				drawVtxIdxNum = vtxNum[cntBone];
+
+			for (int cntVtx = drawVtxIdxNum - 1; cntVtx >= 0; cntVtx--) {
+				bool isOverwrite = false;
+				for (int cntVtx2 = vtxIdxs[cntVtx] + 1; cntVtx2 < vtxNum[cntBone]; cntVtx2++) {
+					if (vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos == vtxInfo[cntBone][cntVtx2].worldPos) {
+						isOverwrite = true;
+						break;
+					}
+				}
+				if (isOverwrite)
+					continue;
+
+				RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos, INITROT3D)
+					->SetSize(0.25f, 0.25f)
+					->SetCol(Color{ 255,0,0,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) })
+					->SetLighting(false)
+					->SetZTest(false)
+					->SetBillboard(true);
+				RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", vtxIdxs[cntVtx]), CText::ALIGNMENT::CENTER, 1, vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos, INITROT3D)
+					->SetSize(Size2D(0.5f, 0.5f))
+					->SetLighting(false)
+					->SetZTest(false)
+					->SetBillboard(true)
+					->SetCol(Color{255,255,255,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum))});
+			}
+
+			// 頂点番号リストとカメラまでの距離リストを作成
+			CMemory::Release(&vtxIdxs);
+			CMemory::Release(&vtxDists);
+		}
 	}
+
+	// フェイスの描画
+	for (int cntFace = 0; cntFace < setUp.m_faceDataNum; cntFace++) {
+		CSetUp3D::FaceVtxData& vtx0 = setUp.m_faceDatas[cntFace].vtxs[0];
+		CSetUp3D::FaceVtxData& vtx1 = setUp.m_faceDatas[cntFace].vtxs[1];
+		CSetUp3D::FaceVtxData& vtx2 = setUp.m_faceDatas[cntFace].vtxs[2];
+		CSetUp3D::FaceVtxData& vtx3 = setUp.m_faceDatas[cntFace].vtxs[3];
+
+		if (vtx0.boneIdx < 0 || vtx0.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx0.vtxIdx  < 0 || vtx0.vtxIdx  >= vtxNum[vtx0.boneIdx])continue;
+		if (vtx1.boneIdx < 0 || vtx1.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx1.vtxIdx  < 0 || vtx1.vtxIdx  >= vtxNum[vtx1.boneIdx])continue;
+		if (vtx2.boneIdx < 0 || vtx2.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx2.vtxIdx  < 0 || vtx2.vtxIdx  >= vtxNum[vtx2.boneIdx])continue;
+		if (vtx3.boneIdx < 0 || vtx3.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx3.vtxIdx  < 0 || vtx3.vtxIdx  >= vtxNum[vtx3.boneIdx])continue;
+
+		RNLib::Polygon3D().Put(m_priority, INITMATRIX)
+			->SetVtxPos(
+				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldPos,
+				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldPos,
+				vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldPos,
+				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldPos)
+			->SetVtxNor(
+				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldNor,
+				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldNor,
+				vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldNor,
+				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldNor)
+			->SetCol(
+				setUp.m_faceDatas[cntFace].col)
+			->SetTexUV(
+				setUp.m_faceDatas[cntFace].texIdx,
+				vtx0.texPos,
+				vtx1.texPos,
+				vtx2.texPos,
+				vtx3.texPos);
+	}
+
+	// 頂点情報を解放
+	CMemory::ReleaseDouble(&vtxInfo, setUp.m_boneDataNum);
+	CMemory::Release(&vtxNum);
 }
 
 //========================================
@@ -254,6 +414,10 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 
 	// 足踏フラグを偽にしておく
 	m_animeStateSum.isStep = false;
+
+	// モーションデータが無しの時、終了
+	if (m_motionData == NULL)
+		return;
 
 	//----------------------------------------
 	// コマンド読み取り

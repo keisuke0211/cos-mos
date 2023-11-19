@@ -258,7 +258,7 @@ void CPlayer::Update(void)
 	// 情報更新
 	UpdateInfo();
 
-	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNSystem::GetFPSCount()));
+	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNSystem::GetFPS()));
 }
 
 //----------------------------
@@ -274,7 +274,7 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal) continue;
 
 		// 位置設定
-		RNLib::Model().Put(Player.pos, Player.rot, Player.nModelIdx, false)
+		RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
 			->SetOutLine(true)
 			->SetCol(Player.color);
 
@@ -283,12 +283,11 @@ void CPlayer::UpdateInfo(void)
 		MarkPos.z = -10.0f;
 		MarkPos.y *= -1.0f;
 
-		RNLib::Polygon3D().Put(MarkPos, INITD3DXVECTOR3)
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
 			->SetSize(20.0f, 20.0f)
 			->SetBillboard(true)
 			->SetTex(s_nSwapMarkTex)
-			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, Player.nSwapAlpha })
-			->SetPriority(1);
+			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha });
 
 		// 最高Ｙ座標更新
 		switch (Player.side)
@@ -561,7 +560,7 @@ void CPlayer::CollisionToStageObject(void)
 
 		// オブジェクト1つ1つを見ていく
 		CObject* obj = NULL;
-		while (Manager::BlockMgr()->ListLoop(&obj)) {
+		while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 
 			// 取得したオブジェクトをキャスト
 			CStageObject* stageObj = (CStageObject*)obj;

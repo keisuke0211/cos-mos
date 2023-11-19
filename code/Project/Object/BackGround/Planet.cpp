@@ -26,7 +26,7 @@ static const float s_PosOver = 100.0f;
 // コンストラクタ
 //========================================
 CPlanet::CPlanet(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::BACKGROUND;	// 種類の設定
 								// 大きさの設定
@@ -91,7 +91,7 @@ void CPlanet::Update(void) {
 		m_move *= -1;
 	}
 	
-	RNLib::Model().Put(m_pos, m_rot, ModelIdx, false)
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false)
 		->SetCol(m_col);
 		
 }

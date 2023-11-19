@@ -15,7 +15,7 @@ const float CPile::CAVEIN_DIFF_HEIGHT = 35.0f;
 //=======================================
 CPile::CPile()
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	//初期状態
 	m_type = TYPE::PILE;
@@ -97,7 +97,7 @@ void CPile::PutModel(void)
 	for (int nCntPile = 0; nCntPile < m_NumTrunk; nCntPile++)
 	{
 		//幹モデル
-		RNLib::Model().Put(PilePos, INITD3DXVECTOR3, m_TrunkModelID);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_TrunkModelID, PilePos, INITD3DXVECTOR3);
 
 		//配置座標を下げる
 		PilePos.y -= SIZE_OF_1_SQUARE;

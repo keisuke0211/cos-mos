@@ -26,7 +26,7 @@ int         CRocket::s_nCountPlayer = 0;		// プレイヤーのカウント
 //========================================
 CRocket::CRocket(void)
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	ResetCounter();
 
@@ -142,7 +142,7 @@ void CRocket::Update(void)
 		}
 	}
 	
-	RNLib::Model().Put(m_pos, m_rot + Rot3D(0.0f, D3DX_PI, 0.0f), m_Info.scale * m_Info.fScaleMag, m_Info.nModelIdx, false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot + Rot3D(0.0f, D3DX_PI, 0.0f), m_Info.scale * m_Info.fScaleMag, false)
 		->SetOutLine(true);
 
 	RNLib::Text2D().PutDebugLog(CreateText("プレイヤーカウンター：%d", s_nCountPlayer));

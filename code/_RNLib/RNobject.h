@@ -30,8 +30,9 @@ public:
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CMotion3D m_motion3D;
-	CSetUp3D  m_setUp3D;
+	CMotion3D   m_motion3D;
+	CSetUp3D    m_setUp3D;
+	CDoll3DMgr  m_doll3DMgr;
 };
 
 // åvéZ
@@ -41,22 +42,26 @@ public:
 	void Init(void) {
 		m_ease	  .Init();
 		m_geometry.Init();
+		m_hitTest .Init();
 		m_matrix  .Init();
 	}
 	void Uninit(void) {
 		m_ease	  .Uninit();
 		m_geometry.Uninit();
+		m_hitTest .Uninit();
 		m_matrix  .Uninit();
 	}
 	void Update(void) {
 		m_ease	  .Update();
 		m_geometry.Update();
+		m_hitTest .Update();
 		m_matrix  .Update();
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
 	CEase     m_ease;
 	CGeometry m_geometry;
+	CHitTest  m_hitTest;
 	CMatrix   m_matrix;
 };
 
@@ -64,14 +69,13 @@ public:
 class CDraw {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
-	void Init(Device& device) {
+	void Init(Device& device, const UShort& priorityMax) {
 		m_model		.Init();
 		m_polygon2D	.Init();
 		m_polygon3D	.Init();
 		m_text2D	.Init();
 		m_text3D	.Init();
-		m_cameraMgr	.Init();
-		m_drawMgr	.Init();
+		m_drawMgr	.Init(priorityMax);
 		m_drawState	.Init(device);
 		m_light3D	.Init();
 		m_text		.Init();
@@ -84,7 +88,6 @@ public:
 		m_polygon3D	.Uninit();
 		m_text2D	.Uninit();
 		m_text3D	.Uninit();
-		m_cameraMgr	.Uninit();
 		m_drawMgr	.Uninit();
 		m_drawState	.Uninit();
 		m_light3D	.Uninit();
@@ -98,7 +101,6 @@ public:
 		m_polygon3D	.Update();
 		m_text2D	.Update();
 		m_text3D	.Update();
-		m_cameraMgr	.Update();
 		m_drawMgr	.Update();
 		m_drawState	.Update();
 		m_light3D	.Update();

@@ -18,7 +18,7 @@
 //=======================================
 CMeteorGenerator::CMeteorGenerator()
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_pos = INITD3DXVECTOR3;
 	m_move = INITD3DXVECTOR3;
@@ -40,7 +40,7 @@ CMeteorGenerator::~CMeteorGenerator()
 void CMeteorGenerator::Init(void)
 {
 	// 隕石の生成
-	Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
+	Manager::StageObjectMgr()->MeteorCreate(m_pos, m_move);
 }
 
 //=======================================
@@ -62,7 +62,7 @@ void CMeteorGenerator::Update(void)
 	CObject *obj = NULL;
 
 	//オブジェクトを取得
-	while (Manager::BlockMgr()->ListLoop(&obj)) {
+	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 		//取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
 
@@ -83,7 +83,7 @@ void CMeteorGenerator::Update(void)
 		{// 生成の間隔を超えたとき
 
 			// 隕石の生成
-			Manager::BlockMgr()->MeteorCreate(m_pos, m_move);
+			Manager::StageObjectMgr()->MeteorCreate(m_pos, m_move);
 			m_nCntSummon = 0;	// カウントの初期化
 		}
 	}

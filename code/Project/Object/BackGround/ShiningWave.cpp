@@ -19,7 +19,7 @@ D3DXVECTOR3(-120.0f, 120.0f, 200.0f);
 // コンストラクタ
 //========================================
 CShiningWave::CShiningWave(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::BACKGROUND;	// 種類の設定
 								// 大きさの設定

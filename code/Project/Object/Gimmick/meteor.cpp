@@ -24,7 +24,7 @@ const float		  CMeteor::METEOR_BLINK_ADJ = 0.01f;                 // “_–ÅƒAƒjƒ
 // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 //========================================
 CMeteor::CMeteor(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 	
 	// í—Ş‚Ìİ’è
 	m_type = TYPE::METEOR;
@@ -83,7 +83,7 @@ void CMeteor::Update(void) {
 	CollisionBlock();
 
 	//ƒ‚ƒfƒ‹”z’u
-	RNLib::Model().Put(m_pos, m_rot, ModelIdx, false)->SetOutLine(true)
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot,  false)->SetOutLine(true)
 		->SetBrightnessOfEmissive(m_fBlink)->SetCol(m_color);
 
 }
@@ -123,7 +123,7 @@ void CMeteor::CollisionBlock(void)
 	CObject *obj = NULL;
 
 	//ƒIƒuƒWƒFƒNƒg‚ğæ“¾
-	while (Manager::BlockMgr()->ListLoop(&obj)) {
+	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 		//æ“¾‚µ‚½ƒIƒuƒWƒFƒNƒg‚ğƒLƒƒƒXƒg
 		CStageObject* stageObj = (CStageObject*)obj;
 

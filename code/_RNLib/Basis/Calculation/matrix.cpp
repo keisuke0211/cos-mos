@@ -13,17 +13,68 @@
 //================================================================================
 
 //========================================
+// [静的]位置をマトリックスに変換
+//========================================
+Matrix CMatrix::ConvPosToMtx(const Pos3D& pos) {
+
+	Matrix posMtx = INITMATRIX;
+	Matrix mtx    = INITMATRIX;
+
+	// 位置を反映
+	D3DXMatrixTranslation(&posMtx, pos.x, pos.y, pos.z);
+	D3DXMatrixMultiply(&mtx, &mtx, &posMtx);
+
+	return mtx;
+}
+
+//========================================
+// [静的]向きをマトリックスに変換
+//========================================
+Matrix CMatrix::ConvRotToMtx(const Rot3D& rot) {
+
+	Matrix rotMtx = INITMATRIX;
+	Matrix mtx    = INITMATRIX;
+
+	// 向きを反映
+	D3DXMatrixRotationYawPitchRoll(&rotMtx, rot.y, rot.x, rot.z);
+	D3DXMatrixMultiply(&mtx, &mtx, &rotMtx);
+
+	return mtx;
+}
+
+//========================================
 // [静的]位置と向きをマトリックスに変換
 //========================================
 Matrix CMatrix::ConvPosRotToMtx(const Pos3D& pos, const Rot3D& rot) {
 
 	Matrix rotMtx = INITMATRIX;
 	Matrix posMtx = INITMATRIX;
-	Matrix mtx = INITMATRIX;
+	Matrix mtx    = INITMATRIX;
 
 	// 向きを反映
 	D3DXMatrixRotationYawPitchRoll(&rotMtx, rot.y, rot.x, rot.z);
 	D3DXMatrixMultiply(&mtx, &mtx, &rotMtx);
+
+	// 位置を反映
+	D3DXMatrixTranslation(&posMtx, pos.x, pos.y, pos.z);
+	D3DXMatrixMultiply(&mtx, &mtx, &posMtx);
+
+	return mtx;
+}
+
+//========================================
+// [静的]位置と法線をマトリックスに変換
+//========================================
+Matrix CMatrix::ConvPosNorToMtx(const Pos3D& pos, const Normal3D& nor) {
+
+	Matrix rotMtx = INITMATRIX;
+	Matrix posMtx = INITMATRIX;
+	Matrix mtx    = INITMATRIX;
+
+	// 法線を反映
+	mtx._31 = nor.x;
+	mtx._32 = nor.y;
+	mtx._33 = nor.z;
 
 	// 位置を反映
 	D3DXMatrixTranslation(&posMtx, pos.x, pos.y, pos.z);

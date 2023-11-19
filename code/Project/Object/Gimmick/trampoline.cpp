@@ -23,7 +23,7 @@
 // コンストラクタ
 //========================================
 CTrampoline::CTrampoline(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	//初期状態
 	m_type = TYPE::TRAMPOLINE;
@@ -117,27 +117,27 @@ void CTrampoline::Update(void) {
 void CTrampoline::PutModel(void)
 {
 	//土台モデル
-	RNLib::Model().Put(m_pos, INITD3DXVECTOR3, m_modelIdx[Parts_BASE], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_BASE], m_pos, INITD3DXVECTOR3,  false)
 		->SetCol(m_color)
 		->SetOutLine(true);
 
 	//キノコ
-	RNLib::Model().Put(m_pSpringPos[0], INITD3DXVECTOR3, m_modelIdx[Parts_MASH], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_MASH], m_pSpringPos[0], INITD3DXVECTOR3, false)
 		->SetOutLine(true);
-	RNLib::Model().Put(m_pSpringPos[1], INVERSEVECTOR3, m_modelIdx[Parts_MASH], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_MASH], m_pSpringPos[1], INVERSEVECTOR3,  false)
 		->SetOutLine(true);
 
 	//ばね
-	RNLib::Model().Put(m_pSpringPos[0], INVERSEVECTOR3, m_modelIdx[Parts_SPRING], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_SPRING], m_pSpringPos[0], INVERSEVECTOR3,false)
 		->SetOutLine(true);
-	RNLib::Model().Put(m_pSpringPos[1], INITD3DXVECTOR3, m_modelIdx[Parts_SPRING], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_SPRING], m_pSpringPos[1], INITD3DXVECTOR3,  false)
 		->SetOutLine(true);
 
 	//目玉モデル
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[Parts_EYE], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_EYE], D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3,  false)
 		->SetCol(m_color)
 		->SetOutLine(true);
-	RNLib::Model().Put(D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, m_modelIdx[Parts_EYE], false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_EYE], D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, false)
 		->SetCol(m_color)
 		->SetOutLine(true);
 }

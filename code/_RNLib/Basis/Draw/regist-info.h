@@ -18,9 +18,9 @@ public:
 	//===== [[[ ŠÖ”éŒ¾ ]]]
 	CRegistInfoBase();
 	virtual ~CRegistInfoBase();
+	void ClearParameter(void);
 	void AssignToDrawInfo(CDrawInfoBase& drawInfo, const CDrawInfoBase::TYPE& type);
 
 	//===== [[[ •Ï”’è‹` ]]]
-	short m_priority;
 	short m_clippingID;
 };

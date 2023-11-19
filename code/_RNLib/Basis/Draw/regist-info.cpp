@@ -17,8 +17,7 @@
 //========================================
 CRegistInfoBase::CRegistInfoBase() {
 
-	m_priority   = 0;
-	m_clippingID = NONEDATA;
+	ClearParameter();
 }
 
 //========================================
@@ -29,11 +28,18 @@ CRegistInfoBase::~CRegistInfoBase() {
 }
 
 //========================================
+// パラメーターのクリア
+//========================================
+void CRegistInfoBase::ClearParameter(void) {
+
+	m_clippingID = NONEDATA;
+}
+
+//========================================
 // 描画情報に代入
 //========================================
 void CRegistInfoBase::AssignToDrawInfo(CDrawInfoBase& drawInfo, const CDrawInfoBase::TYPE& type) {
 
 	drawInfo.m_type       = type;
-	drawInfo.m_priority   = m_priority;
 	drawInfo.m_clippingID = m_clippingID;
 }

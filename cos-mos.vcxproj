@@ -199,6 +199,7 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\setup3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\ease.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\geometry.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Calculation\hit-test.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\matrix.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\number.cpp" />
     <ClCompile Include="code\_RNLib\Basis\default-data.cpp" />
@@ -211,6 +212,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-state.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\light3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon2D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\text2D.cpp" />
@@ -231,9 +233,12 @@
     <ClCompile Include="code\_RNLib\Basis\Mechanical\window.cpp" />
     <ClCompile Include="code\_RNLib\Basis\setting.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo.cpp" />
+    <ClCompile Include="code\_RNLib\Demo\demo_object.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
+    <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
+    <ClCompile Include="code\_RNLib\SetUp3DEditor\setup3D-editor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
@@ -284,6 +289,7 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\setup3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\ease.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\geometry.h" />
+    <ClInclude Include="code\_RNLib\Basis\Calculation\hit-test.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\matrix.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\number.h" />
     <ClInclude Include="code\_RNLib\Basis\default-data.h" />
@@ -295,6 +301,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-state.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\light3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon2D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\text2D.h" />
@@ -315,11 +322,15 @@
     <ClInclude Include="code\_RNLib\Basis\Mechanical\window.h" />
     <ClInclude Include="code\_RNLib\Basis\setting.h" />
     <ClInclude Include="code\_RNLib\Demo\demo.h" />
+    <ClInclude Include="code\_RNLib\Demo\demo_object.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_player.h" />
+    <ClInclude Include="code\_RNLib\Demo\demo_zone.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />
+    <ClInclude Include="code\_RNLib\RNmode.h" />
     <ClInclude Include="code\_RNLib\RNobject.h" />
     <ClInclude Include="code\_RNLib\RNsettings.h" />
+    <ClInclude Include="code\_RNLib\SetUp3DEditor\setup3D-editor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

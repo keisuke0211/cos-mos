@@ -15,7 +15,7 @@
 // コンストラクタ
 //========================================
 CStar::CStar(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::BACKGROUND;	// 種類の設定
 								// 大きさの設定
@@ -61,7 +61,7 @@ void CStar::Uninit(void) {
 //========================================
 void CStar::Update(void) {
 	
-	RNLib::Polygon3D().Put(m_pos, m_rot, false)
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, m_rot, false)
 		->SetSize(100.0f,100.0f);
 }
 

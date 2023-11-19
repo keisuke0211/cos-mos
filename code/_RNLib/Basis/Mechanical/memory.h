@@ -43,6 +43,22 @@ public:
 	}
 
 	//========================================
+	// メモリ再確保処理(Double)
+	//========================================
+	template <class T>static void AllocDouble(T*** alloc, const int& num, const bool& isMutex = false) {
+
+		// ポインタメモリを再確保
+		Alloc(alloc, num, isMutex);
+
+		// 増えた分のメモリを確保していく
+		T** allocTemp = *alloc;
+		for (int cnt = 0; cnt < num; cnt++) {
+			allocTemp[cnt] = NULL;
+			Alloc(&allocTemp[cnt], 1, isMutex);
+		}
+	}
+
+	//========================================
 	// メモリ確保処理(サイズ指定)
 	//========================================
 	static void Alloc(void** alloc, const size_t& size, const bool& isMutex = true) {
@@ -99,7 +115,7 @@ public:
 
 			// 減った分のメモリを解放していく
 			for (int cnt = beforeNum - 1; cnt >= afterNum; cnt--) {
-				Release(&*alloc[cnt]);
+				Release(&(*alloc)[cnt]);
 			}
 		}
 

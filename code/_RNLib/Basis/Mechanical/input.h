@@ -15,7 +15,7 @@ public:
 	//========== [[[ ’è”’è‹` ]]]
 	static const int NUM_KEY_MAX = 256;
 
-	//========== [[[ —ñ‹“Œ^‚Ì’è‹` ]]]
+	//========== [[[ —ñ‹“Œ^’è‹` ]]]
 	enum class ACTIVE_DEVICE { KEYBOARD, JOYPAD, MAX, };
 	enum class INPUT_ANGLE   { UP, DOWN, LEFT, RIGHT, MAX, };
 	enum class MOUSEBUTTON   { LEFT, RIGHT, MAX, };

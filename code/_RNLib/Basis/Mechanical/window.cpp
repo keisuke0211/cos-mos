@@ -275,6 +275,7 @@ void CWindow::SetFullScreen(bool bFullScreen) {
 //========================================
 void CWindow::Message(const char *pText, const char *pCaption) {
 	MessageBox(m_hWnd, pText, pCaption, MB_OK);
+	RNLib::Input().ClearInputInfo();
 }
 
 //========================================
@@ -283,6 +284,7 @@ void CWindow::Message(const char *pText, const char *pCaption) {
 //========================================
 void CWindow::Message_ERROR(const char* pText) {
 	MessageBox(m_hWnd, pText, "ERROR", MB_ICONWARNING);
+	RNLib::Input().ClearInputInfo();
 }
 
 //========================================

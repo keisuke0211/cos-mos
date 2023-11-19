@@ -13,24 +13,32 @@
 class CDefaultData {
 public:
 	//========== [[[ óÒãìå^íËã` ]]]
-	enum class SOUND { TEST_BGM, TEST_SE, MAX, };
-	enum class MODEL { SPHERE, OBSERVER, PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
+	enum class SOUND   { TEST_BGM, TEST_SE, MAX, };
+	enum class TEXTURE { TILE, GRID, STRIPE, BORDER, MAX };
+	enum class MODEL   { SPHERE, DOME_UP, DOME_DOWN, OBSERVER, MONITOR, PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
+	enum class SETUP3D { CAPSULE, MAX };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CDefaultData();
 	~CDefaultData();
-	void Init(void);
+	void Init  (void);
 	void Uninit(void);
 	void Update(void);
-	short& GetSoundIdx(const SOUND& sound) { return m_soundIdxes[(int)sound]; }
-	short& GetModelIdx(const MODEL& model) { return m_modelIdxes[(int)model]; }
+	short& GetSoundIdx  (const SOUND&   sound  ) { return m_soundIdxes  [(int)sound  ]; }
+	short& GetTextureIdx(const TEXTURE& texture) { return m_textureIdxes[(int)texture]; }
+	short& GetModelIdx  (const MODEL&   model  ) { return m_modelIdxes  [(int)model  ]; }
+	short& GetSetUp3DIdx(const SETUP3D& setUp3D) { return m_setUp3DIdxes[(int)setUp3D]; }
 
 private:
 	//========== [[[ íËêîêÈåæ ]]]
-	static const char* SOUND_PATH[(int)SOUND::MAX];
-	static const char* MODEL_PATH[(int)MODEL::MAX];
+	static const char* SOUND_PATHS  [(int)SOUND  ::MAX];
+	static const char* TEXTURE_PATHS[(int)TEXTURE::MAX];
+	static const char* MODEL_PATHS  [(int)MODEL  ::MAX];
+	static const char* SETUP3D_PATHS[(int)SETUP3D::MAX];
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	short m_soundIdxes[(int)SOUND::MAX];
-	short m_modelIdxes[(int)MODEL::MAX];
+	short m_soundIdxes  [(int)SOUND  ::MAX];
+	short m_textureIdxes[(int)TEXTURE::MAX];
+	short m_modelIdxes  [(int)MODEL  ::MAX];
+	short m_setUp3DIdxes[(int)SETUP3D::MAX];
 };

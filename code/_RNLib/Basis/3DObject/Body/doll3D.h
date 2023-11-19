@@ -11,12 +11,13 @@
 #include "../../Calculation/matrix.h"
 #include "../../Calculation/ease.h"
 #include "../../../RNmain.h"
+#include "../../Mechanical/object.h"
 
 //****************************************
 // クラス定義
 //****************************************
 // ドール3Dクラス
-class CDoll3D {
+class CDoll3D : public CObject {
 public:
 	//========== [[[ クラス定義 ]]]
 	// ボーン状態クラス
@@ -64,11 +65,15 @@ public:
 		void         UpdateMotion      (const short& counter);
 		void         PrepareMotion     (const CMotion3D::BoneMotionData& boneMotionData);
 		Pos3D&       GetPos            (void)                                        { return m_pos; }
+		void         AddPos            (const Vector3D& addVec)                      { m_pos += addVec; }
 		Rot3D&       GetRot            (void)                                        { return m_rot; }
+		void         SetRot            (const Rot3D& rot)                            { m_rot = rot; }
+		void         AddRot            (const Vector3D& addVec)                      { m_rot += addVec; }
 		Scale3D&     GetScale          (void)                                        { return m_scale; }
 		void         SetWorldMtx       (const Matrix& worldMtx)                      { m_worldMtx = worldMtx; }
 		Matrix&      GetWorldMtx       (void)                                        { return m_worldMtx; }
 		void         SetMotionData     (const CMotion3D::BoneMotionData* motionData) { m_motionData = motionData; }
+		void         SetParentBoneState(CBoneState* parentBoneState)                 { m_parentBoneState = parentBoneState; }
 		CBoneState*& GetParentBoneState(void)                                        { return m_parentBoneState; }
 
 	private:
@@ -83,7 +88,7 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CDoll3D();
+	CDoll3D(const UShort& priority, const short& setUpIdx);
 	~CDoll3D();
 	void Update          (void);
 	void SetUp           (const short& setUpIdx);
@@ -92,13 +97,14 @@ public:
 	void SetMotionStop   (const bool& isStop)   { m_motionInfo.isStop = isStop; }
 	void SetMotionCounter(const short& counter) { m_motionInfo.counter = counter; }
 	// 取得設定
-	Pos3D& GetPos                 (void)                              { return m_pos; }
-	void   SetPos                 (const Pos3D& pos)                  { m_pos = pos; }
-	Rot3D& GetRot                 (void)                              { return m_rot; }
-	void   SetRot                 (const Rot3D& rot)                  { m_rot = rot; }
-	void   SetCol                 (const Color& col)                  { m_col = col; }
-	void   SetBrightnessOfEmission(const float& brightnessOfEmission) { m_brightnessOfEmission = brightnessOfEmission; }
-	float& GetBrightnessOfEmission(void)                              { return m_brightnessOfEmission; }
+	Pos3D&      GetPos                 (void)                              { return m_pos; }
+	void        SetPos                 (const Pos3D& pos)                  { m_pos = pos; m_isSetPos = true; }
+	Rot3D&      GetRot                 (void)                              { return m_rot; }
+	void        SetRot                 (const Rot3D& rot)                  { m_rot = rot; }
+	void        SetCol                 (const Color& col)                  { m_col = col; }
+	void        SetBrightnessOfEmission(const float& brightnessOfEmission) { m_brightnessOfEmission = brightnessOfEmission; }
+	float&      GetBrightnessOfEmission(void)                              { return m_brightnessOfEmission; }
+	CBoneState& GetBoneState           (const UShort& boneIdx)             { return m_boneStates[boneIdx]; }
 
 private:
 	//========== [[[ 構造体定義 ]]]
@@ -116,12 +122,14 @@ private:
 	void   PrepareMotion   (void);
 
 	//========== [[[ 変数宣言 ]]]
+	UShort      m_priority;
 	Pos3D       m_pos;
+	bool        m_isSetPos;
 	Rot3D       m_rot;
 	Scale3D     m_scale;
 	Color       m_col;
-	float       m_brightnessOfEmission;
 	CBoneState* m_boneStates;
 	short       m_setUpIdx;
 	MotionInfo  m_motionInfo;
+	float       m_brightnessOfEmission;
 };

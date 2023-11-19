@@ -17,6 +17,8 @@
 //========================================
 CCameraMgr::CCameraMgr() {
 
+	m_deletedCamera = NULL;
+	m_deletedCameraNum = 0;
 }
 
 //========================================
@@ -24,20 +26,7 @@ CCameraMgr::CCameraMgr() {
 //========================================
 CCameraMgr::~CCameraMgr() {
 
-}
-
-//========================================
-// 初期化処理
-//========================================
-void CCameraMgr::Init(void) {
-
-}
-
-//========================================
-// 終了処理
-//========================================
-void CCameraMgr::Uninit(void) {
-
+	CMemory::Release(&m_deletedCamera);
 }
 
 //========================================
@@ -48,15 +37,37 @@ void CCameraMgr::Update(void) {
 }
 
 //========================================
-// 一括更新処理
+// 削除済みカメラかチェック
 //========================================
-void CCameraMgr::UpdateAll(void) {
+bool CCameraMgr::CheckDeletedCamera(CCamera*& camera) {
 
-	// 先頭から順番に最後尾まで更新していく
-	CObject* pList = NULL;
-	while (ListLoop(&pList)) {
+	if (m_deletedCameraNum == 0)
+		return false;
 
-		if (!pList->GetDelete())
-			pList->Update();
+	for (int cntCamera = 0; cntCamera < m_deletedCameraNum; cntCamera++) {
+		if (m_deletedCamera[cntCamera] == camera) {
+			return true;
+		}
 	}
+
+	return false;
+}
+
+//========================================
+// 削除済みカメラとして追加
+//========================================
+void CCameraMgr::AddDeletedCamera(CCamera* camera) {
+
+	const UShort oldNum = m_deletedCameraNum++;
+	CMemory::ReAlloc(&m_deletedCamera, oldNum, m_deletedCameraNum);
+	m_deletedCamera[oldNum] = camera;
+}
+
+//========================================
+// 削除済みカメラを解放
+//========================================
+void CCameraMgr::ReleaseDeletedCamera(void) {
+
+	CMemory::Release(&m_deletedCamera);
+	m_deletedCameraNum = 0;
 }

@@ -12,6 +12,58 @@
 //----------|---------------------------------------------------------------------
 //================================================================================
 
+// 仮想関数を使用してLPDIRECT3DTEXTURE9を複製する関数
+LPDIRECT3DTEXTURE9 CloneTexture(LPDIRECT3DTEXTURE9 sourceTexture, LPDIRECT3DDEVICE9 device)
+{
+	LPDIRECT3DTEXTURE9 clonedTexture = nullptr;
+
+	// ソーステクスチャの情報を取得
+	D3DSURFACE_DESC desc;
+	sourceTexture->GetLevelDesc(0, &desc);
+
+	// クローン用のテクスチャを作成
+	HRESULT result = device->CreateTexture(desc.Width, desc.Height, 1, 0, desc.Format, D3DPOOL_MANAGED, &clonedTexture, nullptr);
+
+	if (SUCCEEDED(result))
+	{
+		// ソーステクスチャのサーフェスを取得
+		LPDIRECT3DSURFACE9 sourceSurface;
+		sourceTexture->GetSurfaceLevel(0, &sourceSurface);
+
+		// クローンテクスチャのサーフェスを取得
+		LPDIRECT3DSURFACE9 destSurface;
+		clonedTexture->GetSurfaceLevel(0, &destSurface);
+
+		// ソースサーフェスからデータを取得
+		RECT rect = { 0, 0, (LONG)desc.Width, (LONG)desc.Height };
+		result = D3DXLoadSurfaceFromSurface(destSurface, nullptr, nullptr, sourceSurface, nullptr, &rect, D3DX_FILTER_NONE, 0);
+
+		// リソースの解放
+		sourceSurface->Release();
+		destSurface->Release();
+	}
+
+	return clonedTexture;
+}
+
+//========================================
+// [静的]テクスチャのデータをコピー
+//========================================
+void CTexture::CopyTextureData(LPDIRECT3DTEXTURE9& srcTexture, LPDIRECT3DTEXTURE9& destTexture) {
+
+	// コピー先テクスチャを解放
+	if (srcTexture != NULL) {
+		srcTexture->Release();
+		srcTexture = NULL;
+	}
+
+	// コピー元テクスチャが無ければ終了
+	if (destTexture == NULL)
+		return;
+
+	srcTexture = CloneTexture(destTexture, RNLib::Window().GetD3DDevice());
+}
+
 //========================================
 // コンストラクタ
 //========================================

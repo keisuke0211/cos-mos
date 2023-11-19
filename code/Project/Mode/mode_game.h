@@ -21,9 +21,9 @@ class CRocketPartsUI;
 // モード(ゲーム)クラス
 class CMode_Game :public CMode {
 public:
-	// *** 定義 ***
-	static const int PAUSE_LEFT_ANIME = 20;			// 画面左のアニメーション時間
-	static const int PAUSE_RIGHT_ANIME = 20;		// 画面右のアニメーション時間
+	//========== [[[ 定数定義 ]]]
+	static const int PAUSE_LEFT_ANIME  = 20;	// 画面左のアニメーション時間
+	static const int PAUSE_RIGHT_ANIME = 20;	// 画面右のアニメーション時間
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -32,8 +32,7 @@ public:
 	};
 
 	// メニュー
-	enum MENU
-	{
+	enum MENU {
 		MENU_RESUME = 0,// 続ける
 		MENU_RESET,		// やり直す
 		MENU_SELECT,	// ステージ選択
@@ -43,8 +42,7 @@ public:
 	};
 
 	// 操作方法
-	enum CONTROLLER
-	{
+	enum CONTROLLER {
 		INPUT_TITLE = 0,// タイトル
 		INPUT_MOVE,		// 移動
 		INPUT_JUMP,		// ジャンプ
@@ -55,8 +53,7 @@ public:
 	};
 
 	// テキスト
-	enum TEXT
-	{
+	enum TEXT {
 		TEXT_MENU = 0,	// メニュー
 		TEXT_INPUT,		// 操作方法
 		TEXT_ALL,		// 全部
@@ -64,8 +61,7 @@ public:
 	};
 
 	// ポーズ情報
-	struct Pause
-	{
+	struct Pause {
 		D3DXVECTOR3 LeftPos;
 		D3DXVECTOR3 RightPos;
 		D3DXVECTOR3 LeftTargetPos;
@@ -83,28 +79,23 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	      CMode_Game    ();
-	      ~CMode_Game   ();
-	void  Init          (void);
-	void  Uninit        (void);
-	void  Update        (void);
-	void  ProcessState  (const PROCESS process);
-
 	static CPlayer* GetPlayer(void);
-
+	CMode_Game();
+	~CMode_Game();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
+	void ProcessState(const PROCESS process);
 	// -- 設定 -------------------------------------------------------------------
 	static void SetStage(int planet, int stage) { m_nPlanetIdx = planet; m_nStageIdx = stage; }
 	static void SetBgUpColor(Color color) { m_BgColorUp = color; }
 	static void SetBgDownColor(Color color) { m_BgColorDown = color; }
 	static void SetRocketParts(CRocketPartsUI *rctpar) { m_rocketparts = rctpar; }
-
 	// -- 取得 -------------------------------------------------------------------
-	static int GetStage(void)    { return m_nStageIdx;   }
+	static int GetStage(void)           { return m_nStageIdx;   }
 	static CCamera& GetCameraUp(void)   { return *m_cameraUp;   }
 	static CCamera& GetCameraDown(void) { return *m_cameraDown; }
-
 private:
-
 	//========== [[[ 関数宣言 ]]]
 	void PauseCreate(void);
 	void PauseSelect(void);
@@ -126,11 +117,8 @@ private:
 	static Color m_BgColorUp, m_BgColorDown;
 	short m_wallModelIdx[2];
 	Pause m_Pause;
-
 	short m_BGMIdx;
-
 	CSound::CPlay* play;
-
 
 	char m_RightTxt[INPUT_MAX][TXT_MAX] = {
 		{"操作方法"},
@@ -140,5 +128,4 @@ private:
 		{"・決定　　：Ａ"},
 		{"・戻る　　：Ｂ"},
 	};
-
 };

@@ -17,6 +17,17 @@
 // モデルクラス
 class CModel : public CRegist {
 public:
+	//========== [[[ 構造体定義 ]]]
+	struct Vertex3DInfo {
+		Pos3D    pos;
+		Pos3D    worldPos;
+		Rot3D    rot;
+		Rot3D    worldRot;
+		Normal3D nor;
+		Normal3D worldNor;
+		Pos3D    texPos;
+	};
+
 	//========== [[[ クラス定義 ]]]
 	// データクラス
 	class CData {
@@ -58,14 +69,13 @@ public:
 	};
 
 	// 登録情報クラス
-	class CRegistInfo : CRegistInfoBase {
+	class CRegistInfo : public CRegistInfoBase {
 	public:
 		// [[[ 関数宣言 ]]]
 		CRegistInfo();
 		~CRegistInfo();
 		void ClearParameter(void);
 		CDrawInfo* ConvToDrawInfo(void);
-		CRegistInfo* SetPriority            (const short& priority);
 		CRegistInfo* SetClippingCamera      (CCamera& camera); 
 		CRegistInfo* SetClippingCamera      (const short& ID);
 		CRegistInfo* SetMtx                 (const Matrix& mtx);
@@ -92,15 +102,16 @@ public:
 	//========== [[[ 関数宣言 ]]]
 	CModel();
 	~CModel();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	void         Release(void);
-	short        Load   (const char* loadPath, short idx = NONEDATA);
-	CData&       GetData(const short& idx) { return *m_datas[idx]; }
-	CRegistInfo* Put    (const Matrix& mtx, const short& modelIdx, const bool& isOnScreen = false);
-	CRegistInfo* Put    (const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const bool& isOnScreen = false);
-	CRegistInfo* Put    (const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const bool& isOnScreen = false);
+	void         Init        (void);
+	void         Uninit      (void);
+	void         Update      (void);
+	void         Release     (void);
+	short        Load        (const char* loadPath, short idx = NONEDATA);
+	CData&       GetData     (const short& idx) { return *m_datas[idx]; }
+	void         StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& modelIdx, const Matrix& modelMtx);
+	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Matrix& mtx,                                        const bool& isOnScreen = false);
+	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot,                       const bool& isOnScreen = false);
+	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const bool& isOnScreen = false);
 
 private:
 	//========== [[[ 変数宣言 ]]]

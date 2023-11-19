@@ -17,6 +17,7 @@ public:
 	virtual ~CRegist();
 	virtual bool Load(const char* loadPath, short& idx);
 	virtual void InitMemory(const UShort& num);
+	const char* GetLoadPath(const short& idx) { return idx < 0 ? "NONEDATA" : m_loadPaths[idx]; }
 
 protected:
 	//========== [[[ ŠÖ”éŒ¾ ]]]

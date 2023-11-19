@@ -50,21 +50,21 @@ void CPolygon3D::Update(void) {
 //========================================
 // 設置処理
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::Put(const Matrix& mtx, const bool& isOnScreen) {
+CPolygon3D::CRegistInfo* CPolygon3D::Put(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
 
 	// 登録受付中でない時、終了
 	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
-	return RNLib::DrawMgr().PutPolygon3D(mtx, isOnScreen);
+	return RNLib::DrawMgr().PutPolygon3D(priority, mtx, isOnScreen);
 }
 
 //========================================
 // 設置処理(位置と向き指定)
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::Put(const Pos3D& pos, const Rot3D& rot, const bool& isOnScreen) {
+CPolygon3D::CRegistInfo* CPolygon3D::Put(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const bool& isOnScreen) {
 
-	return Put(CMatrix::ConvPosRotToMtx(pos, rot), isOnScreen);
+	return Put(priority, CMatrix::ConvPosRotToMtx(pos, rot), isOnScreen);
 }
 
 //================================================================================
@@ -125,14 +125,14 @@ CPolygon3D::CDrawInfo::CDrawInfo() {
 
 	m_idx            = 0;
 	m_mtx            = INITMATRIX;
-	m_texIdx         = NONEDATA;
-	m_texCamera      = NULL;
+	m_tex            = NULL;
+	m_texType        = Polygon2DAnd3D::TEX_TYPE::NONE;
 	m_isZTest        = true;
 	m_isLighting     = true;
 	m_isBillboard    = false;
 	m_alphaBlendMode = CDrawState::ALPHA_BLEND_MODE::NORMAL;
 	m_distance       = 0.0f;
-	for (int cntVtx(0); cntVtx < 4; cntVtx++) {
+	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}
 }
@@ -142,6 +142,7 @@ CPolygon3D::CDrawInfo::CDrawInfo() {
 //========================================
 CPolygon3D::CDrawInfo::~CDrawInfo() {
 
+	CMemory::Release<void>(&m_tex);
 }
 
 //========================================
@@ -209,13 +210,7 @@ void CPolygon3D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 	}
 
 	// [[[ テクスチャの設定 ]]]
-	if (m_texCamera != NULL) {
-		m_texCamera->SetTexture(device);
-		RNLib::DrawStateMgr().SetTextureAlphaMode(false, device);	// テクスチャの透過を無効化
-	}
-	else {
-		RNLib::Texture().Set(device, m_texIdx);
-	}
+	Polygon2DAnd3D::SetTexture(device, m_tex, m_texType);
 
 	//----------------------------------------
 	// 描画
@@ -239,7 +234,8 @@ void CPolygon3D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 //========================================
 CPolygon3D::CRegistInfo::CRegistInfo() {
 
-	m_vtxPoses = NULL;
+	m_setVtxPosInfo = NULL;
+	m_setVtxNorInfo = NULL;
 	ClearParameter();
 }
 
@@ -252,31 +248,20 @@ CPolygon3D::CRegistInfo::~CRegistInfo() {
 }
 
 //========================================
-// パラメーターのクリア処理
+// パラメータークリア処理
 //========================================
 void CPolygon3D::CRegistInfo::ClearParameter(void) {
 
-	m_idx            = NONEDATA;
-	m_scaleX         = 1.0f;
-	m_scaleY         = 1.0f;
-	m_isFactScale    = false;
-	m_mtx            = INITMATRIX;
-	CMemory::Release(&m_vtxPoses);
-	m_col            = INITCOLOR;
-	m_texIdx         = NONEDATA;
-	m_texCamera      = NULL;
-	m_ptn            = 0;
-	m_ptnX           = 1;
-	m_ptnY           = 1;
-	m_ptnScaleX      = 1.0f;
-	m_ptnScaleY      = 1.0f;
-	m_ptnPos         = INITPOS2D;
-	m_isZtest        = true;
-	m_isLighting     = true;
-	m_isBillboard    = false;
-	m_alphaBlendMode = CDrawState::ALPHA_BLEND_MODE::NORMAL;
-	m_isTexMirrorX   = false;
-	m_priority       = 0;
+	m_idx				= 0;
+	CMemory::Release(&m_setVtxPosInfo);
+	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
+	CMemory::Release(&m_setVtxNorInfo);
+	m_col				= INITCOLOR;
+	m_setTexInfoSum.ClearParameter();
+	m_isZtest			= true;
+	m_isLighting		= true;
+	m_isBillboard		= false;
+	m_alphaBlendMode	= CDrawState::ALPHA_BLEND_MODE::NORMAL;
 }
 
 //========================================
@@ -284,19 +269,19 @@ void CPolygon3D::CRegistInfo::ClearParameter(void) {
 //========================================
 CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 
+	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::NONE)
+		return NULL;
+
 	// 描画情報のメモリ確保
 	CDrawInfo* drawInfo = NULL;
 	CMemory::Alloc(&drawInfo);
 
+	// 基底情報を代入
+	AssignToDrawInfo(*drawInfo, CDrawInfoBase::TYPE::POLYGON3D);
+
 	// 情報を代入
-	// (基底)
-	drawInfo->m_type           = CDrawInfoBase::TYPE::POLYGON3D;
-	drawInfo->m_priority       = m_priority;
-	// (継承)
 	drawInfo->m_idx            = m_idx;
 	drawInfo->m_mtx            = m_mtx;
-	drawInfo->m_texIdx         = m_texIdx;
-	drawInfo->m_texCamera      = m_texCamera;
 	drawInfo->m_isZTest        = m_isZtest;
 	drawInfo->m_isLighting     = m_isLighting;
 	drawInfo->m_isBillboard    = m_isBillboard;
@@ -306,38 +291,40 @@ CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 	// 頂点情報の設定
 	//----------------------------------------
 	// [[[ 位置 ]]]
-	if (m_vtxPoses == NULL) {
-		float widthHalf;
-		float heightHalf;
+	switch (m_setVtxPosInfoType) {
+	case SET_VTX_POS_INFO_TYPE::NORMAL: {
+		SetVtxPosInfo* setVtxPosInfo = (SetVtxPosInfo*)m_setVtxPosInfo;
 
-		if (m_isFactScale) {
-			widthHalf  = m_scaleX * 0.5f;
-			heightHalf = m_scaleY * 0.5f;
-		}
-		else {
-			float width ((RNLib::Texture().GetWidth (m_texIdx) * PIXEL3D_SIZE) / m_ptnX);
-			float height((RNLib::Texture().GetHeight(m_texIdx) * PIXEL3D_SIZE) / m_ptnY);
-			widthHalf  = width  * m_scaleX * 0.5f;
-			heightHalf = height * m_scaleY * 0.5f;
-		}
+		drawInfo->m_vtxs[0].pos = setVtxPosInfo->vtxPoses[0];
+		drawInfo->m_vtxs[1].pos = setVtxPosInfo->vtxPoses[1];
+		drawInfo->m_vtxs[2].pos = setVtxPosInfo->vtxPoses[2];
+		drawInfo->m_vtxs[3].pos = setVtxPosInfo->vtxPoses[3];
+	}break;
+	case SET_VTX_POS_INFO_TYPE::SIZE: {
+		SetSizeInfo* setSizeInfo = (SetSizeInfo*)m_setVtxPosInfo;
+		const float widthHalf  = setSizeInfo->width  * 0.5f;
+		const float heightHalf = setSizeInfo->height * 0.5f;
 
 		drawInfo->m_vtxs[0].pos = D3DXVECTOR3(-widthHalf,  heightHalf, 0.0f);
 		drawInfo->m_vtxs[1].pos = D3DXVECTOR3( widthHalf,  heightHalf, 0.0f);
 		drawInfo->m_vtxs[2].pos = D3DXVECTOR3(-widthHalf, -heightHalf, 0.0f);
 		drawInfo->m_vtxs[3].pos = D3DXVECTOR3( widthHalf, -heightHalf, 0.0f);
-	}
-	else {
-		drawInfo->m_vtxs[0].pos = m_vtxPoses[0];
-		drawInfo->m_vtxs[1].pos = m_vtxPoses[1];
-		drawInfo->m_vtxs[2].pos = m_vtxPoses[2];
-		drawInfo->m_vtxs[3].pos = m_vtxPoses[3];
+	}break;
 	}
 
 	// [[[ 法線 ]]]
-	drawInfo->m_vtxs[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-	drawInfo->m_vtxs[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-	drawInfo->m_vtxs[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-	drawInfo->m_vtxs[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+	if (m_setVtxNorInfo == NULL) {
+		drawInfo->m_vtxs[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		drawInfo->m_vtxs[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		drawInfo->m_vtxs[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		drawInfo->m_vtxs[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+	}
+	else {
+		drawInfo->m_vtxs[0].nor = m_setVtxNorInfo->vtxNors[0];
+		drawInfo->m_vtxs[1].nor = m_setVtxNorInfo->vtxNors[1];
+		drawInfo->m_vtxs[2].nor = m_setVtxNorInfo->vtxNors[2];
+		drawInfo->m_vtxs[3].nor = m_setVtxNorInfo->vtxNors[3];
+	}
 
 	// [[[ 色 ]]]
 	drawInfo->m_vtxs[0].col =
@@ -346,43 +333,13 @@ CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 	drawInfo->m_vtxs[3].col = D3DCOLOR_RGBA(m_col.r, m_col.g, m_col.b, m_col.a);
 
 	// [[[ UV座標 ]]]
-	if (m_ptn == 0 && m_ptnX == 1 && m_ptnY == 1) {
-		if (m_isTexMirrorX) {
-			drawInfo->m_vtxs[0].tex = D3DXVECTOR2(1.0f, 0.0f);
-			drawInfo->m_vtxs[1].tex = D3DXVECTOR2(0.0f, 0.0f);
-			drawInfo->m_vtxs[2].tex = D3DXVECTOR2(1.0f, 1.0f);
-			drawInfo->m_vtxs[3].tex = D3DXVECTOR2(0.0f, 1.0f);
-		}
-		else {
-			drawInfo->m_vtxs[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-			drawInfo->m_vtxs[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-			drawInfo->m_vtxs[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-			drawInfo->m_vtxs[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-		}
-	}
-	else {
-		const float divX((1.0f / m_ptnX) * m_ptnScaleX);
-		const float divY((1.0f / m_ptnY) * m_ptnScaleY);
-		const float x   (((m_ptn % m_ptnX) * divX) + m_ptnPos.x);
-		const float y   ((((m_ptn / m_ptnX) % m_ptnY) * divY) + m_ptnPos.y);
-
-		if (m_isTexMirrorX) {
-			const float left  (x + divX);
-			const float bottom(y + divY);
-			drawInfo->m_vtxs[0].tex = D3DXVECTOR2(left, y     );
-			drawInfo->m_vtxs[1].tex = D3DXVECTOR2(x   , y     );
-			drawInfo->m_vtxs[2].tex = D3DXVECTOR2(left, bottom);
-			drawInfo->m_vtxs[3].tex = D3DXVECTOR2(x   , bottom);
-		}
-		else {
-			const float right (x + divX);
-			const float bottom(y + divY);
-			drawInfo->m_vtxs[0].tex = D3DXVECTOR2(x    , y     );
-			drawInfo->m_vtxs[1].tex = D3DXVECTOR2(right, y     );
-			drawInfo->m_vtxs[2].tex = D3DXVECTOR2(x    , bottom);
-			drawInfo->m_vtxs[3].tex = D3DXVECTOR2(right, bottom);
-		}
-	}
+	m_setTexInfoSum.AssignTexInfo(
+		drawInfo->m_tex,
+		drawInfo->m_texType,
+		drawInfo->m_vtxs[0].tex,
+		drawInfo->m_vtxs[1].tex,
+		drawInfo->m_vtxs[2].tex,
+		drawInfo->m_vtxs[3].tex);
 
 	return drawInfo;
 }
@@ -421,11 +378,55 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetVtxPos(const Pos3D pos0, co
 	if (this == NULL)
 		return NULL;
 
-	CMemory::Alloc(&m_vtxPoses, 4);
-	m_vtxPoses[0] = pos0;
-	m_vtxPoses[1] = pos1;
-	m_vtxPoses[2] = pos2;
-	m_vtxPoses[3] = pos3;
+	CMemory::Alloc((SetVtxPosInfo**)&m_setVtxPosInfo);
+	SetVtxPosInfo* setTexInfo = (SetVtxPosInfo*)m_setVtxPosInfo;
+	setTexInfo->vtxPoses[0] = pos0;
+	setTexInfo->vtxPoses[1] = pos1;
+	setTexInfo->vtxPoses[2] = pos2;
+	setTexInfo->vtxPoses[3] = pos3;
+	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NORMAL;
+
+	return this;
+}
+
+//========================================
+// 大きさを設定
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetSize(const float& width, const float& height) {
+
+	if (this == NULL)
+		return NULL;
+	
+	CMemory::Alloc((SetSizeInfo**)&m_setVtxPosInfo);
+	SetSizeInfo* setTexInfo = (SetSizeInfo*)m_setVtxPosInfo;
+	setTexInfo->width  = width;
+	setTexInfo->height = height;
+	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::SIZE;
+
+	return this;
+}
+
+//========================================
+// 大きさを設定(サイズ)
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetSize(const Size2D& size) {
+
+	return SetSize(size.x, size.y);
+}
+
+//========================================
+// 法線を設定
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetVtxNor(const Vector3D nor0, const Vector3D nor1, const Vector3D nor2, const Vector3D nor3) {
+
+	if (this == NULL)
+		return NULL;
+
+	CMemory::Alloc(&m_setVtxNorInfo);
+	m_setVtxNorInfo->vtxNors[0] = nor0;
+	m_setVtxNorInfo->vtxNors[1] = nor1;
+	m_setVtxNorInfo->vtxNors[2] = nor2;
+	m_setVtxNorInfo->vtxNors[3] = nor3;
 
 	return this;
 }
@@ -444,90 +445,67 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetCol(const Color& col) {
 }
 
 //========================================
-// 大きさを設定
+// テクスチャを設定
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetSize(const float& width, const float& height) {
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
-		return NULL;
+		return NULL; 
 
-	m_scaleX = width;
-	m_scaleY = height;
-	m_isFactScale = true;
-
-	return this;
-}
-
-//========================================
-// 大きさを設定(テクスチャ基準で拡大)
-//========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetSize_TexBaseScale(const float& scaleX, const float& scaleY) {
-
-	if (this == NULL)
-		return NULL;
-
-	m_scaleX = scaleX;
-	m_scaleY = scaleY;
-	m_isFactScale = false;
-
+	m_setTexInfoSum.SetTex(texIdx, ptn, ptnX, ptnY, ptnPos);
+	
 	return this;
 }
 
 //========================================
 // テクスチャを設定
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTex(CCamera* camera, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_texIdx = texIdx;
-	m_ptn = ptn;
-	m_ptnX = ptnX;
-	m_ptnY = ptnY;
-	m_ptnPos = ptnPos;
+	m_setTexInfoSum.SetTex(camera, ptn, ptnX, ptnY, ptnPos);
 
 	return this;
 }
 
 //========================================
-// テクスチャを設定(カメラ)
+// テクスチャを設定(UV)
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTex_Camera(CCamera* camera) {
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTexUV(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_texCamera = camera;
+	m_setTexInfoSum.SetTexUV(texIdx, pos0, pos1, pos2, pos3);
 
 	return this;
 }
 
 //========================================
-// テクスチャを固定しつつX方向に伸ばす
+// テクスチャを設定(UV)
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::ExtendFixedTexX(const float& rateX) {
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTexUV(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_scaleX *= rateX;
-	m_ptnScaleX = rateX;
+	m_setTexInfoSum.SetTexUV(camera, pos0, pos1, pos2, pos3);
 
 	return this;
 }
 
 //========================================
-// テクスチャを固定しつつY方向に伸ばす
+// テクスチャのX反転設定
 //========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::ExtendFixedTexY(const float& rateY) {
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTexMirrorX(const bool& isMirror) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_scaleY *= rateY;
-	m_ptnScaleY = rateY;
-	
+	m_setTexInfoSum.SetTexMirrorX(isMirror);
+
 	return this;
 }
 
@@ -579,32 +557,6 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetAlphaBlendMode(const CDrawS
 		return NULL;
 
 	m_alphaBlendMode = alphaBlendMode;
-
-	return this;
-}
-
-//========================================
-// テクスチャのX反転設定
-//========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetTexMirrorX(const bool& isMirror) {
-	
-	if (this == NULL)
-		return NULL;
-
-	m_isTexMirrorX = isMirror;
-	
-	return this;
-}
-
-//========================================
-// 優先度設定
-//========================================
-CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetPriority(const short& priority) {
-
-	if (this == NULL)
-		return NULL;
-
-	m_priority = priority;
 
 	return this;
 }

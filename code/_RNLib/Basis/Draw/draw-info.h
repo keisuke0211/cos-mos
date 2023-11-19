@@ -30,6 +30,5 @@ public:
 
 	//===== [[[ •Ï”’è‹` ]]]
 	TYPE  m_type;
-	short m_priority;
 	short m_clippingID;
 };

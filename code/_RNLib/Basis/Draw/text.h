@@ -33,7 +33,7 @@ public:
 		int   nPtnWidth  = 0;			// パターン幅
 		int   nPtnHeight = 0;			// パターン高さ
 		float fSpaceRate = 0.0f;		// 間隔比率
-		int   nTexIdx    = NONEDATA;	// テクスチャ番号
+		short nTexIdx    = NONEDATA;	// テクスチャ番号
 	}FontData;
 
 	//========== [[[ 関数宣言 ]]]
@@ -58,9 +58,7 @@ public:
 	};
 	int GetFontNum(void) { return m_nFontNum; }
 	float GetFontWidth   (int nFont);
-	float GetFontWidth2D (int nFont);
 	float GetFontHeight  (int nFont);
-	float GetFontHeight2D(int nFont);
 
 	//========== [[[ 変数宣言 ]]]
 	FontData* m_pFont;	// フォント情報のポインタ

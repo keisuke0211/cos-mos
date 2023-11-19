@@ -20,6 +20,9 @@
 static const int s_PlanetMaxSummon = 8;		// 出現する位置の最大数
 static const int s_StarMaxSummon = 10;		// 出現する位置の最大数
 
+//****************************************
+// 静的変数定義
+//****************************************
 Color CMode_Game::m_BgColorUp = INITCOLOR;
 Color CMode_Game::m_BgColorDown = INITCOLOR;
 CPlayer *CMode_Game::s_pPlayer = NULL;
@@ -47,9 +50,11 @@ CMode_Game::CMode_Game(void) {
 //========================================
 CMode_Game::~CMode_Game(void) {
 
+	// カメラの破棄
 	m_cameraUp->Delete();
 	m_cameraDown->Delete();
 
+	// テキストの解放
 	TextRelease(TEXT_ALL);
 }
 
@@ -69,48 +74,40 @@ void CMode_Game::Init(void) {
 	// 状態設定
 	SetState((int)STATE::NONE);
 
-	Manager::BlockMgr()->Load();
-	Manager::BlockMgr()->ShiningWaveCreate();
+	// ステージオブジェクトの読み込み
+	Manager::StageObjectMgr()->Load();
 
+	// プレイヤーを生成
 	if (s_pPlayer == NULL)
 		s_pPlayer = CPlayer::Create();
-
-	// 読込
-	/* ブロック	*/Manager::BlockMgr()->Load();
 
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
 
+	// 背景情報を読み込み
 	char *pBgFile = Manager::StgEd()->GetBgFile();
-
 	if (pBgFile != NULL) {
 		CBGEditor::Load(pBgFile);
 	}
 
-	SetBGColor(m_BgColorUp);
-
 	// 上下カメラの生成
-	m_cameraUp = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
+	m_cameraUp   = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
 	m_cameraDown = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
 	m_cameraUp->SetClipping(true);
 	m_cameraUp->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
 	m_cameraDown->SetClipping(true);
 	m_cameraDown->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++){
-		m_Menu[nCnt] = NULL;
-	}
-
-	for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
-		m_RightText[nCnt] = NULL;
-	}
+	// テキストの初期化
+	for (int nCnt = 0; nCnt < MENU_MAX; m_Menu[nCnt] = NULL, nCnt++);
+	for (int nCnt = 0; nCnt < INPUT_MAX; m_RightText[nCnt] = NULL, nCnt++);
 
 	// 壁モデル読み込み
 	m_wallModelIdx[0] = RNLib::Model().Load("data\\MODEL\\Wall_Left.x");
 	m_wallModelIdx[1] = RNLib::Model().Load("data\\MODEL\\Wall_Right.x");
 
+	// BGM読み込み&再生
 	m_BGMIdx = RNLib::Sound().Load("data\\SOUND\\BGM\\STAGE1.wav");
-
 	play = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, true);
 }
 
@@ -121,17 +118,21 @@ void CMode_Game::Init(void) {
 void CMode_Game::Uninit(void) {
 	CMode::Uninit();
 
+	// 再生停止
 	play->Delete();
 
+	// プレイヤーを解放
 	if (s_pPlayer != NULL)	{
 		s_pPlayer->Uninit();
 		delete s_pPlayer;
 		s_pPlayer = NULL;
 	}
 
-	Manager::BlockMgr()->ReleaseAll();
+	// ステージオブジェクトと背景を解放
+	Manager::StageObjectMgr()->ReleaseAll();
 	Manager::BGMgr()->ReleaseAll();
 
+	// ロケットパーツUIを解放
 	if (m_rocketparts != NULL) {
 		m_rocketparts->Uninit();
 		delete m_rocketparts;
@@ -165,47 +166,38 @@ void CMode_Game::Update(void) {
 		m_cameraDown->SetBGCol(m_BgColorDown);
 
 		// 上
-		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
-			->SetTex_Camera(m_cameraUp)
-			->SetSize(windowWidth, windowHeightHalf)
-			->SetPriority(-2);
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
+			->SetTexUV(m_cameraUp)
+			->SetSize(windowWidth, windowHeightHalf);
 
 		// 下
-		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
-			->SetTex_Camera(m_cameraDown)
-			->SetSize(windowWidth, windowHeightHalf)
-			->SetPriority(-2);
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
+			->SetTexUV(m_cameraDown)
+			->SetSize(windowWidth, windowHeightHalf);
 	}
 
 	// [[[ 壁モデル描画 ]]]
-	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0])
-		->SetPriority(-1);
-	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1])
-		->SetPriority(-1);
+	RNLib::Model().Put(PRIORITY_OBJECT, m_wallModelIdx[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+	RNLib::Model().Put(PRIORITY_OBJECT, m_wallModelIdx[1], Pos3D( CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 
-	if (m_rocketparts != NULL)
-	{
+	// ロケットパーツの更新処理
+	if (m_rocketparts != NULL) {
 		m_rocketparts->Update();
 	}
 
-	// [[[ 壁モデル描画 ]]]
-	RNLib::Model().Put(Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[0])
-		->SetPriority(-1);
-	RNLib::Model().Put(Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D, m_wallModelIdx[1])
-		->SetPriority(-1);
+	// [[[ 非ポーズ時の処理 ]]]
+	if (m_state != (int)STATE::PAUSE) {
 
-	if (m_state != (int)STATE::PAUSE)
-	{
-		if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START))
-		{
+		// ポーズ
+		if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START)) {
 			SetState((int)STATE::PAUSE);
 		}
 
+		// プレイヤーの更新処理
 		if (s_pPlayer != NULL)
 			s_pPlayer->Update();
 
-		if (RNLib::Input().GetKeyTrigger(DIK_0) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
-		{
+		if (RNLib::Input().GetKeyTrigger(DIK_0) && RNLib::Transition().GetState() == CTransition::STATE::NONE) {
 			int planet = Manager::StgEd()->GetPlanetIdx();
 			int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
 			Manager::StgEd()->SwapStage(stage + 1);
@@ -253,27 +245,23 @@ void CMode_Game::ProcessState(const PROCESS process) {
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
 
-			RNLib::Polygon2D().Put(D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f), 0.0f, false)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f), 0.0f, false)
 				->SetSize(RNLib::Window().GetCenterX() * 2, RNLib::Window().GetCenterY() * 2)
-				->SetCol(Color{ 0,0,0,120 })
-				->SetPriority(0);
+				->SetCol(Color{ 0,0,0,120 });
 
-			RNLib::Polygon2D().Put(D3DXVECTOR3(m_Pause.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Pause.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
 				->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
-				->SetCol(Color{ 150,150,150,150 })
-				->SetPriority(0);
+				->SetCol(Color{ 150,150,150,150 });
 
-			RNLib::Polygon2D().Put(D3DXVECTOR3(m_Pause.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Pause.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
 				->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
-				->SetCol(Color{ 150,150,150,150 })
-				->SetPriority(0);
+				->SetCol(Color{ 150,150,150,150 });
 
 			if (m_Pause.nSelect == MENU_CONTROLLER)
 			{
-				RNLib::Polygon2D().Put(D3DXVECTOR3(m_Pause.RightPos.x, 400.0f, 100.0f), 0.0f, false)
+				RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Pause.RightPos.x, 400.0f, 100.0f), 0.0f, false)
 					->SetSize(500.0f, 600.0f)
-					->SetTex(m_Pause.BoxTex)
-					->SetPriority(0);
+					->SetTex(m_Pause.BoxTex);
 			}
 
 			if (m_Pause.bMenu && !m_Pause.bClose) {

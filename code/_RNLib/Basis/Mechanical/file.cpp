@@ -6,22 +6,9 @@
 //========================================
 #include "../../RNlib.h"
 
-//****************************************
-// 定数定義
-//****************************************
-namespace {
-	const char* c_anchorNames[] = {
-		"NONE" ,
-		"CENTER","TOP"     ,"BOTTOM"     ,
-		"LEFT"  ,"LEFTTOP" ,"LEFTBOTTOM" ,
-		"RIGHT" ,"RIGHTTOP","RIGHTBOTTOM",
-	};
-}
-CHECK_ARRAY_SIZE(c_anchorNames, (int)ANCHOR::MAX);
-
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| CFileクラスのメンバ関数
+//==========| ファイルクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -29,7 +16,8 @@ CHECK_ARRAY_SIZE(c_anchorNames, (int)ANCHOR::MAX);
 // コンストラクタ
 //========================================
 CFile::CFile() {
-	files = NULL;
+
+	files   = NULL;
 	fileNum = 0;
 	strcpy(searchString, "");
 }
@@ -65,7 +53,7 @@ void CFile::Update(void) {
 //========================================
 // 選択した開くファイル名取得
 //========================================
-bool CFile::GetSelectOpenFileName(char* resultFileName, const char* initDir, const char* fileType) {
+bool CFile::GetSelectOpenFileName(char** resultFileName, const char* initDir, const char* fileType) {
 
 	TCHAR        fileName[MAX_PATH];
 	OPENFILENAME ofn;
@@ -81,20 +69,28 @@ bool CFile::GetSelectOpenFileName(char* resultFileName, const char* initDir, con
 	ofn.lpstrFileTitle  = NULL;					// 選択されたファイルのタイトルを指定(使用されない場合はNULL)
 	ofn.nMaxFileTitle   = 0;					// lpstrFileTitle の最大サイズ(使用されない場合は0)
 	ofn.lpstrInitialDir = initDir;				// 初期表示するディレクトリ(使用されない場合はNULL)
-	// ダイアログのオプションを指定
-	// OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST は、選択されたパスが存在することと、選択されたファイルが存在することを確認するもの
-	// OFN_NOCHANGEDIR は、ディレクトリを変更しないようにするもの
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.Flags           = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+	// ↑ダイアログのオプションを指定
+	//   OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST は、選択されたパスが存在することと、選択されたファイルが存在することを確認するもの
+	//   OFN_NOCHANGEDIR は、ディレクトリを変更しないようにするもの
 
 	// 開いたファイル名を取得出来た時、
 	if (GetOpenFileName(&ofn)) {
+
+		// ファイル名が無い時、失敗
 		if (!strcmp(fileName, ""))
 			return false;
-		sprintf(resultFileName, fileName);
+
+		// ファイル名を適用
+		StrCpyDynamicMemory(resultFileName, fileName);
+
+		// 入力をクリア
 		RNLib::Input().ClearInputInfo();
 	}
 	else {
+		// 入力をクリア
 		RNLib::Input().ClearInputInfo();
+
 		return false;
 	}
 
@@ -102,9 +98,9 @@ bool CFile::GetSelectOpenFileName(char* resultFileName, const char* initDir, con
 }
 
 //========================================
-// 選択した開くファイル名取得
+// 選択した保存するファイル名取得
 //========================================
-bool CFile::GetSelectSaveFileName(char* resultFileName, const char* initDir, const char* fileType) {
+bool CFile::GetSelectSaveFileName(char** resultFileName, const char* initDir, const char* fileType) {
 
 	TCHAR        fileName[MAX_PATH];
 	OPENFILENAME ofn;
@@ -120,58 +116,67 @@ bool CFile::GetSelectSaveFileName(char* resultFileName, const char* initDir, con
 	ofn.lpstrFileTitle  = NULL;					// 選択されたファイルのタイトルを指定(使用されない場合はNULL)
 	ofn.nMaxFileTitle   = 0;					// lpstrFileTitle の最大サイズ(使用されない場合は0)
 	ofn.lpstrInitialDir = initDir;				// 初期表示するディレクトリ(使用されない場合はNULL)
-	// ダイアログのオプションを指定
-	// OFN_NOCHANGEDIR は、ディレクトリを変更しないようにするもの
-	ofn.Flags = OFN_NOCHANGEDIR;
+	ofn.Flags           = OFN_NOCHANGEDIR;
+	// ↑ダイアログのオプションを指定
+	//   OFN_NOCHANGEDIR は、ディレクトリを変更しないようにするもの
 
 	if (GetSaveFileName(&ofn))
 	{// 開いたファイル名を取得出来た時、
 		// ファイル名のポインタに読み込んだファイル名を代入するが、
 		// 文末が拡張子で終わっていない時、それに加えて拡張子を連結させる
-		int len = strlen(fileName);
-		int extlen = strlen(fileType);
-		if (len < extlen || strcmp(fileName + len - extlen, fileType) != 0)
-			sprintf(resultFileName, "%s%s", fileName, fileType);
-		else
-			strcpy(resultFileName, fileName);
+		const int len    = strlen(fileName);
+		const int extlen = strlen(fileType);
+		if (len < extlen || strcmp(fileName + len - extlen, fileType) != 0) {
 
+			// ファイル名を適用
+			StrCpyDynamicMemory(resultFileName, CreateText("%s%s", fileName, fileType));
+		}
+		else {
+			StrCpyDynamicMemory(resultFileName, fileName);
+		}
+
+		// 入力をクリア
 		RNLib::Input().ClearInputInfo();
-		return true;
 	}
 	else {
+		// 入力をクリア
 		RNLib::Input().ClearInputInfo();
+
 		return false;
 	}
+
+	return true;
 }
 
 //========================================
 // "data"を起点としたパス文字列を生成する
 //========================================
-char* CFile::ConvPathToDataStartPath(const char* path) {
-
-	static char dataStartPath[TXT_MAX] = "";
+void CFile::ConvPathToDataStartPath(char** path) {
 
 	// パスがdataディレクトリを含まない場合はエラー
-	if (strstr(path, "Data\\") == NULL) {
-		RNLib::Window().Message(CreateText("\"%s\" does not contain \"Data\\\" directory.\n", path), "Error");
-		return NULL;
+	if (strstr(*path, "\\Data\\") == NULL) {
+		return;
 	}
 
 	// dataディレクトリの直後の文字列をコピーする
-	const char *start = strstr(path, "Data\\");
+	static char dataStartPath[TXT_MAX] = "";
+	const char *start = strstr(*path, "Data\\");
 	strncpy(dataStartPath, start, TXT_MAX);
 	dataStartPath[TXT_MAX - 1] = '\0'; // NULL終端を付加
 
-	return dataStartPath;
+	StrCpyDynamicMemory(path, dataStartPath);
 }
 
 //========================================
 // データファイルを開く(読み込み)
 //========================================
-bool CFile::OpenLoadFile(const char* path) {
+bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 
-	int fileNumOld = fileNum++;
-	CMemory::ReAlloc<FILE*>(&files, fileNumOld, fileNum);
+	// ファイルを再確保(増やす)
+	const int fileNumOld = fileNum++;
+	CMemory::ReAlloc(&files, fileNumOld, fileNum);
+
+	// ファイルを開く
 	files[fileNumOld] = fopen(path, "r");
 	if (files[fileNumOld] == NULL) {
 
@@ -181,10 +186,35 @@ bool CFile::OpenLoadFile(const char* path) {
 		// ファイルを閉じる
 		CloseFile();
 
-		CMemory::ReAlloc<FILE*>(&files, fileNum, fileNumOld);
-
 		return false;
 	}
+
+	// 種類名が指定されている時、
+	if (typeName != NULL) {
+
+		// 1行読み込み
+		char* lineString = NULL;
+		RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &lineString);
+
+		// 種類名と一致していない時、
+		if (strcmp(lineString, typeName)) {
+
+			// エラーメッセージ
+			RNLib::Window().Message_ERROR(CreateText("ファイルの種類が異なります。\n%s", path));
+
+			// ファイルを閉じる
+			CloseFile();
+
+			// 読み込んだ文字列を解放
+			CMemory::Release(&lineString);
+
+			return false;
+		}
+
+		// 読み込んだ文字列を解放
+		CMemory::Release(&lineString);
+	}
+
 
 	return true;
 }
@@ -223,7 +253,7 @@ void CFile::CloseFile(void) {
 	if (files[fileNum-1] != NULL) {
 		fclose(files[fileNum-1]);
 		fileNum--;
-		CMemory::ReAlloc<FILE*>(&files, fileNum + 1, fileNum);
+		CMemory::ReAlloc(&files, fileNum + 1, fileNum);
 	}
 }
 
@@ -277,22 +307,27 @@ void CFile::ScanExecution(const SCAN scan, void* data, bool isCSV, bool isEnd) {
 	switch (scan) {
 	case SCAN::INT: {
 		int* castData = (int*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%d ", castData);
-		else
-			fscanf(files[fileNum-1], "%d,", castData);
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%d ", castData) :
+			fscanf(files[fileNum - 1], "%d,", castData);
+	}break;
+	case SCAN::SHORT: {
+		short* castData = (short*)data;
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%hd ", castData) :
+			fscanf(files[fileNum - 1], "%hd,", castData);
+	}break;
+	case SCAN::USHORT: {
+		UShort* castData = (UShort*)data;
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%hu ", castData) :
+			fscanf(files[fileNum - 1], "%hu,", castData);
 	}break;
 	case SCAN::FLOAT: {
 		float* castData = (float*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%f ", castData);
-		else
-			fscanf(files[fileNum-1], "%f,", castData);
-	}break;
-	case SCAN::FLOAT2D: {
-		float* castData = (float*)data;
-		ScanExecution(SCAN::FLOAT, castData, isCSV, isEnd);
-		*castData *= PIXEL2D_SIZE;
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%f ", castData) :
+			fscanf(files[fileNum - 1], "%f,", castData);
 	}break;
 	case SCAN::CAHR: {
 		char scanString[TXT_MAX];
@@ -302,10 +337,9 @@ void CFile::ScanExecution(const SCAN scan, void* data, bool isCSV, bool isEnd) {
 	}break;
 	case SCAN::STRING: {
 		char* castData = (char*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%s ", castData);
-		else
-			fscanf(files[fileNum-1], "%[^,],", castData);
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%s ", castData) :
+			fscanf(files[fileNum - 1], "%[^,],", castData);
 	}break;
 	case SCAN::STRING_DYNAMIC: {
 		char scanString[TXT_MAX];
@@ -319,106 +353,56 @@ void CFile::ScanExecution(const SCAN scan, void* data, bool isCSV, bool isEnd) {
 		*castData = (temp != 0);
 	}break;
 	case SCAN::POS2D: {
-		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		fscanf(files[fileNum-1], "%f %f %f", &castData->x, &castData->y, &castData->z);
-		*castData *= PIXEL2D_SIZE;
-
-		// アンカーに応じて位置補正
-		char aAnchor[TXT_MAX];
-		ScanExecution(SCAN::STRING, aAnchor, isCSV, isEnd);
-		int cntAnchor;
-		for (cntAnchor = 0; cntAnchor < (int)ANCHOR::MAX; cntAnchor++) {
-			if (strcmp(aAnchor, c_anchorNames[cntAnchor]))
-				continue;
-
-			switch ((ANCHOR)cntAnchor) {
-			case ANCHOR::CENTER: {
-				*castData += Vector3D(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, 0.0f);
-			}break;
-			case ANCHOR::TOP: {
-				castData->x += RNLib::Window().GetCenterX();
-			}break;
-			case ANCHOR::BOTTOM: {
-				castData->x += RNLib::Window().GetCenterX();
-				castData->y += RNLib::Window().GetHeight();
-			}break;
-			case ANCHOR::LEFT: {
-				castData->y += RNLib::Window().GetCenterY();
-			}break;
-			case ANCHOR::LEFTTOP: {
-			}break;
-			case ANCHOR::LEFTBOTTOM: {
-				castData->y += RNLib::Window().GetHeight();
-			}break;
-			case ANCHOR::RIGHT: {
-				castData->x += RNLib::Window().GetWidth();
-				castData->y += RNLib::Window().GetCenterY();
-			}break;
-			case ANCHOR::RIGHTTOP: {
-				castData->x += RNLib::Window().GetWidth();
-			}break;
-			case ANCHOR::RIGHTBOTTOM: {
-				castData->x += RNLib::Window().GetWidth();
-				castData->y += RNLib::Window().GetHeight();
-			}break;
-			}
-
-			break;
-		}
-
-		assert(cntAnchor < (int)ANCHOR::MAX);
+		Pos2D* castData = (Pos2D*)data;
+		fscanf(files[fileNum-1], "%f %f", &castData->x, &castData->y);
 	}break;
 	case SCAN::POS3D: {
 		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%f %f %f ", &castData->x, &castData->y, &castData->z);
-		else
-			fscanf(files[fileNum-1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%f %f %f ", &castData->x, &castData->y, &castData->z) :
+			fscanf(files[fileNum - 1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
 	}break;
 	case SCAN::ROT: {
 		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%f %f %f ", &castData->x, &castData->y, &castData->z);
-		else
-			fscanf(files[fileNum-1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%f %f %f ", &castData->x, &castData->y, &castData->z) :
+			fscanf(files[fileNum - 1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
 	}break;
 	case SCAN::ROT_CORRECT: {
 		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%f %f %f ", &castData->x, &castData->y, &castData->z);
-		else
+		!isCSV || isEnd ?
+			fscanf(files[fileNum-1], "%f %f %f ", &castData->x, &castData->y, &castData->z):
 			fscanf(files[fileNum-1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
 		*castData *= D3DX_PI;
 	}break;
 	case SCAN::COLOR: {
 		Color* castData = (Color*)data;
-		if (!isCSV || isEnd)
-			fscanf(files[fileNum-1], "%d %d %d %d ", &castData->r, &castData->g, &castData->b, &castData->a);
-		else
-			fscanf(files[fileNum-1], "%d %d %d %d,", &castData->r, &castData->g, &castData->b, &castData->a);
+		!isCSV || isEnd ?
+			fscanf(files[fileNum - 1], "%hu %hu %hu %hu ", &castData->r, &castData->g, &castData->b, &castData->a) :
+			fscanf(files[fileNum - 1], "%hu %hu %hu %hu,", &castData->r, &castData->g, &castData->b, &castData->a);
 	}break;
 	case SCAN::TEXIDX: {
 		char texPath[TXT_MAX];
 		ScanExecution(SCAN::STRING, texPath, isCSV, isEnd);
-		int* castData = (int*)data;
+		short* castData = (short*)data;
 		*castData = RNLib::Texture().Load(texPath);
 	}break;
 	case SCAN::MODELIDX: {
 		char modelPath[TXT_MAX];
 		ScanExecution(SCAN::STRING, modelPath, isCSV, isEnd);
-		int* castData = (int*)data;
+		short* castData = (short*)data;
 		*castData = RNLib::Model().Load(modelPath);
 	}break;
 	case SCAN::MODELSUIDX: {
 		char modelSUPath[TXT_MAX];
 		ScanExecution(SCAN::STRING, modelSUPath, isCSV, isEnd);
-		int* castData = (int*)data;
+		short* castData = (short*)data;
 		*castData = RNLib::SetUp3D().Load(modelSUPath);
 	}break;
 	case SCAN::MOTION3DIDX: {
 		char motion3DPath[TXT_MAX];
 		ScanExecution(SCAN::STRING, motion3DPath, isCSV, isEnd);
-		int* castData = (int*)data;
+		short* castData = (short*)data;
 		*castData = RNLib::Motion3D().Load(motion3DPath);
 	}break;
 	}

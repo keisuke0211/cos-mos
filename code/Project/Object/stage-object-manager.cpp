@@ -362,23 +362,6 @@ CStar *CStageObjectMgr::StarCreate(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 }
 
 //========================================
-// ”g‘Å‚ÂŒõ
-//========================================
-CShiningWave *CStageObjectMgr::ShiningWaveCreate(void)
-{
-	CShiningWave *pObj = NULL;
-
-	if (pObj != NULL) { return pObj; }
-	pObj = new CShiningWave;
-
-	// ‰Šú‰»ˆ—
-	pObj->Init();
-
-
-	return pObj;
-}
-
-//========================================
 // ‰•œƒŒ[ƒU[
 //========================================
 CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move,bool bXReturn)

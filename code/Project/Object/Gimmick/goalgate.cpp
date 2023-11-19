@@ -21,7 +21,7 @@
 // コンストラクタ
 //========================================
 CGoalGate::CGoalGate(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	//初期状態
 	m_scale = Scale3D(3.0f,3.0f,6.0f);
@@ -111,7 +111,7 @@ void CGoalGate::Update(void) {
 	//割合計算
 	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
-	RNLib::Model().Put(m_pos, m_rot, Scale3D(m_scale.x * fCountRate, m_scale.y * fCountRate, m_scale.z), m_modelIdx, false);
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRate, m_scale.y * fCountRate, m_scale.z), false);
 }
 //========================================
 // 描画処理

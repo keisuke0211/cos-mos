@@ -140,7 +140,7 @@ Vector3D CGeometry::FindRotVec(const Rot3D& rot) {
 	const float sinY = sinf(rot.y);
 	const float cosY = cosf(rot.y);
 
-	Vector3D vec = Vector3D(sinY * cosX, sinX, cosY * cosX);
+	Vector3D vec = Vector3D(sinY * cosX, -sinX, cosY * cosX);
 	D3DXVec3Normalize(&vec, &vec);
 
 	return vec;
@@ -154,7 +154,7 @@ Rot3D CGeometry::FindVecRot(const Vector3D& vec) {
 	Normal3D nor = vec;
 	D3DXVec3Normalize(&nor, &nor);
 
-	return Rot3D(asinf(vec.y), atan2f(vec.x, vec.z), 0.0f);
+	return Rot3D(asinf(-nor.y), atan2f(nor.x, nor.z), 0.0f);
 }
 
 //========================================

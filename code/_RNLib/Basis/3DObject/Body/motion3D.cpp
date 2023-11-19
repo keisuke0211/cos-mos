@@ -80,7 +80,7 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 		// ファイルを開く
 		if (!RNLib::File().OpenLoadFile(loadPath)) {
 			while (RNLib::File().SearchLoop("END")) {
-				RNLib::File().Scan(CFile::SCAN::INT, &m_datas[idx].loopTime, "loopTime");
+				RNLib::File().Scan(CFile::SCAN::SHORT, &m_datas[idx].loopTime, "loopTime");
 				RNLib::File().Scan(CFile::SCAN::BOOL, &m_datas[idx].isLoop, "isLoop");
 
 				// ボーンモーションデータを読み込み
@@ -88,7 +88,7 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 
 					// ボーンの数を読み込み、
 					// ボーンモーションデータのメモリ確保
-					RNLib::File().Scan(CFile::SCAN::INT, &m_datas[idx].boneNum);
+					RNLib::File().Scan(CFile::SCAN::USHORT, &m_datas[idx].boneNum);
 					CMemory::Alloc<BoneMotionData>(&m_datas[idx].boneMotionDatas, m_datas[idx].boneNum);
 
 					int cntBone = 0;
@@ -106,7 +106,7 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 							boneMotionData = {};
 
 							// コマンド数読み込み
-							RNLib::File().Scan(CFile::SCAN::INT, &boneMotionData.commandDataNum);
+							RNLib::File().Scan(CFile::SCAN::USHORT, &boneMotionData.commandDataNum);
 
 							// コマンド数が0を越えている時、
 							if (boneMotionData.commandDataNum > 0) {
@@ -126,7 +126,7 @@ short CMotion3D::Load(const char* loadPath, short idx) {
 										}
 
 										// コマンド開始時間読み込み
-										RNLib::File().Scan(CFile::SCAN::INT, &boneMotionData.commandDatas[cntCommand].time);
+										RNLib::File().Scan(CFile::SCAN::SHORT, &boneMotionData.commandDatas[cntCommand].time);
 
 										// コマンドを読み取る
 										COMMAND command = COMMAND::NONE;

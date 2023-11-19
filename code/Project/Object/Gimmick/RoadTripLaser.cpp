@@ -16,7 +16,7 @@
 // コンストラクタ
 //========================================
 CRoadTripLaser::CRoadTripLaser(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::LASER;	// 種類の設定
 
@@ -74,7 +74,7 @@ void CRoadTripLaser::Update(void) {
 	//オブジェクトを取得
 	CObject *obj = NULL;
 	float fDis = m_fGroundDis;
-	while (Manager::BlockMgr()->ListLoop(&obj)) {
+	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 		//取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
 
@@ -129,7 +129,7 @@ void CRoadTripLaser::Update(void) {
 	m_pos += m_move;
 
 	// ブロック
-	RNLib::Model().Put(Block, m_rot, ModelIdx, false);
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, Block, m_rot, false);
 
 	m_LaserPos = Block;
 	// ビーム
@@ -138,10 +138,9 @@ void CRoadTripLaser::Update(void) {
 	else if (m_rot.z == D3DX_PI)
 		m_LaserPos.y = (Block.y + m_LaserSize.y * 0.5f);
 
-	RNLib::Polygon3D().Put(m_LaserPos, INITD3DXVECTOR3, false)
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_LaserPos, INITD3DXVECTOR3, false)
 		->SetSize(m_LaserSize.x, m_LaserSize.y)
-		->SetCol(Color{ 255,0,0,255 })
-		->SetPriority(1);
+		->SetCol(Color{ 255,0,0,255 });
 }
 
 //========================================

@@ -20,7 +20,7 @@ int CMagmaBlock::m_nNumAll = 0;
 //========================================
 CMagmaBlock::CMagmaBlock(void)
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::BLOCK;
 	m_width = SIZE_OF_1_SQUARE;
@@ -75,7 +75,7 @@ void CMagmaBlock::Update(void)
 	}
 
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_Info.nModelIdx, false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 		->SetOutLine(true)
 		->SetCol(m_color);
 }
