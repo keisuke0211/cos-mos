@@ -27,7 +27,9 @@ CRocketPartsUI::CRocketPartsUI(void) {
 // デストラクタ
 //========================================
 CRocketPartsUI::~CRocketPartsUI(void) {
-
+	if (m_state != NULL)
+		delete[] m_state;
+	m_state = NULL;
 }
 
 //========================================

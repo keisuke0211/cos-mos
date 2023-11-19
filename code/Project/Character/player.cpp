@@ -318,7 +318,7 @@ void CPlayer::ActionControl(void)
 		{
 			Player.bRide = false;
 			Player.bGoal = false;
-			Player.pos.x = Player.pos.x - 20.0f;
+			Player.move.x *= -2.0f;
 		}
 
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
@@ -374,7 +374,9 @@ void CPlayer::Swap(void)
 	{
 		// インターバル設定
 		s_nSwapInterval = SWAP_INTERVAL;
-		s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+
+		//ロケットに乗っていないときにサウンド再生
+		if(!s_bRideRocket)	s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
 
 		for each (Info &Player in m_aInfo)
 		{
