@@ -22,34 +22,27 @@ public:
 		CRegistInfo();
 		~CRegistInfo();
 		void ClearParameter(void);
-		void PutPolygon2D(const bool& isOnScreen);
-		CRegistInfo* SetPos              (const Pos3D& pos);
-		CRegistInfo* SetAngle            (const Angle& angle);
-		CRegistInfo* SetString           (const char* string);
-		CRegistInfo* SetAlignment        (const CText::ALIGNMENT& alignment);
-		CRegistInfo* SetFontIdx          (const short& fontIdx);
-		CRegistInfo* SetCol              (const Color& col);
-		CRegistInfo* SetSize             (const float& width, const float& height);
-		CRegistInfo* SetSize_TexBaseScale(const float& scaleX, const float& scaleY);
-		CRegistInfo* ExtendFixedTexX     (const float& rateX);
-		CRegistInfo* ExtendFixedTexY     (const float& rateY);
-		CRegistInfo* SetPriority         (const short& priority);
+		void PutPolygon2D(const UShort& priority, const bool& isOnScreen);
+		CRegistInfo* SetPos      (const Pos3D& pos);
+		CRegistInfo* SetAngle    (const Angle& angle);
+		CRegistInfo* SetString   (const char* string);
+		CRegistInfo* SetAlignment(const CText::ALIGNMENT& alignment);
+		CRegistInfo* SetFontIdx  (const short& fontIdx);
+		CRegistInfo* SetCol      (const Color& col);
+		CRegistInfo* SetScale    (const Scale2D scale);
+		CRegistInfo* SetSize     (const Size2D size);
 
 	private:
 		// [[[ ïœêîêÈåæ ]]]
 		char*            m_string;
 		CText::ALIGNMENT m_alignment;
 		short            m_fontIdx;
-		float            m_scaleX;
-		float            m_scaleY;
-		bool             m_isFactScale;
 		Pos3D            m_pos;
 		Angle            m_angle;
+		Vector2D         m_scaleOrSize;
+		bool             m_isScale;
 		Color            m_col;
 		bool             m_isZtest;
-		bool             m_isLighting;
-		bool             m_isBillboard;
-		short            m_priority;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
@@ -58,7 +51,7 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	CRegistInfo* Put(const Pos3D& pos, const Angle& angle, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen = false);
+	CRegistInfo* Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
 	void PutDebugLog(const char* string);
 
 private:

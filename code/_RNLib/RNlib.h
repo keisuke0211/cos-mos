@@ -11,12 +11,14 @@
 //****************************************
 #include "RNmain.h"
 //========== [[[ 3DObject ]]]
-#include "Basis/3DObject/Body/setup3D.h"
-#include "Basis/3DObject/Body/motion3D.h"
 #include "Basis/3DObject/Body/doll3D.h"
+#include "Basis/3DObject/Body/doll3D-manager.h"
+#include "Basis/3DObject/Body/motion3D.h"
+#include "Basis/3DObject/Body/setup3D.h"
 //========== [[[ Calculation ]]]
 #include "Basis/Calculation/ease.h"
 #include "Basis/Calculation/geometry.h"
+#include "Basis/Calculation/hit-test.h"
 #include "Basis/Calculation/matrix.h"
 #include "Basis/Calculation/number.h"
 //========== [[[ Draw ]]]
@@ -57,27 +59,32 @@
 namespace RNSystem {
 
 	//========== [[[ óÒãìå^íËã` ]]]
-	enum class SIGNAL { NONE, INIT, UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, END, };
+	enum class SIGNAL { NONE, INIT, UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, DRAW2, END, };
+	enum class MODE   { EXECUTION, DEMO, SETUP3D_EDITOR };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	bool   MainLoop      (HINSTANCE& instanceHandle, const char* settingsPath, const bool& isDemo);
-	SIGNAL GetSignal     (void);
-	void   EndScene      (void);
-	int    GetFPSCount   (void);
-	void   SetSpace3DStop(const bool& isStop);
-	bool   GetSpace3DStop(void);
-	bool   GetSceneSwap  (void);
+	bool   MainLoop       (HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const MODE& mode);
+	SIGNAL GetSignal      (void);
+	void   EndScene       (void);
+	int    GetFPS         (void);
+	int    GetDrawFPS     (void);
+	void   AddDrawFPSCount(void);
+	void   SetSpace3DStop (const bool& isStop);
+	bool   GetSpace3DStop (void);
+	bool   GetSceneSwap   (void);
 }
 
 // RNÉâÉCÉuÉâÉä
 namespace RNLib {
 
 	// 3DObject
+	CDoll3DMgr&   Doll3DMgr   (void);
 	CMotion3D&    Motion3D    (void);
 	CSetUp3D&     SetUp3D     (void);
 	// Calculation
 	CEase&        Ease        (void);
 	CGeometry&    Geometry    (void);
+	CHitTest&     HitTest     (void);
 	CMatrix&      Matrix      (void);
 	// Draw
 	CModel&       Model       (void);

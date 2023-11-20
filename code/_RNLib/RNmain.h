@@ -46,6 +46,8 @@
 #define FVF_VERTEX_2D         (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 #define FVF_VERTEX_3D         (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 // 初期値 (※D3D系列)
+#define INITMatrix        Matrix   (1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)
+#define INITViewport      Viewport {0,0,0,0,0.0f,0.0f}
 #define INITD3DCOLOR          D3DCOLOR_RGBA(255,255,255,255)
 #define INITD3DXVECTOR3       D3DXVECTOR3  (0.0f,0.0f,0.0f)
 #define INITD3DXVECTOR2       D3DXVECTOR2  (0.0f,0.0f)
@@ -71,14 +73,12 @@
 #define D3DX_PI_RIGHT         (D3DX_PI*0.5f)
 #define D3DX_PI_RIGHT_UP      (D3DX_PI*0.75f)
 #define D3DX_PI_RIGHT_DOWN    (D3DX_PI*0.25f)
-#define D3DX_PI_LEFT          (D3DX_PI*0.5f)
-#define D3DX_PI_LEFT_UP       (D3DX_PI*-0.75f)
-#define D3DX_PI_LEFT_DOWN     (D3DX_PI*-0.25f)
-// ピクセルサイズ
-#define PIXEL2D_SIZE          (2.0f)
-#define PIXEL3D_SIZE          (0.4f)
+#define D3DX_PI_LEFT          (D3DX_PI*-0.5f)
+#define D3DX_PI_LEFT_UP       (D3DX_PI*-0.25f)
+#define D3DX_PI_LEFT_DOWN     (D3DX_PI*-0.75f)
 // データ無し
 #define NONEDATA              ((short)-1)
+#define EDITDATA              ((short)-2)
 #define NONECOLOR             Color{-1,-1,-1,-1}
 // 関数形式
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof(*a))
@@ -90,7 +90,6 @@
 // 列挙型定義
 //****************************************
 enum class PROCESS { INIT, UNINIT, UPDATE, };
-enum class ANCHOR { NONE, CENTER, TOP, BOTTOM, LEFT, LEFTTOP, LEFTBOTTOM, RIGHT, RIGHTTOP, RIGHTBOTTOM, MAX, };
 
 //****************************************
 // 構造体定義
@@ -124,12 +123,14 @@ typedef D3DXVECTOR2             Rot2D;
 typedef D3DXVECTOR2             Vector2D;
 typedef D3DXVECTOR2             Normal2D;
 typedef D3DXVECTOR2             Scale2D;
+typedef D3DXVECTOR2             Size2D;
 // Vector3
 typedef D3DXVECTOR3             Pos3D;
 typedef D3DXVECTOR3             Rot3D;
 typedef D3DXVECTOR3             Vector3D;
 typedef D3DXVECTOR3             Normal3D;
 typedef D3DXVECTOR3             Scale3D;
+typedef D3DXVECTOR3             Size3D;
 // Other
 typedef float                   Angle;
 typedef D3DXMATRIX              Matrix;
@@ -207,8 +208,8 @@ public:
 	}
 
 	//========== [[[ 変数宣言 ]]]
-	int r;	// 赤
-	int g;	// 緑
-	int b;	// 青
-	int a;	// 不透明度
+	UShort r;	// 赤
+	UShort g;	// 緑
+	UShort b;	// 青
+	UShort a;	// 不透明度
 };

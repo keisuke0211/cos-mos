@@ -5,6 +5,7 @@
 // 
 //========================================
 #include "main.h"
+#include "manager.h"
 
 //========================================
 // WinMainä÷êî
@@ -13,7 +14,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR IpCmdLine, int nCmdShow) {
 	int nEndCode = 0;
 
-	while (RNSystem::MainLoop(hInstance, "Data\\RNSettings.txt", false)) {
+	while (RNSystem::MainLoop(hInstance, "Data\\RNSettings.txt", PRIORITY_MAX, RNSystem::MODE::EXECUTION)) {
 
 		switch (RNSystem::GetSignal()) {
 		case RNSystem::SIGNAL::INIT:
@@ -24,6 +25,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR IpCmdLine
 			break;
 		case RNSystem::SIGNAL::UPDATE:
 			Manager::Update();
+			break;
+		case RNSystem::SIGNAL::DRAW:
+			Manager::Draw();
 			break;
 		}
 	}

@@ -14,7 +14,7 @@
 //========================================
 CSpike::CSpike(void)
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::SPIKE;
 	m_width = SIZE_OF_1_SQUARE;
@@ -56,7 +56,7 @@ void CSpike::Uninit(void)
 void CSpike::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Model().Put(m_pos, m_rot, m_Info.nModelIdx, false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot, false)
 		->SetOutLine(true)
 		->SetCol(m_color);
 }

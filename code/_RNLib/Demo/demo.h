@@ -20,7 +20,7 @@ class CDemoPlayer;
 class CDemo {
 public:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
-	enum class PLAYER { RED, BLUE, MAX, };
+	enum class PLAYER   { RED, BLUE, MAX, };
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CDemo();
@@ -28,12 +28,21 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	CObjectMgr& GetDemoObjMgr(void) { return m_demoObjMgr; }
+	CDemoPlayer& GetPlayer(const PLAYER& player) { return *m_players[(int)player]; }
+	CObjectMgr&  GetDemoObjMgr(void) { return m_demoObjMgr; }
 
 private:
+	//========== [[[ —ñ‹“Œ^’è‹` ]]]
+	enum class SCREEN_TYPE { NORMAL, DIVISION, MAX };
+
+	//========== [[[ ’è”éŒ¾ ]]]
+	static const char* PLAYER_NAMES[(int)PLAYER::MAX];
+	static const char* SCREEN_TYPE_NAMES[(int)SCREEN_TYPE::MAX];
+
 	//========== [[[ •Ï”éŒ¾ ]]]
 	CDemoPlayer* m_players[(int)PLAYER::MAX];
 	UShort       m_controlPlayerCount;
+	UShort       m_screenTypeCount;
 	CObjectMgr   m_demoObjMgr;
 };
 

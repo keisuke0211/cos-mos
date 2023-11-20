@@ -142,8 +142,7 @@ bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) 
 void CTransition::FillScreen(const float& rate) {
 
 	// ƒ|ƒŠƒSƒ“2D‚ÌÝ’u
-	RNLib::Polygon2D().Put(RNLib::Window().GetCenterPos(), 0.0f, true)
-		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(int)(m_col.a * rate) })
-		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight())
-		->SetPriority(1);
+	RNLib::Polygon2D().Put(0, RNLib::Window().GetCenterPos(), 0.0f, true)
+		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());
 }

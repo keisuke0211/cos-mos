@@ -94,7 +94,7 @@ void CEffect_Meteor::Update(void)
 		m_Info[nCnt].scale = MAX_SCALE * fCountRate;	// スケールの倍率
 
 		//モデル配置
-		RNLib::Model().Put(m_Info[nCnt].pos, m_Info[nCnt].rot,m_Info[nCnt].scale, s_nModelIdx[0], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, s_nModelIdx[0], m_Info[nCnt].pos, m_Info[nCnt].rot,m_Info[nCnt].scale, false)
 			->SetOutLine(true);
 
 		// 位置の増加

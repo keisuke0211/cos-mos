@@ -55,8 +55,11 @@ public:
 	// テキストボックスの種類
 	enum Box
 	{
-		BOX_NORMAL_RECT = 0,	// ノーマル(長方形)
-		BOX_NORMAL_SQR,			// ノーマル(正方形)
+		BOX_NORMAL_GRAY = 0,	// ノーマル(灰色)
+		BOX_NORMAL_BLUE,		// ノーマル(青)
+		BOX_NORMAL_RED,			// ノーマル(赤)
+		BOX_NORMAL_GREEN,		// ノーマル(緑)
+		BOX_NONE,				// 無し
 		BOX_MAX
 	};
 
@@ -87,13 +90,17 @@ public:
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
 	// -- 設定 ------------------------------------------
+	/* 移動量			*/void SetMove(D3DXVECTOR3 move);
 	/* 空白表示			*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成	*/void SetTetPause(bool bPause);
 	/* TextBoの表示		*/void SetTexBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
 	/* ボックスの色		*/void SetBoxColor(Color col);
+	/* ボックスの種類	*/void SetBoxType(Box type);
 	/* テキストの色		*/bool SetTextColor(D3DXCOLOR col);
 	/* 文字変更(単体)	*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
-	/* 文字変更(全体)	*/bool ChgText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
+	/* 文字変更(全体)	*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
+	/* テキストの再生	*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
+
 
 	// -- 設定 ------------------------------------------
 	/*　サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
@@ -121,6 +128,7 @@ private:
 		D3DXCOLOR FontColOld;	// 前回の文字の色
 		bool bCol;				// 色変更フラグ(ポーズ切替)
 		D3DXVECTOR3 TexPos;		// 位置
+		D3DXVECTOR3 TexMove;	// 移動量		
 		D3DXVECTOR2 TexSize;	// サイズ
 		int nTexIdx;			// テキストボックスのテクスチャ番号
 

@@ -53,13 +53,13 @@ void CText2D::Update(void) {
 //========================================
 // 設置処理
 //========================================
-CText2D::CRegistInfo* CText2D::Put(const Pos3D& pos, const Angle& angle, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const bool& isOnScreen) {
+CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
 
 	// 登録受付中でない時、終了
 	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
-	return RNLib::DrawMgr().PutText2D(pos, angle, isOnScreen)
+	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)
 		->SetFontIdx(fontIdx);
@@ -70,13 +70,9 @@ CText2D::CRegistInfo* CText2D::Put(const Pos3D& pos, const Angle& angle, const c
 //========================================
 void CText2D::PutDebugLog(const char* string) {
 
-	// フォントデータを取得
-	const CText::FontData fontData = RNLib::Text().GetFont(0);
-	const float charWidth  = RNLib::Texture().GetWidth2D (fontData.nTexIdx) / fontData.nPtnWidth;
-	const float charHeight = RNLib::Texture().GetHeight2D(fontData.nTexIdx) / fontData.nPtnHeight;
-
 	// 左上から下にかけてテキスト2Dを設置する
-	Put(Pos3D(charWidth * 0.5f, (charHeight * (0.5f + (float)m_debugLogLine)), 0.0f), 0.0f, string, CText::ALIGNMENT::LEFT, 0, true);
+	Put(0, string, CText::ALIGNMENT::LEFT, 0, Pos3D(0.0f, 8.0f + m_debugLogLine * 16.0f, 0.0f), 0.0f, true)
+		->SetSize(Size2D(16.0f, 16.0f));
 
 	// デバッグログの行数加算
 	m_debugLogLine++;
@@ -114,22 +110,18 @@ void CText2D::CRegistInfo::ClearParameter(void) {
 	CMemory::Release(&m_string);
 	m_alignment   = CText::ALIGNMENT::CENTER;
 	m_fontIdx     = NONEDATA;
-	m_scaleX      = 1.0f;
-	m_scaleY      = 1.0f;
-	m_isFactScale = false;
 	m_pos         = INITD3DXVECTOR3;
 	m_angle       = 0.0f;
+	m_scaleOrSize = INITVECTOR2D;
+	m_isScale     = false;
 	m_col         = INITCOLOR;
 	m_isZtest     = true;
-	m_isLighting  = true;
-	m_isBillboard = false;
-	m_priority    = 0;
 }
 
 //========================================
 // 設置処理(ポリゴン2D)
 //========================================
-void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
+void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
 
 	// フォントデータを取得
 	CText::FontData fontData = RNLib::Text().GetFont(m_fontIdx);
@@ -137,18 +129,16 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 	//----------------------------------------
 	// 幅/高さ/間隔を算出
 	//----------------------------------------
-	float charWidth  = 0.0f;
-	float charHeight = 0.0f;
-	float charSpace  = 0.0f;
-	if (m_isFactScale) {
-		charWidth  = m_scaleX;
-		charHeight = m_scaleY;
+	float charWidth      = 0.0f;
+	float charHeightHalf = 0.0f;
+	if (m_isScale) {
+		charWidth      = (RNLib::Texture().GetWidth (fontData.nTexIdx) / fontData.nPtnWidth ) * m_scaleOrSize.x;
+		charHeightHalf = (RNLib::Texture().GetHeight(fontData.nTexIdx) / fontData.nPtnHeight) * m_scaleOrSize.y * 0.5f;
 	}
 	else {
-		charWidth  = (RNLib::Texture().GetWidth(fontData.nTexIdx) * PIXEL2D_SIZE) / fontData.nPtnWidth;
-		charHeight = (RNLib::Texture().GetHeight(fontData.nTexIdx) * PIXEL2D_SIZE) / fontData.nPtnHeight;
+		charWidth      = m_scaleOrSize.x;
+		charHeightHalf = m_scaleOrSize.y * 0.5f;
 	}
-	charSpace = charWidth * m_scaleX * fontData.fSpaceRate;
 
 	//----------------------------------------
 	// ロケールを設定してマルチバイト文字に対応
@@ -158,58 +148,63 @@ void CText2D::CRegistInfo::PutPolygon2D(const bool& isOnScreen) {
 	//----------------------------------------
 	// char型の文字列をwchar_t型の文字列に変換
 	//----------------------------------------
-	size_t length(strlen(m_string));
-	wchar_t* wstr((wchar_t*)malloc((length + 1) * sizeof(wchar_t)));
+	size_t   length = strlen(m_string);
+	wchar_t* wstr   = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
 	mbstowcs(wstr, m_string, length + 1);
 
 	//----------------------------------------
 	// 一文字ずつ設置していく
 	//----------------------------------------
-	int strLen = (int)wcslen(wstr);
+	const int   strLen    = (int)wcslen(wstr);
+	const float leftShift = strLen * -0.5f;
+	const float topY      = m_pos.y - charHeightHalf;
+	const float bottomY   = m_pos.y + charHeightHalf;
+	const float rotX      = m_angle + D3DX_PI_HALF;
+	const float rateXinX  = sinf(rotX);
+	const float rateYinX  = cosf(rotX);
+	const float rateXinY  = sinf(m_angle);
+	const float rateYinY  = cosf(m_angle);
 	for (int cntChar = 0; cntChar < strLen; cntChar++) {
 
 		// カウントの文字が空白の時、折り返す
-		if (wstr[cntChar] == ' ')
-			continue;	
+		if (wstr[cntChar] == ' ') {
+			continue;
+		}
 
 		// [[[ 表示形式に応じた設定位置の設定 ]]]
-		D3DXVECTOR2 setPos = INITD3DXVECTOR2;
+		Pos2D setPos = INITPOS2D;
 		switch (m_alignment) {
 		case CText::ALIGNMENT::CENTER: {
-			setPos.x += ((strLen * -0.5f) + cntChar + 0.5f) * charSpace;
+			setPos.x += (leftShift + cntChar) * charWidth;
 		}break;
 		case CText::ALIGNMENT::LEFT: {
-			setPos.x += cntChar * charSpace;
+			setPos.x += cntChar * charWidth;
 		}break;
 		case CText::ALIGNMENT::RIGHT: {
-			setPos.x += (-strLen + cntChar + 1) * charSpace;
+			setPos.x += (-strLen + cntChar) * charWidth;
 		}break;
 		}
-
-		// [[[ 結果マトリックスの算出 ]]]
-		Matrix resultMtx; {
-
-			// 基準マトリックスとテキストマトリックスを求める
-			Matrix baseMtx = INITMATRIX;
-			Matrix textMtx = INITMATRIX;
-
-			{// 通常の時、
-				D3DXVECTOR3 charPos = D3DXVECTOR3(setPos.x, setPos.y, 0.0f);
-				baseMtx = CMatrix::ConvPosRotToMtx(D3DXVECTOR3(m_pos.x,m_pos.y, 0.0f), D3DXVECTOR3(0.0f, 0.0f, m_angle));
-				textMtx = CMatrix::ConvPosRotToMtx(charPos, INITD3DXVECTOR3);
-			}
-
-			// 基準マトリックスとテキストマトリックスを掛け合わせる
-			resultMtx = CMatrix::MultiplyMtx(baseMtx, textMtx);
-		}
-
+		
 		// ポリゴン2Dを設置
-		RNLib::DrawMgr().PutPolygon2D(CMatrix::ConvMtxToPos(resultMtx), CMatrix::ConvMtxToRot(resultMtx).z, isOnScreen)
-			->SetSize(charWidth, charHeight)
+		const float leftX   = m_pos.x + setPos.x;
+		const float rightX  = m_pos.x + setPos.x + charWidth;
+		const float XLeft   = rateXinX * leftX;
+		const float XRight  = rateXinX * rightX;
+		const float XTop    = rateXinY * topY;
+		const float XBottom = rateXinY * bottomY;
+		const float YLeft   = rateYinX * leftX;
+		const float YRight  = rateYinX * rightX;
+		const float YTop    = rateYinY * topY;
+		const float YBottom = rateYinY * bottomY;
+		RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen)
+			->SetVtxPos(
+				Pos2D(XLeft  + XTop   , YTop    + YLeft ),
+				Pos2D(XRight + XTop   , YTop    + YRight),
+				Pos2D(XLeft  + XBottom, YBottom + YLeft ),
+				Pos2D(XRight + XBottom, YBottom + YRight))
 			->SetCol(m_col)
 			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
-			->SetZTest(m_isZtest)
-			->SetPriority(1);
+			->SetZTest(m_isZtest);
 	}
 
 	// wchar_t型文字列の解放
@@ -295,44 +290,29 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetCol(const Color& col) {
 }
 
 //========================================
+// 拡大倍率を設定
+//========================================
+CText2D::CRegistInfo* CText2D::CRegistInfo::SetScale(const Scale2D scale) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_scaleOrSize = scale;
+	m_isScale     = true;
+
+	return this;
+}
+
+//========================================
 // 大きさを設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetSize(const float& width, const float& height) {
+CText2D::CRegistInfo* CText2D::CRegistInfo::SetSize(const Size2D size) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_scaleX = width;
-	m_scaleY = height;
-	m_isFactScale = true;
-
-	return this;
-}
-
-//========================================
-// 大きさを設定(テクスチャ基準で拡大)
-//========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetSize_TexBaseScale(const float& scaleX, const float& scaleY) {
-
-	if (this == NULL)
-		return NULL;
-
-	m_scaleX = scaleX;
-	m_scaleY = scaleY;
-	m_isFactScale = false;
-
-	return this;
-}
-
-//========================================
-// 優先度設定
-//========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetPriority(const short& priority) {
-
-	if (this == NULL)
-		return NULL;
-
-	m_priority = priority;
+	m_scaleOrSize = size;
+	m_isScale     = false;
 
 	return this;
 }

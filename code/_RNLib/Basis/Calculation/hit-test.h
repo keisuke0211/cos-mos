@@ -1,0 +1,27 @@
+//========================================
+// 
+// 当たり判定の処理
+// Author:RIKU NISHIMURA
+// 
+//========================================
+#pragma once
+
+#include "../../RNmain.h"
+
+//****************************************
+// クラス定義
+//****************************************
+// 当たり判定クラス
+class CHitTest {
+public:
+	//========== [[[ 関数宣言 ]]]
+	CHitTest();
+	~CHitTest();
+	void Init(void);
+	void Uninit(void);
+	void Update(void);
+	class XZ {
+	public:
+		static bool OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targetPos, const Scale2D& targetScale);
+	};
+};

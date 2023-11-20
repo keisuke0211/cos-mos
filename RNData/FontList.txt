@@ -6,6 +6,13 @@ FONTSET{
 		PTN_HEIGHT:		512
 		SPACE_RATE:		1.0
 	}
+	FONT{
+		TEXTURE_PATH:	RNData\\Texture\\Font\\01.png
+		START_CODE:		33
+		PTN_WIDTH:		8
+		PTN_HEIGHT:		8
+		SPACE_RATE:		1.0
+	}
 }
 
 END

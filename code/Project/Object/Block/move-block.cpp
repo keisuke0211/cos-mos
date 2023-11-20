@@ -19,7 +19,7 @@ int CMoveBlock::m_nNumAll = 0;
 //========================================
 CMoveBlock::CMoveBlock(void)
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::MOVE_BLOCK;	// Ží—Þ‚ÌÝ’è
 
@@ -122,9 +122,9 @@ void CMoveBlock::Update(void)
 	}
 
 	CStageObject::SetPos(m_Info.pos);
-	RNLib::Model().Put(m_Info.pos, m_Info.rot, m_Info.nModelIdx)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_Info.pos, m_Info.rot)
 		->SetCol(m_color);
-	RNLib::Model().Put(m_Info.pos, m_rot, nModelIdx)
+	RNLib::Model().Put(PRIORITY_OBJECT, nModelIdx, m_Info.pos, m_rot)
 		->SetCol(m_color);
 }
 

@@ -22,12 +22,11 @@ void CCamera::ProcessState(const PROCESS process) {
 		// マウスで宙を掴む
 		//----------------------------------------
 	case STATE::GRAB_AIR_MOUSE: {
-		static const D3DXVECTOR3 SPIN_RATE = D3DXVECTOR3(-0.0004f, 0.0004f, 0.0f);
-
 		switch (process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
 			CMemory::Alloc<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
+			m_isPivotToPosV = true;
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
@@ -40,8 +39,8 @@ void CCamera::ProcessState(const PROCESS process) {
 			// [[[ カーソルの移動量に応じて回転させる ]]]
 			if (RNLib::Input().GetMousePress(CInput::MOUSEBUTTON::RIGHT)) {
 				D3DXVECTOR2 cursorMove = RNLib::Input().GetCursorMove();
-				m_spin.x += cursorMove.y * SPIN_RATE.x * info->spinForce;
-				m_spin.y += cursorMove.x * SPIN_RATE.y * info->spinForce;
+				m_spin.x += cursorMove.y * 0.0002f * info->spinForce;
+				m_spin.y += cursorMove.x * 0.0002f * info->spinForce;
 			}
 
 			{
@@ -59,27 +58,19 @@ void CCamera::ProcessState(const PROCESS process) {
 					move.y = cursorMove.y * (1.0f - fabsf(rotXRate));
 
 					// 縦方向基準でXZにYの移動量加算
-					move.x += sinf(m_rot.y) * cursorMove.y * -rotXRate;
-					move.z += cosf(m_rot.y) * cursorMove.y * -rotXRate;
+					move.x += sinf(m_rot.y) * cursorMove.y * rotXRate;
+					move.z += cosf(m_rot.y) * cursorMove.y * rotXRate;
 
 					// 注視点に移動量を反映
-					m_posR += move * info->moveForce;
+					m_posV += move * info->moveForce * 0.1f;
 				}
 
 				// [[[ ホイールの回転に応じてズームイン/アウト ]]]
 				if (RNLib::Input().GetWheelSpin() == CInput::WHEELSPIN::FRONT) {
-					const float XZPlaneRate = 1.0f - fabsf(rotXRate);
-					
-					m_posR.x += sinf(m_rot.y) * info->zoomForce * XZPlaneRate;
-					m_posR.z += cosf(m_rot.y) * info->zoomForce * XZPlaneRate;
-					m_posR.y += info->zoomForce * rotXRate;
+					m_posV += CGeometry::FindRotVec(m_rot) * info->zoomForce * 4.0f;
 				}
 				else if (RNLib::Input().GetWheelSpin() == CInput::WHEELSPIN::BACK) {
-					const float XZPlaneRate = 1.0f - fabsf(rotXRate);
-
-					m_posR.x -= sinf(m_rot.y) * info->zoomForce * XZPlaneRate;
-					m_posR.z -= cosf(m_rot.y) * info->zoomForce * XZPlaneRate;
-					m_posR.y -= info->zoomForce * rotXRate;
+					m_posV -= CGeometry::FindRotVec(m_rot) * info->zoomForce * 4.0f;
 				}
 			}
 		}break;

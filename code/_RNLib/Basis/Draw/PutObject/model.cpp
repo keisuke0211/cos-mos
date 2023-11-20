@@ -102,7 +102,7 @@ short CModel::Load(const char* loadPath, short idx) {
 				D3DXLoadMeshFromX(loadPath, D3DXMESH_SYSTEMMEM, device, NULL, NULL, NULL, NULL, &m_datas[idx]->m_outLineMesh);
 
 				// 頂点フォーマットのサイズを取得
-				const DWORD dwSizeFVF(D3DXGetFVFVertexSize(m_datas[idx]->m_outLineMesh->GetFVF()));
+				const DWORD dwSizeFVF = D3DXGetFVFVertexSize(m_datas[idx]->m_outLineMesh->GetFVF());
 
 				// 頂点バッファをロック
 				BYTE* vtxBuff = NULL;
@@ -119,13 +119,13 @@ short CModel::Load(const char* loadPath, short idx) {
 
 				// 頂点の縁取り情報を生成
 				VertexOutLine* vertexOutLines = NULL;
-				RNLib::Memory().Alloc(&vertexOutLines, vtxNum);
+				CMemory::Alloc(&vertexOutLines, vtxNum);
 				for (int cntVtx = 0; cntVtx < vtxNum; vertexOutLines[cntVtx] = {}, cntVtx++);
 
 				// 法線方向に加算
 				for (int cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
-					Vector3D* pos =  (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
-					Vector3D  nor = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
+					Vector3D* pos = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
+					Vector3D* nor = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 					{// 半径の最大を調べる
 						const float dist = CGeometry::FindDistance(INITD3DXVECTOR3, *pos);
@@ -144,13 +144,13 @@ short CModel::Load(const char* loadPath, short idx) {
 						// 頂点が重なっている時、加算位置の値を加算
 						Pos3D* pos2 = (Pos3D*)(vtxBuff + (dwSizeFVF * cntVtx2));
 						if (*pos == *pos2) {
-							vertexOutLines[cntVtx2].totalVec += nor;
+							vertexOutLines[cntVtx2].totalVec += *nor;
 							vertexOutLines[cntVtx2].count++;
 						}
 					}
 
 					// 現カウント頂点の加算位置の値を加算
-					vertexOutLines[cntVtx].totalVec += nor;
+					vertexOutLines[cntVtx].totalVec += *nor;
 					vertexOutLines[cntVtx].count++;
 				}
 
@@ -184,32 +184,74 @@ short CModel::Load(const char* loadPath, short idx) {
 }
 
 //========================================
+// 頂点情報を格納
+//========================================
+void CModel::StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& modelIdx, const Matrix& modelMtx) {
+
+	if (modelIdx == NONEDATA) {
+		*vtxNum   = 0;
+		*vtxInfos = NULL;
+		return;
+	}
+
+	// 頂点フォーマットのサイズを取得
+	const DWORD dwSizeFVF(D3DXGetFVFVertexSize(m_datas[modelIdx]->m_mesh->GetFVF()));
+
+	// 頂点バッファをロック
+	BYTE* vtxBuff = NULL;
+	m_datas[modelIdx]->m_mesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
+
+	// 頂点数を取得
+	*vtxNum = m_datas[modelIdx]->m_mesh->GetNumVertices();
+
+	// 頂点情報を生成
+	CMemory::Alloc(vtxInfos, *vtxNum);
+
+	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
+		Vertex3DInfo& vtx = (*vtxInfos)[cntVtx];
+		vtx.pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
+		vtx.nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
+
+		// ワールドマトリックスを算出
+		Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx.pos, vtx.nor), modelMtx);
+
+		vtx.worldPos = CMatrix::ConvMtxToPos(worldMtx);
+		vtx.rot      = CGeometry::FindVecRot(vtx.nor);
+		vtx.worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
+		vtx.worldRot = CGeometry::FindVecRot(vtx.worldNor);
+	}
+
+	// 頂点バッファをアンロック
+	m_datas[modelIdx]->m_mesh->UnlockVertexBuffer();
+}
+
+//========================================
 // 設置処理
 //========================================
-CModel::CRegistInfo* CModel::Put(const Matrix& mtx, const short& modelIdx, const bool& isOnScreen) {
+CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, const Matrix& mtx, const bool& isOnScreen) {
 
 	// 登録受付中でない時、終了
 	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
-	return RNLib::DrawMgr().PutModel(mtx, isOnScreen)
+	return RNLib::DrawMgr().PutModel(priority, mtx, isOnScreen)
 		->SetModel(modelIdx);
 }
 
 //========================================
 // 設置処理(位置と向きで指定)
 //========================================
-CModel::CRegistInfo* CModel::Put(const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const bool& isOnScreen) {
+CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const bool& isOnScreen) {
 	
-	return Put(CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, isOnScreen);
+	return Put(priority, modelIdx, CMatrix::ConvPosRotToMtx(pos, rot), isOnScreen);
 }
 
 //========================================
 // 設置処理(位置と向きと拡大倍率で指定)
 //========================================
-CModel::CRegistInfo* CModel::Put(const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const bool& isOnScreen) {
+CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const bool& isOnScreen) {
 
-	return Put(CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, isOnScreen);
+	return Put(priority, modelIdx, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), isOnScreen);
 }
 
 //================================================================================
@@ -421,15 +463,7 @@ void CModel::CDrawInfo::SetMaterial(Device& device, Material* mat, const Color& 
 //========================================
 CModel::CRegistInfo::CRegistInfo() {
 
-	m_mtx                  = INITMATRIX;
-	m_col                  = INITCOLOR;
-	m_modelIdx             = NONEDATA;
-	m_texIdx               = NONEDATA;
-	m_isZTest              = true;
-	m_isLighting           = false;
-	m_isOutLine            = false;
-	m_brightnessOfEmissive = 1.0f;
-	m_priority             = 0;
+	ClearParameter();
 }
 
 //========================================
@@ -440,10 +474,11 @@ CModel::CRegistInfo::~CRegistInfo() {
 }
 
 //========================================
-// パラメーターのクリア処理
+// パラメータークリア処理
 //========================================
 void CModel::CRegistInfo::ClearParameter(void) {
 
+	CRegistInfoBase::ClearParameter();
 	m_mtx                  = INITMATRIX;
 	m_col                  = INITCOLOR;
 	m_modelIdx             = NONEDATA;
@@ -452,9 +487,6 @@ void CModel::CRegistInfo::ClearParameter(void) {
 	m_isLighting           = false;
 	m_isOutLine            = false;
 	m_brightnessOfEmissive = 1.0f;
-	m_priority             = 0;
-	m_clippingID = NONEDATA;
-
 }
 
 //========================================
@@ -496,25 +528,15 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(void) {
 }
 
 //========================================
-// 優先度設定
-//========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetPriority(const short& priority) {
-
-	if (this == NULL)
-		return NULL;
-
-	m_priority = priority;
-
-	return this;
-}
-
-//========================================
 // クリッピングカメラ設定
 //========================================
 CModel::CRegistInfo* CModel::CRegistInfo::SetClippingCamera(CCamera& camera) {
 
 	if (this == NULL)
 		return NULL;
+
+	if (&camera == NULL)
+		return this;
 
 	m_clippingID = camera.GetID();
 

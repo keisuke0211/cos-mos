@@ -13,7 +13,9 @@
 //========================================
 CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 {
+	m_Info.TexPos = INITD3DXVECTOR3;
 	m_Info.TextBoxCol = INITCOLOR;
+	m_Info.TexMove = INITD3DXVECTOR3;
 	m_Info.FontCol = INITD3DCOLOR;
 	m_Info.TextBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;
@@ -138,14 +140,17 @@ void CFontText::Uninit()
 //========================================
 void CFontText::Update()
 {
+	m_Info.TexPos += m_Info.TexMove;
+
 	if (m_Info.bTextBok)
 	{
-		RNLib::Polygon2D().Put(m_Info.TexPos, 0.0f, false)
+		RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
 			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
 			->SetCol(m_Info.TextBoxCol)
-			->SetTex(m_Info.nTexIdx)
-			->SetPriority(1);
+			->SetTex(m_Info.nTexIdx);
 	}
+
+	m_Info.TexMove = INITD3DXVECTOR3;
 
 	// テキスト生成
 	if (!m_Info.bStand)
@@ -182,20 +187,17 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		// -- メッセージボックス ----------------
 
 		// テクスチャ設定
-		switch (type)
-		{
-		case CFontText::BOX_NORMAL_RECT:
-			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox.png");
-			break;
-		case CFontText::BOX_NORMAL_SQR:
+		if(type == BOX_NORMAL_GRAY)
+			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
+		else if (type == BOX_NORMAL_BLUE)
 			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
-			break;
-		case CFontText::BOX_MAX:
+		else if (type == BOX_NORMAL_RED)
+			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+		else if (type == BOX_NORMAL_GREEN)
+			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox03.png");
+		else if(type == BOX_NONE || type == BOX_MAX)
 			pText->m_Info.nTexIdx = -1;
-			break;
-		default:
-			break;
-		}
+
 		pText->m_Info.TexPos = pos;
 		pText->m_Info.TexSize = size;
 		pText->m_Info.bTextBok = bTextBox;
@@ -223,7 +225,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 
 		if (bBoxSize)
 		{
-			pText->m_Info.TexSize.x = BOX_SIZE * (pText->m_Info.nTextLength * 0.5f + 2);
+			pText->m_Info.TexSize.x = pText->m_Info.fTextSize * (pText->m_Info.nTextLength * 0.5f + 1);
 		}
 
 		if (Shadow == NULL)
@@ -430,6 +432,24 @@ void CFontText::DisapTime(void)
 //================================================================================
 
 //========================================
+// 移動量
+//========================================
+void CFontText::SetMove(D3DXVECTOR3 move)
+{
+	m_Info.TexMove = move;
+
+
+	for (int nWords = 0; nWords < m_Info.nLetterPopCount; nWords++)
+	{
+		if (m_Info.words[nWords] != NULL)
+		{
+			m_Info.words[nWords]->SetMove(move);
+		}
+	}
+
+}
+
+//========================================
 // 文字サイズ
 //========================================
 void CFontText::SetTextSize(float TextSize)
@@ -451,6 +471,7 @@ void CFontText::SetStandTime(int StandTime)
 		StandTime = 0;
 	}
 	m_Info.nStandTime = StandTime;
+	m_Info.bStand = false;
 }
 
 //========================================
@@ -510,11 +531,31 @@ void CFontText::SetTetPause(bool bPause)
 }
 
 //========================================
-// メッセージボックスの色設定
+// テキストボックスの色設定
 //========================================
 void CFontText::SetBoxColor(Color col)
 {
 	m_Info.TextBoxCol = col;
+}
+
+//========================================
+// テキストボックスの種類設定
+//========================================
+void CFontText::SetBoxType(Box type)
+{
+	// -- メッセージボックス ----------------
+
+	// テクスチャ設定
+	if (type == BOX_NORMAL_GRAY)
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
+	else if (type == BOX_NORMAL_BLUE)
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
+	else if (type == BOX_NORMAL_RED)
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+	else if (type == BOX_NORMAL_GREEN)
+		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox03.png");
+	else if (type == BOX_NONE || type == BOX_MAX)
+		m_Info.nTexIdx = -1;
 }
 
 //========================================
@@ -584,7 +625,7 @@ bool CFontText::ChgWords(char* Text, int nIdx, D3DXCOLOR col)
 //========================================
 // 文字変更(全体)　半角のみ
 //========================================
-bool CFontText::ChgText(char* Text, D3DXCOLOR col)
+bool CFontText::ChgHalfSizeText(char* Text, D3DXCOLOR col)
 {
 	int nDigit = strlen(Text);
 	char aString[TXT_MAX];
@@ -621,4 +662,74 @@ bool CFontText::ChgText(char* Text, D3DXCOLOR col)
 		}
 	}
 	return FALSE;
+}
+
+//========================================
+// テキストの再生成
+//========================================
+void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont, FormShadow *Shadow)
+{
+	// -- 破棄 -----------------------
+	{
+		for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++) {
+			if (m_Info.words[wordsCount] != NULL)
+				m_Info.words[wordsCount]->Uninit();
+		}
+
+		if (m_Info.words != NULL) {
+			delete[] m_Info.words;
+			m_Info.words = NULL;
+		}
+
+		if (m_Info.aShadow.bShadow) {
+			for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++) {
+				if (m_Info.aShadow.shadow[wordsCount] != NULL)
+					m_Info.aShadow.shadow[wordsCount]->Uninit();
+			}
+
+			if (m_Info.aShadow.shadow != NULL) {
+				delete[] m_Info.aShadow.shadow;
+				m_Info.aShadow.shadow = NULL;
+			}
+		}
+	}
+
+	// -- 生成 -----------------------
+	m_Info.FontType = FontType;
+
+	if (pFont != NULL){
+		m_Info.FontCol = pFont->col;
+		SetTextSize(pFont->fTextSize);
+		SetStandTime(pFont->nStandTime);
+		EraseTime(pFont->nEraseTime);
+		TextLetter(Text, pFont->nAppearTime);
+	}
+	else if (pFont == NULL){
+		m_Info.FontCol = INITD3DCOLOR;
+		SetTextSize(20.0f);
+		SetStandTime(10);
+		EraseTime(1);
+		TextLetter(Text, 1);
+	}
+
+	if (Shadow == NULL){
+		m_Info.aShadow.col = INITD3DCOLOR;
+		m_Info.aShadow.AddPos = INITD3DXVECTOR3;
+		m_Info.aShadow.AddSize = INITD3DXVECTOR2;
+		m_Info.aShadow.bShadow = false;
+	}
+	else if (Shadow != NULL){
+		if (Shadow->bShadow){
+			m_Info.aShadow.shadow = new CWords*[m_Info.nTextLength];
+
+			for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++){
+				m_Info.aShadow.shadow[wordsCount] = NULL;
+			}
+
+			m_Info.aShadow.col = Shadow->col;
+			m_Info.aShadow.AddPos = Shadow->AddPos;
+			m_Info.aShadow.AddSize = Shadow->AddSize;
+			m_Info.aShadow.bShadow = Shadow->bShadow;
+		}
+	}
 }

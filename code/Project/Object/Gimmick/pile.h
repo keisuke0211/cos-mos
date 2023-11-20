@@ -53,10 +53,11 @@ private:
 	void SetOld(float fCaveInHeight);	//前回情報を保存
 	void PutModel(void);//モデル配置
 
-	int m_BodyModelID;	//本体のモデル番号
 	int m_TrunkModelID;	//幹部分のモデル番号
 	Pos3D m_PilePos;	//本体座標
 	int   m_NumTrunk;	//幹の数（最低３個）
+	float m_fEvenTrunkCorrHeight;//幹の数が偶数だった場合の補正値（奇数なら0.0f
 	float m_TrunkHeight;	//幹座標
 	float m_TrunkHeightOld;	//前回の幹座標
+	float m_StartTrunkHeight;
 };

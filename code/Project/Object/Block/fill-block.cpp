@@ -38,7 +38,7 @@ const float CFillBlock::s_Size[(int)CFillBlock::BLOCKTYPE::TYPE_MAX][(int)CFillB
 //========================================
 CFillBlock::CFillBlock(void)
 {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::FILLBLOCK;
 	m_width = SIZE_OF_1_SQUARE;
@@ -87,6 +87,6 @@ void CFillBlock::Uninit(void)
 void CFillBlock::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Model().Put(m_pos, D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), m_Info.nModelIdx, false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, D3DXVECTOR3(0.0f, D3DX_PI, 0.0f), false)
 		->SetCol(m_color);
 }

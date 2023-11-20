@@ -19,8 +19,6 @@
 #define ROT_X_MAX                      (D3DX_PI * 0.499999f)
 #define ROT_X_MIN                      (D3DX_PI * -0.499999f)
 #define INIT_RADIAN                    (45.0f)
-#define FEEDBACK_POLYGON_COLOR         (Color{255,255,255,127})
-#define FEEDBACK_POLYGON_TEX_CUT_SCALE (0.99f)
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -46,21 +44,22 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	ms_IDCount = (ms_IDCount + 1) % SHRT_MAX;
 
 	// 変数を初期化
-	m_posV          = INITPOS3D;
-	m_posR          = INITPOS3D;
-	m_posVib        = INITPOS3D;
-	m_rot           = INITROT3D;
-	m_spin          = INITVECTOR3D;
-	m_dist          = 1.0f;
-	m_radian        = INIT_RADIAN;
-	m_radianGoal    = INIT_RADIAN;
-	m_vibForce      = 0.0f;
-	m_isPivotToPosV = true;
-	m_isFixed       = false;
-	m_isClipping    = false;
-	m_state         = STATE::NONE;
-	m_stateInfo     = NULL;
-	m_BGCol         = Color{0,0,0,0};
+	m_posV            = INITPOS3D;
+	m_posR            = INITPOS3D;
+	m_posVib          = INITPOS3D;
+	m_rot             = INITROT3D;
+	m_spin            = INITVECTOR3D;
+	m_dist            = 1.0f;
+	m_radian          = INIT_RADIAN;
+	m_radianGoal      = INIT_RADIAN;
+	m_vibForce        = 0.0f;
+	m_isPivotToPosV   = true;
+	m_isFixed         = false;
+	m_state           = STATE::NONE;
+	m_stateInfo       = NULL;
+	m_BGCol           = Color{0,0,0,0};
+	m_isClipping      = false;
+	m_motionBlur      = {};
 
 	// デバイスを取得
 	Device device = RNLib::Window().GetD3DDevice();
@@ -110,10 +109,10 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	RNLib::Polygon2D().SetVtxPos_TopLeft(vtxs, INITPOS2D, scale2D.x, scale2D.y);
 
 	// [[[ 頂点カラーの設定 ]]]
-	RNLib::Polygon2D().SetVtxCol(vtxs, FEEDBACK_POLYGON_COLOR);
+	RNLib::Polygon2D().SetVtxCol(vtxs, Color{ 255,255,255,0 });
 
 	// [[[ テクスチャ座標の設定 ]]]
-	RNLib::Polygon2D().SetVtxTex_Cut(vtxs, Pos2D(0.5f, 0.5f), FEEDBACK_POLYGON_TEX_CUT_SCALE);
+	RNLib::Polygon2D().SetVtxTex(vtxs);
 
 	// [[[ RHWの設定 ]]]
 	RNLib::Polygon2D().SetVtxRHW(vtxs);
@@ -129,6 +128,7 @@ CCamera::~CCamera() {
 
 	// リストから削除
 	RNLib::CameraMgr().SubList(this);
+	RNLib::CameraMgr().AddDeletedCamera(this);
 
 	// 状態終了処理
 	ProcessState(PROCESS::UNINIT);
@@ -185,11 +185,31 @@ void CCamera::Update(void) {
 	// 回転軸が視点   > 注視点位置を算出
 	// 回転軸が注視点 > 視点位置  を算出
 	m_isPivotToPosV ?
-		m_posV + CGeometry::FindRotVec(m_rot) * m_dist :
+		m_posR = m_posV + CGeometry::FindRotVec(m_rot) * m_dist :
 		m_posV = m_posR - CGeometry::FindRotVec(m_rot) * m_dist;
 
 	// [[[ ラジアン推移 ]]]
 	m_radian = (m_radian * INIT_RANS_RATE_OPP) + (m_radianGoal * INIT_RANS_RATE);
+
+	//----------------------------------------
+	// 頂点バッファの後進
+	//----------------------------------------
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	Vertex2D* vtxs;
+	m_MTInfo.vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
+
+	{// [[[ 頂点位置の設定 ]]]
+		const float width  = (m_MTInfo.viewport.Width  / RNLib::Window().GetResolution());
+		const float height = m_MTInfo.viewport.Height / RNLib::Window().GetResolution();
+
+		RNLib::Polygon2D().SetVtxPos(vtxs, Pos2D(width * 0.5f, height * 0.5f), m_motionBlur.angle, width * m_motionBlur.scale, height * m_motionBlur.scale * 0.99f);
+	}
+
+	// [[[ 頂点カラーの設定 ]]]
+	RNLib::Polygon2D().SetVtxCol(vtxs, Color{ m_motionBlur.col.r,m_motionBlur.col.g,m_motionBlur.col.b,(UShort)(m_motionBlur.col.a * m_motionBlur.power) });
+
+	// 頂点座標をアンロックする
+	m_MTInfo.vtxBuff->Unlock();
 }
 
 //========================================
@@ -268,20 +288,17 @@ void CCamera::StartRendering(Device& device) {
 //========================================
 void CCamera::EndRendering(Device& device) {
 
-	if (RNLib::Input().GetKeyPress(DIK_F)) {
+	// 頂点フォーマットの設定
+	device->SetFVF(FVF_VERTEX_2D);
 
-		// 頂点フォーマットの設定
-		device->SetFVF(FVF_VERTEX_2D);
+	// 頂点バッファをデータストリームに設定
+	device->SetStreamSource(0, m_MTInfo.vtxBuff, 0, sizeof(Vertex2D));
 
-		// 頂点バッファをデータストリームに設定
-		device->SetStreamSource(0, m_MTInfo.vtxBuff, 0, sizeof(Vertex2D));
+	// テクスチャの設定
+	device->SetTexture(0, m_MTInfo.textures[1]);
 
-		// テクスチャの設定
-		device->SetTexture(0, m_MTInfo.textures[1]);
-
-		// ポリゴンの描画
-		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-	}
+	// ポリゴンの描画
+	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
 	// テクスチャ0と1を入れ替える
 	Texture m_texturesWk = m_MTInfo.textures[0];

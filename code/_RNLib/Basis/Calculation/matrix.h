@@ -14,7 +14,10 @@
 class CMatrix {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
+	static Matrix  ConvPosToMtx        (const Pos3D& pos);
+	static Matrix  ConvRotToMtx        (const Rot3D& rot);
 	static Matrix  ConvPosRotToMtx     (const Pos3D& pos, const Rot3D& rot);
+	static Matrix  ConvPosNorToMtx     (const Pos3D& pos, const Normal3D& nor);
 	static Matrix  ConvPosRotScaleToMtx(const Pos3D& pos, const Rot3D& rot, const Scale3D& scale);
 	static Pos3D   ConvMtxToPos        (const Matrix& mtx);
 	static Rot3D   ConvMtxToRot        (const Matrix& mtx);

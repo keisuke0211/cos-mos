@@ -70,6 +70,8 @@ public:
 	// -- Š“¾ ---------------------------------------------
 	/* F		*/D3DXCOLOR GetColor(void) { return m_Info.col; }
 	/*ˆÊ’u		*/D3DXVECTOR3& GetFirePos(void) { return m_Info.Firetex.pos; }
+	/*Œ»İ‚Ì“‹æÒ”*/static int GetCounter(void) { return s_nCountPlayer; }
+
 private:
 
 	// *** •Ï” ***

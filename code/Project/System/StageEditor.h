@@ -138,6 +138,7 @@ public:
 	// -- 変換 ---------------------------------------------
 	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);
 	/* float	*/bool ToData(float &val, CSVFILE *pFile, int nRow, int nLine);
+	/* ushort	*/bool ToData(UShort& val, CSVFILE* pFile, int nRow, int nLine);
 	/* double	*/bool ToData(double &val, CSVFILE *pFile, int nRow, int nLine);
 
 	// -- 読込 ---------------------------------------------
@@ -196,4 +197,6 @@ private:
 	PileInfo *m_PileInfo;				// 杭の情報
 
 	StageInfo m_Info;					// ステージ情報
+
+	bool bRocket;
 };

@@ -39,7 +39,7 @@ bool CRegist::Load(const char* loadPath, short& idx) {
 
 	// パス無し or DATANONE指定の時、
 	// 番号をDATANONE指定して読み中止
-	if ((!strcmp(loadPath, "")) || (!strcmp(loadPath, "DATANONE"))) {
+	if ((!strcmp(loadPath, "")) || (!strcmp(loadPath, "NONEDATA"))) {
 		idx = NONEDATA;
 		return false;
 	}
@@ -141,4 +141,5 @@ void CRegist::ReAllocLoadPath(const short& oldNum) {
 		CMemory::Release(&m_loadPaths[cnt]);
 	}
 	CMemory::ReAlloc(&m_loadPaths, m_num, oldNum);
+	m_num = oldNum;
 }

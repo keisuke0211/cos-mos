@@ -19,7 +19,7 @@ const D3DXVECTOR3	CParts::PARTS_ADDROT = { 0.0f,0.02f,0.0f };
 // コンストラクタ
 //========================================
 CParts::CParts(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::PARTS;	// 種類の設定
 							// 大きさの設定
@@ -83,9 +83,10 @@ void CParts::Update(void) {
 	{
 		m_rot.y = -D3DX_PI;
 	}
+	fBrightness = 0.5f + fBrightness * 0.5f;
 
-	RNLib::Model().Put(m_pos, m_rot, ModelIdx, false)
-		->SetCol(Color{ (int)(255 * fBrightness),(int)(255 * fBrightness),(int)(255 * fBrightness),255 })
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false)
+		->SetCol(Color{ (UShort)(255 * fBrightness),(UShort)(255 * fBrightness),(UShort)(255 * fBrightness),255 })
 		->SetOutLine(true);
 
 	//int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");

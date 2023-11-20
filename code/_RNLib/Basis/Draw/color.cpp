@@ -46,10 +46,10 @@ void SetBGColor(Color bgCol)
 // Author:RIKU NISHIMURA
 //========================================
 void LoadColor(FILE *pFile, Color *pCol) {
-	fscanf(pFile, "%d", &pCol->r);
-	fscanf(pFile, "%d", &pCol->g);
-	fscanf(pFile, "%d", &pCol->b);
-	fscanf(pFile, "%d", &pCol->a);
+	fscanf(pFile, "%d", (int*)&pCol->r);
+	fscanf(pFile, "%d", (int*)&pCol->g);
+	fscanf(pFile, "%d", (int*)&pCol->b);
+	fscanf(pFile, "%d", (int*)&pCol->a);
 }
 
 //============================================================
@@ -81,7 +81,7 @@ D3DCOLOR ColorToD3DCOLOR(Color col) {
 // Author:RIKU NISHIMURA
 //========================================
 Color D3DCOLORToColor(D3DCOLORVALUE col) {
-	return Color{ (int)(col.r * 255),(int)(col.g * 255),(int)(col.b * 255),(int)(col.a * 255) };
+	return Color{ (UShort)(col.r * 255),(UShort)(col.g * 255),(UShort)(col.b * 255),(UShort)(col.a * 255) };
 }
 
 //============================================================
@@ -109,10 +109,10 @@ Color ColorRate(Color col, float fRate) {
 	col.g *= fRate;
 	col.b *= fRate;
 	col.a *= fRate;
-	IntControl(&col.r, 255, 0);
-	IntControl(&col.g, 255, 0);
-	IntControl(&col.b, 255, 0);
-	IntControl(&col.a, 255, 0);
+	IntControl((int*)&col.r, 255, 0);
+	IntControl((int*)&col.g, 255, 0);
+	IntControl((int*)&col.b, 255, 0);
+	IntControl((int*)&col.a, 255, 0);
 	return col;
 }
 

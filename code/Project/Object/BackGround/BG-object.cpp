@@ -84,12 +84,12 @@ void CBGObject::Update(void) {
 	Color putCol = m_Info.col;
 	putCol.a *= lifeRate;
 	if (m_Info.side == CBGEditor::WORLD_SIDE::UP) {
-		RNLib::Model().Put(m_pos, m_Info.rot, m_Info.modelIdx)
+		RNLib::Model().Put(PRIORITY_BACKGROUND, m_Info.modelIdx, m_pos, m_Info.rot)
 			->SetCol(putCol)
 			->SetClippingCamera(CMode_Game::GetCameraUp());
 	}
 	else if (m_Info.side == CBGEditor::WORLD_SIDE::DOWN) {
-		RNLib::Model().Put(m_pos, m_Info.rot, m_Info.modelIdx)
+		RNLib::Model().Put(PRIORITY_BACKGROUND, m_Info.modelIdx, m_pos, m_Info.rot)
 			->SetCol(putCol)
 			->SetClippingCamera(CMode_Game::GetCameraDown());
 	}

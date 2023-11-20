@@ -15,8 +15,9 @@ public:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
 	enum class SCAN {
 		INT,
+		SHORT,
+		USHORT,
 		FLOAT,
-		FLOAT2D,
 		CAHR,
 		STRING,
 		STRING_DYNAMIC,
@@ -40,10 +41,10 @@ public:
 	void Update(void);
 	FILE* GetFile                 (void) { return files[fileNum-1]; }
 	char* GetSearchString         (void) { return searchString; }
-	bool  GetSelectOpenFileName   (char* fileName, const char* initDir, const char* fileType);
-	bool  GetSelectSaveFileName   (char* fileName, const char* initDir, const char* fileType);
-	char* ConvPathToDataStartPath (const char* path);
-	bool  OpenLoadFile            (const char* path);
+	bool  GetSelectOpenFileName   (char** fileName, const char* initDir, const char* fileType);
+	bool  GetSelectSaveFileName   (char** fileName, const char* initDir, const char* fileType);
+	void  ConvPathToDataStartPath(char** path);
+	bool  OpenLoadFile            (const char* path, const char* typeName = NULL);
 	bool  OpenSaveFile            (const char* path);
 	void  CloseFile               (void);
 	bool  SearchLoop              (const char* endIdentifier);

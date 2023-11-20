@@ -59,12 +59,12 @@ bool RNSettings::LoadAndSave(const char* path) {
 	if (RNLib::File().OpenSaveFile(path)) {
 		fprintf(RNLib::File().GetFile(), /*  */"#KeyOption\n");	
 		fprintf(RNLib::File().GetFile(), /*  */"projectName				%s\n", info.projectName            );
-		fprintf(RNLib::File().GetFile(), /*  */"windowWidth				%f\n", info.windowWidth            );
-		fprintf(RNLib::File().GetFile(), /*  */"windowHeight			%f\n", info.windowHeight           );
+		fprintf(RNLib::File().GetFile(), /*  */"windowWidth				%.2f\n", info.windowWidth            );
+		fprintf(RNLib::File().GetFile(), /*  */"windowHeight			%.2f\n", info.windowHeight           );
 		fprintf(RNLib::File().GetFile(), /*  */"isFullScreen			%d\n", info.isFullScreen           );
-		fprintf(RNLib::File().GetFile(), /*  */"resolution				%f\n", info.resolution             );
+		fprintf(RNLib::File().GetFile(), /*  */"resolution				%.2f\n", info.resolution             );
 	 	fprintf(RNLib::File().GetFile(), /*  */"#OtherOption\n");
-		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistance	%f\n", info.modelOutLineAddDistance);
+		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistance	%.2f\n", info.modelOutLineAddDistance);
 		fprintf(RNLib::File().GetFile(), /*  */"END");
 
 		// ƒtƒ@ƒCƒ‹‚ð•Â‚¶‚é

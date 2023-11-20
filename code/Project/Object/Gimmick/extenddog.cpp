@@ -23,7 +23,7 @@
 // コンストラクタ
 //========================================
 CExtenddog::CExtenddog(void) {
-	Manager::BlockMgr()->AddList(this);
+	Manager::StageObjectMgr()->AddList(this);
 
 	//初期状態
 	m_type = TYPE::EXTEND_DOG;
@@ -83,7 +83,7 @@ void CExtenddog::Update(void) {
 	
 	CObject *obj = NULL;
 
-	while (Manager::BlockMgr()->ListLoop(&obj)) {
+	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 		//取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
 
@@ -162,17 +162,17 @@ void CExtenddog::Update(void) {
 		float fDowncurrenty = (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		// 尻
-		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[3], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[3], m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetOutLine(true);
 
 		// 頭
 		m_HeadPos.y = fDowncurrenty + m_pos.y;
-		RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), m_modelIdx[4], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetOutLine(true);
 
 		// 体
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) / 2;
-		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 7, 1.0f), m_modelIdx[5], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 7, 1.0f),  false)
 			->SetOutLine(true);
 	}
 	else
@@ -181,17 +181,17 @@ void CExtenddog::Update(void) {
 		float fDowncurrenty = -(SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		// 尻
-		RNLib::Model().Put(m_HipPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[3], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[3], m_HipPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), false)
 			->SetOutLine(true);
 
 		// 頭
 		m_HeadPos.y = fDowncurrenty + m_pos.y;
-		RNLib::Model().Put(m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), m_modelIdx[4], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI),  false)
 			->SetOutLine(true);
 
 		// 体
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
-		RNLib::Model().Put(m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y - 0.0f * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight) * 7, 1.0f), m_modelIdx[5], false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y - 0.0f * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight) * 7, 1.0f),  false)
 			->SetOutLine(true);
 	}
 }

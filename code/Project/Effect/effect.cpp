@@ -61,14 +61,13 @@ void CEffect::Uninit(void)
 void CEffect::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Polygon3D().Put(m_Info.pos,m_Info.rot)
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
 		->SetTex(m_Info.nTex)
 		->SetBillboard(m_Info.Billboard)
 		->SetCol(m_Info.col)
-		->SetSize(m_Info.scale.x,m_Info.scale.y)
+		->SetSize(m_Info.scale.x, m_Info.scale.y)
 		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD)
-		->SetZTest(false)
-		->SetPriority(1);
+		->SetZTest(false);
 
 	m_Info.nCount--;
 

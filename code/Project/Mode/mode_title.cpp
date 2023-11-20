@@ -113,9 +113,9 @@ void CMode_Title::Init(void) {
 	m_nSelect = 0;
 
 	// メニュー
-	m_MenuPos[0] = D3DXVECTOR3(280.0f, 150.0f, 1.0f);
+	m_MenuPos[0] = D3DXVECTOR3(280.0f, 200.0f, 1.0f);
 	m_MenuPos[1] = D3DXVECTOR3(280.0f, 300.0f, 1.0f);
-	m_MenuPos[2] = D3DXVECTOR3(280.0f, 450.0f, 1.0f);
+	m_MenuPos[2] = D3DXVECTOR3(280.0f, 400.0f, 1.0f);
 
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Planet\\blue.png");
@@ -173,7 +173,7 @@ void CMode_Title::Update(void) {
 	else if (Title == TITLE_SELECT)
 		StageSelect();
 
-	RNLib::Polygon2D().Put(m_BgPos[0], 0.0f, false)
+	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[0], 0.0f, false)
 		->SetSize(1280.0f, 720.0f)
 		->SetCol(Color{ 255,255,255,255 })
 		->SetTex(m_TexIdx[0]);
@@ -192,12 +192,12 @@ void CMode_Title::Update(void) {
 
 	if (Title <= TITLE_MENU)
 	{
-		RNLib::Polygon2D().Put(m_BgPos[1], m_PlanetAngle, false)
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[1], m_PlanetAngle, false)
 			->SetSize(1300.0f, 1300.0f)
 			->SetCol(Color{ 255,255,255,255 })
 			->SetTex(m_TexIdx[1]);
 
-		RNLib::Polygon2D().Put(m_BgPos[2], m_PlanetAngle, false)
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[2], m_PlanetAngle, false)
 			->SetSize(600.0f, 600.0f)
 			->SetCol(Color{ 255,255,255,255 })
 			->SetTex(m_TexIdx[2]);
@@ -477,16 +477,16 @@ void CMode_Title::MenuCreate(void)
 	SwapMode(TITLE_MENU);
 
 	m_Menu[0] = CFontText::Create(
-		CFontText::BOX_NORMAL_RECT, m_MenuPos[0],D3DXVECTOR2(360.0f, 80.0f),// 360,100
-		"ゲーム",CFont::FONT_ROND_B,&pFont,false,false,&pShadow);
+		CFontText::BOX_NORMAL_GRAY, m_MenuPos[0],D3DXVECTOR2(360.0f, 80.0f),// 360,100
+		"ゲーム",CFont::FONT_ROND_B,&pFont,false,true,&pShadow);
 
 	m_Menu[1] = CFontText::Create(
-		CFontText::BOX_NORMAL_RECT, m_MenuPos[1], D3DXVECTOR2(360.0f, 80.0f),
-		"オプション", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+		CFontText::BOX_NORMAL_GRAY, m_MenuPos[1], D3DXVECTOR2(360.0f, 80.0f),
+		"オプション", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
 
 	m_Menu[2] = CFontText::Create(
-		CFontText::BOX_NORMAL_RECT, m_MenuPos[2], D3DXVECTOR2(360.0f, 80.0f),
-		"ゲームをやめる", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+		CFontText::BOX_NORMAL_GRAY, m_MenuPos[2], D3DXVECTOR2(360.0f, 80.0f),
+		"ゲームをやめる", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
 }
 
 //========================================
@@ -500,21 +500,19 @@ void CMode_Title::Menu(void)
 	{
 		if (m_Menu[nCnt] != NULL)
 		{
-			if (nCnt == m_nSelect)
-			{
-				m_Menu[nCnt]->SetTexBox(true);
-				m_Menu[nCnt]->SetTextColor(D3DXCOLOR(240,255,0,255));
+			if (nCnt == m_nSelect){
+				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
+				//m_Menu[nCnt]->SetTextColor(D3DXCOLOR(240,255,0,255));
 			}
-			else
-			{
-				m_Menu[nCnt]->SetTexBox(false);
+			else{
 				m_Menu[nCnt]->SetTextColor(INITD3DCOLOR);
+				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 			}
 		}
 	}
 
 	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
 		m_bBackMode = true;
 		SwapMode(TITLE_OUTSET);
@@ -534,7 +532,7 @@ void CMode_Title::Menu(void)
 
 	m_BgPos[3].y = m_MenuPos[m_nSelect].y;
 
-	RNLib::Polygon2D().Put(m_BgPos[3], 0.0f, false)
+	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[3], 0.0f, false)
 		->SetSize(75.0f, 75.0f)
 		->SetCol(Color{ 255,255,255,255 })
 		->SetTex(m_TexIdx[3]);
@@ -581,25 +579,21 @@ void CMode_Title::StageSelect(void)
 	int nTexIdx = 0;
 
 	// 惑星
-	RNLib::Model().Put(D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), 0, false)
-		->SetModel(m_PlanetType[m_nPlanetIdx].nModel)
-		->SetPriority(1)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
 		->SetOutLine(true);
 
 	// 矢印
 	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
-		RNLib::Polygon2D().Put(D3DXVECTOR3(400.0f, 550.0f, 0.0), 0.0f, false)
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(400.0f, 550.0f, 0.0), 0.0f, false)
 		->SetSize(100.0f, 100.0f)
 		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nPrevTex)
-		->SetPriority(1);
+		->SetTex(nPrevTex);
 
 	if ((m_nPlanetIdx != nPlanetMax-1) || (m_nPlanetIdx == nPlanetMax-1 && m_nSelect != nStageMax-1))
-		RNLib::Polygon2D().Put(D3DXVECTOR3(880.0f, 550.0f, 0.0), 0.0f, false)
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(880.0f, 550.0f, 0.0), 0.0f, false)
 		->SetSize(100.0f, 100.0f)
 		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nNextTex)
-		->SetPriority(1);
+		->SetTex(nNextTex);
 
 	// 選択アイコン
 	for (int nCnt = 0; nCnt < nStageMax; nCnt++)
@@ -615,16 +609,15 @@ void CMode_Title::StageSelect(void)
 		D3DXVECTOR3 pos = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 680,1.0f);
 		pos.x += ((nStageMax * -0.5f) + nCnt + 0.5f) * 50;
 
-		RNLib::Polygon2D().Put(pos, 0.0f, false)
+		RNLib::Polygon2D().Put(PRIORITY_UI, pos, 0.0f, false)
 			->SetSize(40.0f, 40.0f)
 			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(nTexIdx)
-			->SetPriority(1);
+			->SetTex(nTexIdx);
 	}
 
 	bool bInput = false;
 	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::BACK))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
 		TextClear();
 		SwapMode(TITLE_MENU_ANIME);
@@ -667,7 +660,7 @@ void CMode_Title::StageSelect(void)
 			m_Menu[1] = NULL;
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
 			m_Menu[1] = CFontText::Create(
-				CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
+				CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
 				Manager::StgEd()->GetType()[m_nPlanetIdx].StageType[m_nSelect].aName, CFont::FONT_ROND_B, &pFont);
 		}
 		if (m_nPlanetIdx != m_nOldnPlanet)
@@ -679,7 +672,7 @@ void CMode_Title::StageSelect(void)
 			m_Menu[0] = NULL;
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
 			m_Menu[0] = CFontText::Create(
-				CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
+				CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
 				m_PlanetType[m_nPlanetIdx].Text, CFont::FONT_ROND_B, &pFont,true);
 		}
 	}
@@ -735,7 +728,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),70.0f,5,10,-1, };// 45
 			FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
-			m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(230.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+			m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(230.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
 				"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 		}
 		else if (m_bBackMode)
@@ -770,11 +763,11 @@ void CMode_Title::SwapMode(TITLE aTitle)
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 		m_Menu[0] = CFontText::Create(
-			CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
+			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
 			m_PlanetType[0].Text, CFont::FONT_ROND_B, &pFont);
 
 		m_Menu[1] = CFontText::Create(
-			CFontText::BOX_NORMAL_RECT, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
+			CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
 			Manager::StgEd()->GetType()[0].StageType[0].aName, CFont::FONT_ROND_B, &pFont);
 	}
 		break;

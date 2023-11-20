@@ -6,6 +6,7 @@
 // 
 //========================================
 #include "../main.h"
+#include "../UI/rocket-parts.h"
 
 //========================================
 // Ã“I•Ï”
@@ -298,10 +299,6 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 
 	// ‰Šú‰»ˆ—
 	pObj->SetPos(pos);
-
-	if (pos.y <= 0) {
-		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
-	}
 	pObj->Init();
 
 	return pObj;
@@ -358,23 +355,6 @@ CStar *CStageObjectMgr::StarCreate(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 	// ‰Šú‰»ˆ—
 	pObj->SetPos(pos);
 	pObj->SetRot(rot);
-	pObj->Init();
-
-
-	return pObj;
-}
-
-//========================================
-// ”g‘Å‚ÂŒõ
-//========================================
-CShiningWave *CStageObjectMgr::ShiningWaveCreate(void)
-{
-	CShiningWave *pObj = NULL;
-
-	if (pObj != NULL) { return pObj; }
-	pObj = new CShiningWave;
-
-	// ‰Šú‰»ˆ—
 	pObj->Init();
 
 

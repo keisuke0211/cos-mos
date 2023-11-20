@@ -7,12 +7,19 @@
 #include "../RNlib.h"
 #include "demo.h"
 #include "demo_player.h"
+#include "demo_zone.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| デモクラスのメンバ関数
+//==========| [公開]デモクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
+
+//========================================
+// 定数定義
+//========================================
+const char* CDemo::PLAYER_NAMES[(int)PLAYER::MAX] = { "RED", "BLUE"};
+const char* CDemo::SCREEN_TYPE_NAMES[(int)SCREEN_TYPE::MAX] = { "NORMAL", "DIVISION"};
 
 //========================================
 // コンストラクタ
@@ -21,6 +28,7 @@ CDemo::CDemo() {
 
 	for (int cntPlayer = 0; cntPlayer < (int)PLAYER::MAX; m_players[cntPlayer] = NULL, cntPlayer++);
 	m_controlPlayerCount = 0;
+	m_screenTypeCount = 0;
 }
 
 //========================================
@@ -45,6 +53,10 @@ void CDemo::Init(void) {
 
 	// 操作設定
 	CDemoPlayer::SetControl(m_players[m_controlPlayerCount]);
+
+	// ゾーン生成
+	for (int cntZone = 0; cntZone < (int)CDemoZone::TYPE2::MAX; cntZone++)
+		new CDemoZone((CDemoZone::TYPE2)cntZone);
 }
 
 //========================================
@@ -61,23 +73,25 @@ void CDemo::Uninit(void) {
 //========================================
 void CDemo::Update(void) {
 
-	//----------------------------------------
-	// 操作
-	//----------------------------------------
-	// 操作プレイヤー切り替え
-	if (RNLib::Input().GetKeyTrigger(DIK_1)) {
-		m_controlPlayerCount = (m_controlPlayerCount + 1) % (int)PLAYER::MAX;
-		CDemoPlayer::SetControl(m_players[m_controlPlayerCount]);
+	RNLib::Text2D().PutDebugLog(CreateText("FPS             :%d", RNSystem::GetFPS()));
+	RNLib::Text2D().PutDebugLog(CreateText("DrawFPS         :%d", RNSystem::GetDrawFPS()));
+	RNLib::Text2D().PutDebugLog(CreateText("DrawWaitTime    :%d", RNLib::DrawMgr().GetWaitMilliseconds()));
+	RNLib::Text2D().PutDebugLog(CreateText("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
+	RNLib::Text2D().PutDebugLog(CreateText("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
+
+	{// [[[ 操作 ]]]
+		// 操作プレイヤー切り替え
+		if (RNLib::Input().GetKeyTrigger(DIK_Q)) {
+			m_controlPlayerCount = (m_controlPlayerCount + 1) % (int)PLAYER::MAX;
+			CDemoPlayer::SetControl(m_players[m_controlPlayerCount]);
+		}
+
+		// スクリーンタイプ切り替え
+		if (RNLib::Input().GetKeyTrigger(DIK_E)) {
+			m_screenTypeCount = (m_screenTypeCount + 1) % (int)SCREEN_TYPE::MAX;
+		}
 	}
 
-	// カメラのクリッピングオンオフ切り替え
-	if (RNLib::Input().GetKeyTrigger(DIK_2)) {
-		CDemoPlayer::SetCameraClipping(!CDemoPlayer::GetCameraClipping());
-	}
-
-	//----------------------------------------
-	// 描画
-	//----------------------------------------
 	{// [[[ プレイヤーの視点描画 ]]]
 		const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
 		const float windowWidth       = RNLib::Window().GetWidth();
@@ -85,44 +99,39 @@ void CDemo::Update(void) {
 		const float windowHeightHalf  = windowHeight * 0.5f;
 		const float windowHeightHalf2 = windowHeightHalf * 0.5f;
 
-		// 赤(上)
-		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f, true)
-			->SetTex_Camera(&m_players[(int)PLAYER::RED]->GetCamera())
-			->SetSize(windowWidth, windowHeightHalf);
+		switch ((SCREEN_TYPE)m_screenTypeCount) {
+		case SCREEN_TYPE::NORMAL: {
 
-		// 青(下)
-		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f, true)
-			->SetTex_Camera(&m_players[(int)PLAYER::BLUE]->GetCamera())
-			->SetSize(windowWidth, windowHeightHalf);
-	}
+			RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
+				->SetTex(&CDemoPlayer::GetControl()->GetCamera())
+				->SetSize(windowWidth, windowHeight);
 
-	//----------------------------------------
-	// 描画オブジェクト
-	// ◆ (オブジェクト名)
-	//----------------------------------------
-	{// ◆ クリッピングスフィア
-		Pos3D basePos = INITPOS3D;
+		}break;
+		case SCREEN_TYPE::DIVISION: {
 
-		// 赤
-		RNLib::Model().Put(basePos + Pos3D(10.0f, 5.0f, 0.0f), INITROT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE))
-			->SetCol(Color{ 255, 0, 0, 255 })
-			->SetOutLine(true)
-			->SetClippingCamera(m_players[(int)PLAYER::BLUE]->GetCamera());	// ※青プレイヤーのカメラにのみ描画
+			// 赤(上)
+			RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f, true)
+				->SetTexUV(
+					&m_players[(int)PLAYER::RED]->GetCamera(),
+					Pos2D(0.0f, 0.25f),
+					Pos2D(1.0f, 0.25f),
+					Pos2D(0.0f, 0.75f),
+					Pos2D(1.0f, 0.75f))
+				->SetCol(CDemoPlayer::GetControl() == m_players[(int)PLAYER::RED] ? Color{ 255,255,255,255 } : Color{ 128,128,128,255 })
+				->SetSize(windowWidth, windowHeightHalf);
 
-		// 白
-		RNLib::Model().Put(basePos + Pos3D(0.0f, 5.0f, 0.0f), INITROT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE))
-			->SetCol(Color{ 255, 255, 255, 255 })
-			->SetOutLine(true);
+			// 青(下)
+			RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f, true)
+				->SetTexUV(
+					&m_players[(int)PLAYER::BLUE]->GetCamera(),
+					Pos2D(0.0f, 0.25f),
+					Pos2D(1.0f, 0.25f),
+					Pos2D(0.0f, 0.75f),
+					Pos2D(1.0f, 0.75f))
+				->SetCol(CDemoPlayer::GetControl() == m_players[(int)PLAYER::BLUE] ? Color{ 255,255,255,255 } : Color{ 128,128,128,255 })
+				->SetSize(windowWidth, windowHeightHalf);
 
-		// 青
-		RNLib::Model().Put(basePos + Pos3D(-10.0f, 5.0f, 0.0f), INITROT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE))
-			->SetCol(Color{ 0, 0, 255, 255 })
-			->SetOutLine(true)
-			->SetClippingCamera(m_players[(int)PLAYER::RED]->GetCamera());	// ※赤プレイヤーのカメラにのみ描画
-
-		// 床
-		RNLib::Polygon3D().Put(basePos + Pos3D(0.0f, -5.0f, 0.0f), Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
-			->SetSize(100.0f, 100.0f)
-			->SetCol(Color{ 128, 128, 128, 255 });
+		}break;
+		}
 	}
 }

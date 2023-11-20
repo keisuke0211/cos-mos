@@ -28,28 +28,34 @@ public:
 	enum class VIB_POWER { LOW, MID, HIGH, MAX, };
 
 	//========== [[[ 関数宣言 ]]]
+	static void StartRenderingScreen(Device& device);
 	            CCamera             (const Scale2D& scale2D);
 	            ~CCamera            ();
 	void        Update              (void);
-	static void StartRenderingScreen(Device& device);
 	void        StartRendering      (Device& device);
 	void        EndRendering        (Device& device);
-	void        SetTexture          (Device& device) { device->SetTexture(0, m_MTInfo.textures[0]); }
+	short&      GetID               (void)                   { return m_ID; }
 	void        SetPosVAndPosR      (const Pos3D& posV, const Pos3D& posR);
+	Pos3D&      GetPosV             (void)                   { return m_posV; }
+	Pos3D&      GetPosR             (void)                   { return m_posR; }
+	Rot3D&      GetRot              (void)                   { return m_rot; }
+	Vector3D    GetVec              (void)                   { return m_posR - m_posV; }
+	Vector3D    GetNor              (void)                   { Vector3D vec = GetVec(); return *D3DXVec3Normalize(&vec, &vec); }
+	void        SetRadianGoal       (const float& goal)      { m_radianGoal = goal; }
 	void        SetVib              (const float& vibPower);
-	void        SetRadianGoal       (const float& goal) { m_radianGoal = goal; }
-	void        SetFixed            (const bool& isFixid) { m_isFixed = isFixid; }
+	void        PivotToPosV         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = true; }
+	void        PivotToPosR         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = false; }
+	void        SetFixed            (const bool& isFixid)    { m_isFixed = isFixid; }
+	void        SetBGCol            (const Color& col)       { m_BGCol = col; }
 	void        SetClipping         (const bool& isClipping) { m_isClipping = isClipping; }
-	bool&       GetClipping         (void) { return m_isClipping; }
-	void        PivotToPosV         (void) { if (m_state == STATE::NONE) m_isPivotToPosV = true; }
-	void        PivotToPosR         (void) { if (m_state == STATE::NONE) m_isPivotToPosV = false; }
-	short&      GetID               (void) { return m_ID; }
-	Pos3D&      GetPosV             (void) { return m_posV; }
-	Pos3D&      GetPosR             (void) { return m_posR; }
-	Rot3D&      GetRot              (void) { return m_rot; }
-	Vector3D    GetVec              (void) { return m_posR - m_posV; }
-	Vector3D    GetNor              (void) { Vector3D vec = GetVec(); return *D3DXVec3Normalize(&vec, &vec); }
-	void        SetBGCol            (const Color& col) { m_BGCol = col; }
+	bool&       GetClipping         (void)                   { return m_isClipping; }
+	Texture&    GetTexture          (void)                   { return m_MTInfo.textures[0]; }
+	float&      GetMotionBlurPower  (void)                   { return m_motionBlur.power; }
+	void        SetMotionBlurPower  (const float& power)     { m_motionBlur.power = power; }
+	float&      GetMotionBlurScale  (void)                   { return m_motionBlur.scale; }
+	void        SetMotionBlurScale  (const float& scale)     { m_motionBlur.scale = scale; }
+	float&      GetMotionBlurAngle  (void)                   { return m_motionBlur.angle; }
+	void        SetMotionBlurAngle  (const Angle& angle)     { m_motionBlur.angle = angle; }
 	// <<< 状態系 >>>
 	void        RemoveState         (void) { SetState(STATE::NONE); }
 	void        SetGrabAirMouse     (const float moveForce, const float spinForce, const float zoomForce);
@@ -60,6 +66,13 @@ public:
 
 private:
 	//========== [[[ 構造体宣言 ]]]
+	// モーションブラー情報
+	struct MotionBlur {
+		float power = 0.0f;
+		float scale = 1.0f;
+		Angle angle = 0.0f;
+		Color col   = INITCOLOR;
+	};
 	// マルチターゲットレンダリング情報
 	struct MTRenderingInfo {
 		Texture      textures[2];	// レンダリングターゲット用テクスチャ
@@ -101,10 +114,11 @@ private:
 	// 状態系
 	bool            m_isPivotToPosV;
 	bool            m_isFixed;
-	bool            m_isClipping;
 	STATE           m_state;
 	void*           m_stateInfo;
 	// 描画関連
 	Color           m_BGCol;
+	bool            m_isClipping;
 	MTRenderingInfo m_MTInfo;
+	MotionBlur      m_motionBlur;
 };

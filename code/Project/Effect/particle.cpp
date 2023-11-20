@@ -73,13 +73,12 @@ void CParticle::Update(void)
 	//ˆÚ“®—Ê‰ÁZ
 	m_Info.pos += m_Info.move;
 
-	RNLib::Polygon3D().Put(m_Info.pos, INITD3DXVECTOR3)
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, INITD3DXVECTOR3)
 		->SetTex(m_Info.nTex)
 		->SetBillboard(true)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x, m_Info.scale.y)
-		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD)
-		->SetPriority(1);
+		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD);
 
 	//ˆÚ“®—ÊŒ¸Š
 	m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;

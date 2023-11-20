@@ -16,6 +16,7 @@
 class CTexture : public CRegist {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
+	static void CopyTextureData(LPDIRECT3DTEXTURE9& srcTexture, LPDIRECT3DTEXTURE9& destTexture);
 	CTexture();
 	~CTexture();
 	void Init(void);
@@ -25,6 +26,7 @@ public:
 	void Set(Device pDevice, int nTex);
 
 	// ê›íËéÊìæ
+	Texture& GetTexture(int nTex) { return m_texs[nTex]; }
 	float GetWidth(int nTex) {
 		if (nTex < 0)
 			return 0.0f;
@@ -32,8 +34,6 @@ public:
 		m_texs[nTex]->GetLevelDesc(0, &desc);
 		return (float)desc.Width;
 	}
-	float GetWidth2D(int nTex) { return GetWidth(nTex) * PIXEL2D_SIZE; }
-	float GetWidth3D(int nTex) { return GetWidth(nTex) * PIXEL3D_SIZE; }
 	float GetHeight(int nTex) {
 		if (nTex < 0)
 			return 0.0f;
@@ -41,8 +41,6 @@ public:
 		m_texs[nTex]->GetLevelDesc(0, &desc);
 		return (float)desc.Height;
 	}
-	float GetHeight2D(int nTex) { return GetHeight(nTex) * PIXEL2D_SIZE; }
-	float GetHeight3D(int nTex) { return GetHeight(nTex) * PIXEL3D_SIZE; }
 	int GetCrntPtn(int nPtnX, int nPtnY, int nSpan);
 
 private:

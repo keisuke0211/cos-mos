@@ -39,7 +39,7 @@ private:
 	//========== [[[ •Ï”éŒ¾ ]]]
 	D3DXVECTOR3 m_pos;			// ˆÊ’u
 	Scale2D		m_scale;		// Šgk
-	STATE		m_state[3];		// ó‘Ô
+	STATE		*m_state;		// ó‘Ô
 	int			m_TexIdx;
 	int			m_colorA;
 	int			m_num;

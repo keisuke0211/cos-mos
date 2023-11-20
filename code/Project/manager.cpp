@@ -28,7 +28,7 @@ namespace {
 //----------|---------------------------------------------------------------------
 //================================================================================
 CCamera* Manager::GetMainCamera(void) { return m_camera; }
-CStageObjectMgr* Manager::BlockMgr(void) { return &m_blockMgr; }
+CStageObjectMgr* Manager::StageObjectMgr(void) { return &m_blockMgr; }
 CObjectMgr* Manager::BGMgr(void) { return &m_BGMgr; }
 CEffectMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
@@ -80,8 +80,8 @@ void Manager::Update(void) {
 		const float windowWidth       = RNLib::Window().GetWidth();
 		const float windowHeight      = RNLib::Window().GetHeight();
 
-		RNLib::Polygon2D().Put(Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
-			->SetTex_Camera(m_camera)
+		RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
+			->SetTexUV(m_camera)
 			->SetSize(windowWidth, windowHeight);
 	}
 
@@ -102,6 +102,15 @@ void Manager::Update(void) {
 
 	// フォントオブジェクトの更新処理
 	CFontObject::UpdateAll();
+}
+
+//========================================
+// 描画処理
+// Author:RIKU NISHIMURA
+//========================================
+void Manager::Draw(void) {
+
+	CFontObject::DrawAll();
 }
 
 //========================================

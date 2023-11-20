@@ -41,7 +41,7 @@ CText::~CText() {
 //========================================
 void CText::Init(void) {
 
-	// フォント読み込み処理
+	// フォントを読み込む
 	LoadFont();
 }
 
@@ -115,25 +115,9 @@ float CText::GetFontWidth(int nFont) {
 }
 
 //========================================
-// フォントの幅取得(2D)
-// Author:RIKU NISHIMURA
-//========================================
-float CText::GetFontWidth2D(int nFont) {
-	return RNLib::Texture().GetWidth2D(m_pFont[nFont].nTexIdx) / m_pFont[nFont].nPtnWidth;
-}
-
-//========================================
 // フォントの高さ取得
 // Author:RIKU NISHIMURA
 //========================================
 float CText::GetFontHeight(int nFont) {
 	return RNLib::Texture().GetHeight(m_pFont[nFont].nTexIdx) / m_pFont[nFont].nPtnHeight;
-}
-
-//========================================
-// フォントの高さ取得(2D)
-// Author:RIKU NISHIMURA
-//========================================
-float CText::GetFontHeight2D(int nFont) {
-	return GetFontHeight(nFont) * PIXEL2D_SIZE;
 }
