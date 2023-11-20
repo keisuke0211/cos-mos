@@ -846,7 +846,7 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 		//*********************************
 	case COLLI_ROT::OVER:
 		// 位置・移動量修正
-		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
+		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 		// 表の世界のプレイヤー
 		if (pInfo->side == WORLD_SIDE::FACE) {
@@ -866,7 +866,7 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 		//*********************************
 	case COLLI_ROT::UNDER:
 		// 位置・移動量修正
-		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
+		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 		// 裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND) {
@@ -886,7 +886,7 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 		//*********************************
 	case COLLI_ROT::LEFT:
 		// 位置・移動量修正
-		FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, pColli->fWidth);
+		FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, SIZE_WIDTH);
 		break;
 
 		//*********************************
@@ -894,13 +894,15 @@ void CPlayer::CollisionBlock(Info *pInfo, CollInfo *pColli)
 		//*********************************
 	case COLLI_ROT::RIGHT:
 		// 位置・移動量修正
-		FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, pColli->fWidth);
+		FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 		break;
 
 		//*********************************
 		// 埋まった
 		//*********************************
-	case COLLI_ROT::UNKNOWN: Death(&pInfo->pos); break;
+	case COLLI_ROT::UNKNOWN:
+		Death(&pInfo->pos);
+		break;
 	}
 }
 
@@ -926,7 +928,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 	case COLLI_ROT::OVER:
 
 		// 位置・移動量修正
-		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
+		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 		// 表の世界のプレイヤー
 		if (pInfo->side == WORLD_SIDE::FACE)
@@ -955,7 +957,7 @@ void CPlayer::CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pT
 		//*********************************
 	case COLLI_ROT::UNDER:
 		// 位置・移動量修正
-		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
+		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 		// 裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND)
@@ -999,7 +1001,7 @@ void CPlayer::CollisionSpike(Info *pInfo, CollInfo *pColli)
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1007,7 +1009,7 @@ void CPlayer::CollisionSpike(Info *pInfo, CollInfo *pColli)
 			//*********************************
 		case COLLI_ROT::RIGHT:
 			// 位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 	}
@@ -1025,7 +1027,7 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *
 		//*********************************
 	case COLLI_ROT::OVER:
 		// 位置・移動量修正
-		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
+		FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 		// 表の世界のプレイヤーの場合
 		if (pInfo->side == WORLD_SIDE::FACE)
@@ -1047,7 +1049,7 @@ void CPlayer::CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *
 		//*********************************
 	case COLLI_ROT::UNDER:
 		// 位置・移動量修正
-		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
+		FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 		// 裏の世界のプレイヤーならジャンプ可能
 		if (pInfo->side == WORLD_SIDE::BEHIND)
@@ -1137,7 +1139,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 			//*********************************
 		case COLLI_ROT::OVER:
 			// 位置・移動量修正
-			FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
+			FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤーの場合
 			if (pInfo->side == WORLD_SIDE::FACE)
@@ -1159,7 +1161,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 			//*********************************
 		case COLLI_ROT::UNDER:
 			// 位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
+			FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤーの場合
 			if (pInfo->side == WORLD_SIDE::FACE)
@@ -1181,7 +1183,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1189,7 +1191,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 			//*********************************
 		case COLLI_ROT::RIGHT:
 			// 位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1206,7 +1208,7 @@ void CPlayer::CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollIn
 			for (int nCntVec = 0; nCntVec < (int)COLLI_VEC::MAX; nCntVec++)
 			{
 				// プレイヤーのどの方向に当たっているか
-				pColli->ColliRot = IsBoxCollider(BlockPos, BlockPosOld, fWidth, fHeight, pInfo->pos, pInfo->posOld, pColli->fWidth, pColli->fHeight, (COLLI_VEC)nCntVec);
+				pColli->ColliRot = IsBoxCollider(BlockPos, BlockPosOld, fWidth, fHeight, pInfo->pos, pInfo->posOld, SIZE_WIDTH, SIZE_HEIGHT, (COLLI_VEC)nCntVec);
 
 				// それでも当たらないなら、スキップ
 				if (pColli->ColliRot == COLLI_ROT::NONE || pColli->ColliRot == COLLI_ROT::UNKNOWN) continue;
@@ -1252,7 +1254,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::OVER:
 			// 位置・移動量修正
-			FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, pColli->fHeight);
+			FixPos_OVER(&pInfo->pos.y, pColli->maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
@@ -1272,7 +1274,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::UNDER:
 			// 位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, pColli->fHeight);
+			FixPos_UNDER(&pInfo->pos.y, pColli->minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
@@ -1292,7 +1294,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1300,7 +1302,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::RIGHT:
 			// 位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, pColli->fHeight);
+			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1320,7 +1322,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::OVER:
 			// 位置・移動量修正
-			FixPos_OVER(&pInfo->pos.y, pOthColli[0].maxPos.y, &pInfo->move.y, pOthColli[0].fHeight);
+			FixPos_OVER(&pInfo->pos.y, pOthColli[0].maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤーの場合
 			if (pInfo->side == WORLD_SIDE::FACE){
@@ -1340,7 +1342,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::UNDER:
 			// 位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, pOthColli[0].minPos.y, &pInfo->move.y, pOthColli[0].fHeight);
+			FixPos_UNDER(&pInfo->pos.y, pOthColli[0].minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤーの場合
 			if (pInfo->side == WORLD_SIDE::FACE){
@@ -1360,7 +1362,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pOthColli[0].minPos.x, &pInfo->move.x, pOthColli[0].fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pOthColli[0].minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1370,7 +1372,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 
 			if (state == CExtenddog::STATE::NONE) {
 				// 位置・移動量修正
-				FixPos_RIGHT(&pInfo->pos.x, pOthColli[0].maxPos.x, &pInfo->move.x, pOthColli[0].fWidth);
+				FixPos_RIGHT(&pInfo->pos.x, pOthColli[0].maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			}
 			break;
 
@@ -1391,7 +1393,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::OVER:
 			// 位置・移動量修正
-			FixPos_OVER(&pInfo->pos.y, pOthColli[1].maxPos.y, &pInfo->move.y, pOthColli[1].fHeight);
+			FixPos_OVER(&pInfo->pos.y, pOthColli[1].maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
@@ -1406,7 +1408,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::UNDER:
 			// 位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, pOthColli[1].minPos.y, &pInfo->move.y, pOthColli[1].fHeight);
+			FixPos_UNDER(&pInfo->pos.y, pOthColli[1].minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
@@ -1421,7 +1423,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pOthColli[1].minPos.x, &pInfo->move.x, pOthColli[1].fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pOthColli[1].minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1429,7 +1431,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::RIGHT:
 			// 位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, pOthColli[1].maxPos.x, &pInfo->move.x, pOthColli[1].fWidth);
+			FixPos_RIGHT(&pInfo->pos.x, pOthColli[1].maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1448,7 +1450,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::OVER:
 			// 位置・移動量修正
-			FixPos_OVER(&pInfo->pos.y, pOthColli[2].maxPos.y, &pInfo->move.y, pOthColli[2].fHeight);
+			FixPos_OVER(&pInfo->pos.y, pOthColli[2].maxPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 表の世界のプレイヤー
 			if (pInfo->side == WORLD_SIDE::FACE) {
@@ -1470,7 +1472,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::UNDER:
 			// 位置・移動量修正
-			FixPos_UNDER(&pInfo->pos.y, pOthColli[2].minPos.y, &pInfo->move.y, pOthColli[2].fHeight);
+			FixPos_UNDER(&pInfo->pos.y, pOthColli[2].minPos.y, &pInfo->move.y, SIZE_HEIGHT);
 
 			// 裏の世界のプレイヤーならジャンプ可能
 			if (pInfo->side == WORLD_SIDE::BEHIND) {
@@ -1492,7 +1494,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pOthColli[2].minPos.x, &pInfo->move.x, pOthColli[2].fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pOthColli[2].minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1500,7 +1502,7 @@ void CPlayer::CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli
 			//*********************************
 		case COLLI_ROT::RIGHT:
 			// 位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, pOthColli[2].maxPos.x, &pInfo->move.x, pOthColli[2].fWidth);
+			FixPos_RIGHT(&pInfo->pos.x, pOthColli[2].maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1635,7 +1637,7 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			//*********************************
 		case COLLI_ROT::LEFT:
 			// 位置・移動量修正
-			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_LEFT(&pInfo->pos.x, pColli->minPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
@@ -1643,13 +1645,26 @@ void CPlayer::CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile)
 			//*********************************
 		case COLLI_ROT::RIGHT:
 			// 位置・移動量修正
-			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, pColli->fWidth);
+			FixPos_RIGHT(&pInfo->pos.x, pColli->maxPos.x, &pInfo->move.x, SIZE_WIDTH);
 			break;
 
 			//*********************************
 			// 埋まった
 			//*********************************
-		case COLLI_ROT::UNKNOWN: if(s_nSwapInterval != 0)	Death(&pInfo->pos); break;
+		case COLLI_ROT::UNKNOWN:
+		{
+			if (s_nSwapInterval != 0) Death(&pInfo->pos);
+			else
+			{
+				if (pInfo->side == WORLD_SIDE::FACE)pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
+				else 								pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
+
+				pInfo->move.y = 0.0f;
+				pInfo->bLandPile = true;// 乗った
+				pInfo->bGround = true;	// 地面に接している
+				pInfo->bJump = false;	// ジャンプ可能
+			}
+		}break;
 	}
 }
 
