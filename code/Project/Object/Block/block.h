@@ -4,8 +4,6 @@
 // Author:KEISUKE OTONO
 // 
 //========================================
-// *** block.h ***
-//========================================
 #pragma once
 
 #include "../../../_RNLib/RNlib.h"
@@ -16,44 +14,41 @@
 //****************************************
 class CBlock : public CStageObject {
 public:
+	//========== [[[ 列挙型定義 ]]]
+	// 見た目の種類
+	enum class LOOKS_TYPE {
+		SOIL_BLOCK,
+		SOIL_BLOCK_GRASSY,
+		ANCIENT_STONE_BLOCK,
+		ANCIENT_STONE_BLOCK_PTN_A,
+		ANCIENT_STONE_BLOCK_PTN_B,
+		ANCIENT_STONE_BLOCK_PTN_C,
+		ANCIENT_STONE_PILLAR_UP,
+		ANCIENT_STONE_PILLAR_CENTER,
+		ANCIENT_STONE_PILLAR_DOWN,
+		MAX,
+	};
 
+	//========== [[[ 構造体定義 ]]]
 	// 共通情報
-	struct Info
-	{
-		D3DXVECTOR3 move;		// 移動量
-		int nType;				// 種類
-		short nModelIdx;		// モデル番号
-		int nID;				// ID
+	struct Info {
+		LOOKS_TYPE looksType;	// 種類
+		short      modelIdx;	// モデル番号
 	};
 
-	// 穴埋めブロック種類
-	enum class BLOCK_TYPE
-	{
-		BLOCK_NORMAL = 0,
-		BLOCK_NUI,
-		BLOCK_MAX
-	};
-
-	// *** 関数 ***
+	//========== [[[ 関数宣言 ]]]
 	CBlock();
 	~CBlock();
-
-	/* 初期化	*/HRESULT Init(BLOCK_TYPE type);
-	/* 終了		*/void Uninit(void);
-	/* 更新		*/void Update(void);
-	/* 描画		*/void Draw(void);
-
-	// -- 設定 ---------------------------------------------
-	/* モデル番号	*/void SetModelIdx(const int nIdx) { m_Info.nModelIdx = nIdx; }
-
-	// -- 所得 ---------------------------------------------
+	HRESULT Init(LOOKS_TYPE type);
+	void Uninit(void);
+	void Update(void);
+	void Draw(void);
 
 private:
+	//========== [[[ 定数宣言 ]]]
+	static const char* MODEL_PATHS[(int)LOOKS_TYPE::MAX];
 
-	// *** 静的変数 ***
-	static int m_nNumAll;		// 総数
-
-	// *** 変数 ***
-	Info m_Info;		// 共通情報
+	//========== [[[ 変数宣言 ]]]
+	Info m_Info;
 
 };

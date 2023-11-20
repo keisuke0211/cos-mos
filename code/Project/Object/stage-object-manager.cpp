@@ -98,7 +98,7 @@ void CStageObjectMgr::Load(void)
 //========================================
 // ÉuÉçÉbÉN
 //========================================
-CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::BLOCK_TYPE type, Color color)
+CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::LOOKS_TYPE type, Color color)
 {
 	CBlock *pObj = NULL;
 

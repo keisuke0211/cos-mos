@@ -4,56 +4,50 @@
 // Author:KEISUKE OTONO
 // 
 //========================================
-// *** block.cpp ***
-//========================================
 #include "block.h"
 #include "../../main.h"
 
 //========================================
-// 静的変数
+// 定数定義
 //========================================
-int CBlock::m_nNumAll = 0;
-
-//パス読み込み
-static const char* s_Path[8] = {
-	"data\\MODEL\\Block_Chocolate.x",
-	"data\\MODEL\\WallDog\\WallDog_House.x",
+const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
+	"data\\MODEL\\Object\\SoilBlock.x",
+	"data\\MODEL\\Object\\SoilBlock_Grassy.x",
+	"data\\MODEL\\Object\\AncientStoneBlock.x",
+	"data\\MODEL\\Object\\AncientStoneBlock_PatternA.x",
+	"data\\MODEL\\Object\\AncientStoneBlock_PatternB.x",
+	"data\\MODEL\\Object\\AncientStoneBlock_PatternC.x",
+	"data\\MODEL\\Object\\AncientStonePillar_Up.x",
+	"data\\MODEL\\Object\\AncientStonePillar_Center.x",
+	"data\\MODEL\\Object\\AncientStonePillar_Down.x",
 };
 
 //========================================
 // コンストラクタ
 //========================================
-CBlock::CBlock(void)
-{
-	Manager::StageObjectMgr()->AddList(this);
+CBlock::CBlock(void) {
 
+	Manager::StageObjectMgr()->AddList(this);
 	m_type   = TYPE::BLOCK;
 	m_width  = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE;
-
-	m_Info.move = INITD3DXVECTOR3;
-	m_Info.nType = 0;
-	m_Info.nID = m_nNumAll;
 }
 
 //========================================
 // デストラクタ
 //========================================
-CBlock::~CBlock()
-{
+CBlock::~CBlock() {
 
 }
 
 //========================================
 // 初期化
 //========================================
-HRESULT CBlock::Init(BLOCK_TYPE type)
-{
-	m_Info.move = INITD3DXVECTOR3;
-	m_Info.nType = 0;
+HRESULT CBlock::Init(LOOKS_TYPE looksType) {
+	m_Info.looksType = looksType;
 
-	//モデル番号読み込み
-	m_Info.nModelIdx = RNLib::Model().Load(s_Path[(int)type]);
+	// モデル読み込み
+	m_Info.modelIdx = RNLib::Model().Load(MODEL_PATHS[(int)looksType]);
 
 	return S_OK;
 }
@@ -61,18 +55,17 @@ HRESULT CBlock::Init(BLOCK_TYPE type)
 //========================================
 // 終了
 //========================================
-void CBlock::Uninit(void)
-{
+void CBlock::Uninit(void) {
 	
 }
 
 //========================================
 // 更新
 //========================================
-void CBlock::Update(void)
-{
+void CBlock::Update(void) {
+
 	// 過去の位置
-	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),  false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.modelIdx, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f),  false)
 		->SetOutLine(true)
 		->SetCol(m_color);
 }
@@ -80,7 +73,6 @@ void CBlock::Update(void)
 //========================================
 // 描画
 //========================================
-void CBlock::Draw(void)
-{
+void CBlock::Draw(void) {
 
 }
