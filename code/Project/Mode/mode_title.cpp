@@ -16,7 +16,7 @@
 //----------|---------------------------------------------------------------------
 //================================================================================
 const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\TitleFile.txt";
-bool CMode_Title::s_bStageSelect = true;
+bool CMode_Title::s_bStageSelect = false;
 
 //========================================
 // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -164,7 +164,7 @@ void CMode_Title::Update(void) {
 
 	// ƒƒjƒ…[‚Ì”wŒi
 	if (Title == TITLE_MENU){
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(m_Anime.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
 			->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
 			->SetCol(Color{ 150,150,150,150 });
 
@@ -187,7 +187,6 @@ void CMode_Title::Update(void) {
 		case TITLE_OUTSET:
 		{
 			SwapMode(TITLE_MENU_ANIME);
-			TextRelease(TEXT_TITLE);
 		}
 		break;
 		case TITLE_MENU:
@@ -396,7 +395,7 @@ void CMode_Title::MenuAnime(void)
 			else if (m_Anime.bClose) {
 
 				if (m_bBackMode)
-					SwapMode(TITLE_OUTSET);
+					SwapMode(TITLE_TITLE);
 				else if (!m_bBackMode){
 					TextRelease(TEXT_ALL);
 					SwapMode(TITLE_SELECT);
@@ -448,6 +447,22 @@ void CMode_Title::MenuAnime(void)
 				m_Anime.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
 				m_Anime.bRightDisp = false;
 				TextRelease(TEXT_RIGHT);
+			}
+		}
+	}
+
+	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
+	{
+		if (m_TITLE[nCnt] != NULL) {
+			D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
+
+			if (pos.y >= -60.0f && m_bMove[nCnt]) {
+				D3DXVECTOR3 move;
+
+				move.y = -20.0f;
+
+				m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+				m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
 			}
 		}
 	}
@@ -657,6 +672,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 	{
 	case CMode_Title::TITLE_TITLE:
 	{
+		TextRelease(TEXT_TITLE);
 		{
 			m_TitleShadow[0] = CWords::Create("‚b", D3DXVECTOR3(786.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 			m_TitleShadow[1] = CWords::Create("‚n", D3DXVECTOR3(946.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
