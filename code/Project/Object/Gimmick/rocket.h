@@ -56,14 +56,14 @@ public:
 	/* 初期化	*/HRESULT Init(void);
 	/* 終了		*/void Uninit(void);
 	/* 更新		*/void Update(void);
-	/* 乗る状態の更新		*/void UpdateState_Ride(void);
-	/* 飛ぶ状態の更新		*/void UpdateState_Fly(void);
-	/* 描画		*/void Draw(void);
+	/* 乗る状態の更新*/void UpdateState_Ride(void);
+	/* 飛ぶ状態の更新*/void UpdateState_Fly(void);
 
 	// -- 設定 ---------------------------------------------
 	/* 色			*/void SetColor(const D3DXCOLOR col) { m_Info.col = col; }
 	/* モデル番号	*/void SetModelIdx(const int nIdx) { m_Info.nModelIdx = nIdx; }
 	/* アニメーションの状態の設定*/void SetState(const ANIME_STATE state) { m_Info.Animstate = state; }
+	/* 乗る準備完了*/	static void ReadyRide(void) { s_bReady = true; }
 	/* 乗ってる状態		*/void Ride(void);
 	/*搭乗しているプレイヤー数リセット*/static void ResetCounter(void) { s_nCountPlayer = 0; }
 
@@ -73,10 +73,10 @@ public:
 	/*現在の搭乗者数*/static int GetCounter(void) { return s_nCountPlayer; }
 
 private:
-
 	// *** 変数 ***
-	Info m_Info;			// 共通情報
-	static int  s_nCountPlayer;		// プレイヤーのカウント
+	Info m_Info;				// 共通情報
+	static int  s_nCountPlayer;	// プレイヤーのカウント
+	static bool s_bReady;		// 乗る準備が整ったか
 
 	static const int   s_AnimeMax;
 	static const int   s_RideAnimeMax;

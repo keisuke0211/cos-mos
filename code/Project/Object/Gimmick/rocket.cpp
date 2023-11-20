@@ -10,6 +10,7 @@
 #include "../../main.h"
 #include"../../Character/player.h"
 
+bool		CRocket::s_bReady = false;		// 乗る準備クリア
 const int   CRocket::s_AnimeMax = 120;		// 初期微動アニメーションの最大数
 const int   CRocket::s_RideAnimeMax = 25;	// 乗り込みアニメーションの最大数
 const float CRocket::s_RideAnimeMag = 1.3f;	// 大きさ1.0を基準にそこから加算される大きさ	
@@ -29,7 +30,7 @@ CRocket::CRocket(void)
 	Manager::StageObjectMgr()->AddList(this);
 
 	ResetCounter();
-
+	s_bReady = false;
 	m_type = TYPE::ROCKET;
 	m_width = SIZE_OF_1_SQUARE * 4;
 	m_height = SIZE_OF_1_SQUARE * 7;
@@ -119,7 +120,6 @@ void CRocket::Update(void)
 		break;
 	case CRocket::ANIME_STATE::FLY:
 		UpdateState_Fly();		// 飛び出し準備状態の更新
-		
 		break;
 	}
 
@@ -213,21 +213,16 @@ void CRocket::UpdateState_Fly(void)
 		}
 	}
 
-	
 	m_pos += m_Info.move;	// 位置に移動量の増加
 }
-//========================================
-// 描画
-//========================================
-void CRocket::Draw(void)
-{
 
-}
 //========================================
 // 乗ってる状態
 //========================================
 void CRocket::Ride(void)
 {
+	if (!s_bReady) return;
+
 	s_nCountPlayer++;												// プレイヤーの乗った人数の増加
 	m_Info.fScaleMag = s_RideAnimeMag;								// スケール倍率の設定
 	m_Info.SmallSpeed = (m_Info.fScaleMag - 1.0f) / s_RideAnimeMax;	// 小さくなる速度の設定
