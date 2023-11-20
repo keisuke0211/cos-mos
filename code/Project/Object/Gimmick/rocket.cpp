@@ -10,6 +10,11 @@
 #include "../../main.h"
 #include"../../Character/player.h"
 
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| CRocketクラスのメンバ関数
+//----------|---------------------------------------------------------------------
+//================================================================================
 const int   CRocket::s_AnimeMax = 120;		// 初期微動アニメーションの最大数
 const int   CRocket::s_RideAnimeMax = 25;	// 乗り込みアニメーションの最大数
 const float CRocket::s_RideAnimeMag = 1.3f;	// 大きさ1.0を基準にそこから加算される大きさ	
@@ -18,8 +23,11 @@ const float CRocket::s_RotAdd = 0.02f;		// 向きの増加量
 const int   CRocket::s_RotAnimeMax = 4;		// 小刻みアニメーションの最大
 const float CRocket::s_MoveMag = 1.05f;		// 移動量の倍率
 const float CRocket::s_MoveAdd = 0.01f;		// 移動量の増加量
+const float CRocket::s_HeightDis = 40.0f;	// 高さの距離
 const int   CRocket::s_FadeModeCountMax = 240;	// フェードのモードのカウント最大
-int         CRocket::s_nCountPlayer = 0;		// プレイヤーのカウント
+const int   CRocket::s_Firerate = 4;		// 炎の出現割合
+const int   CRocket::s_Smokerate = 6;		// 煙の出現割合
+int         CRocket::s_nCountPlayer = 0;	// プレイヤーのカウント
 
 //========================================
 // コンストラクタ
@@ -118,7 +126,7 @@ void CRocket::Update(void)
 	
 		break;
 	case CRocket::ANIME_STATE::FLY:
-		UpdateState_Fly();		// 飛び出し準備状態の更新
+		UpdateState_Fly();		// 飛び出し状態の更新
 		
 		break;
 	}
@@ -126,19 +134,19 @@ void CRocket::Update(void)
 	if (m_Info.bEffect == true)
 	{
 		m_Info.nEffectAnimCounter++;
-		if (m_Info.nEffectAnimCounter % 6 == 0)
+		if (m_Info.nEffectAnimCounter % s_Smokerate == 0)
 		{
-			m_Info.Smoketex.move = D3DXVECTOR3(rand() % 3 - 1, -0.1f, 0.0f);
+			m_Info.Smoketex.move = D3DXVECTOR3(rand() % 6 - 3, rand() % 4 - 3, 0.0f);
 
 			// 煙のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 7.0f, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Smoketex.col, 120, D3DXVECTOR3(0.1f, 0.1f, 0.1f), m_Info.Smoketex.move, false);
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - s_HeightDis, m_pos.z), Scale3D(30.0f, 30.0f, 30.0f), m_Info.Smoketex.col, 120, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Smoketex.move, false, D3DXVECTOR3(1.05f, 1.05f, 1.00f));
 		}
-		if (m_Info.nEffectAnimCounter % 4 == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
+		if (m_Info.nEffectAnimCounter % s_Firerate == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
 		{
 			m_Info.Firetex.move = D3DXVECTOR3(0.0f, -0.1f, 0.0f);
 
 			// 炎のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Firetex.TexIdx, D3DXVECTOR3(m_pos.x - rand() % 10 - 5, m_pos.y - 20.0f, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Firetex.col, 160, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Firetex.move, false);
+			Manager::EffectMgr()->EffectCreate(m_Info.Firetex.TexIdx, D3DXVECTOR3(m_pos.x - rand() % 4 - 2, m_pos.y - s_HeightDis, m_pos.z), Scale3D(30.0f, 30.0f, 30.0f), m_Info.Firetex.col, 160, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Firetex.move, false);
 		}
 	}
 	
@@ -168,7 +176,10 @@ void CRocket::UpdateState_Ride(void)
 	else if (m_Info.nRideAnimeCounter <= (s_RideAnimeMax + s_RideAnimeShrink) * 4)
 	{// アニメーションの移行
 
-		//m_Info.Animstate = CRocket::ANIME_STATE::NONE;	// なしに変更	
+		if (s_nCountPlayer == CPlayer::NUM_PLAYER)
+		{// プレイヤーが全員乗ったら
+			m_Info.Animstate = ANIME_STATE::FLY;	// 飛ぶ状態に移行
+		}
 		m_Info.nRideAnimeCounter = 0;					// 乗るアニメーションカウンターを初期化
 	}
 }
@@ -235,8 +246,5 @@ void CRocket::Ride(void)
 	m_Info.nFlyAnimeCounter = 0;									// 飛ぶアニメーションカウンターを初期化
 
 	m_Info.Animstate = ANIME_STATE::RIDE;		// 乗る状態に移行
-	if (s_nCountPlayer == CPlayer::NUM_PLAYER)
-	{// プレイヤーが全員乗ったら
-		m_Info.Animstate = ANIME_STATE::FLY;	// 飛ぶ状態に移行
-	}
+
 }

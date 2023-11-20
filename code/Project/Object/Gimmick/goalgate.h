@@ -37,9 +37,12 @@ protected:
 private:
 
 	//========== [[[ 変数宣言 ]]]
-	STATE m_state;			//種類
-	int m_modelIdx;			//モデル番号
-	int m_TexIdx[2];		//テクスチャ番号
-	Scale3D m_scale;	//拡縮
-	int			m_nCnt;		//カウント
+	STATE m_state;					//種類
+	int m_modelIdx;					//モデル番号
+	int m_TexIdx[2];				//テクスチャ番号
+	Scale3D m_scale;				//拡縮
+	int		m_nCnt;					//カウント
+	bool	m_bEntry;				//入ったかどうか
+	bool	m_bScale;				//拡大するか縮小するか
+	int		m_nCntEtrX,m_nCntEtrY;	//
 };

@@ -21,6 +21,7 @@ public:
 		D3DXVECTOR3 rot;		// 向き
 		D3DXVECTOR3 spin;		// 回転量
 		D3DXVECTOR3 scale;		// 拡縮
+		D3DXVECTOR3 scalemag;	// 拡縮倍率
 		Color col;				// 頂点カラー
 		int nCount;
 		int nCountMax;
@@ -42,6 +43,7 @@ public:
 	/* 位置		*/void SetPos(const D3DXVECTOR3 pos) { m_Info.pos = pos; }
 	/* 位置		*/void SetMove(const D3DXVECTOR3 move) { m_Info.move = move; }
 	/* 位置		*/void SetScale(const D3DXVECTOR3 scale) { m_Info.scale = scale; }
+	/* スケールの倍率		*/void SetScalemag(const D3DXVECTOR3 scale) { m_Info.scalemag = scale; }
 	/* 位置		*/void SetBillboard(const bool billboard) { m_Info.Billboard = billboard; }
 
 	// -- 所得 ---------------------------------------------

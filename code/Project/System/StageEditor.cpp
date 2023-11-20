@@ -581,7 +581,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	switch (nType)
 	{
 	case TYPE_BLOCK:
-		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::BLOCK_TYPE::BLOCK_NORMAL, m_StageColor.Block);
+		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::LOOKS_TYPE::SOIL_BLOCK, m_StageColor.Block);
 		break;
 	case TYPE_TRAMPOLINE:
 		pos.x += fSizeX / 2;
@@ -608,7 +608,7 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		Manager::StageObjectMgr()->RoadTripLaserCreate(pos, pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		break;
 	case TYPE_Extenddog:
-		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::BLOCK_TYPE::BLOCK_NUI);
+		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::LOOKS_TYPE::SOIL_BLOCK_GRASSY);
 		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::StageObjectMgr()->FillBlockCreate(pos, CFillBlock::BLOCKTYPE::TYPE_1x1, m_StageColor.FillBlock);
