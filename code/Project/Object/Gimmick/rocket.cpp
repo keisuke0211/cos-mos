@@ -23,7 +23,7 @@ const float CRocket::s_RotAdd = 0.02f;		// 向きの増加量
 const int   CRocket::s_RotAnimeMax = 4;		// 小刻みアニメーションの最大
 const float CRocket::s_MoveMag = 1.05f;		// 移動量の倍率
 const float CRocket::s_MoveAdd = 0.01f;		// 移動量の増加量
-const float CRocket::s_HeightDis = 25.0f;	// 高さの距離
+const float CRocket::s_HeightDis = 40.0f;	// 高さの距離
 const int   CRocket::s_FadeModeCountMax = 240;	// フェードのモードのカウント最大
 const int   CRocket::s_Firerate = 4;		// 炎の出現割合
 const int   CRocket::s_Smokerate = 6;		// 煙の出現割合
@@ -136,10 +136,10 @@ void CRocket::Update(void)
 		m_Info.nEffectAnimCounter++;
 		if (m_Info.nEffectAnimCounter % s_Smokerate == 0)
 		{
-			m_Info.Smoketex.move = D3DXVECTOR3(rand() % 3 - 1, -0.1f, 0.0f);
+			m_Info.Smoketex.move = D3DXVECTOR3(rand() % 6 - 3, rand() % 4 - 3, 0.0f);
 
 			// 煙のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - s_HeightDis, m_pos.z), Scale3D(30.0f, 30.0f, 30.0f), m_Info.Smoketex.col, 120, D3DXVECTOR3(0.1f, 0.1f, 0.1f), m_Info.Smoketex.move, false);
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - s_HeightDis, m_pos.z), Scale3D(30.0f, 30.0f, 30.0f), m_Info.Smoketex.col, 120, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Smoketex.move, false, D3DXVECTOR3(1.05f, 1.05f, 1.00f));
 		}
 		if (m_Info.nEffectAnimCounter % s_Firerate == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
 		{

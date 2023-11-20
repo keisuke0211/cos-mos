@@ -25,6 +25,7 @@ int CEffect_Meteor::s_nModelIdx[3] = {};
 CEffect_Meteor::CEffect_Meteor(void)
 {
 	//Manager::BlockMgr()->AddList(this);
+	Manager::EffectMgr()->AddList(this);
 
 	for (int nCnt = 0; nCnt < MAX_INFO; nCnt++)
 	{
@@ -44,6 +45,8 @@ CEffect_Meteor::CEffect_Meteor(void)
 //========================================
 CEffect_Meteor::~CEffect_Meteor()
 {
+	Manager::EffectMgr()->SubList(this);
+
 	m_nNumAll--;
 }
 

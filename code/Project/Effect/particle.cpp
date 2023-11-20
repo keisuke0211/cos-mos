@@ -25,6 +25,8 @@ int CParticle::m_nNumAll = 0;
 //========================================
 CParticle::CParticle(void)
 {
+	Manager::EffectMgr()->AddList(this);
+
 	m_Info.pos = INITD3DXVECTOR3;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
@@ -37,6 +39,8 @@ CParticle::CParticle(void)
 //========================================
 CParticle::~CParticle()
 {
+	Manager::EffectMgr()->SubList(this);
+
 	m_nNumAll--;
 }
 
