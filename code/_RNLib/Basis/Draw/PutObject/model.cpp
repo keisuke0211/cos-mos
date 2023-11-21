@@ -365,6 +365,44 @@ void CModel::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 	// マテリアルデータへのポインタを取得
 	D3DXMATERIAL* mats = (D3DXMATERIAL*)modelData.m_matBuff->GetBufferPointer();
 
+	// マトリックスの拡大倍率を取得し、
+	const Scale3D scale = CMatrix::ConvMtxToScale(m_mtx);
+	const bool isScaling = !EqualFloat(scale.x,1.0f, 0.01f) ? true : !EqualFloat(scale.y, 1.0f, 0.01f) ? true : !EqualFloat(scale.z, 1.0f, 0.01f);
+	LPD3DXMESH drawMesh = NULL;
+	if (isScaling)
+	{// もし拡大倍率に変更があった時、
+		const DWORD fvf    = modelData.m_mesh->GetFVF();
+		const ULong vtxNum = modelData.m_mesh->GetNumVertices();
+
+		// メッシュを複製する
+		D3DXCreateMeshFVF(modelData.m_mesh->GetNumFaces(), vtxNum, D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, modelData.m_mesh->GetFVF(), device, &drawMesh);
+		modelData.m_mesh->CloneMeshFVF(D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawMesh);
+
+		// 頂点フォーマットのサイズを取得
+		const DWORD dwSizeFVF = D3DXGetFVFVertexSize(fvf);
+
+		// 頂点バッファをロック
+		BYTE* vtxBuff = NULL;
+		drawMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
+
+		// 法線方向に加算
+		for (ULong cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
+			Vector3D* nor = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
+
+			nor->x *= scale.x;
+			nor->y *= scale.y;
+			nor->z *= scale.z;
+		}
+
+		// 頂点バッファをアンロック
+		drawMesh->UnlockVertexBuffer();
+	}
+	else 
+	{// 拡大倍率に変更がなかった時、
+		// 描画メッシュはそのまま使用
+		drawMesh = modelData.m_mesh;
+	}
+
 	//----------------------------------------
 	// 一時的な描画モード設定を開始
 	//----------------------------------------
@@ -398,7 +436,7 @@ void CModel::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 		RNLib::Texture().Set(device, (m_texIdx == NONEDATA) ? modelData.m_texIdxs[cntMat] : m_texIdx);
 
 		// 描画
-		modelData.m_mesh->DrawSubset(cntMat);
+		drawMesh->DrawSubset(cntMat);
 	}
 
 	//----------------------------------------
@@ -419,6 +457,10 @@ void CModel::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 	// 一時的な描画モード設定を終了
 	//----------------------------------------
 	RNLib::DrawStateMgr().EndTemporarySetMode(device);
+
+	// 拡大倍率に変更があった時、解放する
+	if (isScaling)
+		drawMesh->Release();
 }
 
 //========================================

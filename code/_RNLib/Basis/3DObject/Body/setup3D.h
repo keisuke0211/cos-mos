@@ -74,12 +74,12 @@ public:
 	short  Load        (const char* loadPath, short idx = NONEDATA);
 	bool   LoadEditData(const char* loadPath);
 	void   SaveEditData(const char* savePath);
-	CData& GetData     (const short& idx) { return idx == EDITDATA ? *m_editData : *m_datas[idx]; }
+	CData& GetData     (const short& idx) { return idx == EDITDATA ? *m_editData : (idx == NONEDATA ? *(CData*)(nullptr) : *m_datas[idx]); }
 	void   InitMemory  (const UShort& num);
 
 private:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	bool   ExecutionLoad(const char* loadPath, CData& data);
+	bool ExecutionLoad(const char* loadPath, CData& data);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	CData** m_datas;

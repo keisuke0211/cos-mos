@@ -33,6 +33,7 @@ CSetUp3DEditor::CSetUp3DEditor() {
 	m_slither        = INITVECTOR3D;
 	m_slitherCounter = 0;
 	m_editPath       = NULL;
+	m_motionPath     = NULL;
 	m_messageType    = MESSAGE_TYPE::NONE;
 	m_messageCounter = 0;
 }
@@ -101,17 +102,47 @@ void CSetUp3DEditor::Update(void) {
 		if (RNLib::Input().GetKeyTrigger(DIK_3)) {
 			if (m_editPath != NULL) {
 				m_messageType = RNLib::SetUp3D().LoadEditData(m_editPath) ?
-					MESSAGE_TYPE::RELOAD_SUCCEEDED:
-					MESSAGE_TYPE::RELOAD_FAILED;
+					MESSAGE_TYPE::SETUP_RELOAD_SUCCEEDED:
+					MESSAGE_TYPE::SETUP_RELOAD_FAILED;
 			}
 			else {
-				m_messageType = MESSAGE_TYPE::RELOAD_FAILED;
+				m_messageType = MESSAGE_TYPE::SETUP_RELOAD_FAILED;
+			}
+			m_messageCounter = 30;
+		}
+
+		// êVãKçÏê¨
+		if (RNLib::Input().GetKeyTrigger(DIK_4)) {
+			CMemory::Release(&m_motionPath);
+			if (RNLib::File().GetSelectSaveFileName(&m_motionPath, "", ".txt")) {
+				RNLib::Motion3D().LoadEditData("RNData\\Motion3D\\CapsuleStretch.txt");
+				RNLib::Motion3D().SaveEditData(m_motionPath);
+			}
+		}
+
+		// ì«Ç›çûÇ›
+		if (RNLib::Input().GetKeyTrigger(DIK_5)) {
+			CMemory::Release(&m_motionPath);
+			if (RNLib::File().GetSelectOpenFileName(&m_motionPath, "", ".txt")) {
+				RNLib::Motion3D().LoadEditData(m_motionPath);
+			}
+		}
+
+		// çƒì«Ç›çûÇ›
+		if (RNLib::Input().GetKeyTrigger(DIK_6)) {
+			if (m_motionPath != NULL) {
+				m_messageType = RNLib::Motion3D().LoadEditData(m_motionPath) ?
+					MESSAGE_TYPE::MOTION_RELOAD_SUCCEEDED :
+					MESSAGE_TYPE::MOTION_RELOAD_FAILED;
+			}
+			else {
+				m_messageType = MESSAGE_TYPE::MOTION_RELOAD_FAILED;
 			}
 			m_messageCounter = 30;
 		}
 		
 		// í∏ì_î‘çÜÇÃï`âÊON/OFF
-		if (RNLib::Input().GetKeyTrigger(DIK_4)) {
+		if (RNLib::Input().GetKeyTrigger(DIK_7)) {
 			RNLib::Doll3DMgr().SetEditDollIsDrawModelVtxIdx(!RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx());
 		}
 
@@ -185,7 +216,7 @@ void CSetUp3DEditor::Update(void) {
 		const CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(EDITDATA);
 		if (&setUp != NULL) {
 			for (short cntBone = 0; cntBone < setUp.m_boneDataNum; cntBone++) {
-				m_doll->GetBoneState(cntBone).SetRot(rot);
+				m_doll->GetBoneState(cntBone).SetAddRot(rot);
 			}
 		}
 	}
@@ -201,10 +232,13 @@ void CSetUp3DEditor::Update(void) {
 	RNLib::Text2D().PutDebugLog(CreateText("-----Information-----"));
 	RNLib::Text2D().PutDebugLog(CreateText("EditPath:%s", m_editPath));
 	RNLib::Text2D().PutDebugLog(CreateText("-----Control-----"));
-	RNLib::Text2D().PutDebugLog(CreateText("CreateNew        [1]"));
-	RNLib::Text2D().PutDebugLog(CreateText("Load             [2]"));
-	RNLib::Text2D().PutDebugLog(CreateText("ReLoad           [3] %s", m_messageType == MESSAGE_TYPE::RELOAD_SUCCEEDED ? "SUCCEEDED!" : m_messageType == MESSAGE_TYPE::RELOAD_FAILED ? "FAILED!" : ""));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdx       [4]   :%s", RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
+	RNLib::Text2D().PutDebugLog(CreateText("SetUpCreateNew   [1]"));
+	RNLib::Text2D().PutDebugLog(CreateText("SetUpLoad        [2]"));
+	RNLib::Text2D().PutDebugLog(CreateText("SetUpReLoad      [3] %s", m_messageType == MESSAGE_TYPE::SETUP_RELOAD_SUCCEEDED ? "SUCCEEDED!" : m_messageType == MESSAGE_TYPE::SETUP_RELOAD_FAILED ? "FAILED!" : ""));
+	RNLib::Text2D().PutDebugLog(CreateText("MotionCreateNew  [4]"));
+	RNLib::Text2D().PutDebugLog(CreateText("MotionLoad       [5]"));
+	RNLib::Text2D().PutDebugLog(CreateText("MotionReLoad     [6] %s", m_messageType == MESSAGE_TYPE::MOTION_RELOAD_SUCCEEDED ? "SUCCEEDED!" : m_messageType == MESSAGE_TYPE::MOTION_RELOAD_FAILED ? "FAILED!" : ""));
+	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdx       [7]   :%s", RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
 	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdxBoneIdx[E][R]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
 	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdxNum    [D][F]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum()));
 	RNLib::Text2D().PutDebugLog(CreateText("SlitherX         [Q][W]:%.1f", m_slither.x));
