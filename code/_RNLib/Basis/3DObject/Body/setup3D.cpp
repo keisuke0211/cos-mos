@@ -139,6 +139,14 @@ void CSetUp3D::SaveEditData(const char* savePath) {
 				m_editData->m_boneDatas[cntBoneData].relativeRot.x / D3DX_PI,
 				m_editData->m_boneDatas[cntBoneData].relativeRot.y / D3DX_PI,
 				m_editData->m_boneDatas[cntBoneData].relativeRot.z / D3DX_PI);
+			if (m_editData->m_boneDatas[cntBoneData].swaying != NULL) {
+				fprintf(RNLib::File().GetFile(), "		swaying{\n");
+				fprintf(RNLib::File().GetFile(), "			timeMin %d\n", m_editData->m_boneDatas[cntBoneData].swaying->timeMin);
+				fprintf(RNLib::File().GetFile(), "			timeAdd %d\n", m_editData->m_boneDatas[cntBoneData].swaying->timeAdd);
+				fprintf(RNLib::File().GetFile(), "			distMin %f\n", m_editData->m_boneDatas[cntBoneData].swaying->distMin);
+				fprintf(RNLib::File().GetFile(), "			distAdd %f\n", m_editData->m_boneDatas[cntBoneData].swaying->distAdd);
+				fprintf(RNLib::File().GetFile(), "		}\n");
+			}
 			fprintf(RNLib::File().GetFile(), "	}\n");
 		}
 		fprintf(RNLib::File().GetFile(), "}\n");
@@ -238,6 +246,26 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 							RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.parentIdx, "parentIdx");
 							RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.relativePos, "relativePos");
 							RNLib::File().Scan(CFile::SCAN::ROT_CORRECT, &boneData.relativeRot, "relativeRot");
+							if (RNLib::File().CheckIdentifier("swaying{")) {
+								CMemory::Alloc(&boneData.swaying);
+
+								while (RNLib::File().SearchLoop("}")) {
+									RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.swaying->timeMin, "timeMin");
+									RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.swaying->timeAdd, "timeAdd");
+									RNLib::File().Scan(CFile::SCAN::FLOAT, &boneData.swaying->distMin, "distMin");
+									RNLib::File().Scan(CFile::SCAN::FLOAT, &boneData.swaying->distAdd, "distAdd");
+								}
+							}
+							else if (RNLib::File().CheckIdentifier("follow{")) {
+								CMemory::Alloc(&boneData.follow);
+
+								while (RNLib::File().SearchLoop("}")) {
+									RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.follow->followIdx, "followIdx");
+									RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.follow->posRate, "posRate");
+									RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.follow->rotRate, "rotRate");
+									RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.follow->scaleRate, "scaleRate");
+								}
+							}
 						}
 
 						// ƒJƒEƒ“ƒg‚ð‰ÁŽZ
@@ -397,6 +425,10 @@ CSetUp3D::CData::~CData() {
 //========================================
 void CSetUp3D::CData::Release(void) {
 
+	for (int cntBone = 0; cntBone < m_boneDataNum; cntBone++) {
+		CMemory::Release(&m_boneDatas[cntBone].swaying);
+		CMemory::Release(&m_boneDatas[cntBone].follow);
+	}
 	CMemory::Release(&m_boneDatas);
 	CMemory::Release(&m_faceDatas);
 }

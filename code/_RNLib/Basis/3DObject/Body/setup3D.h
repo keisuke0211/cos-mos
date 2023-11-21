@@ -17,18 +17,32 @@ class CSetUp3D : public CRegist {
 public:
 	//========== [[[ 構造体定義 ]]]
 	// ボーンデータ構造体
+	struct Swaying {
+		UShort timeMin = 0;
+		UShort timeAdd = 0;
+		float  distMin = 0.0f;
+		float  distAdd = 0.0f;
+	};
+	struct Follow {
+		short    followIdx = NONEDATA;
+		Vector3D posRate   = INITVECTOR3D;
+		Vector3D rotRate   = INITVECTOR3D;
+		Vector3D scaleRate = INITVECTOR3D;
+	};
 	struct BoneData {
-		short idx         = NONEDATA;
-		short modelIdx    = NONEDATA;
-		short parentIdx   = NONEDATA;
-		Pos3D relativePos = INITPOS3D;
-		Pos3D relativeRot = INITPOS3D;
+		short    idx         = NONEDATA;
+		short    modelIdx    = NONEDATA;
+		short    parentIdx   = NONEDATA;
+		Pos3D    relativePos = INITPOS3D;
+		Pos3D    relativeRot = INITPOS3D;
+		Swaying* swaying     = NULL;
+		Follow*  follow      = NULL;
 	};
 	// フェイスデータ構造体
 	struct FaceVtxData {
-		short boneIdx = NONEDATA;
-		short vtxIdx  = NONEDATA;
-		Pos2D texPos  = INITPOS2D;
+		UShort boneIdx = NONEDATA;
+		UInt   vtxIdx  = NONEDATA;
+		Pos2D  texPos  = INITPOS2D;
 	};
 	struct FaceData {
 		FaceVtxData vtxs[4] = {};

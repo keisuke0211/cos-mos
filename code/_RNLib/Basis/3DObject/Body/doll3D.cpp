@@ -59,7 +59,7 @@ void CDoll3D::Update(void) {
 	if (m_setUpIdx != NONEDATA)
 	{// セットアップが設定されている時、
 		// セットアップデータ取得
-		const CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
+		CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
 
 		// モーションの更新処理
 		UpdateMotion();
@@ -99,15 +99,19 @@ void CDoll3D::SetUp(const short& setUpIdx) {
 
 		for (int cntBone = 0; cntBone < setUp.m_boneDataNum; cntBone++) {
 
-			// 親番号が無しの時、折り返す
-			if (setUp.m_boneDatas[cntBone].modelIdx == NONEDATA)
-				continue;
+			// 揺れ情報が存在する時、揺れ状態を生成
+			if (setUp.m_boneDatas[cntBone].swaying != NULL) {
+				m_boneStates[cntBone].CreateSwayingState();
+			}
 
-			// 同じ番号のボーンを検索し、見つけたら親のポインタを設定する
-			for (int cntBone2 = 0; cntBone2 < setUp.m_boneDataNum; cntBone2++) {
-				if (setUp.m_boneDatas[cntBone].parentIdx == setUp.m_boneDatas[cntBone2].idx) {
-					m_boneStates[cntBone].SetParentBoneState(&m_boneStates[cntBone2]);
-					break;
+			if (setUp.m_boneDatas[cntBone].parentIdx != NONEDATA) 
+			{// 親番号が在りの時、
+				// 同じ番号のボーンを検索し、見つけたら親のポインタを設定する
+				for (int cntBone2 = 0; cntBone2 < setUp.m_boneDataNum; cntBone2++) {
+					if (setUp.m_boneDatas[cntBone].parentIdx == setUp.m_boneDatas[cntBone2].idx) {
+						m_boneStates[cntBone].SetParentBoneState(&m_boneStates[cntBone2]);
+						break;
+					}
 				}
 			}
 		}
@@ -166,7 +170,7 @@ void CDoll3D::UpdateMotion(void) {
 //========================================
 // ボーンの更新処理
 //========================================
-void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
+void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 
 	// セットアップデータが存在しない時、処理を終了する
 	if (&setUp == NULL)
@@ -192,11 +196,11 @@ void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 		Pos3D       resultPos = INITPOS3D;
 		Rot3D       resultRot = INITROT3D;
 
-		// モーションの更新処理
-		boneState.UpdateMotion(m_motionInfo.counter);
+		// ボーンの更新処理
+		boneState.Update(m_motionInfo.counter, setUp.m_boneDatas[cntBone]);
 
 		// ワールドマトリックスを調べる
-		const Matrix worldMtx = FindBoneWorldMtx(boneState, setUp.m_boneDatas[cntBone], selfMtx);
+		const Matrix worldMtx = FindBoneWorldMtx(cntBone, m_boneStates, setUp.m_boneDatas, selfMtx);
 
 		// モデルの設置処理
 		RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
@@ -213,67 +217,98 @@ void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 			RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx() == cntBone &&
 			RNLib::Doll3DMgr().GetEditCamera() != NULL) {
 
-			// 頂点番号リストとカメラまでの距離リストを作成
-			UShort* vtxIdxs  = NULL;
-			float*  vtxDists = NULL;
-			CMemory::Alloc(&vtxIdxs, vtxNum[cntBone]);
-			CMemory::Alloc(&vtxDists, vtxNum[cntBone]);
-			const Pos3D& cameraPos = RNLib::Doll3DMgr().GetEditCamera()->GetPosV();
-			for (UShort cntVtx = 0; cntVtx < vtxNum[cntBone]; cntVtx++) {
-				vtxIdxs[cntVtx] = cntVtx;
-				vtxDists[cntVtx] = CGeometry::FindDistance(cameraPos, vtxInfo[cntBone][cntVtx].pos);
-			}
-
-			// バブルソートを使用して頂点番号リストをソート
-			for (UShort cntVtx = 0; cntVtx < vtxNum[cntBone] - 1; ++cntVtx) {
-				for (UShort cntVtx2 = 0; cntVtx2 < vtxNum[cntBone] - cntVtx - 1; ++cntVtx2) {
-					if (vtxDists[cntVtx2] > vtxDists[cntVtx2 + 1]) {
-
-						// 距離を交換
-						float temp = vtxDists[cntVtx2];
-						vtxDists[cntVtx2] = vtxDists[cntVtx2 + 1];
-						vtxDists[cntVtx2 + 1] = temp;
-
-						// 頂点番号も交換
-						int tempIndex = vtxIdxs[cntVtx2];
-						vtxIdxs[cntVtx2] = vtxIdxs[cntVtx2 + 1];
-						vtxIdxs[cntVtx2 + 1] = tempIndex;
-					}
-				}
-			}
-
-			UShort drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+			// 頂点番号描画数
+			short drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
 			if (drawVtxIdxNum > vtxNum[cntBone])
 				drawVtxIdxNum = vtxNum[cntBone];
 
-			for (int cntVtx = drawVtxIdxNum - 1; cntVtx >= 0; cntVtx--) {
-				bool isOverwrite = false;
-				for (int cntVtx2 = vtxIdxs[cntVtx] + 1; cntVtx2 < vtxNum[cntBone]; cntVtx2++) {
-					if (vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos == vtxInfo[cntBone][cntVtx2].worldPos) {
-						isOverwrite = true;
-						break;
+			// 0を越えている
+			if (drawVtxIdxNum > 0) {
+
+				// 頂点番号リストとカメラまでの距離リストを作成
+				UShort* vtxIdxs = NULL;
+				float* vtxDists = NULL;
+				CMemory::Alloc(&vtxIdxs, vtxNum[cntBone]);
+				CMemory::Alloc(&vtxDists, vtxNum[cntBone]);
+				const Pos3D& cameraPos = RNLib::Doll3DMgr().GetEditCamera()->GetPosV();
+				for (UShort cntVtx = 0; cntVtx < vtxNum[cntBone]; cntVtx++) {
+					vtxIdxs[cntVtx] = cntVtx;
+					vtxDists[cntVtx] = CGeometry::FindDistance(cameraPos, vtxInfo[cntBone][cntVtx].pos);
+				}
+
+				// バブルソートを使用して頂点番号リストをソート
+				for (UShort cntVtx = 0; cntVtx < vtxNum[cntBone] - 1; ++cntVtx) {
+					for (UShort cntVtx2 = 0; cntVtx2 < vtxNum[cntBone] - cntVtx - 1; ++cntVtx2) {
+						if (vtxDists[cntVtx2] > vtxDists[cntVtx2 + 1]) {
+
+							// 距離を交換
+							float temp = vtxDists[cntVtx2];
+							vtxDists[cntVtx2] = vtxDists[cntVtx2 + 1];
+							vtxDists[cntVtx2 + 1] = temp;
+
+							// 頂点番号も交換
+							int tempIndex = vtxIdxs[cntVtx2];
+							vtxIdxs[cntVtx2] = vtxIdxs[cntVtx2 + 1];
+							vtxIdxs[cntVtx2 + 1] = tempIndex;
+						}
 					}
 				}
-				if (isOverwrite)
-					continue;
 
-				RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos, INITROT3D)
-					->SetSize(0.25f, 0.25f)
-					->SetCol(Color{ 255,0,0,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) })
-					->SetLighting(false)
-					->SetZTest(false)
-					->SetBillboard(true);
-				RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", vtxIdxs[cntVtx]), CText::ALIGNMENT::CENTER, 1, vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos, INITROT3D)
-					->SetSize(Size2D(0.5f, 0.5f))
-					->SetLighting(false)
-					->SetZTest(false)
-					->SetBillboard(true)
-					->SetCol(Color{255,255,255,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum))});
+				for (int cntVtx = drawVtxIdxNum - 1; cntVtx >= 0; cntVtx--) {
+					bool isOverwrite = false;
+					for (UInt cntVtx2 = vtxIdxs[cntVtx] + 1; cntVtx2 < vtxNum[cntBone]; cntVtx2++) {
+						if (vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos == vtxInfo[cntBone][cntVtx2].worldPos) {
+							isOverwrite = true;
+							break;
+						}
+					}
+					if (isOverwrite)
+						continue;
+
+					RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos, INITROT3D)
+						->SetSize(0.25f, 0.25f)
+						->SetCol(Color{ 255,0,0,255 })
+						->SetLighting(false)
+						->SetZTest(false)
+						->SetBillboard(true);
+					RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", vtxIdxs[cntVtx]), CText::ALIGNMENT::CENTER, 1, vtxInfo[cntBone][vtxIdxs[cntVtx]].worldPos, INITROT3D)
+						->SetSize(Size2D(0.5f, 0.5f))
+						->SetLighting(false)
+						->SetZTest(false)
+						->SetBillboard(true);
+				}
+
+				// 頂点番号リストとカメラまでの距離リストを作成
+				CMemory::Release(&vtxIdxs);
+				CMemory::Release(&vtxDists);
 			}
+			else if (drawVtxIdxNum == NONEDATA) {
 
-			// 頂点番号リストとカメラまでの距離リストを作成
-			CMemory::Release(&vtxIdxs);
-			CMemory::Release(&vtxDists);
+				for (int cntVtx = drawVtxIdxNum - 1; cntVtx >= 0; cntVtx--) {
+					bool isOverwrite = false;
+					for (UInt cntVtx2 = cntVtx + 1; cntVtx2 < vtxNum[cntBone]; cntVtx2++) {
+						if (vtxInfo[cntBone][cntVtx].worldPos == vtxInfo[cntBone][cntVtx2].worldPos) {
+							isOverwrite = true;
+							break;
+						}
+					}
+					if (isOverwrite)
+						continue;
+
+					RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, vtxInfo[cntBone][cntVtx].worldPos, INITROT3D)
+						->SetSize(0.25f, 0.25f)
+						->SetCol(Color{ 255,0,0,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) })
+						->SetLighting(false)
+						->SetZTest(false)
+						->SetBillboard(true);
+					RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", cntVtx), CText::ALIGNMENT::CENTER, 1, vtxInfo[cntBone][cntVtx].worldPos, INITROT3D)
+						->SetSize(Size2D(0.5f, 0.5f))
+						->SetLighting(false)
+						->SetZTest(false)
+						->SetBillboard(true)
+						->SetCol(Color{ 255,255,255,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) });
+				}
+			}
 		}
 	}
 
@@ -284,14 +319,14 @@ void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 		CSetUp3D::FaceVtxData& vtx2 = setUp.m_faceDatas[cntFace].vtxs[2];
 		CSetUp3D::FaceVtxData& vtx3 = setUp.m_faceDatas[cntFace].vtxs[3];
 
-		if (vtx0.boneIdx < 0 || vtx0.boneIdx >= setUp.m_boneDataNum )continue;
-		if (vtx0.vtxIdx  < 0 || vtx0.vtxIdx  >= vtxNum[vtx0.boneIdx])continue;
-		if (vtx1.boneIdx < 0 || vtx1.boneIdx >= setUp.m_boneDataNum )continue;
-		if (vtx1.vtxIdx  < 0 || vtx1.vtxIdx  >= vtxNum[vtx1.boneIdx])continue;
-		if (vtx2.boneIdx < 0 || vtx2.boneIdx >= setUp.m_boneDataNum )continue;
-		if (vtx2.vtxIdx  < 0 || vtx2.vtxIdx  >= vtxNum[vtx2.boneIdx])continue;
-		if (vtx3.boneIdx < 0 || vtx3.boneIdx >= setUp.m_boneDataNum )continue;
-		if (vtx3.vtxIdx  < 0 || vtx3.vtxIdx  >= vtxNum[vtx3.boneIdx])continue;
+		if (vtx0.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx0.vtxIdx  >= vtxNum[vtx0.boneIdx])continue;
+		if (vtx1.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx1.vtxIdx  >= vtxNum[vtx1.boneIdx])continue;
+		if (vtx2.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx2.vtxIdx  >= vtxNum[vtx2.boneIdx])continue;
+		if (vtx3.boneIdx >= setUp.m_boneDataNum )continue;
+		if (vtx3.vtxIdx  >= vtxNum[vtx3.boneIdx])continue;
 
 		RNLib::Polygon3D().Put(m_priority, INITMATRIX)
 			->SetVtxPos(
@@ -322,16 +357,39 @@ void CDoll3D::UpdateBone(const CSetUp3D::CData& setUp) {
 //========================================
 // ボーンのワールドマトリックスを調べる
 //========================================
-Matrix CDoll3D::FindBoneWorldMtx(CBoneState& boneState, const CSetUp3D::BoneData& boneData, const Matrix& selfMtx) {
+Matrix CDoll3D::FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, const Matrix& selfMtx) {
 
 	Matrix  worldMtx    = INITMATRIX;
-	Pos3D   resultPos   = boneState.GetPos() + boneData.relativePos;
-	Rot3D   resultRot   = boneState.GetRot() + boneData.relativeRot;
-	Scale3D resultScale = boneState.GetScale();
+	Pos3D   resultPos   = boneState[idx].GetPos() + boneData[idx].relativePos;
+	Rot3D   resultRot   = boneState[idx].GetRot() + boneData[idx].relativeRot;
+	Scale3D resultScale = boneState[idx].GetScale();
 	Matrix  parentMtx   = INITMATRIX;
 
+	// 追従処理
+	if (boneData[idx].follow != NULL) {
+		const Pos3D followPos = boneState[boneData[idx].follow->followIdx].GetPos() - boneData[boneData[idx].follow->followIdx].relativePos;
+		const Rot3D followRot = boneState[boneData[idx].follow->followIdx].GetRot() - boneData[boneData[idx].follow->followIdx].relativeRot;
+		const Scale3D followScale = boneState[boneData[idx].follow->followIdx].GetScale();
+		resultPos.x += followPos.x * boneData[idx].follow->posRate.x;
+		resultPos.y += followPos.y * boneData[idx].follow->posRate.y;
+		resultPos.z += followPos.z * boneData[idx].follow->posRate.z;
+		resultRot.x += followRot.x * boneData[idx].follow->rotRate.x;
+		resultRot.y += followRot.y * boneData[idx].follow->rotRate.y;
+		resultRot.z += followRot.z * boneData[idx].follow->rotRate.z;
+		resultScale.x += (followScale.x - 1.0f) * boneData[idx].follow->scaleRate.x;
+		resultScale.y += (followScale.y - 1.0f) * boneData[idx].follow->scaleRate.y;
+		resultScale.z += (followScale.z - 1.0f) * boneData[idx].follow->scaleRate.z;
+	}
+
+	{// 揺れ状態である時、揺れの加算位置を加算
+		CBoneState::SwayingState*& swayingState = boneState[idx].GetSwayingState();
+		if (swayingState != NULL) {
+			resultPos += swayingState->addPos;
+		}
+	}
+
 	// 親ボーンがない時、
-	if (boneState.GetParentBoneState() == NULL) {
+	if (boneState[idx].GetParentBoneState() == NULL) {
 
 		// ドール自体の拡大倍率を乗算
 		resultScale.x *= m_scale.x;
@@ -344,14 +402,19 @@ Matrix CDoll3D::FindBoneWorldMtx(CBoneState& boneState, const CSetUp3D::BoneData
 	else 
 	{// 親ボーンがある時、
 		// 親マトリックスを親ボーンのマトリックスに設定
-		parentMtx = boneState.GetParentBoneState()->GetWorldMtx();
+		parentMtx = boneState[idx].GetParentBoneState()->GetWorldMtx();
 	}
 
 	// ワールドマトリックスを算出
 	worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosRotScaleToMtx(resultPos, resultRot, resultScale), parentMtx);
 
 	// ワールドマトリックス設定
-	boneState.SetWorldMtx(worldMtx);
+	boneState[idx].SetWorldMtx(worldMtx);
+
+	// 位置設定
+	boneState[idx].SetPos(resultPos);
+	boneState[idx].SetRot(resultRot);
+	boneState[idx].SetScale(resultScale);
 
 	return worldMtx;
 }
@@ -396,6 +459,7 @@ CDoll3D::CBoneState::CBoneState() {
 	m_scale			  = Scale3D(1.0f, 1.0f, 1.0f);
 	m_worldMtx		  = INITMATRIX;
 	m_animeStateSum   = {};
+	m_swayingState    = NULL;
 	m_motionData      = NULL;
 	m_parentBoneState = NULL;
 }
@@ -405,15 +469,36 @@ CDoll3D::CBoneState::CBoneState() {
 //========================================
 CDoll3D::CBoneState::~CBoneState() {
 
+	// 揺れ状態のメモリ解放
+	CMemory::Release(&m_swayingState);
 }
 
 //========================================
-// モーション更新処理
+// 更新処理
 //========================================
-void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
+void CDoll3D::CBoneState::Update(const short& motionCounter, const CSetUp3D::BoneData& boneData) {
+
+	// 揺れ状態
+	if (m_swayingState != NULL) {
+		
+		if (--m_swayingState->counter <= 0) {
+			m_swayingState->counterMax   = boneData.swaying->timeMin + rand() % boneData.swaying->timeAdd;
+			m_swayingState->counter      = m_swayingState->counterMax;
+			m_swayingState->oldAddPos    = m_swayingState->addPos;
+			m_swayingState->targetAddPos = CGeometry::GetRandomVec() * (boneData.swaying->distMin + fRand() * boneData.swaying->distAdd);
+		}
+
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_swayingState->counter, m_swayingState->counterMax);
+		m_swayingState->addPos = (m_swayingState->oldAddPos * rate) + (m_swayingState->targetAddPos * (1.0f - rate));
+	}
 
 	// 足踏フラグを偽にしておく
 	m_animeStateSum.isStep = false;
+
+	// 位置/向き/拡大倍率を初期化
+	m_pos   = INITPOS3D;
+	m_rot   = INITROT3D;
+	m_scale = INITSCALE3D;
 
 	// モーションデータが無しの時、終了
 	if (m_motionData == NULL)
@@ -425,7 +510,7 @@ void CDoll3D::CBoneState::UpdateMotion(const short& counter) {
 	for (int cntCommand = 0; cntCommand < m_motionData->commandDataNum; cntCommand++) {
 
 		// カウンターが実行時間と一致していない時、折り返す
-		if (counter != m_motionData->commandDatas[cntCommand].time)
+		if (motionCounter != m_motionData->commandDatas[cntCommand].time)
 			continue;
 
 		CMotion3D::CommandData& commandData(m_motionData->commandDatas[cntCommand]);
