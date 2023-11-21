@@ -62,7 +62,7 @@ private:
 	enum MENU{
 		MENU_GAME = 0,	// ゲーム
 		MENU_CONTROLLER,// 操作方法
-		MENU_SERRING,	// 設定
+		MENU_SETTING,	// 設定
 		MENU_END,		// 終了
 		MENU_MAX
 	};
@@ -119,7 +119,7 @@ private:
 		char Text[TXT_MAX];		// テキスト
 	};
 
-	// ステージ種類情報
+	// 設定情報
 	struct Setting{
 		char Text[TXT_MAX];		// テキスト
 	};
@@ -144,6 +144,16 @@ private:
 		int BoxTex;
 		int OperationMax;
 		int SettingMax;
+
+		// スクリーン
+		int nCntScrChg;		// スクリーン変更のカウント
+		bool bFullScreen;	// スクリーンモード
+
+		// サウンド
+		int nBGMVolume;
+		int nSEVolume;
+		int nBGMOldVolume;
+		int nSEOldVolume;
 
 		Operation *pOperation;
 		Setting *pSetting;
@@ -182,9 +192,4 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
-
-	int m_nCntScrChg;	// スクリーン変更のカウント
-	bool m_bFullScreen;	// スクリーンモード
-	int nBGMVolume;
-	int nSEVolume;
 };

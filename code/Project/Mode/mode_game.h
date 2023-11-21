@@ -22,8 +22,11 @@ class CRocketPartsUI;
 class CMode_Game :public CMode {
 public:
 	//========== [[[ 定数定義 ]]]
+	static const char* TEXT_FILE;				// テキスト情報のファイルパス
 	static const int PAUSE_LEFT_ANIME  = 20;	// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 20;	// 画面右のアニメーション時間
+	static const int FONT_TEXT_MAX = 8;			// テキストの最大数
+	static const int VOLUME_MSX = 20;			// サウンドの最大値
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -52,15 +55,35 @@ public:
 		INPUT_MAX
 	};
 
+	// 設定
+	enum SETTING {
+		SETTING_SCREEN = 1,	// フルスクリーン
+		SETTING_BGM,		// BGM
+		SETTING_SE,			// SE
+		SETTING_BGM_TEXT,
+		SETTING_SE_TEXT,
+		SETTING_MAX
+	};
+
 	// テキスト
 	enum TEXT {
 		TEXT_MENU = 0,	// メニュー
-		TEXT_INPUT,		// 操作方法
+		TEXT_RIGHT,		// 左画面
 		TEXT_ALL,		// 全部
 		TEXT_MAX
 	};
 
 	//========== [[[ 構造体定義 ]]]
+
+	// 操作方法のテキスト情報
+	struct Operation {
+		char Text[TXT_MAX];		// テキスト
+	};
+
+	// 設定情報
+	struct Setting {
+		char Text[TXT_MAX];		// テキスト
+	};
 
 	// ポーズ情報
 	struct Pause {
@@ -70,14 +93,31 @@ public:
 		D3DXVECTOR3 RightTargetPos;
 		int nCntLeftAnime;
 		int nCntRightAnime;
-		int nSelect;
+		int nMaineSelect;
+		int nSubSelect;
 		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
 		bool bClose;
+		bool bSubMenu;
 
 		int BoxTex;
+		int OperationMax;
+		int SettingMax;
+
+		// スクリーン
+		int nCntScrChg;		// スクリーン変更のカウント
+		bool bFullScreen;	// スクリーンモード
+
+		// サウンド
+		int nBGMVolume;
+		int nSEVolume;
+		int nBGMOldVolume;
+		int nSEOldVolume;
+
+		Operation *pOperation;
+		Setting *pSetting;
 	};
 
 	//========== [[[ 関数宣言 ]]]
@@ -103,15 +143,16 @@ private:
 	void PauseSelect(void);
 	void PauseAnime(void);
 	void PauseMenu(void);
-	void InputText(void);
+	void SubTextCreate(void);
+	void TextLoad(void);
 	void TextRelease(TEXT type);
 
 	//========== [[[ 変数宣言 ]]]
 	static CPlayer *s_pPlayer;
 	static int m_nPlanetIdx;
 	static int m_nStageIdx;
-	CFontText *m_Menu[MENU_MAX];
-	CFontText *m_RightText[INPUT_MAX];
+	CFontText *m_pMenu[MENU_MAX];
+	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	static CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
@@ -120,13 +161,4 @@ private:
 	Pause m_Pause;
 	short m_BGMIdx;
 	CSound::CPlay* play;
-
-	char m_RightTxt[INPUT_MAX][TXT_MAX] = {
-		{"操作方法"},
-		{"・移動　　：Ω"},
-		{"・ジャンプ：Σ"},
-		{"・スワップ：Φ"},
-		{"・決定　　：Д"},
-		{"・戻る　　：Σ"},
-	};
 };

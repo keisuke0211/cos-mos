@@ -70,17 +70,18 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	short         Load                (const char* loadPath, short idx = NONEDATA);
-	CPlay*        Play                (const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space = SPACE::NONE, const Pos3D& pos = INITPOS3D, const float& dist = 0.0f);
-	void          Stop                (const CATEGORY& category);	// (分類指定)
-	void          Stop                (void);						// (全て)
-	void          ChangeCategoryVolume(const CATEGORY& category, float& volume);
-	void          SetMic3DPos         (const Pos3D& pos) { m_mic3DPos = pos; }
-	CData&        GetData             (const short& idx) { return *m_datas[idx]; }
-	CObjectMgr&   GetPlayMgr          (void) { return *m_playMgr; }
-	CategoryState GetCategoryState    (const CATEGORY& category) { return m_categoryStates[(int)category]; }
-	Pos3D&        GetMic3DPos         (void) { return m_mic3DPos; }
-	IXAudio2&     GetXAudio2          (void) { return *m_XAudio2; }
+	short          Load                (const char* loadPath, short idx = NONEDATA);
+	CPlay*         Play                (const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space = SPACE::NONE, const Pos3D& pos = INITPOS3D, const float& dist = 0.0f);
+	void           Stop                (const CATEGORY& category);	// (分類指定)
+	void           Stop                (void);						// (全て)
+	void           ChangeCategoryVolume(const CATEGORY& category, float& volume);
+	void           ChangeSetVolume	   (const CATEGORY& category, float& volume);
+	void           SetMic3DPos         (const Pos3D& pos) { m_mic3DPos = pos; }
+	CData&         GetData             (const short& idx) { return *m_datas[idx]; }
+	CObjectMgr&    GetPlayMgr          (void) { return *m_playMgr; }
+	CategoryState& GetCategoryState    (const CATEGORY& category) { return m_categoryStates[(int)category]; }
+	Pos3D&         GetMic3DPos         (void) { return m_mic3DPos; }
+	IXAudio2&      GetXAudio2          (void) { return *m_XAudio2; }
 
 private:
 	//========== [[[ 関数宣言 ]]]
