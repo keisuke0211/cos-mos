@@ -201,15 +201,15 @@ void CMotion3D::Save(const char* savePath, const short& idx) {
 	// ファイルポインタを取得
 	FILE* file = RNLib::File().GetFile();
 
+	fprintf(file, "Motion3DFile\n");
 	fprintf(file, "loopTime: %d\n", m_datas[idx].loopTime);
 	fprintf(file, "loop: %d\n", (int)m_datas[idx].isLoop);
-
+	fprintf(file, "boneMotionDatas{ %d\n", m_datas[idx].boneNum);
 	// ボーンモーションデータの書き出し
 	for (int cntBone = 0; cntBone < m_datas[idx].boneNum; cntBone++) {
 		BoneMotionData& boneMotionData = m_datas[idx].boneMotionDatas[cntBone];
 
-		fprintf(file, "boneMotionDatas{ %d\n", boneMotionData.commandDataNum);
-
+		fprintf(file, "	boneMotionData{ %d\n", boneMotionData.commandDataNum);
 		// コマンドデータ書き出し
 		for (int cntCmd = 0; cntCmd < boneMotionData.commandDataNum; cntCmd++) {
 			CommandData& cmd = boneMotionData.commandDatas[cntCmd];
@@ -238,9 +238,9 @@ void CMotion3D::Save(const char* savePath, const short& idx) {
 			}break;
 			}
 		}
-		fprintf(file, "}\n");
+		fprintf(file, "	}\n");
 	}
-
+	fprintf(file, "}\n");
 	fprintf(file, "END\n");
 
 	// ファイルを閉じる

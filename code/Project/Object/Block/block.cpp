@@ -54,6 +54,7 @@ void CBlock::Load(void) {
 CBlock::CBlock(void) {
 
 	Manager::StageObjectMgr()->AddList(this);
+	m_isCollision  = true;
 	m_type         = TYPE::BLOCK;
 	m_width        = SIZE_OF_1_SQUARE;
 	m_height       = SIZE_OF_1_SQUARE;

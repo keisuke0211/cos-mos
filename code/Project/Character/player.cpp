@@ -11,7 +11,7 @@
 #include "../Object/Gimmick/pile.h"
 
 // スワップインターバル
-const int	CPlayer::SWAP_INTERVAL = 30;	// スワップインターバル
+const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
 int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
 
 const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
@@ -239,6 +239,12 @@ void CPlayer::SetPosOld(void)
 //=====================================================================================================================
 void CPlayer::Update(void)
 {
+	if (s_nSwapInterval != 0)
+	{
+		SwapAnimation();
+		return;
+	}
+
 	// 前回位置更新
 	SetPosOld();
 
@@ -272,6 +278,8 @@ void CPlayer::Update(void)
 //----------------------------
 void CPlayer::UpdateInfo(void)
 {
+	if (s_nSwapInterval != 0) return;
+
 	int nCntPlayer = -1;
 	for each (Info &Player in m_aInfo)
 	{
@@ -367,13 +375,6 @@ void CPlayer::ActionControl(void)
 //############################
 void CPlayer::Swap(void)
 {
-	// インターバルがあれば減少させて終了
-	if (s_nSwapInterval > 0)
-	{
-		s_nSwapInterval--;
-		return;
-	}
-
 	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
@@ -410,6 +411,29 @@ void CPlayer::Swap(void)
 
 		// 前回位置更新
 		SetPosOld();
+	}
+}
+
+//----------------------------
+// 情報更新処理
+//----------------------------
+void CPlayer::SwapAnimation(void)
+{
+	s_nSwapInterval--;
+
+	if(s_nSwapInterval <= SWAP_INTERVAL / 3 ||
+	   s_nSwapInterval >= SWAP_INTERVAL / 3 * 2)
+	for each (Info &Player in m_aInfo)
+	{
+		// 位置設定
+		RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
+			->SetOutLine(true)
+			->SetCol(Player.color);
+
+		for (int i = 0; i < 16; i++)
+		{
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
+		}
 	}
 }
 
@@ -616,6 +640,13 @@ void CPlayer::CollisionToStageObject(void)
 				// 移動するオブジェクトは、
 				// 当たり判定位置に前回位置を設定する
 				switch (type) {
+					// 移動床
+				case CStageObject::TYPE::BLOCK: {
+					CBlock* pBlock = (CBlock*)stageObj;
+					if (!pBlock->GetCollision())
+						continue;
+				}break;
+
 					// 移動床
 				case CStageObject::TYPE::MOVE_BLOCK:{
 					CMoveBlock *pBlock = (CMoveBlock*)stageObj;

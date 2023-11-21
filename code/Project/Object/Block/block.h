@@ -46,6 +46,7 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+	bool& GetCollision(void) { return m_isCollision; }
 
 private:
 	//========== [[[ íËêîêÈåæ ]]]
@@ -56,6 +57,7 @@ private:
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
 	LOOKS_TYPE m_looksType;		// éÌóﬁ
+	bool       m_isCollision;
 	Pos3D      m_targetAddPos;
 	Pos3D      m_oldAddPos;
 	Pos3D      m_addPos;
