@@ -144,7 +144,6 @@ void CTransition::FillScreen(const float& rate) {
 
 	// ƒ|ƒŠƒSƒ“2D‚ÌÝ’u
 	RNLib::Polygon2D().Put(1, RNLib::Window().GetCenterPos(), 0.0f, false)
-		->SetZTest(false)
 		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
 		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());
 

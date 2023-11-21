@@ -156,8 +156,8 @@ void CSetUp3DEditor::Update(void) {
 			short drawVtxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
 
 			if (RNLib::Input().GetKeyTrigger(DIK_D)) {
-				if (--drawVtxNum < 0)
-					drawVtxNum = 0;
+				if (--drawVtxNum < NONEDATA)
+					drawVtxNum = NONEDATA;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_F)) {
 				drawVtxNum++;

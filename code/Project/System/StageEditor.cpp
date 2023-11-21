@@ -578,10 +578,15 @@ void CStageEditor::SwapStage(int nStageIdx)
 //========================================
 void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nType)
 {
+	// ƒuƒƒbƒN
+	if (nType >= 100 && nType < 200) {
+		Manager::StageObjectMgr()->BlockCreate(pos, (CBlock::LOOKS_TYPE)(nType - 100), m_StageColor.Block);
+	}
+
 	switch (nType)
 	{
 	case TYPE_BLOCK:
-		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::LOOKS_TYPE::SOIL_BLOCK, m_StageColor.Block);
+		Manager::StageObjectMgr()->BlockCreate(pos, CBlock::LOOKS_TYPE::SOIL_BLOCK, m_StageColor.Block);
 		break;
 	case TYPE_TRAMPOLINE:
 		pos.x += fSizeX / 2;

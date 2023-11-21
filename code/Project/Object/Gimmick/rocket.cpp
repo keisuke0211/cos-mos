@@ -27,8 +27,8 @@ const float CRocket::s_HeightDis = 40.0f;	// 高さの距離
 const int   CRocket::s_FadeModeCountMax = 240;	// フェードのモードのカウント最大
 const int   CRocket::s_Firerate = 4;		// 炎の出現割合
 const int   CRocket::s_Smokerate = 6;		// 煙の出現割合
-bool        CRocket::s_bReady = false;		
 int         CRocket::s_nCountPlayer = 0;	// プレイヤーのカウント
+bool		CRocket::s_bReady = false;		// 乗る準備クリア
 
 //========================================
 // コンストラクタ
@@ -38,7 +38,7 @@ CRocket::CRocket(void)
 	Manager::StageObjectMgr()->AddList(this);
 
 	ResetCounter();
-
+	s_bReady = false;
 	m_type = TYPE::ROCKET;
 	m_width = SIZE_OF_1_SQUARE * 4;
 	m_height = SIZE_OF_1_SQUARE * 7;
@@ -124,11 +124,9 @@ void CRocket::Update(void)
 	case CRocket::ANIME_STATE::RIDE:
 		m_Info.bEffect = true;
 		UpdateState_Ride();		// 飛び出し準備状態の更新
-	
 		break;
 	case CRocket::ANIME_STATE::FLY:
 		UpdateState_Fly();		// 飛び出し状態の更新
-		
 		break;
 	}
 
@@ -233,12 +231,12 @@ void CRocket::UpdateState_Fly(void)
 //========================================
 void CRocket::Ride(void)
 {
+	if (!s_bReady) return;
+
 	s_nCountPlayer++;												// プレイヤーの乗った人数の増加
 	m_Info.fScaleMag = s_RideAnimeMag;								// スケール倍率の設定
 	m_Info.SmallSpeed = (m_Info.fScaleMag - 1.0f) / s_RideAnimeMax;	// 小さくなる速度の設定
 	m_Info.nRideAnimeCounter = 0;									// 乗るアニメーションカウンターを初期化
 	m_Info.nFlyAnimeCounter = 0;									// 飛ぶアニメーションカウンターを初期化
-
 	m_Info.Animstate = ANIME_STATE::RIDE;		// 乗る状態に移行
-
 }

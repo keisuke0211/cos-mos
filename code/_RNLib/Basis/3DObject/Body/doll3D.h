@@ -12,6 +12,7 @@
 #include "../../Calculation/ease.h"
 #include "../../../RNmain.h"
 #include "../../Mechanical/object.h"
+#include "../../Mechanical/memory.h"
 
 //****************************************
 // ÉNÉâÉXíËã`
@@ -59,22 +60,35 @@ public:
 			bool              isStep  = false;
 		};
 
+		// óhÇÍèÛë‘
+		struct SwayingState {
+			Pos3D targetAddPos = INITPOS3D;
+			Pos3D oldAddPos    = INITPOS3D;
+			Pos3D addPos       = INITPOS3D;
+			short counter      = 0;
+			short counterMax   = 0;
+		};
+
 		// [[[ ä÷êîêÈåæ ]]]
 		CBoneState();
 		~CBoneState();
-		void         UpdateMotion      (const short& counter);
-		void         PrepareMotion     (const CMotion3D::BoneMotionData& boneMotionData);
-		Pos3D&       GetPos            (void)                                        { return m_pos; }
-		void         AddPos            (const Vector3D& addVec)                      { m_pos += addVec; }
-		Rot3D&       GetRot            (void)                                        { return m_rot; }
-		void         SetRot            (const Rot3D& rot)                            { m_rot = rot; }
-		void         AddRot            (const Vector3D& addVec)                      { m_rot += addVec; }
-		Scale3D&     GetScale          (void)                                        { return m_scale; }
-		void         SetWorldMtx       (const Matrix& worldMtx)                      { m_worldMtx = worldMtx; }
-		Matrix&      GetWorldMtx       (void)                                        { return m_worldMtx; }
-		void         SetMotionData     (const CMotion3D::BoneMotionData* motionData) { m_motionData = motionData; }
-		void         SetParentBoneState(CBoneState* parentBoneState)                 { m_parentBoneState = parentBoneState; }
-		CBoneState*& GetParentBoneState(void)                                        { return m_parentBoneState; }
+		void           Update            (const short& motionCounter, const CSetUp3D::BoneData& boneData);
+		void           PrepareMotion     (const CMotion3D::BoneMotionData& boneMotionData);
+		void           SetPos            (const Pos3D& pos)                            { m_pos = pos; }
+		Pos3D&         GetPos            (void)                                        { return m_pos; }
+		void           AddPos            (const Vector3D& addVec)                      { m_pos += addVec; }
+		Rot3D&         GetRot            (void)                                        { return m_rot; }
+		void           SetRot            (const Rot3D& rot)                            { m_rot = rot; }
+		void           AddRot            (const Vector3D& addVec)                      { m_rot += addVec; }
+		void           SetScale          (const Scale3D& scale)                        { m_scale = scale; }
+		Scale3D&       GetScale          (void)                                        { return m_scale; }
+		void           SetWorldMtx       (const Matrix& worldMtx)                      { m_worldMtx = worldMtx; }
+		Matrix&        GetWorldMtx       (void)                                        { return m_worldMtx; }
+		SwayingState*& GetSwayingState   (void)                                        { return m_swayingState; }
+		void           CreateSwayingState(void)                                        { CMemory::Alloc(&m_swayingState); *m_swayingState = {}; }
+		void           SetMotionData     (const CMotion3D::BoneMotionData* motionData) { m_motionData = motionData; }
+		void           SetParentBoneState(CBoneState* parentBoneState)                 { m_parentBoneState = parentBoneState; }
+		CBoneState*&   GetParentBoneState(void)                                        { return m_parentBoneState; }
 
 	private:
 		// [[[ ïœêîêÈåæ ]]]
@@ -83,6 +97,7 @@ public:
 		Scale3D                          m_scale;
 		Matrix                           m_worldMtx;
 		AnimStateSum                     m_animeStateSum;
+		SwayingState*                    m_swayingState;
 		const CMotion3D::BoneMotionData* m_motionData;
 		CBoneState*                      m_parentBoneState;
 	};
@@ -117,8 +132,8 @@ private:
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void   UpdateMotion    (void);
-	void   UpdateBone      (const CSetUp3D::CData& setUp);
-	Matrix FindBoneWorldMtx(CBoneState& boneState, const CSetUp3D::BoneData& boneData, const Matrix& selfMtx);
+	void   UpdateBone      (CSetUp3D::CData& setUp);
+	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, const Matrix& selfMtx);
 	void   PrepareMotion   (void);
 
 	//========== [[[ ïœêîêÈåæ ]]]
