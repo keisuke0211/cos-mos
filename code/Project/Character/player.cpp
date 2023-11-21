@@ -437,18 +437,24 @@ void CPlayer::SwapAnimation(void)
 	{
 		//プレイヤー情報参照（移動時だけパーティクルの位置を手前に出す
 		Info &Player = m_aInfo[nCntPlayer];
-		Pos3D ParPos = Player.pos;
 
 		switch (s_AnimState)
 		{
 			case CPlayer::SWAP_ANIM::PROLOGUE: SwapAnim_Prologue(Player, nCntPlayer);break;//プロローグ
-			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	ParPos.z -= 100.0f;break;//中間
+			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	break;//中間
 			case CPlayer::SWAP_ANIM::EPILOGUE: SwapAnim_Epilogue(Player, nCntPlayer);break;//エピローグ
 		}
 
-		for (int nCntPar = 0; nCntPar < 16; nCntPar++)
+		for (int nCntPar = 0; nCntPar < 1; nCntPar++)
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI), ParPos, INIT_EFFECT_SCALE, INITCOLOR);
+			Color setCol;
+			if (nCntPlayer == 0){
+				setCol = Color{ (UShort)(215 + rand() % 40),(UShort)(135 + rand() % 40),(UShort)(39 + rand() % 40),255 };
+			}
+			else{
+				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(203 + rand() % 40),(UShort)(190 + rand() % 40),255 };
+			}
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_MARK), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol);
 		}
 	}
 }
