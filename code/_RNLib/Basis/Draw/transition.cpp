@@ -25,6 +25,7 @@ CTransition::CTransition() {
 
 	m_type = TYPE::NONE;
 	m_state = STATE::NONE;
+	m_fMove = 0.0f;
 	m_stateCounter = 0;
 	m_time = 0;
 	m_col = INITCOLOR;
@@ -142,7 +143,21 @@ bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) 
 void CTransition::FillScreen(const float& rate) {
 
 	// ƒ|ƒŠƒSƒ“2D‚ÌÝ’u
-	RNLib::Polygon2D().Put(1, RNLib::Window().GetCenterPos(), 0.0f, true)
+	RNLib::Polygon2D().Put(1, RNLib::Window().GetCenterPos(), 0.0f, false)
+		->SetZTest(false)
 		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
 		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());
+
+	//// ƒ|ƒŠƒSƒ“2D‚ÌÝ’u
+	//RNLib::Polygon2D().Put(1, D3DXVECTOR3(0.0f + m_fMove, RNLib::Window().GetHeight() / 3, 0.0f), 0.0f, true)
+	//	->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+	//	->SetSize(m_fMove, RNLib::Window().GetHeight() / 2);
+
+	//// ƒ|ƒŠƒSƒ“2D‚ÌÝ’u
+	//RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetHeight() - m_fMove, RNLib::Window().GetHeight() / 3 - RNLib::Window().GetHeight() / 2, 0.0f), 0.0f, true)
+	//	->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+	//	->SetSize(m_fMove, RNLib::Window().GetHeight() / 2);
+
+	m_fMove++;
+
 }

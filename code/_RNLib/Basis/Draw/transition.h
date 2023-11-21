@@ -36,4 +36,5 @@ private:
 	UShort m_stateCounter;
 	UShort m_time;
 	Color  m_col;
+	float  m_fMove;
 };
