@@ -23,7 +23,7 @@ public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
 	static const int WORDS_MAX = 7;				// 文字の最大数
-	static const int FONT_TEXT_MAX = 8;			// テキストの最大数
+	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
 	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
@@ -92,6 +92,7 @@ private:
 		SETTING_SCREEN = 1,	// フルスクリーン
 		SETTING_BGM ,		// BGM
 		SETTING_SE,			// SE
+		SETTING_BACK,
 		SETTING_BGM_TEXT,
 		SETTING_SE_TEXT,
 		SETTING_MAX

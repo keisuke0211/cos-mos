@@ -488,7 +488,9 @@ void CMode_Game::PauseMenu(void)
 
 		char data[TXT_MAX];		int nData = m_Pause.nBGMVolume * 5;
 		sprintf(data, "%d%s", nData, m_Pause.pSetting[SETTING_BGM_TEXT].Text);
-		m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
+			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::BGM, volume);
@@ -498,7 +500,9 @@ void CMode_Game::PauseMenu(void)
 
 		char data[TXT_MAX];		int nData = m_Pause.nSEVolume * 5;
 		sprintf(data, "%d%s", nData, m_Pause.pSetting[SETTING_SE_TEXT].Text);
-		m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
+			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::SE, volume);

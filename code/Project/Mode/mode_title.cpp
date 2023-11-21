@@ -418,14 +418,16 @@ void CMode_Title::SubTextCreate(void)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
 			else if (nText == SETTING_SE)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
+			else if (nText == SETTING_BACK)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 650.0f, 0.0f);
 			else if (nText == SETTING_BGM_TEXT)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * 3), 0.0f);
 			else if (nText == SETTING_SE_TEXT)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * ((nText - 2) + 2)), 0.0f);
 
-			if(nText >= SETTING_BGM_TEXT)
+			if(nText >= SETTING_BACK)
 				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-					pos, D3DXVECTOR2(480.0f, 60.0f),
+					pos, D3DXVECTOR2(200.0f, 80.0f),
 					"", CFont::FONT_ROND_B, &pFont, false, true);
 			else
 				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
@@ -690,6 +692,8 @@ void CMode_Title::MenuSelect(void)
 
 		char data[TXT_MAX];		int nData = m_Anime.nBGMVolume * 5;
 		sprintf(data, "%d%s", nData, m_Anime.pSetting[SETTING_BGM_TEXT].Text);
+
+		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
 		m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
@@ -700,6 +704,8 @@ void CMode_Title::MenuSelect(void)
 
 		char data[TXT_MAX];		int nData = m_Anime.nSEVolume * 5;
 		sprintf(data, "%d%s", nData, m_Anime.pSetting[SETTING_SE_TEXT].Text);
+
+		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
 		m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
