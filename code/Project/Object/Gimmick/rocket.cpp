@@ -27,7 +27,6 @@ const float CRocket::s_HeightDis = 40.0f;	// 高さの距離
 const int   CRocket::s_FadeModeCountMax = 240;	// フェードのモードのカウント最大
 const int   CRocket::s_Firerate = 4;		// 炎の出現割合
 const int   CRocket::s_Smokerate = 6;		// 煙の出現割合
-bool        CRocket::s_bReady = false;		
 int         CRocket::s_nCountPlayer = 0;	// プレイヤーのカウント
 bool		CRocket::s_bReady = false;		// 乗る準備クリア
 
