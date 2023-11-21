@@ -696,6 +696,11 @@ void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FormFont *p
 	// -- ¶¬ -----------------------
 	m_Info.FontType = FontType;
 
+	m_Info.nLetterPopCount = 0;
+	m_Info.nLetterPopCountX = 0;
+	m_Info.nAddLetter = 0;
+	m_Info.nNiCount = 0;
+
 	if (pFont != NULL){
 		m_Info.FontCol = pFont->col;
 		SetTextSize(pFont->fTextSize);
