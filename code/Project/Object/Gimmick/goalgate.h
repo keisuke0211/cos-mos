@@ -36,6 +36,10 @@ protected:
 
 private:
 
+	void StateUpdate(void);
+	void CountRate(float *CountRateX, float *CountRateY);
+
+
 	//========== [[[ •Ï”éŒ¾ ]]]
 	STATE m_state;					//í—Ş
 	int m_modelIdx;					//ƒ‚ƒfƒ‹”Ô†

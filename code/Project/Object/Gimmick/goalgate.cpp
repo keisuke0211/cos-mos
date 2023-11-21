@@ -11,6 +11,7 @@
 //マクロ定義
 #define MAX_COUNT		(60)	//最大カウント数
 #define ETR_CNT			(16)	//最大カウント数
+#define MAX_ROT_SPEED	(30.0f / (float) MAX_COUNT)	//最大回転速度
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -68,14 +69,32 @@ void CGoalGate::Uninit(void) {
 //========================================
 void CGoalGate::Update(void) {
 
+	StateUpdate();
+
+	float fCountRateX, fCountRateY;
+
+	CountRate(&fCountRateX, &fCountRateY);
+	
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false);
+}
+//========================================
+// 描画処理
+// Author:RYUKI FUJIWARA
+//========================================
+void CGoalGate::Draw(void) 
+{
+
+}
+//========================================
+// 状態更新処理
+// Author:RYUKI FUJIWARA
+//========================================
+void CGoalGate::StateUpdate(void)
+{
 	if (m_state != STATE::MAX)
 	{
 		m_rot.z += 0.05f;
 	}
-	else
-	{
-		m_rot.z += 0.35f;
-	}	
 
 	if (RNLib::Input().GetKeyTrigger(DIK_U))
 	{
@@ -108,6 +127,10 @@ void CGoalGate::Update(void) {
 	}
 	else if (m_state == STATE::MAX)
 	{
+		float CountRateRot = MAX_ROT_SPEED * CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt,MAX_COUNT);
+
+		m_rot.z += 0.6f - CountRateRot;
+
 		if (m_nCnt > 0)
 		{
 			m_nCnt--;
@@ -120,17 +143,21 @@ void CGoalGate::Update(void) {
 			{
 				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
 				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-			}	
+			}
 		}
 	}
-
-	float fCountRateX,fCountRateY;
-
+}
+//========================================
+// カウントレート処理
+// Author:RYUKI FUJIWARA
+//========================================
+void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
+{
 	if (m_bEntry == true)
 	{
 		//割合計算
-		fCountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
-		fCountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
+		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
+		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
 
 		if (m_bScale == false)
 		{
@@ -157,7 +184,7 @@ void CGoalGate::Update(void) {
 			if (m_nCntEtrX == ETR_CNT && m_nCntEtrY == ETR_CNT)
 			{
 				m_nCnt = MAX_COUNT;
-				m_bEntry = false;	
+				m_bEntry = false;
 				m_bScale = false;
 			}
 		}
@@ -165,17 +192,7 @@ void CGoalGate::Update(void) {
 	else
 	{
 		//割合計算
-		fCountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-		fCountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 	}
-	
-	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false);
-}
-//========================================
-// 描画処理
-// Author:RYUKI FUJIWARA
-//========================================
-void CGoalGate::Draw(void) 
-{
-
 }
