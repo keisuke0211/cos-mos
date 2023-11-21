@@ -26,8 +26,8 @@ public:
 	bool&     GetEditDollIsDrawModelVtxIdx     (void)                                 { return m_editInfo.isDrawModelVtxIdx; }
 	void      SetEditDollDrawModelVtxIdxBoneIdx(const UShort& drawModelVtxIdxBoneIdx) { m_editInfo.drawModelVtxIdxBoneIdx = drawModelVtxIdxBoneIdx; }
 	UShort&   GetEditDollDrawModelVtxIdxBoneIdx(void)                                 { return m_editInfo.drawModelVtxIdxBoneIdx; }
-	void      SetEditDollDrawModelVtxIdxNum    (const UShort& drawModelVtxIdxNum)     { m_editInfo.drawModelVtxIdxNum = drawModelVtxIdxNum; }
-	UShort&   GetEditDollDrawModelVtxIdxNum    (void)                                 { return m_editInfo.drawModelVtxIdxNum; }
+	void      SetEditDollDrawModelVtxIdxNum    (const short& drawModelVtxIdxNum)      { m_editInfo.drawModelVtxIdxNum = drawModelVtxIdxNum; }
+	short&    GetEditDollDrawModelVtxIdxNum    (void)                                 { return m_editInfo.drawModelVtxIdxNum; }
 	void      SetEditCamera                    (CCamera*& editCamera)                 { m_editInfo.editCamera = editCamera; }
 	CCamera*& GetEditCamera                    (void)                                 { return m_editInfo.editCamera; }
 
@@ -37,7 +37,7 @@ public:
 		CDoll3D* editDoll               = NULL;
 		bool     isDrawModelVtxIdx      = false;
 		UShort   drawModelVtxIdxBoneIdx = 0;
-		UShort   drawModelVtxIdxNum     = 0;
+		short    drawModelVtxIdxNum     = 0;
 		CCamera* editCamera             = NULL;
 	};
 	

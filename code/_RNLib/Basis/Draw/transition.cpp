@@ -11,7 +11,7 @@
 //****************************************
 #define BLACK_TIME     (10)
 #define HOLE_SCALE_MAX (6.0f)
-
+#define LOAD_TEX_DIS	(300.0f)
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| [公開]遷移クラスのメンバ関数
@@ -25,9 +25,11 @@ CTransition::CTransition() {
 
 	m_type = TYPE::NONE;
 	m_state = STATE::NONE;
+	m_fMove = 0.0f;
 	m_stateCounter = 0;
 	m_time = 0;
 	m_col = INITCOLOR;
+	m_nTexIdx = 0;
 }
 
 //========================================
@@ -41,7 +43,7 @@ CTransition::~CTransition() {
 // 初期化処理
 //========================================
 void CTransition::Init(void) {
-
+	m_nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\Load.png");
 }
 
 //========================================
@@ -142,7 +144,28 @@ bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) 
 void CTransition::FillScreen(const float& rate) {
 
 	// ポリゴン2Dの設置
-	RNLib::Polygon2D().Put(0, RNLib::Window().GetCenterPos(), 0.0f, true)
+	/*RNLib::Polygon2D().Put(1, RNLib::Window().GetCenterPos(), 0.0f, false)
 		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
-		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());
+		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());*/
+
+	// ポリゴン2Dの設置
+	RNLib::Polygon2D().Put(1, D3DXVECTOR3(0.0f + RNLib::Window().GetWidth() * rate, RNLib::Window().GetHeight() * 0.25f, 0.0f), 0.0f, true)
+		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+		->SetSize((RNLib::Window().GetWidth() * 2) * rate, RNLib::Window().GetHeight() / 2);
+
+	RNLib::Polygon2D().Put(1, D3DXVECTOR3(0.0f + RNLib::Window().GetWidth() * rate , RNLib::Window().GetHeight() * 0.25f, 0.0f), 3.16f, true)
+		->SetTex(m_nTexIdx)
+		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+		->SetSize(RNLib::Window().GetHeight() / 2, RNLib::Window().GetHeight() / 2);
+
+	// ポリゴン2Dの設置
+	RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetWidth() - RNLib::Window().GetWidth() * rate, RNLib::Window().GetHeight()* 0.75f, 0.0f), 0.0f, true)
+		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+
+		->SetSize((RNLib::Window().GetWidth() * 2) * rate, RNLib::Window().GetHeight() / 2);
+
+	RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetWidth() - RNLib::Window().GetWidth() * rate , RNLib::Window().GetHeight()* 0.75f, 0.0f), 0.0f, true)
+		->SetTex(m_nTexIdx)
+		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+		->SetSize(RNLib::Window().GetHeight() / 2, RNLib::Window().GetHeight() / 2);
 }

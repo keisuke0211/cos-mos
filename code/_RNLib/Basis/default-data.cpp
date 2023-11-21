@@ -41,16 +41,20 @@ const char* CDefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
 const char* CDefaultData::SETUP3D_PATHS[(int)SETUP3D::MAX] = {
 	"RNData\\SetUp3D\\Capsule.txt",
 };
+const char* CDefaultData::MOTION3D_PATHS[(int)MOTION3D::MAX] = {
+	"RNData\\Motion3D\\CapsuleStretch.txt",
+};
 
 //========================================
 // コンストラクタ
 //========================================
 CDefaultData::CDefaultData(void) {
 
-	for (int cntSound   = 0; cntSound   < (int)SOUND  ::MAX; m_soundIdxes  [cntSound  ] = NONEDATA, cntSound++  );
-	for (int cntTexture = 0; cntTexture < (int)TEXTURE::MAX; m_textureIdxes[cntTexture] = NONEDATA, cntTexture++);
-	for (int cntModel   = 0; cntModel   < (int)MODEL  ::MAX; m_modelIdxes  [cntModel  ] = NONEDATA, cntModel++  );
-	for (int cntSetUp3D = 0; cntSetUp3D < (int)SETUP3D::MAX; m_setUp3DIdxes[cntSetUp3D] = NONEDATA, cntSetUp3D++);
+	for (int cntSound    = 0; cntSound    < (int)SOUND   ::MAX; m_soundIdxes   [cntSound   ] = NONEDATA, cntSound++  );
+	for (int cntTexture  = 0; cntTexture  < (int)TEXTURE ::MAX; m_textureIdxes [cntTexture ] = NONEDATA, cntTexture++);
+	for (int cntModel    = 0; cntModel    < (int)MODEL   ::MAX; m_modelIdxes   [cntModel   ] = NONEDATA, cntModel++  );
+	for (int cntSetUp3D  = 0; cntSetUp3D  < (int)SETUP3D ::MAX; m_setUp3DIdxes [cntSetUp3D ] = NONEDATA, cntSetUp3D++);
+	for (int cntMotion3D = 0; cntMotion3D < (int)MOTION3D::MAX; m_motion3DIdxes[cntMotion3D] = NONEDATA, cntMotion3D++);
 }
 
 //========================================

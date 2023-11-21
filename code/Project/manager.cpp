@@ -48,6 +48,9 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// 使用するコントローラーの数を指定する
 	RNLib::Input().SetJoyPadNum(2);
+
+	// ブロックの読み込み処理(※主にモデルなど)
+	CBlock::Load();
 }
 
 //========================================

@@ -12,7 +12,8 @@
 //==========| CPartsクラスのメンバ変数
 //----------|---------------------------------------------------------------------
 //================================================================================
-int					CParts::s_nNumAll = 0;	
+int					CParts::s_nNumGetParts = 0;
+int					CParts::s_nNumAll = 0;
 const D3DXVECTOR3	CParts::PARTS_ADDROT = { 0.0f,0.02f,0.0f };
 
 //========================================
@@ -32,6 +33,7 @@ CParts::CParts(void) {
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	m_nEffctAnimCnt = 0;
+	s_nNumGetParts = 0;
 	s_nNumAll++;
 }
 
@@ -39,7 +41,7 @@ CParts::CParts(void) {
 // デストラクタ
 //========================================
 CParts::~CParts(void) {
-
+	s_nNumGetParts = 0;
 	s_nNumAll--;
 }
 
@@ -88,15 +90,6 @@ void CParts::Update(void) {
 	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false)
 		->SetCol(Color{ (UShort)(255 * fBrightness),(UShort)(255 * fBrightness),(UShort)(255 * fBrightness),255 })
 		->SetOutLine(true);
-
-	//int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
-	//m_nEffctAnimCnt++;
-
-	//if (m_nEffctAnimCnt % 6 == 1)
-	//{
-	//	Manager::EffectMgr()->EffectCreate(ParTex, m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-	//}
 }
 
 //---------------------------

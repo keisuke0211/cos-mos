@@ -64,9 +64,7 @@ void CRocketPartsUI::Update(void) {
 
 	if (m_bRocketStg == true)
 	{
-		CPlayer *pPlayer = CMode_Game::GetPlayer();
-
-		if (pPlayer->GetNumParts() > m_num)
+		if (CParts::GetNumAll() > m_num)
 		{
 			m_state[m_num++] = STATE::OBTAIN;
 		}

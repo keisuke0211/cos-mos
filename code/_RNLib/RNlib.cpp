@@ -344,6 +344,7 @@ namespace {
 
 		// 全オブジェクトマネージャーの更新処理
 		CObjectMgr::UpdateAllMgrs();
+		draw.Update();
 	}
 
 	//========================================
@@ -358,7 +359,6 @@ namespace {
 		_3DObject  .Update();
 		calculation.Update();
 		other	   .Update();
-		draw	   .Update();
 		mechanical .Update();
 
 		// 設定の更新処理
