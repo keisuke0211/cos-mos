@@ -343,7 +343,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 								static void LoadFaceVtxData(CSetUp3D::FaceVtxData& vtxData) {
 									while (RNLib::File().SearchLoop("}")) {
 										RNLib::File().Scan(CFile::SCAN::SHORT, &vtxData.boneIdx, "boneIdx");
-										RNLib::File().Scan(CFile::SCAN::SHORT, &vtxData.vtxIdx, "vtxIdx");
+										RNLib::File().Scan(CFile::SCAN::INT, &vtxData.vtxIdx, "vtxIdx");
 										RNLib::File().Scan(CFile::SCAN::POS2D, &vtxData.texPos, "texPos");
 									}
 								}
