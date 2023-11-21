@@ -1,0 +1,10 @@
+Motion3DFile
+loopTime 180
+loop 1
+boneMotionDatas{ 2
+	boneMotionData{ 0
+	}
+	boneMotionData{ 0
+	}
+}
+END

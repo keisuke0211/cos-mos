@@ -617,6 +617,13 @@ void CPlayer::CollisionToStageObject(void)
 				// “–‚½‚è”»’èˆÊ’u‚É‘O‰ñˆÊ’u‚ðÝ’è‚·‚é
 				switch (type) {
 					// ˆÚ“®°
+				case CStageObject::TYPE::BLOCK: {
+					CBlock* pBlock = (CBlock*)stageObj;
+					if (!pBlock->GetCollision())
+						continue;
+				}break;
+
+					// ˆÚ“®°
 				case CStageObject::TYPE::MOVE_BLOCK:{
 					CMoveBlock *pBlock = (CMoveBlock*)stageObj;
 					m_colliInfo.posOld = pBlock->GetPosOld();
