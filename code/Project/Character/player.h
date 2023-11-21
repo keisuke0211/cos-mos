@@ -198,6 +198,7 @@ private:
 	void Move(VECTOL vec);
 	void CtrlPos(Info *pInfo, VECTOL vec);	// ”ÍˆÍŠO‚Ì§Œä
 	void Swap(void);
+	void SwapAnimation(void);
 
 	void CollisionToStageObject(void);
 
