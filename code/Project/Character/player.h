@@ -66,6 +66,8 @@ public:
 		D3DXVECTOR3 move;         // 移動量
 		Color		color;		  // 色
 		int			nSwapAlpha;   // スワップマークのα値
+		float		fSwapPosY;    // スワップ先のＹ座標
+		float		fSwapMoveY;   // スワップ移動時の速度
 		bool		bGround;      // 地面に接しているか
 		bool		bGroundOld;   // 地面に接しているか(過去)
 		bool		bJump;        // ジャンプ
@@ -82,8 +84,8 @@ public:
 		bool		bLandPile;	  // 杭に乗っているかどうか
 		int			nModelIdx;    // モデル番号
 		WORLD_SIDE  side;         // どちらの世界に存在するか
-		int             Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
-		CInput::BUTTON  JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
+		int            Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
+		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
 	};
 
 	static const float SIZE_WIDTH;	// 横幅
@@ -175,11 +177,36 @@ public:
 	static int GetParticleIdx(PARTI_TEX tex) { return s_ParticleTex[(int)tex]; };
 
 private:
-	static int s_nSwapInterval; // 残りスワップインターバル
+	//****************************************************************************
+	//スワップアニメーションセットリスト
+	//順番：詳細【その演出にかかる時間変数】
+	//----------------------------------------------------------------------------
+	//プロローグ：各プレイヤーが光に包まれ、プレイヤーが見えなくなる【SWAP_START_INTERVAL】
+	//   中間   ：光は中心に集まりつつ、スワップ先まで直線で移動する【SWAP_MOVE_INTERVAL】
+	//エピローグ：スワップ先から光が飛び散りプレイヤーが顕現する	【SWAP_END_INTERVAL】
+	//****************************************************************************
+	//アニメーション構成
+	enum class SWAP_ANIM {
+		PROLOGUE = 0,	//プロローグ
+		MIDDLE,			//中間
+		EPILOGUE,		//エピローグ
+		MAX
+	};
+	static const int SWAP_PROLOGUE_INTERVAL = 10; //スワップ開始～移動までの時間
+	static const int SWAP_MIDDLE_INTERVAL   = 70; //移動～目的地到着までの時間
+	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
+	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
+	static SWAP_ANIM s_AnimState;			   //アニメーション構成
+	static		 int s_nSwapInterval;		   //残りスワップインターバル
+	static		 bool s_bSwapAnim;			   //スワップアニメーション中かどうか
+	void Swap(void);
+	void SwapAnimation(void);
+	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); //プロローグ処理
+	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);	//中間処理
+	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); //エピローグ処理
 
 	static const char *PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX];
 	static int s_ParticleTex[(int)PARTI_TEX::MAX];
-	static const int NORMAL_SWAP_ALPHA = 100;//通常時のスワップマークのα値
 
 	static const float MOVE_SPEED;		// 移動量
 	static const float MAX_MOVE_SPEED;	// 最大移動量
@@ -197,8 +224,6 @@ private:
 	void ActionControl(void);
 	void Move(VECTOL vec);
 	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
-	void Swap(void);
-	void SwapAnimation(void);
 
 	void CollisionToStageObject(void);
 
