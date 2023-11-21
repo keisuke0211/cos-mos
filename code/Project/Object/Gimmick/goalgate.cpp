@@ -10,6 +10,7 @@
 
 //マクロ定義
 #define MAX_COUNT		(60)	//最大カウント数
+#define ETR_CNT			(16)	//最大カウント数
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -33,6 +34,8 @@ CGoalGate::CGoalGate(void) {
 	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
+	m_bEntry = false;
+	m_bScale = false;
 }
 
 //========================================
@@ -65,11 +68,24 @@ void CGoalGate::Uninit(void) {
 //========================================
 void CGoalGate::Update(void) {
 
-	m_rot.z += 0.05f;
+	if (m_state != STATE::MAX)
+	{
+		m_rot.z += 0.05f;
+	}
+	else
+	{
+		m_rot.z += 0.35f;
+	}	
 
 	if (RNLib::Input().GetKeyTrigger(DIK_U))
 	{
 		m_state = STATE::MAX;
+	}
+	if (RNLib::Input().GetKeyTrigger(DIK_I))
+	{
+		m_bEntry = true;
+		m_nCntEtrX = ETR_CNT;
+		m_nCntEtrY = ETR_CNT * 0.5;
 	}
 
 	if (m_state == STATE::SMALL)
@@ -108,10 +124,52 @@ void CGoalGate::Update(void) {
 		}
 	}
 
-	//割合計算
-	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	float fCountRateX,fCountRateY;
 
-	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRate, m_scale.y * fCountRate, m_scale.z), false);
+	if (m_bEntry == true)
+	{
+		//割合計算
+		fCountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
+		fCountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
+
+		if (m_bScale == false)
+		{
+			m_nCntEtrX--;
+			m_nCntEtrY++;
+
+			if (m_nCntEtrX <= ETR_CNT * 0.5 && m_nCntEtrY >= ETR_CNT)
+			{
+				m_bScale = true;
+			}
+		}
+		else
+		{
+			if (m_nCntEtrX < ETR_CNT)
+			{
+				m_nCntEtrX++;
+				m_nCntEtrY--;
+			}
+			else
+			{
+				m_nCntEtrY++;
+			}
+
+			if (m_nCntEtrX == ETR_CNT && m_nCntEtrY == ETR_CNT)
+			{
+				m_nCnt = MAX_COUNT;
+				m_bEntry = false;	
+				m_bScale = false;
+			}
+		}
+	}
+	else
+	{
+		//割合計算
+		fCountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		fCountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	}
+	
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false);
 }
 //========================================
 // 描画処理

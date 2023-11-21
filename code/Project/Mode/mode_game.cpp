@@ -299,7 +299,7 @@ void CMode_Game::PauseCreate(void)
 
 	for (int nText = MENU_RESUME; nText < MENU_MAX; nText++) {
 		m_Menu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.LeftPos.x - 50, 150.0f + (100.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			D3DXVECTOR3(m_Pause.LeftPos.x - 20, 150.0f + (100.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
 			"", CFont::FONT_ROND_B, &pFont);
 	}
 }
@@ -510,37 +510,23 @@ void CMode_Game::InputText(void)
 //========================================
 void CMode_Game::TextRelease(TEXT type)
 {
-	switch (type)
-	{
-	case CMode_Game::TEXT_MENU:
+	// ÉÅÉjÉÖÅ[
+	if (type == TEXT_MENU || type == TEXT_ALL) {
 		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
 			if (m_Menu[nCnt] != NULL) {
 				m_Menu[nCnt]->Uninit();
 				m_Menu[nCnt] = NULL;
 			}
 		}
-		break;
-	case CMode_Game::TEXT_INPUT:
+	}
+
+	// ëÄçÏï˚ñ@
+	if (type == TEXT_INPUT || type == TEXT_ALL) {
 		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
 			if (m_RightText[nCnt] != NULL) {
 				m_RightText[nCnt]->Uninit();
 				m_RightText[nCnt] = NULL;
 			}
 		}
-		break;
-	case CMode_Game::TEXT_ALL:
-		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
-			if (m_Menu[nCnt] != NULL) {
-				m_Menu[nCnt]->Uninit();
-				m_Menu[nCnt] = NULL;
-			}
-		}
-		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
-			if (m_RightText[nCnt] != NULL) {
-				m_RightText[nCnt]->Uninit();
-				m_RightText[nCnt] = NULL;
-			}
-		}
-		break;
 	}
 }

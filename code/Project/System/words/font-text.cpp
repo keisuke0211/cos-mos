@@ -438,7 +438,6 @@ void CFontText::SetMove(D3DXVECTOR3 move)
 {
 	m_Info.TexMove = move;
 
-
 	for (int nWords = 0; nWords < m_Info.nLetterPopCount; nWords++)
 	{
 		if (m_Info.words[nWords] != NULL)

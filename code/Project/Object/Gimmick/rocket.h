@@ -87,4 +87,7 @@ private:
 	static const float s_RotAdd;
 	static const float s_MoveMag;
 	static const float s_MoveAdd;
+	static const float s_HeightDis;
+	static const int   s_Smokerate;
+	static const int   s_Firerate;
 };
