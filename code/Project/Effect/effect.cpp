@@ -19,9 +19,12 @@ int CEffect::m_nNumAll = 0;
 //========================================
 CEffect::CEffect(void)
 {
+	Manager::EffectMgr()->AddList(this);
+
 	m_Info.pos = INITD3DXVECTOR3;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
+	m_Info.scalemag = INITD3DXVECTOR3;
 	m_Info.rot =INITD3DXVECTOR3;
 	m_Info.col = INITCOLOR;
 	m_nNumAll++;
@@ -32,6 +35,8 @@ CEffect::CEffect(void)
 //========================================
 CEffect::~CEffect()
 {
+	Manager::EffectMgr()->SubList(this);
+
 	m_nNumAll--;
 }
 
@@ -79,6 +84,9 @@ void CEffect::Update(void)
 	m_Info.rot += m_Info.spin * fCountRate;
 
 	m_Info.pos += m_Info.move;
+
+	m_Info.scale.x *= m_Info.scalemag.x;
+	m_Info.scale.y *= m_Info.scalemag.y;
 
 	if (m_Info.nCount <= 0)
 	{

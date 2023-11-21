@@ -15,7 +15,8 @@
 //==========| CMode_Titleクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
-bool CMode_Title::s_bStageSelect = true;
+const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\TitleFile.txt";
+bool CMode_Title::s_bStageSelect = false;
 
 //========================================
 // コンストラクタ
@@ -29,11 +30,7 @@ CMode_Title::CMode_Title(void) {
 		m_TexIdx[nCnt] = 0;
 	}
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		m_MenuPos[nCnt] = INITD3DXVECTOR3;
-	}
-
+	Title = TITLE_TITLE;
 	m_nSelect = 0;
 	m_nOldSelect = 0;
 	m_nPlanetIdx = 0;
@@ -42,8 +39,10 @@ CMode_Title::CMode_Title(void) {
 	m_nSelect = 0;
 	m_nOldSelect = 0;
 	m_PlanetType = NULL;
-	m_bMenuAnime = false;
 	m_bBackMode = false;
+
+	m_Anime.pOperation = NULL;
+	m_Anime.pSetting = NULL;
 }
 
 //========================================
@@ -54,15 +53,15 @@ CMode_Title::~CMode_Title(void) {
 
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
 	{
-		if (m_Words[nCnt] != NULL)
+		if (m_TITLE[nCnt] != NULL)
 		{
-			m_Words[nCnt]->Uninit();
-			m_Words[nCnt] = NULL;
+			m_TITLE[nCnt]->Uninit();
+			m_TITLE[nCnt] = NULL;
 		}
-		if (m_WordsShadow[nCnt] != NULL)
+		if (m_TitleShadow[nCnt] != NULL)
 		{
-			m_WordsShadow[nCnt]->Uninit();
-			m_WordsShadow[nCnt] = NULL;
+			m_TitleShadow[nCnt]->Uninit();
+			m_TitleShadow[nCnt] = NULL;
 		}
 	}
 
@@ -80,30 +79,29 @@ CMode_Title::~CMode_Title(void) {
 void CMode_Title::Init(void) {
 	CMode::Init();
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		m_Menu[nCnt] = {NULL};
+	// テキストの初期化
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)m_pMenu[nCnt] = { NULL };
+	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++)m_pSubMenu[nCnt] = { NULL };
+	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
+		m_bMove[nCnt] = false; m_TITLE[nCnt] = NULL; m_TitleShadow[nCnt] = NULL;
 	}
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-	{
-		m_bMove[nCnt] = false;
-		m_Words[nCnt] = NULL;
-		m_WordsShadow[nCnt] = NULL;
-	}
+
+	// テキスト読込
+	TextLoad();
+
+	// ステージ読込
+	StageLoad();
 
 	if (s_bStageSelect)
 	{
-		SelectCreate();
+		SwapMode(TITLE_SELECT);
 		s_bStageSelect = false;
 	}
-	else
-	{
-		SwapMode(TITLE_PLANET);
-	}
+	else if(!s_bStageSelect)
+		// モード設定
+		SwapMode(TITLE_TITLE);
 
-	m_bMenuAnime = false;
-	m_bBackMode = false;
-	m_bBackAnime = false;
+	
 
 	// テクスチャ
 	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
@@ -111,11 +109,6 @@ void CMode_Title::Init(void) {
 	m_BgPos[2] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1460.0f, 0.0f);
 	m_BgPos[3] = D3DXVECTOR3(50, 140.0f, 0.0f);
 	m_nSelect = 0;
-
-	// メニュー
-	m_MenuPos[0] = D3DXVECTOR3(280.0f, 200.0f, 1.0f);
-	m_MenuPos[1] = D3DXVECTOR3(280.0f, 300.0f, 1.0f);
-	m_MenuPos[2] = D3DXVECTOR3(280.0f, 400.0f, 1.0f);
 
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Planet\\blue.png");
@@ -142,14 +135,7 @@ void CMode_Title::Init(void) {
 void CMode_Title::Uninit(void) {
 	CMode::Uninit();
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		if (m_Menu[nCnt] != NULL)
-		{
-			m_Menu[nCnt]->Uninit();
-			m_Menu[nCnt] = NULL;
-		}
-	}
+	TextRelease(TEXT_ALL);
 }
 
 //========================================
@@ -160,47 +146,38 @@ void CMode_Title::Update(void) {
 	CMode::Update();
 
 	// 各モードの処理
-	if (Title == TITLE_PLANET)
-		PlanetAnime();
-	else if (Title == TITLE_TITLE)
+	if (Title == TITLE_TITLE)
 		TitleAnime();
-	else if (Title == TITLE_OUTSET && m_bBackMode)
-		TitleAnime();
-	else if (Title == TITLE_MENU_ANIME)
+	else if (Title == TITLE_MENU) {
+		if (!m_Anime.bClose)MenuSelect();
 		MenuAnime();
-	else if (Title == TITLE_MENU)
-		Menu();
+	}
 	else if (Title == TITLE_SELECT)
 		StageSelect();
+	else if (Title == TITLE_NEXT)
+		return;
 
 	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[0], 0.0f, false)
 		->SetSize(1280.0f, 720.0f)
 		->SetCol(Color{ 255,255,255,255 })
 		->SetTex(m_TexIdx[0]);
 
-	if (Title == TITLE_OUTSET || Title == TITLE_MENU || Title == TITLE_SELECT)
-	{
-		if(Title == TITLE_OUTSET)
-			m_PlanetAngle += -0.002f;
-		else if (Title == TITLE_MENU)
-			m_PlanetAngle += -0.002f;
-		else if(Title == TITLE_SELECT)
-			m_PlanetAngle += -0.002f;
+	// メニューの背景
+	if (Title == TITLE_MENU){
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(m_Anime.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+			->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
+			->SetCol(Color{ 150,150,150,150 });
 
-		FloatLoopControl(&m_PlanetAngle, D3DX_PI, -D3DX_PI);
-	}
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+			->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
+			->SetCol(Color{ 150,150,150,150 });
 
-	if (Title <= TITLE_MENU)
-	{
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[1], m_PlanetAngle, false)
-			->SetSize(1300.0f, 1300.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(m_TexIdx[1]);
-
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[2], m_PlanetAngle, false)
-			->SetSize(600.0f, 600.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(m_TexIdx[2]);
+		if (m_Anime.nSelect == MENU_CONTROLLER || m_Anime.nSelect == MENU_SERRING)
+		{
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x, 400.0f, 100.0f), 0.0f, false)
+				->SetSize(500.0f, 600.0f)
+				->SetTex(m_Anime.BoxTex);
+		}
 	}
 
 	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
@@ -217,7 +194,10 @@ void CMode_Title::Update(void) {
 			switch (m_nSelect)
 			{
 			case MENU_GAME:
-				SelectCreate();
+				m_Anime.bClose = true;
+				m_Anime.LeftTargetPos *= -1;
+				m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+				m_Anime.nCntLeftAnime = 0;
 				break;
 			case MENU_SERRING:
 				break;
@@ -274,28 +254,6 @@ void CMode_Title::ProcessState(const PROCESS process) {
 }
 
 //========================================
-// 惑星アニメーション
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Title::PlanetAnime(void)
-{
-	if (m_BgPos[1].y >= 1000.0f)
-	{
-		D3DXVECTOR3 move = INITD3DXVECTOR3;
-
-		move.y = -25.0f;
-
-		m_BgPos[1] += move;
-		if (m_BgPos[1].y <= 1000.0f)
-		{
-			move.y = 0.0f;
-			m_BgPos[1].y = 1000;
-			SwapMode(TITLE_TITLE);
-		}
-	}
-}
-
-//========================================
 // タイトルアニメーション
 // Author:KEISUKE OTONO
 //========================================
@@ -303,163 +261,31 @@ void CMode_Title::TitleAnime(void)
 {
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
 	{
-		if (m_Words[nCnt] != NULL)
+		if (m_TITLE[nCnt] != NULL)
 		{
-			D3DXVECTOR3 pos = m_Words[nCnt]->GetPos();
+			D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
 
-			if (!m_bBackMode)
-			{
-				if (pos.y <= 210.0f && m_bMove[nCnt])
-				{
-					D3DXVECTOR3 move;
+			if (pos.y <= 210.0f && m_bMove[nCnt]) {
+				D3DXVECTOR3 move;
 
-					move.y = 15.0f;
+				move.y = 15.0f;
 
-					m_Words[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-					m_WordsShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+				m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+				m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
 
-					if (pos.y >= 200.0f)
-					{
-						move.y = 0.0f;
-						pos.y = 200;
+				if (pos.y >= 200.0f) {
+					move.y = 0.0f;
+					pos.y = 200;
 
-						m_Words[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-						m_WordsShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+					m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+					m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
 
-						if (nCnt == WORDS_MAX - 1)
-						{
-							SwapMode(TITLE_OUTSET);
-						}
+					if (nCnt == WORDS_MAX - 1)
+						SwapMode(TITLE_OUTSET);
 
-					}
-					else if (pos.y >= 20 && nCnt != WORDS_MAX - 1 && !m_bMove[nCnt + 1])
-					{
-						m_bMove[nCnt + 1] = true;
-					}
 				}
-			}
-		}
-
-		if (m_bBackMode)
-		{
-			bool bReset1 = false;
-			bool bReset2 = false;
-
-			if (m_BgPos[1].x >= -640.0f)
-			{
-				D3DXVECTOR3 move = INITD3DXVECTOR3;
-				move.x = -5.0f;
-
-				m_BgPos[1] += move;
-
-				if (m_BgPos[1].x <= -640.0f)
-				{
-					move.x = 0.0f;
-					m_BgPos[1].x = -640.0f;
-					bReset1 = true;
-				}
-			}
-			if (m_BgPos[2].y >= -250.0f)
-			{
-				D3DXVECTOR3 move01 = INITD3DXVECTOR3;
-				move01.y = -3.0f;
-
-				m_BgPos[2] += move01;
-
-				if (m_BgPos[2].y <= -250.0f)
-				{
-					move01.y = 0.0f;
-					m_BgPos[2].y = -250.0f;
-					bReset2 = true;
-				}
-			}
-
-			if (bReset1 && bReset2)
-			{
-				m_bBackMode = false;
-				SwapMode(TITLE_PLANET);
-			}
-		}
-	}
-}
-
-//========================================
-// メニュー演出
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Title::MenuAnime(void)
-{
-	if (!m_bMenuAnime)
-	{
-		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-		{
-			if (m_Words[nCnt] != NULL)
-			{
-				D3DXVECTOR3 pos = m_Words[nCnt]->GetPos();
-
-				if (pos.y >= -60.0f && m_bMove[nCnt])
-				{
-					D3DXVECTOR3 move;
-
-					move.y = -15.0f;
-
-					m_Words[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-					m_WordsShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-				}
-			}
-		}
-
-		if (m_Menu[0] != NULL)
-		{
-			m_Menu[0]->Uninit();
-			m_Menu[0] = NULL;
-		}
-
-		if (m_BgPos[1].y <= 1460.0f)
-		{
-			D3DXVECTOR3 move = INITD3DXVECTOR3;
-			move.y = 25.0f;
-
-			m_BgPos[1] += move;
-			if (m_BgPos[1].y >= 1460.0f)
-			{
-				move.y = 0.0f;
-				m_BgPos[1].y = 1460;
-				m_bMenuAnime = true;
-
-				m_BgPos[1] = D3DXVECTOR3(-640.0f, 600.0f, 0.0f);
-				m_BgPos[2] = D3DXVECTOR3(1240.0f, -250.0f, 0.0f);
-			}
-		}
-	}
-	else if (m_bMenuAnime)
-	{
-		if (m_BgPos[1].x <= 120.0f)
-		{
-			D3DXVECTOR3 move = INITD3DXVECTOR3;
-			move.x = 40.0f;
-
-			m_BgPos[1] += move;
-
-			if (m_BgPos[1].x >= 120.0f)
-			{
-				move.x = 0.0f;
-				m_BgPos[1].x = 120.0f;
-
-				MenuCreate();
-			}
-		}
-		if (m_BgPos[2].y <= 0)
-		{
-			D3DXVECTOR3 move01 = INITD3DXVECTOR3;
-			move01.y = 10.0f;
-
-			m_BgPos[2] += move01;
-
-			if (m_BgPos[2].y >= 0.0f)
-			{
-				move01.y = 0.0f;
-				m_BgPos[2].y = 0.0f;
+				else if (pos.y >= 20 && nCnt != WORDS_MAX - 1 && !m_bMove[nCnt + 1])
+					m_bMove[nCnt + 1] = true;
 			}
 		}
 	}
@@ -471,42 +297,192 @@ void CMode_Title::MenuAnime(void)
 //========================================
 void CMode_Title::MenuCreate(void)
 {
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),45.0f,5,10,-1};// 45
+	m_Anime.LeftPos = D3DXVECTOR3(-340.0f, 0.0f, 0.0f);
+	m_Anime.RightPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+	m_Anime.LeftTargetPos = D3DXVECTOR3(280.0f, 0.0f, 0.0f);
+	m_Anime.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+	m_Anime.nCntLeftAnime = 0;
+	m_Anime.nCntRightAnime = 0;
+	m_Anime.nSelect = 0;
+	m_Anime.bRightMove = false;
+	m_Anime.bRightDisp = false;
+	m_Anime.nRightTextType = 0;
+	m_Anime.bMenu = false;
+	m_Anime.bClose = false;
+
+	m_Anime.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
+
+	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 	FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
-	SwapMode(TITLE_MENU);
+	for (int nText = MENU_GAME; nText < MENU_MAX; nText++) {
+		m_pMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			D3DXVECTOR3(m_Anime.LeftPos.x - 20, 150.0f + (100.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+			"", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
+	}
+}
 
-	m_Menu[0] = CFontText::Create(
-		CFontText::BOX_NORMAL_GRAY, m_MenuPos[0],D3DXVECTOR2(360.0f, 80.0f),// 360,100
-		"ゲーム",CFont::FONT_ROND_B,&pFont,false,true,&pShadow);
+//========================================
+// サブテキストの生成
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Title::SubTextCreate(void)
+{
+	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
-	m_Menu[1] = CFontText::Create(
-		CFontText::BOX_NORMAL_GRAY, m_MenuPos[1], D3DXVECTOR2(360.0f, 80.0f),
-		"オプション", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
+	if (m_pSubMenu != NULL)
+		TextRelease(TEXT_RIGHT);
 
-	m_Menu[2] = CFontText::Create(
-		CFontText::BOX_NORMAL_GRAY, m_MenuPos[2], D3DXVECTOR2(360.0f, 80.0f),
-		"ゲームをやめる", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
+	if (m_Anime.nSelect == MENU_CONTROLLER) {
+		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
+			CFontText::BOX_NORMAL_BLUE, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+			"", CFont::FONT_ROND_B, &pFont);
+
+		for (int nText = 1; nText < m_Anime.OperationMax; nText++) {
+			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+				D3DXVECTOR3(m_Anime.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+				"", CFont::FONT_ROND_B, &pFont, false, false);
+		}
+	}
+	else if (m_Anime.nSelect == MENU_SERRING) {
+		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
+		CFontText::BOX_NORMAL_BLUE, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+		"", CFont::FONT_ROND_B, &pFont);
+
+		for (int nText = 1; nText < m_Anime.SettingMax; nText++) {
+		m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+		D3DXVECTOR3(m_Anime.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+		"", CFont::FONT_ROND_B, &pFont, false, false);
+		}
+	}
+
+	m_Anime.nRightTextType = m_Anime.nSelect;
+}
+
+//========================================
+// メニュー演出
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Title::MenuAnime(void)
+{
+	// 左画面のアニメーション
+	if (!m_Anime.bMenu || m_Anime.bClose)
+	{
+		D3DXVECTOR3 move = INITD3DXVECTOR3;
+		move.x = (m_Anime.LeftTargetPos.x - m_Anime.LeftPos.x) * 0.3f;
+
+		m_Anime.LeftPos.x += move.x;
+		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)		{
+			if (m_pMenu[nCnt] != NULL)
+				m_pMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+		}
+
+		if (++m_Anime.nCntLeftAnime == PAUSE_LEFT_ANIME) {
+			m_Anime.LeftPos = m_Anime.LeftTargetPos;
+			m_Anime.nCntLeftAnime = 0;
+
+			if (!m_Anime.bClose) {
+				m_Anime.bMenu = true;
+
+				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+				m_pMenu[0]->Regeneration("ゲーム", CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_pMenu[1]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_pMenu[2]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_pMenu[3]->Regeneration("やめる", CFont::FONT_ROND_B, &pFont, &pShadow);
+			}
+			else if (m_Anime.bClose) {
+
+				if (m_bBackMode)
+					SwapMode(TITLE_TITLE);
+				else if (!m_bBackMode){
+					TextRelease(TEXT_ALL);
+					SwapMode(TITLE_SELECT);
+				}
+			}
+		}
+	}
+
+	// 右画面のアニメーション
+	if (m_Anime.bRightMove || (m_Anime.bClose && m_Anime.bRightDisp))
+	{
+		D3DXVECTOR3 move = INITD3DXVECTOR3;
+		move.x = (m_Anime.RightTargetPos.x - m_Anime.RightPos.x) * 0.3f;
+
+		m_Anime.RightPos.x += move.x;
+		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+			if (m_pSubMenu[nCnt] != NULL) {
+				m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+			}
+		}
+
+		if (++m_Anime.nCntRightAnime == PAUSE_RIGHT_ANIME) {
+			m_Anime.RightPos = m_Anime.RightTargetPos;
+			m_Anime.bRightMove = false;
+			m_Anime.nCntRightAnime = 0;
+
+			if (!m_Anime.bRightDisp)
+			{
+				m_Anime.bRightDisp = true;
+				m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+				// テキストの再生成
+				if (m_Anime.nSelect == MENU_CONTROLLER) {
+					for (int nText = 0; nText < m_Anime.OperationMax; nText++) {
+						if (m_pSubMenu[nText] != NULL)
+							m_pSubMenu[nText]->Regeneration(m_Anime.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
+					}
+				}
+				if (m_Anime.nSelect == MENU_SERRING) {
+					for (int nText = 0; nText < m_Anime.SettingMax; nText++) {
+						if (m_pSubMenu[nText] != NULL)
+							m_pSubMenu[nText]->Regeneration(m_Anime.pSetting[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
+					}
+				}
+			}
+			else if (m_Anime.bRightDisp && !m_Anime.bClose) {
+				m_Anime.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+				m_Anime.bRightDisp = false;
+				TextRelease(TEXT_RIGHT);
+			}
+		}
+	}
+
+	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
+	{
+		if (m_TITLE[nCnt] != NULL) {
+			D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
+
+			if (pos.y >= -60.0f && m_bMove[nCnt]) {
+				D3DXVECTOR3 move;
+
+				move.y = -20.0f;
+
+				m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+				m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+			}
+		}
+	}
 }
 
 //========================================
 // メニュー
 // Author:KEISUKE OTONO
 //========================================
-void CMode_Title::Menu(void)
+void CMode_Title::MenuSelect(void)
 {
-	// 色
+	// 選択・非選択
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
-		if (m_Menu[nCnt] != NULL)
-		{
-			if (nCnt == m_nSelect){
-				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
-				//m_Menu[nCnt]->SetTextColor(D3DXCOLOR(240,255,0,255));
+		if (m_pMenu[nCnt] != NULL) {
+			if (nCnt == m_Anime.nSelect) {
+				m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
 			}
-			else{
-				m_Menu[nCnt]->SetTextColor(INITD3DCOLOR);
-				m_Menu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
+			else {
+				m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 			}
 		}
 	}
@@ -515,34 +491,41 @@ void CMode_Title::Menu(void)
 	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
 		m_bBackMode = true;
-		SwapMode(TITLE_OUTSET);
+		m_Anime.bClose = true;
+		m_Anime.LeftTargetPos *= -1;
+		m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+		m_Anime.nCntLeftAnime = 0;
 		return;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT,CInput::INPUT_ANGLE::UP))
+	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::UP))
 	{
-		m_nSelect--;
+		m_Anime.nSelect--;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::DOWN))
 	{
-		m_nSelect++;
+		m_Anime.nSelect++;
 	}
 
+	// アニメーション
+	if ((m_Anime.nSelect == MENU_CONTROLLER || m_Anime.nSelect == MENU_SERRING ) && !m_Anime.bRightMove && !m_Anime.bRightDisp) {
+
+		m_Anime.bRightMove = true;
+		SubTextCreate();
+	}
+	else if (m_Anime.nSelect != m_Anime.nRightTextType && !m_Anime.bRightMove && m_Anime.bRightDisp) {
+
+		TextRelease(TEXT_RIGHT);
+		m_Anime.bRightMove = true;
+	}
 	// ループ制御
-	IntLoopControl(&m_nSelect, MENU_MAX, 0);
-
-	m_BgPos[3].y = m_MenuPos[m_nSelect].y;
-
-	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[3], 0.0f, false)
-		->SetSize(75.0f, 75.0f)
-		->SetCol(Color{ 255,255,255,255 })
-		->SetTex(m_TexIdx[3]);
+	IntLoopControl(&m_Anime.nSelect, MENU_MAX, 0);
 }
 
 //========================================
 // ステージ選択の生成
 // Author:KEISUKE OTONO
 //========================================
-void CMode_Title::SelectCreate(void)
+void CMode_Title::StageLoad(void)
 {
 	Manager::StgEd()->Uninit();
 	Manager::StgEd()->FileLoad();
@@ -559,8 +542,6 @@ void CMode_Title::SelectCreate(void)
 		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
 		sprintf(m_PlanetType[nCnt].Text, aStgName);
 	}
-
-	SwapMode(TITLE_SELECT);
 }
 
 //========================================
@@ -619,7 +600,7 @@ void CMode_Title::StageSelect(void)
 	// -- メニュー選択 ---------------------------
 	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
-		TextClear();
+		TextRelease(TEXT_MENU);
 		SwapMode(TITLE_MENU_ANIME);
 		return;
 	}
@@ -656,10 +637,10 @@ void CMode_Title::StageSelect(void)
 		{
 			m_nOldSelect = m_nSelect;
 
-			m_Menu[1]->Uninit();
-			m_Menu[1] = NULL;
+			m_pMenu[1]->Uninit();
+			m_pMenu[1] = NULL;
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
-			m_Menu[1] = CFontText::Create(
+			m_pMenu[1] = CFontText::Create(
 				CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
 				Manager::StgEd()->GetType()[m_nPlanetIdx].StageType[m_nSelect].aName, CFont::FONT_ROND_B, &pFont);
 		}
@@ -668,10 +649,10 @@ void CMode_Title::StageSelect(void)
 			m_nOldnPlanet = m_nPlanetIdx;
 			m_PlanetAngle = 0.0f;
 
-			m_Menu[0]->Uninit();
-			m_Menu[0] = NULL;
+			m_pMenu[0]->Uninit();
+			m_pMenu[0] = NULL;
 			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
-			m_Menu[0] = CFontText::Create(
+			m_pMenu[0] = CFontText::Create(
 				CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
 				m_PlanetType[m_nPlanetIdx].Text, CFont::FONT_ROND_B, &pFont,true);
 		}
@@ -685,75 +666,59 @@ void CMode_Title::StageSelect(void)
 //========================================
 void CMode_Title::SwapMode(TITLE aTitle)
 {
+	Title = aTitle;
+
 	switch (aTitle)
 	{
-	case CMode_Title::TITLE_PLANET:
-	{
-		TextClear();
-		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-		{
-			m_bMove[nCnt] = false;
-		}
-
-		m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1360.0f, 0.0f);
-	}
-		break;
 	case CMode_Title::TITLE_TITLE:
 	{
+		TextRelease(TEXT_TITLE);
 		{
-			m_WordsShadow[0] = CWords::Create("Ｃ", D3DXVECTOR3(786.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_WordsShadow[1] = CWords::Create("Ｏ", D3DXVECTOR3(946.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_WordsShadow[2] = CWords::Create("Ｓ", D3DXVECTOR3(1096.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_WordsShadow[3] = CWords::Create("／", D3DXVECTOR3(1246.0f, -54.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_WordsShadow[4] = CWords::Create("Ｍ", D3DXVECTOR3(1406.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_WordsShadow[5] = CWords::Create("Ｏ", D3DXVECTOR3(1566.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_WordsShadow[6] = CWords::Create("Ｓ", D3DXVECTOR3(1706.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[0] = CWords::Create("Ｃ", D3DXVECTOR3(786.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[1] = CWords::Create("Ｏ", D3DXVECTOR3(946.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[2] = CWords::Create("Ｓ", D3DXVECTOR3(1096.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[3] = CWords::Create("／", D3DXVECTOR3(1246.0f, -54.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TitleShadow[4] = CWords::Create("Ｍ", D3DXVECTOR3(1406.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[5] = CWords::Create("Ｏ", D3DXVECTOR3(1566.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[6] = CWords::Create("Ｓ", D3DXVECTOR3(1706.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 		}
 		{
-			m_Words[0] = CWords::Create("Ｃ", D3DXVECTOR3(780.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_Words[1] = CWords::Create("Ｏ", D3DXVECTOR3(940.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_Words[2] = CWords::Create("Ｓ", D3DXVECTOR3(1090.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_Words[3] = CWords::Create("／", D3DXVECTOR3(1234.0f, -66.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_Words[4] = CWords::Create("Ｍ", D3DXVECTOR3(1400.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_Words[5] = CWords::Create("Ｏ", D3DXVECTOR3(1560.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_Words[6] = CWords::Create("Ｓ", D3DXVECTOR3(1700.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[0] = CWords::Create("Ｃ", D3DXVECTOR3(780.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[1] = CWords::Create("Ｏ", D3DXVECTOR3(940.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[2] = CWords::Create("Ｓ", D3DXVECTOR3(1090.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[3] = CWords::Create("／", D3DXVECTOR3(1234.0f, -66.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[4] = CWords::Create("Ｍ", D3DXVECTOR3(1400.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[5] = CWords::Create("Ｏ", D3DXVECTOR3(1560.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[6] = CWords::Create("Ｓ", D3DXVECTOR3(1700.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
 		}
 		m_bMove[0] = true;
 	}
 		break;
 	case CMode_Title::TITLE_OUTSET:
 	{
-		if (!m_bBackMode)
-		{
-			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),70.0f,5,10,-1, };// 45
-			FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
+		TextRelease(TEXT_MENU);
+		TextRelease(TEXT_RIGHT);
 
-			m_Menu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(230.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-				"ボタンを押して始めてね", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
-		}
-		else if (m_bBackMode)
-		{
-			TextClear();
-			m_bBackAnime = false;
-		}
+		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
+		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
+
+		m_pMenu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+			"ボタンを押してねД", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 	}
 		break;
 	case CMode_Title::TITLE_MENU_ANIME:
 	{
-		m_bMenuAnime = false;
-		m_BgPos[1] = D3DXVECTOR3(-640.0f, 1000.0f, 0.0f);
-		m_BgPos[2] = D3DXVECTOR3(1240.0f, -250.0f, 0.0f);
-	}
-		break;
-	case CMode_Title::TITLE_MENU:
-	{
-		TextClear();
-		m_nSelect = 0;
+		TextRelease(TEXT_MENU);
+
+		// メニュー生成
+		MenuCreate();
+		MenuAnime();
+
+		Title = TITLE_MENU;
 	}
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		TextClear();
 		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;
@@ -762,50 +727,154 @@ void CMode_Title::SwapMode(TITLE aTitle)
 		s_bStageSelect = false;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
-		m_Menu[0] = CFontText::Create(
+		m_pMenu[0] = CFontText::Create(
 			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
 			m_PlanetType[0].Text, CFont::FONT_ROND_B, &pFont);
 
-		m_Menu[1] = CFontText::Create(
+		m_pMenu[1] = CFontText::Create(
 			CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
 			Manager::StgEd()->GetType()[0].StageType[0].aName, CFont::FONT_ROND_B, &pFont);
 	}
 		break;
 	case CMode_Title::TITLE_NEXT:
-		TextClear();
+		TextRelease(TEXT_ALL);
 		break;
 	}
+}
 
-	Title = aTitle;
+//========================================
+// テキスト読込
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Title::TextLoad(void)
+{
+	int nCntPlanet = 0;
+	char aDataSearch[TXT_MAX];	// データ検索用
+
+	// ファイルの読み込み
+	FILE *pFile = fopen(TEXT_FILE, "r");
+
+	if (pFile == NULL)
+	{// 種類毎の情報のデータファイルが開けなかった場合、
+	 //処理を終了する
+		return;
+	}
+
+	// ENDが見つかるまで読み込みを繰り返す
+	while (1)
+	{
+		fscanf(pFile, "%s", aDataSearch);	// 検索
+
+		if (!strcmp(aDataSearch, "END"))
+		{// 読み込みを終了
+			fclose(pFile);
+
+			break;
+		}
+		if (aDataSearch[0] == '#')
+		{// 折り返す
+			continue;
+		}
+
+		if (!strcmp(aDataSearch, "SetOperation"))
+		{
+			int nText = 0;
+			while (1)
+			{
+				fscanf(pFile, "%s", aDataSearch);	// 検索
+				if (!strcmp(aDataSearch, "EndOperation")){
+					break;
+				}
+				if (!strcmp(aDataSearch, "TextMax")){
+					int nMax = -1;
+
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%d", &nMax);
+
+					if (nMax <= 0)
+						nMax = 0;
+
+					m_Anime.OperationMax = nMax;
+					m_Anime.pOperation = new Operation[nMax];
+					assert(m_Anime.pOperation != NULL);
+				}
+				if (!strcmp(aDataSearch, "Text")){
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%s", &m_Anime.pOperation[nText]);
+					nText++;
+				}
+			}
+		}
+		else if (!strcmp(aDataSearch, "SetSetting"))
+		{
+			int nText = 0;
+			while (1)
+			{
+				fscanf(pFile, "%s", aDataSearch);	// 検索
+				if (!strcmp(aDataSearch, "EndSetting")) {
+					break;
+				}
+				if (!strcmp(aDataSearch, "TextMax")) {
+					int nMax = -1;
+
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%d", &nMax);
+
+					if (nMax <= 0)
+						nMax = 0;
+
+					m_Anime.SettingMax = nMax;
+					m_Anime.pSetting = new Setting[nMax];
+					assert(m_Anime.pSetting != NULL);
+				}
+				if (!strcmp(aDataSearch, "Text")) {
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%s", &m_Anime.pSetting[nText]);
+					nText++;
+				}
+			}
+		}
+	}
 }
 
 //========================================
 // テキスト削除
 // Author:KEISUKE OTONO
 //========================================
-void CMode_Title::TextClear(void)
+void CMode_Title::TextRelease(TEXT type)
 {
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-	{
-		if (m_Words[nCnt] != NULL)
-		{
-			m_Words[nCnt]->Uninit();
-			m_Words[nCnt] = NULL;
-		}
+	// タイトル
+	if (type == TEXT_TITLE || type == TEXT_ALL) {
+		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++){
+			if (m_TITLE[nCnt] != NULL){
+				m_TITLE[nCnt]->Uninit();
+				m_TITLE[nCnt] = NULL;
+			}
 
-		if (m_WordsShadow[nCnt] != NULL)
-		{
-			m_WordsShadow[nCnt]->Uninit();
-			m_WordsShadow[nCnt] = NULL;
+			if (m_TitleShadow[nCnt] != NULL){
+				m_TitleShadow[nCnt]->Uninit();
+				m_TitleShadow[nCnt] = NULL;
+			}
 		}
 	}
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		if (m_Menu[nCnt] != NULL)
-		{
-			m_Menu[nCnt]->Uninit();
-			m_Menu[nCnt] = NULL;
+	// メニュー
+	if (type == TEXT_MENU || type == TEXT_ALL) {
+		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
+			if (m_pMenu[nCnt] != NULL) {
+				m_pMenu[nCnt]->Uninit();
+				m_pMenu[nCnt] = NULL;
+			}
+		}
+	}
+
+	// 操作方法と設定
+	if (type == TEXT_RIGHT || type == TEXT_ALL) {
+		for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++) {
+			if (m_pSubMenu[nCnt] != NULL) {
+				m_pSubMenu[nCnt]->Uninit();
+				m_pSubMenu[nCnt] = NULL;
+			}
 		}
 	}
 }

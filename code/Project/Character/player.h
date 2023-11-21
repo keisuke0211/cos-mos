@@ -14,6 +14,7 @@ class CRocket;
 class CRoadTripLaser;
 class CExtenddog;
 class CPile;
+class CCollision;
 
 // プレイヤークラス
 class CPlayer {
@@ -26,7 +27,7 @@ public:
 	};
 
 	// 当たり判定の順番列挙
-	enum class COLLI_VEC {
+	enum class VECTOL {
 		X = 0,	// Ⅹベクトル
 		Y,		// Ｙベクトル
 		MAX
@@ -52,19 +53,6 @@ public:
 		DECIDE,			// 決定
 		PAUSE,			// ポーズ
 		MAX
-	};
-
-	// 当たり判定情報
-	struct CollInfo
-	{
-		D3DXVECTOR3 pos;        // 位置
-		D3DXVECTOR3 posOld;     // 前回位置
-		D3DXVECTOR3 minPos;		// 最小位置
-		D3DXVECTOR3 maxPos;		// 最大位置
-		float		fWidth;		// 幅
-		float		fHeight;	// 高さ
-
-		COLLI_ROT ColliRot;		// 当たり判定
 	};
 
 	// プレイヤー情報
@@ -136,6 +124,9 @@ public:
 	// プレイヤーにトランポリン用のジャンプを設定
 	void SetTrampolineJump(Info*& pInfo, float fMaxHeight);
 
+	// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
+	void Death(D3DXVECTOR3 *pDeathPos);
+
 	// プレイヤー情報取得
 	// 各引数にプレイヤー情報のアドレスを渡します
 	void GetInfo(Info*& pP1, Info*& pP2) { pP1 = &m_aInfo[0]; pP2 = &m_aInfo[1]; }
@@ -148,19 +139,46 @@ public:
 	// 指定された世界にいるプレイヤーの情報を返します
 	Info *GetInfo(WORLD_SIDE side);
 
-	// 取得したパーツ数
-	int GetNumParts(void) { return s_nNumGetParts; }
-
 	// スワップインターバルを設定
 	// 既にインターバルがあれば設定しない
 	static void SetSwapInterval(void) { s_nSwapInterval = s_nSwapInterval == 0 ? SWAP_INTERVAL : s_nSwapInterval; }
 
+	// スワップインターバルを取得
+	static int GetSwapInterval(void) { return s_nSwapInterval; }
+
+	//SEラベル
+	enum class SE_LABEL {
+		JUMP = 0,// ジャンプSE
+		LANDING, // 着地SE
+		DOG_00,	 // 押す
+		DOG_01,	 // 縮む
+		DOG_02,	 // 伸びる
+		DOG_03,	 // 震える
+		SWAP,	 // スワップSE
+		MAX
+	};
+
+	//プレイヤー用SE再生
+	static void PlaySE(SE_LABEL label);
+
+	//パーティクルテクスチャ
+	enum class PARTI_TEX {
+		SWAP_MARK = 0,	// スワップマーク
+		SWAP_PARTI,		// スワップパーティクル
+		DEATH_MARK,		// 死亡マーク
+		DEATH_PARTI,	// 死亡パーティクル
+		GOAL_EFFECT,	// ゴール・ロケット乗車時のエフェクト
+		MAX
+	};
+
+	//パーティクル番号取得
+	static int GetParticleIdx(PARTI_TEX tex) { return s_ParticleTex[(int)tex]; };
+
 private:
 	static int s_nSwapInterval; // 残りスワップインターバル
-	static int s_nSwapMarkTex;  // スワップ先のマークテクスチャ番号
-	static int s_nSwapParticle; // スワップ時のパーティクルテクスチャ番号
-	static int s_nDeathMarkTex; // 死亡時のマークテクスチャ番号
-	static int s_nDeathParticle;// 死亡時のパーティクルテクスチャ番号
+
+	static const char *PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX];
+	static int s_ParticleTex[(int)PARTI_TEX::MAX];
 	static const int NORMAL_SWAP_ALPHA = 100;//通常時のスワップマークのα値
 
 	static const float MOVE_SPEED;		// 移動量
@@ -170,8 +188,6 @@ private:
 	static const float GRAVITY_POWER;	// 基本重力加速度
 
 	static const int TRAMPOLINE_JUMP_COUNTER;
-	static int	s_nNumGetParts;	// 取得したパーツの数
-	static bool	s_bRideRocket;	// ロケットに乗れるかどうか
 
 	static const int OBJ_TRAMPOLINE = 2;// オブジェクトの最大数
 	static const int OBJ_EXTENDDOG = 3;	// オブジェクトの最大数
@@ -179,49 +195,32 @@ private:
 	void InitKeyConfig(void);// 各プレイヤーのキーボード・ジョイパッドのキーコンフィグ初期化設定
 	void SetPosOld(void);
 	void ActionControl(void);
-	void Move(COLLI_VEC vec);
-	void CtrlPos(Info *pInfo, COLLI_VEC vec);	// 範囲外の制御
+	void Move(VECTOL vec);
+	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
 	void Swap(void);
-	void Death(D3DXVECTOR3 *pDeathPos);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
 
 	// 各プレイヤーの当たり判定が終わった後の処理
 	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type);
 
-	//========================
-	// 対象物の中にめり込んでいるかどうか判定
-	//------------------------
-	// 引数１	pos			：現在位置
-	// 引数２	posOld		：前回位置
-	// 引数３	fWidth		：幅
-	// 引数４	fHeight		：高さ
-	// 引数５	TargetPos	：対象の現在位置
-	// 引数６	TargetPosOld：対象の前回位置（オブジェクトにPosOld変数が無いなら、現在位置をいれればOK
-	// 引数７	TargetWidth	：対象の幅
-	// 引数８	TargetHeight：対象の高さ
-	// 引数９	value		：ベクトル
-	// 返り値	対象物にめりこんでいる方向を返す（NONEなら当たっていない
-	//========================
-	COLLI_ROT IsBoxCollider(D3DXVECTOR3 pos, D3DXVECTOR3 posOld, float fWidth, float fHeight, D3DXVECTOR3 TargetPos, D3DXVECTOR3 TargetPosOld, float TargetWidth, float TargetHeight, COLLI_VEC value);
-
 	void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY,float fHeight);	// 上からの当たり判定による位置・移動量修正
 	void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight);	// 下からの当たり判定による位置・移動量修正
 	void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth);	// 左からの当たり判定による位置・移動量修正
 	void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth);	// 右からの当たり判定による位置・移動量修正
 
-	void CollisionBlock(Info *pInfo, CollInfo *pColli);
-	void CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot);
-	void CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pTrampoline);
-	void CollisionSpike(Info *pInfo, CollInfo *pColli);
-	void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *pColli);
-	void CollisionMeteor(Info *pInfo, CollInfo *pColli);
-	void CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollInfo *pColli, CollInfo *pOthColli);
-	void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli, CollInfo *pOthColli);
-	void CollisionGoalGate(Info *pInfo, CollInfo *pColli);
-	void CollisionParts(Info *pInfo, CParts *pParts);
-	void CollisionRocket(Info *pInfo, CRocket *pRocket);
-	void CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile);
+	//void CollisionBlock(Info *pInfo, CollInfo *pColli);
+	//void CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot);
+	//void CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pTrampoline);
+	//void CollisionSpike(Info *pInfo, CollInfo *pColli);
+	//void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *pColli);
+	//void CollisionMeteor(Info *pInfo, CollInfo *pColli);
+	//void CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollInfo *pColli, CollInfo *pOthColli);
+	//void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli, CollInfo *pOthColli);
+	//void CollisionGoalGate(Info *pInfo, CollInfo *pColli);
+	//void CollisionParts(Info *pInfo, CParts *pParts);
+	//void CollisionRocket(Info *pInfo, CRocket *pRocket);
+	//void CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
@@ -229,10 +228,7 @@ private:
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
 
-	void OthColliDelete(void);
-
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
-	CollInfo *m_pOthColli;		// 他パーツの当たり判定情報
 
 	struct SE
 	{
@@ -244,4 +240,5 @@ private:
 		CSound *pSound;	// サウンドクラス保管用
 	};
 	static SE s_SE;		//サウンド用構造体
+	static CCollision *s_pColli;
 };

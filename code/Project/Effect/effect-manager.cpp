@@ -30,13 +30,13 @@ CEffectMgr::~CEffectMgr()
 //========================================
 void CEffectMgr::Update(void)
 {
-
+	RNLib::Text2D().PutDebugLog(CreateText("%d", CObjectMgr::GetNum()));
 }
 
 //========================================
 // エフェクト
 //========================================
-CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount, D3DXVECTOR3 spin, D3DXVECTOR3 move,bool bbilborad)
+CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount, D3DXVECTOR3 spin, D3DXVECTOR3 move,bool bbilborad, D3DXVECTOR3 scalemag)
 {
 	CEffect *pObj = NULL;
 
@@ -48,9 +48,8 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
 	pObj->SetMove(move);
+	pObj->SetScalemag(scalemag);
 	pObj->SetBillboard(bbilborad);
-
-	CObjectMgr::AddList((CObject*)pObj);
 
 	return pObj;
 }
@@ -67,7 +66,6 @@ CEffect_Meteor * CEffectMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 	pObj->SetPos(pos);
 	pObj->Init();
 
-	CObjectMgr::AddList((CObject*)pObj);
 
 	return pObj;
 }
@@ -86,7 +84,6 @@ CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 sca
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
 
-	CObjectMgr::AddList((CObject*)pObj);
 
 	return pObj;
 }

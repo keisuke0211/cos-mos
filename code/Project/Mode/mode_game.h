@@ -60,6 +60,8 @@ public:
 		TEXT_MAX
 	};
 
+	//========== [[[ 構造体定義 ]]]
+
 	// ポーズ情報
 	struct Pause {
 		D3DXVECTOR3 LeftPos;
@@ -110,7 +112,6 @@ private:
 	static int m_nStageIdx;
 	CFontText *m_Menu[MENU_MAX];
 	CFontText *m_RightText[INPUT_MAX];
-	CFontText *m_InputText[INPUT_MAX];
 	static CRocketPartsUI *m_rocketparts;
 	static CCamera* m_cameraUp;
 	static CCamera* m_cameraDown;
