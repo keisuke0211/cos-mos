@@ -37,4 +37,5 @@ private:
 	UShort m_time;
 	Color  m_col;
 	float  m_fMove;
+	int	   m_nTexIdx;
 };
