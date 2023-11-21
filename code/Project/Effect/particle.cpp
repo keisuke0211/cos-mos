@@ -82,6 +82,7 @@ void CParticle::Update(void)
 		->SetBillboard(true)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x, m_Info.scale.y)
+		->SetZTest(false)
 		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD);
 
 	//ˆÚ“®—ÊŒ¸Š
