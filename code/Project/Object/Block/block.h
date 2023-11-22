@@ -56,6 +56,11 @@ public:
 	void SetCollision(bool isCollision) { m_isCollision = isCollision; }
 	bool& GetCollision(void) { return m_isCollision; }
 
+	//========== [[[ リアクション用関数宣言 ]]]
+	void IsReaction_Move(bool bFrag);   //上で移動している
+	void IsReaction_Land(bool bFrag);   //上に着地した瞬間
+	void IsReaction_TakeOff(bool bFrag);//上からジャンプで離れた瞬間
+
 private:
 	//========== [[[ 定数宣言 ]]]
 	static const char* MODEL_PATHS[(int)LOOKS_TYPE::MAX];
