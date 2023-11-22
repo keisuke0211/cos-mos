@@ -26,7 +26,7 @@ private:
 	static const int SLITHER_TIME = 60;
 
 	//========== [[[ óÒãìå^íËã` ]]]
-	enum class MESSAGE_TYPE { NONE, RELOAD_SUCCEEDED, RELOAD_FAILED };
+	enum class MESSAGE_TYPE { NONE, SETUP_RELOAD_SUCCEEDED, MOTION_RELOAD_SUCCEEDED, SETUP_RELOAD_FAILED, MOTION_RELOAD_FAILED, };
 
 	//========== [[[ ïœêîêÈåæ ]]]
 	CCamera*     m_camera;
@@ -34,6 +34,7 @@ private:
 	Vector3D     m_slither;
 	int          m_slitherCounter;
 	char*        m_editPath;
+	char*        m_motionPath;
 	MESSAGE_TYPE m_messageType;
 	UShort       m_messageCounter;
 };

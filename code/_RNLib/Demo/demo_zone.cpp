@@ -294,7 +294,7 @@ void CDemoZone::UpdateActive(void) {
 			if (RNLib::Input().GetKeyPress(DIK_B))
 				addRot.z -= 0.02f;
 
-			bone0.AddRot(addRot);
+			bone0.AddAddRot(addRot);
 		}
 
 		{// É{Å[Éì1ÇÃâÒì]ëÄçÏ
@@ -313,17 +313,17 @@ void CDemoZone::UpdateActive(void) {
 			if (RNLib::Input().GetKeyPress(DIK_M))
 				addRot.z -= 0.02f;
 
-			bone1.AddRot(addRot);
+			bone1.AddAddRot(addRot);
 		}
 
 		RNLib::Text2D().PutDebugLog(CreateText("-----Bone0-----"));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinX[R][T]:%f", bone0.GetRot().x));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinY[F][G]:%f", bone0.GetRot().y));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[V][B]:%f", bone0.GetRot().z));
+		RNLib::Text2D().PutDebugLog(CreateText("SpinX[R][T]:%f", bone0.GetAddRot().x));
+		RNLib::Text2D().PutDebugLog(CreateText("SpinY[F][G]:%f", bone0.GetAddRot().y));
+		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[V][B]:%f", bone0.GetAddRot().z));
 		RNLib::Text2D().PutDebugLog(CreateText("-----Bone1-----"));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinX[Y][U]:%f", bone1.GetRot().x));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinY[H][J]:%f", bone1.GetRot().y));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[N][M]:%f", bone1.GetRot().z));
+		RNLib::Text2D().PutDebugLog(CreateText("SpinX[Y][U]:%f", bone1.GetAddRot().x));
+		RNLib::Text2D().PutDebugLog(CreateText("SpinY[H][J]:%f", bone1.GetAddRot().y));
+		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[N][M]:%f", bone1.GetAddRot().z));
 	}break;
 	}
 }
