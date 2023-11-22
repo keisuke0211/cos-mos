@@ -296,3 +296,10 @@ int* CreateRandList(int num) {
 
 	return pList;
 }
+
+//========================================
+// float“™‰¿”äŠrˆ—
+//========================================
+bool EqualFloat(const float& numA, const float& numB, const float& allowableError) {
+	return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB))));
+}

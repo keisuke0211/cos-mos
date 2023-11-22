@@ -384,13 +384,15 @@ void CPlayer::Swap(void)
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
 	{
-		// スワップアニメーション設定
-		s_AnimState = SWAP_ANIM::PROLOGUE;
-		s_nSwapInterval = SWAP_PROLOGUE_INTERVAL;
-		s_bSwapAnim = true;
-
 		//ロケットに乗っていないときにサウンド再生
-		if(CRocket::GetCounter() != NUM_PLAYER)	s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+		if (CRocket::GetCounter() != NUM_PLAYER)
+		{
+			// スワップアニメーション設定
+			s_AnimState = SWAP_ANIM::PROLOGUE;
+			s_nSwapInterval = SWAP_PROLOGUE_INTERVAL;
+			s_bSwapAnim = true;
+			s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+		}
 
 		for each (Info &Player in m_aInfo)
 		{
@@ -419,17 +421,6 @@ void CPlayer::Swap(void)
 //*************************************************
 void CPlayer::SwapAnimation(void)
 {
-	RNLib::Text2D().PutDebugLog(CreateText("インターバル：%d", s_nSwapInterval));
-	switch (s_AnimState)
-	{
-		case CPlayer::SWAP_ANIM::PROLOGUE:RNLib::Text2D().PutDebugLog("プロローグ"); break;
-		case CPlayer::SWAP_ANIM::MIDDLE:  RNLib::Text2D().PutDebugLog("中間"); break;
-		case CPlayer::SWAP_ANIM::EPILOGUE:RNLib::Text2D().PutDebugLog("エピローグ"); break;
-	}
-
-	//if (!RNLib::Input().GetKeyTrigger(DIK_RETURN) &&
-	//	!RNLib::Input().GetKeyPress(DIK_RSHIFT)) return;
-
 	//インターバル減少
 	s_nSwapInterval--;
 
