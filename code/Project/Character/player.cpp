@@ -335,6 +335,7 @@ void CPlayer::ActionControl(void)
 		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer +1) % NUM_PLAYER].bGoal &&
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
+			CGoalGate::EntrySub();
 			Player.bRide = false;
 			Player.bGoal = false;
 			Player.move.x *= -2.0f;
@@ -836,7 +837,7 @@ void CPlayer::CollisionToStageObject(void)
 				case CStageObject::TYPE::METEOR:	s_pColli->Meteor(&Self, &m_colliInfo, &Player.side); break;
 				case CStageObject::TYPE::LASER:		s_pColli->Laser(&Self, (CRoadTripLaser *)stageObj,&m_colliInfo, NULL, &Player.side);	break;
 				case CStageObject::TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog *)stageObj, &m_colliInfo, NULL, &Player.side); break;
-				case CStageObject::TYPE::GOALGATE:	s_pColli->GoalGate(&Self, &m_colliInfo, &Player.side);	break;
+				case CStageObject::TYPE::GOALGATE:	s_pColli->GoalGate(&Self, &m_colliInfo,obj, &Player.side);	break;
 				case CStageObject::TYPE::PARTS:		s_pColli->Parts(&Self, (CParts *)stageObj, &Player.side); break;
 				case CStageObject::TYPE::ROCKET:	s_pColli->Rocket(&Self, (CRocket *)stageObj, &Player.side); break;
 				case CStageObject::TYPE::PILE:		s_pColli->Pile(&Self, &m_colliInfo, (CPile *)stageObj, &Player.side); break;
