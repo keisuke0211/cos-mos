@@ -913,46 +913,6 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 }
 
 //----------------------------
-// 上からの当たり判定による位置修正
-//----------------------------
-void CPlayer::FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY, float fHeight)
-{
-	// 位置・移動量修正
-	*pPosY = fMaxPosY + fHeight;
-	*pMoveY = 0.0f;
-}
-
-//----------------------------
-// 下からの当たり判定による位置修正
-//----------------------------
-void CPlayer::FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight)
-{
-	// 位置・移動量修正
-	*pPosY = fMinPosY - fHeight;
-	*pMoveY = 0.0f;
-}
-
-//----------------------------
-// 左からの当たり判定による位置修正
-//----------------------------
-void CPlayer::FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth)
-{
-	// 位置・移動量修正
-	*pPosX = fMinPosX - fWidth;
-	*pMoveX = 0.0f;
-}
-
-//----------------------------
-// 右からの当たり判定による位置修正
-//----------------------------
-void CPlayer::FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth)
-{
-	// 位置・移動量修正
-	*pPosX = fMaxPosX + fWidth;
-	*pMoveX = 0.0f;
-}
-
-//----------------------------
 // プレイヤー情報設定
 // 指定された番号のプレイヤー情報を設定します。
 //----------------------------
