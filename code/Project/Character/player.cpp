@@ -13,6 +13,8 @@
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
 int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
+bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
+CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
 
 const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
@@ -44,6 +46,8 @@ CPlayer::CPlayer()
 {
 	// 残りスワップインターバル
 	s_nSwapInterval = 0;
+	s_bSwapAnim = false;
+	s_AnimState = SWAP_ANIM::PROLOGUE;
 
 	s_SE.pSound = NULL;
 	s_SE.jump = 0;
@@ -63,6 +67,8 @@ CPlayer::CPlayer()
 		Player.move = INITD3DXVECTOR3;			// 移動量
 		Player.color = INITCOLOR;				// 色
 		Player.nSwapAlpha = NORMAL_SWAP_ALPHA;	// スワップマークのα値
+		Player.fSwapPosY = 0.0f;				// スワップ先のＹ座標
+		Player.fSwapMoveY = 0.0f;				// スワップ移動時の速度
 		Player.bGround = false;					// 地面に接しているか
 		Player.bGroundOld = false;				// 地面に接しているか(過去)
 		Player.bJump = false;					// ジャンプ
@@ -239,7 +245,8 @@ void CPlayer::SetPosOld(void)
 //=====================================================================================================================
 void CPlayer::Update(void)
 {
-	if (s_nSwapInterval != 0)
+	//スワップアニメーション中
+	if (s_bSwapAnim)
 	{
 		SwapAnimation();
 		return;
@@ -278,8 +285,6 @@ void CPlayer::Update(void)
 //----------------------------
 void CPlayer::UpdateInfo(void)
 {
-	if (s_nSwapInterval != 0) return;
-
 	int nCntPlayer = -1;
 	for each (Info &Player in m_aInfo)
 	{
@@ -370,20 +375,24 @@ void CPlayer::ActionControl(void)
 	}
 }
 
-//############################
+//#################################################
 // スワップ処理
-//############################
+//#################################################
 void CPlayer::Swap(void)
 {
 	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
 	{
-		// インターバル設定
-		s_nSwapInterval = SWAP_INTERVAL;
-
 		//ロケットに乗っていないときにサウンド再生
-		if(CRocket::GetCounter() != NUM_PLAYER)	s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+		if (CRocket::GetCounter() != NUM_PLAYER)
+		{
+			// スワップアニメーション設定
+			s_AnimState = SWAP_ANIM::PROLOGUE;
+			s_nSwapInterval = SWAP_PROLOGUE_INTERVAL;
+			s_bSwapAnim = true;
+			s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+		}
 
 		for each (Info &Player in m_aInfo)
 		{
@@ -396,17 +405,10 @@ void CPlayer::Swap(void)
 			}
 
 			// 位置・重力加速度・ジャンプ量・存在する世界を反転
-			Player.pos.y *= -1.0f;
-			Player.fGravity *= -1.0f;
-			Player.fJumpPower *= -1.0f;
-			Player.side = (WORLD_SIDE)(((int)Player.side + 1) % (int)WORLD_SIDE::MAX);
+			Player.fSwapPosY = Player.pos.y * -1.0f;
+			Player.fSwapMoveY = (Player.fSwapPosY - Player.pos.y) / SWAP_MIDDLE_INTERVAL;
 			//Player.TramColliRot = CCollision::ROT::NONE;
 			Player.bTramJump = false;
-
-			if (Player.side == WORLD_SIDE::FACE)
-				Player.rot.z = 0.0f;
-			else if (Player.side == WORLD_SIDE::BEHIND)
-				Player.rot.z = D3DX_PI;
 		}
 
 		// 前回位置更新
@@ -414,27 +416,94 @@ void CPlayer::Swap(void)
 	}
 }
 
-//----------------------------
-// 情報更新処理
-//----------------------------
+//*************************************************
+// スワップアニメーション
+//*************************************************
 void CPlayer::SwapAnimation(void)
 {
+	//インターバル減少
 	s_nSwapInterval--;
 
-	if(s_nSwapInterval <= SWAP_INTERVAL / 3 ||
-	   s_nSwapInterval >= SWAP_INTERVAL / 3 * 2)
-	for each (Info &Player in m_aInfo)
+	for (int nCntPlayer = 0; nCntPlayer < NUM_PLAYER; nCntPlayer++)
 	{
-		// 位置設定
-		RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-			->SetOutLine(true)
-			->SetCol(Player.color);
+		//プレイヤー情報参照（移動時だけパーティクルの位置を手前に出す
+		Info &Player = m_aInfo[nCntPlayer];
 
-		for (int i = 0; i < 16; i++)
+		switch (s_AnimState)
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
+			case CPlayer::SWAP_ANIM::PROLOGUE: SwapAnim_Prologue(Player, nCntPlayer);break;//プロローグ
+			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	break;//中間
+			case CPlayer::SWAP_ANIM::EPILOGUE: SwapAnim_Epilogue(Player, nCntPlayer);break;//エピローグ
+		}
+
+		for (int nCntPar = 0; nCntPar < 1; nCntPar++)
+		{
+			Color setCol;
+			if (nCntPlayer == 0){
+				setCol = Color{ (UShort)(215 + rand() % 40),(UShort)(135 + rand() % 40),(UShort)(39 + rand() % 40),255 };
+			}
+			else{
+				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(203 + rand() % 40),(UShort)(190 + rand() % 40),255 };
+			}
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_MARK), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol);
 		}
 	}
+}
+
+//*************************************************
+//プロローグ処理
+//*************************************************
+void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
+{
+	// 位置設定
+	RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
+		->SetOutLine(true)
+		->SetCol(Player.color);
+
+	//次のインターバルへ
+	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
+	s_nSwapInterval = SWAP_MIDDLE_INTERVAL;
+	s_AnimState = SWAP_ANIM::MIDDLE;
+}
+
+//*************************************************
+//中間処理
+//*************************************************
+void CPlayer::SwapAnim_Middle(Info& Player, const int nIdxPlayer)
+{
+	//スワップ先へ移動
+	Player.pos.y += Player.fSwapMoveY;
+
+	//次のインターバルへ
+	if (s_nSwapInterval > 0) return;
+	Player.pos.y = Player.fSwapPosY;
+	Player.move.y *= -1.0f;
+	Player.fGravity *= -1.0f;
+	Player.fJumpPower *= -1.0f;
+	Player.side = (WORLD_SIDE)(((int)Player.side + 1) % (int)WORLD_SIDE::MAX);
+	if (Player.side == WORLD_SIDE::FACE)
+		Player.rot.z = 0.0f;
+	else Player.rot.z = D3DX_PI;
+
+	//最後のプレイヤーのときにアニメーション状態を遷移
+	if (nIdxPlayer == 0) return;
+	s_nSwapInterval = SWAP_EPILOGUE_INTERVAL;
+	s_AnimState = SWAP_ANIM::EPILOGUE;
+}
+
+//*************************************************
+//エピローグ処理
+//*************************************************
+void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
+{
+	// 位置設定
+	RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
+		->SetOutLine(true)
+		->SetCol(Player.color);
+
+	//最後のプレイヤーのときにスワップアニメーション終了
+	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
+	s_bSwapAnim = false;
 }
 
 //----------------------------

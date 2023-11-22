@@ -4,6 +4,9 @@
 // Author:KEISUKE OTONO
 // 
 //========================================
+#include "../../_RNLib/RNlib.h"
+#include "../../_RNLib/RNsettings.h"
+#include "../../_RNLib/Basis/Mechanical/sound.h"
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
@@ -15,7 +18,7 @@
 //==========| CMode_Titleクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
-const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\TitleFile.txt";
+const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
 
 //========================================
@@ -43,6 +46,15 @@ CMode_Title::CMode_Title(void) {
 
 	m_Anime.pOperation = NULL;
 	m_Anime.pSetting = NULL;
+
+	m_Anime.bFullScreen = RNSettings::GetInfo().isFullScreen;
+
+	float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
+	float SE = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
+	m_Anime.nBGMVolume = BGM * VOLUME_MSX;
+	m_Anime.nSEVolume = SE * VOLUME_MSX;
+	m_Anime.nBGMOldVolume = BGM * VOLUME_MSX;
+	m_Anime.nSEOldVolume = SE * VOLUME_MSX;
 }
 
 //========================================
@@ -69,6 +81,19 @@ CMode_Title::~CMode_Title(void) {
 	{
 		delete[] m_PlanetType;
 		m_PlanetType = NULL;
+	}
+
+	TextRelease(TEXT_ALL);
+
+	// テキスト関連
+	if (m_Anime.pOperation != NULL) {
+		delete[] m_Anime.pOperation;
+		m_Anime.pOperation = NULL;
+	}
+
+	if (m_Anime.pSetting != NULL) {
+		delete[] m_Anime.pSetting;
+		m_Anime.pSetting = NULL;
 	}
 }
 
@@ -172,10 +197,10 @@ void CMode_Title::Update(void) {
 			->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
 			->SetCol(Color{ 150,150,150,150 });
 
-		if (m_Anime.nSelect == MENU_CONTROLLER || m_Anime.nSelect == MENU_SERRING)
+		if (m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SETTING)
 		{
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x, 400.0f, 100.0f), 0.0f, false)
-				->SetSize(500.0f, 600.0f)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x+10, 400.0f, 100.0f), 0.0f, false)
+				->SetSize(560.0f, 600.0f)
 				->SetTex(m_Anime.BoxTex);
 		}
 	}
@@ -191,20 +216,53 @@ void CMode_Title::Update(void) {
 		break;
 		case TITLE_MENU:
 		{
-			switch (m_nSelect)
-			{
-			case MENU_GAME:
-				m_Anime.bClose = true;
-				m_Anime.LeftTargetPos *= -1;
-				m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-				m_Anime.nCntLeftAnime = 0;
-				break;
-			case MENU_SERRING:
-				break;
-			case MENU_END:
-				//ゲームの終了
-				PostQuitMessage(0);
-				break;
+			if (!m_Anime.bSubMenu) {
+				switch (m_Anime.nMaineSelect)
+				{
+				case MENU_GAME:
+					m_Anime.bClose = true;
+					m_Anime.LeftTargetPos *= -1;
+					m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+					m_Anime.nCntLeftAnime = 0;
+					break;
+				case MENU_CONTROLLER:
+					break;
+				case MENU_SETTING:
+					m_Anime.bSubMenu = true;
+					m_pMenu[m_Anime.nMaineSelect]->SetBoxColor(Color{155,155,155,255});
+					break;
+				case MENU_END:
+					//ゲームの終了
+					PostQuitMessage(0);
+					break;
+				}
+			}
+			else if (m_Anime.bSubMenu) {
+				switch (m_Anime.nSubSelect)
+				{
+				case SETTING_SCREEN:
+					if (m_Anime.nCntScrChg <= 0) {
+						int nText = m_Anime.nSubSelect;
+						m_Anime.bFullScreen = !m_Anime.bFullScreen;
+
+						char data[TXT_MAX] = {};
+						if (!m_Anime.bFullScreen)	sprintf(data, "%s ：OFF", m_Anime.pSetting[nText].Text);
+						else if (m_Anime.bFullScreen)	sprintf(data, "%s ：ON", m_Anime.pSetting[nText].Text);
+
+						FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+						FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+						m_Anime.nCntScrChg = 20;
+					}
+					
+					break;
+				case SETTING_BGM:
+					break;
+				case SETTING_SE:
+					break;
+				}
+
 			}
 		}
 		break;
@@ -303,11 +361,13 @@ void CMode_Title::MenuCreate(void)
 	m_Anime.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
 	m_Anime.nCntLeftAnime = 0;
 	m_Anime.nCntRightAnime = 0;
-	m_Anime.nSelect = 0;
+	m_Anime.nMaineSelect = 0;
+	m_Anime.nSubSelect = 1;
 	m_Anime.bRightMove = false;
 	m_Anime.bRightDisp = false;
 	m_Anime.nRightTextType = 0;
 	m_Anime.bMenu = false;
+	m_Anime.bSubMenu = false;
 	m_Anime.bClose = false;
 
 	m_Anime.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
@@ -333,9 +393,9 @@ void CMode_Title::SubTextCreate(void)
 	if (m_pSubMenu != NULL)
 		TextRelease(TEXT_RIGHT);
 
-	if (m_Anime.nSelect == MENU_CONTROLLER) {
+	if (m_Anime.nMaineSelect == MENU_CONTROLLER) {
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_NORMAL_BLUE, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 			"", CFont::FONT_ROND_B, &pFont);
 
 		for (int nText = 1; nText < m_Anime.OperationMax; nText++) {
@@ -344,19 +404,39 @@ void CMode_Title::SubTextCreate(void)
 				"", CFont::FONT_ROND_B, &pFont, false, false);
 		}
 	}
-	else if (m_Anime.nSelect == MENU_SERRING) {
+	else if (m_Anime.nMaineSelect == MENU_SETTING) {
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-		CFontText::BOX_NORMAL_BLUE, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+		CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 		"", CFont::FONT_ROND_B, &pFont);
 
+		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),30.0f,1,1,-1, };
+
 		for (int nText = 1; nText < m_Anime.SettingMax; nText++) {
-		m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-		D3DXVECTOR3(m_Anime.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-		"", CFont::FONT_ROND_B, &pFont, false, false);
+
+			D3DXVECTOR3 pos = INITD3DXVECTOR3;
+			if (nText <= SETTING_BGM)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
+			else if (nText == SETTING_SE)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
+			else if (nText == SETTING_BACK)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 650.0f, 0.0f);
+			else if (nText == SETTING_BGM_TEXT)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * 3), 0.0f);
+			else if (nText == SETTING_SE_TEXT)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * ((nText - 2) + 2)), 0.0f);
+
+			if(nText >= SETTING_BACK)
+				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+					pos, D3DXVECTOR2(200.0f, 80.0f),
+					"", CFont::FONT_ROND_B, &pFont, false, true);
+			else
+				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+					pos, D3DXVECTOR2(480.0f, 60.0f),
+					"", CFont::FONT_ROND_B, &pFont, false, true);
 		}
 	}
 
-	m_Anime.nRightTextType = m_Anime.nSelect;
+	m_Anime.nRightTextType = m_Anime.nMaineSelect;
 }
 
 //========================================
@@ -430,16 +510,34 @@ void CMode_Title::MenuAnime(void)
 				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
 				// テキストの再生成
-				if (m_Anime.nSelect == MENU_CONTROLLER) {
+				if (m_Anime.nMaineSelect == MENU_CONTROLLER) {
 					for (int nText = 0; nText < m_Anime.OperationMax; nText++) {
 						if (m_pSubMenu[nText] != NULL)
 							m_pSubMenu[nText]->Regeneration(m_Anime.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
 					}
 				}
-				if (m_Anime.nSelect == MENU_SERRING) {
+				if (m_Anime.nMaineSelect == MENU_SETTING) {
 					for (int nText = 0; nText < m_Anime.SettingMax; nText++) {
-						if (m_pSubMenu[nText] != NULL)
-							m_pSubMenu[nText]->Regeneration(m_Anime.pSetting[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
+						if (m_pSubMenu[nText] != NULL) {
+
+							char data[TXT_MAX];
+							if (nText == SETTING_SCREEN) {
+								if (!m_Anime.bFullScreen)	sprintf(data, "%s ：OFF", m_Anime.pSetting[nText].Text);
+								else if (m_Anime.bFullScreen)	sprintf(data, "%s ：ON", m_Anime.pSetting[nText].Text);
+							}
+							else if (nText == SETTING_BGM_TEXT){
+								int nData = m_Anime.nBGMVolume * 5;
+								sprintf(data, "%d%s", nData, m_Anime.pSetting[nText].Text);
+							}
+							else if(nText == SETTING_SE_TEXT){
+								int nData = m_Anime.nSEVolume * 5;
+								sprintf(data, "%d%s", nData, m_Anime.pSetting[nText].Text);
+							}
+							else
+								sprintf(data, "%s", m_Anime.pSetting[nText].Text);
+
+							m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+						}
 					}
 				}
 			}
@@ -451,6 +549,7 @@ void CMode_Title::MenuAnime(void)
 		}
 	}
 
+	// タイトル
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
 	{
 		if (m_TITLE[nCnt] != NULL) {
@@ -463,6 +562,11 @@ void CMode_Title::MenuAnime(void)
 
 				m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
 				m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+
+				if (pos.y <= -60.0f) {
+					delete[nCnt] m_TITLE[nCnt];
+					m_TITLE[nCnt] = NULL;
+				}
 			}
 		}
 	}
@@ -474,15 +578,39 @@ void CMode_Title::MenuAnime(void)
 //========================================
 void CMode_Title::MenuSelect(void)
 {
+	if (m_Anime.nCntScrChg >= 0)
+	{// 画面モード切り替えカウンターが0以上の時、
+	 // 画面モード切り替えカウンターを減算
+		m_Anime.nCntScrChg--;
+
+		if (m_Anime.nCntScrChg == 0)
+		{// 画面モード切り替えカウンターが0の時、
+		 // ウインドウのモードを切り替える
+			RNSettings::SetFulScreen(m_Anime.bFullScreen);
+		}
+	}
+
 	// 選択・非選択
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
 	{
-		if (m_pMenu[nCnt] != NULL) {
-			if (nCnt == m_Anime.nSelect) {
-				m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
+		if (!m_Anime.bSubMenu) {
+			if (m_pMenu[nCnt] != NULL) {
+				if (nCnt == m_Anime.nMaineSelect)
+					m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
+				else
+					m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 			}
-			else {
-				m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
+		}
+	}
+
+	for (int nCnt = 1; nCnt < m_Anime.SettingMax; nCnt++)
+	{
+		if (m_Anime.bSubMenu) {
+			if (m_pSubMenu[nCnt] != NULL) {
+				if (nCnt == m_Anime.nSubSelect)
+					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
+				else
+					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 			}
 		}
 	}
@@ -490,35 +618,109 @@ void CMode_Title::MenuSelect(void)
 	// -- メニュー選択 ---------------------------
 	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
 	{
-		m_bBackMode = true;
-		m_Anime.bClose = true;
-		m_Anime.LeftTargetPos *= -1;
-		m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-		m_Anime.nCntLeftAnime = 0;
-		return;
+		if (!m_Anime.bSubMenu) {
+			m_bBackMode = true;
+			m_Anime.bClose = true;
+			m_Anime.LeftTargetPos *= -1;
+			m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+			m_Anime.nCntLeftAnime = 0;
+			return;
+		}
+		else if (m_Anime.bSubMenu) {
+			m_Anime.bSubMenu = false;
+			m_pMenu[m_Anime.nMaineSelect]->SetBoxColor(INITCOLOR);
+			m_pSubMenu[m_Anime.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
+		}
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::UP))
 	{
-		m_Anime.nSelect--;
+		if (!m_Anime.bSubMenu)
+			m_Anime.nMaineSelect--;
+		else if (m_Anime.bSubMenu)
+			m_Anime.nSubSelect--;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::DOWN))
 	{
-		m_Anime.nSelect++;
+		if (!m_Anime.bSubMenu)
+			m_Anime.nMaineSelect++;
+		else if (m_Anime.bSubMenu)
+			m_Anime.nSubSelect++;
+	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
+	{
+		if (m_Anime.nSubSelect == SETTING_BGM) {
+			m_Anime.nBGMVolume--;
+		}
+		else if (m_Anime.nSubSelect == SETTING_SE) {
+			m_Anime.nSEVolume--;
+		}
+	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
+	{
+		if (m_Anime.nSubSelect == SETTING_BGM) {
+			m_Anime.nBGMVolume++;
+		}
+		else if (m_Anime.nSubSelect == SETTING_SE) {
+			m_Anime.nSEVolume++;
+		}
 	}
 
 	// アニメーション
-	if ((m_Anime.nSelect == MENU_CONTROLLER || m_Anime.nSelect == MENU_SERRING ) && !m_Anime.bRightMove && !m_Anime.bRightDisp) {
+	if ((m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SETTING ) && !m_Anime.bRightMove && !m_Anime.bRightDisp) {
 
 		m_Anime.bRightMove = true;
 		SubTextCreate();
 	}
-	else if (m_Anime.nSelect != m_Anime.nRightTextType && !m_Anime.bRightMove && m_Anime.bRightDisp) {
+	else if (m_Anime.nMaineSelect != m_Anime.nRightTextType && !m_Anime.bRightMove && m_Anime.bRightDisp) {
 
 		TextRelease(TEXT_RIGHT);
 		m_Anime.bRightMove = true;
 	}
+
 	// ループ制御
-	IntLoopControl(&m_Anime.nSelect, MENU_MAX, 0);
+	IntLoopControl(&m_Anime.nMaineSelect, MENU_MAX, 0);
+	IntLoopControl(&m_Anime.nSubSelect, m_Anime.SettingMax-2, 1);
+	IntControl(&m_Anime.nBGMVolume, VOLUME_MSX, 0);
+	IntControl(&m_Anime.nSEVolume, VOLUME_MSX, 0);
+
+	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+	FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+	// サウンド
+	if (m_Anime.nBGMVolume != m_Anime.nBGMOldVolume) {
+		m_Anime.nBGMOldVolume = m_Anime.nBGMVolume;
+
+		char data[TXT_MAX];		int nData = m_Anime.nBGMVolume * 5;
+		sprintf(data, "%d%s", nData, m_Anime.pSetting[SETTING_BGM_TEXT].Text);
+
+		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
+		m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+		float volume = (float)nData / (float)100.0f;
+		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::BGM, volume);
+	}
+	if (m_Anime.nSEVolume != m_Anime.nSEOldVolume) {
+		m_Anime.nSEOldVolume = m_Anime.nSEVolume;
+
+		char data[TXT_MAX];		int nData = m_Anime.nSEVolume * 5;
+		sprintf(data, "%d%s", nData, m_Anime.pSetting[SETTING_SE_TEXT].Text);
+
+		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
+		m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+		float volume = (float)nData / (float)100.0f;
+		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::SE, volume);
+	}
+
+}
+
+//========================================
+// 設定処理
+// Author:KEISUKE OTONO
+//========================================
+void CMode_Title::SettingMenu(void)
+{
+
 }
 
 //========================================
@@ -692,6 +894,7 @@ void CMode_Title::SwapMode(TITLE aTitle)
 			m_TITLE[6] = CWords::Create("Ｓ", D3DXVECTOR3(1700.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
 		}
 		m_bMove[0] = true;
+		m_bBackMode = false;
 	}
 		break;
 	case CMode_Title::TITLE_OUTSET:
@@ -800,7 +1003,7 @@ void CMode_Title::TextLoad(void)
 				}
 				if (!strcmp(aDataSearch, "Text")){
 					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%s", &m_Anime.pOperation[nText]);
+					fscanf(pFile, "%s", &m_Anime.pOperation[nText].Text);
 					nText++;
 				}
 			}
@@ -829,7 +1032,7 @@ void CMode_Title::TextLoad(void)
 				}
 				if (!strcmp(aDataSearch, "Text")) {
 					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%s", &m_Anime.pSetting[nText]);
+					fscanf(pFile, "%s", &m_Anime.pSetting[nText].Text);
 					nText++;
 				}
 			}

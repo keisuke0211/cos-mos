@@ -81,3 +81,12 @@ RNSettings::Info RNSettings::GetInfo(void) {
 
 	return info;
 }
+
+//========================================
+// スクリーンモード
+//========================================
+void RNSettings::SetFulScreen(bool screen) {
+
+	info.isFullScreen = screen;
+	RNLib::Window().SetFullScreen(screen);
+}

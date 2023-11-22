@@ -23,9 +23,10 @@ public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
 	static const int WORDS_MAX = 7;				// 文字の最大数
-	static const int FONT_TEXT_MAX = 8;		// テキストの最大数
+	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
 	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
+	static const int VOLUME_MSX = 20;			// サウンドの最大値
 
 	// *** 列挙型 ***
 	enum class STATE {
@@ -61,7 +62,7 @@ private:
 	enum MENU{
 		MENU_GAME = 0,	// ゲーム
 		MENU_CONTROLLER,// 操作方法
-		MENU_SERRING,	// 設定
+		MENU_SETTING,	// 設定
 		MENU_END,		// 終了
 		MENU_MAX
 	};
@@ -86,6 +87,17 @@ private:
 		INPUT_MAX
 	};
 
+	// 設定
+	enum SETTING {
+		SETTING_SCREEN = 1,	// フルスクリーン
+		SETTING_BGM ,		// BGM
+		SETTING_SE,			// SE
+		SETTING_BACK,
+		SETTING_BGM_TEXT,
+		SETTING_SE_TEXT,
+		SETTING_MAX
+	};
+
 	// テキスト
 	enum TEXT {
 		TEXT_TITLE = 0,	// タイトル
@@ -108,7 +120,7 @@ private:
 		char Text[TXT_MAX];		// テキスト
 	};
 
-	// ステージ種類情報
+	// 設定情報
 	struct Setting{
 		char Text[TXT_MAX];		// テキスト
 	};
@@ -121,16 +133,28 @@ private:
 		D3DXVECTOR3 RightTargetPos;
 		int nCntLeftAnime;
 		int nCntRightAnime;
-		int nSelect;
+		int nMaineSelect;
+		int nSubSelect;
 		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
 		bool bClose;
+		bool bSubMenu;
 
 		int BoxTex;
 		int OperationMax;
 		int SettingMax;
+
+		// スクリーン
+		int nCntScrChg;		// スクリーン変更のカウント
+		bool bFullScreen;	// スクリーンモード
+
+		// サウンド
+		int nBGMVolume;
+		int nSEVolume;
+		int nBGMOldVolume;
+		int nSEOldVolume;
 
 		Operation *pOperation;
 		Setting *pSetting;
@@ -138,6 +162,7 @@ private:
 
 	// *** 関数 ***
 	/* テキストの読込			*/void TextLoad(void);
+	/* 設定処理					*/void SettingMenu(void);
 	/* タイトルアニメーション	*/void TitleAnime(void);
 	/* メニューアニメーション	*/void MenuAnime(void);
 	/* メニュー生成				*/void MenuCreate(void);
@@ -168,13 +193,4 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
-
-	char m_RightTxt[INPUT_MAX][TXT_MAX] = {
-		{ "操作方法" },
-		{ "・移動　　：Ω" },
-		{ "・ジャンプ：Σ" },
-		{ "・スワップ：Φ" },
-		{ "・決定　　：Д" },
-		{ "・戻る　　：Σ" },
-	};
 };
