@@ -33,17 +33,6 @@ public:
 		MAX
 	};
 
-	// 当たり判定が働いた方向
-	enum class COLLI_ROT {
-		NONE = 0,	// 何もなし
-		OVER,		// 上
-		UNDER,		// 下
-		LEFT,		// 左
-		RIGHT,		// 右
-		UNKNOWN,	// 当たっているけど方向が分からない（当たられる側が動いている可能性アリ
-		MAX
-	};
-
 	// 操作の割り当て
 	enum class KEY_CONFIG {
 		MOVE_LEFT = 0,	// 左移動
@@ -79,7 +68,6 @@ public:
 		int			nTramJumpCounter;	// トランポリンによって跳ね上がる時間
 		float		fTramTargetPosY;	// トランポリン用の目標位置
 		bool		bTramJump;			// トランポリン用の特殊ジャンプ
-		COLLI_ROT	TramColliRot;		// トランポリン用の当たり判定
 		bool		bExtendDog;	  // ヌイ用の接触フラグ
 		bool		bLandPile;	  // 杭に乗っているかどうか
 		int			nModelIdx;    // モデル番号
@@ -228,7 +216,7 @@ private:
 	void CollisionToStageObject(void);
 
 	// 各プレイヤーの当たり判定が終わった後の処理
-	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type);
+	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, int *pColliRot);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);

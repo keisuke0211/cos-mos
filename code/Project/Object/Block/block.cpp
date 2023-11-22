@@ -132,6 +132,11 @@ void CBlock::Uninit(void) {
 //========================================
 void CBlock::Update(void) {
 
+	// ‰ß‹Ž‚Ì“–‚½‚èƒtƒ‰ƒO•Û‘¶
+	for (int cnt = 0; cnt < 6; cnt++){
+		m_isHitOlds[cnt] = m_isHits[cnt];
+	}
+
 	switch (m_looksType) {
 	case LOOKS_TYPE::LEAF_BLOCK: {
 		if (--m_counter <= 0) {
