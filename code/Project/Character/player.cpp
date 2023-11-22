@@ -80,7 +80,6 @@ CPlayer::CPlayer()
 		Player.nTramJumpCounter = 0;			// トランポリンによって跳ね上がる最高到達地点
 		Player.fTramTargetPosY = 0.0f;			// トランポリン用の目標位置
 		Player.bTramJump = false;				// トランポリン用の特殊ジャンプ
-		//Player.TramColliRot = CCollision::ROT::NONE;	// トランポリン用の判定
 		Player.bExtendDog = false;				// ヌイ用の接触フラグ
 		Player.bLandPile = false;				// 杭に乗っているかどうか
 		Player.nModelIdx = NONEDATA;			// モデル番号
@@ -408,7 +407,6 @@ void CPlayer::Swap(void)
 			// 位置・重力加速度・ジャンプ量・存在する世界を反転
 			Player.fSwapPosY = Player.pos.y * -1.0f;
 			Player.fSwapMoveY = (Player.fSwapPosY - Player.pos.y) / SWAP_MIDDLE_INTERVAL;
-			//Player.TramColliRot = CCollision::ROT::NONE;
 			Player.bTramJump = false;
 		}
 
@@ -674,16 +672,19 @@ void CPlayer::CollisionToStageObject(void)
 			const OBJECT_TYPE type = stageObj->GetType();
 
 			// オブジェクトの当たり判定情報を設定
-			CCollision::ColliInfo m_colliInfo;
-			m_colliInfo.pos     = stageObj->GetPos();
-			m_colliInfo.posOld  = m_colliInfo.pos;
-			m_colliInfo.fWidth  = stageObj->GetWidth() * 0.5f;
-			m_colliInfo.fHeight = stageObj->GetHeight() * 0.5f;
-			m_colliInfo.minPos  = D3DXVECTOR3(m_colliInfo.pos.x - m_colliInfo.fWidth, m_colliInfo.pos.y - m_colliInfo.fHeight, 0.0f);
-			m_colliInfo.maxPos  = D3DXVECTOR3(m_colliInfo.pos.x + m_colliInfo.fWidth, m_colliInfo.pos.y + m_colliInfo.fHeight, 0.0f);
+			CCollision::ColliInfo colliInfo;
+			colliInfo.pos     = stageObj->GetPos();
+			colliInfo.posOld  = colliInfo.pos;
+			colliInfo.fWidth  = stageObj->GetWidth() * 0.5f;
+			colliInfo.fHeight = stageObj->GetHeight() * 0.5f;
+			colliInfo.minPos  = D3DXVECTOR3(colliInfo.pos.x - colliInfo.fWidth, colliInfo.pos.y - colliInfo.fHeight, 0.0f);
+			colliInfo.maxPos  = D3DXVECTOR3(colliInfo.pos.x + colliInfo.fWidth, colliInfo.pos.y + colliInfo.fHeight, 0.0f);
 
+			int nColliRot[NUM_PLAYER] = {};
+			int nCntPlayer = NONEDATA;
 			// プレイヤー毎に処理していく
 			for each(Info& Player in m_aInfo) {
+				nCntPlayer++;
 				// ロケットに乗ってるかゴールしていたら折り返す
 				if (Player.bRide || Player.bGoal)
 					continue;
@@ -694,8 +695,8 @@ void CPlayer::CollisionToStageObject(void)
 					type != OBJECT_TYPE::LASER && 
 					type != OBJECT_TYPE::EXTEND_DOG) {
 
-					if (D3DXVec3Length(&(m_colliInfo.pos - Player.pos)) >
-						D3DXVec2Length(&D3DXVECTOR2(m_colliInfo.fWidth + SIZE_WIDTH, m_colliInfo.fHeight + SIZE_HEIGHT)))
+					if (D3DXVec3Length(&(colliInfo.pos - Player.pos)) >
+						D3DXVec2Length(&D3DXVECTOR2(colliInfo.fWidth + SIZE_WIDTH, colliInfo.fHeight + SIZE_HEIGHT)))
 						continue;
 				}
 
@@ -715,22 +716,22 @@ void CPlayer::CollisionToStageObject(void)
 				switch (type) {
 					// 移動床
 				case OBJECT_TYPE::BLOCK: {
-					//CBlock* pBlock = (CBlock*)stageObj;
-					//if (!pBlock->GetCollision())
-					//	continue;
+					CBlock* pBlock = (CBlock*)stageObj;
+					if (!pBlock->GetCollision())
+						continue;
 				}break;
 
 					// 移動床
 				case OBJECT_TYPE::MOVE_BLOCK:{
 					CMoveBlock *pBlock = (CMoveBlock*)stageObj;
-					m_colliInfo.posOld = pBlock->GetPosOld();
+					colliInfo.posOld = pBlock->GetPosOld();
 				}
 				break;
 
 					// 隕石
 				case OBJECT_TYPE::METEOR:{
 					CMeteor *pMeteor = (CMeteor *)stageObj;
-					m_colliInfo.posOld = pMeteor->GetPosOld();
+					colliInfo.posOld = pMeteor->GetPosOld();
 				}
 				break;
 
@@ -791,7 +792,7 @@ void CPlayer::CollisionToStageObject(void)
 					//	m_pOthColli[nCnt].maxPos = D3DXVECTOR3(m_pOthColli[nCnt].pos.x + m_pOthColli[nCnt].fWidth, m_pOthColli[nCnt].pos.y + m_pOthColli[nCnt].fHeight, 0.0f);
 
 					//	// 当たった方向を格納
-					//	m_pOthColli[nCnt].ColliRot = s_pColli->IsBoxCollider(*pSelf, m_colliInfo, vec);
+					//	m_pOthColli[nCnt].ColliRot = s_pColli->IsBoxCollider(*pSelf, colliInfo, vec);
 
 					//	//if (m_pOthColli[nCnt].ColliRot != CCollision::ROT::NONE){
 					//	//	bOtherColl = true;
@@ -811,17 +812,18 @@ void CPlayer::CollisionToStageObject(void)
 				{
 					CPile *pPile = (CPile *)stageObj;
 
-					m_colliInfo.pos = pPile->GetPos();
-					m_colliInfo.posOld = pPile->GetPosOld();
+					colliInfo.pos = pPile->GetPos();
+					colliInfo.posOld = pPile->GetPosOld();
 				}
 				break;
 				}
 
 				// 当たった方向を格納
-				m_colliInfo.Rot = s_pColli->IsBoxCollider(Self, m_colliInfo, vec);
+				colliInfo.Rot = s_pColli->IsBoxCollider(Self, colliInfo, vec);
+				nColliRot[nCntPlayer] = (int)colliInfo.Rot;
 
 				// 当たっていない
-				if (m_colliInfo.Rot == CCollision::ROT::NONE)
+				if (colliInfo.Rot == CCollision::ROT::NONE)
 				{
 					//杭に当たっていないなら乗っていない
 					if (type == OBJECT_TYPE::PILE)
@@ -835,18 +837,18 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &m_colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, m_colliInfo.Rot, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &m_colliInfo, (CTrampoline *)stageObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &m_colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock *)stageObj, &m_colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &m_colliInfo, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser *)stageObj,&m_colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog *)stageObj, &m_colliInfo, NULL, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &m_colliInfo, obj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline *)stageObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock *)stageObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser *)stageObj,&colliInfo, NULL, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog *)stageObj, &colliInfo, NULL, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts *)stageObj, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket *)stageObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &m_colliInfo, (CPile *)stageObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &colliInfo, (CPile *)stageObj, &Player.side, &bDeath); break;
 				}
 
 				// 死亡判定ON
@@ -862,7 +864,7 @@ void CPlayer::CollisionToStageObject(void)
 			}
 
 			//当たり判定の事後処理
-			CollisionAfter(stageObj, type);
+			CollisionAfter(stageObj, type, &nColliRot[0]);
 		}
 	}
 }
@@ -870,11 +872,31 @@ void CPlayer::CollisionToStageObject(void)
 //----------------------------
 // 各プレイヤーの当たり判定が終わった後の処理
 //----------------------------
-void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type)
+void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, int *pColliRot)
 {
 	// 種類ごとに関数分け
 	switch (type)
 	{
+		//ブロックのリアクションフラグ
+		case CStageObject::TYPE::BLOCK:
+		{
+			typedef CCollision::ROT ColRot;		 //衝突方向の別名
+			Info *pInfo = &m_aInfo[0];			 //プレイヤー情報のポインタ
+			CBlock *pBlock = (CBlock *)pStageObj;//ブロックへキャスト
+
+			for (int nCntPlayer = 0; nCntPlayer < NUM_PLAYER; nCntPlayer++, pInfo++, pColliRot++)
+			{
+				pBlock->IsReaction_HitsRot(*pColliRot);	//当たった方向を代入
+				pBlock->IsReaction_Move(false);
+				
+				//着地したかどうか
+				if (((ColRot)*pColliRot == ColRot::OVER  && pInfo->side == WORLD_SIDE::FACE && pInfo->pos.y < pInfo->posOld.y) ||
+					((ColRot)*pColliRot == ColRot::UNDER && pInfo->side == WORLD_SIDE::BEHIND && pInfo->pos.y > pInfo->posOld.y))
+					pBlock->IsReaction_Land(true);
+			}
+			break;
+		}
+
 		// ヌイの状態設定
 		case CStageObject::TYPE::EXTEND_DOG:
 		{
