@@ -98,7 +98,7 @@ void CStageObjectMgr::Load(void)
 //========================================
 // ƒuƒƒbƒN
 //========================================
-CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::LOOKS_TYPE type, Color color)
+CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::LOOKS_TYPE type, Color color, bool isCollision)
 {
 	CBlock *pObj = NULL;
 
@@ -109,6 +109,7 @@ CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::LOOKS_TYPE type, Co
 	pObj->Init(type);
 	pObj->SetPos(pos);
 	pObj->SetColor(color);
+	pObj->SetCollision(isCollision);
 
 	return pObj;
 }

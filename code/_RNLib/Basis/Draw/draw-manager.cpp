@@ -15,15 +15,15 @@
 //****************************************
 // 静的変数定義
 //****************************************
-CDrawMgr::PROCESS_STATE           CDrawMgr::ms_processState = PROCESS_STATE::REGIST_ACCEPT;
-CDrawMgr::CRegistInfoSum*         CDrawMgr::ms_resistInfoSum		= NULL;
-CDrawMgr::CRegistInfoSum*         CDrawMgr::ms_resistInfoSumScreen	= NULL;
-CDrawMgr::CDrawInfoSum*           CDrawMgr::ms_drawInfoSum			= NULL;
-CDrawMgr::CDrawInfoSum*           CDrawMgr::ms_drawInfoSumOvr		= NULL;
-CDrawMgr::CDrawInfoSum*           CDrawMgr::ms_drawInfoSumScreen	= NULL;
-CDrawMgr::CDrawInfoSum*           CDrawMgr::ms_drawInfoSumScreenOvr = NULL;
-std::thread                       CDrawMgr::ms_mainLoopTh(MainLoop);
-UShort                            CDrawMgr::ms_priorityMax;
+CDrawMgr::PROCESS_STATE   CDrawMgr::ms_processState         = PROCESS_STATE::REGIST_ACCEPT;
+CDrawMgr::CRegistInfoSum* CDrawMgr::ms_resistInfoSum		= NULL;
+CDrawMgr::CRegistInfoSum* CDrawMgr::ms_resistInfoSumScreen	= NULL;
+CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSum			= NULL;
+CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumOvr		= NULL;
+CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumScreen	= NULL;
+CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumScreenOvr = NULL;
+std::thread               CDrawMgr::ms_mainLoopTh(MainLoop);
+UShort                    CDrawMgr::ms_priorityMax;
 
 //========================================
 // コンストラクタ

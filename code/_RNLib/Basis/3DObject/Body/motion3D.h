@@ -63,15 +63,20 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	short  Load      (const char* loadPath, short idx = NONEDATA);
-	void   Save      (const char* savePath, const short& idx);
-	CData& GetData   (const short& idx) { return m_datas[idx]; }
-	void   InitMemory(const UShort& num);
-
-	//========== [[[ •Ï”éŒ¾ ]]]
-	CData* m_datas;
+	short  Load        (const char* loadPath, short idx = NONEDATA);
+	bool   LoadEditData(const char* loadPath);
+	void   SaveEditData(const char* savePath);
+	CData& GetData     (const short& idx) { return idx == EDITDATA ? *m_editData : (idx == NONEDATA ? *(CData*)(nullptr) : *m_datas[idx]); }
+	void   InitMemory  (const UShort& num);
 
 private:
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	bool ExecutionLoad(const char* loadPath, CData& data);
+
 	//========== [[[ ’è”éŒ¾ ]]]
 	static const UShort COMMAND_DATA_NUM[(int)COMMAND::MAX];
+
+	//========== [[[ •Ï”éŒ¾ ]]]
+	CData** m_datas;
+	CData*  m_editData;
 };

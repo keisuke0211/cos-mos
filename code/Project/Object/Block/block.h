@@ -46,6 +46,7 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+	void SetCollision(bool isCollision) { m_isCollision = isCollision; }
 	bool& GetCollision(void) { return m_isCollision; }
 
 private:

@@ -55,6 +55,8 @@ CMode_Title::CMode_Title(void) {
 	m_Anime.nSEVolume = SE * VOLUME_MSX;
 	m_Anime.nBGMOldVolume = BGM * VOLUME_MSX;
 	m_Anime.nSEOldVolume = SE * VOLUME_MSX;
+
+	//m_player1 = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(""));
 }
 
 //========================================
@@ -170,6 +172,29 @@ void CMode_Title::Uninit(void) {
 void CMode_Title::Update(void) {
 	CMode::Update();
 
+	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[0], 0.0f, false)
+		->SetSize(1280.0f, 720.0f)
+		->SetCol(Color{ 255,255,255,255 })
+		->SetTex(m_TexIdx[0]);
+
+	// メニューの背景
+	if (Title == TITLE_MENU) {
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(m_Anime.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+			->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
+			->SetCol(Color{ 150,150,150,150 });
+
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+			->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
+			->SetCol(Color{ 150,150,150,150 });
+
+		if (m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SETTING)
+		{
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x + 10, 400.0f, 100.0f), 0.0f, false)
+				->SetSize(560.0f, 600.0f)
+				->SetTex(m_Anime.BoxTex);
+		}
+	}
+
 	// 各モードの処理
 	if (Title == TITLE_TITLE)
 		TitleAnime();
@@ -181,29 +206,6 @@ void CMode_Title::Update(void) {
 		StageSelect();
 	else if (Title == TITLE_NEXT)
 		return;
-
-	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[0], 0.0f, false)
-		->SetSize(1280.0f, 720.0f)
-		->SetCol(Color{ 255,255,255,255 })
-		->SetTex(m_TexIdx[0]);
-
-	// メニューの背景
-	if (Title == TITLE_MENU){
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(m_Anime.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-			->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
-			->SetCol(Color{ 150,150,150,150 });
-
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-			->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
-			->SetCol(Color{ 150,150,150,150 });
-
-		if (m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SETTING)
-		{
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x+10, 400.0f, 100.0f), 0.0f, false)
-				->SetSize(560.0f, 600.0f)
-				->SetTex(m_Anime.BoxTex);
-		}
-	}
 
 	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
 	{
@@ -220,16 +222,20 @@ void CMode_Title::Update(void) {
 				switch (m_Anime.nMaineSelect)
 				{
 				case MENU_GAME:
-					m_Anime.bClose = true;
-					m_Anime.LeftTargetPos *= -1;
-					m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-					m_Anime.nCntLeftAnime = 0;
+					if (!m_Anime.bClose) {
+						m_Anime.bClose = true;
+						m_Anime.LeftTargetPos *= -1;
+						m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+						m_Anime.nCntLeftAnime = 0;
+					}
 					break;
 				case MENU_CONTROLLER:
 					break;
 				case MENU_SETTING:
-					m_Anime.bSubMenu = true;
-					m_pMenu[m_Anime.nMaineSelect]->SetBoxColor(Color{155,155,155,255});
+					if (!m_Anime.bSubMenu) {
+						m_Anime.bSubMenu = true;
+						m_pMenu[m_Anime.nMaineSelect]->SetBoxColor(Color{ 155,155,155,255 });
+					}
 					break;
 				case MENU_END:
 					//ゲームの終了
@@ -260,6 +266,11 @@ void CMode_Title::Update(void) {
 				case SETTING_BGM:
 					break;
 				case SETTING_SE:
+					break;
+				case SETTING_BACK:
+					m_Anime.bSubMenu = false;
+					m_pMenu[m_Anime.nMaineSelect]->SetBoxColor(INITCOLOR);
+					m_pSubMenu[m_Anime.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 					break;
 				}
 
@@ -414,25 +425,30 @@ void CMode_Title::SubTextCreate(void)
 		for (int nText = 1; nText < m_Anime.SettingMax; nText++) {
 
 			D3DXVECTOR3 pos = INITD3DXVECTOR3;
+			D3DXVECTOR2 size = INITD3DXVECTOR2;
 			if (nText <= SETTING_BGM)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
 			else if (nText == SETTING_SE)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
 			else if (nText == SETTING_BACK)
-				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 650.0f, 0.0f);
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 190.0f, 650.0f, 0.0f);
 			else if (nText == SETTING_BGM_TEXT)
-				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * 3), 0.0f);
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);
 			else if (nText == SETTING_SE_TEXT)
-				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * ((nText - 2) + 2)), 0.0f);
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
 
-			if(nText >= SETTING_BACK)
-				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-					pos, D3DXVECTOR2(200.0f, 80.0f),
-					"", CFont::FONT_ROND_B, &pFont, false, true);
+
+
+			if (nText > SETTING_BACK)
+				size = D3DXVECTOR2(180.0f, 80.0f);
+			else if (nText == SETTING_BACK)
+				size = D3DXVECTOR2(100.0f, 80.0f);
 			else
-				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-					pos, D3DXVECTOR2(480.0f, 60.0f),
-					"", CFont::FONT_ROND_B, &pFont, false, true);
+				size = D3DXVECTOR2(480.0f, 60.0f);
+
+			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+				pos, size,
+				"", CFont::FONT_ROND_B, &pFont, false, true);
 		}
 	}
 
@@ -491,7 +507,12 @@ void CMode_Title::MenuAnime(void)
 		move.x = (m_Anime.RightTargetPos.x - m_Anime.RightPos.x) * 0.3f;
 
 		m_Anime.RightPos.x += move.x;
-		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+
+		int nTextMax = -1;
+		if (m_Anime.nMaineSelect == MENU_CONTROLLER) nTextMax = m_Anime.OperationMax;
+		else if (m_Anime.nMaineSelect == MENU_SETTING) nTextMax = m_Anime.SettingMax;
+
+		for (int nCnt = 0; nCnt < nTextMax; nCnt++) {
 			if (m_pSubMenu[nCnt] != NULL) {
 				m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
 			}
@@ -602,7 +623,6 @@ void CMode_Title::MenuSelect(void)
 			}
 		}
 	}
-
 	for (int nCnt = 1; nCnt < m_Anime.SettingMax; nCnt++)
 	{
 		if (m_Anime.bSubMenu) {
@@ -613,6 +633,41 @@ void CMode_Title::MenuSelect(void)
 					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 			}
 		}
+	}
+
+	// 矢印の表示
+
+	if (m_Anime.nSubSelect == SETTING_BGM || m_Anime.nSubSelect == SETTING_SE) {
+		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
+		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
+
+		D3DXVECTOR3 pos = INITD3DXVECTOR3;	D3DXVECTOR2 TexSize = INITD3DXVECTOR2;	float TxtSize;	int Volume = 0;
+		if (m_Anime.nSubSelect == SETTING_BGM) {
+			pos = m_pSubMenu[SETTING_BGM_TEXT]->GetTexPos();
+			TexSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTexSize();
+			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
+			Volume = m_Anime.nBGMVolume;
+		}
+		else if (m_Anime.nSubSelect == SETTING_SE) {
+			pos = m_pSubMenu[SETTING_SE_TEXT]->GetTexPos();
+			TexSize = m_pSubMenu[SETTING_SE_TEXT]->GetTexSize();
+			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
+			Volume = m_Anime.nSEVolume;
+		}
+		
+
+
+		if (Volume != 0)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(pos.x - (TexSize.x - TxtSize), pos.y, 0.0), 0.0f, false)
+			->SetSize(80.0f, 100.0f)
+			->SetCol(Color{ 50,255,0,255 })
+			->SetTex(nPrevTex);
+
+		if (Volume != VOLUME_MSX)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(pos.x + (TexSize.x - TxtSize), pos.y, 0.0), 0.0f, false)
+			->SetSize(80.0f, 100.0f)
+			->SetCol(Color{ 50,255,0,255 })
+			->SetTex(nNextTex);
 	}
 
 	// -- メニュー選択 ---------------------------

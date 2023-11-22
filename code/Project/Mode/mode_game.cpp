@@ -365,23 +365,32 @@ void CMode_Game::SubTextCreate(void)
 		for (int nText = 1; nText < m_Pause.SettingMax; nText++) {
 
 			D3DXVECTOR3 pos = INITD3DXVECTOR3;
+			D3DXVECTOR2 size = INITD3DXVECTOR2;
+
+			// 位置
 			if (nText <= SETTING_BGM)
 				pos = D3DXVECTOR3(m_Pause.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
 			else if (nText == SETTING_SE)
 				pos = D3DXVECTOR3(m_Pause.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
+			else if (nText == SETTING_BACK)
+				pos = D3DXVECTOR3(m_Pause.RightPos.x + 190.0f, 650.0f, 0.0f);
 			else if (nText == SETTING_BGM_TEXT)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x + 50.0f, 100.0f + (80.0f * 3), 0.0f);
+				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);
 			else if (nText == SETTING_SE_TEXT)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x + 50.0f, 100.0f + (80.0f * ((nText - 2) + 2)), 0.0f);
+				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
 
-			if (nText >= SETTING_BGM_TEXT)
-				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-					pos, D3DXVECTOR2(480.0f, 60.0f),
-					"", CFont::FONT_ROND_B, &pFont, false, true);
+
+			// サイズ
+			if (nText > SETTING_BACK)
+				size = D3DXVECTOR2(180.0f, 80.0f);
+			else if (nText == SETTING_BACK)
+				size = D3DXVECTOR2(100.0f, 80.0f);
 			else
-				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-					pos, D3DXVECTOR2(480.0f, 60.0f),
-					"", CFont::FONT_ROND_B, &pFont, false, true);
+				size = D3DXVECTOR2(480.0f, 60.0f);
+
+			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+				pos, size,
+				"", CFont::FONT_ROND_B, &pFont, false, true);
 		}
 	}
 
@@ -561,7 +570,11 @@ void CMode_Game::PauseAnime(void)
 		move.x = (m_Pause.RightTargetPos.x - m_Pause.RightPos.x) * 0.3f;
 
 		m_Pause.RightPos.x += move.x;
-		for (int nCnt = 0; nCnt < INPUT_MAX; nCnt++) {
+		int nTextMax = -1;
+		if (m_Pause.nMaineSelect == MENU_CONTROLLER) nTextMax = m_Pause.OperationMax;
+		else if (m_Pause.nMaineSelect == MENU_SETTING) nTextMax = m_Pause.SettingMax;
+
+		for (int nCnt = 0; nCnt < nTextMax; nCnt++) {
 			if (m_pSubMenu[nCnt] != NULL) {
 				m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
 			}
@@ -690,6 +703,11 @@ void CMode_Game::PauseSelect(void)
 			case SETTING_BGM:
 				break;
 			case SETTING_SE:
+				break;
+			case SETTING_BACK:
+				m_Pause.bSubMenu = false;
+				m_pMenu[m_Pause.nMaineSelect]->SetBoxColor(INITCOLOR);
+				m_pSubMenu[m_Pause.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
 				break;
 			}
 		}

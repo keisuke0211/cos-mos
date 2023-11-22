@@ -30,7 +30,7 @@ CEffectMgr::~CEffectMgr()
 //========================================
 void CEffectMgr::Update(void)
 {
-	RNLib::Text2D().PutDebugLog(CreateText("%d", CObjectMgr::GetNum()));
+
 }
 
 //========================================

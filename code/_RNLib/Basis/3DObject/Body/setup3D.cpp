@@ -18,7 +18,7 @@
 CSetUp3D::CSetUp3D() {
 
 	m_datas    = NULL;
-	m_editData = {};
+	m_editData = NULL;
 }
 
 //========================================
