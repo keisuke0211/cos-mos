@@ -70,9 +70,7 @@ private:
 	// ÉeÉNÉXÉ`ÉÉ
 	enum TEX{
 		TEX_BG = 0,		// îwåi
-		TEX_PLANET00,	// òfêØ
-		TEX_PLANET01,	// òfêØ
-		TEX_ICON,		// ÉAÉCÉRÉì
+		TEX_PLANET,		// òfêØ
 		TEX_MAX
 	};
 
@@ -186,6 +184,7 @@ private:
 	int m_nOldSelect;
 	int m_nPlanetIdx;
 	int m_nOldnPlanet;
+	int m_RocketIdx;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	CWords *m_TITLE[WORDS_MAX];
@@ -194,4 +193,5 @@ private:
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
 	CDoll3D *m_player1;
+	CDoll3D *m_player2;
 };

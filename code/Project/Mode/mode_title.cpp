@@ -44,6 +44,8 @@ CMode_Title::CMode_Title(void) {
 	m_PlanetType = NULL;
 	m_bBackMode = false;
 
+	m_RocketIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
+
 	m_Anime.pOperation = NULL;
 	m_Anime.pSetting = NULL;
 
@@ -56,7 +58,8 @@ CMode_Title::CMode_Title(void) {
 	m_Anime.nBGMOldVolume = BGM * VOLUME_MSX;
 	m_Anime.nSEOldVolume = SE * VOLUME_MSX;
 
-	//m_player1 = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(""));
+	m_player1 = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
+	m_player2 = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 }
 
 //========================================
@@ -128,25 +131,31 @@ void CMode_Title::Init(void) {
 		// モード設定
 		SwapMode(TITLE_TITLE);
 
+	m_player1->SetPos(D3DXVECTOR3(60.0f,-0.0f,-30.0f));
+	m_player1->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.3f));
+	m_player2->SetPos(D3DXVECTOR3(80.0f,-38.0f,-30.0f));
+	m_player2->SetRot(D3DXVECTOR3(0.0f, 0.0f, -0.3f));
 	
 
 	// テクスチャ
 	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
-	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1460.0f, 0.0f);
-	m_BgPos[2] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1460.0f, 0.0f);
-	m_BgPos[3] = D3DXVECTOR3(50, 140.0f, 0.0f);
+	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
+
 	m_nSelect = 0;
 
+	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
+		m_TexIdx[nCnt] = 0;
+
+	}
+
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
-	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Planet\\blue.png");
-	m_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\Planet\\Orange.png");
-	m_TexIdx[3] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
+	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Planet.png");
 
 	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 1);
 
 	// カメラの視点/注視点を設定
-	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -50.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 状態設定
 	SetState((int)STATE::NONE);
@@ -172,11 +181,22 @@ void CMode_Title::Uninit(void) {
 void CMode_Title::Update(void) {
 	CMode::Update();
 
-	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[0], 0.0f, false)
+	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_BG], 0.0f, false)
 		->SetSize(1280.0f, 720.0f)
 		->SetCol(Color{ 255,255,255,255 })
-		->SetTex(m_TexIdx[0]);
+		->SetTex(m_TexIdx[TEX_BG]);
 
+	if (Title <= TITLE_MENU)
+	{
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_PLANET], 0.0f, false)
+			->SetSize(1400.0f, 1400.0f)
+			->SetCol(Color{ 255,255,255,255 })
+			->SetTex(m_TexIdx[TEX_PLANET]);
+
+		// ロケット
+		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
+			->SetOutLine(true);
+	}
 	// メニューの背景
 	if (Title == TITLE_MENU) {
 		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(m_Anime.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
@@ -571,22 +591,24 @@ void CMode_Title::MenuAnime(void)
 	}
 
 	// タイトル
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-	{
-		if (m_TITLE[nCnt] != NULL) {
-			D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
+	if (Title == TITLE_MENU) {
+		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
+		{
+			if (m_TITLE[nCnt] != NULL) {
+				D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
 
-			if (pos.y >= -60.0f && m_bMove[nCnt]) {
-				D3DXVECTOR3 move;
+				if (pos.y >= -60.0f && m_bMove[nCnt]) {
+					D3DXVECTOR3 move;
 
-				move.y = -20.0f;
+					move.y = -20.0f;
 
-				m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-				m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+					m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+					m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
 
-				if (pos.y <= -60.0f) {
-					delete[nCnt] m_TITLE[nCnt];
-					m_TITLE[nCnt] = NULL;
+					if (pos.y <= -60.0f) {
+						delete[nCnt] m_TITLE[nCnt];
+						m_TITLE[nCnt] = NULL;
+					}
 				}
 			}
 		}
@@ -638,6 +660,7 @@ void CMode_Title::MenuSelect(void)
 	// 矢印の表示
 
 	if (m_Anime.nSubSelect == SETTING_BGM || m_Anime.nSubSelect == SETTING_SE) {
+
 		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
 		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
 
@@ -654,7 +677,7 @@ void CMode_Title::MenuSelect(void)
 			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
 			Volume = m_Anime.nSEVolume;
 		}
-		
+
 
 
 		if (Volume != 0)
@@ -679,6 +702,7 @@ void CMode_Title::MenuSelect(void)
 			m_Anime.LeftTargetPos *= -1;
 			m_Anime.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
 			m_Anime.nCntLeftAnime = 0;
+			TextRelease(TEXT_ALL);
 			return;
 		}
 		else if (m_Anime.bSubMenu) {
@@ -827,7 +851,7 @@ void CMode_Title::StageSelect(void)
 		->SetCol(Color{ 50,255,0,255 })
 		->SetTex(nPrevTex);
 
-	if ((m_nPlanetIdx != nPlanetMax-1) || (m_nPlanetIdx == nPlanetMax-1 && m_nSelect != nStageMax-1))
+	if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1))
 		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(880.0f, 550.0f, 0.0), 0.0f, false)
 		->SetSize(100.0f, 100.0f)
 		->SetCol(Color{ 50,255,0,255 })
@@ -844,7 +868,7 @@ void CMode_Title::StageSelect(void)
 		{
 			nTexIdx = nNoChoiceTex;
 		}
-		D3DXVECTOR3 pos = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 680,1.0f);
+		D3DXVECTOR3 pos = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 680, 1.0f);
 		pos.x += ((nStageMax * -0.5f) + nCnt + 0.5f) * 50;
 
 		RNLib::Polygon2D().Put(PRIORITY_UI, pos, 0.0f, false)
@@ -977,6 +1001,16 @@ void CMode_Title::SwapMode(TITLE aTitle)
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
+		if (m_player1 != NULL) {
+			delete m_player1;
+			m_player1 = NULL;
+		}
+
+		if (m_player2 != NULL) {
+			delete m_player2;
+			m_player2 = NULL;
+		}
+
 		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;
