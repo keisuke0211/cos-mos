@@ -154,9 +154,9 @@
   <ItemGroup>
     <ClCompile Include="code\Project\Character\player.cpp" />
     <ClCompile Include="code\Project\collision.cpp" />
-    <ClCompile Include="code\Project\Effect\effect-manager.cpp" />
-    <ClCompile Include="code\Project\Effect\effect-meteor.cpp" />
-    <ClCompile Include="code\Project\Effect\effect.cpp" />
+    <ClCompile Include="code\Project\Effect\eff-manager.cpp" />
+    <ClCompile Include="code\Project\Effect\eff-meteor.cpp" />
+    <ClCompile Include="code\Project\Effect\eff.cpp" />
     <ClCompile Include="code\Project\Effect\particle.cpp" />
     <ClCompile Include="code\Project\main.cpp" />
     <ClCompile Include="code\Project\manager.cpp" />
@@ -166,6 +166,7 @@
     <ClCompile Include="code\Project\Mode\mode_result.cpp" />
     <ClCompile Include="code\Project\Mode\mode_title.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\pile.cpp" />
+    <ClCompile Include="code\Project\Sound\ambient-sound-player.cpp" />
     <ClCompile Include="code\Project\System\BG-Editor.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\Planet.cpp" />
@@ -200,6 +201,8 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\doll3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\motion3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\setup3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D-manager.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\ease.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\geometry.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\hit-test.cpp" />
@@ -246,9 +249,9 @@
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
     <ClInclude Include="code\Project\collision.h" />
-    <ClInclude Include="code\Project\Effect\effect-manager.h" />
-    <ClInclude Include="code\Project\Effect\effect-meteor.h" />
-    <ClInclude Include="code\Project\Effect\effect.h" />
+    <ClInclude Include="code\Project\Effect\eff-manager.h" />
+    <ClInclude Include="code\Project\Effect\eff-meteor.h" />
+    <ClInclude Include="code\Project\Effect\eff.h" />
     <ClInclude Include="code\Project\Effect\particle.h" />
     <ClInclude Include="code\Project\main.h" />
     <ClInclude Include="code\Project\manager.h" />
@@ -258,6 +261,7 @@
     <ClInclude Include="code\Project\Mode\mode_result.h" />
     <ClInclude Include="code\Project\Mode\mode_title.h" />
     <ClInclude Include="code\Project\Object\Gimmick\pile.h" />
+    <ClInclude Include="code\Project\Sound\ambient-sound-player.h" />
     <ClInclude Include="code\Project\System\BG-Editor.h" />
     <ClInclude Include="code\Project\Object\BackGround\BG-object.h" />
     <ClInclude Include="code\Project\Object\BackGround\Planet.h" />
@@ -290,6 +294,9 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\doll3D.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\motion3D.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\setup3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D-manager.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\ease.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\geometry.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\hit-test.h" />

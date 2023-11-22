@@ -1,7 +1,5 @@
 SCRIPT			# Ç±ÇÃçsÇÕê‚ëŒè¡Ç≥Ç»Ç¢Ç±Ç∆ÅI
 
-START_PATH data\\MODEL\\
-
 UP
 	POS 0.0,-15.0,0.0 ROT 0.0,0.0,0.0 SPIN 0.0,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\RockTower.x
 	POS 50.0,10.0,0.0 ROT 1.0,1.0,1.0 SPIN 0.005,0.0,0.0 COLOR 255,255,255,255 PATH data\\MODEL\\StoneBird.x
