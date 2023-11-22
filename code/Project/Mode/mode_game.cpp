@@ -14,6 +14,7 @@
 #include "../Mode/mode_title.h"
 #include "../UI/rocket-parts.h"
 #include "../System/BG-Editor.h"
+#include "../Sound/ambient-sound-player.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -173,6 +174,9 @@ void CMode_Game::Uninit(void) {
 //========================================
 void CMode_Game::Update(void) {
 	CMode::Update();
+
+	// 環境音プレイヤーの更新処理
+	AmbientSoundPlayer::Update();
 
 	{// [[[ カメラ制御 ]]]
 		Pos3D pos = (s_pPlayer->GetInfo(0)->pos + s_pPlayer->GetInfo(1)->pos) * 0.5f;
