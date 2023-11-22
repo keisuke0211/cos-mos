@@ -50,6 +50,15 @@ public:
 	void SetSpringForce(float fForce) { m_fSpringForce = fForce; }
 	float GetSpringForce(void) { return m_fSpringForce; }
 
+	//---------------------------------------------
+	//バウンド設定
+	//Author:HIRASAWA SHION
+	//---------------------------
+	//引数１　state： どっちの方向に着地したか
+	//引数２　fForce：どれだけバウンドさせるか（最高Ｙ座標を代入）
+	//---------------------------------------------
+	void SetBound(STATE state, float fForce) { SetState(state); SetSpringForce(fForce); SetCount(MAX_COUNT); }
+
 private:
 	//========== [[[ 関数宣言 ]]]
 	void PutModel(void);

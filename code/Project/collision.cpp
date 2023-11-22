@@ -76,6 +76,11 @@ void CCollision::FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float
 
 //----------------------------
 //上下どちらかに当たった（乗った）プレイヤーの設定処理
+// 概要 ----------------------
+//・着地SE再生(ジャンプ中のみ)
+//・bGround = true
+//・bJump = false
+//・fMaxHeight = fMaxY
 //----------------------------
 void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 {
@@ -93,7 +98,7 @@ void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 //----------------------------
 // ブロックの当たり判定処理
 //----------------------------
-void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 当たった方向ごとに処理を切り替え
 	switch (pColli->Rot)
@@ -147,23 +152,23 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SI
 			//*********************************
 			// 埋まった
 			//*********************************
-		case ROT::UNKNOWN:CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);	 break;
+		case ROT::UNKNOWN:*pDeath = true; break;
 	}
 }
 
 //----------------------------
 // 穴埋めブロックの当たり判定処理
 //----------------------------
-void CCollision::FillBlock(SelfInfo *pSelfInfo, ROT Rot, CPlayer::WORLD_SIDE *pSide)
+void CCollision::FillBlock(SelfInfo *pSelfInfo, ROT Rot, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	//死亡処理
-	CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);
+	*pDeath = true;
 }
 
 //----------------------------
 // トランポリンの当たり判定処理
 //----------------------------
-void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline *pTrampoline, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline *pTrampoline, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 当たった方向ごとに処理を切り替え
 	switch (pColli->Rot)
@@ -180,21 +185,19 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 				*pSide == CPlayer::WORLD_SIDE::FACE)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer *pPlayer = CMode_Game::GetPlayer();
+				CPlayer::Info *pInfo = pPlayer->GetInfo(*pSide);
 
+				// 着地した
 				if (pSelfInfo->posOld.y > pSelfInfo->pos.y)
-				{// 着地した
-					pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
-					pTrampoline->SetSpringForce(pInfo->fMaxHeight);
-					pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-				}
+					pTrampoline->SetBound(CTrampoline::STATE::UP_LAND, pInfo->fMaxHeight);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->maxPos.y);
 
-				if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND) {
-					//SetTrampolineJump(pSelfInfo, pTrampoline->GetSpringForce());
-				}
+				//トランポリンによる跳ね上げ処理
+				if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND)
+					pPlayer->SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
 			}
 			break;
 
@@ -210,21 +213,19 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 				*pSide == CPlayer::WORLD_SIDE::BEHIND)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer *pPlayer = CMode_Game::GetPlayer();
+				CPlayer::Info *pInfo = pPlayer->GetInfo(*pSide);
 
+				// 着地した
 				if (pSelfInfo->posOld.y < pSelfInfo->pos.y)
-				{// 着地した
-					pTrampoline->SetState(CTrampoline::STATE::DOWN_LAND);
-					pTrampoline->SetSpringForce(pInfo->fMaxHeight);
-					pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-				}
+					pTrampoline->SetBound(CTrampoline::STATE::DOWN_LAND, pInfo->fMaxHeight);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->minPos.y);
 
-				if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND) {
-					//SetTrampolineJump(pSelfInfo, pTrampoline->GetSpringForce());
-				}
+				//トランポリンによる跳ね上げ処理
+				if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND)
+					pPlayer->SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
 			}
 			break;
 	}
@@ -233,7 +234,7 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 //----------------------------
 // トゲの当たり判定処理
 //----------------------------
-void CCollision::Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	switch (pColli->Rot)
 	{
@@ -241,7 +242,7 @@ void CCollision::Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SI
 		case ROT::OVER:
 		case ROT::UNDER:
 			// 死亡処理
-			CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);
+			*pDeath = true;
 			break;
 
 			//*********************************
@@ -259,7 +260,7 @@ void CCollision::Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SI
 //----------------------------
 // 移動床の当たり判定処理
 //----------------------------
-void CCollision::MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	switch (pColli->Rot)
 	{
@@ -345,17 +346,17 @@ void CCollision::MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInf
 // 隕石の当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::Meteor(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Meteor(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 死亡処理
-	CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);
+	*pDeath = true;
 }
 
 //----------------------------
 // レーザーの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 本体
 	{
@@ -446,7 +447,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 	// レーザー
 	{
 		// 死亡処理
-		CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);
+		*pDeath = true;
 	}
 }
 
@@ -454,7 +455,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 // ヌイの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// ハウス
 	{
@@ -513,7 +514,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				//*********************************
 				// 埋まった
 				//*********************************
-			case ROT::UNKNOWN: CMode_Game::GetPlayer()->Death(&pSelfInfo->pos); break;
+			case ROT::UNKNOWN: *pDeath = true; break;
 		}
 	}
 
@@ -572,7 +573,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				//*********************************
 				// 埋まった
 				//*********************************
-			case ROT::UNKNOWN: CMode_Game::GetPlayer()->Death(&pSelfInfo->pos); break;
+			case ROT::UNKNOWN: *pDeath = true; break;
 		}
 	}
 }
@@ -581,7 +582,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 // ゴールゲートの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli,CObject *obj, CPlayer::WORLD_SIDE *pSide)
+void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CObject *obj, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	if (pSide == NULL) return;
 
@@ -590,13 +591,11 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli,CObject *obj, C
 
 	if (!pInfo->bGoal)
 	{
-		pInfo->bGoal = true;
-
-		//オブジェクトを敵にキャスト
+		//オブジェクトをキャスト
 		CGoalGate *GoalGateObj = dynamic_cast<CGoalGate*>(obj);
-
 		GoalGateObj->SetEntry(true);
 
+		pInfo->bGoal = true;
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
 			Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::GOAL_EFFECT), pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
@@ -607,7 +606,7 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli,CObject *obj, C
 //----------------------------
 // パーツの当たり判定処理
 //----------------------------
-void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	if (!pParts->GetDisp()) return;
 
@@ -622,7 +621,7 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 //----------------------------
 // ロケットの当たり判定処理
 //----------------------------
-void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
 	if (pRocket->GetReady() && pInfo->bRide) return;
@@ -641,7 +640,7 @@ void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SI
 //----------------------------
 // 杭の当たり判定処理
 //----------------------------
-void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPlayer::WORLD_SIDE *pSide)
+void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 当たった方向ごとに処理を切り替え
 	switch (pColli->Rot)
@@ -715,7 +714,7 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 		{
 			if (pSide == NULL) return;
 
-			if (CPlayer::GetSwapInterval() != 0) CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);
+			if (CPlayer::GetSwapInterval() != 0) *pDeath = true;
 			else
 			{
 				//プレイヤー取得
