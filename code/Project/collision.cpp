@@ -76,6 +76,11 @@ void CCollision::FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float
 
 //----------------------------
 //上下どちらかに当たった（乗った）プレイヤーの設定処理
+// 概要 ----------------------
+//・着地SE再生(ジャンプ中のみ)
+//・bGround = true
+//・bJump = false
+//・fMaxHeight = fMaxY
 //----------------------------
 void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 {
@@ -180,21 +185,19 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 				*pSide == CPlayer::WORLD_SIDE::FACE)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer *pPlayer = CMode_Game::GetPlayer();
+				CPlayer::Info *pInfo = pPlayer->GetInfo(*pSide);
 
+				// 着地した
 				if (pSelfInfo->posOld.y > pSelfInfo->pos.y)
-				{// 着地した
-					pTrampoline->SetState(CTrampoline::STATE::UP_LAND);
-					pTrampoline->SetSpringForce(pInfo->fMaxHeight);
-					pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-				}
+					pTrampoline->SetBound(CTrampoline::STATE::UP_LAND, pInfo->fMaxHeight);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->maxPos.y);
 
-				if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND) {
-					//SetTrampolineJump(pSelfInfo, pTrampoline->GetSpringForce());
-				}
+				//トランポリンによる跳ね上げ処理
+				if (pTrampoline->GetState() == CTrampoline::STATE::DOWN_LAND)
+					pPlayer->SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
 			}
 			break;
 
@@ -210,21 +213,19 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 				*pSide == CPlayer::WORLD_SIDE::BEHIND)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer *pPlayer = CMode_Game::GetPlayer();
+				CPlayer::Info *pInfo = pPlayer->GetInfo(*pSide);
 
+				// 着地した
 				if (pSelfInfo->posOld.y < pSelfInfo->pos.y)
-				{// 着地した
-					pTrampoline->SetState(CTrampoline::STATE::DOWN_LAND);
-					pTrampoline->SetSpringForce(pInfo->fMaxHeight);
-					pTrampoline->SetCount(CTrampoline::MAX_COUNT);
-				}
+					pTrampoline->SetBound(CTrampoline::STATE::DOWN_LAND, pInfo->fMaxHeight);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->minPos.y);
 
-				if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND) {
-					//SetTrampolineJump(pSelfInfo, pTrampoline->GetSpringForce());
-				}
+				//トランポリンによる跳ね上げ処理
+				if (pTrampoline->GetState() == CTrampoline::STATE::UP_LAND)
+					pPlayer->SetTrampolineJump(pInfo, pTrampoline->GetSpringForce());
 			}
 			break;
 	}
