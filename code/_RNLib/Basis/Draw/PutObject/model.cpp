@@ -234,6 +234,10 @@ CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, 
 	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
 		return NULL;
 
+	if (modelIdx == 84) {
+		int n = 0;
+	}
+
 	return RNLib::DrawMgr().PutModel(priority, mtx, isOnScreen)
 		->SetModel(modelIdx);
 }
