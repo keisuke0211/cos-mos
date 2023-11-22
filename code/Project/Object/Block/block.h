@@ -47,6 +47,12 @@ public:
 		MAX,
 	};
 
+	// ‚»‚Ì‘¼ƒ‚[ƒVƒ‡ƒ“3D
+	enum class OTHER_MOTION3D {
+		CHEST_STEPPED,
+		MAX,
+	};
+
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	static void Load(void);
 	CBlock();

@@ -1,5 +1,5 @@
 SetUp3DFile
-boneDataSum{ 2
+boneDataSum{ 12
 	boneData{
 		idx 0
 		modelIdx data\\Model\\PalmTree\\Stem_0.x
@@ -14,7 +14,272 @@ boneDataSum{ 2
 		relativePos 0.00 35.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
+	
+	
+	
+	boneData{
+		idx 2
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.0 0.00 0.25
+	}
+	boneData{
+		idx 3
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 0.20 0.17
+	}
+	boneData{
+		idx 4
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 0.40 0.22
+	}
+	boneData{
+		idx 5
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 0.60 0.15
+	}
+	boneData{
+		idx 6
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 0.80 -0.04
+	}
+	boneData{
+		idx 7
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 1.00 -0.02
+	}
+	boneData{
+		idx 8
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 1.20 0.00
+	}
+	boneData{
+		idx 9
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 1.40 0.12
+	}
+	boneData{
+		idx 10
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 1.60 0.16
+	}
+	boneData{
+		idx 11
+		modelIdx data\\Model\\PalmTree\\Branch.x
+		parentIdx 1
+		relativePos 1.00 13.00 0.00
+		relativeRot 0.00 1.80 0.21
+	}
 }
-faceDataSum{ 0
+faceDataSum{ 8
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 2
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 5
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 1
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 4
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 5
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 7
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 4
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 6
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 7
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 9
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 6
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 8
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 9
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 11
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 8
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 10
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 11
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 13
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 10
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 12
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 13
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 15
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 12
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 14
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 15
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 17
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 14
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 16
+		texPos 1.00 1.00
+	}
+}
+faceData{
+	texIdx data\\TEXTURE\\Wood.png
+	col 255 255 255 255
+	vtx0{
+		boneIdx 1
+		vtxIdx 17
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 1
+		vtxIdx 2
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 16
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 1
+		texPos 1.00 1.00
+	}
+}
 }
 END

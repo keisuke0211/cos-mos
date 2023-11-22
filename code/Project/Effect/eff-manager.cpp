@@ -72,18 +72,20 @@ CEffect_Meteor * CEffMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 //========================================
 // パーティクル
 //========================================
-CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount)
+CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,Color col, CParticle::TYPE type ,int nCount, D3DXVECTOR3 rot)
 {
 	CParticle *pObj = NULL;
 
 	pObj = new CParticle;
 
 	// 初期化処理
+	pObj->SetType(type);
 	pObj->Init(nTex, nCount);
 	pObj->SetPos(pos);
+	pObj->SetRot(rot);
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
-
+	
 
 	return pObj;
 }

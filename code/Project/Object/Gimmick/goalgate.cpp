@@ -35,7 +35,7 @@ CGoalGate::CGoalGate(void) {
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
-	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
+	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
 	m_bEntry = false;
 	m_bScale = false;
 	m_num++;
@@ -103,23 +103,20 @@ void CGoalGate::StateUpdate(void)
 	if (m_num == m_numEntry)
 	{
 		float CountRateRot = MAX_ROT_SPEED * CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		float CntEffRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
 		m_rot.z += 0.6f - CountRateRot;
 
 		if (m_nCnt > 0)
 		{
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120);
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120,D3DXVECTOR3(0.0f,0.0f,3.14f));
 			m_nCnt--;
 		}
 		else
 		{
 			m_state = STATE::NONE;
 			m_numEntry = 0;
-
-			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
-			{
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-			}
 		}
 	}
 	else if (m_state == STATE::SMALL)
@@ -188,5 +185,24 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
 		//割合計算
 		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	}
+}
+//========================================
+// エントリー設定処理
+// Author:RYUKI FUJIWARA
+//========================================
+void CGoalGate::SetEntry(bool bEntry) 
+{
+	m_bEntry = bEntry;
+
+	if (bEntry == true) {
+		m_numEntry++;
+		m_nCntEtrX = ETR_CNT;
+		m_nCntEtrY = ETR_CNT * 0.5;
+
+		for (int ParCnt = 0; ParCnt < 16; ParCnt++)
+		{
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+		}
 	}
 }
