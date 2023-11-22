@@ -223,12 +223,6 @@ void CMode_Game::Update(void) {
 		// プレイヤーの更新処理
 		if (s_pPlayer != NULL)
 			s_pPlayer->Update();
-
-		if (RNLib::Input().GetKeyTrigger(DIK_0) && RNLib::Transition().GetState() == CTransition::STATE::NONE) {
-			int planet = Manager::StgEd()->GetPlanetIdx();
-			int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-			Manager::StgEd()->SwapStage(stage + 1);
-		}
 	}
 }
 
