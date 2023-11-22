@@ -1,0 +1,91 @@
+SetUp3DFile
+boneDataSum{ 7
+	boneData{
+		idx 0
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\Tree.x
+		parentIdx -1
+		relativePos 0.00 0.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\LeafA_Inside.x
+		parentIdx 0
+		relativePos -24.00 52.50 -5.00
+		relativeRot 0.00 -0.75 0.00
+		swaying{
+			timeMin 60
+			timeAdd 60
+			distMin 1.0
+			distAdd 1.0
+		}
+	}
+	boneData{
+		idx 2
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\LeafA.x
+		parentIdx 0
+		relativePos -24.00 52.50 -5.00
+		relativeRot 0.00 -0.75 0.00
+		follow{
+			followIdx 1
+			posRate 1.50 1.50 1.50
+			rotRate 1.00 1.00 1.00
+			scaleRate 1.00 1.00 1.00
+		}
+	}
+	boneData{
+		idx 3
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\LeafA_Inside.x
+		parentIdx 0
+		relativePos 26.00 55.00 0.00
+		relativeRot 0.00 0.00 0.00
+		swaying{
+			timeMin 60
+			timeAdd 60
+			distMin 1.0
+			distAdd 1.0
+		}
+	}
+	boneData{
+		idx 4
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\LeafA.x
+		parentIdx 0
+		relativePos 26.00 55.00 0.00
+		relativeRot 0.00 0.00 0.00
+		follow{
+			followIdx 3
+			posRate 1.50 1.50 1.50
+			rotRate 1.00 1.00 1.00
+			scaleRate 1.00 1.00 1.00
+		}
+	}
+	boneData{
+		idx 5
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\LeafB_Inside.x
+		parentIdx 0
+		relativePos 0.00 60.00 0.00
+		relativeRot 0.00 0.00 0.00
+		swaying{
+			timeMin 60
+			timeAdd 60
+			distMin 1.0
+			distAdd 1.0
+		}
+	}
+	boneData{
+		idx 6
+		modelIdx Data\\Model\\StageObject\\BaobabTree\\LeafB.x
+		parentIdx 0
+		relativePos 0.00 60.00 0.00
+		relativeRot 0.00 0.00 0.00
+		follow{
+			followIdx 5
+			posRate 1.50 1.50 1.50
+			rotRate 1.00 1.00 1.00
+			scaleRate 1.00 1.00 1.00
+		}
+	}
+}
+faceDataSum{ 0
+}
+END

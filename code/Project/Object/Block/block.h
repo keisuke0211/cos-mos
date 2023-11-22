@@ -29,12 +29,19 @@ public:
 		LEAF_BLOCK	                = 9,
 		TREE_TRUNK	                = 10,
 		TREE_TRUNK_ROOT             = 11,
+		BAOBAB_TREE                 = 12,
 		MAX
 	};
 
 	// その他モデル
 	enum class OTHER_MODEL {
 		LEAF_INSIDE,
+		MAX,
+	};
+
+	// その他セットアップ3D
+	enum class OTHER_SETUP3D {
+		BAOBAB_TREE,
 		MAX,
 	};
 
@@ -53,10 +60,13 @@ private:
 	//========== [[[ 定数宣言 ]]]
 	static const char* MODEL_PATHS[(int)LOOKS_TYPE::MAX];
 	static const char* OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX];
+	static const char* OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX];
 
 	//========== [[[ 変数宣言 ]]]
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
+	static short m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::MAX];
+	CDoll3D*   m_doll;
 	LOOKS_TYPE m_looksType;		// 種類
 	bool       m_isCollision;
 	Pos3D      m_targetAddPos;
