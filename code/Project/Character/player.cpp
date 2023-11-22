@@ -649,6 +649,9 @@ void CPlayer::CtrlPos(Info *pInfo, VECTOL vec)
 //========================================
 void CPlayer::CollisionToStageObject(void)
 {
+	//種類の略称を設定
+	typedef CStageObject::TYPE OBJECT_TYPE;
+
 	// 一旦両プレイヤーともにジャンプ不可
 	m_aInfo[0].bGround = m_aInfo[1].bGround = false;
 
@@ -668,7 +671,7 @@ void CPlayer::CollisionToStageObject(void)
 			CStageObject* stageObj = (CStageObject*)obj;
 
 			// 種類取得
-			const CStageObject::TYPE type = stageObj->GetType();
+			const OBJECT_TYPE type = stageObj->GetType();
 
 			// オブジェクトの当たり判定情報を設定
 			CCollision::ColliInfo m_colliInfo;
@@ -687,9 +690,9 @@ void CPlayer::CollisionToStageObject(void)
 
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
-				if (type != CStageObject::TYPE::TRAMPOLINE && 
-					type != CStageObject::TYPE::LASER && 
-					type != CStageObject::TYPE::EXTEND_DOG) {
+				if (type != OBJECT_TYPE::TRAMPOLINE && 
+					type != OBJECT_TYPE::LASER && 
+					type != OBJECT_TYPE::EXTEND_DOG) {
 
 					if (D3DXVec3Length(&(m_colliInfo.pos - Player.pos)) >
 						D3DXVec2Length(&D3DXVECTOR2(m_colliInfo.fWidth + SIZE_WIDTH, m_colliInfo.fHeight + SIZE_HEIGHT)))
@@ -711,28 +714,28 @@ void CPlayer::CollisionToStageObject(void)
 				// 当たり判定位置に前回位置を設定する
 				switch (type) {
 					// 移動床
-				case CStageObject::TYPE::BLOCK: {
+				case OBJECT_TYPE::BLOCK: {
 					CBlock* pBlock = (CBlock*)stageObj;
 					if (!pBlock->GetCollision())
 						continue;
 				}break;
 
 					// 移動床
-				case CStageObject::TYPE::MOVE_BLOCK:{
+				case OBJECT_TYPE::MOVE_BLOCK:{
 					CMoveBlock *pBlock = (CMoveBlock*)stageObj;
 					m_colliInfo.posOld = pBlock->GetPosOld();
 				}
 				break;
 
 					// 隕石
-				case CStageObject::TYPE::METEOR:{
+				case OBJECT_TYPE::METEOR:{
 					CMeteor *pMeteor = (CMeteor *)stageObj;
 					m_colliInfo.posOld = pMeteor->GetPosOld();
 				}
 				break;
 
 					// レーザー
-				case CStageObject::TYPE::LASER:{
+				case OBJECT_TYPE::LASER:{
 					CRoadTripLaser *pLaser = (CRoadTripLaser *)stageObj;
 
 					//m_pOthColli = new CollInfo;
@@ -756,7 +759,7 @@ void CPlayer::CollisionToStageObject(void)
 				break;
 
 					// ヌイ
-				case CStageObject::TYPE::EXTEND_DOG:{
+				case OBJECT_TYPE::EXTEND_DOG:{
 					//CExtenddog *pDog = (CExtenddog *)stageObj;
 
 					//m_pOthColli = new CollInfo[OBJ_EXTENDDOG];
@@ -804,7 +807,7 @@ void CPlayer::CollisionToStageObject(void)
 				break;
 
 					//杭
-				case CStageObject::TYPE::PILE:
+				case OBJECT_TYPE::PILE:
 				{
 					CPile *pPile = (CPile *)stageObj;
 
@@ -821,10 +824,13 @@ void CPlayer::CollisionToStageObject(void)
 				if (m_colliInfo.Rot == CCollision::ROT::NONE)
 				{
 					//杭に当たっていないなら乗っていない
-					if (type == CStageObject::TYPE::PILE)
+					if (type == OBJECT_TYPE::PILE)
 						Player.bLandPile = false;
 					continue;
 				}
+
+				//死亡判定
+				bool bDeath = false;
 
 				// 種類ごとに関数分け
 				switch (type)
@@ -843,13 +849,17 @@ void CPlayer::CollisionToStageObject(void)
 				case CStageObject::TYPE::PILE:		s_pColli->Pile(&Self, &m_colliInfo, (CPile *)stageObj, &Player.side); break;
 				}
 
+				// 死亡判定のあるのオブジェクトに当たっていて実際死んでいる
+				if (bDeath &&
+					(type == OBJECT_TYPE::SPIKE ||
+					type == OBJECT_TYPE::METEOR ||
+					type == OBJECT_TYPE::LASER  ||
+					type == OBJECT_TYPE::FILLBLOCK))
+					break;
+
 				//情報代入
 				Player.pos = Self.pos;
 				Player.move = Self.move;
-
-				// 当たれば即死のオブジェクトに当たっている
-				if (type == CStageObject::TYPE::SPIKE || type == CStageObject::TYPE::METEOR || type == CStageObject::TYPE::LASER)
-					break;
 			}
 
 			//当たり判定の事後処理
