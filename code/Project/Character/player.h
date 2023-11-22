@@ -230,24 +230,6 @@ private:
 	// 各プレイヤーの当たり判定が終わった後の処理
 	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type);
 
-	void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY,float fHeight);	// 上からの当たり判定による位置・移動量修正
-	void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight);	// 下からの当たり判定による位置・移動量修正
-	void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth);	// 左からの当たり判定による位置・移動量修正
-	void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth);	// 右からの当たり判定による位置・移動量修正
-
-	//void CollisionBlock(Info *pInfo, CollInfo *pColli);
-	//void CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot);
-	//void CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pTrampoline);
-	//void CollisionSpike(Info *pInfo, CollInfo *pColli);
-	//void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *pColli);
-	//void CollisionMeteor(Info *pInfo, CollInfo *pColli);
-	//void CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollInfo *pColli, CollInfo *pOthColli);
-	//void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli, CollInfo *pOthColli);
-	//void CollisionGoalGate(Info *pInfo, CollInfo *pColli);
-	//void CollisionParts(Info *pInfo, CParts *pParts);
-	//void CollisionRocket(Info *pInfo, CRocket *pRocket);
-	//void CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile);
-
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 

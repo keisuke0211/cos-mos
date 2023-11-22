@@ -8,6 +8,8 @@
 
 #include "../stage-object.h"
 
+#define ETR_CNT			(16)	//最大カウント数
+
 //****************************************
 // クラス定義
 //****************************************
@@ -20,7 +22,6 @@ public:
 		NONE = 0,	//何もない
 		GROW,		//大きくなる
 		SMALL,		//小さくなる
-		DISAPP,		//消える
 		MAX,
 	};
 
@@ -32,13 +33,24 @@ public:
 	virtual void   Update(void);
 	virtual void   Draw(void);
 
+	void SetEntry(bool bEntry) { 
+		m_bEntry = bEntry; 
+
+		if (bEntry == true){
+			m_numEntry++;
+			m_nCntEtrX = ETR_CNT;
+			m_nCntEtrY = ETR_CNT * 0.5;
+		}
+	}
+
+	static void EntrySub(void) { m_numEntry--; }
+
 protected:
 
 private:
 
 	void StateUpdate(void);
 	void CountRate(float *CountRateX, float *CountRateY);
-
 
 	//========== [[[ 変数宣言 ]]]
 	STATE m_state;					//種類
@@ -48,5 +60,7 @@ private:
 	int		m_nCnt;					//カウント
 	bool	m_bEntry;				//入ったかどうか
 	bool	m_bScale;				//拡大するか縮小するか
-	int		m_nCntEtrX,m_nCntEtrY;	//
+	int		m_nCntEtrX,m_nCntEtrY;	//XYの個別カウント
+	static int m_num;
+	static int m_numEntry;
 };

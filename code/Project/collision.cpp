@@ -147,7 +147,7 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SI
 			//*********************************
 			// 埋まった
 			//*********************************
-		case ROT::UNKNOWN: break; CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);
+		case ROT::UNKNOWN:CMode_Game::GetPlayer()->Death(&pSelfInfo->pos);	 break;
 	}
 }
 
@@ -581,7 +581,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 // ゴールゲートの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide)
+void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli,CObject *obj, CPlayer::WORLD_SIDE *pSide)
 {
 	if (pSide == NULL) return;
 
@@ -591,6 +591,11 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD
 	if (!pInfo->bGoal)
 	{
 		pInfo->bGoal = true;
+
+		//オブジェクトを敵にキャスト
+		CGoalGate *GoalGateObj = dynamic_cast<CGoalGate*>(obj);
+
+		GoalGateObj->SetEntry(true);
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
