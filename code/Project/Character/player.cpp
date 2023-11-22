@@ -715,9 +715,9 @@ void CPlayer::CollisionToStageObject(void)
 				switch (type) {
 					// 移動床
 				case OBJECT_TYPE::BLOCK: {
-					CBlock* pBlock = (CBlock*)stageObj;
-					if (!pBlock->GetCollision())
-						continue;
+					//CBlock* pBlock = (CBlock*)stageObj;
+					//if (!pBlock->GetCollision())
+					//	continue;
 				}break;
 
 					// 移動床
@@ -835,27 +835,26 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &m_colliInfo, &Player.side);	break;
-				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, m_colliInfo.Rot, &Player.side); break;
-				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &m_colliInfo, (CTrampoline *)stageObj, &Player.side);	break;
-				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &m_colliInfo, &Player.side);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock *)stageObj, &m_colliInfo, &Player.side);	break;
-				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &m_colliInfo, &Player.side); break;
-				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser *)stageObj,&m_colliInfo, NULL, &Player.side);	break;
-				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog *)stageObj, &m_colliInfo, NULL, &Player.side); break;
-				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &m_colliInfo,obj, &Player.side);	break;
-				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts *)stageObj, &Player.side); break;
-				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket *)stageObj, &Player.side); break;
-				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &m_colliInfo, (CPile *)stageObj, &Player.side); break;
+				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &m_colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, m_colliInfo.Rot, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &m_colliInfo, (CTrampoline *)stageObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &m_colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock *)stageObj, &m_colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &m_colliInfo, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser *)stageObj,&m_colliInfo, NULL, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog *)stageObj, &m_colliInfo, NULL, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &m_colliInfo, obj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts *)stageObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket *)stageObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &m_colliInfo, (CPile *)stageObj, &Player.side, &bDeath); break;
 				}
 
-				// 死亡判定のあるのオブジェクトに当たっていて実際死んでいる
-				if (bDeath &&
-					(type == OBJECT_TYPE::SPIKE ||
-					type == OBJECT_TYPE::METEOR ||
-					type == OBJECT_TYPE::LASER  ||
-					type == OBJECT_TYPE::FILLBLOCK))
+				// 死亡判定ON
+				if (bDeath)
+				{
+					Death(&Self.pos);
 					break;
+				}
 
 				//情報代入
 				Player.pos = Self.pos;
