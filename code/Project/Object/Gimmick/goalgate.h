@@ -33,15 +33,7 @@ public:
 	virtual void   Update(void);
 	virtual void   Draw(void);
 
-	void SetEntry(bool bEntry) { 
-		m_bEntry = bEntry; 
-
-		if (bEntry == true){
-			m_numEntry++;
-			m_nCntEtrX = ETR_CNT;
-			m_nCntEtrY = ETR_CNT * 0.5;
-		}
-	}
+	void SetEntry(bool bEntry);
 
 	static void EntrySub(void) { m_numEntry--; }
 
