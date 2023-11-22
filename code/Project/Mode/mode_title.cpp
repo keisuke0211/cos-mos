@@ -6,6 +6,7 @@
 //========================================
 #include "../../_RNLib/RNlib.h"
 #include "../../_RNLib/RNsettings.h"
+#include "../../_RNLib/Basis/Mechanical/sound.h"
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
@@ -17,9 +18,8 @@
 //==========| CMode_Titleクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
-const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\TitleFile.txt";
+const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
-
 
 //========================================
 // コンストラクタ
@@ -47,10 +47,14 @@ CMode_Title::CMode_Title(void) {
 	m_Anime.pOperation = NULL;
 	m_Anime.pSetting = NULL;
 
-	m_bFullScreen = RNSettings::GetInfo().isFullScreen;
+	m_Anime.bFullScreen = RNSettings::GetInfo().isFullScreen;
 
-	nBGMVolume = VOLUME_MSX;
-	nSEVolume = VOLUME_MSX;
+	float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
+	float SE = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
+	m_Anime.nBGMVolume = BGM * VOLUME_MSX;
+	m_Anime.nSEVolume = SE * VOLUME_MSX;
+	m_Anime.nBGMOldVolume = BGM * VOLUME_MSX;
+	m_Anime.nSEOldVolume = SE * VOLUME_MSX;
 }
 
 //========================================
@@ -193,7 +197,7 @@ void CMode_Title::Update(void) {
 			->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
 			->SetCol(Color{ 150,150,150,150 });
 
-		if (m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SERRING)
+		if (m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SETTING)
 		{
 			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Anime.RightPos.x+10, 400.0f, 100.0f), 0.0f, false)
 				->SetSize(560.0f, 600.0f)
@@ -223,7 +227,7 @@ void CMode_Title::Update(void) {
 					break;
 				case MENU_CONTROLLER:
 					break;
-				case MENU_SERRING:
+				case MENU_SETTING:
 					m_Anime.bSubMenu = true;
 					m_pMenu[m_Anime.nMaineSelect]->SetBoxColor(Color{155,155,155,255});
 					break;
@@ -237,19 +241,19 @@ void CMode_Title::Update(void) {
 				switch (m_Anime.nSubSelect)
 				{
 				case SETTING_SCREEN:
-					if (m_nCntScrChg <= 0) {
+					if (m_Anime.nCntScrChg <= 0) {
 						int nText = m_Anime.nSubSelect;
-						m_bFullScreen = !m_bFullScreen;
+						m_Anime.bFullScreen = !m_Anime.bFullScreen;
 
 						char data[TXT_MAX] = {};
-						if (!m_bFullScreen)	sprintf(data, "%s ：OFF", m_Anime.pSetting[nText].Text);
-						else if (m_bFullScreen)	sprintf(data, "%s ：ON", m_Anime.pSetting[nText].Text);
+						if (!m_Anime.bFullScreen)	sprintf(data, "%s ：OFF", m_Anime.pSetting[nText].Text);
+						else if (m_Anime.bFullScreen)	sprintf(data, "%s ：ON", m_Anime.pSetting[nText].Text);
 
 						FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 						FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
-						m_nCntScrChg = 20;
+						m_Anime.nCntScrChg = 20;
 					}
 					
 					break;
@@ -400,7 +404,7 @@ void CMode_Title::SubTextCreate(void)
 				"", CFont::FONT_ROND_B, &pFont, false, false);
 		}
 	}
-	else if (m_Anime.nMaineSelect == MENU_SERRING) {
+	else if (m_Anime.nMaineSelect == MENU_SETTING) {
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 		CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Anime.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 		"", CFont::FONT_ROND_B, &pFont);
@@ -414,11 +418,18 @@ void CMode_Title::SubTextCreate(void)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
 			else if (nText == SETTING_SE)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
+			else if (nText == SETTING_BACK)
+				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 650.0f, 0.0f);
 			else if (nText == SETTING_BGM_TEXT)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * 3), 0.0f);
 			else if (nText == SETTING_SE_TEXT)
 				pos = D3DXVECTOR3(m_Anime.RightPos.x + 50.0f, 100.0f + (80.0f * ((nText - 2) + 2)), 0.0f);
 
+			if(nText >= SETTING_BACK)
+				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+					pos, D3DXVECTOR2(200.0f, 80.0f),
+					"", CFont::FONT_ROND_B, &pFont, false, true);
+			else
 				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 					pos, D3DXVECTOR2(480.0f, 60.0f),
 					"", CFont::FONT_ROND_B, &pFont, false, true);
@@ -505,21 +516,21 @@ void CMode_Title::MenuAnime(void)
 							m_pSubMenu[nText]->Regeneration(m_Anime.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
 					}
 				}
-				if (m_Anime.nMaineSelect == MENU_SERRING) {
+				if (m_Anime.nMaineSelect == MENU_SETTING) {
 					for (int nText = 0; nText < m_Anime.SettingMax; nText++) {
 						if (m_pSubMenu[nText] != NULL) {
 
 							char data[TXT_MAX];
 							if (nText == SETTING_SCREEN) {
-								if (!m_bFullScreen)	sprintf(data, "%s ：OFF", m_Anime.pSetting[nText].Text);
-								else if (m_bFullScreen)	sprintf(data, "%s ：ON", m_Anime.pSetting[nText].Text);
+								if (!m_Anime.bFullScreen)	sprintf(data, "%s ：OFF", m_Anime.pSetting[nText].Text);
+								else if (m_Anime.bFullScreen)	sprintf(data, "%s ：ON", m_Anime.pSetting[nText].Text);
 							}
 							else if (nText == SETTING_BGM_TEXT){
-								int nData = nBGMVolume * 5;
+								int nData = m_Anime.nBGMVolume * 5;
 								sprintf(data, "%d%s", nData, m_Anime.pSetting[nText].Text);
 							}
 							else if(nText == SETTING_SE_TEXT){
-								int nData = nSEVolume * 5;
+								int nData = m_Anime.nSEVolume * 5;
 								sprintf(data, "%d%s", nData, m_Anime.pSetting[nText].Text);
 							}
 							else
@@ -567,15 +578,15 @@ void CMode_Title::MenuAnime(void)
 //========================================
 void CMode_Title::MenuSelect(void)
 {
-	if (m_nCntScrChg >= 0)
+	if (m_Anime.nCntScrChg >= 0)
 	{// 画面モード切り替えカウンターが0以上の時、
 	 // 画面モード切り替えカウンターを減算
-		m_nCntScrChg--;
+		m_Anime.nCntScrChg--;
 
-		if (m_nCntScrChg == 0)
+		if (m_Anime.nCntScrChg == 0)
 		{// 画面モード切り替えカウンターが0の時、
 		 // ウインドウのモードを切り替える
-			RNSettings::SetFulScreen(m_bFullScreen);
+			RNSettings::SetFulScreen(m_Anime.bFullScreen);
 		}
 	}
 
@@ -635,9 +646,27 @@ void CMode_Title::MenuSelect(void)
 		else if (m_Anime.bSubMenu)
 			m_Anime.nSubSelect++;
 	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
+	{
+		if (m_Anime.nSubSelect == SETTING_BGM) {
+			m_Anime.nBGMVolume--;
+		}
+		else if (m_Anime.nSubSelect == SETTING_SE) {
+			m_Anime.nSEVolume--;
+		}
+	}
+	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
+	{
+		if (m_Anime.nSubSelect == SETTING_BGM) {
+			m_Anime.nBGMVolume++;
+		}
+		else if (m_Anime.nSubSelect == SETTING_SE) {
+			m_Anime.nSEVolume++;
+		}
+	}
 
 	// アニメーション
-	if ((m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SERRING ) && !m_Anime.bRightMove && !m_Anime.bRightDisp) {
+	if ((m_Anime.nMaineSelect == MENU_CONTROLLER || m_Anime.nMaineSelect == MENU_SETTING ) && !m_Anime.bRightMove && !m_Anime.bRightDisp) {
 
 		m_Anime.bRightMove = true;
 		SubTextCreate();
@@ -647,9 +676,41 @@ void CMode_Title::MenuSelect(void)
 		TextRelease(TEXT_RIGHT);
 		m_Anime.bRightMove = true;
 	}
+
 	// ループ制御
 	IntLoopControl(&m_Anime.nMaineSelect, MENU_MAX, 0);
-	IntLoopControl(&m_Anime.nSubSelect, m_Anime.SettingMax, 1);
+	IntLoopControl(&m_Anime.nSubSelect, m_Anime.SettingMax-2, 1);
+	IntControl(&m_Anime.nBGMVolume, VOLUME_MSX, 0);
+	IntControl(&m_Anime.nSEVolume, VOLUME_MSX, 0);
+
+	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+	FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+	// サウンド
+	if (m_Anime.nBGMVolume != m_Anime.nBGMOldVolume) {
+		m_Anime.nBGMOldVolume = m_Anime.nBGMVolume;
+
+		char data[TXT_MAX];		int nData = m_Anime.nBGMVolume * 5;
+		sprintf(data, "%d%s", nData, m_Anime.pSetting[SETTING_BGM_TEXT].Text);
+
+		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
+		m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+		float volume = (float)nData / (float)100.0f;
+		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::BGM, volume);
+	}
+	if (m_Anime.nSEVolume != m_Anime.nSEOldVolume) {
+		m_Anime.nSEOldVolume = m_Anime.nSEVolume;
+
+		char data[TXT_MAX];		int nData = m_Anime.nSEVolume * 5;
+		sprintf(data, "%d%s", nData, m_Anime.pSetting[SETTING_SE_TEXT].Text);
+
+		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
+		m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+
+		float volume = (float)nData / (float)100.0f;
+		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::SE, volume);
+	}
 
 }
 

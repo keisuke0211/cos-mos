@@ -21,12 +21,13 @@ SetOperation
 EndOperation
 
 SetSetting
-	TextMax = 6
+	TextMax = 7
 	
 	Text = 設定
 	Text = フルスクリーン
 	Text = BGM音量
 	Text = 効果音音量
+	Text = 戻る
 	Text = %
 	Text = %
 

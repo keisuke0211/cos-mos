@@ -23,7 +23,7 @@ public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
 	static const int WORDS_MAX = 7;				// 文字の最大数
-	static const int FONT_TEXT_MAX = 8;			// テキストの最大数
+	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
 	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
@@ -62,7 +62,7 @@ private:
 	enum MENU{
 		MENU_GAME = 0,	// ゲーム
 		MENU_CONTROLLER,// 操作方法
-		MENU_SERRING,	// 設定
+		MENU_SETTING,	// 設定
 		MENU_END,		// 終了
 		MENU_MAX
 	};
@@ -92,6 +92,7 @@ private:
 		SETTING_SCREEN = 1,	// フルスクリーン
 		SETTING_BGM ,		// BGM
 		SETTING_SE,			// SE
+		SETTING_BACK,
 		SETTING_BGM_TEXT,
 		SETTING_SE_TEXT,
 		SETTING_MAX
@@ -119,7 +120,7 @@ private:
 		char Text[TXT_MAX];		// テキスト
 	};
 
-	// ステージ種類情報
+	// 設定情報
 	struct Setting{
 		char Text[TXT_MAX];		// テキスト
 	};
@@ -144,6 +145,16 @@ private:
 		int BoxTex;
 		int OperationMax;
 		int SettingMax;
+
+		// スクリーン
+		int nCntScrChg;		// スクリーン変更のカウント
+		bool bFullScreen;	// スクリーンモード
+
+		// サウンド
+		int nBGMVolume;
+		int nSEVolume;
+		int nBGMOldVolume;
+		int nSEOldVolume;
 
 		Operation *pOperation;
 		Setting *pSetting;
@@ -182,9 +193,4 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
-
-	int m_nCntScrChg;	// スクリーン変更のカウント
-	bool m_bFullScreen;	// スクリーンモード
-	int nBGMVolume;
-	int nSEVolume;
 };

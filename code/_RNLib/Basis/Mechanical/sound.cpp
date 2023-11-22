@@ -277,6 +277,21 @@ void CSound::ChangeCategoryVolume(const CATEGORY& category, float& volume) {
 	m_categoryStates[(int)category].volume = volume * m_categoryStates[(int)category].settingVolume;
 }
 
+//========================================
+// 設定音量変更
+//========================================
+void CSound::ChangeSetVolume(const CATEGORY& category, float& volume) {
+
+	// 設定音量を制御
+	if (volume < 0.0f)
+		volume = 0.0f;
+	else if (volume > 1.0f)
+		volume = 1.0f;
+
+	// 設定音量を設定
+	m_categoryStates[(int)category].settingVolume = volume;
+}
+
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| [非公開]サウンドクラスのメンバ関数
@@ -477,7 +492,7 @@ void CSound::CPlay::Update(void) {
 	case SPACE::NONE: {
 
 		// 音量を反映させる
-		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume);
+		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume);
 
 	}break;
 		// [[[ 3D ]]]
@@ -491,7 +506,7 @@ void CSound::CPlay::Update(void) {
 		}
 
 		// 音量を反映させる
-		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * distRateOpp);
+		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume * distRateOpp);
 
 	}break;
 	}
