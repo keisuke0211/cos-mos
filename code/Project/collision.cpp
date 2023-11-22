@@ -619,18 +619,18 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 //----------------------------
 void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide)
 {
-	//const int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
-
-	//if (!CPlayer::s_bRideRocket) return;
+	CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+	if (pRocket->GetReady() && pInfo->bRide) return;
 
 	// ƒƒPƒbƒg‚É“‹æ
-	//pSelfInfo->bRide = true;
-	//pRocket->Ride();
-	//
-	//for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-	//{
-	//	Manager::EffectMgr()->ParticleCreate(ParTex, pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
-	//}
+	pInfo->bRide = true;
+	pRocket->Ride();
+	
+	const int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+	{
+		Manager::EffectMgr()->ParticleCreate(ParTex, pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
+	}
 }
 
 //----------------------------
