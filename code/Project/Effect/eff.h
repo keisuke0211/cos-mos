@@ -10,7 +10,7 @@
 //****************************************
 // ƒNƒ‰ƒX
 //****************************************
-class CEffect : public CObject{
+class CEff : public CObject{
 public:
 
 	// ‹¤’Êî•ñ
@@ -30,8 +30,8 @@ public:
 	};
 
 	// *** ŠÖ” ***
-	CEffect();
-	~CEffect();
+	CEff();
+	~CEff();
 
 	/* ‰Šú‰»	*/HRESULT Init(int nTex, int nCount, D3DXVECTOR3 spin);
 	/* I—¹		*/void Uninit(void);

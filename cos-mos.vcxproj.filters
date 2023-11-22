@@ -102,10 +102,10 @@
     <ClCompile Include="code\Project\Mode\mode_title.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Effect\effect.cpp">
+    <ClCompile Include="code\Project\Effect\eff.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Effect\effect-manager.cpp">
+    <ClCompile Include="code\Project\Effect\eff-manager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\Effect\particle.cpp">
@@ -252,7 +252,7 @@
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Effect\effect-meteor.cpp">
+    <ClCompile Include="code\Project\Effect\eff-meteor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\System\BG-Editor.cpp">
@@ -368,10 +368,10 @@
     <ClInclude Include="code\Project\Mode\mode_title.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Effect\effect.h">
+    <ClInclude Include="code\Project\Effect\eff.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Effect\effect-manager.h">
+    <ClInclude Include="code\Project\Effect\eff-manager.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\Effect\particle.h">
@@ -521,7 +521,7 @@
     <ClInclude Include="code\Project\Object\BackGround\BG-object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Effect\effect-meteor.h">
+    <ClInclude Include="code\Project\Effect\eff-meteor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\System\BG-Editor.h">

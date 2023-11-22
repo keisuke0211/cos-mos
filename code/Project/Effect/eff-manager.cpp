@@ -5,7 +5,7 @@
 // 
 // 
 //========================================
-#include "effect-manager.h"
+#include "eff-manager.h"
 
 //========================================
 // 静的変数
@@ -14,21 +14,21 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffectMgr::CEffectMgr(void)
+CEffMgr::CEffMgr(void)
 {
 }
 
 //========================================
 // デストラクタ
 //========================================
-CEffectMgr::~CEffectMgr()
+CEffMgr::~CEffMgr()
 {
 }
 
 //========================================
 // 更新
 //========================================
-void CEffectMgr::Update(void)
+void CEffMgr::Update(void)
 {
 
 }
@@ -36,11 +36,11 @@ void CEffectMgr::Update(void)
 //========================================
 // エフェクト
 //========================================
-CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount, D3DXVECTOR3 spin, D3DXVECTOR3 move,bool bbilborad, D3DXVECTOR3 scalemag)
+CEff *CEffMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount, D3DXVECTOR3 spin, D3DXVECTOR3 move,bool bbilborad, D3DXVECTOR3 scalemag)
 {
-	CEffect *pObj = NULL;
+	CEff *pObj = NULL;
 
-	pObj = new CEffect;
+	pObj = new CEff;
 
 	// 初期化処理
 	pObj->Init(nTex, nCount, spin);
@@ -56,7 +56,7 @@ CEffect *CEffectMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,C
 //========================================
 // 隕石エフェクト
 //========================================
-CEffect_Meteor * CEffectMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
+CEffect_Meteor * CEffMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 {
 	CEffect_Meteor *pObj = NULL;
 
@@ -72,7 +72,7 @@ CEffect_Meteor * CEffectMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 //========================================
 // パーティクル
 //========================================
-CParticle *CEffectMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount)
+CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color col, int nCount)
 {
 	CParticle *pObj = NULL;
 

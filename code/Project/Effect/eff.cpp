@@ -6,18 +6,18 @@
 //========================================
 // *** block.cpp ***
 //========================================
-#include "effect.h"
+#include "eff.h"
 #include "../main.h"
 
 //========================================
 // 静的変数
 //========================================
-int CEffect::m_nNumAll = 0;
+int CEff::m_nNumAll = 0;
 
 //========================================
 // コンストラクタ
 //========================================
-CEffect::CEffect(void)
+CEff::CEff(void)
 {
 	Manager::EffectMgr()->AddList(this);
 
@@ -33,7 +33,7 @@ CEffect::CEffect(void)
 //========================================
 // デストラクタ
 //========================================
-CEffect::~CEffect()
+CEff::~CEff()
 {
 	Manager::EffectMgr()->SubList(this);
 
@@ -43,7 +43,7 @@ CEffect::~CEffect()
 //========================================
 // 初期化
 //========================================
-HRESULT CEffect::Init(int nTex, int nCount, D3DXVECTOR3 spin)
+HRESULT CEff::Init(int nTex, int nCount, D3DXVECTOR3 spin)
 {
 	m_Info.nTex = nTex;
 	m_Info.nCount = m_Info.nCountMax = nCount;
@@ -55,7 +55,7 @@ HRESULT CEffect::Init(int nTex, int nCount, D3DXVECTOR3 spin)
 //========================================
 // 終了
 //========================================
-void CEffect::Uninit(void)
+void CEff::Uninit(void)
 {
 
 }
@@ -63,7 +63,7 @@ void CEffect::Uninit(void)
 //========================================
 // 更新
 //========================================
-void CEffect::Update(void)
+void CEff::Update(void)
 {
 	// 過去の位置
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
@@ -97,6 +97,6 @@ void CEffect::Update(void)
 //========================================
 // 描画
 //========================================
-void CEffect::Draw(void)
+void CEff::Draw(void)
 {
 }

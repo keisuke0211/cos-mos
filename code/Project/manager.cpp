@@ -16,7 +16,7 @@ namespace {
 	CMode::TYPE     m_reserveModeType;
 	CStageObjectMgr m_blockMgr;
 	CObjectMgr      m_BGMgr;
-	CEffectMgr      m_effectMgr;
+	CEffMgr      m_effectMgr;
 	CStageEditor    m_StgEd;
 	CFont           m_Font;
 	CCamera*        m_camera;
@@ -30,7 +30,7 @@ namespace {
 CCamera* Manager::GetMainCamera(void) { return m_camera; }
 CStageObjectMgr* Manager::StageObjectMgr(void) { return &m_blockMgr; }
 CObjectMgr* Manager::BGMgr(void) { return &m_BGMgr; }
-CEffectMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
+CEffMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
 CFont* Manager::Font(void) { return &m_Font; }
 
