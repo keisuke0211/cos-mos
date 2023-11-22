@@ -4,7 +4,7 @@ boneDataSum{ 2
 		idx 0
 		modelIdx data\\Model\\Chest\\Box.x
 		parentIdx -1
-		relativePos 0.00 12.00 0.00
+		relativePos 0.00 9.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
