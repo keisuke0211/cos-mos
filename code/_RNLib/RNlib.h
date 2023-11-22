@@ -15,6 +15,9 @@
 #include "Basis/3DObject/Body/doll3D-manager.h"
 #include "Basis/3DObject/Body/motion3D.h"
 #include "Basis/3DObject/Body/setup3D.h"
+#include "Basis/3DObject/Effect/effect3D.h"
+#include "Basis/3DObject/Effect/effect3D_cylinder.h"
+#include "Basis/3DObject/Effect/effect3D-manager.h"
 //========== [[[ Calculation ]]]
 #include "Basis/Calculation/ease.h"
 #include "Basis/Calculation/geometry.h"
@@ -81,6 +84,7 @@ namespace RNLib {
 	CDoll3DMgr&   Doll3DMgr   (void);
 	CMotion3D&    Motion3D    (void);
 	CSetUp3D&     SetUp3D     (void);
+	CEffect3D&    Effect3D    (void);
 	// Calculation
 	CEase&        Ease        (void);
 	CGeometry&    Geometry    (void);

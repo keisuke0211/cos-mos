@@ -24,12 +24,14 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\StageObject\\TreeTrunk.x",
 	"data\\MODEL\\StageObject\\TreeTrunk_Root.x",
 	"NONEDATA",
+	"NONEDATA",
 };
 const char* CBlock::OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX] = {
 	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Inside.x",
 };
 const char* CBlock::OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX] = {
 	"data\\SETUP\\BaobabTree.txt",
+	"data\\SETUP\\Chest.txt",
 };
 
 //========================================
@@ -96,6 +98,10 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE]);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f - (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
 	}break;
+	case LOOKS_TYPE::CHEST: {
+		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
+		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
+	}break;
 	}
 
 	// ˆÊ’u—”
@@ -144,9 +150,6 @@ void CBlock::Update(void) {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetCol(m_color)
 			->SetOutLine(m_isCollision);
-	}break;
-	case LOOKS_TYPE::BAOBAB_TREE: {
-
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)

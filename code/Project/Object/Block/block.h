@@ -30,6 +30,7 @@ public:
 		TREE_TRUNK	                = 10,
 		TREE_TRUNK_ROOT             = 11,
 		BAOBAB_TREE                 = 12,
+		CHEST                       = 13,
 		MAX
 	};
 
@@ -42,6 +43,7 @@ public:
 	// その他セットアップ3D
 	enum class OTHER_SETUP3D {
 		BAOBAB_TREE,
+		CHEST,
 		MAX,
 	};
 

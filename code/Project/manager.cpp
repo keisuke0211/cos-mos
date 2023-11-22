@@ -5,6 +5,7 @@
 // 
 //========================================
 #include "System\words\object\font-object.h"
+#include "Sound/ambient-sound-player.h"
 #include "main.h"
 
 //****************************************
@@ -51,6 +52,9 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// ブロックの読み込み処理(※主にモデルなど)
 	CBlock::Load();
+
+	// 環境音プレイヤーの初期化処理
+	AmbientSoundPlayer::Init();
 }
 
 //========================================
@@ -70,6 +74,9 @@ void Manager::Uninit(void) {
 
 	// カメラの破棄
 	RNLib::Memory().Release(&m_camera);
+
+	// 環境音プレイヤーの終了処理
+	AmbientSoundPlayer::Uninit();
 }
 
 //========================================

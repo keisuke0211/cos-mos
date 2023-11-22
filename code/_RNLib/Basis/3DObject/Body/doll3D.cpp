@@ -221,7 +221,7 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 			RNLib::Doll3DMgr().GetEditCamera() != NULL) {
 
 			// ’¸“_”Ô†•`‰æ”
-			short drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+			UInt drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
 			if (drawVtxIdxNum > vtxNum[cntBone])
 				drawVtxIdxNum = vtxNum[cntBone];
 
