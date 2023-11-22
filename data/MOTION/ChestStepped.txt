@@ -1,0 +1,15 @@
+Motion3DFile
+loopTime 40
+isLoop 1
+boneMotionDatas{ 2
+	boneMotionData{ 2
+		time 0 2 1.000000 0.800000 1.000000 0 0
+		time 0 2 1.000000 1.000000 1.000000 30 2
+	}
+	boneMotionData{ 3
+		time 0 1 -0.100000 0.000000 0.000000 0 0
+		time 0 1 0.100000 0.000000 0.000000 30 2
+		time 30 1 0.000000 0.000000 0.000000 10 3
+	}
+}
+END
