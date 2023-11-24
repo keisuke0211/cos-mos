@@ -106,10 +106,18 @@ void CDrawMgr::Release(void) {
 		ms_drawInfoSumOvr      [cntPriority].Release();
 		ms_drawInfoSumScreen   [cntPriority].Release();
 		ms_drawInfoSumScreenOvr[cntPriority].Release();
-		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_drawInfos);
-		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_drawInfos);
-		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_drawInfos);
-		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_drawInfos);
+		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_model);
+		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_polygon3D);
+		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_polygon2D);
+		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_model);
+		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_polygon3D);
+		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_polygon2D);
+		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_model);
+		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_polygon3D);
+		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_polygon2D);
+		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_model);
+		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_polygon3D);
+		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_polygon2D);
 
 		// 登録情報を解放
 		ms_resistInfoSum      [cntPriority].Release();
@@ -246,34 +254,10 @@ void CDrawMgr::Draw(Device& device, const short& cameraID, const bool& isCameraC
 
 	// 描画していく
 	if (isOnScreen) {
-		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-			for (int cntDrawInfo = 0; cntDrawInfo < ms_drawInfoSumScreen[cntPriority].m_drawInfoNum; cntDrawInfo++) {
-				if (ms_drawInfoSumScreen[cntPriority].m_drawInfos[cntDrawInfo] != NULL) {
-
-					// クリッピングIDが対象外であれば折り返す
-					if (ms_drawInfoSumScreen[cntPriority].m_drawInfos[cntDrawInfo]->m_clippingID != NONEDATA || isCameraClipping)
-						if (ms_drawInfoSumScreen[cntPriority].m_drawInfos[cntDrawInfo]->m_clippingID != cameraID)
-							continue;
-
-					ms_drawInfoSumScreen[cntPriority].m_drawInfos[cntDrawInfo]->Draw(device, viewMtx);
-				}
-			}
-		}
+		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSumScreen, viewMtx);
 	}
 	else {
-		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-			for (int cntDrawInfo = 0; cntDrawInfo < ms_drawInfoSum[cntPriority].m_drawInfoNum; cntDrawInfo++) {
-				if (ms_drawInfoSum[cntPriority].m_drawInfos[cntDrawInfo] != NULL) {
-
-					// クリッピングIDが対象外であれば折り返す
-					if (ms_drawInfoSum[cntPriority].m_drawInfos[cntDrawInfo]->m_clippingID != NONEDATA || isCameraClipping)
-						if (ms_drawInfoSum[cntPriority].m_drawInfos[cntDrawInfo]->m_clippingID != cameraID)
-							continue;
-
-					ms_drawInfoSum[cntPriority].m_drawInfos[cntDrawInfo]->Draw(device, viewMtx);
-				}
-			}
-		}
+		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSum, viewMtx);
 	}
 }
 
@@ -412,6 +396,44 @@ CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mt
 //================================================================================
 
 //========================================
+// 描画実行処理
+//========================================
+void CDrawMgr::ExecutionDraw(Device& device, const short& cameraID, const bool& isCameraClipping, CDrawInfoSum*& drawInfo, Matrix& viewMtx) {
+
+	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+		for (int cntModel = 0; cntModel < drawInfo[cntPriority].m_modelNum; cntModel++) {
+
+			// クリッピングIDが対象外であれば折り返す
+			if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != NONEDATA || isCameraClipping)
+				if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != cameraID)
+					continue;
+
+			drawInfo[cntPriority].m_model[cntModel]->Draw(device, viewMtx);
+		}
+
+		for (int cntPolygon3D = 0; cntPolygon3D < drawInfo[cntPriority].m_polygon3DNum; cntPolygon3D++) {
+
+			// クリッピングIDが対象外であれば折り返す
+			if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != NONEDATA || isCameraClipping)
+				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != cameraID)
+					continue;
+
+			drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->Draw(device, viewMtx);
+		}
+
+		for (int cntPolygon2D = 0; cntPolygon2D < drawInfo[cntPriority].m_polygon2DNum; cntPolygon2D++) {
+
+			// クリッピングIDが対象外であれば折り返す
+			if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != NONEDATA || isCameraClipping)
+				if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != cameraID)
+					continue;
+
+			drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->Draw(device, viewMtx);
+		}
+	}
+}
+
+//========================================
 // 頂点情報代入処理
 //========================================
 void CDrawMgr::AssignVertexInfo(void) {
@@ -454,19 +476,15 @@ void CDrawMgr::AssignVertexInfo(void) {
 //========================================
 void CDrawMgr::ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum) {
 
-	for (int cntDrawInfo = 0; cntDrawInfo < drawInfoSum.m_drawInfoNum; cntDrawInfo++) {
+	for (int cntDrawInfo = 0; cntDrawInfo < drawInfoSum.m_polygon2DNum; cntDrawInfo++) {
 
-		if (drawInfoSum.m_drawInfos[cntDrawInfo]->m_type == CDrawInfoBase::TYPE::POLYGON2D)
-		{// カウントの描画情報がポリゴン2Dの時、
-			// 頂点情報を代入
-			CPolygon2D::CDrawInfo& drawInfo = (CPolygon2D::CDrawInfo&)*drawInfoSum.m_drawInfos[cntDrawInfo];
-			int vtxStartIdx = 4 * drawInfo.m_idx;
+		// 頂点情報を代入
+		const int vtxStartIdx = 4 * drawInfoSum.m_polygon2D[cntDrawInfo]->m_idx;
 
-			for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
-				int vtxIdx = vtxStartIdx + cntVtx;
-				assert(vtxIdx < CPolygon2D::CDrawInfo::m_allocNum * 4);
-				vtxs[vtxIdx] = drawInfo.m_vtxs[cntVtx];
-			}
+		for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
+			const int vtxIdx = vtxStartIdx + cntVtx;
+			assert(vtxIdx < CPolygon2D::CDrawInfo::m_allocNum * 4);
+			vtxs[vtxIdx] = drawInfoSum.m_polygon2D[cntDrawInfo]->m_vtxs[cntVtx];
 		}
 	}
 }
@@ -476,19 +494,15 @@ void CDrawMgr::ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInf
 //========================================
 void CDrawMgr::ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum) {
 
-	for (int cntDrawInfo = 0; cntDrawInfo < drawInfoSum.m_drawInfoNum; cntDrawInfo++) {
+	for (int cntPolygon3D = 0; cntPolygon3D < drawInfoSum.m_polygon3DNum; cntPolygon3D++) {
 
-		if (drawInfoSum.m_drawInfos[cntDrawInfo]->m_type == CDrawInfoBase::TYPE::POLYGON3D)
-		{// カウントの描画情報がポリゴン2Dの時、
-			// 頂点情報を代入
-			CPolygon3D::CDrawInfo& drawInfo((CPolygon3D::CDrawInfo&)*drawInfoSum.m_drawInfos[cntDrawInfo]);
-			int                    vtxStartIdx(4 * drawInfo.m_idx);
+		// 頂点情報を代入
+		const int vtxStartIdx = 4 * drawInfoSum.m_polygon3D[cntPolygon3D]->m_idx;
 
-			for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
-				int vtxIdx(vtxStartIdx + cntVtx);
-				assert(vtxIdx < CPolygon3D::CDrawInfo::m_allocNum * 4);
-				vtxs[vtxIdx] = drawInfo.m_vtxs[cntVtx];
-			}
+		for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
+			const int vtxIdx = vtxStartIdx + cntVtx;
+			assert(vtxIdx < CPolygon3D::CDrawInfo::m_allocNum * 4);
+			vtxs[vtxIdx] = drawInfoSum.m_polygon3D[cntPolygon3D]->m_vtxs[cntVtx];
 		}
 	}
 }
@@ -666,41 +680,40 @@ void CDrawMgr::PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& p
 //========================================
 void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum) {
 
-	int cntDrawInfo = 0;
-
 	{// 描画情報のメモリ確保
-		drawInfoSum.m_drawInfoNum =
-			resistInfoSum.m_polygon2DRegistInfoNum +	// ポリゴン2D
-			resistInfoSum.m_polygon3DRegistInfoNum +	// ポリゴン3D
-			resistInfoSum.m_modelRegistInfoNum;			// モデル
-		CMemory::Alloc<CDrawInfoBase*>(&drawInfoSum.m_drawInfos, drawInfoSum.m_drawInfoNum, true);
+		drawInfoSum.m_modelNum     = resistInfoSum.m_modelRegistInfoNum;
+		drawInfoSum.m_polygon3DNum = resistInfoSum.m_polygon3DRegistInfoNum;
+		drawInfoSum.m_polygon2DNum = resistInfoSum.m_polygon2DRegistInfoNum;
+		CMemory::Alloc(&drawInfoSum.m_model    , drawInfoSum.m_modelNum    , true);
+		CMemory::Alloc(&drawInfoSum.m_polygon3D, drawInfoSum.m_polygon3DNum, true);
+		CMemory::Alloc(&drawInfoSum.m_polygon2D, drawInfoSum.m_polygon2DNum, true);
 	}
-
-	//----------------------------------------
-	// ポリゴン3D
-	//----------------------------------------
-	for (int cnt = 0; cnt < resistInfoSum.m_polygon3DRegistInfoNum; cnt++, cntDrawInfo++) {
-		drawInfoSum.m_drawInfos[cntDrawInfo] = resistInfoSum.m_polygon3DRegistInfos[cnt]->ConvToDrawInfo();
-	}
-
-	resistInfoSum.m_polygon3DDrawNum = resistInfoSum.m_polygon3DRegistInfoNum;
-	resistInfoSum.m_polygon3DRegistInfoNum = 0;
 
 	//----------------------------------------
 	// モデル
 	//----------------------------------------
-	for (int cnt = 0; cnt < resistInfoSum.m_modelRegistInfoNum; cnt++, cntDrawInfo++) {
-		drawInfoSum.m_drawInfos[cntDrawInfo] = resistInfoSum.m_modelRegistInfos[cnt]->ConvToDrawInfo();
+	for (int cnt = 0; cnt < resistInfoSum.m_modelRegistInfoNum; cnt++) {
+		drawInfoSum.m_model[cnt] = resistInfoSum.m_modelRegistInfos[cnt]->ConvToDrawInfo();
 	}
 
 	resistInfoSum.m_modelDrawNum = resistInfoSum.m_modelRegistInfoNum;
 	resistInfoSum.m_modelRegistInfoNum = 0;
 
 	//----------------------------------------
+	// ポリゴン3D
+	//----------------------------------------
+	for (int cnt = 0; cnt < resistInfoSum.m_polygon3DRegistInfoNum; cnt++) {
+		drawInfoSum.m_polygon3D[cnt] = resistInfoSum.m_polygon3DRegistInfos[cnt]->ConvToDrawInfo();
+	}
+
+	resistInfoSum.m_polygon3DDrawNum = resistInfoSum.m_polygon3DRegistInfoNum;
+	resistInfoSum.m_polygon3DRegistInfoNum = 0;
+
+	//----------------------------------------
 	// ポリゴン2D
 	//----------------------------------------
-	for (int cnt = 0; cnt < resistInfoSum.m_polygon2DRegistInfoNum; cnt++, cntDrawInfo++) {
-		drawInfoSum.m_drawInfos[cntDrawInfo] = resistInfoSum.m_polygon2DRegistInfos[cnt]->ConvToDrawInfo();
+	for (int cnt = 0; cnt < resistInfoSum.m_polygon2DRegistInfoNum; cnt++) {
+		drawInfoSum.m_polygon2D[cnt] = resistInfoSum.m_polygon2DRegistInfos[cnt]->ConvToDrawInfo();
 	}
 
 	resistInfoSum.m_polygon2DDrawNum = resistInfoSum.m_polygon2DRegistInfoNum;
@@ -718,8 +731,12 @@ void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfo
 //========================================
 CDrawMgr::CDrawInfoSum::CDrawInfoSum() {
 
-	m_drawInfos   = NULL;
-	m_drawInfoNum = 0;
+	m_model        = NULL;
+	m_modelNum     = 0;
+	m_polygon2D    = NULL;
+	m_polygon2DNum = 0;
+	m_polygon3D    = NULL;
+	m_polygon3DNum = 0;
 }
 
 //========================================
@@ -735,11 +752,25 @@ CDrawMgr::CDrawInfoSum::~CDrawInfoSum() {
 void CDrawMgr::CDrawInfoSum::Release(void) {
 
 	// 描画情報を解放
-	if (m_drawInfos != NULL) {
-		for (int cnt = 0; cnt < m_drawInfoNum; cnt++) {
-			CMemory::Release(&m_drawInfos[cnt]);
+	if (m_model != NULL) {
+		for (int cnt = 0; cnt < m_modelNum; cnt++) {
+			CMemory::Release(&m_model[cnt]);
 		}
-		CMemory::Release(&m_drawInfos);
+		CMemory::Release(&m_model);
+	}
+	
+	if (m_polygon3D != NULL) {
+		for (int cnt = 0; cnt < m_polygon3DNum; cnt++) {
+			CMemory::Release(&m_polygon3D[cnt]);
+		}
+		CMemory::Release(&m_polygon3D);
+	}
+
+	if (m_polygon2D != NULL) {
+		for (int cnt = 0; cnt < m_polygon2DNum; cnt++) {
+			CMemory::Release(&m_polygon2D[cnt]);
+		}
+		CMemory::Release(&m_polygon2D);
 	}
 }
 
@@ -752,10 +783,18 @@ void CDrawMgr::CDrawInfoSum::Overwrite(CDrawInfoSum* pOvr) {
 	Release();
 
 	// 上書き
-	m_drawInfos         = pOvr->m_drawInfos;
-	m_drawInfoNum       = pOvr->m_drawInfoNum;
-	pOvr->m_drawInfos   = NULL;
-	pOvr->m_drawInfoNum = 0;
+	m_model        = pOvr->m_model;
+	m_modelNum     = pOvr->m_modelNum;
+	m_polygon3D    = pOvr->m_polygon3D;
+	m_polygon3DNum = pOvr->m_polygon3DNum;
+	m_polygon2D    = pOvr->m_polygon2D;
+	m_polygon2DNum = pOvr->m_polygon2DNum;
+	pOvr->m_model		 = NULL;
+	pOvr->m_modelNum	 = 0;
+	pOvr->m_polygon3D	 = NULL;
+	pOvr->m_polygon3DNum = 0;
+	pOvr->m_polygon2D	 = NULL;
+	pOvr->m_polygon2DNum = 0;
 }
 
 //================================================================================

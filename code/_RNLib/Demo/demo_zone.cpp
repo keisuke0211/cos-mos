@@ -239,12 +239,8 @@ void CDemoZone::UpdateActive(void) {
 		if (RNLib::Input().GetKeyPress(DIK_C)) {
 			typeInfo->modelInfo.drawNum++;
 		}
-		else if (typeInfo->modelInfo.drawNum > 0) {
-			typeInfo->modelInfo.drawNum--;
-		}
 
 		RNLib::Text2D().PutDebugLog(CreateText("-----DrawManager-----"));
-		RNLib::Text2D().PutDebugLog(CreateText("DrawNum         :%-4d+%-4d", RNLib::DrawMgr().GetDrawInfoSum().m_drawInfoNum, RNLib::DrawMgr().GetDrawInfoSumScreen().m_drawInfoNum));
 		RNLib::Text2D().PutDebugLog(CreateText("Polygon2D Num   :%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_polygon2DDrawNum           , RNLib::DrawMgr().GetRegistInfoSumScreen().m_polygon2DDrawNum));
 		RNLib::Text2D().PutDebugLog(CreateText("Polygon3D Num[Z]:%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_polygon3DDrawNum           , RNLib::DrawMgr().GetRegistInfoSumScreen().m_polygon3DDrawNum));
 		RNLib::Text2D().PutDebugLog(CreateText("Text2D    Num   :%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_text2DDrawNum              , RNLib::DrawMgr().GetRegistInfoSumScreen().m_text2DDrawNum));

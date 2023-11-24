@@ -53,8 +53,12 @@ public:
 		void Overwrite(CDrawInfoSum* pOvr);
 
 		// [[[ ïœêîêÈåæ ]]]
-		CDrawInfoBase** m_drawInfos;
-		int             m_drawInfoNum;
+		CModel::CDrawInfo**     m_model;
+		int                     m_modelNum;
+		CPolygon3D::CDrawInfo** m_polygon3D;
+		int                     m_polygon3DNum;
+		CPolygon2D::CDrawInfo** m_polygon2D;
+		int                     m_polygon2DNum;
 	};
 
 	//----------------------------------------
@@ -128,6 +132,7 @@ private:
 	static void MainLoop(void);
 	static void PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
 	static void ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum);
+	void ExecutionDraw(Device& device, const short& cameraID, const bool& isCameraClipping, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
 	void AssignVertexInfo(void);
 	void ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
 	void ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);

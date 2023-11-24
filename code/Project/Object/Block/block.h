@@ -77,11 +77,13 @@ private:
 	static const char* MODEL_PATHS[(int)LOOKS_TYPE::MAX];
 	static const char* OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX];
 	static const char* OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX];
+	static const char* OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX];
 
 	//========== [[[ ïœêîêÈåæ ]]]
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
 	static short m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::MAX];
+	static short m_otherMotion3DIdxes[(int)OTHER_MOTION3D::MAX];
 	CDoll3D*   m_doll;
 	LOOKS_TYPE m_looksType;		// éÌóﬁ
 	bool       m_isCollision;

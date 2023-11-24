@@ -94,7 +94,7 @@ void CMode_Game::Init(void) {
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// ÉJÉÅÉâÇÃéãì_/íçéãì_Çê›íË
-	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// èÛë‘ê›íË
 	SetState((int)STATE::NONE);

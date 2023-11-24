@@ -17,7 +17,6 @@
 //========================================
 CDrawInfoBase::CDrawInfoBase() {
 
-	m_type       = TYPE::NONE;
 	m_clippingID = NONEDATA;
 }
 

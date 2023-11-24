@@ -545,7 +545,7 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(void) {
 	CMemory::Alloc(&drawInfo);
 
 	// Šî’êî•ñ‚ð‘ã“ü
-	AssignToDrawInfo(*drawInfo, CDrawInfoBase::TYPE::MODEL);
+	AssignToDrawInfo(*drawInfo);
 
 	// î•ñ‚ð‘ã“ü
 	drawInfo->m_mtx                  = m_mtx;

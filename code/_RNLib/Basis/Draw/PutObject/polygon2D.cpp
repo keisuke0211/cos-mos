@@ -357,7 +357,7 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	CMemory::Alloc(&drawInfo);
 
 	// Šî’êî•ñ‚ð‘ã“ü
-	AssignToDrawInfo(*drawInfo, CDrawInfoBase::TYPE::POLYGON2D);
+	AssignToDrawInfo(*drawInfo);
 
 	// î•ñ‚ð‘ã“ü
 	drawInfo->m_idx       = m_idx;

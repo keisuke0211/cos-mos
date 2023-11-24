@@ -38,8 +38,7 @@ void CRegistInfoBase::ClearParameter(void) {
 //========================================
 // ï`âÊèÓïÒÇ…ë„ì¸
 //========================================
-void CRegistInfoBase::AssignToDrawInfo(CDrawInfoBase& drawInfo, const CDrawInfoBase::TYPE& type) {
+void CRegistInfoBase::AssignToDrawInfo(CDrawInfoBase& drawInfo) {
 
-	drawInfo.m_type       = type;
 	drawInfo.m_clippingID = m_clippingID;
 }
