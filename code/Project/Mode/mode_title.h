@@ -125,12 +125,12 @@ private:
 
 	// アニメーション情報
 	struct Anime {
+		D3DXVECTOR3 InitPos;	// 初期位置
 		D3DXVECTOR3 TargetPos;	// 目標位置
+		D3DXVECTOR3 FormerPos;	// 元の位置
 		float fDistance;		// 距離
-		float fSpeed;			// 速度
 		int nTime;				// 時間
 		int nTimeMax;			// 時間の最大値
-		int nSign;				// 符号(+or-)
 	};
 
 	// 操作方法のテキスト情報

@@ -37,11 +37,11 @@ CMode_Title::CMode_Title(void) {
 	m_Anime[ANIME_PLAYER01].fDistance = 10.0f;
 	for (int nCnt = 0; nCnt < ANIME_MAX; nCnt++)
 	{
+		m_Anime[nCnt].InitPos = INITD3DXVECTOR3;
 		m_Anime[nCnt].TargetPos = INITD3DXVECTOR3;
-		m_Anime[nCnt].fSpeed = 0.0f;
+		m_Anime[nCnt].FormerPos = INITD3DXVECTOR3;
 		m_Anime[nCnt].nTime = 0;
 		m_Anime[nCnt].nTimeMax = rand() % (PLAYER_MOVE_TIME - (PLAYER_MOVE_TIME / 2) + 1) + PLAYER_MOVE_TIME / 2;
-		m_Anime[nCnt].nSign = 1;
 	}
 
 	Title = TITLE_TITLE;
@@ -142,10 +142,10 @@ void CMode_Title::Init(void) {
 		// モード設定
 		SwapMode(TITLE_TITLE);
 
-	m_player1->SetPos(D3DXVECTOR3(60.0f,0.0f,-30.0f));
+	m_player1->SetPos(D3DXVECTOR3(60.0f,10.0f,-30.0f));
 	m_player1->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.3f));
 
-	m_player2->SetPos(D3DXVECTOR3(80.0f,-38.0f,-30.0f));
+	m_player2->SetPos(D3DXVECTOR3(80.0f,-28.0f,-30.0f));
 	m_player2->SetRot(D3DXVECTOR3(0.0f, 0.0f, -0.3f));
 
 	for (int nCnt = 0; nCnt < ANIME_MAX; nCnt++)
@@ -154,8 +154,10 @@ void CMode_Title::Init(void) {
 		if (nCnt == ANIME_PLAYER00)	pos = m_player1->GetPos();
 		else if (nCnt == ANIME_PLAYER01)	pos = m_player2->GetPos();
 
-		m_Anime[nCnt].TargetPos = pos;
-		m_Anime[nCnt].TargetPos.y = pos.y + (m_Anime[nCnt].fDistance * m_Anime[nCnt].nSign);
+		m_Anime[nCnt].InitPos = pos;
+		m_Anime[nCnt].FormerPos = pos;
+
+		m_Anime[nCnt].TargetPos = m_Anime[nCnt].InitPos + CGeometry::GetRandomVec() * fRand() *m_Anime[nCnt].fDistance;
 	}
 
 	// テクスチャ
@@ -390,33 +392,17 @@ void CMode_Title::TitleAnime(void)
 		if (++m_Anime[nCnt].nTime >= m_Anime[nCnt].nTimeMax) {
 			m_Anime[nCnt].nTime = 0;
 			m_Anime[nCnt].nTimeMax = rand() % (PLAYER_MOVE_TIME - (PLAYER_MOVE_TIME/2) + 1) + PLAYER_MOVE_TIME/2;
-			m_Anime[nCnt].nSign *= -1;
 
 			pos = m_Anime[nCnt].TargetPos;
+			m_Anime[nCnt].FormerPos = pos;
 
-			m_Anime[nCnt].TargetPos.y = pos.y + (m_Anime[nCnt].fDistance * m_Anime[nCnt].nSign);
+			m_Anime[nCnt].TargetPos = m_Anime[nCnt].InitPos + CGeometry::GetRandomVec() * (m_Anime[nCnt].fDistance * (0.5f + fRand() * 0.5f));
 		}
-		else {
-			D3DXVECTOR3 move = INITD3DXVECTOR3;
 
-			float dy = m_Anime[nCnt].TargetPos.y - pos.y;
-			float rate = m_Anime[nCnt].nTimeMax - m_Anime[nCnt].nTime;
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Anime[nCnt].nTime, m_Anime[nCnt].nTimeMax);
 
-			float distance = dy / rate;
-
-			m_Anime[nCnt].fSpeed = distance;
-
-			if (m_Anime[nCnt].nTime == m_Anime[nCnt].nTimeMax - 2)
-				move.y += 0;
-			if (m_Anime[nCnt].nTime == m_Anime[nCnt].nTimeMax-1)
-				move.y += 0;
-
-			move.y = m_Anime[nCnt].fSpeed;
-
-			pos += move;
-
-			
-		}
+		// 現在位置 = 目標位置 * 割合 + 元の位置 * 割合の逆数
+		pos = m_Anime[nCnt].TargetPos * rate + m_Anime[nCnt].FormerPos * (1.0f - rate);
 
 		if (nCnt == ANIME_PLAYER00)	m_player1->SetPos(pos);
 		else if (nCnt == ANIME_PLAYER01)	m_player2->SetPos(pos);
