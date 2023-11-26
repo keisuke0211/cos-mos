@@ -5,6 +5,7 @@
 // 
 //========================================
 #include "../RNlib.h"
+#include "../RNmode.h"
 #include "demo.h"
 #include "demo_player.h"
 #include "demo_zone.h"
@@ -57,6 +58,9 @@ void CDemo::Init(void) {
 	// ゾーン生成
 	for (int cntZone = 0; cntZone < (int)CDemoZone::TYPE2::MAX; cntZone++)
 		new CDemoZone((CDemoZone::TYPE2)cntZone);
+
+	// 標準エフェクトの優先度設定
+	RNLib::StandardEffect3D().SetPriority((UShort)RNMode::PRIORITY::EFFECT3D);
 }
 
 //========================================
@@ -74,8 +78,6 @@ void CDemo::Uninit(void) {
 void CDemo::Update(void) {
 
 	RNLib::Text2D().PutDebugLog(CreateText("FPS             :%d", RNSystem::GetFPS()));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawFPS         :%d", RNSystem::GetDrawFPS()));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawWaitTime    :%d", RNLib::DrawMgr().GetWaitMilliseconds()));
 	RNLib::Text2D().PutDebugLog(CreateText("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
 	RNLib::Text2D().PutDebugLog(CreateText("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
 

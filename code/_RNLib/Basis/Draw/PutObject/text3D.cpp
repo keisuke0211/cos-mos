@@ -53,10 +53,6 @@ void CText3D::Update(void) {
 //========================================
 CText3D::CRegistInfo* CText3D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Matrix& mtx, const bool& isOnScreen) {
 
-	// “o˜^Žó•t’†‚Å‚È‚¢ŽžAI—¹
-	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
-		return NULL;
-
 	return RNLib::DrawMgr().PutText3D(priority, mtx, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)

@@ -195,7 +195,7 @@ void CMode_Title::Update(void) {
 
 		// ƒƒPƒbƒg
 		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 	}
 	// ƒƒjƒ…[‚Ì”wŒi
 	if (Title == TITLE_MENU) {
@@ -842,7 +842,7 @@ void CMode_Title::StageSelect(void)
 
 	// ˜f¯
 	RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 
 	// –îˆó
 	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))

@@ -52,10 +52,6 @@ void CPolygon3D::Update(void) {
 //========================================
 CPolygon3D::CRegistInfo* CPolygon3D::Put(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
 
-	// 登録受付中でない時、終了
-	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
-		return NULL;
-
 	return RNLib::DrawMgr().PutPolygon3D(priority, mtx, isOnScreen);
 }
 
@@ -130,6 +126,7 @@ CPolygon3D::CDrawInfo::CDrawInfo() {
 	m_isZTest        = true;
 	m_isLighting     = true;
 	m_isBillboard    = false;
+	m_cullingMode    = CDrawState::CULLING_MODE::FRONT_SIDE;
 	m_alphaBlendMode = CDrawState::ALPHA_BLEND_MODE::NORMAL;
 	m_distance       = 0.0f;
 	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
@@ -180,6 +177,13 @@ void CPolygon3D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 	// [[[ 加算合成を有効/無効にする ]]]
 	RNLib::DrawStateMgr().SetAlphaBlendMode(m_alphaBlendMode, device);
 
+	// カリング設定
+	switch (m_cullingMode) {
+	case CDrawState::CULLING_MODE::FRONT_SIDE:device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW ); break;
+	case CDrawState::CULLING_MODE::BACK_SIDE :device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW  ); break;
+	case CDrawState::CULLING_MODE::BOTH_SIDES:device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE); break;
+	}
+
 	{
 		Matrix mtxTrans(INITMATRIX);	// 計算用マトリックス
 		Matrix mtxSelf (INITMATRIX);	// 本体マトリックス
@@ -221,6 +225,9 @@ void CPolygon3D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
 	// 一時的な描画モード設定を終了
 	//----------------------------------------
 	RNLib::DrawStateMgr().EndTemporarySetMode(device);
+
+	// 元に戻す
+	device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 //================================================================================
@@ -256,11 +263,12 @@ void CPolygon3D::CRegistInfo::ClearParameter(void) {
 	CMemory::Release(&m_setVtxPosInfo);
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
 	CMemory::Release(&m_setVtxNorInfo);
-	m_col				= INITCOLOR;
+	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = INITCOLOR, cntVtx++);
 	m_setTexInfoSum.ClearParameter();
 	m_isZtest			= true;
 	m_isLighting		= true;
 	m_isBillboard		= false;
+	m_cullingMode	    = CDrawState::CULLING_MODE::FRONT_SIDE;
 	m_alphaBlendMode	= CDrawState::ALPHA_BLEND_MODE::NORMAL;
 }
 
@@ -285,6 +293,7 @@ CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 	drawInfo->m_isZTest        = m_isZtest;
 	drawInfo->m_isLighting     = m_isLighting;
 	drawInfo->m_isBillboard    = m_isBillboard;
+	drawInfo->m_cullingMode    = m_cullingMode;
 	drawInfo->m_alphaBlendMode = m_alphaBlendMode;
 
 	//----------------------------------------
@@ -327,10 +336,10 @@ CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 	}
 
 	// [[[ 色 ]]]
-	drawInfo->m_vtxs[0].col =
-	drawInfo->m_vtxs[1].col =
-	drawInfo->m_vtxs[2].col =
-	drawInfo->m_vtxs[3].col = D3DCOLOR_RGBA(m_col.r, m_col.g, m_col.b, m_col.a);
+	drawInfo->m_vtxs[0].col = D3DCOLOR_RGBA(m_vtxCols[0].r, m_vtxCols[0].g, m_vtxCols[0].b, m_vtxCols[0].a);
+	drawInfo->m_vtxs[1].col = D3DCOLOR_RGBA(m_vtxCols[1].r, m_vtxCols[1].g, m_vtxCols[1].b, m_vtxCols[1].a);
+	drawInfo->m_vtxs[2].col = D3DCOLOR_RGBA(m_vtxCols[2].r, m_vtxCols[2].g, m_vtxCols[2].b, m_vtxCols[2].a);
+	drawInfo->m_vtxs[3].col = D3DCOLOR_RGBA(m_vtxCols[3].r, m_vtxCols[3].g, m_vtxCols[3].b, m_vtxCols[3].a);
 
 	// [[[ UV座標 ]]]
 	m_setTexInfoSum.AssignTexInfo(
@@ -439,7 +448,26 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetCol(const Color& col) {
 	if (this == NULL)
 		return NULL;
 
-	m_col = col;
+	m_vtxCols[0] = 
+	m_vtxCols[1] = 
+	m_vtxCols[2] = 
+	m_vtxCols[3] = col;
+
+	return this;
+}
+
+//========================================
+// 色を設定
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetVtxCol(const Color col0, const Color col1, const Color col2, const Color col3) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_vtxCols[0] = col0;
+	m_vtxCols[1] = col1;
+	m_vtxCols[2] = col2;
+	m_vtxCols[3] = col3;
 
 	return this;
 }
@@ -545,6 +573,19 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetBillboard(const bool& isBil
 
 	m_isBillboard = isBillboard;
 	
+	return this;
+}
+
+//========================================
+// カリングモードを設定
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetCullingMode(const CDrawState::CULLING_MODE& cullingMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_cullingMode = cullingMode;
+
 	return this;
 }
 

@@ -166,10 +166,10 @@ void CBlock::Update(void) {
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetCol(m_color)
-			->SetOutLine(m_isCollision);
+			->SetOutLineIdx(m_isCollision);
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetCol(m_color)
-			->SetOutLine(m_isCollision);
+			->SetOutLineIdx(m_isCollision);
 	}break;
 	case LOOKS_TYPE::CHEST: {
 
@@ -187,7 +187,7 @@ void CBlock::Update(void) {
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
-			->SetOutLine(m_isCollision);
+			->SetOutLineIdx(m_isCollision);
 	}break;
 	}
 

@@ -201,8 +201,11 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\doll3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\motion3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\setup3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D-base.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\standard-effect3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\ease.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\geometry.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\hit-test.cpp" />
@@ -294,9 +297,11 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\doll3D.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\motion3D.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\setup3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D-base.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\standard-effect3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\ease.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\geometry.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\hit-test.h" />

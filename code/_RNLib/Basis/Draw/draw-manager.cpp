@@ -15,24 +15,149 @@
 //****************************************
 // 静的変数定義
 //****************************************
-CDrawMgr::PROCESS_STATE   CDrawMgr::ms_processState         = PROCESS_STATE::REGIST_ACCEPT;
 CDrawMgr::CRegistInfoSum* CDrawMgr::ms_resistInfoSum		= NULL;
 CDrawMgr::CRegistInfoSum* CDrawMgr::ms_resistInfoSumScreen	= NULL;
 CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSum			= NULL;
 CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumOvr		= NULL;
 CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumScreen	= NULL;
 CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumScreenOvr = NULL;
-std::thread               CDrawMgr::ms_mainLoopTh(MainLoop);
 UShort                    CDrawMgr::ms_priorityMax;
+
+//========================================
+// 描画開始処理
+//========================================
+void CDrawMgr::StartDraw(Device& device) {
+
+	//----------------------------------------
+	// 登録情報を適用
+	//----------------------------------------
+	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+
+		// 登録情報を元に設置する
+		PutBasedRegistInfo(ms_resistInfoSum[cntPriority], cntPriority, false);
+		PutBasedRegistInfo(ms_resistInfoSumScreen[cntPriority], cntPriority, true);
+
+		// 登録情報を描画情報に変換する
+		ConvRegistInfoToDrawInfo(ms_resistInfoSum[cntPriority], ms_drawInfoSumOvr[cntPriority], device);
+		ConvRegistInfoToDrawInfo(ms_resistInfoSumScreen[cntPriority], ms_drawInfoSumScreenOvr[cntPriority], device);
+	}
+
+	//----------------------------------------
+	// 描画情報を入れ替える
+	//----------------------------------------
+	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+
+		// 描画情報を上書きする
+		ms_drawInfoSum[cntPriority].Overwrite(&ms_drawInfoSumOvr[cntPriority]);
+		ms_drawInfoSumScreen[cntPriority].Overwrite(&ms_drawInfoSumScreenOvr[cntPriority]);
+
+		// 不要メモリ破棄の為、再確保
+		ms_resistInfoSum[cntPriority].ReAlloc();
+		ms_resistInfoSumScreen[cntPriority].ReAlloc();
+	}
+
+	// ポリゴン2Dの頂点バッファ再確保
+	if (CPolygon2D::CDrawInfo::m_allocPower > POLYGON2D_ALLOC_BASE_POWER) {
+
+		for (int cntAlloc = POLYGON2D_ALLOC_BASE_POWER; cntAlloc < CPolygon2D::CDrawInfo::m_allocPower; cntAlloc++) {
+			const UShort allocLine = pow(2, cntAlloc);
+
+			if (CPolygon2D::CDrawInfo::m_idxCount < allocLine)
+			{// 確保ラインよりも数が少ない時、
+				// その確保ライン分確保し直す
+				CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
+				CPolygon2D::CDrawInfo::CreateVertexBuffer(allocLine);
+
+				// 確保した数/べき乗数を保存
+				CPolygon2D::CDrawInfo::m_allocNum = allocLine;
+				CPolygon2D::CDrawInfo::m_allocPower = cntAlloc;
+
+				break;
+			}
+		}
+	}
+
+	// ポリゴン3Dの頂点バッファ再確保
+	if (CPolygon3D::CDrawInfo::m_allocPower > POLYGON3D_ALLOC_BASE_POWER) {
+
+		for (int cntAlloc = POLYGON3D_ALLOC_BASE_POWER; cntAlloc < CPolygon3D::CDrawInfo::m_allocPower; cntAlloc++) {
+			const UShort allocLine = pow(2, cntAlloc);
+
+			if (CPolygon3D::CDrawInfo::m_idxCount < allocLine)
+			{// 確保ラインよりも数が少ない時、
+				// その確保ライン分確保し直す
+				CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
+				CPolygon3D::CDrawInfo::CreateVertexBuffer(allocLine);
+
+				// 確保した数/べき乗数を保存
+				CPolygon3D::CDrawInfo::m_allocNum = allocLine;
+				CPolygon3D::CDrawInfo::m_allocPower = cntAlloc;
+
+				break;
+			}
+		}
+	}
+
+	// 番号カウント初期化
+	CPolygon2D::CDrawInfo::m_idxCount = 0;
+	CPolygon3D::CDrawInfo::m_idxCount = 0;
+
+	// 頂点情報を代入
+	AssignVertexInfo();
+
+	//----------------------------------------
+	// 描画
+	//----------------------------------------
+	// 描画を開始
+	device->BeginScene();
+
+	// [[[ スクリーン描画 ]]]
+	CCamera::StartRenderingScreen(device);
+	Draw(device, NONEDATA, false, true);
+}
+
+//========================================
+// 描画終了処理
+//========================================
+void CDrawMgr::EndDraw(Device& device) {
+
+	{// [[[ カメラ描画 ]]]
+		// レンダリングターゲット/Zバッファ/ビューポートを保存
+		Surface  renderDef;
+		Surface  ZBuffDef;
+		Viewport viewPortDef;
+		device->GetRenderTarget(0, &renderDef);
+		device->GetDepthStencilSurface(&ZBuffDef);
+		device->GetViewport(&viewPortDef);
+
+		// カメラ1つ1つに対し描画していく
+		CCamera* camera = NULL;
+		CCameraMgr& cameraMgr = RNSystem::GetCameraMgr();
+		while (cameraMgr.ListLoop((CObject**)&camera)) {
+			camera->StartRendering(device);
+			Draw(device, camera->GetID(), camera->GetClipping(), false);
+			camera->EndRendering(device);
+		}
+
+		// レンダリングターゲット/Zバッファ/ビューポートを元に戻す
+		device->SetRenderTarget(0, renderDef);
+		device->SetDepthStencilSurface(ZBuffDef);
+		device->SetViewport(&viewPortDef);
+	}
+
+	// 描画終了
+	device->EndScene();
+
+	// バックバッファとフロントバッファの入れ替え
+	device->Present(NULL, NULL, NULL, NULL);
+}
 
 //========================================
 // コンストラクタ
 //========================================
 CDrawMgr::CDrawMgr() {
 
-	m_reAllocCount     = 0;
-	m_oldDrawFPS       = 0;
-	m_waitMilliseconds = WAIT_MILLISECONDS_MIN;
+	m_reAllocCount = 0;
 }
 
 //========================================
@@ -79,9 +204,6 @@ void CDrawMgr::Init(const UShort& priorityMax) {
 // 終了処理
 //========================================
 void CDrawMgr::Uninit(void) {
-
-	// メインループスレッドを斬り離す
-	ms_mainLoopTh.detach();
 
 	// 解放処理
 	Release();
@@ -135,130 +257,6 @@ void CDrawMgr::Release(void) {
 	// 頂点バッファを解放する
 	CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
 	CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
-}
-
-//========================================
-// 登録情報適用待ち開始
-//========================================
-void CDrawMgr::StartRegistInfoApplyWait(void) {
-
-	if (ms_processState == PROCESS_STATE::REGIST_ACCEPT)
-	{// [ 登録受付 ]の時、
-		// 削除済みカメラを解放する
-		RNLib::CameraMgr().ReleaseDeletedCamera();
-
-		// [ 登録情報適用待ち ]にする
-		ms_processState = PROCESS_STATE::REGIST_INFO_APPLY_WAIT;
-	}
-}
-
-//========================================
-// 描画開始処理
-//========================================
-bool CDrawMgr::StartDraw(void) {
-
-	// まだ描画情報適用待ちの時、
-	if (ms_processState == PROCESS_STATE::REGIST_INFO_APPLY_WAIT) {
-
-		// 更に待っても適用が間に合わなかった時、待ち時間を加算する
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_waitMilliseconds));
-		if (ms_processState == PROCESS_STATE::REGIST_INFO_APPLY_WAIT && m_waitMilliseconds < WAIT_MILLISECONDS_MAX) {
-			m_waitMilliseconds++;
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		}
-	}
-
-	if ((ms_processState == PROCESS_STATE::DRAW_INFO_SWAP_WAIT && !RNSystem::GetSpace3DStop()) || RNSystem::GetSceneSwap())
-	{// [ 描画入れ替え待ち ]の時、
-
-		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-
-			// 描画情報を上書きする
-			ms_drawInfoSum      [cntPriority].Overwrite(&ms_drawInfoSumOvr      [cntPriority]);
-			ms_drawInfoSumScreen[cntPriority].Overwrite(&ms_drawInfoSumScreenOvr[cntPriority]);
-
-			// 不要メモリ破棄の為、再確保
-			ms_resistInfoSum      [cntPriority].ReAlloc();
-			ms_resistInfoSumScreen[cntPriority].ReAlloc();
-		}
-
-		// ポリゴン2D
-		if (CPolygon2D::CDrawInfo::m_allocPower > POLYGON2D_ALLOC_BASE_POWER) {
-
-			for (int cntAlloc = POLYGON2D_ALLOC_BASE_POWER; cntAlloc < CPolygon2D::CDrawInfo::m_allocPower; cntAlloc++) {
-				const UShort allocLine = pow(2, cntAlloc);
-
-				if (CPolygon2D::CDrawInfo::m_idxCount < allocLine)
-				{// 確保ラインよりも数が少ない時、
-					// その確保ライン分確保し直す
-					CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
-					CPolygon2D::CDrawInfo::CreateVertexBuffer(allocLine);
-
-					// 確保した数/べき乗数を保存
-					CPolygon2D::CDrawInfo::m_allocNum = allocLine;
-					CPolygon2D::CDrawInfo::m_allocPower = cntAlloc;
-
-					break;
-				}
-			}
-		}
-
-		// ポリゴン3D
-		if (CPolygon3D::CDrawInfo::m_allocPower > POLYGON3D_ALLOC_BASE_POWER) {
-
-			for (int cntAlloc = POLYGON3D_ALLOC_BASE_POWER; cntAlloc < CPolygon3D::CDrawInfo::m_allocPower; cntAlloc++) {
-				const UShort allocLine = pow(2, cntAlloc);
-
-				if (CPolygon3D::CDrawInfo::m_idxCount < allocLine)
-				{// 確保ラインよりも数が少ない時、
-					// その確保ライン分確保し直す
-					CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
-					CPolygon3D::CDrawInfo::CreateVertexBuffer(allocLine);
-
-					// 確保した数/べき乗数を保存
-					CPolygon3D::CDrawInfo::m_allocNum = allocLine;
-					CPolygon3D::CDrawInfo::m_allocPower = cntAlloc;
-
-					break;
-				}
-			}
-		}
-
-		// 番号カウント初期化
-		CPolygon2D::CDrawInfo::m_idxCount = 0;
-		CPolygon3D::CDrawInfo::m_idxCount = 0;
-
-		// 頂点情報を代入
-		AssignVertexInfo();
-
-		// 描画FPSカウントを加算
-		RNSystem::AddDrawFPSCount();
-
-		// [ 登録受付 ]にする
-		ms_processState = PROCESS_STATE::REGIST_ACCEPT;
-
-		return true;
-	}
-
-	return false;
-}
-
-//========================================
-// 描画処理
-//========================================
-void CDrawMgr::Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
-
-	// ビューマトリックスを取得
-	Matrix viewMtx;
-	device->GetTransform(D3DTS_VIEW, &viewMtx);
-
-	// 描画していく
-	if (isOnScreen) {
-		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSumScreen, viewMtx);
-	}
-	else {
-		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSum, viewMtx);
-	}
 }
 
 //========================================
@@ -374,10 +372,6 @@ CText3D::CRegistInfo* CDrawMgr::PutText3D(const UShort& priority, const Matrix& 
 //========================================
 CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
 
-	// 登録受付中でない時、終了
-	if (ms_processState != PROCESS_STATE::REGIST_ACCEPT)
-		return NULL;
-
 	// 登録情報
 	CModel::CRegistInfo* registInfo = isOnScreen ?
 		RegistModel(ms_resistInfoSumScreen[priority]) :
@@ -396,22 +390,93 @@ CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mt
 //================================================================================
 
 //========================================
+// 描画処理
+//========================================
+void CDrawMgr::Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
+
+	// ビューマトリックスを取得
+	Matrix viewMtx;
+	device->GetTransform(D3DTS_VIEW, &viewMtx);
+
+	// 描画していく
+	if (isOnScreen) {
+		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSumScreen, viewMtx);
+	}
+	else {
+		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSum, viewMtx);
+	}
+}
+
+//========================================
 // 描画実行処理
 //========================================
 void CDrawMgr::ExecutionDraw(Device& device, const short& cameraID, const bool& isCameraClipping, CDrawInfoSum*& drawInfo, Matrix& viewMtx) {
 
 	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+		//----------------------------------------
+		// モデル描画
+		//----------------------------------------
 		for (int cntModel = 0; cntModel < drawInfo[cntPriority].m_modelNum; cntModel++) {
+
+			if (drawInfo[cntPriority].m_model[cntModel] == NULL)
+				continue;
 
 			// クリッピングIDが対象外であれば折り返す
 			if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != NONEDATA || isCameraClipping)
 				if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != cameraID)
 					continue;
 
-			drawInfo[cntPriority].m_model[cntModel]->Draw(device, viewMtx);
+			// 本体のワールドマトリックスの設定
+			device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_model[cntModel]->m_mtx);
+
+			// [[[ Zテストの設定 ]]]
+			if (drawInfo[cntPriority].m_model[cntModel]->m_isZTest) {
+				device->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+				device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			}
+			else {
+				device->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+				device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+			}
+
+			// 描画
+			for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
+
+				// マテリアルの設定
+				device->SetMaterial(&drawInfo[cntPriority].m_model[cntModel]->m_mats[cntMat]);
+
+				// [[[ テクスチャの設定 ]]]
+				device->SetTexture(0, drawInfo[cntPriority].m_model[cntModel]->m_texes[cntMat]);
+
+				// [[[ 描画 ]]]
+				drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat);
+			}
+
+			// 輪郭線の描画
+			if (drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh != NULL) {
+
+				// マテリアルの設定
+				device->SetMaterial(&CModel::CDrawInfo::ms_outLineMat);
+
+				// 裏面
+				device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+
+				for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
+					drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh->DrawSubset(cntMat);
+				}
+
+				// 表面
+				device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+			}
 		}
 
+		//----------------------------------------
+		// ポリゴン3D
+		//----------------------------------------
 		for (int cntPolygon3D = 0; cntPolygon3D < drawInfo[cntPriority].m_polygon3DNum; cntPolygon3D++) {
+
+			if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D] == NULL)
+				continue;
 
 			// クリッピングIDが対象外であれば折り返す
 			if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != NONEDATA || isCameraClipping)
@@ -421,7 +486,13 @@ void CDrawMgr::ExecutionDraw(Device& device, const short& cameraID, const bool& 
 			drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->Draw(device, viewMtx);
 		}
 
+		//----------------------------------------
+		// ポリゴン2D
+		//----------------------------------------
 		for (int cntPolygon2D = 0; cntPolygon2D < drawInfo[cntPriority].m_polygon2DNum; cntPolygon2D++) {
+
+			if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D] == NULL)
+				continue;
 
 			// クリッピングIDが対象外であれば折り返す
 			if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != NONEDATA || isCameraClipping)
@@ -624,32 +695,6 @@ CModel::CRegistInfo* CDrawMgr::RegistModel(CRegistInfoSum& resistInfo) {
 //================================================================================
 
 //========================================
-// [静的]メインループ
-//========================================
-void CDrawMgr::MainLoop(void) {
-	while (true) {
-		if (ms_processState == PROCESS_STATE::REGIST_INFO_APPLY_WAIT)
-		{// [ 登録情報適用待ち ]の時、
-			for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-				// 登録情報を元に設置する
-				PutBasedRegistInfo(ms_resistInfoSum      [cntPriority], cntPriority, false);
-				PutBasedRegistInfo(ms_resistInfoSumScreen[cntPriority], cntPriority, true);
-
-				// 登録情報を描画情報に変換する
-				ConvRegistInfoToDrawInfo(ms_resistInfoSum      [cntPriority], ms_drawInfoSumOvr      [cntPriority]);
-				ConvRegistInfoToDrawInfo(ms_resistInfoSumScreen[cntPriority], ms_drawInfoSumScreenOvr[cntPriority]);
-			}
-
-			// [ 描画情報入れ替え待ち ]にする
-			ms_processState = PROCESS_STATE::DRAW_INFO_SWAP_WAIT;
-		}
-
-		// ※全力で回さないように0秒スリープ
-		std::this_thread::sleep_for(std::chrono::milliseconds(0));
-	}
-}
-
-//========================================
 // [静的]登録情報を元に設置する
 //========================================
 void CDrawMgr::PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen) {
@@ -678,7 +723,7 @@ void CDrawMgr::PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& p
 //========================================
 // [静的]登録情報を描画情報に変換する
 //========================================
-void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum) {
+void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device) {
 
 	{// 描画情報のメモリ確保
 		drawInfoSum.m_modelNum     = resistInfoSum.m_modelRegistInfoNum;
@@ -693,7 +738,7 @@ void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfo
 	// モデル
 	//----------------------------------------
 	for (int cnt = 0; cnt < resistInfoSum.m_modelRegistInfoNum; cnt++) {
-		drawInfoSum.m_model[cnt] = resistInfoSum.m_modelRegistInfos[cnt]->ConvToDrawInfo();
+		drawInfoSum.m_model[cnt] = resistInfoSum.m_modelRegistInfos[cnt]->ConvToDrawInfo(device);
 	}
 
 	resistInfoSum.m_modelDrawNum = resistInfoSum.m_modelRegistInfoNum;

@@ -31,13 +31,8 @@ void Polygon2DAnd3D::SetTexture(Device& device, void*& tex, TEX_TYPE& texType) {
 				device->SetTexture(0, NULL);
 			}
 			else {
-				if (RNLib::CameraMgr().CheckDeletedCamera(*camera)) {
-					device->SetTexture(0, NULL);
-				}
-				else {
-					device->SetTexture(0, (*camera)->GetTexture());
-					RNLib::DrawStateMgr().SetTextureAlphaMode(false, device);	// テクスチャの透過を無効化
-				}
+				device->SetTexture(0, (*camera)->GetTexture());
+				device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 			}
 		}break;
 		}

@@ -57,7 +57,7 @@ void CSpike::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
 	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot, false)
-		->SetOutLine(true)
+		->SetOutLineIdx(true)
 		->SetCol(m_color);
 }
 

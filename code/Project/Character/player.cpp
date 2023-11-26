@@ -293,7 +293,7 @@ void CPlayer::UpdateInfo(void)
 
 		// 位置設定
 		RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-			->SetOutLine(true)
+			->SetOutLineIdx(true)
 			->SetCol(Player.color);
 
 		// スワップ先のマークを描画する位置
@@ -456,7 +456,7 @@ void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
 {
 	// 位置設定
 	RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-		->SetOutLine(true)
+		->SetOutLineIdx(true)
 		->SetCol(Player.color);
 
 	//次のインターバルへ
@@ -497,7 +497,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 {
 	// 位置設定
 	RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-		->SetOutLine(true)
+		->SetOutLineIdx(true)
 		->SetCol(Player.color);
 
 	//最後のプレイヤーのときにスワップアニメーション終了

@@ -98,7 +98,7 @@ void CEffect_Meteor::Update(void)
 
 		//モデル配置
 		RNLib::Model().Put(PRIORITY_OBJECT, s_nModelIdx[0], m_Info[nCnt].pos, m_Info[nCnt].rot,m_Info[nCnt].scale, false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 
 		// 位置の増加
 		m_Info[nCnt].pos += m_Info[nCnt].move;

@@ -16,6 +16,7 @@ class CObjectMgr {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	static void  UpdateAllMgrs(void);
+	static void  ReleaseAllMgrs(void);
 	static void  SubMgr(CObjectMgr* mgr);
 	             CObjectMgr();
 	virtual      ~CObjectMgr();

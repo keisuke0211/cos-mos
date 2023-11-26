@@ -20,9 +20,10 @@
 // 静的変数定義
 //****************************************
 const CDemoZone::TypeData CDemoZone::TYPE_DATAS[(int)TYPE2::MAX] = {
-	{"DrawTest"  ,Pos3D(100.0f * 0, 0.0f,100.0f * 0.5f),{90.0f,190.0f}},
-	{"CameraTest",Pos3D(100.0f * 1, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
-	{"DollTest"  ,Pos3D(100.0f * 1, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
+	{"DrawTest"  ,Pos3D(100.0f *  0.0f, 0.0f,100.0f * 0.5f),{90.0f,190.0f}},
+	{"CameraTest",Pos3D(100.0f *  1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
+	{"DollTest"  ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
+	{"EffectTest",Pos3D(100.0f * -1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
 };
 CDemoZone* CDemoZone::ms_active = NULL;
 
@@ -47,6 +48,9 @@ CDemoZone::CDemoZone(const TYPE2& type2) : CDemoObject(TYPE::ZONE) {
 		TypeInfo_DollTest* typeInfo = (TypeInfo_DollTest*)m_typeInfo;
 		typeInfo->doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetSetUp3DIdx(CDefaultData::SETUP3D::CAPSULE));
 	}break;
+	case TYPE2::EFFECT_TEST: {
+
+	}break;
 	}
 }
 
@@ -65,6 +69,9 @@ CDemoZone::~CDemoZone() {
 	case TYPE2::DOLL_TEST: {
 		TypeInfo_DollTest* typeInfo = (TypeInfo_DollTest*)m_typeInfo;
 		CMemory::Release(&typeInfo->doll);
+	}break;
+	case TYPE2::EFFECT_TEST: {
+
 	}break;
 	}
 
@@ -128,7 +135,7 @@ void CDemoZone::Update(void) {
 				->SetTex(typeInfo->modelInfo.isTex ? RNLib::DefaultData().GetTextureIdx(CDefaultData::TEXTURE::GRID) : NONEDATA)
 				->SetZTest(typeInfo->modelInfo.isZTest)
 				->SetLighting(typeInfo->modelInfo.isLighting)
-				->SetOutLine(typeInfo->modelInfo.m_isOutLine)
+				->SetOutLineIdx(typeInfo->modelInfo.m_outLineIdx)
 				->SetBrightnessOfEmissive(typeInfo->modelInfo.m_brightnessOfEmissive);
 
 		}break;
@@ -154,7 +161,7 @@ void CDemoZone::Update(void) {
 				->SetTex(typeInfo->modelInfo.isTex ? RNLib::DefaultData().GetTextureIdx(CDefaultData::TEXTURE::GRID) : NONEDATA)
 				->SetZTest(typeInfo->modelInfo.isZTest)
 				->SetLighting(typeInfo->modelInfo.isLighting)
-				->SetOutLine(typeInfo->modelInfo.m_isOutLine)
+				->SetOutLineIdx(typeInfo->modelInfo.m_outLineIdx)
 				->SetBrightnessOfEmissive(typeInfo->modelInfo.m_brightnessOfEmissive);
 		}
 
@@ -164,18 +171,18 @@ void CDemoZone::Update(void) {
 		// 赤スフィア
 		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(10.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 255, 0, 0, 255 })
-			->SetOutLine(true)
+			->SetOutLineIdx(true)
 			->SetClippingCamera(RNDemo::Get().GetPlayer(CDemo::PLAYER::BLUE).GetCamera());	// ※青プレイヤーのカメラにのみ描画
 
 		// 白スフィア
 		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(0.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 255, 255, 255, 255 })
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 
 		// 青スフィア
 		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(-10.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 0, 0, 255, 255 })
-			->SetOutLine(true)
+			->SetOutLineIdx(true)
 			->SetClippingCamera(RNDemo::Get().GetPlayer(CDemo::PLAYER::RED).GetCamera());	// ※赤プレイヤーのカメラにのみ描画
 		
 	}break;
@@ -188,6 +195,9 @@ void CDemoZone::Update(void) {
 
 		// ドール3D
 		typeInfo->doll->SetPos(pos + Pos3D(0.0f, 0.0f, 0.0f));
+	}break;
+	case TYPE2::EFFECT_TEST: {
+
 	}break;
 	}
 }
@@ -217,8 +227,10 @@ const char* CDemoZone::ALIGNMENT_NAME[(int)CText::ALIGNMENT::MAX] = {
 //========================================
 void CDemoZone::UpdateActive(void) {
 	
+	const Pos3D& pos = TYPE_DATAS[(int)m_type2].pos;
+
 	// ゾーン名表示
-	RNLib::Text2D().PutDebugLog(CreateText("ZoneName        :『%s』", TYPE_DATAS[(int)m_type2].name));
+	RNLib::Text2D().PutDebugLog(CreateText("----------%s----------", TYPE_DATAS[(int)m_type2].name));
 
 	// [[[ 種類毎の処理 ]]]
 	switch (m_type2) {
@@ -230,22 +242,18 @@ void CDemoZone::UpdateActive(void) {
 			typeInfo->putObjType = (PUTOBJECT_TYPE)((typeCount + 1) % (int)PUTOBJECT_TYPE::MAX);
 		}
 		
-		if (RNLib::Input().GetKeyPress(DIK_Z)) {
+		if (RNLib::Input().GetKeyPress(DIK_F) && typeInfo->modelInfo.drawNum > 0) {
+			typeInfo->modelInfo.drawNum--;
 		}
 
-		if (RNLib::Input().GetKeyPress(DIK_X)) {
-		}
-
-		if (RNLib::Input().GetKeyPress(DIK_C)) {
+		if (RNLib::Input().GetKeyPress(DIK_G)) {
 			typeInfo->modelInfo.drawNum++;
 		}
 
-		RNLib::Text2D().PutDebugLog(CreateText("-----DrawManager-----"));
-		RNLib::Text2D().PutDebugLog(CreateText("Polygon2D Num   :%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_polygon2DDrawNum           , RNLib::DrawMgr().GetRegistInfoSumScreen().m_polygon2DDrawNum));
-		RNLib::Text2D().PutDebugLog(CreateText("Polygon3D Num[Z]:%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_polygon3DDrawNum           , RNLib::DrawMgr().GetRegistInfoSumScreen().m_polygon3DDrawNum));
-		RNLib::Text2D().PutDebugLog(CreateText("Text2D    Num   :%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_text2DDrawNum              , RNLib::DrawMgr().GetRegistInfoSumScreen().m_text2DDrawNum));
-		RNLib::Text2D().PutDebugLog(CreateText("Text3D    Num[X]:%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_text3DDrawNum              , RNLib::DrawMgr().GetRegistInfoSumScreen().m_text3DDrawNum));
-		RNLib::Text2D().PutDebugLog(CreateText("Model     Num[C]:%-4d+%-4d", RNLib::DrawMgr().GetRegistInfoSum().m_modelDrawNum               , RNLib::DrawMgr().GetRegistInfoSumScreen().m_modelDrawNum));
+
+		RNLib::Text2D().PutDebugLog(CreateText("Polygon2D Num      :%d", RNLib::DrawMgr().GetPolygon2DNum()));
+		RNLib::Text2D().PutDebugLog(CreateText("Polygon3D Num[R][T]:%d", RNLib::DrawMgr().GetPolygon3DNum()));
+		RNLib::Text2D().PutDebugLog(CreateText("Model     Num[F][G]:%d", RNLib::DrawMgr().GetModelNum    ()));
 		RNLib::Text2D().PutDebugLog(CreateText("-----PutObject-----"));
 		RNLib::Text2D().PutDebugLog(CreateText("Type     [1]:%s", PUTOBJECT_TYPE_NAME[(int)typeInfo->putObjType]));
 
@@ -320,6 +328,13 @@ void CDemoZone::UpdateActive(void) {
 		RNLib::Text2D().PutDebugLog(CreateText("SpinX[Y][U]:%f", bone1.GetAddRot().x));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinY[H][J]:%f", bone1.GetAddRot().y));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[N][M]:%f", bone1.GetAddRot().z));
+	}break;
+	case TYPE2::EFFECT_TEST: {
+
+		if (RNLib::Input().GetKeyTrigger(DIK_1)) {
+			RNLib::StandardEffect3D().CreateDustStormOnLanding(pos, INITROT3D, Color{ 214,209,176,255 }, 10.0f);
+		}
+
 	}break;
 	}
 }

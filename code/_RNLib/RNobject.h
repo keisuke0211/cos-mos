@@ -17,22 +17,31 @@ class C3DObject {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init(void) {
-		m_motion3D.Init();
-		m_setUp3D .Init();
+		m_motion3D        .Init();
+		m_setUp3D         .Init();
+		m_effect3D        .Init();
+		m_standardEffect3D.Init();
 	}
 	void Uninit(void) {
-		m_motion3D.Uninit();
-		m_setUp3D .Uninit();
+		m_motion3D        .Uninit();
+		m_setUp3D         .Uninit();
+		m_effect3D        .Uninit();
+		m_standardEffect3D.Uninit();
 	}
 	void Update(void) {
-		m_motion3D.Update();
-		m_setUp3D .Update();
+		m_motion3D        .Update();
+		m_setUp3D         .Update();
+		m_effect3D        .Update();
+		m_standardEffect3D.Update();
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CMotion3D   m_motion3D;
-	CSetUp3D    m_setUp3D;
-	CDoll3DMgr  m_doll3DMgr;
+	CMotion3D         m_motion3D;
+	CSetUp3D          m_setUp3D;
+	CDoll3DMgr        m_doll3DMgr;
+	CEffect3D         m_effect3D;
+	CEffect3DMgr      m_effect3DMgr;
+	CStandardEffect3D m_standardEffect3D;
 };
 
 // åvéZ

@@ -20,7 +20,8 @@ namespace RNSettings {
 		bool  isFullScreen            = false;	
 		float resolution              = 0.0f;
 		// OtherOptions
-		float modelOutLineAddDistance = 0.0f;
+		float modelOutLineAddDistanceInterval = 0.0f;
+		UShort modelOutLineAddDistanceDelimiter = 0;
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
