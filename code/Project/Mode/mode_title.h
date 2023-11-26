@@ -28,6 +28,9 @@ public:
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
 
+	static const int PLAYER_MOVE_TIME = 120;	// プレイヤーの移動時間
+
+
 	// *** 列挙型 ***
 	enum class STATE {
 		NONE,
@@ -65,6 +68,13 @@ private:
 		MENU_SETTING,	// 設定
 		MENU_END,		// 終了
 		MENU_MAX
+	};
+
+	// アニメーション
+	enum ANIME {
+		ANIME_PLAYER00 = 0,	// プレイヤー0
+		ANIME_PLAYER01,		// プレイヤー１
+		ANIME_MAX
 	};
 
 	// テクスチャ
@@ -113,6 +123,16 @@ private:
 		char Text[TXT_MAX];		// ステージ名
 	};
 
+	// アニメーション情報
+	struct Anime {
+		D3DXVECTOR3 InitPos;	// 初期位置
+		D3DXVECTOR3 TargetPos;	// 目標位置
+		D3DXVECTOR3 FormerPos;	// 元の位置
+		float fDistance;		// 距離
+		int nTime;				// 時間
+		int nTimeMax;			// 時間の最大値
+	};
+
 	// 操作方法のテキスト情報
 	struct Operation{
 		char Text[TXT_MAX];		// テキスト
@@ -159,9 +179,10 @@ private:
 	};
 
 	// *** 関数 ***
+	/* タイトルアニメーション	*/void TitleAnime(void);
 	/* テキストの読込			*/void TextLoad(void);
 	/* 設定処理					*/void SettingMenu(void);
-	/* タイトルアニメーション	*/void TitleAnime(void);
+	/* テキストアニメーション	*/void TextAnime(void);
 	/* メニューアニメーション	*/void MenuAnime(void);
 	/* メニュー生成				*/void MenuCreate(void);
 	/* メニュー選択				*/void MenuSelect(void);
@@ -176,7 +197,7 @@ private:
 
 	// *** 変数 ***
 	TITLE Title;
-	Menu m_Anime;
+	Menu m_Menu;
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
@@ -192,6 +213,7 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
+	Anime m_Anime[ANIME_MAX];
 	CDoll3D *m_player1;
 	CDoll3D *m_player2;
 };
