@@ -185,7 +185,9 @@ void CPolygon2D::Update(void) {
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	return RNLib::DrawMgr().PutPolygon2D(priority, pos, angle, isOnScreen);
+	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen)
+		->SetPos(pos)
+		->SetAngle(angle);
 }
 
 //========================================
@@ -194,6 +196,14 @@ CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& po
 CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
 	return Put(priority, Pos3D(pos.x, pos.y, 0.0f), angle, isOnScreen);
+}
+
+//========================================
+// ê›íuèàóù
+//========================================
+CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const bool& isOnScreen) {
+
+	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen);
 }
 
 //================================================================================

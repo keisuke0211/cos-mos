@@ -80,9 +80,10 @@ void CSound::Init(void) {
 void CSound::Uninit(void) {
 
 	// データの解放
-	for (int cntData = 0; cntData < m_num; cntData++)
-		CMemory::Release(&m_datas[cntData]);
-	CMemory::Release(&m_datas);
+	CMemory::ReleaseDouble(&m_datas, m_num);
+
+	// 全て停止する
+	Stop();
 
 	// 再生マネージャーの解放
 	CMemory::Release(&m_playMgr);
@@ -414,8 +415,7 @@ void CSound::CData::Release(void) {
 
 	// オーディオデータの開放
 	if (m_audioData != NULL) {
-		free(m_audioData);
-		m_audioData = NULL;
+		CMemory::Release(&m_audioData);
 	}
 }
 

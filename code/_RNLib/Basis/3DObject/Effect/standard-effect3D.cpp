@@ -57,8 +57,8 @@ void CStandardEffect3D::CreateDustStormOnLanding(const Pos3D& pos, const Rot3D& 
 	CEffect3D_Cylinder::Circle circleFront = {};
 	circleFront.startRadius = 0.0f;
 	circleFront.endRadius   = force * 1.25f;
-	circleFront.startDepth  = -force / 2.5f;
-	circleFront.endDepth    = -force / 1.5f;
+	circleFront.startDepth  = -force / 1.5f;
+	circleFront.endDepth    = 0.0f;
 	circleFront.col         = col;
 
 	CEffect3D_Cylinder::Circle circleBack = {};

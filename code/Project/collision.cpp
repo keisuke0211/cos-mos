@@ -254,7 +254,8 @@ void CCollision::Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SI
 		//è„â∫Ç«ÇøÇÁÇ©Ç…ìñÇΩÇÍÇŒéÄñS
 		//*********************************
 		case ROT::OVER:
-		case ROT::UNDER: *pDeath = true;break;
+		case ROT::UNDER: 
+		case ROT::UNKNOWN: *pDeath = true;break;
 
 			//*********************************
 			// ç∂Ç…ìñÇΩÇ¡ÇΩ
