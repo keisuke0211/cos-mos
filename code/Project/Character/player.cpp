@@ -516,7 +516,7 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 }, CParticle::TYPE::TYPE_NORMAL);
 		}
 	}
 
