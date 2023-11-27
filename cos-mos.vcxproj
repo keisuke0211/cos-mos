@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="code\Project\Character\player.cpp" />
     <ClCompile Include="code\Project\collision.cpp" />
+    <ClCompile Include="code\Project\Effect\eff-death.cpp" />
     <ClCompile Include="code\Project\Effect\eff-manager.cpp" />
     <ClCompile Include="code\Project\Effect\eff-meteor.cpp" />
     <ClCompile Include="code\Project\Effect\eff.cpp" />
@@ -252,6 +253,7 @@
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
     <ClInclude Include="code\Project\collision.h" />
+    <ClInclude Include="code\Project\Effect\eff-death.h" />
     <ClInclude Include="code\Project\Effect\eff-manager.h" />
     <ClInclude Include="code\Project\Effect\eff-meteor.h" />
     <ClInclude Include="code\Project\Effect\eff.h" />

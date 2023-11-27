@@ -114,9 +114,6 @@ public:
 	// プレイヤーにトランポリン用のジャンプを設定
 	void SetTrampolineJump(Info*& pInfo, float fMaxHeight);
 
-	// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
-	void Death(D3DXVECTOR3 *pDeathPos);
-
 	// プレイヤー情報取得
 	// 各引数にプレイヤー情報のアドレスを渡します
 	void GetInfo(Info*& pP1, Info*& pP2) { pP1 = &m_aInfo[0]; pP2 = &m_aInfo[1]; }
@@ -165,6 +162,9 @@ public:
 	static int GetParticleIdx(PARTI_TEX tex) { return s_ParticleTex[(int)tex]; };
 
 private:
+	//種類の略称を設定
+	typedef CStageObject::TYPE OBJECT_TYPE;
+
 	//****************************************************************************
 	//スワップアニメーションセットリスト
 	//順番：詳細【その演出にかかる時間変数】
@@ -212,6 +212,7 @@ private:
 	void ActionControl(void);
 	void Move(VECTOL vec);
 	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
+	void Death(const D3DXVECTOR3 *pDeathPos, const OBJECT_TYPE type, const int *pColliRot);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
 
