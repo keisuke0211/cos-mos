@@ -63,6 +63,7 @@ CPlayer::CPlayer()
 	{
 		Player.expandCounter = 0;
 		Player.deathCounter = 0;
+		Player.deathCounter2 = 0;
 		Player.StartPos = INITD3DXVECTOR3;		// 開始位置
 		Player.doll = NULL;
 		Player.pos = INITD3DXVECTOR3;			// 位置
@@ -260,6 +261,7 @@ void CPlayer::InitInfo(void) {
 		Player.bTramJump = false;
 		Player.expandCounter = 0;
 		Player.deathCounter = 0;
+		Player.deathCounter2 = 0;
 	}
 }
 
@@ -339,7 +341,7 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal) continue;
 
 		// 位置設定
-		if (Player.deathCounter == 0 && !Player.bGoal && !s_bSwapAnim) {
+		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim) {
 			Player.doll->SetPos(Player.pos - Pos3D(0.0f, (fabsf(Player.pos.y) / Player.pos.y) * SIZE_HEIGHT, 0.0f));
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
@@ -384,7 +386,15 @@ void CPlayer::ActionControl(void)
 	int nIdxPlayer = -1;
 
 	// 操作停止フラグを算出
-	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0;
+	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0 || m_aInfo[0].deathCounter2 > 0 || m_aInfo[1].deathCounter2 > 0;
+
+	if (!isControlStop) {
+		// [[[ カメラ制御 ]]]
+		Pos3D pos = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
+		pos.x *= 0.25f;
+		pos.y = 0.0f;
+		Manager::GetMainCamera()->SetPosVAndPosR(Manager::GetMainCamera()->GetPosV(), pos);
+	}
 
 	for each (Info & Player in m_aInfo)
 	{
@@ -392,16 +402,53 @@ void CPlayer::ActionControl(void)
 		nIdxPlayer++;
 
 		// 死亡カウンター&演出
+		static Vector3D addVec = INITVECTOR3D;
+		static Pos3D posVTemp = INITVECTOR3D;
+		static Pos3D posRTemp = INITVECTOR3D;
 		if (Player.deathCounter > 0) {
 			if (--Player.deathCounter == 0) {
-				InitInfo();
+				Player.deathCounter2 = DEATH_TIME2;
+				addVec = INITVECTOR3D;
+				posVTemp = Manager::GetMainCamera()->GetPosV();
+				posRTemp = Manager::GetMainCamera()->GetPosR();
 			}
 
 			float rate = (float)Player.deathCounter / DEATH_TIME;
 			float rateOpp = 1.0f - rate;
 			Manager::GetMainCamera()->SetMotionBlurColor(Color{ 255,(UShort)(255 * rateOpp),(UShort)(255 * rateOpp),255 });
-			Manager::GetMainCamera()->SetMotionBlurPower(rate * 0.5f);
+			Manager::GetMainCamera()->SetMotionBlurPower(0.25f + rate * 0.25f);
 			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.1f));
+		}
+		// 死亡カウンター2&演出
+		if (Player.deathCounter2 > 0) {
+
+			if (--Player.deathCounter2 == 0) {
+				InitInfo();
+			}
+
+			bool isReturn = false;
+			int counter = Player.deathCounter2;
+			if (counter > DEATH_TIME2 / 2)
+				counter -= DEATH_TIME2 / 2;
+			float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, counter, DEATH_TIME2 / 2);
+			if (rate > 0.5f) {
+				rate = 0.5f + (0.5f - rate);
+				isReturn = true;
+			}
+			rate /= 0.5f;
+
+			float rate2 = ((float)Player.deathCounter2 / DEATH_TIME2);
+			if (rate2 > 0.5f) {
+				rate2 = 0.5f + (0.5f - rate2);
+			}
+			rate2 /= 0.5f;
+
+			addVec += CGeometry::GetRandomVec();
+			Manager::GetMainCamera()->SetMotionBlurPower(isReturn ? 0.25f + rate * 0.25f : rate * 0.5f);
+			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.02f));
+			Manager::GetMainCamera()->SetPosVAndPosR(
+				((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
+				((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
 		}
 		// 膨らみカウンター&円す津
 		else if (Player.expandCounter > 0) {
@@ -599,7 +646,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 {
-	if (Player.expandCounter > 0 || Player.deathCounter > 0)
+	if (Player.expandCounter > 0 || Player.deathCounter > 0 || Player.deathCounter2 > 0)
 		return;
 
 	Player.expandCounter = EXPAND_TIME;
@@ -611,7 +658,9 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 //----------------------------
 void CPlayer::Move(VECTOL vec)
 {
-	if (m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0) {
+	if (m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || 
+		m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0 ||
+		m_aInfo[0].deathCounter2 > 0 || m_aInfo[1].deathCounter2 > 0) {
 		return;
 	}
 

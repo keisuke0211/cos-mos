@@ -65,6 +65,7 @@ public:
 		bool		bGoal;		   // ゴールしたかどうか
 		int         expandCounter; // 膨らみカウンター
 		int         deathCounter;  // 死亡カウンター
+		int         deathCounter2; // 死亡カウンター2
 		float		fJumpPower;    // ジャンプ量
 		float		fGravity;      // 重力
 		float		fMaxHeight;    // 最高Ｙ座標
@@ -188,6 +189,7 @@ private:
 	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
 	static const int EXPAND_TIME = 60;  //膨らみにかかる時間
 	static const int DEATH_TIME = 60;  //死亡時間
+	static const int DEATH_TIME2 = 120;  //死亡時間2
 	static SWAP_ANIM s_AnimState;			   //アニメーション構成
 	static		 int s_nSwapInterval;		   //残りスワップインターバル
 	static		 bool s_bSwapAnim;			   //スワップアニメーション中かどうか
