@@ -149,7 +149,7 @@ HRESULT CPlayer::Init(void)
 	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap.wav");
 
 	// 初期情報設定
-	Death(NULL);
+	Death(NULL, OBJECT_TYPE::NONE, NULL);
 
 	// 初期値設定
 	// ※ 来れないとステージ入る前に一瞬着地SEがなる
@@ -508,7 +508,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 // 死亡処理
 //----------------------------
-void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
+void CPlayer::Death(const D3DXVECTOR3 *pDeathPos, const OBJECT_TYPE type, const int *pColliRot)
 {
 	if (pDeathPos != NULL)
 	{
@@ -516,7 +516,7 @@ void CPlayer::Death(D3DXVECTOR3 *pDeathPos)
 
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 }, CParticle::TYPE::TYPE_NORMAL);
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
 		}
 	}
 
@@ -647,9 +647,6 @@ void CPlayer::CtrlPos(Info *pInfo, VECTOL vec)
 //========================================
 void CPlayer::CollisionToStageObject(void)
 {
-	//種類の略称を設定
-	typedef CStageObject::TYPE OBJECT_TYPE;
-
 	// 一旦両プレイヤーともにジャンプ不可
 	m_aInfo[0].bGround = m_aInfo[1].bGround = false;
 
@@ -863,7 +860,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 死亡判定ON
 				if (bDeath)
 				{
-					Death(&Self.pos);
+					Death(&Self.pos, type, &nColliRot[nCntPlayer]);
 					break;
 				}
 
