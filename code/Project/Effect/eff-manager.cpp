@@ -85,7 +85,6 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 	pObj->SetRot(rot);
 	pObj->SetScale(scale);
 	pObj->SetColor(col);
-	
 
 	return pObj;
 }
@@ -101,7 +100,7 @@ CEffect_Death *CEffMgr::DeathParticleCreate(int nTex, Vector3D pos, Vector3D mov
 
 	//情報設定
 	if (pEff != NULL)
-		pEff->SetInfo(pos, pos, move, rot, spin, size, color, NULL, nTex, type);
+		pEff->SetInfo(pos, pos, move, rot, spin, size, color, 20, nTex, type);
 
 	//インスタンスを返す
 	return pEff;
