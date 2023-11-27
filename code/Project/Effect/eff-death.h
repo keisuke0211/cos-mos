@@ -6,6 +6,7 @@
 // 
 //========================================================
 #include "../../_RNLib/RNlib.h"
+#include "../collision.h"
 
 // 死亡パーティクルクラス
 class CEffect_Death : public CObject {
@@ -40,12 +41,7 @@ public:
 	//******************************
 	//設定処理（自己情報を一括設定）
 	//******************************
-	void SetInfo(const Info info) { m_Info = info; }
-	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int *pLife, const int nTex, const TYPE type) {
-		SetPos(pos);    SetPosOld(posOld);SetMove(move);
-		SetRot(rot);    SetSpin(spin);    SetSize(size);
-		SetColor(color);SetLife(pLife);   SetTex(nTex);	SetType(type);
-	};
+	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int *pLife, const int nTex, const TYPE type);
 
 	//******************************
 	//設定処理（自己情報を個別設定）
@@ -66,7 +62,9 @@ private:
 	void UpdateType_Ball(void);
 	void UpdateType_Ink(void);
 
-	//共通更新処理
+	//情報更新処理
+	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo);
+	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo);
 	void Move(void);
 	void Spin(void);
 	void Life(void);

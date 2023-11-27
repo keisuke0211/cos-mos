@@ -57,7 +57,7 @@ public:
 	// 引数３	value	：ベクトル
 	// 返り値	対象物にめりこんでいる方向を返す（NONEなら当たっていない
 	//========================
-	ROT IsBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec);
+	static ROT IsBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec);
 
 	void Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
 	void FillBlock(SelfInfo *pSelfInfo, ROT ColliRot, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);

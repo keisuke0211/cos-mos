@@ -482,6 +482,11 @@ CDoll3D::CBoneState::~CBoneState() {
 
 	// —h‚êó‘Ô‚Ìƒƒ‚ƒŠ‰ğ•ú
 	CMemory::Release(&m_swayingState);
+
+	// ƒAƒjƒ‚Ìî•ñ‚ğ‰ğ•ú
+	CMemory::Release(&m_animeStateSum.move);
+	CMemory::Release(&m_animeStateSum.spin);
+	CMemory::Release(&m_animeStateSum.scaling);
 }
 
 //========================================

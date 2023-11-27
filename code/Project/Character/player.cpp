@@ -37,6 +37,7 @@ const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 int			CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 
 CPlayer::SE CPlayer::s_SE = {};	//サウンド用構造体
+CPlayer::Motion CPlayer::s_motion = {};	//モーション用構造体
 CCollision *CPlayer::s_pColli = NULL;
 
 //=======================================
@@ -63,6 +64,7 @@ CPlayer::CPlayer()
 		Player.expandCounter = 0;
 		Player.deathCounter = 0;
 		Player.StartPos = INITD3DXVECTOR3;		// 開始位置
+		Player.doll = NULL;
 		Player.pos = INITD3DXVECTOR3;			// 位置
 		Player.posOld = INITD3DXVECTOR3;		// 前回位置
 		Player.rot = INITD3DXVECTOR3;			// 向き
@@ -84,7 +86,6 @@ CPlayer::CPlayer()
 		Player.bTramJump = false;				// トランポリン用の特殊ジャンプ
 		Player.bExtendDog = false;				// ヌイ用の接触フラグ
 		Player.bLandPile = false;				// 杭に乗っているかどうか
-		Player.nModelIdx = NONEDATA;			// モデル番号
 		Player.side = WORLD_SIDE::FACE;			// どちらの世界に存在するか
 	}
 
@@ -96,6 +97,9 @@ CPlayer::CPlayer()
 //=======================================
 CPlayer::~CPlayer()
 {
+	delete m_aInfo[0].doll;
+	delete m_aInfo[1].doll;
+
 	if (s_pColli != NULL)
 	{
 		s_pColli->OthColliDelete();
@@ -125,10 +129,11 @@ CPlayer *CPlayer::Create(void)
 HRESULT CPlayer::Init(void)
 {
 	// １Ｐ初期情報
-	m_aInfo[0].nModelIdx = RNLib::Model().Load("data\\MODEL\\Player_Human.x");
+	m_aInfo[0].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
+	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
 
 	// ２Ｐ初期情報
-	m_aInfo[1].nModelIdx = RNLib::Model().Load("data\\MODEL\\Player_Octopus.x");
+	m_aInfo[1].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 
 	// キーコンフィグ初期化
@@ -151,6 +156,9 @@ HRESULT CPlayer::Init(void)
 	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap.wav");
 	s_SE.expand = s_SE.pSound->Load("data\\SOUND\\SE\\death_expand.wav");
 	s_SE.explosion = s_SE.pSound->Load("data\\SOUND\\SE\\death_explosion.wav");
+
+	s_motion.neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Default.txt");
+	s_motion.walk = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Walk.txt");
 
 	InitInfo();
 
@@ -229,6 +237,7 @@ void CPlayer::InitInfo(void) {
 	m_aInfo[0].fGravity = GRAVITY_POWER;
 	m_aInfo[0].side = WORLD_SIDE::FACE;
 	m_aInfo[0].rot.z = 0.0f;
+	m_aInfo[0].rot.y = D3DX_PI;
 	m_aInfo[0].scale = INITSCALE3D;
 
 	// ２Ｐ用初期情報
@@ -236,6 +245,7 @@ void CPlayer::InitInfo(void) {
 	m_aInfo[1].fGravity = -GRAVITY_POWER;
 	m_aInfo[1].side = WORLD_SIDE::BEHIND;
 	m_aInfo[1].rot.z = D3DX_PI;
+	m_aInfo[1].rot.y = D3DX_PI;
 	m_aInfo[1].scale = INITSCALE3D;
 
 	// 両者共通初期情報
@@ -248,6 +258,8 @@ void CPlayer::InitInfo(void) {
 		Player.bRide = false;
 		Player.bGoal = false;
 		Player.bTramJump = false;
+		Player.expandCounter = 0;
+		Player.deathCounter = 0;
 	}
 }
 
@@ -327,10 +339,19 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal) continue;
 
 		// 位置設定
-		if (Player.deathCounter == 0) {
-			RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, Player.scale, false)
-				->SetOutLineIdx(true)
-				->SetCol(Player.color);
+		if (Player.deathCounter == 0 && !Player.bGoal && !s_bSwapAnim) {
+			Player.doll->SetPos(Player.pos - Pos3D(0.0f, (fabsf(Player.pos.y) / Player.pos.y) * SIZE_HEIGHT, 0.0f));
+			Player.doll->SetRot(Player.rot);
+			Player.doll->SetScale(Player.scale);
+			if (Player.move.x + Player.move.y <= 0.1f) {
+				Player.doll->OverwriteMotion(s_motion.neutral);
+			}
+			else {
+				Player.doll->OverwriteMotion(s_motion.walk);
+			}
+		}
+		else {
+			Player.doll->SetPos(Pos3D(10000.0f, 10000.0f, 10000.0f));
 		}
 
 		// スワップ先のマークを描画する位置
@@ -362,24 +383,27 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
+	// 操作停止フラグを算出
 	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0;
 
-	for each (Info &Player in m_aInfo)
+	for each (Info & Player in m_aInfo)
 	{
 		// 次のプレイヤー番号へ
 		nIdxPlayer++;
 
+		// 死亡カウンター&演出
 		if (Player.deathCounter > 0) {
 			if (--Player.deathCounter == 0) {
 				InitInfo();
 			}
 
-			float rate    = (float)Player.deathCounter / DEATH_TIME;
+			float rate = (float)Player.deathCounter / DEATH_TIME;
 			float rateOpp = 1.0f - rate;
 			Manager::GetMainCamera()->SetMotionBlurColor(Color{ 255,(UShort)(255 * rateOpp),(UShort)(255 * rateOpp),255 });
 			Manager::GetMainCamera()->SetMotionBlurPower(rate * 0.5f);
 			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.1f));
 		}
+		// 膨らみカウンター&円す津
 		else if (Player.expandCounter > 0) {
 			if (--Player.expandCounter == 0) {
 				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
@@ -395,14 +419,15 @@ void CPlayer::ActionControl(void)
 			}
 			Player.scale.x =
 			Player.scale.y =
-			Player.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, Player.expandCounter, EXPAND_TIME)) * 0.5f;
+			Player.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, Player.expandCounter, EXPAND_TIME)) * 0.2f;
 		}
 
+		// 操作停止であれば折り返す
 		if (isControlStop)
 			continue;
 
 		// 相方がゴールしていなければ出る
-		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer +1) % NUM_PLAYER].bGoal &&
+		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer + 1) % NUM_PLAYER].bGoal &&
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
 			CGoalGate::EntrySub();
@@ -425,15 +450,18 @@ void CPlayer::ActionControl(void)
 			s_SE.pSound->Play(s_SE.jump, CSound::CATEGORY::SE, false);
 		}
 
-		// 右に移動
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
-			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT, nIdxPlayer))
+			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT, nIdxPlayer)) 
+		{// 右に移動
 			Player.move.x += MOVE_SPEED;
-
-		// 左に移動
-		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
-			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
+			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
+		}
+		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
+			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer)) 
+		{// 左に移動
 			Player.move.x -= MOVE_SPEED;
+			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
+		}
 
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
@@ -525,11 +553,6 @@ void CPlayer::SwapAnimation(void)
 //*************************************************
 void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
 {
-	// 位置設定
-	RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-		->SetOutLineIdx(true)
-		->SetCol(Player.color);
-
 	//次のインターバルへ
 	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
 	s_nSwapInterval = SWAP_MIDDLE_INTERVAL;
@@ -566,11 +589,6 @@ void CPlayer::SwapAnim_Middle(Info& Player, const int nIdxPlayer)
 //*************************************************
 void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 {
-	// 位置設定
-	RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-		->SetOutLineIdx(true)
-		->SetCol(Player.color);
-
 	//最後のプレイヤーのときにスワップアニメーション終了
 	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
 	s_bSwapAnim = false;
@@ -581,6 +599,9 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 {
+	if (Player.expandCounter > 0 || Player.deathCounter > 0)
+		return;
+
 	Player.expandCounter = EXPAND_TIME;
 	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, false);
 }

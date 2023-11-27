@@ -89,3 +89,20 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 
 	return pObj;
 }
+
+//========================================
+// 死亡パーティクル
+// Author:HIRASAWA SHION
+//========================================
+CEffect_Death *CEffMgr::DeathParticleCreate(int nTex, Vector3D pos, Vector3D move, Vector3D rot, Vector3D spin, Vector2D size, Color color, CEffect_Death::TYPE type)
+{
+	//インスタンス生成
+	CEffect_Death *pEff = new CEffect_Death;
+
+	//情報設定
+	if (pEff != NULL)
+		pEff->SetInfo(pos, pos, move, rot, spin, size, color, NULL, nTex, type);
+
+	//インスタンスを返す
+	return pEff;
+}

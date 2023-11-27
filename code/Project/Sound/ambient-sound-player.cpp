@@ -24,7 +24,7 @@ struct AmbientSEInfo {
 #define AMBIENT_SE_MAX (2)
 static const AmbientSEInfo sc_ambientSEInfos[AMBIENT_SE_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bard.wav", 200, 500, 0.0f, 0.0f },
-	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.0f, 0.7f },
+	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.0f, 0.0f },
 	
 };
 
