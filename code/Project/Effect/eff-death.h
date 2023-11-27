@@ -28,7 +28,7 @@ public:
 		Vector3D spin   = INITVECTOR3D; // 回転量
 		Vector2D size   = INITVECTOR2D; // サイズ（幅・高さ）
 		Color    color  = INITCOLOR;    // 色
-		int      *pLife = NULL;         // 寿命（不死身ならNULL
+		int      nLife  = NONEDATA;     // 寿命（不死身ならNONEDATA
 		int      nTex   = NONEDATA;     // テクスチャ番号
 		TYPE     type   = TYPE::NONE;   // 種類
 	};
@@ -41,7 +41,7 @@ public:
 	//******************************
 	//設定処理（自己情報を一括設定）
 	//******************************
-	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int *pLife, const int nTex, const TYPE type);
+	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nTex, const TYPE type);
 
 	//******************************
 	//設定処理（自己情報を個別設定）
@@ -53,7 +53,7 @@ public:
 	void SetSpin(const Vector3D spin)     { m_Info.spin = spin; }
 	void SetSize(const Vector2D size)     { m_Info.size = size; }
 	void SetColor(const Color color)      { m_Info.color = color; }
-	void SetLife(const int *pLife)        { *m_Info.pLife = *pLife; }
+	void SetLife(const int nLife)         { m_Info.nLife = nLife; }
 	void SetTex(const int nTex)           { m_Info.nTex = nTex; }
 	void SetType(const TYPE type)         { m_Info.type = type; }
 

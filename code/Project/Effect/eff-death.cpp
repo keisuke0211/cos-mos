@@ -26,18 +26,18 @@ CEffect_Death::~CEffect_Death()
 //=======================================
 // 設定処理
 //=======================================
-void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int *pLife, const int nTex, const TYPE type)
+void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nTex, const TYPE type)
 {
 	m_Info.pos = pos;   m_Info.posOld = posOld; m_Info.move = move;
 	m_Info.rot = rot;   m_Info.spin   = spin;
 	m_Info.size = size; m_Info.color  = color;
 	m_Info.nTex = nTex; m_Info.type   = type;
-	*m_Info.pLife = *pLife;
+	m_Info.nLife = nLife;
 
 	if (type == TYPE::BALL)
 	{
-		m_Info.move.x = sinf(rot.z) * 2.0f;
-		m_Info.move.y = cosf(rot.z) * 2.0f;
+		m_Info.move.x = sinf(rot.z) * -2.0f;
+		m_Info.move.y = cosf(rot.z) * -2.0f;
 	}
 }
 
@@ -53,7 +53,7 @@ void CEffect_Death::Update(void)
 		case TYPE::INK: UpdateType_Ink();  break;
 	}
 	
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, INITVECTOR3D)
 		->SetTex(m_Info.nTex)
 		->SetBillboard(true)
 		->SetCol(m_Info.color)
@@ -85,8 +85,8 @@ void CEffect_Death::UpdateType_Ball(void)
 								  powf(SelfInfo.pos.y + colliInfo.pos.y, 2.0f));
 
 		//移動量設定
-		m_Info.move.x = sinf(fRot) * 3.0f;
-		m_Info.move.y = cosf(fRot) * 3.0f;
+		m_Info.move.x = sinf(fRot) * -3.0f;
+		m_Info.move.y = cosf(fRot) * -3.0f;
 	}
 
 	//ステージオブジェクトとの当たり判定
@@ -204,7 +204,7 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 void CEffect_Death::Move(void)
 {
 	//移動する
-	m_Info.pos = m_Info.move;
+	m_Info.pos += m_Info.move;
 
 	//横の移動量を減衰させる
 	m_Info.move.x += (0.0f - m_Info.move.x) * 0.01f;
@@ -221,7 +221,7 @@ void CEffect_Death::Move(void)
 //=======================================
 void CEffect_Death::Spin(void)
 {
-	m_Info.rot = m_Info.spin;
+	m_Info.rot += m_Info.spin;
 }
 
 //=======================================
@@ -230,6 +230,6 @@ void CEffect_Death::Spin(void)
 void CEffect_Death::Life(void)
 {
 	//寿命が存在し、尽きた
-	if (m_Info.pLife != NULL &&	--*m_Info.pLife <= 0)
+	if (m_Info.nLife > 0 &&	--m_Info.nLife <= 0)
 		CObject::Delete();
 }
