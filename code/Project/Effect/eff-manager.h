@@ -27,7 +27,7 @@ public:
 	CEff *EffectCreate(int nTex, D3DXVECTOR3 pos , D3DXVECTOR3 scale, Color col, int nCount = EFFECT_COUNT, D3DXVECTOR3 spin = INITD3DXVECTOR3, D3DXVECTOR3 move = INITD3DXVECTOR3,bool billboard = true, D3DXVECTOR3 scalemag = D3DXVECTOR3(1.0f,1.0f,1.0f));
 	CEffect_Meteor * EffectMeteorCreate(D3DXVECTOR3 pos);
 	CParticle *ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale, Color col, CParticle::TYPE type = CParticle::TYPE::TYPE_NORMAL, int nCount = EFFECT_COUNT, D3DXVECTOR3 rot = INITD3DXVECTOR3);
-	CEffect_Death *DeathParticleCreate(void) { return NULL; }
+	CEffect_Death *DeathParticleCreate(int nTex, Vector3D pos, Vector3D move, Vector3D rot, Vector3D spin, Vector2D size, Color color, CEffect_Death::TYPE type);
 
 private:
 
