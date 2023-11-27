@@ -48,7 +48,7 @@ public:
 	struct Info
 	{
 		D3DXVECTOR3 StartPos;      // 開始位置
-
+		CDoll3D*    doll;
 		D3DXVECTOR3 pos;           // 位置
 		D3DXVECTOR3 posOld;        // 前回位置
 		Scale3D     scale;
@@ -73,7 +73,6 @@ public:
 		bool		bTramJump;			// トランポリン用の特殊ジャンプ
 		bool		bExtendDog;	   // ヌイ用の接触フラグ
 		bool		bLandPile;	   // 杭に乗っているかどうか
-		int			nModelIdx;     // モデル番号
 		WORLD_SIDE  side;          // どちらの世界に存在するか
 		int            Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
 		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
@@ -233,8 +232,7 @@ private:
 
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 
-	struct SE
-	{
+	struct SE {
 		short jump;			// ジャンプSE
 		short landing;		// 着地SE
 		short dog[4];		// 壁ギミック用SE
@@ -245,5 +243,12 @@ private:
 		CSound *pSound;	// サウンドクラス保管用
 	};
 	static SE s_SE;		//サウンド用構造体
+
+	struct Motion {
+		short neutral;
+		short walk;
+	};
+	static Motion s_motion;
+
 	static CCollision *s_pColli;
 };

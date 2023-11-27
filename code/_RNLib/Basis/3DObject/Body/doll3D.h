@@ -122,6 +122,8 @@ public:
 	void        SetPos                 (const Pos3D& pos)                  { m_pos = pos; m_isSetPos = true; }
 	Rot3D&      GetRot                 (void)                              { return m_rot; }
 	void        SetRot                 (const Rot3D& rot)                  { m_rot = rot; }
+	Scale3D&    GetScale               (void)                              { return m_scale; }
+	void        SetScale               (const Scale3D& scale)              { m_scale = scale; }
 	void        SetCol                 (const Color& col)                  { m_col = col; }
 	void        SetBrightnessOfEmission(const float& brightnessOfEmission) { m_brightnessOfEmission = brightnessOfEmission; }
 	float&      GetBrightnessOfEmission(void)                              { return m_brightnessOfEmission; }
