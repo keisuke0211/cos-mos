@@ -237,6 +237,7 @@ void CPlayer::InitInfo(void) {
 	m_aInfo[0].fGravity = GRAVITY_POWER;
 	m_aInfo[0].side = WORLD_SIDE::FACE;
 	m_aInfo[0].rot.z = 0.0f;
+	m_aInfo[0].rot.y = D3DX_PI;
 	m_aInfo[0].scale = INITSCALE3D;
 
 	// ‚Q‚o—p‰Šúî•ñ
@@ -244,6 +245,7 @@ void CPlayer::InitInfo(void) {
 	m_aInfo[1].fGravity = -GRAVITY_POWER;
 	m_aInfo[1].side = WORLD_SIDE::BEHIND;
 	m_aInfo[1].rot.z = D3DX_PI;
+	m_aInfo[1].rot.y = D3DX_PI;
 	m_aInfo[1].scale = INITSCALE3D;
 
 	// —¼ŽÒ‹¤’Ê‰Šúî•ñ
@@ -256,6 +258,8 @@ void CPlayer::InitInfo(void) {
 		Player.bRide = false;
 		Player.bGoal = false;
 		Player.bTramJump = false;
+		Player.expandCounter = 0;
+		Player.deathCounter = 0;
 	}
 }
 
@@ -414,8 +418,8 @@ void CPlayer::ActionControl(void)
 				Player.deathCounter = DEATH_TIME;
 			}
 			Player.scale.x =
-				Player.scale.y =
-				Player.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, Player.expandCounter, EXPAND_TIME)) * 0.5f;
+			Player.scale.y =
+			Player.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, Player.expandCounter, EXPAND_TIME)) * 0.2f;
 		}
 
 		// ‘€ì’âŽ~‚Å‚ ‚ê‚ÎÜ‚è•Ô‚·
@@ -595,6 +599,9 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 {
+	if (Player.expandCounter > 0 || Player.deathCounter > 0)
+		return;
+
 	Player.expandCounter = EXPAND_TIME;
 	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, false);
 }
