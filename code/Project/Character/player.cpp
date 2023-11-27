@@ -514,6 +514,8 @@ void CPlayer::Death(const D3DXVECTOR3 *pDeathPos, const OBJECT_TYPE type, const 
 	{
 		Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
+		Manager::EffectMgr()->DeathInk(*pDeathPos, GetParticleIdx(PARTI_TEX::DEATH_PARTI));
+
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{
 			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });

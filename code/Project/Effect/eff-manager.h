@@ -28,7 +28,7 @@ public:
 	CEffect_Meteor * EffectMeteorCreate(D3DXVECTOR3 pos);
 	CParticle *ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale, Color col, CParticle::TYPE type = CParticle::TYPE::TYPE_NORMAL, int nCount = EFFECT_COUNT, D3DXVECTOR3 rot = INITD3DXVECTOR3);
 	CEffect_Death *DeathParticleCreate(void) { return NULL; }
-
+	void DeathInk(D3DXVECTOR3 pos, int Tex);
 private:
 
 	// *** ç\ë¢ëÃ ***

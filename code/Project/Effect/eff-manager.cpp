@@ -6,6 +6,8 @@
 // 
 //========================================
 #include "eff-manager.h"
+#include "../main.h"
+#include "../collision.h"
 
 //========================================
 // 静的変数
@@ -88,4 +90,63 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 	
 
 	return pObj;
+}
+
+//========================================
+// デスインク
+// Author:KEISUKE OTONO
+//========================================
+void CEffMgr::DeathInk(D3DXVECTOR3 pos,int Tex) {
+
+	for (int nInk = 0; nInk < 3; nInk++) {
+
+		bool bSet = false;
+
+		while (1)
+		{
+			float rot = (float)(rand() % ((int)(100 * 2 * D3DX_PI) + 1) - (int)(D3DX_PI * 100)) / (float)100;
+			float scale = (float)(rand() % (int)12 + 3);
+			float distance = (float)(rand() % (int)16 + 16);
+
+
+			D3DXVECTOR3 InkPos = pos;
+			D3DXVECTOR3 move = INITD3DXVECTOR3;
+
+			move = D3DXVECTOR3(distance * sinf(rot), distance * cosf(rot),0.0f);
+
+			InkPos += move;
+
+			// オブジェクト1つ1つを見ていく
+			CObject* obj = NULL;
+			while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+
+				// 取得したオブジェクトをキャスト
+				CStageObject* stageObj = (CStageObject*)obj;
+
+				// 種類取得
+				CStageObject::TYPE type = stageObj->GetType();
+
+				if (type == CStageObject::TYPE::BLOCK || type == CStageObject::TYPE::FILLBLOCK) {
+
+					D3DXVECTOR3 ObjPos = stageObj->GetPos();
+					D3DXVECTOR3 ObjSize = D3DXVECTOR3(stageObj->GetWidth(), stageObj->GetHeight(), 0.0f);
+
+					if ((InkPos.x + scale/2) > (ObjPos.x - ObjSize.x/2) &&
+						(InkPos.x - scale/2) < (ObjPos.x + ObjSize.x/2) &&
+						(InkPos.y + scale/2) > (ObjPos.y - ObjSize.y/2) &&
+						(InkPos.y - scale/2) < (ObjPos.y + ObjSize.y/2))
+					{// インクが判定内にある時、
+
+						bSet = true;
+						Manager::EffectMgr()->EffectCreate(Tex, InkPos, D3DXVECTOR3(scale,scale,0.0f), Color{ 255,0,255,255 },-44);
+						break;
+					}
+				}
+
+			}
+
+			if (bSet)	break;
+		}
+
+	}
 }
