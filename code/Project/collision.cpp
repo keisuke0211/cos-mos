@@ -87,8 +87,20 @@ void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 	if (pInfo == NULL) return;
 
 	// 着地SE再生
-	if (pInfo->bJump == true)
+	if (pInfo->bJump == true) {
 		CPlayer::PlaySE(CPlayer::SE_LABEL::LANDING);
+		Pos3D createPos = pInfo->pos;
+		Rot3D createRot = INITROT3D;
+
+		if (pInfo->pos.y > 0.0f) {
+			createPos.y -= CPlayer::SIZE_HEIGHT * 0.5f;
+		}
+		else {
+			createPos.y += CPlayer::SIZE_HEIGHT * 0.5f;
+			createRot.x += D3DX_PI;
+		}
+		RNLib::StandardEffect3D().CreateDustStormOnLanding(createPos, createRot,  Color{ 169,158,93,255 }, 10.0f);
+	}
 
 	pInfo->bGround = true;	// 地面に接している
 	pInfo->bJump = false;	// ジャンプ可能
@@ -238,12 +250,12 @@ void CCollision::Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SI
 {
 	switch (pColli->Rot)
 	{
+		//*********************************
 		//上下どちらかに当たれば死亡
+		//*********************************
 		case ROT::OVER:
-		case ROT::UNDER:
-			// 死亡処理
-			*pDeath = true;
-			break;
+		case ROT::UNDER: 
+		case ROT::UNKNOWN: *pDeath = true;break;
 
 			//*********************************
 			// 左に当たった
@@ -469,16 +481,14 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				FixPos_OVER(&pSelfInfo->pos.y, pColli->maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
 
 				// 表の世界のプレイヤー
-				//if (pSelfInfo->side == CPlayer::WORLD_SIDE::FACE) {
-				//	if (pSelfInfo->bJump == true)
-				//	{// 着地した
-				//	 // SE再生
-				//		//s_SE.pSound->Play(//s_SE.landing, CSound::CATEGORY::SE, false);
-				//	}
-				//	pSelfInfo->bGround = true;	// 地面に接している
-				//	pSelfInfo->bJump = false;	// ジャンプ可能
-				//	pSelfInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
-				//}
+				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
+				{
+					//プレイヤー取得
+					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+
+					//プレイヤーオプション設定
+					LandPlayerOption(pInfo, pColli->maxPos.y);
+				}
 				break;
 
 				//*********************************
@@ -488,17 +498,15 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				// 位置・移動量修正
 				FixPos_UNDER(&pSelfInfo->pos.y, pColli->minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
 
-				// 裏の世界のプレイヤーならジャンプ可能
-				//if (pSelfInfo->side == CPlayer::WORLD_SIDE::BEHIND) {
-				//	if (pSelfInfo->bJump == true)
-				//	{// 着地した
-				//	 // SE再生
-				//		//s_SE.pSound->Play(//s_SE.landing, CSound::CATEGORY::SE, false);
-				//	}
-				//	pSelfInfo->bGround = true;
-				//	pSelfInfo->bJump = false;	// ジャンプ可能
-				//	pSelfInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
-				//}
+				// 裏の世界のプレイヤー
+				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
+				{
+					//プレイヤー取得
+					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+
+					//プレイヤーオプション設定
+					LandPlayerOption(pInfo, pColli->minPos.y);
+				}
 				break;
 
 				//*********************************
@@ -646,46 +654,37 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 	switch (pColli->Rot)
 	{
 		//*********************************
-		// 上に当たった
+		// 上下に当たった
 		//*********************************
 		case ROT::OVER:
-			// 表の世界のプレイヤー
-			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
-			{
-				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
-
-				//ある程度の高さから落下してきた
-				if (pInfo->fMaxHeight - pColli->maxPos.y >= CPile::CAVEIN_DIFF_HEIGHT)
-				{
-					pPile->CaveInTrunkHeight(pColli->maxPos.y - pSelfInfo->pos.y - CPlayer::SIZE_HEIGHT);
-				}
-
-				//プレイヤーオプション設定
-				LandPlayerOption(pInfo, pColli->maxPos.y);
-				pInfo->bLandPile = true;// 乗った
-				pInfo->move.y = 0.0f;
-			}
-			break;
-
-			//*********************************
-			// 下に当たった
-			//*********************************
 		case ROT::UNDER:
-			// 裏の世界のプレイヤー
-			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
+			if (pSide != NULL)
 			{
 				//プレイヤー取得
 				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
 
-				//ある程度の高さから落下してきた
-				if (pInfo->fMaxHeight - pColli->minPos.y <= -CPile::CAVEIN_DIFF_HEIGHT)
+				// 表の世界のプレイヤー
+				if (*pSide == CPlayer::WORLD_SIDE::FACE)
 				{
-					pPile->CaveInTrunkHeight(pColli->minPos.y - pSelfInfo->pos.y + CPlayer::SIZE_HEIGHT);
+					//ある程度の高さから落下してきた
+					if (pInfo->fMaxHeight - pColli->maxPos.y >= CPile::CAVEIN_DIFF_HEIGHT)
+						pPile->CaveInTrunkHeight(pColli->maxPos.y - pSelfInfo->pos.y - CPlayer::SIZE_HEIGHT);
+
+					//プレイヤーオプション設定
+					LandPlayerOption(pInfo, pColli->maxPos.y);
 				}
 
-				//プレイヤーオプション設定
-				LandPlayerOption(pInfo, pColli->minPos.y);
+				// 裏の世界のプレイヤー
+				else
+				{
+					//ある程度の高さから落下してきた
+					if (pInfo->fMaxHeight - pColli->minPos.y <= -CPile::CAVEIN_DIFF_HEIGHT)
+						pPile->CaveInTrunkHeight(pColli->minPos.y - pSelfInfo->pos.y + CPlayer::SIZE_HEIGHT);
+
+					//プレイヤーオプション設定
+					LandPlayerOption(pInfo, pColli->minPos.y);
+				}
+
 				pInfo->bLandPile = true;// 乗った
 				pInfo->move.y = 0.0f;
 			}

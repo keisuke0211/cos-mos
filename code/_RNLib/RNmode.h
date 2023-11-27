@@ -13,5 +13,5 @@
 namespace RNMode {
 
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
-	enum class PRIORITY { STAGE3D, OBJECT3D, UI3D, MAX, };
+	enum class PRIORITY { STAGE3D, OBJECT3D, EFFECT3D, UI3D, MAX, };
 }

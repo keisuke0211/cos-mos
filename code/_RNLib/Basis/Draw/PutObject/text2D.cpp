@@ -55,10 +55,6 @@ void CText2D::Update(void) {
 //========================================
 CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	// “o˜^Žó•t’†‚Å‚È‚¢ŽžAI—¹
-	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
-		return NULL;
-
 	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)

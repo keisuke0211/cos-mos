@@ -163,17 +163,17 @@ void CExtenddog::Update(void) {
 
 		// K
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[3], m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 
 		// “ª
 		m_HeadPos.y = fDowncurrenty + m_pos.y;
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 
 		// ‘Ì
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) / 2;
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, fDowncurrenty * 7, 1.0f),  false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 	}
 	else
 	{// ”½“]ó‘Ô‚ÌŽž
@@ -182,17 +182,17 @@ void CExtenddog::Update(void) {
 
 		// K
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[3], m_HipPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 
 		// “ª
 		m_HeadPos.y = fDowncurrenty + m_pos.y;
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI),  false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 
 		// ‘Ì
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y - 0.0f * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight) * 7, 1.0f),  false)
-			->SetOutLine(true);
+			->SetOutLineIdx(true);
 	}
 }
 //========================================

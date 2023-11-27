@@ -119,25 +119,25 @@ void CTrampoline::PutModel(void)
 	//“y‘äƒ‚ƒfƒ‹
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_BASE], m_pos, INITD3DXVECTOR3,  false)
 		->SetCol(m_color)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 
 	//ƒLƒmƒR
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_MASH], m_pSpringPos[0], INITD3DXVECTOR3, false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_MASH], m_pSpringPos[1], INVERSEVECTOR3,  false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 
 	//‚Î‚Ë
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_SPRING], m_pSpringPos[0], INVERSEVECTOR3,false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_SPRING], m_pSpringPos[1], INITD3DXVECTOR3,  false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 
 	//–Ú‹Êƒ‚ƒfƒ‹
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_EYE], D3DXVECTOR3(m_pos.x + CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3,  false)
 		->SetCol(m_color)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[Parts_EYE], D3DXVECTOR3(m_pos.x - CORRECT_WIDTH, m_pos.y, m_pos.z - CORRECT_HEIGHT), INITD3DXVECTOR3, false)
 		->SetCol(m_color)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 }

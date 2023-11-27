@@ -37,6 +37,7 @@ public:
 		bool                         m_isZTest;
 		bool                         m_isLighting;
 		bool                         m_isBillboard;
+		CDrawState::CULLING_MODE     m_cullingMode;
 		CDrawState::ALPHA_BLEND_MODE m_alphaBlendMode;
 		float                        m_distance;
 		Vertex3D                     m_vtxs[4];
@@ -67,6 +68,7 @@ public:
 		CRegistInfo* SetVtxNor           (const Vector3D nor0, const Vector3D nor1, const Vector3D nor2, const Vector3D nor3);
 		// <<< 色情報設定 >>>
 		CRegistInfo* SetCol              (const Color& col);
+		CRegistInfo* SetVtxCol              (const Color col0, const Color col1, const Color col2, const Color col3);
 		// <<< テクスチャ情報設定 >>>
 		CRegistInfo* SetTex              (const short& texIdx, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
 		CRegistInfo* SetTex              (CCamera* camera, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
@@ -77,6 +79,7 @@ public:
 		CRegistInfo* SetZTest            (const bool& isZTest);
 		CRegistInfo* SetLighting         (const bool& isLighting);
 		CRegistInfo* SetBillboard        (const bool& isBillboard);
+		CRegistInfo* SetCullingMode      (const CDrawState::CULLING_MODE& cullingMode);
 		CRegistInfo* SetAlphaBlendMode   (const CDrawState::ALPHA_BLEND_MODE& alphaBlendMode);
 
 	private:
@@ -103,7 +106,7 @@ public:
 		SetVtxNorInfo* m_setVtxNorInfo;
 
 		// <<< 色情報設定 >>>
-		Color m_col;
+		Color m_vtxCols[4];
 
 		// <<< テクスチャ設定 >>>
 		Polygon2DAnd3D::CSetTexInfoSum m_setTexInfoSum;
@@ -112,6 +115,7 @@ public:
 		bool                         m_isZtest;
 		bool                         m_isLighting;
 		bool                         m_isBillboard;
+		CDrawState::CULLING_MODE     m_cullingMode;
 		CDrawState::ALPHA_BLEND_MODE m_alphaBlendMode;
 	};
 

@@ -24,6 +24,7 @@ const char* CDefaultData::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"RNData\\Texture\\Grid.PNG",
 	"RNData\\Texture\\Stripe.PNG",
 	"RNData\\Texture\\Border.PNG",
+	"RNData\\Texture\\Smoke.PNG",
 };
 const char* CDefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
 	"RNData\\Model\\Sphere.x",

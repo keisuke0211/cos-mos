@@ -155,7 +155,7 @@ void CRocket::Update(void)
 	}
 	
 	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot + Rot3D(0.0f, D3DX_PI, 0.0f), m_Info.scale * m_Info.fScaleMag, false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 
 	RNLib::Text2D().PutDebugLog(CreateText("プレイヤーカウンター：%d", s_nCountPlayer));
 }

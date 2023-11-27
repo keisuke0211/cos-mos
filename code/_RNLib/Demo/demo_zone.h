@@ -16,12 +16,7 @@
 class CDemoZone : public CDemoObject {
 public:
 	//========== [[[ óÒãìå^íËã` ]]]
-	enum class TYPE2 {
-		DRAW_TEST,
-		CAMERA_TEST,
-		DOLL_TEST,
-		MAX,
-	};
+	enum class TYPE2 { DRAW_TEST, CAMERA_TEST, DOLL_TEST, EFFECT_TEST, MAX,};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	static void        SetActive(CDemoZone* demoZone) { ms_active = demoZone; }
@@ -59,7 +54,7 @@ private:
 		bool  isTex                  = false;
 		bool  isZTest                = true;
 		bool  isLighting             = true;
-		bool  m_isOutLine            = false;
+		bool  m_outLineIdx           = 0;
 		float m_brightnessOfEmissive = 1.0f;
 	};
 	struct TypeInfo_DrawTest {

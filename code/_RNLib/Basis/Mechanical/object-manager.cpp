@@ -31,6 +31,17 @@ void CObjectMgr::UpdateAllMgrs(void) {
 }
 
 //========================================
+// [静的] 全マネージャー解放処理
+//========================================
+void CObjectMgr::ReleaseAllMgrs(void) {
+
+	// 全マネージャーの全更新処理と更新処理を行う
+	for (int cntObjectMgr = 0; cntObjectMgr < ms_objectMgrNum; cntObjectMgr++) {
+		ms_objectMgrs[cntObjectMgr]->ReleaseAll();
+	}
+}
+
+//========================================
 // [静的] マネージャーを排除
 //========================================
 void CObjectMgr::SubMgr(CObjectMgr* mgr) {
@@ -47,16 +58,17 @@ void CObjectMgr::SubMgr(CObjectMgr* mgr) {
 		{// 排除してない
 			if (mgr == ms_objectMgrs[cntObjectMgr]) 
 			{// カウントと対象アドレスが一致した時、
-				// 総数を減らし、排除フラグを真にする
-				ms_objectMgrNum--;
+				// 排除フラグを真にする
 				isSub = true;
 			}
 		}
 	}
 
-	// 排除出来た時、メモリを再確保
-	if (isSub)
+	// 排除出来た時、総数を減らしメモリを再確保
+	if (isSub) {
+		ms_objectMgrNum--;
 		CMemory::ReAlloc<CObjectMgr*>(&ms_objectMgrs, ms_objectMgrNum + 1, ms_objectMgrNum);
+	}
 }
 
 //========================================

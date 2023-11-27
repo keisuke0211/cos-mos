@@ -109,7 +109,7 @@ void CDemoPlayer::Update(void) {
 	// ƒ‚ƒfƒ‹”z’u
 	RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::OBSERVER), m_pos, m_rot)
 		->SetCol(m_col)
-		->SetOutLine(true)
+		->SetOutLineIdx(true)
 		->SetClippingCamera(m_clippingCameraID);
 }
 

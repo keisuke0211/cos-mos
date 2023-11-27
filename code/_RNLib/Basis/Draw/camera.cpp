@@ -37,7 +37,7 @@ short CCamera::ms_IDCount = 0;
 CCamera::CCamera(const Scale2D& scale2D) {
 
 	// リストに追加
-	RNLib::CameraMgr().AddList(this);
+	RNSystem::GetCameraMgr().AddList(this);
 
 	// IDを設定
 	m_ID       = ms_IDCount;
@@ -127,8 +127,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 CCamera::~CCamera() {
 
 	// リストから削除
-	RNLib::CameraMgr().SubList(this);
-	RNLib::CameraMgr().AddDeletedCamera(this);
+	RNSystem::GetCameraMgr().SubList(this);
 
 	// 状態終了処理
 	ProcessState(PROCESS::UNINIT);

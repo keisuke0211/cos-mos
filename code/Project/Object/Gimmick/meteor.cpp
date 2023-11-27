@@ -83,7 +83,7 @@ void CMeteor::Update(void) {
 	CollisionBlock();
 
 	//ƒ‚ƒfƒ‹”z’u
-	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot,  false)->SetOutLine(true)
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot,  false)->SetOutLineIdx(true)
 		->SetBrightnessOfEmissive(m_fBlink)->SetCol(m_color);
 
 }

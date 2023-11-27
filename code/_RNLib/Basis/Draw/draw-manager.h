@@ -31,16 +31,6 @@ public:
 	static const UShort WAIT_MILLISECONDS_MAX      = 5;
 
 	//----------------------------------------
-	// 列挙型定義
-	//----------------------------------------
-	// 処理状態
-	enum class PROCESS_STATE {
-		REGIST_ACCEPT,			// 登録受付
-		REGIST_INFO_APPLY_WAIT,	// 登録情報適用待ち
-		DRAW_INFO_SWAP_WAIT,	// 描画情報入れ替え待ち
-	};
-
-	//----------------------------------------
 	// クラス定義
 	//----------------------------------------
 	// 描画情報総括クラス
@@ -53,8 +43,12 @@ public:
 		void Overwrite(CDrawInfoSum* pOvr);
 
 		// [[[ 変数宣言 ]]]
-		CDrawInfoBase** m_drawInfos;
-		int             m_drawInfoNum;
+		CModel::CDrawInfo**     m_model;
+		int                     m_modelNum;
+		CPolygon3D::CDrawInfo** m_polygon3D;
+		int                     m_polygon3DNum;
+		CPolygon2D::CDrawInfo** m_polygon2D;
+		int                     m_polygon2DNum;
 	};
 
 	//----------------------------------------
@@ -99,24 +93,18 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	static PROCESS_STATE&  GetProcessState       (void) { return ms_processState; }
-	static CRegistInfoSum& GetRegistInfoSum      (void) { return ms_resistInfoSum[0]; }
-	static CRegistInfoSum& GetRegistInfoSumScreen(void) { return ms_resistInfoSumScreen[0]; }
-	static CDrawInfoSum&   GetDrawInfoSum        (void) { return ms_drawInfoSum[0]; }
-	static CDrawInfoSum&   GetDrawInfoSumScreen  (void) { return ms_drawInfoSumScreen[0]; }
-	static const UShort&   GetPriorityMax        (void) { return ms_priorityMax; }
+	static const UShort& GetPriorityMax (void) { return ms_priorityMax; }
+	static UInt          GetPolygon2DNum(void) { UInt num = 0; for (int cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
+	static UInt          GetPolygon3DNum(void) { UInt num = 0; for (int cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
+	static UInt          GetModelNum    (void) { UInt num = 0; for (int cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
+	static void StartDraw(Device& device);
+	static void EndDraw(Device& device);
 	CDrawMgr();
 	~CDrawMgr();
 	void Init(const UShort& priorityMax);
 	void Uninit(void);
 	void Update(void);
 	void Release(void);
-	UShort& GetWaitMilliseconds(void) { return m_waitMilliseconds; }
-	void ResetWaitMilliseconds(void) { m_waitMilliseconds = WAIT_MILLISECONDS_MIN; }
-	void StartRegistInfoApplyWait(void);
-	bool StartDraw(void);
-	void Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
-	CPolygon2D::CRegistInfo* PutPolygon2D(const UShort& priority, const Pos3D& pos, const float& angle, const bool& isOnScreen);
 	CPolygon2D::CRegistInfo* PutPolygon2D(const UShort& priority, const bool& isOnScreen);
 	CPolygon3D::CRegistInfo* PutPolygon3D(const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
 	CText2D::CRegistInfo*    PutText2D   (const UShort& priority, const Pos3D& pos, const float& angle, const bool& isOnScreen);
@@ -125,12 +113,13 @@ public:
 
 private:
 	//========== [[[ 関数宣言 ]]]
-	static void MainLoop(void);
 	static void PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
-	static void ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum);
-	void AssignVertexInfo(void);
-	void ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
-	void ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
+	static void ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
+	static void Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
+	static void ExecutionDraw(Device& device, const short& cameraID, const bool& isCameraClipping, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
+	static void AssignVertexInfo(void);
+	static void ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
+	static void ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
 	CPolygon2D::CRegistInfo* RegistPolygon2D(CRegistInfoSum& resistInfo);
 	CPolygon3D::CRegistInfo* RegistPolygon3D(CRegistInfoSum& resistInfo);
 	CText2D::CRegistInfo*    RegistText2D   (CRegistInfoSum& resistInfo);
@@ -138,16 +127,12 @@ private:
 	CModel::CRegistInfo*     RegistModel    (CRegistInfoSum& resistInfo);
 
 	//========== [[[ 変数宣言 ]]]
-	static PROCESS_STATE   ms_processState;
 	static CRegistInfoSum* ms_resistInfoSum;
 	static CRegistInfoSum* ms_resistInfoSumScreen;
 	static CDrawInfoSum*   ms_drawInfoSum;				// 描画情報
 	static CDrawInfoSum*   ms_drawInfoSumOvr;			// 描画情報(上書き)
 	static CDrawInfoSum*   ms_drawInfoSumScreen;		// スクリーン描画情報
 	static CDrawInfoSum*   ms_drawInfoSumScreenOvr;		// スクリーン描画情報(上書き)
-	static std::thread     ms_mainLoopTh;				// メインループスレッド
 	static UShort          ms_priorityMax;
 	UShort m_reAllocCount;
-	UShort m_oldDrawFPS;
-	UShort m_waitMilliseconds;
 };

@@ -74,23 +74,25 @@ void CEff::Update(void)
 		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD)
 		->SetZTest(false);
 
-	m_Info.nCount--;
+	if (m_Info.nCount != -44) {
+		m_Info.nCount--;
 
-	//äÑçáåvéZ
-	float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
+		//äÑçáåvéZ
+		float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
 
-	m_Info.col.a = m_Info.col.a * fCountRate;
+		m_Info.col.a = m_Info.col.a * fCountRate;
 
-	m_Info.rot += m_Info.spin * fCountRate;
+		m_Info.rot += m_Info.spin * fCountRate;
 
-	m_Info.pos += m_Info.move;
+		m_Info.pos += m_Info.move;
 
-	m_Info.scale.x *= m_Info.scalemag.x;
-	m_Info.scale.y *= m_Info.scalemag.y;
+		m_Info.scale.x *= m_Info.scalemag.x;
+		m_Info.scale.y *= m_Info.scalemag.y;
 
-	if (m_Info.nCount <= 0)
-	{
-		CObject::Delete();
+		if (m_Info.nCount <= 0)
+		{
+			CObject::Delete();
+		}
 	}
 }
 

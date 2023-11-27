@@ -19,7 +19,7 @@ public:
 		D3DXVECTOR3 pos;		// 位置
 		D3DXVECTOR3 move;		// 移動量
 		D3DXVECTOR3 rot;		// 移動量
-		D3DXVECTOR3 scale;			// 拡縮
+		D3DXVECTOR3 scale;		// 拡縮
 		Color col;				// 頂点カラー
 		int nCount;
 		int nCountMax;

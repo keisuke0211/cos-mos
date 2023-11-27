@@ -17,7 +17,7 @@ namespace {
 	CMode::TYPE     m_reserveModeType;
 	CStageObjectMgr m_blockMgr;
 	CObjectMgr      m_BGMgr;
-	CEffMgr      m_effectMgr;
+	CEffMgr         m_effectMgr;
 	CStageEditor    m_StgEd;
 	CFont           m_Font;
 	CCamera*        m_camera;
@@ -55,6 +55,9 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// 環境音プレイヤーの初期化処理
 	AmbientSoundPlayer::Init();
+
+	// 標準エフェクトの優先度設定
+	RNLib::StandardEffect3D().SetPriority(PRIORITY_EFFECT);
 }
 
 //========================================
@@ -182,5 +185,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// 遷移設定
-	RNLib::Transition().Close(transType, Color{ 0,0,0,255 }, 30);
+	RNLib::Transition().Close(transType, INITCOLOR, 30);
 }

@@ -49,8 +49,12 @@ void CEffect3D::Update(void) {
 }
 
 //========================================
-// 更新処理
+// シリンダーエフェクト生成処理
 //========================================
-void CEffect3D::CreateCylinder(const Pos3D& pos, const UShort& divNum, const Circle& circleA, const Circle& circleB) {
+CEffect3D_Cylinder* CEffect3D::CreateCylinder(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const CEase::TYPE& easeType, const CDrawState::ALPHA_BLEND_MODE& alphaBlendType, const UShort& divNum, const CEffect3D_Cylinder::Circle& circleFront, const CEffect3D_Cylinder::Circle& circleBack) {
 
+	return (new CEffect3D_Cylinder(priority, pos, rot, life, easeType, alphaBlendType))
+		->SetDivisionNum(divNum)
+		->SetCircleFront(circleFront)
+		->SetCircleBack(circleBack);
 }

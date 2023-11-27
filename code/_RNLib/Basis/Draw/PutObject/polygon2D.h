@@ -115,4 +115,5 @@ public:
 	void Update(void);
 	CRegistInfo* Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
 	CRegistInfo* Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen = false);
+	CRegistInfo* Put(const UShort& priority, const bool& isOnScreen = false);
 };

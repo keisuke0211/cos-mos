@@ -61,11 +61,12 @@ void CDoll3D::Update(void) {
 		// セットアップデータ取得
 		CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
 
-		// モーションの更新処理
-		UpdateMotion();
-
 		// ボーンの更新処理
 		UpdateBone(setUp);
+
+		// モーションの更新処理
+		// (※ボーンの後でなければ、time0のコマンドを通らなくなってしまう)
+		UpdateMotion();
 	}
 }
 
@@ -167,7 +168,7 @@ void CDoll3D::UpdateMotion(void) {
 
 	// モーションカウンターを進める
 	if (++m_motionInfo.counter >= motionData.loopTime)
-		m_motionInfo.counter = motionData.isLoop ? 0 : m_motionInfo.counter = motionData.loopTime;
+		m_motionInfo.counter = motionData.isLoop ? 0 : motionData.loopTime;
 }
 
 //========================================
@@ -481,6 +482,11 @@ CDoll3D::CBoneState::~CBoneState() {
 
 	// 揺れ状態のメモリ解放
 	CMemory::Release(&m_swayingState);
+
+	// アニメの情報を解放
+	CMemory::Release(&m_animeStateSum.move);
+	CMemory::Release(&m_animeStateSum.spin);
+	CMemory::Release(&m_animeStateSum.scaling);
 }
 
 //========================================

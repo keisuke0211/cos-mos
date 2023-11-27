@@ -18,12 +18,4 @@ public:
 	CCameraMgr();
 	~CCameraMgr();
 	void Update(void);
-	bool CheckDeletedCamera(CCamera*& camera);
-	void AddDeletedCamera(CCamera* camera);
-	void ReleaseDeletedCamera(void);
-
-private:
-	//========== [[[ •Ï”éŒ¾ ]]]
-	CCamera** m_deletedCamera;
-	UShort m_deletedCameraNum;
 };
