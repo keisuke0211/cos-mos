@@ -44,6 +44,7 @@ CStageEditor::CStageEditor(void)
 	m_Info.nLine = 0;
 	m_Info.nRowMax = 0;
 	m_Info.nLineMax = 0;
+	m_Info.CameraPos = INITD3DXVECTOR3;
 	m_Info.nPlanetIdx = 0;
 	m_Info.aBgFile = NULL;
 	m_Info.aSoundFile = NULL;
@@ -342,6 +343,13 @@ void CStageEditor::StageLoad(int planet, int stage)
 					std::char_traits<char>::copy(m_Info.aSoundFile, sData.c_str(), sData.size() + 1);
 				}
 				
+			}
+			else if (!strcmp(aDataSearch, "SetCamera")) {
+				nLine += 4;
+
+				ToData(m_Info.CameraPos.x, pFile, nRow, nLine); nLine++;
+				ToData(m_Info.CameraPos.y, pFile, nRow, nLine); nLine++;
+				ToData(m_Info.CameraPos.z, pFile, nRow, nLine); nLine++;
 			}
 			else if (!strcmp(aDataSearch, "StageWidth")){
 				nLine += 4;
