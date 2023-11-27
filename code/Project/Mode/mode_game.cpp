@@ -93,8 +93,6 @@ void CMode_Game::Init(void) {
 	// 遷移設定
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
-	// カメラの視点/注視点を設定
-	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 状態設定
 	SetState((int)STATE::NONE);
@@ -108,6 +106,10 @@ void CMode_Game::Init(void) {
 
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
+
+	D3DXVECTOR3 pos = Manager::StgEd()->GetCameraPos();
+	// カメラの視点/注視点を設定
+	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 背景情報を読み込み
 	char *pBgFile = Manager::StgEd()->GetBgFile();

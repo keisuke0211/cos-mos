@@ -99,6 +99,16 @@ CMode_Title::~CMode_Title(void) {
 		m_PlanetType = NULL;
 	}
 
+	if (m_player1 != NULL) {
+		delete m_player1;
+		m_player1 = NULL;
+	}
+
+	if (m_player2 != NULL) {
+		delete m_player2;
+		m_player2 = NULL;
+	}
+
 	TextRelease(TEXT_ALL);
 
 	// テキスト関連
@@ -1068,16 +1078,6 @@ void CMode_Title::SwapMode(TITLE aTitle)
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		if (m_player1 != NULL) {
-			delete m_player1;
-			m_player1 = NULL;
-		}
-
-		if (m_player2 != NULL) {
-			delete m_player2;
-			m_player2 = NULL;
-		}
-
 		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;
