@@ -185,5 +185,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// ëJà⁄ê›íË
-	RNLib::Transition().Close(transType, Color{ 0,0,0,255 }, 30);
+	RNLib::Transition().Close(transType, INITCOLOR, 30);
 }

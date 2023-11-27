@@ -130,6 +130,9 @@ CMode_Title::~CMode_Title(void) {
 void CMode_Title::Init(void) {
 	CMode::Init();
 
+	// 遷移設定
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
+
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)m_pMenu[nCnt] = { NULL };
 	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++)m_pSubMenu[nCnt] = { NULL };
