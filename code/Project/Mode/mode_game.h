@@ -27,6 +27,7 @@ public:
 	static const int PAUSE_RIGHT_ANIME = 20;	// 画面右のアニメーション時間
 	static const int FONT_TEXT_MAX = 8;			// テキストの最大数
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
+	static const int COOLDOWN = 20;				// クールダウン
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -94,12 +95,15 @@ public:
 		D3DXVECTOR3 RightTargetPos;
 		int nCntLeftAnime;
 		int nCntRightAnime;
+		int nRightCoolDown;	//　左画面出現のクールダウン
 		int nMaineSelect;
+		int nMaineOldSelect;
 		int nSubSelect;
 		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
+		bool bRightCoolDown;
 		bool bClose;
 		bool bSubMenu;
 

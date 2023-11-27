@@ -60,6 +60,8 @@ CPlayer::CPlayer()
 
 	for each(Info &Player in m_aInfo)
 	{
+		Player.expandCounter = 0;
+		Player.deathCounter = 0;
 		Player.StartPos = INITD3DXVECTOR3;		// 開始位置
 		Player.pos = INITD3DXVECTOR3;			// 位置
 		Player.posOld = INITD3DXVECTOR3;		// 前回位置
@@ -147,9 +149,10 @@ HRESULT CPlayer::Init(void)
 	s_SE.dog[2]	= s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");		// 伸びる
 	s_SE.dog[3]	= s_SE.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// 震える
 	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap.wav");
+	s_SE.expand = s_SE.pSound->Load("data\\SOUND\\SE\\death_expand.wav");
+	s_SE.explosion = s_SE.pSound->Load("data\\SOUND\\SE\\death_explosion.wav");
 
-	// 初期情報設定
-	Death(NULL, OBJECT_TYPE::NONE, NULL);
+	InitInfo();
 
 	// 初期値設定
 	// ※ 来れないとステージ入る前に一瞬着地SEがなる
@@ -213,6 +216,38 @@ void CPlayer::InitKeyConfig(void)
 		Player.JoyPad[(int)KEY_CONFIG::SWAP]       = CInput::BUTTON::X;     // スワップ
 		Player.JoyPad[(int)KEY_CONFIG::DECIDE]     = CInput::BUTTON::A;     // 決定
 		Player.JoyPad[(int)KEY_CONFIG::PAUSE]      = CInput::BUTTON::START; // ポーズ
+	}
+}
+
+//=====================================================================================================================
+// 情報初期化処理
+//=====================================================================================================================
+void CPlayer::InitInfo(void) {
+
+	// １Ｐ用初期情報
+	m_aInfo[0].fJumpPower = JUMP_POWER;
+	m_aInfo[0].fGravity = GRAVITY_POWER;
+	m_aInfo[0].side = WORLD_SIDE::FACE;
+	m_aInfo[0].rot.z = 0.0f;
+	m_aInfo[0].scale = INITSCALE3D;
+
+	// ２Ｐ用初期情報
+	m_aInfo[1].fJumpPower = -JUMP_POWER;
+	m_aInfo[1].fGravity = -GRAVITY_POWER;
+	m_aInfo[1].side = WORLD_SIDE::BEHIND;
+	m_aInfo[1].rot.z = D3DX_PI;
+	m_aInfo[1].scale = INITSCALE3D;
+
+	// 両者共通初期情報
+	for each (Info & Player in m_aInfo)
+	{
+		Player.posOld = Player.pos = Player.StartPos;
+		Player.move = INITD3DXVECTOR3;
+		Player.bGround = false;
+		Player.bJump = true;
+		Player.bRide = false;
+		Player.bGoal = false;
+		Player.bTramJump = false;
 	}
 }
 
@@ -292,9 +327,11 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal) continue;
 
 		// 位置設定
-		RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, false)
-			->SetOutLineIdx(true)
-			->SetCol(Player.color);
+		if (Player.deathCounter == 0) {
+			RNLib::Model().Put(PRIORITY_OBJECT, Player.nModelIdx, Player.pos, Player.rot, Player.scale, false)
+				->SetOutLineIdx(true)
+				->SetCol(Player.color);
+		}
 
 		// スワップ先のマークを描画する位置
 		D3DXVECTOR3 MarkPos = Player.pos;
@@ -325,10 +362,44 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
+	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0;
+
 	for each (Info &Player in m_aInfo)
 	{
 		// 次のプレイヤー番号へ
 		nIdxPlayer++;
+
+		if (Player.deathCounter > 0) {
+			if (--Player.deathCounter == 0) {
+				InitInfo();
+			}
+
+			float rate    = (float)Player.deathCounter / DEATH_TIME;
+			float rateOpp = 1.0f - rate;
+			Manager::GetMainCamera()->SetMotionBlurColor(Color{ 255,(UShort)(255 * rateOpp),(UShort)(255 * rateOpp),255 });
+			Manager::GetMainCamera()->SetMotionBlurPower(rate * 0.5f);
+			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.1f));
+		}
+		else if (Player.expandCounter > 0) {
+			if (--Player.expandCounter == 0) {
+				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
+				Manager::GetMainCamera()->SetVib(5.0f);
+
+				Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+
+				for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+				{
+					Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), Player.pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+				}
+				Player.deathCounter = DEATH_TIME;
+			}
+			Player.scale.x =
+			Player.scale.y =
+			Player.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, Player.expandCounter, EXPAND_TIME)) * 0.5f;
+		}
+
+		if (isControlStop)
+			continue;
 
 		// 相方がゴールしていなければ出る
 		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer +1) % NUM_PLAYER].bGoal &&
@@ -508,44 +579,10 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 // 死亡処理
 //----------------------------
-void CPlayer::Death(const D3DXVECTOR3 *pDeathPos, const OBJECT_TYPE type, const int *pColliRot)
+void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 {
-	if (pDeathPos != NULL)
-	{
-		Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), *pDeathPos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), *pDeathPos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
-		}
-	}
-
-	// １Ｐ用初期情報
-	m_aInfo[0].fJumpPower = JUMP_POWER;
-	m_aInfo[0].fGravity = GRAVITY_POWER;
-	m_aInfo[0].side = WORLD_SIDE::FACE;
-	m_aInfo[0].rot.z = 0.0f;
-
-	// ２Ｐ用初期情報
-	m_aInfo[1].fJumpPower = -JUMP_POWER;
-	m_aInfo[1].fGravity = -GRAVITY_POWER;
-	m_aInfo[1].side = WORLD_SIDE::BEHIND;
-	m_aInfo[1].rot.z = D3DX_PI;
-
-	// 両者共通初期情報
-	for each (Info &Player in m_aInfo)
-	{
-		Player.posOld = Player.pos = Player.StartPos;
-		Player.move = INITD3DXVECTOR3;
-		Player.bGround = false;
-		Player.bJump = true;
-		Player.bRide = false;
-		Player.bGoal = false;
-		Player.bTramJump = false;
-	}
-
-	//搭乗しているプレイヤーの数リセット
-	CRocket::ResetCounter();
+	Player.expandCounter = EXPAND_TIME;
+	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, false);
 }
 
 //----------------------------
@@ -553,6 +590,10 @@ void CPlayer::Death(const D3DXVECTOR3 *pDeathPos, const OBJECT_TYPE type, const 
 //----------------------------
 void CPlayer::Move(VECTOL vec)
 {
+	if (m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0) {
+		return;
+	}
+
 	// プレイヤーの位置更新
 	for each (Info &Player in m_aInfo)
 	{
@@ -860,7 +901,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 死亡判定ON
 				if (bDeath)
 				{
-					Death(&Self.pos, type, &nColliRot[nCntPlayer]);
+					Death(Player, type, &nColliRot[nCntPlayer]);
 					break;
 				}
 

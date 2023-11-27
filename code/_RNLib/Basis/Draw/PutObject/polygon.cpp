@@ -132,6 +132,16 @@ void Polygon2DAnd3D::CSetTexInfoSum::AssignTexInfo(void*& tex, TEX_TYPE& texType
 		pos3 = setTexInfo->poses[3];
 	}break;
 	}
+
+	if (m_isTexMirrorX) {
+		float XTemp = pos0.x;
+		pos0.x = pos1.x;
+		pos1.x = XTemp;
+
+		XTemp = pos2.x;
+		pos2.x = pos3.x;
+		pos3.x = XTemp;
+	}
 }
 
 //========================================

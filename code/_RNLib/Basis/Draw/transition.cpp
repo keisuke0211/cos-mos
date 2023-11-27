@@ -11,7 +11,6 @@
 //****************************************
 #define BLACK_TIME     (10)
 #define HOLE_SCALE_MAX (6.0f)
-#define LOAD_TEX_DIS	(300.0f)
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| [公開]遷移クラスのメンバ関数
@@ -143,29 +142,40 @@ bool CTransition::Close(const TYPE& type, const Color& col, const UShort& time) 
 //========================================
 void CTransition::FillScreen(const float& rate) {
 
-	// ポリゴン2Dの設置
-	/*RNLib::Polygon2D().Put(1, RNLib::Window().GetCenterPos(), 0.0f, false)
-		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
-		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());*/
+	const float screenWidth = RNLib::Window().GetWidth();
+	const float screenHeight = RNLib::Window().GetHeight();
+	const float screenHeightHalf = screenHeight * 0.5f;
 
-	// ポリゴン2Dの設置
-	RNLib::Polygon2D().Put(1, D3DXVECTOR3(0.0f + RNLib::Window().GetWidth() * rate, RNLib::Window().GetHeight() * 0.25f, 0.0f), 0.0f, true)
-		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
-		->SetSize((RNLib::Window().GetWidth() * 2) * rate, RNLib::Window().GetHeight() / 2);
+	{// [[[ 上 ]]]
+		float right1 = (screenWidth + screenHeightHalf) * rate;
+		float right2 = right1 - screenHeightHalf;
 
-	RNLib::Polygon2D().Put(1, D3DXVECTOR3(0.0f + RNLib::Window().GetWidth() * rate , RNLib::Window().GetHeight() * 0.25f, 0.0f), 3.16f, true)
-		->SetTex(m_nTexIdx)
-		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
-		->SetSize(RNLib::Window().GetHeight() / 2, RNLib::Window().GetHeight() / 2);
+		// 胴体
+		RNLib::Polygon2D().Put(1, true)
+			->SetCol(m_col)
+			->SetVtxPos(Pos2D(0.0f, 0.0f), Pos2D(right2, 0.0f), Pos2D(0.0f, screenHeightHalf), Pos2D(right2, screenHeightHalf));
 
-	// ポリゴン2Dの設置
-	RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetWidth() - RNLib::Window().GetWidth() * rate, RNLib::Window().GetHeight()* 0.75f, 0.0f), 0.0f, true)
-		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
+		// 頭
+		RNLib::Polygon2D().Put(1, true)
+			->SetCol(m_col)
+			->SetTex(m_nTexIdx)
+			->SetTexMirrorX(true)
+			->SetVtxPos(Pos2D(right2 - 0.1f, 0.0f), Pos2D(right1, 0.0f), Pos2D(right2 - 0.1f, screenHeightHalf), Pos2D(right1, screenHeightHalf));
+	}
 
-		->SetSize((RNLib::Window().GetWidth() * 2) * rate, RNLib::Window().GetHeight() / 2);
+	{// [[[ 下 ]]]
+		float left1 = screenWidth - ((screenWidth + screenHeightHalf) * rate);
+		float left2 = left1 + screenHeightHalf;
 
-	RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetWidth() - RNLib::Window().GetWidth() * rate , RNLib::Window().GetHeight()* 0.75f, 0.0f), 0.0f, true)
-		->SetTex(m_nTexIdx)
-		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
-		->SetSize(RNLib::Window().GetHeight() / 2, RNLib::Window().GetHeight() / 2);
+		// 胴体
+		RNLib::Polygon2D().Put(1, true)
+			->SetCol(m_col)
+			->SetVtxPos(Pos2D(left2, screenHeightHalf), Pos2D(screenWidth, screenHeightHalf), Pos2D(left2, screenHeight), Pos2D(screenWidth, screenHeight));
+
+		// 頭
+		RNLib::Polygon2D().Put(1, true)
+			->SetCol(m_col)
+			->SetTex(m_nTexIdx)
+			->SetVtxPos(Pos2D(left1, screenHeightHalf), Pos2D(left2 + 0.1f, screenHeightHalf), Pos2D(left1, screenHeight), Pos2D(left2 + 0.1f, screenHeight));
+	}
 }

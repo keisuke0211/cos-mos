@@ -262,7 +262,7 @@ void CDrawMgr::Release(void) {
 //========================================
 // 設置処理(ポリゴン2D)
 //========================================
-CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const Pos3D& pos, const float& angle, const bool& isOnScreen) {
+CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
 
 	// 番号カウントが最大数に達した時、頂点バッファを再生成する
 	if (CPolygon2D::CDrawInfo::m_idxCount == CPolygon2D::CDrawInfo::m_allocNum) {
@@ -277,33 +277,7 @@ CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const Po
 		RegistPolygon2D(ms_resistInfoSumScreen[priority]) :
 		RegistPolygon2D(ms_resistInfoSum[priority]);
 
-	// 情報を代入
-	registInfo->SetIdx(CPolygon2D::CDrawInfo::m_idxCount++);
-	registInfo->SetPos(pos);
-	registInfo->SetAngle(angle);
-
-	return registInfo;
-}
-
-//========================================
-// 設置処理(ポリゴン2D)
-//========================================
-CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
-
-	// 番号カウントが最大数に達した時、頂点バッファを再生成する
-	if (CPolygon2D::CDrawInfo::m_idxCount == CPolygon2D::CDrawInfo::m_allocNum) {
-		CPolygon2D::CDrawInfo::m_allocPower++;
-		CPolygon2D::CDrawInfo::m_allocNum = pow(2, CPolygon2D::CDrawInfo::m_allocPower);
-		CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
-		CPolygon2D::CDrawInfo::CreateVertexBuffer(CPolygon2D::CDrawInfo::m_allocNum);
-	}
-
-	// 登録情報
-	CPolygon2D::CRegistInfo* registInfo = isOnScreen ?
-		RegistPolygon2D(ms_resistInfoSumScreen[priority]):
-		RegistPolygon2D(ms_resistInfoSum[priority]);
-
-	// 情報を代入
+	// 番号を代入
 	registInfo->SetIdx(CPolygon2D::CDrawInfo::m_idxCount++);
 
 	return registInfo;

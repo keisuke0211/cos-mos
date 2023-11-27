@@ -27,6 +27,8 @@ public:
 	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
+	static const int COOLDOWN = 20;				// クールダウン
+
 
 	static const int PLAYER_MOVE_TIME = 120;	// プレイヤーの移動時間
 
@@ -151,12 +153,15 @@ private:
 		D3DXVECTOR3 RightTargetPos;
 		int nCntLeftAnime;
 		int nCntRightAnime;
+		int nRightCoolDown;	//　左画面出現のクールダウン
 		int nMaineSelect;
+		int nMaineOldSelect;
 		int nSubSelect;
 		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
+		bool bRightCoolDown;
 		bool bClose;
 		bool bSubMenu;
 
