@@ -248,12 +248,12 @@ void CMode_Title::Update(void) {
 			->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
 			->SetCol(Color{ 150,150,150,150 });
 
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-			->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
-			->SetCol(Color{ 150,150,150,150 });
-
-		if (m_Menu.nMaineSelect == MENU_CONTROLLER || m_Menu.nMaineSelect == MENU_SETTING)
+		if (m_Menu.RightPos.x < 1800)
 		{
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
+				->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
+				->SetCol(Color{ 150,150,150,150 });
+
 			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x + 10, 400.0f, 100.0f), 0.0f, false)
 				->SetSize(560.0f, 600.0f)
 				->SetTex(m_Menu.BoxTex);
@@ -470,9 +470,12 @@ void CMode_Title::MenuCreate(void)
 	m_Menu.nCntLeftAnime = 0;
 	m_Menu.nCntRightAnime = 0;
 	m_Menu.nMaineSelect = 0;
+	m_Menu.nMaineOldSelect = 0;
 	m_Menu.nSubSelect = 1;
 	m_Menu.bRightMove = false;
 	m_Menu.bRightDisp = false;
+	m_Menu.nRightCoolDown = COOLDOWN;
+	m_Menu.bRightCoolDown = false;
 	m_Menu.nRightTextType = 0;
 	m_Menu.bMenu = false;
 	m_Menu.bSubMenu = false;
@@ -514,7 +517,7 @@ void CMode_Title::SubTextCreate(void)
 	}
 	else if (m_Menu.nMaineSelect == MENU_SETTING) {
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-		CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+		CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x-210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),//-210
 		"", CFont::FONT_ROND_B, &pFont);
 
 		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),30.0f,1,1,-1, };
@@ -528,11 +531,11 @@ void CMode_Title::SubTextCreate(void)
 			else if (nText == SETTING_SE)
 				pos = D3DXVECTOR3(m_Menu.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
 			else if (nText == SETTING_BACK)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 190.0f, 650.0f, 0.0f);
+				pos = D3DXVECTOR3(m_Menu.RightPos.x + 190.0f, 650.0f, 0.0f);//190
 			else if (nText == SETTING_BGM_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);
+				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);//150
 			else if (nText == SETTING_SE_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
+				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);//150
 
 
 
@@ -598,71 +601,99 @@ void CMode_Title::MenuAnime(void)
 	}
 
 	// 右画面のアニメーション
-	if (m_Menu.bRightMove || (m_Menu.bClose && m_Menu.bRightDisp))
-	{
-		D3DXVECTOR3 move = INITD3DXVECTOR3;
-		move.x = (m_Menu.RightTargetPos.x - m_Menu.RightPos.x) * 0.3f;
+	if (m_Menu.bRightMove && m_Menu.bRightCoolDown) {
+		if (--m_Menu.nRightCoolDown <= 0) {
 
-		m_Menu.RightPos.x += move.x;
-
-		int nTextMax = -1;
-		if (m_Menu.nMaineSelect == MENU_CONTROLLER) nTextMax = m_Menu.OperationMax;
-		else if (m_Menu.nMaineSelect == MENU_SETTING) nTextMax = m_Menu.SettingMax;
-
-		for (int nCnt = 0; nCnt < nTextMax; nCnt++) {
-			if (m_pSubMenu[nCnt] != NULL) {
-				m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
+			m_Menu.bRightCoolDown = false;
+			m_Menu.nRightCoolDown = COOLDOWN;
+			if (!m_Menu.bRightDisp){
+				SubTextCreate();
+			}
+			else if (m_Menu.bRightDisp && !m_Menu.bClose) {
+				TextRelease(TEXT_RIGHT);
 			}
 		}
+	}
+	else if (m_Menu.bRightMove && !m_Menu.bRightCoolDown || (m_Menu.bClose && m_Menu.bRightDisp))
+	{
+		D3DXVECTOR3 move = INITD3DXVECTOR3;
+		if (m_Menu.nMaineSelect != MENU_CONTROLLER && m_Menu.nMaineSelect != MENU_SETTING && !m_Menu.bRightDisp) {
+			TextRelease(TEXT_RIGHT);
+			m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+			move.x = (m_Menu.RightTargetPos.x - m_Menu.RightPos.x) * 0.3f;
+			m_Menu.RightPos.x += move.x;
 
-		if (++m_Menu.nCntRightAnime == PAUSE_RIGHT_ANIME) {
-			m_Menu.RightPos = m_Menu.RightTargetPos;
-			m_Menu.bRightMove = false;
-			m_Menu.nCntRightAnime = 0;
+			if (++m_Menu.nCntRightAnime == PAUSE_RIGHT_ANIME) {
+				m_Menu.RightPos = m_Menu.RightTargetPos;
+				m_Menu.bRightMove = false;
+				m_Menu.nCntRightAnime = 0;
+				m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+			}
+		}
+		else {
+			move.x = (m_Menu.RightTargetPos.x - m_Menu.RightPos.x) * 0.3f;
 
-			if (!m_Menu.bRightDisp)
-			{
-				m_Menu.bRightDisp = true;
-				m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+			m_Menu.RightPos.x += move.x;
 
-				// テキストの再生成
-				if (m_Menu.nMaineSelect == MENU_CONTROLLER) {
-					for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
-						if (m_pSubMenu[nText] != NULL)
-							m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
-					}
+			int nTextMax = -1;
+			if (m_Menu.nMaineSelect == MENU_CONTROLLER) nTextMax = m_Menu.OperationMax;
+			else if (m_Menu.nMaineSelect == MENU_SETTING) nTextMax = m_Menu.SettingMax;
+
+			for (int nCnt = 0; nCnt < nTextMax; nCnt++) {
+				if (m_pSubMenu[nCnt] != NULL) {
+					m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
 				}
-				if (m_Menu.nMaineSelect == MENU_SETTING) {
-					for (int nText = 0; nText < m_Menu.SettingMax; nText++) {
-						if (m_pSubMenu[nText] != NULL) {
+			}
 
-							char data[TXT_MAX];
-							if (nText == SETTING_SCREEN) {
-								if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
-								else if (m_Menu.bFullScreen)	sprintf(data, "%s ：ON", m_Menu.pSetting[nText].Text);
-							}
-							else if (nText == SETTING_BGM_TEXT){
-								int nData = m_Menu.nBGMVolume * 5;
-								sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
-							}
-							else if(nText == SETTING_SE_TEXT){
-								int nData = m_Menu.nSEVolume * 5;
-								sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
-							}
-							else
-								sprintf(data, "%s", m_Menu.pSetting[nText].Text);
+			if (++m_Menu.nCntRightAnime == PAUSE_RIGHT_ANIME) {
+				m_Menu.RightPos = m_Menu.RightTargetPos;
+				m_Menu.bRightMove = false;
+				m_Menu.nCntRightAnime = 0;
 
-							m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+				if (!m_Menu.bRightDisp)
+				{
+					m_Menu.bRightDisp = true;
+					m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+					// テキストの再生成
+					if (m_Menu.nRightTextType == MENU_CONTROLLER) {
+						for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
+							if (m_pSubMenu[nText] != NULL)
+								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
+						}
+					}
+					if (m_Menu.nRightTextType == MENU_SETTING) {
+						for (int nText = 0; nText < m_Menu.SettingMax; nText++) {
+							if (m_pSubMenu[nText] != NULL) {
+
+								char data[TXT_MAX];
+								if (nText == SETTING_SCREEN) {
+									if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
+									else if (m_Menu.bFullScreen)	sprintf(data, "%s ：ON", m_Menu.pSetting[nText].Text);
+								}
+								else if (nText == SETTING_BGM_TEXT) {
+									int nData = m_Menu.nBGMVolume * 5;
+									sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
+								}
+								else if (nText == SETTING_SE_TEXT) {
+									int nData = m_Menu.nSEVolume * 5;
+									sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
+								}
+								else
+									sprintf(data, "%s", m_Menu.pSetting[nText].Text);
+
+								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+							}
 						}
 					}
 				}
-			}
-			else if (m_Menu.bRightDisp && !m_Menu.bClose) {
-				m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-				m_Menu.bRightDisp = false;
-				TextRelease(TEXT_RIGHT);
+				else if (m_Menu.bRightDisp && !m_Menu.bClose) {
+					m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+					m_Menu.bRightDisp = false;
+					TextRelease(TEXT_RIGHT);
+				}
 			}
 		}
 	}
@@ -775,6 +806,7 @@ void CMode_Title::MenuSelect(void)
 	{
 		if (!m_Menu.bSubMenu) {
 			m_bBackMode = true;
+			m_Menu.bRightMove = true;
 			m_Menu.bClose = true;
 			m_Menu.LeftTargetPos *= -1;
 			m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
@@ -825,12 +857,27 @@ void CMode_Title::MenuSelect(void)
 	if ((m_Menu.nMaineSelect == MENU_CONTROLLER || m_Menu.nMaineSelect == MENU_SETTING ) && !m_Menu.bRightMove && !m_Menu.bRightDisp) {
 
 		m_Menu.bRightMove = true;
-		SubTextCreate();
+		m_Menu.bRightCoolDown = true;
 	}
-	else if (m_Menu.nMaineSelect != m_Menu.nRightTextType && !m_Menu.bRightMove && m_Menu.bRightDisp) {
+	else if (m_Menu.nMaineSelect != m_Menu.nRightTextType && !m_Menu.bRightMove && m_Menu.bRightDisp && !m_Menu.bRightCoolDown) {
 
-		TextRelease(TEXT_RIGHT);
 		m_Menu.bRightMove = true;
+		m_Menu.bRightCoolDown = true;
+	}
+	else if (m_Menu.bRightMove && m_Menu.bRightDisp && m_Menu.bRightCoolDown) {
+		if (m_Menu.nMaineSelect != m_Menu.nMaineOldSelect) {
+			if (m_Menu.nMaineSelect == MENU_CONTROLLER || m_Menu.nMaineSelect == MENU_SETTING)
+				m_Menu.nRightCoolDown = COOLDOWN;
+		}
+		else if (m_Menu.nMaineSelect == m_Menu.nRightTextType) {
+			m_Menu.bRightMove = false;
+			m_Menu.bRightCoolDown = false;
+			m_Menu.nRightCoolDown = COOLDOWN;
+		}
+	}
+
+	if (m_Menu.nMaineSelect != m_Menu.nMaineOldSelect) {
+		m_Menu.nMaineOldSelect = m_Menu.nMaineSelect;
 	}
 
 	// ループ制御
