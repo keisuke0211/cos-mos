@@ -16,6 +16,8 @@ int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
 bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
 CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
 
+int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
+
 const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
@@ -49,6 +51,9 @@ CPlayer::CPlayer()
 	s_nSwapInterval = 0;
 	s_bSwapAnim = false;
 	s_AnimState = SWAP_ANIM::PROLOGUE;
+
+	//ゴール後の余韻カウンター
+	s_nGoalInterval = 0;
 
 	s_SE.pSound = NULL;
 	s_SE.jump = 0;
@@ -314,9 +319,12 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		const int planet = Manager::StgEd()->GetPlanetIdx();
-		const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-		Manager::StgEd()->SwapStage(stage + 1);
+		if (++s_nGoalInterval >= GOAL_INTERVAL)
+		{
+			const int planet = Manager::StgEd()->GetPlanetIdx();
+			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
+			Manager::StgEd()->SwapStage(stage + 1);
+		}
 	}
 
 	// 当たり判定まとめ
