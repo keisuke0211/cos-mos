@@ -10,6 +10,7 @@
 #include "../../_RNLib/Basis/Calculation/number.h"
 #include "../Object/Gimmick/pile.h"
 #include"../UI/miss.h"
+#include"../Object/Block/Ghost.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
@@ -423,8 +424,11 @@ void CPlayer::ActionControl(void)
 				posVTemp = Manager::GetMainCamera()->GetPosV();
 				posRTemp = Manager::GetMainCamera()->GetPosR();
 
-				// ここ！
+				// ミスのテキスト生成
 				CMiss::Create();
+
+				// ゴーストの生成
+				CGhost::Create(Player.pos, nIdxPlayer);
 			}
 
 			float rate = (float)Player.deathCounter / DEATH_TIME;
