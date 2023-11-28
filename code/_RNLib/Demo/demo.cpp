@@ -104,7 +104,7 @@ void CDemo::Update(void) {
 		switch ((SCREEN_TYPE)m_screenTypeCount) {
 		case SCREEN_TYPE::NORMAL: {
 
-			RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
+			RNLib::Polygon2D().Put(0, windowCenterPos, 0.0f, true)
 				->SetTex(&CDemoPlayer::GetControl()->GetCamera())
 				->SetSize(windowWidth, windowHeight);
 
@@ -112,7 +112,7 @@ void CDemo::Update(void) {
 		case SCREEN_TYPE::DIVISION: {
 
 			// Ô(ã)
-			RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f, true)
+			RNLib::Polygon2D().Put(0, Pos2D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2), 0.0f, true)
 				->SetTexUV(
 					&m_players[(int)PLAYER::RED]->GetCamera(),
 					Pos2D(0.0f, 0.25f),
@@ -123,7 +123,7 @@ void CDemo::Update(void) {
 				->SetSize(windowWidth, windowHeightHalf);
 
 			// Â(‰º)
-			RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f, true)
+			RNLib::Polygon2D().Put(0, Pos2D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2), 0.0f, true)
 				->SetTexUV(
 					&m_players[(int)PLAYER::BLUE]->GetCamera(),
 					Pos2D(0.0f, 0.25f),
