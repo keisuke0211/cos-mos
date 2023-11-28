@@ -11,6 +11,8 @@
 // 死亡パーティクルクラス
 class CEffect_Death : public CObject {
 public:
+	static const int CREATE_COUNTER = 30;
+
 	//種類
 	enum class TYPE {
 		NONE = 0,
@@ -21,6 +23,7 @@ public:
 	//自己情報
 	struct Info
 	{
+		//設定処理によって個別に設定される項目
 		Vector3D pos    = INITVECTOR3D; // 位置
 		Vector3D posOld = INITVECTOR3D; // 前回位置
 		Vector3D move   = INITVECTOR3D; // 移動量
@@ -31,6 +34,9 @@ public:
 		int      nLife  = NONEDATA;     // 寿命（不死身ならNONEDATA
 		int      nTex   = NONEDATA;     // テクスチャ番号
 		TYPE     type   = TYPE::NONE;   // 種類
+
+		//設定処理を通れば、皆共通で代入される項目
+		int      CreateCounter; // 生成されてからのカウンター(生まれてすぐはプレイヤーとの当たり判定を働かせないため
 	};
 
 	CEffect_Death();
@@ -63,9 +69,10 @@ private:
 	void UpdateType_Ink(void);
 
 	//情報更新処理
-	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo);
-	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo);
-	void Move(void);
+	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
+	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
+	void SetSelfInfo(CCollision::SelfInfo *pSelfInfo);
+	void Move(CPlayer::VECTOL vec);
 	void Spin(void);
 	void Life(void);
 

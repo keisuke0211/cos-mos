@@ -102,7 +102,7 @@ CEffect_Death *CEffMgr::DeathParticleCreate(int nTex, Vector3D pos, Vector3D mov
 
 	//情報設定
 	if (pEff != NULL)
-		pEff->SetInfo(pos, pos, move, rot, spin, size, color, 20, nTex, type);
+		pEff->SetInfo(pos, pos, move, rot, spin, size, color, NONEDATA, nTex, type);
 
 	//インスタンスを返す
 	return pEff;

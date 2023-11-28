@@ -16,6 +16,8 @@ int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
 bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
 CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
 
+int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
+
 const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
@@ -49,6 +51,9 @@ CPlayer::CPlayer()
 	s_nSwapInterval = 0;
 	s_bSwapAnim = false;
 	s_AnimState = SWAP_ANIM::PROLOGUE;
+
+	//ゴール後の余韻カウンター
+	s_nGoalInterval = 0;
 
 	s_SE.pSound = NULL;
 	s_SE.jump = 0;
@@ -314,9 +319,12 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		const int planet = Manager::StgEd()->GetPlanetIdx();
-		const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-		Manager::StgEd()->SwapStage(stage + 1);
+		if (++s_nGoalInterval >= GOAL_INTERVAL)
+		{
+			const int planet = Manager::StgEd()->GetPlanetIdx();
+			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
+			Manager::StgEd()->SwapStage(stage + 1);
+		}
 	}
 
 	// 当たり判定まとめ
@@ -450,17 +458,22 @@ void CPlayer::ActionControl(void)
 				((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
 				((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
 		}
-		// 膨らみカウンター&円す津
+		// 膨らみカウンター＆演出
 		else if (Player.expandCounter > 0) {
 			if (--Player.expandCounter == 0) {
 				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
 				Manager::GetMainCamera()->SetVib(5.0f);
 
-				Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+				//Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
-				for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+				const int NUM_PARTICLE = 8;
+				Pos3D rot = INITVECTOR3D;
+				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 				{
-					Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), Player.pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+					const float fSize = (float)(rand() % 100) / 10.0f + 1.2f;
+					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
+					Manager::EffectMgr()->DeathParticleCreate(
+						GetParticleIdx(PARTI_TEX::SWAP_MARK), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, Vector2D(fSize, fSize), Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
 				}
 				Player.deathCounter = DEATH_TIME;
 			}
