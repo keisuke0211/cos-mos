@@ -83,12 +83,14 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 	// ‰Šú‰»ˆ—
 	pObj->SetType(type);
 	pObj->SetRdmMagni(magni);
-	pObj->Init(nTex, nCount);
 	pObj->SetPos(pos);
 	pObj->SetRot(rot);
 	pObj->SetScale(scale);
-	pObj->SetColor(col);
 	pObj->SetAlphaMode(alphamode);
+	pObj->Init(nTex, nCount);
+	pObj->SetColor(col);
+
+	
 
 	return pObj;
 }

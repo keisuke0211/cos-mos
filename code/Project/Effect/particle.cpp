@@ -60,18 +60,10 @@ HRESULT CParticle::Init(int nTex,int nCount)
 	}
 	else if (m_type == TYPE::TYPE_SPIN)
 	{
-		m_Info.rot = m_rot;
 		m_Info.move = D3DXVECTOR3(
 			10.0f * sinf(m_Info.rot.z),
 			10.0f * cosf(m_Info.rot.z),
 			0.0f);
-
-		m_rot.z -= 0.1f;
-
-		if (m_rot.z <= -6.28f)
-		{
-			m_rot = INITD3DXVECTOR3;
-		}
 	}
 	
 	m_Info.col = INITCOLOR;
