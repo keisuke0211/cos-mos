@@ -80,7 +80,7 @@ void CRocketPartsUI::Update(void) {
 				m_colorA = INITCOLOR.a;
 			}
 
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x + m_scale.x * (nUI + 1), m_pos.y, m_pos.z), 0.0f)
+			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + m_scale.x * (nUI + 1), m_pos.y), 0.0f)
 				->SetSize(m_scale.x, m_scale.y)
 				->SetTex(m_TexIdx)
 				->SetCol(Color{ INITCOLOR.r,INITCOLOR.g,INITCOLOR.b,(UShort)m_colorA });

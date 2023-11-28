@@ -80,6 +80,9 @@ void CSetUp3DEditor::Update(void) {
 			Pos2D(0.0f, 9.0f),
 			Pos2D(9.0f, 9.0f));
 
+	// 現在のボーン番号を取得
+	short boneIdx = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx();
+
 	{// [[[ 操作 ]]]
 		// 新規作成
 		if (RNLib::Input().GetKeyTrigger(DIK_1)) {
@@ -169,8 +172,6 @@ void CSetUp3DEditor::Update(void) {
 		else if (m_slither.z > 1.0f) m_slither.z = 1.0f;
 
 		{// 頂点番号の描画ボーン番号切り替え
-			short boneIdx = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx();
-
 			if (RNLib::Input().GetKeyTrigger(DIK_E)) {
 				if (--boneIdx < 0) {
 					boneIdx = RNLib::SetUp3D().GetData(EDITDATA).m_boneDataNum - 1;
@@ -239,9 +240,51 @@ void CSetUp3DEditor::Update(void) {
 	RNLib::Text2D().PutDebugLog(CreateText("MotionLoad       [5]"));
 	RNLib::Text2D().PutDebugLog(CreateText("MotionReLoad     [6] %s", m_messageType == MESSAGE_TYPE::MOTION_RELOAD_SUCCEEDED ? "SUCCEEDED!" : m_messageType == MESSAGE_TYPE::MOTION_RELOAD_FAILED ? "FAILED!" : ""));
 	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdx       [7]   :%s", RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdxBoneIdx[E][R]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdxNum    [D][F]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum()));
 	RNLib::Text2D().PutDebugLog(CreateText("SlitherX         [Q][W]:%.1f", m_slither.x));
 	RNLib::Text2D().PutDebugLog(CreateText("SlitherY         [A][S]:%.1f", m_slither.y));
 	RNLib::Text2D().PutDebugLog(CreateText("SlitherZ         [Z][X]:%.1f", m_slither.z));
+	RNLib::Text2D().PutDebugLog(CreateText("FocusedBoneIdx   [E][R]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
+	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdxNum    [D][F]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum()));
+	RNLib::Text2D().PutDebugLog(CreateText("-----Materials-----"));
+
+	// マテリアル情報の表示
+	if (&RNLib::SetUp3D().GetData(EDITDATA) != NULL) {
+		if (RNLib::SetUp3D().GetData(EDITDATA).m_boneDataNum > 0) {
+			if (RNLib::SetUp3D().GetData(EDITDATA).m_boneDatas[boneIdx].modelIdx != NONEDATA) {
+
+				// モデルデータを取得
+				const CModel::CData& modelData = RNLib::Model().GetData(RNLib::SetUp3D().GetData(EDITDATA).m_boneDatas[boneIdx].modelIdx);
+
+				// マテリアル情報に対するポインタを取得
+				const D3DXMATERIAL* mats = (D3DXMATERIAL*)modelData.m_matBuff->GetBufferPointer();
+				for (int cntMat = 0; cntMat < modelData.m_matNum; cntMat++) {
+					const Color col = Color{
+						(UShort)(mats[cntMat].MatD3D.Diffuse.r * 255),
+						(UShort)(mats[cntMat].MatD3D.Diffuse.g * 255),
+						(UShort)(mats[cntMat].MatD3D.Diffuse.b * 255),
+						(UShort)(mats[cntMat].MatD3D.Diffuse.a * 255) 
+					};
+
+					RNLib::Text2D().PutDebugLog(CreateText("Mat_%d", cntMat));
+					RNLib::Polygon2D().Put(0, true)
+						->SetSize(16.0f, 16.0f)
+						->SetPos(RNLib::Text2D().PutDebugLog(CreateText(" Color      :%d %d %d %d", col.r, col.g, col.b, col.a)) + Pos2D(8.0f, 0.0f))
+						->SetCol(col);
+					RNLib::Polygon2D().Put(0, true)
+						->SetSize(16.0f, 16.0f)
+						->SetPos(RNLib::Text2D().PutDebugLog(CreateText(" TexturePath:%s", RNLib::Texture().GetLoadPath(modelData.m_texIdxes[cntMat]))) + Pos2D(8.0f, 0.0f))
+						->SetTex(modelData.m_texIdxes[cntMat]);
+				}
+			}
+			else {
+				RNLib::Text2D().PutDebugLog(CreateText("NONEDATA"));
+			}
+		}
+		else {
+			RNLib::Text2D().PutDebugLog(CreateText("NONEDATA"));
+		}
+	}
+	else {
+		RNLib::Text2D().PutDebugLog(CreateText("NONEDATA"));
+	}
 }
