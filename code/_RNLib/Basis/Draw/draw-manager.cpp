@@ -311,7 +311,7 @@ CPolygon3D::CRegistInfo* CDrawMgr::PutPolygon3D(const UShort& priority, const Ma
 //========================================
 // 設置処理(テキスト2D)
 //========================================
-CText2D::CRegistInfo* CDrawMgr::PutText2D(const UShort& priority, const Pos3D& pos, const float& angle, const bool& isOnScreen) {
+CText2D::CRegistInfo* CDrawMgr::PutText2D(const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen) {
 
 	// 登録情報
 	CText2D::CRegistInfo* registInfo = isOnScreen ?

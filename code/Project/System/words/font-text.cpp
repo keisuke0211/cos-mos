@@ -13,9 +13,9 @@
 //========================================
 CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 {
-	m_Info.TexPos = INITD3DXVECTOR3;
+	m_Info.TexPos = INITD3DXVECTOR2;
 	m_Info.TextBoxCol = INITCOLOR;
-	m_Info.TexMove = INITD3DXVECTOR3;
+	m_Info.TexMove = INITD3DXVECTOR2;
 	m_Info.FontCol = INITD3DCOLOR;
 	m_Info.TextBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;
@@ -150,7 +150,7 @@ void CFontText::Update()
 			->SetTex(m_Info.nTexIdx);
 	}
 
-	m_Info.TexMove = INITD3DXVECTOR3;
+	m_Info.TexMove = INITD3DXVECTOR2;
 
 	// テキスト生成
 	if (!m_Info.bStand)
@@ -198,7 +198,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		else if(type == BOX_NONE || type == BOX_MAX)
 			pText->m_Info.nTexIdx = -1;
 
-		pText->m_Info.TexPos = pos;
+		pText->m_Info.TexPos = Pos2D(pos.x, pos.y);
 		pText->m_Info.TexSize = size;
 		pText->m_Info.bTextBok = bTextBox;
 
@@ -436,7 +436,7 @@ void CFontText::DisapTime(void)
 //========================================
 void CFontText::SetMove(D3DXVECTOR3 move)
 {
-	m_Info.TexMove = move;
+	m_Info.TexMove = Pos2D(move.x, move.y);
 
 	for (int nWords = 0; nWords < m_Info.nLetterPopCount; nWords++)
 	{

@@ -22,8 +22,8 @@ CEffect3D_Cylinder::CEffect3D_Cylinder(const short& priority, const Pos3D& pos, 
 	m_divisionNum	   = 3;
 	m_texIdx		   = NONEDATA;
 	m_texXNum          = 1;
-	m_circleFront		   = {};
-	m_circleBack		   = {};
+	m_circleFront      = {};
+	m_circleBack       = {};
 }
 
 //========================================
