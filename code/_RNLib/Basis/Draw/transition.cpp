@@ -161,7 +161,6 @@ void CTransition::FillScreen(const float& rate) {
 	// ƒ|ƒŠƒSƒ“2D‚ÌÝ’u
 	RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetWidth() - RNLib::Window().GetWidth() * rate, RNLib::Window().GetHeight()* 0.75f, 0.0f), 0.0f, true)
 		->SetCol(Color{ m_col.r,m_col.g,m_col.b,(UShort)(m_col.a * rate) })
-
 		->SetSize((RNLib::Window().GetWidth() * 2) * rate, RNLib::Window().GetHeight() / 2);
 
 	RNLib::Polygon2D().Put(1, D3DXVECTOR3(RNLib::Window().GetWidth() - RNLib::Window().GetWidth() * rate , RNLib::Window().GetHeight()* 0.75f, 0.0f), 0.0f, true)
