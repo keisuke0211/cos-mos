@@ -41,7 +41,7 @@ CBat::~CBat(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CBat::Init(void) {
-	ModelIdx = RNLib::Model().Load();
+	//ModelIdx = RNLib::Model().Load();
 
 }
 
@@ -59,7 +59,7 @@ void CBat::Uninit(void) {
 //========================================
 void CBat::Update(void) {
 
-	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false)
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false);
 
 }
 
