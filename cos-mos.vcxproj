@@ -166,6 +166,7 @@
     <ClCompile Include="code\Project\Mode\mode_logo.cpp" />
     <ClCompile Include="code\Project\Mode\mode_result.cpp" />
     <ClCompile Include="code\Project\Mode\mode_title.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\bat.cpp" />
     <ClCompile Include="code\Project\Object\Block\Ghost.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\pile.cpp" />
     <ClCompile Include="code\Project\Sound\ambient-sound-player.cpp" />
@@ -268,6 +269,7 @@
     <ClInclude Include="code\Project\Mode\mode_logo.h" />
     <ClInclude Include="code\Project\Mode\mode_result.h" />
     <ClInclude Include="code\Project\Mode\mode_title.h" />
+    <ClInclude Include="code\Project\Object\BackGround\bat.h" />
     <ClInclude Include="code\Project\Object\Block\Ghost.h" />
     <ClInclude Include="code\Project\Object\Gimmick\pile.h" />
     <ClInclude Include="code\Project\Sound\ambient-sound-player.h" />
