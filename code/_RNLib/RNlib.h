@@ -17,6 +17,7 @@
 #include "Basis/3DObject/Body/setup3D.h"
 #include "Basis/3DObject/Effect/effect3D.h"
 #include "Basis/3DObject/Effect/effect3D_cylinder.h"
+#include "Basis/3DObject/Effect/effect3D_model.h"
 #include "Basis/3DObject/Effect/effect3D-base.h"
 #include "Basis/3DObject/Effect/effect3D-manager.h"
 #include "Basis/3DObject/Effect/standard-effect3D.h"

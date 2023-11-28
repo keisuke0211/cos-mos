@@ -129,8 +129,8 @@ private:
 		D3DXCOLOR TextBoxColOld;// 前回のテキストボックスの色
 		D3DXCOLOR FontColOld;	// 前回の文字の色
 		bool bCol;				// 色変更フラグ(ポーズ切替)
-		D3DXVECTOR3 TexPos;		// 位置
-		D3DXVECTOR3 TexMove;	// 移動量		
+		D3DXVECTOR2 TexPos;		// 位置
+		D3DXVECTOR2 TexMove;	// 移動量		
 		D3DXVECTOR2 TexSize;	// サイズ
 		int nTexIdx;			// テキストボックスのテクスチャ番号
 

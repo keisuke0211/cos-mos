@@ -11,6 +11,8 @@
 // 死亡パーティクルクラス
 class CEffect_Death : public CObject {
 public:
+	static const int CREATE_COUNTER = 30;
+
 	//種類
 	enum class TYPE {
 		NONE = 0,
@@ -21,6 +23,7 @@ public:
 	//自己情報
 	struct Info
 	{
+		//設定処理によって個別に設定される項目
 		Vector3D pos    = INITVECTOR3D; // 位置
 		Vector3D posOld = INITVECTOR3D; // 前回位置
 		Vector3D move   = INITVECTOR3D; // 移動量
@@ -28,9 +31,12 @@ public:
 		Vector3D spin   = INITVECTOR3D; // 回転量
 		Vector2D size   = INITVECTOR2D; // サイズ（幅・高さ）
 		Color    color  = INITCOLOR;    // 色
-		int      *pLife = NULL;         // 寿命（不死身ならNULL
+		int      nLife  = NONEDATA;     // 寿命（不死身ならNONEDATA
 		int      nTex   = NONEDATA;     // テクスチャ番号
 		TYPE     type   = TYPE::NONE;   // 種類
+
+		//設定処理を通れば、皆共通で代入される項目
+		int      CreateCounter; // 生成されてからのカウンター(生まれてすぐはプレイヤーとの当たり判定を働かせないため
 	};
 
 	CEffect_Death();
@@ -41,7 +47,7 @@ public:
 	//******************************
 	//設定処理（自己情報を一括設定）
 	//******************************
-	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int *pLife, const int nTex, const TYPE type);
+	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nTex, const TYPE type);
 
 	//******************************
 	//設定処理（自己情報を個別設定）
@@ -53,7 +59,7 @@ public:
 	void SetSpin(const Vector3D spin)     { m_Info.spin = spin; }
 	void SetSize(const Vector2D size)     { m_Info.size = size; }
 	void SetColor(const Color color)      { m_Info.color = color; }
-	void SetLife(const int *pLife)        { *m_Info.pLife = *pLife; }
+	void SetLife(const int nLife)         { m_Info.nLife = nLife; }
 	void SetTex(const int nTex)           { m_Info.nTex = nTex; }
 	void SetType(const TYPE type)         { m_Info.type = type; }
 
@@ -63,9 +69,10 @@ private:
 	void UpdateType_Ink(void);
 
 	//情報更新処理
-	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo);
-	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo);
-	void Move(void);
+	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
+	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
+	void SetSelfInfo(CCollision::SelfInfo *pSelfInfo);
+	void Move(CPlayer::VECTOL vec);
 	void Spin(void);
 	void Life(void);
 
