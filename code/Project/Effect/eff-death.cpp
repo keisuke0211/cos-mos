@@ -58,15 +58,20 @@ void CEffect_Death::Update(void)
 		case TYPE::INK: UpdateType_Ink();  break;
 	}
 	
-	//RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, INITVECTOR3D)
-	//	->SetBillboard(true)
-	//	->SetCol(INITCOLOR)
-	//	->SetSize(m_Info.size.x, m_Info.size.y)
-	//	->SetZTest(false);
-
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, INITVECTOR3D)
-		->SetTex(m_Info.nTex)
 		->SetBillboard(true)
+		->SetCol(INITCOLOR)
+		->SetSize(m_Info.size.x, m_Info.size.y)
+		->SetZTest(false);
+
+	Pos3D rot = m_Info.rot;
+	rot.x = rot.z;
+	rot.y = rot.z;
+	rot.z = 0.0f;
+
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
+		->SetTex(m_Info.nTex)
+		//->SetBillboard(true)
 		->SetCol(m_Info.color)
 		->SetSize(m_Info.size.x, m_Info.size.y)
 		->SetZTest(false);
@@ -104,13 +109,14 @@ void CEffect_Death::UpdateType_Ball(void)
 			ColliRot = PlayerCollider(&SelfInfo, &colliInfo, vec);
 			if (ColliRot != CCollision::ROT::NONE)
 			{
+				const Pos3D PosDiff = colliInfo.pos - SelfInfo.pos;
+
 				//ƒvƒŒƒCƒ„[‚Ü‚Å‚ÌŠp“x‚ðŽæ“¾
-				const float fRot = atan2f(powf(SelfInfo.pos.x + colliInfo.pos.x, 2.0f),
-										  powf(SelfInfo.pos.y + colliInfo.pos.y, 2.0f));
+				const float fRot = atan2f(PosDiff.x, -PosDiff.y);
 
 				//ˆÚ“®—ÊÝ’è
-				m_Info.move.x = sinf(fRot) * -3.0f;
-				m_Info.move.y = cosf(fRot) * -3.0f;
+				m_Info.move.x = sinf(fRot) * 3.0f;
+				m_Info.move.y = cosf(fRot) * 3.0f;
 			}
 		}
 
@@ -127,6 +133,10 @@ void CEffect_Death::UpdateType_Ball(void)
 			}
 		}
 	}
+
+	//ˆÚ“®ƒxƒNƒgƒ‹‚ÌŠp“x‚ðŽZo
+	const float fRot = atan2f(m_Info.move.x, -m_Info.move.y);
+	m_Info.rot.z = fRot;
 
 	//‰ñ“]ˆ—
 	Spin();
@@ -158,6 +168,8 @@ CCollision::ROT CEffect_Death::PlayerCollider(CCollision::SelfInfo *pSelfInfo, C
 	{
 		//ƒvƒŒƒCƒ„[î•ñ”½‰f
 		CPlayer::Info *pInfo = pPlayer->GetInfo(nCntPlayer);
+		//ƒS[ƒ‹‚µ‚Ä‚¢‚é or Ž€‚ñ‚Å‚¢‚é
+		if (pInfo->bGoal || pInfo->bRide || pInfo->deathCounter != 0 || pInfo->deathCounter2 != 0)continue;
 		pColliInfo->pos = pInfo->pos;             pColliInfo->posOld  = pInfo->posOld;
 		pColliInfo->fWidth = CPlayer::SIZE_WIDTH; pColliInfo->fHeight = CPlayer::SIZE_HEIGHT;
 
