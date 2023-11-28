@@ -38,12 +38,13 @@ public:
 		void Release(void);
 
 		// [[[ •Ï”éŒ¾ ]]]
-		short* m_texIdxs;
-		Mesh   m_mesh;
-		Mesh   m_outLineMesh;
-		Buffer m_matBuff;
-		UShort m_matNum;
-		float  m_radiusMax;
+		short*   m_texIdxes;
+		Texture* m_texes;
+		Mesh     m_mesh;
+		Mesh*    m_outLineMeshs;
+		Buffer   m_matBuff;
+		UShort   m_matNum;
+		float    m_radiusMax;
 	};
 
 	// •`‰æî•ñƒNƒ‰ƒX
@@ -52,20 +53,19 @@ public:
 		// [[[ ŠÖ”éŒ¾ ]]]
 		CDrawInfo();
 		~CDrawInfo();
-		void Draw       (Device& device, const Matrix& viewMtx);
-		void SetMaterial(Device& device, Material* mat, const Color& col);
 
 		// [[[ •Ï”éŒ¾ ]]]
 		static Material ms_outLineMat;
-		Matrix m_mtx;
-		Color  m_col;
-		short  m_modelIdx;
-		short  m_texIdx;
-		bool   m_isZTest;
-		bool   m_isLighting;
-		bool   m_isOutLine;
-		float  m_brightnessOfEmissive;
-		float  m_distance;
+		Matrix    m_mtx;
+		Material* m_mats;
+		Texture*  m_texes;
+		UShort    m_matNum;
+		Mesh      m_mesh;
+		Mesh      m_outLineMesh;
+		bool      m_isScaling;
+		bool      m_isZTest;
+		bool      m_isLighting;
+		float     m_brightnessOfEmissive;
 	};
 
 	// “o˜^î•ñƒNƒ‰ƒX
@@ -75,7 +75,7 @@ public:
 		CRegistInfo();
 		~CRegistInfo();
 		void ClearParameter(void);
-		CDrawInfo* ConvToDrawInfo(void);
+		CDrawInfo* ConvToDrawInfo(Device& device);
 		CRegistInfo* SetClippingCamera      (CCamera& camera); 
 		CRegistInfo* SetClippingCamera      (const short& ID);
 		CRegistInfo* SetMtx                 (const Matrix& mtx);
@@ -84,7 +84,7 @@ public:
 		CRegistInfo* SetTex                 (const short& texIdx);
 		CRegistInfo* SetZTest               (const bool& isZTest);
 		CRegistInfo* SetLighting            (const bool& isLighting);
-		CRegistInfo* SetOutLine             (const bool& isOutLine);
+		CRegistInfo* SetOutLineIdx          (const UShort& outLineIdx);
 		CRegistInfo* SetBrightnessOfEmissive(const float& brightnessOfEmissive);
 
 	private:
@@ -95,7 +95,7 @@ public:
 		short  m_texIdx;
 		bool   m_isZTest;
 		bool   m_isLighting;
-		bool   m_isOutLine;
+		short  m_outLineIdx;
 		float  m_brightnessOfEmissive;
 	};
 

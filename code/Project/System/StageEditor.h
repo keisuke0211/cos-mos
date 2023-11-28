@@ -52,8 +52,8 @@ public:
 		int nLineMax;	// 列数の最大
 
 		// ステージ関連
-		int nPlanetIdx;	// 現在の惑星
-
+		D3DXVECTOR3 CameraPos;	// カメラ位置
+		int nPlanetIdx;			// 現在の惑星
 		char	*aBgFile;		// 背景
 		char	*aSoundFile;	// サウンド
 
@@ -131,6 +131,7 @@ public:
 	/* 最大値			*/int GetPlanetMax(void) { return m_Info.nPlanetMax; }
 	/* 現在のステージ	*/int GetPlanetIdx(void) { return m_Info.nPlanetIdx; }
 	/* 惑星種類情報		*/PlanetType *GetType(void) { return m_PlanetType; }
+	/* カメラの初期位置	*/D3DXVECTOR3 GetCameraPos(void) { return m_Info.CameraPos; }
 	/* 背景				*/char *GetBgFile(void) { return m_Info.aBgFile; }
 	/* サウンド			*/char *GetSoundFile(void) { return m_Info.aSoundFile; }
 	/* 位置				*/D3DXVECTOR3 GetPos(int nRow, int nLine);

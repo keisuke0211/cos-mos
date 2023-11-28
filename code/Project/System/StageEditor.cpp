@@ -44,6 +44,7 @@ CStageEditor::CStageEditor(void)
 	m_Info.nLine = 0;
 	m_Info.nRowMax = 0;
 	m_Info.nLineMax = 0;
+	m_Info.CameraPos = INITD3DXVECTOR3;
 	m_Info.nPlanetIdx = 0;
 	m_Info.aBgFile = NULL;
 	m_Info.aSoundFile = NULL;
@@ -343,6 +344,13 @@ void CStageEditor::StageLoad(int planet, int stage)
 				}
 				
 			}
+			else if (!strcmp(aDataSearch, "SetCamera")) {
+				nLine += 4;
+
+				ToData(m_Info.CameraPos.x, pFile, nRow, nLine); nLine++;
+				ToData(m_Info.CameraPos.y, pFile, nRow, nLine); nLine++;
+				ToData(m_Info.CameraPos.z, pFile, nRow, nLine); nLine++;
+			}
 			else if (!strcmp(aDataSearch, "StageWidth")){
 				nLine += 4;
 				int nWidth;
@@ -580,13 +588,16 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 {
 	// ƒuƒƒbƒN
 	if (nType >= 100 && nType < 200) {
-		Manager::StageObjectMgr()->BlockCreate(pos, (CBlock::LOOKS_TYPE)(nType - 100), m_StageColor.Block);
+		Manager::StageObjectMgr()->BlockCreate(pos, (CBlock::LOOKS_TYPE)(nType - 100), m_StageColor.Block, false);
+	}
+	else if (nType >= 200 && nType < 300) {
+		Manager::StageObjectMgr()->BlockCreate(pos, (CBlock::LOOKS_TYPE)(nType - 200), m_StageColor.Block, true);
 	}
 
 	switch (nType)
 	{
 	case TYPE_BLOCK:
-		Manager::StageObjectMgr()->BlockCreate(pos, CBlock::LOOKS_TYPE::SOIL_BLOCK, m_StageColor.Block);
+		Manager::StageObjectMgr()->BlockCreate(pos, CBlock::LOOKS_TYPE::SOIL_BLOCK, m_StageColor.Block, true);
 		break;
 	case TYPE_TRAMPOLINE:
 		pos.x += fSizeX / 2;

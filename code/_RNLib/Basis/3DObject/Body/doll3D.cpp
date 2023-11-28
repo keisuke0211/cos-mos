@@ -61,11 +61,12 @@ void CDoll3D::Update(void) {
 		// セットアップデータ取得
 		CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
 
-		// モーションの更新処理
-		UpdateMotion();
-
 		// ボーンの更新処理
 		UpdateBone(setUp);
+
+		// モーションの更新処理
+		// (※ボーンの後でなければ、time0のコマンドを通らなくなってしまう)
+		UpdateMotion();
 	}
 }
 
@@ -116,6 +117,9 @@ void CDoll3D::SetUp(const short& setUpIdx) {
 			}
 		}
 	}
+
+	// モーション準備処理
+	PrepareMotion();
 }
 
 //========================================
@@ -164,7 +168,7 @@ void CDoll3D::UpdateMotion(void) {
 
 	// モーションカウンターを進める
 	if (++m_motionInfo.counter >= motionData.loopTime)
-		m_motionInfo.counter = motionData.isLoop ? 0 : m_motionInfo.counter = motionData.loopTime;
+		m_motionInfo.counter = motionData.isLoop ? 0 : motionData.loopTime;
 }
 
 //========================================
@@ -218,7 +222,7 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 			RNLib::Doll3DMgr().GetEditCamera() != NULL) {
 
 			// 頂点番号描画数
-			short drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+			UInt drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
 			if (drawVtxIdxNum > vtxNum[cntBone])
 				drawVtxIdxNum = vtxNum[cntBone];
 
@@ -360,16 +364,19 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 Matrix CDoll3D::FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, const Matrix& selfMtx) {
 
 	Matrix  worldMtx    = INITMATRIX;
-	Pos3D   resultPos   = boneState[idx].GetPos() + boneData[idx].relativePos;
-	Rot3D   resultRot   = boneState[idx].GetRot() + boneData[idx].relativeRot;
-	Scale3D resultScale = boneState[idx].GetScale();
+	Pos3D   resultPos   = boneState[idx].GetAddPos  () + boneState[idx].GetAnimPos() + boneData[idx].relativePos;
+	Rot3D   resultRot   = boneState[idx].GetAddRot  () + boneState[idx].GetAnimRot() + boneData[idx].relativeRot;
+	Scale3D resultScale;
+	resultScale.x = boneState[idx].GetAddScale().x * boneState[idx].GetAnimScale().x;
+	resultScale.y = boneState[idx].GetAddScale().y * boneState[idx].GetAnimScale().y;
+	resultScale.z = boneState[idx].GetAddScale().z * boneState[idx].GetAnimScale().z;
 	Matrix  parentMtx   = INITMATRIX;
 
 	// 追従処理
 	if (boneData[idx].follow != NULL) {
-		const Pos3D followPos = boneState[boneData[idx].follow->followIdx].GetPos() - boneData[boneData[idx].follow->followIdx].relativePos;
-		const Rot3D followRot = boneState[boneData[idx].follow->followIdx].GetRot() - boneData[boneData[idx].follow->followIdx].relativeRot;
-		const Scale3D followScale = boneState[boneData[idx].follow->followIdx].GetScale();
+		const Pos3D   followPos   = boneState[boneData[idx].follow->followIdx].GetAddPos()   + boneState[boneData[idx].follow->followIdx].GetAnimPos();
+		const Rot3D   followRot   = boneState[boneData[idx].follow->followIdx].GetAddRot()   + boneState[boneData[idx].follow->followIdx].GetAnimRot();
+		const Scale3D followScale = boneState[boneData[idx].follow->followIdx].GetAddScale() + boneState[boneData[idx].follow->followIdx].GetAnimScale();
 		resultPos.x += followPos.x * boneData[idx].follow->posRate.x;
 		resultPos.y += followPos.y * boneData[idx].follow->posRate.y;
 		resultPos.z += followPos.z * boneData[idx].follow->posRate.z;
@@ -411,11 +418,6 @@ Matrix CDoll3D::FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetU
 	// ワールドマトリックス設定
 	boneState[idx].SetWorldMtx(worldMtx);
 
-	// 位置設定
-	boneState[idx].SetPos(resultPos);
-	boneState[idx].SetRot(resultRot);
-	boneState[idx].SetScale(resultScale);
-
 	return worldMtx;
 }
 
@@ -424,8 +426,14 @@ Matrix CDoll3D::FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetU
 //========================================
 void CDoll3D::PrepareMotion(void) {
 
-	const CMotion3D::CData& motionData(RNLib::Motion3D().GetData(m_motionInfo.idx));	// モーションデータ
-	const CSetUp3D::CData&  setUpData(RNLib::SetUp3D().GetData(m_setUpIdx));			// セットアップデータ
+	const CMotion3D::CData& motionData = RNLib::Motion3D().GetData(m_motionInfo.idx);	// モーションデータ
+	const CSetUp3D::CData&  setUpData  = RNLib::SetUp3D().GetData(m_setUpIdx);			// セットアップデータ
+
+	if (&setUpData == NULL)
+		return;
+
+	if (&motionData == NULL)
+		return;
 
 	// ボーン毎に準備処理
 	for (int cntBone = 0; cntBone < setUpData.m_boneDataNum; cntBone++) {
@@ -454,9 +462,12 @@ void CDoll3D::PrepareMotion(void) {
 //========================================
 CDoll3D::CBoneState::CBoneState() {
 
-	m_pos			  = INITPOS3D;
-	m_rot			  = INITROT3D;
-	m_scale			  = Scale3D(1.0f, 1.0f, 1.0f);
+	m_animPos         = INITPOS3D;
+	m_addPos          = INITPOS3D;
+	m_animRot         = INITROT3D;
+	m_addRot          = INITROT3D;
+	m_animScale       = INITSCALE3D;
+	m_addScale        = INITSCALE3D;
 	m_worldMtx		  = INITMATRIX;
 	m_animeStateSum   = {};
 	m_swayingState    = NULL;
@@ -471,6 +482,11 @@ CDoll3D::CBoneState::~CBoneState() {
 
 	// 揺れ状態のメモリ解放
 	CMemory::Release(&m_swayingState);
+
+	// アニメの情報を解放
+	CMemory::Release(&m_animeStateSum.move);
+	CMemory::Release(&m_animeStateSum.spin);
+	CMemory::Release(&m_animeStateSum.scaling);
 }
 
 //========================================
@@ -495,103 +511,96 @@ void CDoll3D::CBoneState::Update(const short& motionCounter, const CSetUp3D::Bon
 	// 足踏フラグを偽にしておく
 	m_animeStateSum.isStep = false;
 
-	// 位置/向き/拡大倍率を初期化
-	m_pos   = INITPOS3D;
-	m_rot   = INITROT3D;
-	m_scale = INITSCALE3D;
-
-	// モーションデータが無しの時、終了
-	if (m_motionData == NULL)
-		return;
-
 	//----------------------------------------
 	// コマンド読み取り
 	//----------------------------------------
-	for (int cntCommand = 0; cntCommand < m_motionData->commandDataNum; cntCommand++) {
+	if (m_motionData != NULL){
+		for (int cntCommand = 0; cntCommand < m_motionData->commandDataNum; cntCommand++) {
 
-		// カウンターが実行時間と一致していない時、折り返す
-		if (motionCounter != m_motionData->commandDatas[cntCommand].time)
-			continue;
+			// カウンターが実行時間と一致していない時、折り返す
+			if (motionCounter != m_motionData->commandDatas[cntCommand].time)
+				continue;
 
-		CMotion3D::CommandData& commandData(m_motionData->commandDatas[cntCommand]);
+			CMotion3D::CommandData& commandData(m_motionData->commandDatas[cntCommand]);
 
-		// コマンドに応じた処理
-		switch (commandData.command) {
-			// [[[ 移動 ]]]
-		case CMotion3D::COMMAND::MOVE: {
-			const Pos3D       targetPos = Pos3D(commandData.datas[0], commandData.datas[1], commandData.datas[2]);
-			const int         moveTime  = (int)commandData.datas[3];
-			const CEase::TYPE ease      = (CEase::TYPE)((int)commandData.datas[4]);
+			// コマンドに応じた処理
+			switch (commandData.command) {
+				// [[[ 移動 ]]]
+			case CMotion3D::COMMAND::MOVE: {
+				const Pos3D       targetPos = Pos3D(commandData.datas[0], commandData.datas[1], commandData.datas[2]);
+				const int         moveTime  = (int)commandData.datas[3];
+				const CEase::TYPE ease      = (CEase::TYPE)((int)commandData.datas[4]);
 
-			if (moveTime == 0)
-			{// 移動にかかる時間が0の時、
-				// 位置を直接代入
-				m_pos = targetPos;
+				if (moveTime == 0)
+				{// 移動にかかる時間が0の時、
+					// 位置を直接代入
+					m_animPos = targetPos;
+				}
+				else
+				{// 移動にかかる時間が0でない時、
+					// 移動アニメ状態メモリを確保
+					CMemory::Alloc(&m_animeStateSum.move);
+
+					// 移動アニメ状態を設定
+					m_animeStateSum.move->posEase   = ease;
+					m_animeStateSum.move->oldPos    = m_animPos;
+					m_animeStateSum.move->targetPos = targetPos;
+					m_animeStateSum.move->time      = moveTime;
+				}
+			}break;
+				// [[[ 回転 ]]]
+			case CMotion3D::COMMAND::SPIN: {
+				const Rot3D       targetRot = Rot3D(commandData.datas[0], commandData.datas[1], commandData.datas[2]);
+				const int         spinTime  = (int)commandData.datas[3];
+				const CEase::TYPE ease      = (CEase::TYPE)((int)commandData.datas[4]);
+
+				if (spinTime == 0)
+				{// 回転にかかる時間が0の時、
+					// 向きを直接代入
+					m_animRot = targetRot;
+				}
+				else
+				{// 回転にかかる時間が0でない時、
+					// 回転アニメ状態メモリを確保
+					CMemory::Alloc(&m_animeStateSum.spin);
+
+					// 回転アニメ状態を設定
+					m_animeStateSum.spin->rotEase   = ease;
+					m_animeStateSum.spin->oldRot    = m_animRot;
+					m_animeStateSum.spin->targetRot = targetRot;
+					m_animeStateSum.spin->time      = spinTime;
+				}
+			}break;
+				// [[[ 拡縮 ]]]
+			case CMotion3D::COMMAND::SCALING: {
+				const Scale3D     targetScale = Scale3D(commandData.datas[0], commandData.datas[1], commandData.datas[2]);
+				const int         scalingTime = (int)commandData.datas[3];
+				const CEase::TYPE ease        = (CEase::TYPE)((int)commandData.datas[4]);
+
+				if (scalingTime == 0)
+				{// 拡縮にかかる時間が0の時、
+					// 拡大倍率を直接代入
+					m_animScale = targetScale;
+				}
+				else
+				{// 拡縮にかかる時間が0でない時、
+					// 拡縮アニメ状態メモリを確保
+					CMemory::Alloc(&m_animeStateSum.scaling);
+
+					// 拡縮アニメ状態を設定
+					m_animeStateSum.scaling->scaleEase   = ease;
+					m_animeStateSum.scaling->oldScale    = m_animScale;
+					m_animeStateSum.scaling->targetScale = targetScale;
+					m_animeStateSum.scaling->time        = scalingTime;
+				}
+			}break;
+				// [[[ 足踏 ]]]
+			case CMotion3D::COMMAND::STEP: {
+
+				// 足踏フラグを真にしておく
+				m_animeStateSum.isStep = true;
+			}break;
 			}
-			else
-			{// 移動にかかる時間が0でない時、
-				// 移動アニメ状態メモリを確保
-				CMemory::Alloc(&m_animeStateSum.move);
-
-				// 移動アニメ状態を設定
-				m_animeStateSum.move->posEase   = ease;
-				m_animeStateSum.move->oldPos    = m_pos;
-				m_animeStateSum.move->targetPos = targetPos;
-				m_animeStateSum.move->time      = moveTime;
-			}
-		}break;
-			// [[[ 回転 ]]]
-		case CMotion3D::COMMAND::SPIN: {
-			const Rot3D       targetRot = Rot3D(commandData.datas[0], commandData.datas[1], commandData.datas[2]);
-			const int         spinTime  = (int)commandData.datas[3];
-			const CEase::TYPE ease      = (CEase::TYPE)((int)commandData.datas[4]);
-
-			if (spinTime == 0)
-			{// 回転にかかる時間が0の時、
-				// 向きを直接代入
-				m_rot = targetRot;
-			}
-			else
-			{// 回転にかかる時間が0でない時、
-				// 回転アニメ状態メモリを確保
-				CMemory::Alloc(&m_animeStateSum.spin);
-
-				// 回転アニメ状態を設定
-				m_animeStateSum.spin->rotEase   = ease;
-				m_animeStateSum.spin->oldRot    = m_rot;
-				m_animeStateSum.spin->targetRot = targetRot;
-				m_animeStateSum.spin->time      = spinTime;
-			}
-		}break;
-			// [[[ 拡縮 ]]]
-		case CMotion3D::COMMAND::SCALING: {
-			const Scale3D     targetScale = Scale3D(commandData.datas[0], commandData.datas[1], commandData.datas[2]);
-			const int         scalingTime = (int)commandData.datas[3];
-			const CEase::TYPE ease        = (CEase::TYPE)((int)commandData.datas[4]);
-
-			if (scalingTime == 0)
-			{// 拡縮にかかる時間が0の時、
-				// 拡大倍率を直接代入
-				m_scale = targetScale;
-			}
-			else
-			{// 拡縮にかかる時間が0でない時、
-				// 拡縮アニメ状態メモリを確保
-				CMemory::Alloc(&m_animeStateSum.scaling);
-
-				// 拡縮アニメ状態を設定
-				m_animeStateSum.scaling->scaleEase   = ease;
-				m_animeStateSum.scaling->oldScale    = m_scale;
-				m_animeStateSum.scaling->targetScale = targetScale;
-				m_animeStateSum.scaling->time        = scalingTime;
-			}
-		}break;
-			// [[[ 足踏 ]]]
-		case CMotion3D::COMMAND::STEP: {
-
-			// 足踏フラグを真にしておく
-			m_animeStateSum.isStep = true;
-		}break;
 		}
 	}
 
@@ -605,7 +614,7 @@ void CDoll3D::CBoneState::Update(const short& motionCounter, const CSetUp3D::Bon
 		const float rate = CEase::Easing(m_animeStateSum.move->posEase, m_animeStateSum.move->counter, m_animeStateSum.move->time);
 
 		// 位置を更新
-		m_pos = (m_animeStateSum.move->oldPos * (1.0f - rate)) + (m_animeStateSum.move->targetPos * rate);
+		m_animPos = (m_animeStateSum.move->oldPos * (1.0f - rate)) + (m_animeStateSum.move->targetPos * rate);
 
 		// カウンター到達時、メモリ解放
 		if (++m_animeStateSum.move->counter >= m_animeStateSum.move->time) {
@@ -620,7 +629,7 @@ void CDoll3D::CBoneState::Update(const short& motionCounter, const CSetUp3D::Bon
 		const float rate = CEase::Easing(m_animeStateSum.spin->rotEase, m_animeStateSum.spin->counter, m_animeStateSum.spin->time);
 
 		// 向きを更新
-		m_rot = (m_animeStateSum.spin->oldRot * (1.0f - rate)) + (m_animeStateSum.spin->targetRot * rate);
+		m_animRot = (m_animeStateSum.spin->oldRot * (1.0f - rate)) + (m_animeStateSum.spin->targetRot * rate);
 
 		// カウンター到達時、メモリ解放
 		if (++m_animeStateSum.spin->counter >= m_animeStateSum.spin->time) {
@@ -635,7 +644,7 @@ void CDoll3D::CBoneState::Update(const short& motionCounter, const CSetUp3D::Bon
 		const float rate = CEase::Easing(m_animeStateSum.scaling->scaleEase, m_animeStateSum.scaling->counter, m_animeStateSum.scaling->time);
 
 		// 拡大倍率を更新
-		m_scale = (m_animeStateSum.scaling->oldScale * (1.0f - rate)) + (m_animeStateSum.scaling->targetScale * rate);
+		m_animScale = (m_animeStateSum.scaling->oldScale * (1.0f - rate)) + (m_animeStateSum.scaling->targetScale * rate);
 
 		// カウンター到達時、メモリ解放
 		if (++m_animeStateSum.scaling->counter >= m_animeStateSum.scaling->time) {
@@ -655,39 +664,39 @@ void CDoll3D::CBoneState::PrepareMotion(const CMotion3D::BoneMotionData& boneMot
 	CMemory::Release(&m_animeStateSum.scaling);
 
 	// 移動しないモーションの時、位置変更しているのであれば、
-	if (!boneMotionData.isMove && m_pos != INITPOS3D) {
+	if (!boneMotionData.isMove && m_animPos != INITPOS3D) {
 		
 		// 移動情報のメモリを確保し、
 		CMemory::Alloc(&m_animeStateSum.move);
 
 		// 初期位置に移動させる
-		m_animeStateSum.move->oldPos    = m_pos;
+		m_animeStateSum.move->oldPos    = m_animPos;
 		m_animeStateSum.move->targetPos = INITPOS3D;
 		m_animeStateSum.move->time      = PAUSE_RESET_TIME;
 		m_animeStateSum.move->posEase   = CEase::TYPE::LINEAR;
 	}
 
 	// 回転しないモーションの時、向き変更しているのであれば、
-	if (!boneMotionData.isSpin && m_rot != INITROT3D) {
+	if (!boneMotionData.isSpin && m_animRot != INITROT3D) {
 		
 		// 回転情報のメモリを確保し、
 		CMemory::Alloc(&m_animeStateSum.spin);
 
 		// 初期向きに回転させる
-		m_animeStateSum.spin->oldRot    = m_rot;
+		m_animeStateSum.spin->oldRot    = m_animRot;
 		m_animeStateSum.spin->targetRot = INITROT3D;
 		m_animeStateSum.spin->time      = PAUSE_RESET_TIME;
 		m_animeStateSum.spin->rotEase   = CEase::TYPE::LINEAR;
 	}
 
 	// 拡縮しないモーションの時、拡大倍率変更しているのであれば、
-	if (!boneMotionData.isScale && m_scale != INITSCALE3D) {
+	if (!boneMotionData.isScale && m_animScale != INITSCALE3D) {
 		
 		// 拡縮情報のメモリを確保し、
 		CMemory::Alloc(&m_animeStateSum.scaling);
 
 		// 初期拡大倍率に拡縮させる
-		m_animeStateSum.scaling->oldScale    = m_scale;
+		m_animeStateSum.scaling->oldScale    = m_animScale;
 		m_animeStateSum.scaling->targetScale = INITSCALE3D;
 		m_animeStateSum.scaling->time        = PAUSE_RESET_TIME;
 		m_animeStateSum.scaling->scaleEase   = CEase::TYPE::LINEAR;

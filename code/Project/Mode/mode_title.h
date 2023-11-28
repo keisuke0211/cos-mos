@@ -23,9 +23,15 @@ public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
 	static const int WORDS_MAX = 7;				// 文字の最大数
-	static const int FONT_TEXT_MAX = 8;		// テキストの最大数
+	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
 	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
+	static const int VOLUME_MSX = 20;			// サウンドの最大値
+	static const int COOLDOWN = 20;				// クールダウン
+
+
+	static const int PLAYER_MOVE_TIME = 120;	// プレイヤーの移動時間
+
 
 	// *** 列挙型 ***
 	enum class STATE {
@@ -61,17 +67,22 @@ private:
 	enum MENU{
 		MENU_GAME = 0,	// ゲーム
 		MENU_CONTROLLER,// 操作方法
-		MENU_SERRING,	// 設定
+		MENU_SETTING,	// 設定
 		MENU_END,		// 終了
 		MENU_MAX
+	};
+
+	// アニメーション
+	enum ANIME {
+		ANIME_PLAYER00 = 0,	// プレイヤー0
+		ANIME_PLAYER01,		// プレイヤー１
+		ANIME_MAX
 	};
 
 	// テクスチャ
 	enum TEX{
 		TEX_BG = 0,		// 背景
-		TEX_PLANET00,	// 惑星
-		TEX_PLANET01,	// 惑星
-		TEX_ICON,		// アイコン
+		TEX_PLANET,		// 惑星
 		TEX_MAX
 	};
 
@@ -84,6 +95,17 @@ private:
 		INPUT_DECISION,	// 決定
 		INPUT_BACK,		// 戻る
 		INPUT_MAX
+	};
+
+	// 設定
+	enum SETTING {
+		SETTING_SCREEN = 1,	// フルスクリーン
+		SETTING_BGM ,		// BGM
+		SETTING_SE,			// SE
+		SETTING_BACK,
+		SETTING_BGM_TEXT,
+		SETTING_SE_TEXT,
+		SETTING_MAX
 	};
 
 	// テキスト
@@ -103,12 +125,22 @@ private:
 		char Text[TXT_MAX];		// ステージ名
 	};
 
+	// アニメーション情報
+	struct Anime {
+		D3DXVECTOR3 InitPos;	// 初期位置
+		D3DXVECTOR3 TargetPos;	// 目標位置
+		D3DXVECTOR3 FormerPos;	// 元の位置
+		float fDistance;		// 距離
+		int nTime;				// 時間
+		int nTimeMax;			// 時間の最大値
+	};
+
 	// 操作方法のテキスト情報
 	struct Operation{
 		char Text[TXT_MAX];		// テキスト
 	};
 
-	// ステージ種類情報
+	// 設定情報
 	struct Setting{
 		char Text[TXT_MAX];		// テキスト
 	};
@@ -121,24 +153,41 @@ private:
 		D3DXVECTOR3 RightTargetPos;
 		int nCntLeftAnime;
 		int nCntRightAnime;
-		int nSelect;
+		int nRightCoolDown;	//　左画面出現のクールダウン
+		int nMaineSelect;
+		int nMaineOldSelect;
+		int nSubSelect;
 		int nRightTextType;
 		bool bMenu;
 		bool bRightMove;
 		bool bRightDisp;
+		bool bRightCoolDown;
 		bool bClose;
+		bool bSubMenu;
 
 		int BoxTex;
 		int OperationMax;
 		int SettingMax;
+
+		// スクリーン
+		int nCntScrChg;		// スクリーン変更のカウント
+		bool bFullScreen;	// スクリーンモード
+
+		// サウンド
+		int nBGMVolume;
+		int nSEVolume;
+		int nBGMOldVolume;
+		int nSEOldVolume;
 
 		Operation *pOperation;
 		Setting *pSetting;
 	};
 
 	// *** 関数 ***
-	/* テキストの読込			*/void TextLoad(void);
 	/* タイトルアニメーション	*/void TitleAnime(void);
+	/* テキストの読込			*/void TextLoad(void);
+	/* 設定処理					*/void SettingMenu(void);
+	/* テキストアニメーション	*/void TextAnime(void);
 	/* メニューアニメーション	*/void MenuAnime(void);
 	/* メニュー生成				*/void MenuCreate(void);
 	/* メニュー選択				*/void MenuSelect(void);
@@ -153,7 +202,7 @@ private:
 
 	// *** 変数 ***
 	TITLE Title;
-	Menu m_Anime;
+	Menu m_Menu;
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
@@ -161,6 +210,7 @@ private:
 	int m_nOldSelect;
 	int m_nPlanetIdx;
 	int m_nOldnPlanet;
+	int m_RocketIdx;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	CWords *m_TITLE[WORDS_MAX];
@@ -168,13 +218,7 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
-
-	char m_RightTxt[INPUT_MAX][TXT_MAX] = {
-		{ "操作方法" },
-		{ "・移動　　：Ω" },
-		{ "・ジャンプ：Σ" },
-		{ "・スワップ：Φ" },
-		{ "・決定　　：Д" },
-		{ "・戻る　　：Σ" },
-	};
+	Anime m_Anime[ANIME_MAX];
+	CDoll3D *m_player1;
+	CDoll3D *m_player2;
 };

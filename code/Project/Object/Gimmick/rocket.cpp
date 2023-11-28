@@ -107,14 +107,19 @@ void CRocket::Uninit(void)
 void CRocket::Update(void)
 {
 	//乗るアニメーションに移動
-	if (RNLib::Input().GetKeyTrigger(DIK_R) && m_Info.Animstate == CRocket::ANIME_STATE::RIDE)
+	if (RNLib::Input().GetKeyTrigger(DIK_R))
 	{
-		m_Info.Animstate = CRocket::ANIME_STATE::FLY;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_R) && m_Info.Animstate == CRocket::ANIME_STATE::NONE)
-	{
-		m_Info.Animstate = CRocket::ANIME_STATE::RIDE;
-		Ride();
+		switch (m_Info.Animstate)
+		{
+			case CRocket::ANIME_STATE::RIDE:
+				m_Info.Animstate = CRocket::ANIME_STATE::FLY;
+				break;
+
+			case CRocket::ANIME_STATE::NONE:
+				m_Info.Animstate = CRocket::ANIME_STATE::RIDE;
+				Ride();
+				break;
+		}
 	}
 
 	switch (m_Info.Animstate)
@@ -130,7 +135,7 @@ void CRocket::Update(void)
 		break;
 	}
 
-	if (m_Info.bEffect == true)
+	if (m_Info.bEffect)
 	{
 		m_Info.nEffectAnimCounter++;
 		if (m_Info.nEffectAnimCounter % s_Smokerate == 0)
@@ -150,7 +155,7 @@ void CRocket::Update(void)
 	}
 	
 	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot + Rot3D(0.0f, D3DX_PI, 0.0f), m_Info.scale * m_Info.fScaleMag, false)
-		->SetOutLine(true);
+		->SetOutLineIdx(true);
 
 	RNLib::Text2D().PutDebugLog(CreateText("プレイヤーカウンター：%d", s_nCountPlayer));
 }
@@ -223,7 +228,6 @@ void CRocket::UpdateState_Fly(void)
 		}
 	}
 
-	
 	m_pos += m_Info.move;	// 位置に移動量の増加
 }
 //========================================
@@ -234,6 +238,7 @@ void CRocket::Ride(void)
 	if (!s_bReady) return;
 
 	s_nCountPlayer++;												// プレイヤーの乗った人数の増加
+	if (s_nCountPlayer == CPlayer::NUM_PLAYER) s_bReady = true;		// 乗車OK
 	m_Info.fScaleMag = s_RideAnimeMag;								// スケール倍率の設定
 	m_Info.SmallSpeed = (m_Info.fScaleMag - 1.0f) / s_RideAnimeMax;	// 小さくなる速度の設定
 	m_Info.nRideAnimeCounter = 0;									// 乗るアニメーションカウンターを初期化

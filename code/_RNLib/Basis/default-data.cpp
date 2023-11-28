@@ -24,6 +24,7 @@ const char* CDefaultData::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"RNData\\Texture\\Grid.PNG",
 	"RNData\\Texture\\Stripe.PNG",
 	"RNData\\Texture\\Border.PNG",
+	"RNData\\Texture\\Smoke.PNG",
 };
 const char* CDefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
 	"RNData\\Model\\Sphere.x",
@@ -84,6 +85,10 @@ void CDefaultData::Init(void) {
 	// セットアップ3D読み込み
 	for (int cntSetUp3D = 0; cntSetUp3D < (int)SETUP3D::MAX; cntSetUp3D++)
 		m_setUp3DIdxes[cntSetUp3D] = RNLib::SetUp3D().Load(SETUP3D_PATHS[cntSetUp3D]);
+
+	// モーション3D読み込み
+	for (int cntMotion3D = 0; cntMotion3D < (int)MOTION3D::MAX; cntMotion3D++)
+		m_motion3DIdxes[cntMotion3D] = RNLib::Motion3D().Load(MOTION3D_PATHS[cntMotion3D]);
 }
 
 //========================================

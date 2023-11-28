@@ -56,6 +56,8 @@ public:
 	void        SetMotionBlurScale  (const float& scale)     { m_motionBlur.scale = scale; }
 	float&      GetMotionBlurAngle  (void)                   { return m_motionBlur.angle; }
 	void        SetMotionBlurAngle  (const Angle& angle)     { m_motionBlur.angle = angle; }
+	Color&      GetMotionBlurColor  (void)                   { return m_motionBlur.col; }
+	void        SetMotionBlurColor  (const Color& col)       { m_motionBlur.col = col; }
 	// <<< ó‘ÔŒn >>>
 	void        RemoveState         (void) { SetState(STATE::NONE); }
 	void        SetGrabAirMouse     (const float moveForce, const float spinForce, const float zoomForce);

@@ -18,11 +18,20 @@ public:
 	{
 		D3DXVECTOR3 pos;		// 位置
 		D3DXVECTOR3 move;		// 移動量
+		D3DXVECTOR3 rot;		// 移動量
 		D3DXVECTOR3 scale;		// 拡縮
 		Color col;				// 頂点カラー
 		int nCount;
 		int nCountMax;
 		int nTex;
+	};
+
+	// 共通情報
+	enum class TYPE
+	{
+		TYPE_NORMAL = 0,
+		TYPE_SPIN,
+		MAX
 	};
 
 	// *** 関数 ***
@@ -37,7 +46,9 @@ public:
 	// -- 設定 ---------------------------------------------
 	/* 色		*/void SetColor(const Color col) { m_Info.col = col; }
 	/* 位置		*/void SetPos(const D3DXVECTOR3 pos) { m_Info.pos = pos; }
+	/* 位置		*/void SetRot(const D3DXVECTOR3 rot) { m_Info.rot = rot; }
 	/* 拡縮		*/void SetScale(const D3DXVECTOR3 scale) { m_Info.scale = scale; }
+	/* 拡縮		*/void SetType(const TYPE type) { m_type = type; }
 
 	// -- 所得 ---------------------------------------------
 	/* 色		*/Color GetColor(void) { return m_Info.col; }
@@ -48,7 +59,9 @@ private:
 
 	// *** 静的変数 ***
 	static int m_nNumAll;		// 総数
+	static D3DXVECTOR3 m_rot;	// 移動量
 
 	// *** 変数 ***
 	Info m_Info;		// 共通情報
+	TYPE m_type;
 };

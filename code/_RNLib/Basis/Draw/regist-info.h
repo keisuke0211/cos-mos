@@ -19,7 +19,7 @@ public:
 	CRegistInfoBase();
 	virtual ~CRegistInfoBase();
 	void ClearParameter(void);
-	void AssignToDrawInfo(CDrawInfoBase& drawInfo, const CDrawInfoBase::TYPE& type);
+	void AssignToDrawInfo(CDrawInfoBase& drawInfo);
 
 	//===== [[[ ïœêîíËã` ]]]
 	short m_clippingID;

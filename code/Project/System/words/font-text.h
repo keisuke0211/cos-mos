@@ -102,8 +102,10 @@ public:
 	/* テキストの再生	*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
 
 
-	// -- 設定 ------------------------------------------
-	/*　サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
+	// -- 取得 ------------------------------------------
+	/*　位置		*/D3DXVECTOR3 GetTexPos() { return m_Info.TexPos; }
+	/*　Texサイズ	*/D3DXVECTOR2 GetTexSize() { return m_Info.TexSize; }
+	/*　文字サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
 
 private:
 

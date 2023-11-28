@@ -5,6 +5,7 @@
 // 
 //========================================
 #include "System\words\object\font-object.h"
+#include "Sound/ambient-sound-player.h"
 #include "main.h"
 
 //****************************************
@@ -16,7 +17,7 @@ namespace {
 	CMode::TYPE     m_reserveModeType;
 	CStageObjectMgr m_blockMgr;
 	CObjectMgr      m_BGMgr;
-	CEffectMgr      m_effectMgr;
+	CEffMgr         m_effectMgr;
 	CStageEditor    m_StgEd;
 	CFont           m_Font;
 	CCamera*        m_camera;
@@ -30,7 +31,7 @@ namespace {
 CCamera* Manager::GetMainCamera(void) { return m_camera; }
 CStageObjectMgr* Manager::StageObjectMgr(void) { return &m_blockMgr; }
 CObjectMgr* Manager::BGMgr(void) { return &m_BGMgr; }
-CEffectMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
+CEffMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
 CFont* Manager::Font(void) { return &m_Font; }
 
@@ -51,6 +52,12 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// ブロックの読み込み処理(※主にモデルなど)
 	CBlock::Load();
+
+	// 環境音プレイヤーの初期化処理
+	AmbientSoundPlayer::Init();
+
+	// 標準エフェクトの優先度設定
+	RNLib::StandardEffect3D().SetPriority(PRIORITY_EFFECT);
 }
 
 //========================================
@@ -70,6 +77,9 @@ void Manager::Uninit(void) {
 
 	// カメラの破棄
 	RNLib::Memory().Release(&m_camera);
+
+	// 環境音プレイヤーの終了処理
+	AmbientSoundPlayer::Uninit();
 }
 
 //========================================
@@ -175,5 +185,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// 遷移設定
-	RNLib::Transition().Close(transType, Color{ 0,0,0,255 }, 30);
+	RNLib::Transition().Close(transType, INITCOLOR, 30);
 }

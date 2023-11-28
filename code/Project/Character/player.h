@@ -33,17 +33,6 @@ public:
 		MAX
 	};
 
-	// 当たり判定が働いた方向
-	enum class COLLI_ROT {
-		NONE = 0,	// 何もなし
-		OVER,		// 上
-		UNDER,		// 下
-		LEFT,		// 左
-		RIGHT,		// 右
-		UNKNOWN,	// 当たっているけど方向が分からない（当たられる側が動いている可能性アリ
-		MAX
-	};
-
 	// 操作の割り当て
 	enum class KEY_CONFIG {
 		MOVE_LEFT = 0,	// 左移動
@@ -58,32 +47,36 @@ public:
 	// プレイヤー情報
 	struct Info
 	{
-		D3DXVECTOR3 StartPos;     // 開始位置
-
-		D3DXVECTOR3 pos;          // 位置
-		D3DXVECTOR3 posOld;       // 前回位置
-		D3DXVECTOR3 rot;          // 向き
-		D3DXVECTOR3 move;         // 移動量
-		Color		color;		  // 色
-		int			nSwapAlpha;   // スワップマークのα値
-		bool		bGround;      // 地面に接しているか
-		bool		bGroundOld;   // 地面に接しているか(過去)
-		bool		bJump;        // ジャンプ
-		bool		bRide;        // ロケットに乗っているかどうか
-		bool		bGoal;		  // ゴールしたかどうか
-		float		fJumpPower;   // ジャンプ量
-		float		fGravity;     // 重力
-		float		fMaxHeight;   // 最高Ｙ座標
+		D3DXVECTOR3 StartPos;      // 開始位置
+		CDoll3D*    doll;
+		D3DXVECTOR3 pos;           // 位置
+		D3DXVECTOR3 posOld;        // 前回位置
+		Scale3D     scale;
+		D3DXVECTOR3 rot;           // 向き
+		D3DXVECTOR3 move;          // 移動量
+		Color		color;		   // 色
+		int			nSwapAlpha;    // スワップマークのα値
+		float		fSwapPosY;     // スワップ先のＹ座標
+		float		fSwapMoveY;    // スワップ移動時の速度
+		bool		bGround;       // 地面に接しているか
+		bool		bGroundOld;    // 地面に接しているか(過去)
+		bool		bJump;         // ジャンプ
+		bool		bRide;         // ロケットに乗っているかどうか
+		bool		bGoal;		   // ゴールしたかどうか
+		int         expandCounter; // 膨らみカウンター
+		int         deathCounter;  // 死亡カウンター
+		int         deathCounter2; // 死亡カウンター2
+		float		fJumpPower;    // ジャンプ量
+		float		fGravity;      // 重力
+		float		fMaxHeight;    // 最高Ｙ座標
 		int			nTramJumpCounter;	// トランポリンによって跳ね上がる時間
 		float		fTramTargetPosY;	// トランポリン用の目標位置
 		bool		bTramJump;			// トランポリン用の特殊ジャンプ
-		COLLI_ROT	TramColliRot;		// トランポリン用の当たり判定
-		bool		bExtendDog;	  // ヌイ用の接触フラグ
-		bool		bLandPile;	  // 杭に乗っているかどうか
-		int			nModelIdx;    // モデル番号
-		WORLD_SIDE  side;         // どちらの世界に存在するか
-		int             Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
-		CInput::BUTTON  JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
+		bool		bExtendDog;	   // ヌイ用の接触フラグ
+		bool		bLandPile;	   // 杭に乗っているかどうか
+		WORLD_SIDE  side;          // どちらの世界に存在するか
+		int            Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
+		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
 	};
 
 	static const float SIZE_WIDTH;	// 横幅
@@ -123,9 +116,6 @@ public:
 
 	// プレイヤーにトランポリン用のジャンプを設定
 	void SetTrampolineJump(Info*& pInfo, float fMaxHeight);
-
-	// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
-	void Death(D3DXVECTOR3 *pDeathPos);
 
 	// プレイヤー情報取得
 	// 各引数にプレイヤー情報のアドレスを渡します
@@ -175,11 +165,46 @@ public:
 	static int GetParticleIdx(PARTI_TEX tex) { return s_ParticleTex[(int)tex]; };
 
 private:
-	static int s_nSwapInterval; // 残りスワップインターバル
+	//種類の略称を設定
+	typedef CStageObject::TYPE OBJECT_TYPE;
+
+	//****************************************************************************
+	//スワップアニメーションセットリスト
+	//順番：詳細【その演出にかかる時間変数】
+	//----------------------------------------------------------------------------
+	//プロローグ：各プレイヤーが光に包まれ、プレイヤーが見えなくなる【SWAP_START_INTERVAL】
+	//   中間   ：光は中心に集まりつつ、スワップ先まで直線で移動する【SWAP_MOVE_INTERVAL】
+	//エピローグ：スワップ先から光が飛び散りプレイヤーが顕現する	【SWAP_END_INTERVAL】
+	//****************************************************************************
+	//アニメーション構成
+	enum class SWAP_ANIM {
+		PROLOGUE = 0,	//プロローグ
+		MIDDLE,			//中間
+		EPILOGUE,		//エピローグ
+		MAX
+	};
+	static const int SWAP_PROLOGUE_INTERVAL = 10; //スワップ開始～移動までの時間
+	static const int SWAP_MIDDLE_INTERVAL   = 70; //移動～目的地到着までの時間
+	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
+	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
+	static const int EXPAND_TIME = 60;  //膨らみにかかる時間
+	static const int DEATH_TIME = 60;   //死亡時間
+	static const int DEATH_TIME2 = 120; //死亡時間2
+	static SWAP_ANIM s_AnimState;		//アニメーション構成
+	static       int s_nSwapInterval;	//残りスワップインターバル
+	static       bool s_bSwapAnim;		//スワップアニメーション中かどうか
+
+	static const int GOAL_INTERVAL = 120;//ゴール後の余韻
+	static       int s_nGoalInterval;    //ゴール後の余韻カウンター
+
+	void Swap(void);
+	void SwapAnimation(void);
+	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); //プロローグ処理
+	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);	//中間処理
+	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); //エピローグ処理
 
 	static const char *PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX];
 	static int s_ParticleTex[(int)PARTI_TEX::MAX];
-	static const int NORMAL_SWAP_ALPHA = 100;//通常時のスワップマークのα値
 
 	static const float MOVE_SPEED;		// 移動量
 	static const float MAX_MOVE_SPEED;	// 最大移動量
@@ -193,35 +218,17 @@ private:
 	static const int OBJ_EXTENDDOG = 3;	// オブジェクトの最大数
 
 	void InitKeyConfig(void);// 各プレイヤーのキーボード・ジョイパッドのキーコンフィグ初期化設定
+	void InitInfo(void);
 	void SetPosOld(void);
 	void ActionControl(void);
 	void Move(VECTOL vec);
 	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
-	void Swap(void);
-	void SwapAnimation(void);
+	void Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
 
 	// 各プレイヤーの当たり判定が終わった後の処理
-	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type);
-
-	void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY,float fHeight);	// 上からの当たり判定による位置・移動量修正
-	void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight);	// 下からの当たり判定による位置・移動量修正
-	void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth);	// 左からの当たり判定による位置・移動量修正
-	void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth);	// 右からの当たり判定による位置・移動量修正
-
-	//void CollisionBlock(Info *pInfo, CollInfo *pColli);
-	//void CollisionFillBlock(Info *pInfo,COLLI_ROT ColliRot);
-	//void CollisionTrampoline(Info *pInfo, CollInfo *pColli, CTrampoline *pTrampoline);
-	//void CollisionSpike(Info *pInfo, CollInfo *pColli);
-	//void CollisionMoveBlock(Info *pInfo, CMoveBlock *pMoveBlock, CollInfo *pColli);
-	//void CollisionMeteor(Info *pInfo, CollInfo *pColli);
-	//void CollisionLaser(Info *pInfo, CRoadTripLaser *pRoadTripLaser, CollInfo *pColli, CollInfo *pOthColli);
-	//void CollisionDog(Info *pInfo, CExtenddog *pExtenddog, CollInfo *pColli, CollInfo *pOthColli);
-	//void CollisionGoalGate(Info *pInfo, CollInfo *pColli);
-	//void CollisionParts(Info *pInfo, CParts *pParts);
-	//void CollisionRocket(Info *pInfo, CRocket *pRocket);
-	//void CollisionPile(Info *pInfo, CollInfo *pColli, CPile *pPile);
+	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, int *pColliRot);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
@@ -231,15 +238,23 @@ private:
 
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 
-	struct SE
-	{
-		short jump;		// ジャンプSE
-		short landing;	// 着地SE
-		short dog[4];	// 壁ギミック用SE
-		short Swap;		// スワップSE
+	struct SE {
+		short jump;			// ジャンプSE
+		short landing;		// 着地SE
+		short dog[4];		// 壁ギミック用SE
+		short Swap;			// スワップSE
+		short expand;		// 膨らみ
+		short explosion;	// 破裂
 
 		CSound *pSound;	// サウンドクラス保管用
 	};
 	static SE s_SE;		//サウンド用構造体
+
+	struct Motion {
+		short neutral;
+		short walk;
+	};
+	static Motion s_motion;
+
 	static CCollision *s_pColli;
 };

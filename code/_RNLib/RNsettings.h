@@ -20,11 +20,13 @@ namespace RNSettings {
 		bool  isFullScreen            = false;	
 		float resolution              = 0.0f;
 		// OtherOptions
-		float modelOutLineAddDistance = 0.0f;
+		float modelOutLineAddDistanceInterval = 0.0f;
+		UShort modelOutLineAddDistanceDelimiter = 0;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Release(void);
 	bool LoadAndSave(const char* path);
 	Info GetInfo(void);
+	void SetFulScreen(bool screen);
 }

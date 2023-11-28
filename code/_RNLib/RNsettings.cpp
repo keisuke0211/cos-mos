@@ -39,12 +39,13 @@ bool RNSettings::LoadAndSave(const char* path) {
 	bool isLoad = RNLib::File().OpenLoadFile(path);
 	if (isLoad) {
 		while (RNLib::File().SearchLoop("END")) {
-			RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &info.projectName            , "projectName"            );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowWidth            , "windowWidth"            );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowHeight           , "windowHeight"           );
-			RNLib::File().Scan(CFile::SCAN::BOOL          , &info.isFullScreen           , "isFullScreen"           );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.resolution             , "resolution"             );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.modelOutLineAddDistance, "modelOutLineAddDistance");
+			RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &info.projectName                     , "projectName"                     );
+			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowWidth                     , "windowWidth"                     );
+			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowHeight                    , "windowHeight"                    );
+			RNLib::File().Scan(CFile::SCAN::BOOL          , &info.isFullScreen                    , "isFullScreen"                    );
+			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.resolution                      , "resolution"                      );
+			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.modelOutLineAddDistanceInterval , "modelOutLineAddDistanceInterval" );
+			RNLib::File().Scan(CFile::SCAN::USHORT        , &info.modelOutLineAddDistanceDelimiter, "modelOutLineAddDistanceDelimiter");
 		}
 
 		// ファイルを閉じる
@@ -58,13 +59,14 @@ bool RNSettings::LoadAndSave(const char* path) {
 	// 書き込むファイルとして開く
 	if (RNLib::File().OpenSaveFile(path)) {
 		fprintf(RNLib::File().GetFile(), /*  */"#KeyOption\n");	
-		fprintf(RNLib::File().GetFile(), /*  */"projectName				%s\n", info.projectName            );
-		fprintf(RNLib::File().GetFile(), /*  */"windowWidth				%.2f\n", info.windowWidth            );
-		fprintf(RNLib::File().GetFile(), /*  */"windowHeight			%.2f\n", info.windowHeight           );
-		fprintf(RNLib::File().GetFile(), /*  */"isFullScreen			%d\n", info.isFullScreen           );
-		fprintf(RNLib::File().GetFile(), /*  */"resolution				%.2f\n", info.resolution             );
+		fprintf(RNLib::File().GetFile(), /*  */"projectName							%s\n"  , info.projectName);
+		fprintf(RNLib::File().GetFile(), /*  */"windowWidth							%.2f\n", info.windowWidth);
+		fprintf(RNLib::File().GetFile(), /*  */"windowHeight						%.2f\n", info.windowHeight);
+		fprintf(RNLib::File().GetFile(), /*  */"isFullScreen						%d\n"  , info.isFullScreen);
+		fprintf(RNLib::File().GetFile(), /*  */"resolution							%.2f\n", info.resolution);
 	 	fprintf(RNLib::File().GetFile(), /*  */"#OtherOption\n");
-		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistance	%.2f\n", info.modelOutLineAddDistance);
+		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistanceInterval		%.2f\n", info.modelOutLineAddDistanceInterval);
+		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistanceDelimiter	%d\n"  , info.modelOutLineAddDistanceDelimiter);
 		fprintf(RNLib::File().GetFile(), /*  */"END");
 
 		// ファイルを閉じる
@@ -80,4 +82,13 @@ bool RNSettings::LoadAndSave(const char* path) {
 RNSettings::Info RNSettings::GetInfo(void) {
 
 	return info;
+}
+
+//========================================
+// スクリーンモード
+//========================================
+void RNSettings::SetFulScreen(bool screen) {
+
+	info.isFullScreen = screen;
+	RNLib::Window().SetFullScreen(screen);
 }

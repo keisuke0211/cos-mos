@@ -9,7 +9,7 @@
 #include "Mode/mode.h"
 #include "../_RNLib/RNlib.h"
 #include "Object/stage-object-manager.h"
-#include "Effect/effect-manager.h"
+#include "Effect/eff-manager.h"
 #include "System\StageEditor.h"
 #include "System\words\font.h"
 
@@ -41,8 +41,8 @@ namespace Manager {
 	void        Transition   (const CMode::TYPE newMode, const CTransition::TYPE transType);
 	CCamera*    GetMainCamera(void);
 	CStageObjectMgr*  StageObjectMgr   (void);
-	CObjectMgr*  BGMgr(void);
-	CEffectMgr*       EffectMgr(void);
+	CObjectMgr*   BGMgr(void);
+	CEffMgr*      EffectMgr(void);
 	CStageEditor* StgEd(void);
-	CFont* Font(void);
+	CFont*        Font(void);
 };

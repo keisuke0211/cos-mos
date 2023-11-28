@@ -6,7 +6,7 @@
 //========================================
 #include "meteor.h"
 #include "../../main.h"
-#include "../../Effect/effect-manager.h"
+#include "../../Effect/eff-manager.h"
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CTrampolineクラスのメンバ関数
@@ -83,7 +83,7 @@ void CMeteor::Update(void) {
 	CollisionBlock();
 
 	//モデル配置
-	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot,  false)->SetOutLine(true)
+	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot,  false)->SetOutLineIdx(true)
 		->SetBrightnessOfEmissive(m_fBlink)->SetCol(m_color);
 
 }

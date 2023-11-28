@@ -185,11 +185,9 @@ void CPolygon2D::Update(void) {
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	// ìoò^éÛïtíÜÇ≈Ç»Ç¢éûÅAèIóπ
-	if (CDrawMgr::GetProcessState() != CDrawMgr::PROCESS_STATE::REGIST_ACCEPT)
-		return NULL;
-
-	return RNLib::DrawMgr().PutPolygon2D(priority, pos, angle, isOnScreen);
+	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen)
+		->SetPos(pos)
+		->SetAngle(angle);
 }
 
 //========================================
@@ -198,6 +196,14 @@ CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& po
 CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
 	return Put(priority, Pos3D(pos.x, pos.y, 0.0f), angle, isOnScreen);
+}
+
+//========================================
+// ê›íuèàóù
+//========================================
+CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const bool& isOnScreen) {
+
+	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen);
 }
 
 //================================================================================
@@ -357,7 +363,7 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	CMemory::Alloc(&drawInfo);
 
 	// äÓíÍèÓïÒÇë„ì¸
-	AssignToDrawInfo(*drawInfo, CDrawInfoBase::TYPE::POLYGON2D);
+	AssignToDrawInfo(*drawInfo);
 
 	// èÓïÒÇë„ì¸
 	drawInfo->m_idx       = m_idx;
@@ -406,9 +412,6 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetIdx(const short& idx) {
 
-	if (this == NULL)
-		return NULL;
-
 	m_idx = idx;
 
 	return this;
@@ -419,9 +422,6 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetIdx(const short& idx) {
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetPos(const Pos3D& pos) {
 
-	if (this == NULL)
-		return NULL;
-
 	m_pos = pos;
 
 	return this;
@@ -431,9 +431,6 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetPos(const Pos3D& pos) {
 // äpìxÇê›íË
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetAngle(const Angle& angle) {
-
-	if (this == NULL)
-		return NULL;
 
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::SIZE) {
 		SetSizeInfo* setSizeInfo = (SetSizeInfo*)m_setVtxPosInfo;
@@ -459,9 +456,6 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetAngle(const Angle& angle) {
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxPos(const Pos2D pos0, const Pos2D pos1, const Pos2D pos2, const Pos2D pos3) {
 
-	if (this == NULL)
-		return NULL;
-
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::NONE) {
 		CMemory::Alloc((SetVtxPosInfo**)&m_setVtxPosInfo);
 		SetVtxPosInfo* setTexInfo = (SetVtxPosInfo*)m_setVtxPosInfo;
@@ -482,9 +476,6 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxPos(const Pos2D pos0, co
 // ëÂÇ´Ç≥Çê›íË
 //========================================
 CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetSize(const float& width, const float& height) {
-
-	if (this == NULL)
-		return NULL;
 
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::SIZE) {
 		SetSizeInfo* setTexInfo = (SetSizeInfo*)m_setVtxPosInfo;

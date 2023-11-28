@@ -10,9 +10,10 @@
 
 //マクロ定義
 #define MAX_COUNT		(60)	//最大カウント数
-#define ETR_CNT			(16)	//最大カウント数
 #define MAX_ROT_SPEED	(30.0f / (float) MAX_COUNT)	//最大回転速度
 
+int CGoalGate::m_num = 0;
+int CGoalGate::m_numEntry = 0;
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CGoalGateクラスのメンバ関数
@@ -34,9 +35,10 @@ CGoalGate::CGoalGate(void) {
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
-	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
+	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
 	m_bEntry = false;
 	m_bScale = false;
+	m_num++;
 }
 
 //========================================
@@ -44,6 +46,8 @@ CGoalGate::CGoalGate(void) {
 //========================================
 CGoalGate::~CGoalGate(void) {
 
+	m_num = 0;
+	m_numEntry = 0;
 }
 
 //========================================
@@ -96,18 +100,26 @@ void CGoalGate::StateUpdate(void)
 		m_rot.z += 0.05f;
 	}
 
-	if (RNLib::Input().GetKeyTrigger(DIK_U))
+	if (m_num == m_numEntry)
 	{
-		m_state = STATE::MAX;
-	}
-	if (RNLib::Input().GetKeyTrigger(DIK_I))
-	{
-		m_bEntry = true;
-		m_nCntEtrX = ETR_CNT;
-		m_nCntEtrY = ETR_CNT * 0.5;
-	}
+		float CountRateRot = MAX_ROT_SPEED * CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		float CntEffRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
-	if (m_state == STATE::SMALL)
+		m_rot.z += 0.6f - CountRateRot;
+
+		if (m_nCnt > 0)
+		{
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120);
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120,D3DXVECTOR3(0.0f,0.0f,3.14f));
+			m_nCnt--;
+		}
+		else
+		{
+			m_state = STATE::NONE;
+			m_numEntry = 0;
+		}
+	}
+	else if (m_state == STATE::SMALL)
 	{
 		m_nCnt--;
 
@@ -123,27 +135,6 @@ void CGoalGate::StateUpdate(void)
 		if (m_nCnt > MAX_COUNT)
 		{
 			m_state = STATE::SMALL;
-		}
-	}
-	else if (m_state == STATE::MAX)
-	{
-		float CountRateRot = MAX_ROT_SPEED * CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt,MAX_COUNT);
-
-		m_rot.z += 0.6f - CountRateRot;
-
-		if (m_nCnt > 0)
-		{
-			m_nCnt--;
-		}
-		else
-		{
-			m_state = STATE::NONE;
-
-			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
-			{
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
-			}
 		}
 	}
 }
@@ -194,5 +185,24 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
 		//割合計算
 		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	}
+}
+//========================================
+// エントリー設定処理
+// Author:RYUKI FUJIWARA
+//========================================
+void CGoalGate::SetEntry(bool bEntry) 
+{
+	m_bEntry = bEntry;
+
+	if (bEntry == true) {
+		m_numEntry++;
+		m_nCntEtrX = ETR_CNT;
+		m_nCntEtrY = ETR_CNT * 0.5;
+
+		for (int ParCnt = 0; ParCnt < 16; ParCnt++)
+		{
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+		}
 	}
 }

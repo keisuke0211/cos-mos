@@ -1,0 +1,37 @@
+#========================================
+#
+# テキスト情報
+# Author KEISUKE OOTONO
+#
+#========================================
+# テキスト設定
+#========================================
+Start
+
+SetOperation
+	TextMax = 6
+	
+	Text = 操作方法
+	Text = ・移動　　：Ω
+	Text = ・ジャンプ：Σ
+	Text = ・スワップ：Φ
+	Text = ・決定　　：Д
+	Text = ・戻る　　：Σ
+
+EndOperation
+
+SetSetting
+	TextMax = 7
+	
+	Text = 設定
+	Text = フルスクリーン
+	Text = BGM音量
+	Text = 効果音音量
+	Text = 戻る
+	Text = %
+	Text = %
+
+
+EndSetting
+
+END

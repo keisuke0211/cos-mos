@@ -15,6 +15,11 @@
 #include "Basis/3DObject/Body/doll3D-manager.h"
 #include "Basis/3DObject/Body/motion3D.h"
 #include "Basis/3DObject/Body/setup3D.h"
+#include "Basis/3DObject/Effect/effect3D.h"
+#include "Basis/3DObject/Effect/effect3D_cylinder.h"
+#include "Basis/3DObject/Effect/effect3D-base.h"
+#include "Basis/3DObject/Effect/effect3D-manager.h"
+#include "Basis/3DObject/Effect/standard-effect3D.h"
 //========== [[[ Calculation ]]]
 #include "Basis/Calculation/ease.h"
 #include "Basis/Calculation/geometry.h"
@@ -59,55 +64,56 @@
 namespace RNSystem {
 
 	//========== [[[ óÒãìå^íËã` ]]]
-	enum class SIGNAL { NONE, INIT, UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, DRAW2, END, };
+	enum class SIGNAL { NONE, INIT, UNINIT, END_UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, END_DRAW, END, };
 	enum class MODE   { EXECUTION, DEMO, SETUP3D_EDITOR };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	bool   MainLoop       (HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const MODE& mode);
-	SIGNAL GetSignal      (void);
-	void   EndScene       (void);
-	int    GetFPS         (void);
-	int    GetDrawFPS     (void);
-	void   AddDrawFPSCount(void);
-	void   SetSpace3DStop (const bool& isStop);
-	bool   GetSpace3DStop (void);
-	bool   GetSceneSwap   (void);
+	bool          MainLoop      (HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const MODE& mode);
+	SIGNAL        GetSignal     (void);
+	void          EndScene      (void);
+	int           GetFPS        (void);
+	void          SetSpace3DStop(const bool& isStop);
+	bool          GetSpace3DStop(void);
+	bool          GetSceneSwap  (void);
+	CEffect3DMgr& GetEffet3DMgr (void);
+	CCameraMgr&   GetCameraMgr  (void);
 }
 
 // RNÉâÉCÉuÉâÉä
 namespace RNLib {
 
 	// 3DObject
-	CDoll3DMgr&   Doll3DMgr   (void);
-	CMotion3D&    Motion3D    (void);
-	CSetUp3D&     SetUp3D     (void);
+	CDoll3DMgr&        Doll3DMgr       (void);
+	CMotion3D&         Motion3D        (void);
+	CSetUp3D&          SetUp3D         (void);
+	CEffect3D&         Effect3D        (void);
+	CStandardEffect3D& StandardEffect3D(void);
 	// Calculation
-	CEase&        Ease        (void);
-	CGeometry&    Geometry    (void);
-	CHitTest&     HitTest     (void);
-	CMatrix&      Matrix      (void);
-	// Draw
-	CModel&       Model       (void);
-	CPolygon2D&   Polygon2D   (void);
-	CPolygon3D&   Polygon3D   (void);
-	CText2D&      Text2D      (void);
-	CText3D&      Text3D      (void);
-	CCameraMgr&   CameraMgr   (void);
-	CDrawMgr&     DrawMgr     (void);
-	CDrawState&   DrawStateMgr(void);
-	CLight3D&     Light3D     (void);
-	CText&        Text        (void);
-	CTexture&     Texture     (void);
-	CTransition&  Transition  (void);
+	CEase&             Ease            (void);
+	CGeometry&         Geometry        (void);
+	CHitTest&          HitTest         (void);
+	CMatrix&           Matrix          (void);
+	// Draw						       
+	CModel&            Model           (void);
+	CPolygon2D&        Polygon2D       (void);
+	CPolygon3D&        Polygon3D       (void);
+	CText2D&           Text2D          (void);
+	CText3D&           Text3D          (void);
+	CDrawMgr&          DrawMgr         (void);
+	CDrawState&        DrawStateMgr    (void);
+	CLight3D&          Light3D         (void);
+	CText&             Text            (void);
+	CTexture&          Texture         (void);
+	CTransition&       Transition      (void);
 	// Mechanical
-	CCount&       Count       (void);
-	CFile&        File        (void);
-	CInput&       Input       (void);
-	CMemory&      Memory      (void);
-	CSound&       Sound       (void);
-	CWindow&      Window      (void);
+	CCount&            Count           (void);
+	CFile&             File            (void);
+	CInput&            Input           (void);
+	CMemory&           Memory          (void);
+	CSound&            Sound           (void);
+	CWindow&           Window          (void);
 	// Other...
-	CDefaultData& DefaultData (void);
+	CDefaultData&      DefaultData     (void);
 }
 
 //****************************************

@@ -76,7 +76,7 @@ void CMagmaBlock::Update(void)
 
 	// ‰ß‹Ž‚ÌˆÊ’u
 	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-		->SetOutLine(true)
+		->SetOutLineIdx(true)
 		->SetCol(m_color);
 }
 
