@@ -9,6 +9,8 @@
 #include "../collision.h"
 #include "../../_RNLib/Basis/Calculation/number.h"
 #include "../Object/Gimmick/pile.h"
+#include"../UI/miss.h"
+#include"../Object/Block/Ghost.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
@@ -31,7 +33,9 @@ const int	CPlayer::TRAMPOLINE_JUMP_COUNTER = 10;
 
 const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 	"data\\TEXTURE\\Effect\\eff_Circle_005.png",// スワップマーク
-	"data\\TEXTURE\\Effect\\eff_Star_000.png",	// スワップパーティクル
+	"data\\TEXTURE\\Effect\\eff_Star_000.png",	// スワップパーティクル00
+	"data\\TEXTURE\\Effect\\ink001.png",		// スワップパーティクル01
+	"data\\TEXTURE\\Effect\\ink002.png",		// スワップパーティクル02
 	"data\\TEXTURE\\Effect\\mark_Skull_000.png",// 死亡マーク
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",	// 死亡パーティクル
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",	// ゴール・ロケット乗車時のエフェクト
@@ -419,6 +423,12 @@ void CPlayer::ActionControl(void)
 				addVec = INITVECTOR3D;
 				posVTemp = Manager::GetMainCamera()->GetPosV();
 				posRTemp = Manager::GetMainCamera()->GetPosR();
+
+				// ミスのテキスト生成
+				CMiss::Create();
+
+				// ゴーストの生成
+				CGhost::Create(Player.pos, nIdxPlayer);
 			}
 
 			float rate = (float)Player.deathCounter / DEATH_TIME;
@@ -432,6 +442,27 @@ void CPlayer::ActionControl(void)
 
 			if (--Player.deathCounter2 == 0) {
 				InitInfo();
+
+				//オブジェクトのポインタを格納
+				CObject *obj = NULL;
+
+				//オブジェクトを取得
+				while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+					//取得したオブジェクトをキャスト
+					CStageObject* stageObj = (CStageObject*)obj;
+
+					//種類取得
+					const CStageObject::TYPE type = stageObj->GetType();
+
+					if (type == CStageObject::TYPE::MISS)
+					{
+						//取得したオブジェクトをキャスト
+						CMiss* Miss = (CMiss*)obj;
+
+						Miss->Delete();	// 削除処理
+						break;
+					}
+				}
 			}
 
 			bool isReturn = false;
@@ -526,7 +557,7 @@ void CPlayer::ActionControl(void)
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
 			Player.nSwapAlpha = 255;
 		}
 		//スワップ先のマークカラーを変更
@@ -560,7 +591,7 @@ void CPlayer::Swap(void)
 
 			for (int i = 0; i < 16; i++)
 			{
-				Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
+				Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
 			}
 
 			// 位置・重力加速度・ジャンプ量・存在する世界を反転
@@ -589,8 +620,8 @@ void CPlayer::SwapAnimation(void)
 
 		switch (s_AnimState)
 		{
-			case CPlayer::SWAP_ANIM::PROLOGUE: SwapAnim_Prologue(Player, nCntPlayer);break;//プロローグ
-			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	break;//中間
+			case CPlayer::SWAP_ANIM::PROLOGUE: SwapAnim_Prologue(Player, nCntPlayer);break; //プロローグ
+			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	break;	//中間
 			case CPlayer::SWAP_ANIM::EPILOGUE: SwapAnim_Epilogue(Player, nCntPlayer);break;//エピローグ
 		}
 
@@ -603,7 +634,10 @@ void CPlayer::SwapAnimation(void)
 			else{
 				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(203 + rand() % 40),(UShort)(190 + rand() % 40),255 };
 			}
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_MARK), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol);
+
+			int nTex = rand() % 2 + 2;
+
+			Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol,CParticle::TYPE::TYPE_NORMAL,300,D3DXVECTOR3(0.0f,0.0f,(float)(rand() % 629 - 314) / 100.0f),8, CDrawState::ALPHA_BLEND_MODE::NORMAL);
 		}
 	}
 }

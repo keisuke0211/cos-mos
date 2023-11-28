@@ -1,0 +1,26 @@
+SetUp3DFile
+boneDataSum{ 3
+	boneData{
+		idx 0
+		modelIdx data\\MODEL\\BoneHead.x
+		parentIdx -1
+		relativePos 0.00 9.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\MODEL\\Bone.x
+		parentIdx 0
+		relativePos 0.00 -2.00 0.00
+		relativeRot 0.00 0.00 0.10
+	}
+	boneData{
+		idx 2
+		modelIdx data\\MODEL\\Bone.x
+		parentIdx 0
+		relativePos 0.00 -2.00 0.00
+		relativeRot 0.00 0.00 -0.10
+	}
+}
+
+END

@@ -33,6 +33,7 @@ public:
 		ROCKET	   = 10,//ロケット本体
 		PILE       = 11,//杭
 		BACKGROUND = 12,//背景
+		MISS	   = 13,//ミス
 		MAX,
 	};
 
