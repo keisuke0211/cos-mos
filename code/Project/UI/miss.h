@@ -31,6 +31,5 @@ protected:
 private:
 	int m_TexIdx;		// テクスチャ
 	int m_nMagCnt;		// 倍率カウント
-	Scale2D m_Scale;	// スケール
 
 };

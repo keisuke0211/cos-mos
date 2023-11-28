@@ -34,6 +34,7 @@ public:
 		PILE       = 11,//çY
 		BACKGROUND = 12,//îwåi
 		MISS	   = 13,//É~ÉX
+		GHOST	   = 14,//óHóÏ
 		MAX,
 	};
 
