@@ -9,6 +9,7 @@
 #include "../collision.h"
 #include "../../_RNLib/Basis/Calculation/number.h"
 #include "../Object/Gimmick/pile.h"
+#include"../UI/miss.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
@@ -419,6 +420,9 @@ void CPlayer::ActionControl(void)
 				addVec = INITVECTOR3D;
 				posVTemp = Manager::GetMainCamera()->GetPosV();
 				posRTemp = Manager::GetMainCamera()->GetPosR();
+
+				// ここ！
+				CMiss::Create();
 			}
 
 			float rate = (float)Player.deathCounter / DEATH_TIME;
@@ -432,6 +436,27 @@ void CPlayer::ActionControl(void)
 
 			if (--Player.deathCounter2 == 0) {
 				InitInfo();
+
+				//オブジェクトのポインタを格納
+				CObject *obj = NULL;
+
+				//オブジェクトを取得
+				while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+					//取得したオブジェクトをキャスト
+					CStageObject* stageObj = (CStageObject*)obj;
+
+					//種類取得
+					const CStageObject::TYPE type = stageObj->GetType();
+
+					if (type == CStageObject::TYPE::MISS)
+					{
+						//取得したオブジェクトをキャスト
+						CMiss* Miss = (CMiss*)obj;
+
+						Miss->Delete();	// 削除処理
+						break;
+					}
+				}
 			}
 
 			bool isReturn = false;
