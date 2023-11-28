@@ -23,7 +23,7 @@ public:
 		~CRegistInfo();
 		void ClearParameter(void);
 		void PutPolygon2D(const UShort& priority, const bool& isOnScreen);
-		CRegistInfo* SetPos      (const Pos3D& pos);
+		CRegistInfo* SetPos      (const Pos2D& pos);
 		CRegistInfo* SetAngle    (const Angle& angle);
 		CRegistInfo* SetString   (const char* string);
 		CRegistInfo* SetAlignment(const CText::ALIGNMENT& alignment);
@@ -37,7 +37,7 @@ public:
 		char*            m_string;
 		CText::ALIGNMENT m_alignment;
 		short            m_fontIdx;
-		Pos3D            m_pos;
+		Pos2D            m_pos;
 		Angle            m_angle;
 		Vector2D         m_scaleOrSize;
 		bool             m_isScale;
@@ -51,8 +51,8 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	CRegistInfo* Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
-	void PutDebugLog(const char* string);
+	CRegistInfo* Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen = false);
+	Pos2D PutDebugLog(const char* string);
 
 private:
 	//========== [[[ ïœêîêÈåæ ]]]

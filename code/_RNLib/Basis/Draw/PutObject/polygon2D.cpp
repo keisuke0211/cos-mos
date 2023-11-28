@@ -183,7 +183,7 @@ void CPolygon2D::Update(void) {
 //========================================
 // 設置処理
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
+CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
 	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen)
 		->SetPos(pos)
@@ -193,9 +193,9 @@ CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& po
 //========================================
 // 設置処理
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
+CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	return Put(priority, Pos3D(pos.x, pos.y, 0.0f), angle, isOnScreen);
+	return Put(priority, Pos2D(pos.x, pos.y), angle, isOnScreen);
 }
 
 //========================================
@@ -260,7 +260,6 @@ CPolygon2D::CDrawInfo::CDrawInfo() {
 	m_tex         = NULL;
 	m_texType     = Polygon2DAnd3D::TEX_TYPE::NONE;
 	m_isZTest     = true;
-	m_distance    = 0.0f;
 	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}
@@ -346,7 +345,7 @@ void CPolygon2D::CRegistInfo::ClearParameter(void) {
 	CRegistInfoBase::ClearParameter();
 	m_idx               = 0;
 	CMemory::Release(&m_setVtxPosInfo);
-	m_pos               = INITPOS3D;
+	m_pos               = INITPOS2D;
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
 	m_col               = INITCOLOR;
 	m_setTexInfoSum.ClearParameter();
@@ -368,7 +367,6 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	// 情報を代入
 	drawInfo->m_idx       = m_idx;
 	drawInfo->m_isZTest   = m_isZtest;
-	drawInfo->m_distance  = -m_pos.z;
 
 	//----------------------------------------
 	// 頂点情報の設定
@@ -420,7 +418,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetIdx(const short& idx) {
 //========================================
 // 位置を設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetPos(const Pos3D& pos) {
+CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetPos(const Pos2D& pos) {
 
 	m_pos = pos;
 
