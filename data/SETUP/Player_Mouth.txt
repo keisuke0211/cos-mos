@@ -4,7 +4,7 @@ boneDataSum{ 13
 		idx 0
 		modelIdx data\\MODEL\\Player_Mouth\\Head.x
 		parentIdx -1
-		relativePos 0.00 11.50 0.00
+		relativePos 0.00 7.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -53,14 +53,14 @@ boneDataSum{ 13
 		idx 7
 		modelIdx data\\MODEL\\Player_Mouth\\Limb.x
 		parentIdx 0
-		relativePos 3.00 -2.00 0.00
+		relativePos 3.00 2.20 0.00
 		relativeRot 0.0 0.00 0.00
 	}
 	boneData{
 		idx 8
 		modelIdx data\\MODEL\\Player_Mouth\\Limb.x
 		parentIdx 0
-		relativePos -3.00 -2.00 0.00
+		relativePos -3.00 2.20 0.00
 		relativeRot 0.0 0.00 0.00
 	}
 	boneData{
@@ -100,7 +100,7 @@ boneDataSum{ 13
 faceDataSum{ 64
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 17
@@ -124,7 +124,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 1
@@ -148,7 +148,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 5
@@ -172,7 +172,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 7
@@ -196,7 +196,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 9
@@ -220,7 +220,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 11
@@ -244,7 +244,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 13
@@ -268,7 +268,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 15
@@ -290,9 +290,14 @@ faceData{
 		texPos 1.00 1.00
 	}
 }
+
+
+
+
+
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 17
@@ -316,7 +321,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 1
@@ -340,7 +345,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 5
@@ -364,7 +369,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 7
@@ -388,7 +393,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 9
@@ -412,7 +417,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 11
@@ -436,7 +441,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 13
@@ -460,7 +465,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 15
@@ -489,7 +494,7 @@ faceData{
 
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 9
@@ -513,7 +518,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 11
@@ -537,7 +542,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 13
@@ -561,7 +566,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 15
@@ -585,7 +590,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 17
@@ -609,7 +614,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 1
@@ -633,7 +638,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 5
@@ -657,7 +662,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 2
 		vtxIdx 7
@@ -679,9 +684,14 @@ faceData{
 		texPos 1.00 1.00
 	}
 }
+
+
+
+
+
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 17
@@ -705,7 +715,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 1
@@ -729,7 +739,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 5
@@ -753,7 +763,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 7
@@ -777,7 +787,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 9
@@ -801,7 +811,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 11
@@ -825,7 +835,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 13
@@ -849,7 +859,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 4
 		vtxIdx 15
@@ -871,9 +881,13 @@ faceData{
 		texPos 1.00 1.00
 	}
 }
+
+
+
+
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 17
@@ -897,7 +911,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 1
@@ -921,7 +935,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 5
@@ -945,7 +959,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 7
@@ -969,7 +983,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 9
@@ -993,7 +1007,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 11
@@ -1017,7 +1031,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 13
@@ -1041,7 +1055,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 7
 		vtxIdx 15
@@ -1069,7 +1083,7 @@ faceData{
 
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 17
@@ -1093,7 +1107,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 1
@@ -1117,7 +1131,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 5
@@ -1141,7 +1155,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 7
@@ -1165,7 +1179,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 9
@@ -1189,7 +1203,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 11
@@ -1213,7 +1227,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 13
@@ -1237,7 +1251,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 9
 		vtxIdx 15
@@ -1265,7 +1279,7 @@ faceData{
 
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 17
@@ -1289,7 +1303,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 1
@@ -1313,7 +1327,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 5
@@ -1337,7 +1351,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 7
@@ -1361,7 +1375,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 9
@@ -1385,7 +1399,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 11
@@ -1409,7 +1423,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 13
@@ -1433,7 +1447,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 8
 		vtxIdx 15
@@ -1461,7 +1475,7 @@ faceData{
 
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 17
@@ -1485,7 +1499,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 1
@@ -1509,7 +1523,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 5
@@ -1533,7 +1547,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 7
@@ -1557,7 +1571,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 9
@@ -1581,7 +1595,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 11
@@ -1605,7 +1619,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 13
@@ -1629,7 +1643,7 @@ faceData{
 }
 faceData{
 	texIdx NONEDATA
-	col 255 155 59 255
+	col 204 124 47 255
 	vtx0{
 		boneIdx 10
 		vtxIdx 15
