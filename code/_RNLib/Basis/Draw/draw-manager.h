@@ -107,7 +107,7 @@ public:
 	void Release(void);
 	CPolygon2D::CRegistInfo* PutPolygon2D(const UShort& priority, const bool& isOnScreen);
 	CPolygon3D::CRegistInfo* PutPolygon3D(const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	CText2D::CRegistInfo*    PutText2D   (const UShort& priority, const Pos3D& pos, const float& angle, const bool& isOnScreen);
+	CText2D::CRegistInfo*    PutText2D   (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
 	CText3D::CRegistInfo*    PutText3D   (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
 	CModel::CRegistInfo*     PutModel    (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
 

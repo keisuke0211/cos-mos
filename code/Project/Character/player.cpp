@@ -9,12 +9,15 @@
 #include "../collision.h"
 #include "../../_RNLib/Basis/Calculation/number.h"
 #include "../Object/Gimmick/pile.h"
+#include"../UI/miss.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
 int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
 bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
 CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
+
+int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
 
 const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
@@ -52,6 +55,9 @@ CPlayer::CPlayer()
 	s_bSwapAnim = false;
 	s_AnimState = SWAP_ANIM::PROLOGUE;
 
+	//ゴール後の余韻カウンター
+	s_nGoalInterval = 0;
+
 	s_SE.pSound = NULL;
 	s_SE.jump = 0;
 	s_SE.landing = 0;
@@ -65,6 +71,7 @@ CPlayer::CPlayer()
 	{
 		Player.expandCounter = 0;
 		Player.deathCounter = 0;
+		Player.deathCounter2 = 0;
 		Player.StartPos = INITD3DXVECTOR3;		// 開始位置
 		Player.doll = NULL;
 		Player.pos = INITD3DXVECTOR3;			// 位置
@@ -262,6 +269,7 @@ void CPlayer::InitInfo(void) {
 		Player.bTramJump = false;
 		Player.expandCounter = 0;
 		Player.deathCounter = 0;
+		Player.deathCounter2 = 0;
 	}
 }
 
@@ -314,9 +322,12 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		const int planet = Manager::StgEd()->GetPlanetIdx();
-		const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-		Manager::StgEd()->SwapStage(stage + 1);
+		if (++s_nGoalInterval >= GOAL_INTERVAL)
+		{
+			const int planet = Manager::StgEd()->GetPlanetIdx();
+			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
+			Manager::StgEd()->SwapStage(stage + 1);
+		}
 	}
 
 	// 当たり判定まとめ
@@ -341,7 +352,7 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal) continue;
 
 		// 位置設定
-		if (Player.deathCounter == 0 && !Player.bGoal && !s_bSwapAnim) {
+		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim) {
 			Player.doll->SetPos(Player.pos - Pos3D(0.0f, (fabsf(Player.pos.y) / Player.pos.y) * SIZE_HEIGHT, 0.0f));
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
@@ -386,7 +397,15 @@ void CPlayer::ActionControl(void)
 	int nIdxPlayer = -1;
 
 	// 操作停止フラグを算出
-	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0;
+	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0 || m_aInfo[0].deathCounter2 > 0 || m_aInfo[1].deathCounter2 > 0;
+
+	if (!isControlStop) {
+		// [[[ カメラ制御 ]]]
+		Pos3D pos = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
+		pos.x *= 0.25f;
+		pos.y = 0.0f;
+		Manager::GetMainCamera()->SetPosVAndPosR(Manager::GetMainCamera()->GetPosV(), pos);
+	}
 
 	for each (Info & Player in m_aInfo)
 	{
@@ -394,28 +413,94 @@ void CPlayer::ActionControl(void)
 		nIdxPlayer++;
 
 		// 死亡カウンター&演出
+		static Vector3D addVec = INITVECTOR3D;
+		static Pos3D posVTemp = INITVECTOR3D;
+		static Pos3D posRTemp = INITVECTOR3D;
 		if (Player.deathCounter > 0) {
 			if (--Player.deathCounter == 0) {
-				InitInfo();
+				Player.deathCounter2 = DEATH_TIME2;
+				addVec = INITVECTOR3D;
+				posVTemp = Manager::GetMainCamera()->GetPosV();
+				posRTemp = Manager::GetMainCamera()->GetPosR();
+
+				// ここ！
+				CMiss::Create();
 			}
 
 			float rate = (float)Player.deathCounter / DEATH_TIME;
 			float rateOpp = 1.0f - rate;
 			Manager::GetMainCamera()->SetMotionBlurColor(Color{ 255,(UShort)(255 * rateOpp),(UShort)(255 * rateOpp),255 });
-			Manager::GetMainCamera()->SetMotionBlurPower(rate * 0.5f);
+			Manager::GetMainCamera()->SetMotionBlurPower(0.25f + rate * 0.25f);
 			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.1f));
 		}
-		// 膨らみカウンター&円す津
+		// 死亡カウンター2&演出
+		if (Player.deathCounter2 > 0) {
+
+			if (--Player.deathCounter2 == 0) {
+				InitInfo();
+
+				//オブジェクトのポインタを格納
+				CObject *obj = NULL;
+
+				//オブジェクトを取得
+				while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+					//取得したオブジェクトをキャスト
+					CStageObject* stageObj = (CStageObject*)obj;
+
+					//種類取得
+					const CStageObject::TYPE type = stageObj->GetType();
+
+					if (type == CStageObject::TYPE::MISS)
+					{
+						//取得したオブジェクトをキャスト
+						CMiss* Miss = (CMiss*)obj;
+
+						Miss->Delete();	// 削除処理
+						break;
+					}
+				}
+			}
+
+			bool isReturn = false;
+			int counter = Player.deathCounter2;
+			if (counter > DEATH_TIME2 / 2)
+				counter -= DEATH_TIME2 / 2;
+			float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, counter, DEATH_TIME2 / 2);
+			if (rate > 0.5f) {
+				rate = 0.5f + (0.5f - rate);
+				isReturn = true;
+			}
+			rate /= 0.5f;
+
+			float rate2 = ((float)Player.deathCounter2 / DEATH_TIME2);
+			if (rate2 > 0.5f) {
+				rate2 = 0.5f + (0.5f - rate2);
+			}
+			rate2 /= 0.5f;
+
+			addVec += CGeometry::GetRandomVec();
+			Manager::GetMainCamera()->SetMotionBlurPower(isReturn ? 0.25f + rate * 0.25f : rate * 0.5f);
+			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.02f));
+			Manager::GetMainCamera()->SetPosVAndPosR(
+				((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
+				((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
+		}
+		// 膨らみカウンター＆演出
 		else if (Player.expandCounter > 0) {
 			if (--Player.expandCounter == 0) {
 				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
 				Manager::GetMainCamera()->SetVib(5.0f);
 
-				Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
+				//Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
 
-				for (int ParCnt = 0; ParCnt < 8; ParCnt++)
+				const int NUM_PARTICLE = 8;
+				Pos3D rot = INITVECTOR3D;
+				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 				{
-					Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::DEATH_PARTI), Player.pos, INIT_EFFECT_SCALE * 0.5f, Color{ 255,0,0,255 });
+					const float fSize = (float)(rand() % 100) / 10.0f + 1.2f;
+					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
+					Manager::EffectMgr()->DeathParticleCreate(
+						GetParticleIdx(PARTI_TEX::SWAP_MARK), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, Vector2D(fSize, fSize), Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
 				}
 				Player.deathCounter = DEATH_TIME;
 			}
@@ -604,7 +689,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 {
-	if (Player.expandCounter > 0 || Player.deathCounter > 0)
+	if (Player.expandCounter > 0 || Player.deathCounter > 0 || Player.deathCounter2 > 0)
 		return;
 
 	Player.expandCounter = EXPAND_TIME;
@@ -616,7 +701,9 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 //----------------------------
 void CPlayer::Move(VECTOL vec)
 {
-	if (m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0) {
+	if (m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || 
+		m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0 ||
+		m_aInfo[0].deathCounter2 > 0 || m_aInfo[1].deathCounter2 > 0) {
 		return;
 	}
 

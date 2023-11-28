@@ -53,7 +53,7 @@ void CText2D::Update(void) {
 //========================================
 // 設置処理
 //========================================
-CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
+CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
 	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
 		->SetString(string)
@@ -64,14 +64,19 @@ CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, c
 //========================================
 // デバッグログ設置処理
 //========================================
-void CText2D::PutDebugLog(const char* string) {
+Pos2D CText2D::PutDebugLog(const char* string) {
+
+	// 設置位置
+	Pos2D putPos = Pos2D(0.0f, 8.0f + m_debugLogLine * 16.0f);
 
 	// 左上から下にかけてテキスト2Dを設置する
-	Put(0, string, CText::ALIGNMENT::LEFT, 0, Pos3D(0.0f, 8.0f + m_debugLogLine * 16.0f, 0.0f), 0.0f, true)
+	Put(0, string, CText::ALIGNMENT::LEFT, 0, putPos, 0.0f, true)
 		->SetSize(Size2D(16.0f, 16.0f));
 
 	// デバッグログの行数加算
 	m_debugLogLine++;
+
+	return putPos;
 }
 
 //================================================================================
@@ -106,7 +111,7 @@ void CText2D::CRegistInfo::ClearParameter(void) {
 	CMemory::Release(&m_string);
 	m_alignment   = CText::ALIGNMENT::CENTER;
 	m_fontIdx     = NONEDATA;
-	m_pos         = INITD3DXVECTOR3;
+	m_pos         = INITPOS2D;
 	m_angle       = 0.0f;
 	m_scaleOrSize = INITVECTOR2D;
 	m_isScale     = false;
@@ -210,7 +215,7 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 //========================================
 // 位置を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetPos(const Pos3D& pos) {
+CText2D::CRegistInfo* CText2D::CRegistInfo::SetPos(const Pos2D& pos) {
 
 	if (this == NULL)
 		return NULL;

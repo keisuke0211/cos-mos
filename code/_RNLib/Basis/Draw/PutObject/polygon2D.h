@@ -34,7 +34,6 @@ public:
 		void*                    m_tex;
 		Polygon2DAnd3D::TEX_TYPE m_texType;
 		bool                     m_isZTest;
-		float                    m_distance;
 		Vertex2D                 m_vtxs[4];
 
 		// [[[ 静的変数宣言 ]]]
@@ -54,7 +53,7 @@ public:
 		CPolygon2D::CDrawInfo* ConvToDrawInfo(void);
 		// <<< 基本情報設定 >>>
 		CRegistInfo* SetIdx        (const short& idx);
-		CRegistInfo* SetPos        (const Pos3D& pos);
+		CRegistInfo* SetPos        (const Pos2D& pos);
 		CRegistInfo* SetAngle      (const Angle& angle);
 		// <<< 頂点位置情報設定 >>>
 		CRegistInfo* SetVtxPos     (const Pos2D pos0, const Pos2D pos1, const Pos2D pos2, const Pos2D pos3);
@@ -73,7 +72,7 @@ public:
 	private:
 		// <<< 基本情報 >>>
 		short m_idx;
-		Pos3D m_pos;
+		Pos2D m_pos;
 
 		// <<< 頂点情報 >>>
 		enum class SET_VTX_POS_INFO_TYPE { NONE, NORMAL, SIZE, MAX, };
@@ -113,7 +112,7 @@ public:
 	void Init  (void);
 	void Uninit(void);
 	void Update(void);
-	CRegistInfo* Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
 	CRegistInfo* Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen = false);
+	CRegistInfo* Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
 	CRegistInfo* Put(const UShort& priority, const bool& isOnScreen = false);
 };
