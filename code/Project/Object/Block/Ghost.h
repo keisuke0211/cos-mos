@@ -25,6 +25,7 @@ public:
 
 	static CGhost *Create(D3DXVECTOR3 pos,int nplayernumber);	// 生成処理
 
+	void Delete(void) { CStageObject::Delete(); }		// 削除処理
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };		// 位置の設定
 	void SetPlayer(int playernumber) { m_nPlayerNumber = playernumber; };	// プレイヤー番号
 
@@ -32,6 +33,7 @@ protected:
 
 private:
 	D3DXVECTOR3 m_pos;		// 位置
+	D3DXVECTOR3 m_rot;		// 位置
 	int m_nPlayerNumber;	// プレイヤー番号
 	int m_TexIdx[2];		// テクスチャ
 	int m_nMagCnt;			// 倍率カウント

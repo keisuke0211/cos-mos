@@ -21,7 +21,6 @@ CMiss::CMiss()
 
 	m_TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Miss.png");
 	m_nMagCnt = 0;
-	m_Scale = MAX_SCALE;
 }
 //========================================
 // デストラクタ
@@ -59,7 +58,7 @@ void CMiss::Update(void) {
 	float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_nMagCnt, MAX_MAG_CNT);
 
 	RNLib::Polygon3D().Put(PRIORITY_UI, Manager::GetMainCamera()->GetPosR(), INITROT3D)
-		->SetSize(m_Scale.x * fCountRate, m_Scale.y * fCountRate)
+		->SetSize(MAX_SCALE.x * fCountRate, MAX_SCALE.y * fCountRate)
 		->SetZTest(false)
 		->SetLighting(false)
 		->SetTex(m_TexIdx)

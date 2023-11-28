@@ -97,26 +97,51 @@ void CGoalGate::StateUpdate(void)
 {
 	if (m_state != STATE::MAX)
 	{
-		m_rot.z += 0.05f;
+		if (m_pos.y > 0)
+		{
+			m_rot.z += 0.05f;
+		}
+		else if (m_pos.y < 0)
+		{
+			m_rot.z -= 0.05f;
+		}
 	}
 
 	if (m_num == m_numEntry)
 	{
+		m_state = STATE::MAX;
+
 		float CountRateRot = MAX_ROT_SPEED * CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 		float CntEffRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
-		m_rot.z += 0.6f - CountRateRot;
+		if (m_pos.y > 0)
+		{
+			m_rot.z += 0.6f - CountRateRot;
+		}
+		else if(m_pos.y < 0)
+		{
+			m_rot.z -= 0.6f - CountRateRot;
+		}
 
 		if (m_nCnt > 0)
 		{
-			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120);
-			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120,D3DXVECTOR3(0.0f,0.0f,3.14f));
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120,m_rot);
+
 			m_nCnt--;
 		}
 		else
 		{
 			m_state = STATE::NONE;
-			m_numEntry = 0;
+			m_num--;
+			m_numEntry--;
+
+
+			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
+			{
+				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+			}
+
+			Delete();
 		}
 	}
 	else if (m_state == STATE::SMALL)
@@ -144,6 +169,11 @@ void CGoalGate::StateUpdate(void)
 //========================================
 void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
 {
+	if (m_state == STATE::MAX)
+	{
+		m_bEntry = false;
+	}
+
 	if (m_bEntry == true)
 	{
 		//äÑçáåvéZ

@@ -1,35 +1,35 @@
 //========================================
 // 
-// ミスの処理
+// 蝙蝠の処理
 // Author:KOMURO HIROMU
 // 
 //========================================
 #pragma once
 
-#include "../../_RNLib/RNlib.h"
-#include "../Object/stage-object.h"
-
+#include "../../../_RNLib/RNlib.h"
+#include"../stage-object.h"
 //****************************************
 // クラス定義
 //****************************************
-// ミスの情報構造体
-class CMiss : public CStageObject{
+// 惑星の情報構造体
+class CBat : public CStageObject {
 public:
 
-	CMiss();
-	virtual		~CMiss();
-
+	//========== [[[ 関数宣言 ]]]
+	CBat();
+	virtual        ~CBat();
 	virtual void   Init(void);
 	virtual void   Uninit(void);
 	virtual void   Update(void);
+	virtual void   Draw(void);
 
-	void Delete(void) { CStageObject::Delete(); }	// 削除処理
-	static CMiss *Create();	// 生成処理
+	void	SetModelIdx(int idx) { ModelIdx = idx; }
 
 protected:
 
 private:
-	int m_TexIdx;		// テクスチャ
-	int m_nMagCnt;		// 倍率カウント
+	//========== [[[ 変数宣言 ]]]
+	int ModelIdx;
 
 };
+

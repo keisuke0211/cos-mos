@@ -456,12 +456,33 @@ void CPlayer::ActionControl(void)
 
 					if (type == CStageObject::TYPE::MISS)
 					{
-						//取得したオブジェクトをキャスト
-						CMiss* Miss = (CMiss*)obj;
+							//取得したオブジェクトをキャスト
+							CMiss* Miss = (CMiss*)obj;
 
-						Miss->Delete();	// 削除処理
-						break;
+							Miss->Delete();	// 削除処理
 					}
+					if (type == CStageObject::TYPE::GHOST)
+					{
+							//取得したオブジェクトをキャスト
+							CGhost* Ghost = (CGhost*)obj;
+
+							Ghost->Delete();	// 削除処理
+					}
+					//switch (type)
+					//{
+					//case CStageObject::TYPE::MISS:
+					//	//取得したオブジェクトをキャスト
+					//	CMiss* Miss = (CMiss*)obj;
+
+					//	Miss->Delete();	// 削除処理
+					//	break;
+					//case CStageObject::TYPE::GHOST:
+					//	//取得したオブジェクトをキャスト
+					//	CGhost* Ghost = (CGhost*)obj;
+
+					//	Ghost->Delete();	// 削除処理
+					//	break;
+					//}
 				}
 			}
 
