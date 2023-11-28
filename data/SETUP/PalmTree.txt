@@ -91,7 +91,7 @@ boneDataSum{ 12
 faceDataSum{ 8
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 2
@@ -115,7 +115,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 5
@@ -139,7 +139,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 7
@@ -163,7 +163,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 9
@@ -187,7 +187,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 11
@@ -211,7 +211,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 13
@@ -235,7 +235,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 15
@@ -259,7 +259,7 @@ faceData{
 }
 faceData{
 	texIdx data\\TEXTURE\\Wood.png
-	col 255 255 255 255
+	col 130 82 28 255
 	vtx0{
 		boneIdx 1
 		vtxIdx 17
