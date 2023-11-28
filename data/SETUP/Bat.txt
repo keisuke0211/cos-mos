@@ -1,0 +1,27 @@
+SetUp3DFile
+boneDataSum{ 3
+	boneData{
+		idx 0
+		modelIdx data\\MODEL\\Bat\\Bat_Body.x
+		parentIdx -1
+		relativePos 0.00 5.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\MODEL\\Bat\\Bat_LWing.x
+		parentIdx 0
+		relativePos 2.00 0.00 01.00
+		relativeRot 0.0 0.00 -0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\MODEL\\Bat\\Bat_RWing.x
+		parentIdx 0
+		relativePos -2.00 0.00 1.00
+		relativeRot 0.0 0.00 -0.00
+	}
+}
+
+}
+END
