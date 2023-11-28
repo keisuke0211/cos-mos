@@ -26,6 +26,7 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\StageObject\\TreeTrunk_Root.x",
 	"NONEDATA",
 	"NONEDATA",
+	"data\\MODEL\\coin.x",
 };
 const char* CBlock::OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX] = {
 	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Inside.x",
@@ -37,6 +38,9 @@ const char* CBlock::OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX] = {
 const char* CBlock::OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX] = {
 	"data\\MOTION\\ChestStepped.txt",
 };
+const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
+	"data\\SOUND\\SE\\coin.wav",
+};
 
 //========================================
 // 変数定義
@@ -45,6 +49,7 @@ short CBlock::m_modelIdxes[(int)LOOKS_TYPE::MAX];
 short CBlock::m_otherModelIdxes[(int)OTHER_MODEL::MAX];
 short CBlock::m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::MAX];
 short CBlock::m_otherMotion3DIdxes[(int)OTHER_MOTION3D::MAX];
+short CBlock::m_otherSoundIdxes[(int)OTHER_SOUND::MAX];
 
 //========================================
 // 読み込み処理
@@ -67,6 +72,11 @@ void CBlock::Load(void) {
 	// モーション3D読み込み
 	for (int cnt = 0; cnt < (int)OTHER_MOTION3D::MAX; cnt++) {
 		m_otherMotion3DIdxes[cnt] = RNLib::Motion3D().Load(OTHER_MOTION3D_PATHS[cnt]);
+	}
+
+	// サウンド読み込み
+	for (int cnt = 0; cnt < (int)OTHER_SOUND::MAX; cnt++) {
+		m_otherSoundIdxes[cnt] = RNLib::Sound().Load(OTHER_SOUND_PATHS[cnt]);
 	}
 }
 
@@ -124,7 +134,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	}break;
 	}
 
-	// 位置乱数
+	// 位置調整
 	switch (m_looksType) {
 	case LOOKS_TYPE::SOIL_BLOCK					:
 	case LOOKS_TYPE::SOIL_BLOCK_GRASSY			:
@@ -134,6 +144,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_C	:
 	case LOOKS_TYPE::LEAF_BLOCK					:
 		m_pos.z -= ((int)fabsf(m_pos.x + m_pos.y) % 20) * 0.5f;
+		break;
+	case LOOKS_TYPE::PILE_OF_COINS:
+		m_pos.y -= (m_pos.y / fabsf(m_pos.y)) * SIZE_OF_1_SQUARE * 0.5f;
 		break;
 	}
 
@@ -183,6 +196,29 @@ void CBlock::Update(void) {
 				m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::CHEST_STEPPED]);
 			}
 		}
+	}break;
+	case LOOKS_TYPE::PILE_OF_COINS: {
+
+		if (m_pos.y > 0.0f) {
+			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
+				for (int cnt = 0; cnt < 3; cnt++)
+					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f,8.0f,0.0f), Color{ 255,200,0,255 });
+			}
+
+			RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
+		}
+		else {
+			if (!m_isHitOlds[(int)CCollision::ROT::UNDER] && m_isHits[(int)CCollision::ROT::UNDER]) {
+				for (int cnt = 0; cnt < 3; cnt++)
+					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
+
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
+			}
+		}
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision);
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)

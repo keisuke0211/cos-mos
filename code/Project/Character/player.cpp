@@ -632,7 +632,7 @@ void CPlayer::SwapAnimation(void)
 				setCol = Color{ (UShort)(215 + rand() % 40),(UShort)(135 + rand() % 40),(UShort)(39 + rand() % 40),255 };
 			}
 			else{
-				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(203 + rand() % 40),(UShort)(190 + rand() % 40),255 };
+				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(130 + rand() % 125),(UShort)(130 + rand() % 125),255 };
 			}
 
 			int nTex = rand() % 2 + 2;

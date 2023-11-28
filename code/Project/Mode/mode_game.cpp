@@ -708,10 +708,12 @@ void CMode_Game::PauseSelect(void)
 			case MENU_RESET:
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 				m_Pause.bClose = true;
+				Manager::EffectMgr()->ReleaseAll();
 				break;
 			case MENU_SELECT:
 				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
 				CMode_Title::SetSelect(true);
+				Manager::EffectMgr()->ReleaseAll();
 				break;
 			case MENU_CONTROLLER:
 				break;
