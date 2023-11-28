@@ -70,19 +70,19 @@ void CGhost::Update(void) {
 		->SetZTest(false)
 		->SetLighting(false)
 		->SetBillboard(false)
-		->SetTex(m_TexIdx[m_nPlayerNumber]);
-		//->SetCol(m_color);
+		->SetTex(m_TexIdx[m_nPlayerNumber])
+		->SetCol(m_color);
 
 	m_color.a = 255 * fCountRate;
 
 	if (m_nPlayerNumber == 0)
 	{
-		//m_pos.y += 0.1f;
+		m_pos.y += 0.1f;
 
 	}
 	else
 	{
-		//m_pos.y -= 0.1f;
+		m_pos.y -= 0.1f;
 	}
 }
 
