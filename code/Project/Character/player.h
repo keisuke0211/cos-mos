@@ -154,7 +154,9 @@ public:
 	//パーティクルテクスチャ
 	enum class PARTI_TEX {
 		SWAP_MARK = 0,	// スワップマーク
-		SWAP_PARTI,		// スワップパーティクル
+		SWAP_PARTI00,	// スワップパーティクル00
+		SWAP_PARTI01,	// スワップパーティクル01
+		SWAP_PARTI02,	// スワップパーティクル02
 		DEATH_MARK,		// 死亡マーク
 		DEATH_PARTI,	// 死亡パーティクル
 		GOAL_EFFECT,	// ゴール・ロケット乗車時のエフェクト
