@@ -9,7 +9,7 @@
 #include "../../Character/player.h"
 
 //マクロ定義
-#define MAX_COUNT		(60)						//最大カウント数
+#define MAX_COUNT		(90)						//最大カウント数
 #define MAX_ROT_SPEED	(30.0f / (float) MAX_COUNT)	//最大回転速度
 #define MAX_COLOR		(200)						//最大カラー値
 #define ADDSUB_COLOR	(10)						//和差カラー値
@@ -41,6 +41,7 @@ CGoalGate::CGoalGate(void) {
 	m_Rainbow = RAINBOW::RED;
 	m_num++;
 	m_bStartGate = false;
+	m_bCloseGate = false;
 
 	//モデルとテクスチャ
 	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
@@ -52,6 +53,7 @@ CGoalGate::CGoalGate(void) {
 // デストラクタ
 //========================================
 CGoalGate::~CGoalGate(void) {
+	m_num--;
 }
 
 //========================================
@@ -62,6 +64,13 @@ void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
+
+	m_RainbowCol[(int)RAINBOW::RED] =		{ 255,0,0,255 };
+	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 255,0,255,255 };
+	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,255,255 };
+	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,255,255,255 };
+	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,255,0,255 };
+	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 255,255,0,255 };
 }
 
 //========================================
@@ -82,13 +91,12 @@ void CGoalGate::Update(void)
 	StateUpdate();
 	ColUpdate();
 
-	float fCountRateX, fCountRateY;
-	CountRate(&fCountRateX, &fCountRateY);
+	float fCountRateX, fCountRateY, fCountRateZ;
+	CountRate(&fCountRateX, &fCountRateY,&fCountRateZ);
 	
 	//モデル配置
-	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false)
-		->SetCol(m_col)
-		->SetOutLineIdx(1);
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
+		->SetCol(m_col);
 }
 //========================================
 // 描画処理
@@ -113,7 +121,7 @@ void CGoalGate::StateUpdate(void)
 			m_rot.z -= 0.05f;
 	}
 
-	if (m_num == m_numEntry || m_bStartGate == true)
+	if (m_num == m_numEntry || m_bCloseGate == true)
 	{
 		m_state = STATE::MAX;
 
@@ -128,15 +136,17 @@ void CGoalGate::StateUpdate(void)
 
 		if (m_nCnt > 0)
 		{
-			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 30,m_rot);
-			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 30,D3DXVECTOR3(m_rot.x,m_rot.y,m_rot.z + D3DX_PI));
+			if (!m_bStartGate)
+			{
+				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, m_rot);
+				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z + D3DX_PI));
+			}
 
 			m_nCnt--;
 		}
 		else
 		{
 			m_state = STATE::NONE;
-			m_num--;
 
 			if (m_bStartGate == false)
 			{
@@ -145,13 +155,13 @@ void CGoalGate::StateUpdate(void)
 
 			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 			{
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, m_RainbowCol[rand() % 6]);
 			}
 
 			Delete();
 		}
 	}
-	else if (m_state == STATE::SMALL)
+	else if (m_state == STATE::SMALL )
 	{
 		m_nCnt--;
 
@@ -163,7 +173,12 @@ void CGoalGate::StateUpdate(void)
 		m_nCnt++;
 
 		if (m_nCnt > MAX_COUNT)
+		{
 			m_state = STATE::SMALL;
+
+			if (m_bStartGate)
+				m_bCloseGate = true;
+		}	
 	}
 }
 //========================================
@@ -221,7 +236,7 @@ void CGoalGate::ColUpdate(void)
 // カウントレート処理
 // Author:RYUKI FUJIWARA
 //========================================
-void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
+void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRateZ)
 {
 	if (m_state == STATE::MAX)
 		m_bEntry = false;
@@ -266,6 +281,8 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
 		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 	}
+
+	*CountRateZ = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 }
 //========================================
 // エントリー設定処理
