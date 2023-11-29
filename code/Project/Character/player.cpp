@@ -84,7 +84,8 @@ CPlayer::CPlayer()
 		Player.fSwapPosY = 0.0f;				// スワップ先のＹ座標
 		Player.fSwapMoveY = 0.0f;				// スワップ移動時の速度
 		Player.bGround = false;					// 地面に接しているか
-		Player.bGroundOld = false;				// 地面に接しているか(過去)
+		Player.bGroundOld = false;				// 地面に接しているか(過去)7
+		Player.landingCounter = false;
 		Player.bJump = false;					// ジャンプ
 		Player.bRide = false;					// ロケットに乗っているかどうか
 		Player.bGoal = false;					// ゴールしたかどうか
@@ -169,6 +170,9 @@ HRESULT CPlayer::Init(void)
 
 	s_motion.neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Default.txt");
 	s_motion.walk = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Walk.txt");
+	s_motion.jump = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Jump.txt");
+	s_motion.fall = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
+	s_motion.landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
 
 	InitInfo();
 
@@ -555,24 +559,42 @@ void CPlayer::ActionControl(void)
 
 												// SE再生
 			s_SE.pSound->Play(s_SE.jump, CSound::CATEGORY::SE, false);
+
+			Player.doll->OverwriteMotion(s_motion.jump);
 		}
+
+		bool isMove = false;
 
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
 			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT, nIdxPlayer)) 
 		{// 右に移動
 			Player.move.x += MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
-			Player.doll->OverwriteMotion(s_motion.walk);
+			isMove = true;
 		}
 		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
 			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer)) 
 		{// 左に移動
 			Player.move.x -= MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
-			Player.doll->OverwriteMotion(s_motion.walk);
+			isMove = true;
+		}
+
+		if (!Player.bGround) {
+			if ((Player.pos.y > 0.0f && Player.move.y < 0.0f) || (Player.pos.y < 0.0f && Player.move.y > 0.0f)) {
+				Player.doll->OverwriteMotion(s_motion.fall);
+			}
+		}
+		else if (Player.landingCounter == 0) {
+			if (isMove) {
+				Player.doll->OverwriteMotion(s_motion.walk);
+			}
+			else {
+				Player.doll->OverwriteMotion(s_motion.neutral);
+			}
 		}
 		else {
-			Player.doll->OverwriteMotion(s_motion.neutral);
+			Player.landingCounter--;
 		}
 
 		// スワップ入力

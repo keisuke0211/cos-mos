@@ -18,7 +18,8 @@
 //========================================
 CText2D::CText2D() {
 
-	m_debugLogLine = 0;
+	m_isShowDebugLog = true;
+	m_debugLogLine   = 0;
 }
 
 //========================================
@@ -33,6 +34,8 @@ CText2D::~CText2D() {
 //========================================
 void CText2D::Init(void) {
 
+	// 実行モードであればデバッグ表示を行わない
+	m_debugLogLine = (RNSystem::GetMode() != RNSystem::MODE::EXECUTION);
 }
 
 //========================================
@@ -48,12 +51,22 @@ void CText2D::Uninit(void) {
 void CText2D::Update(void) {
 
 	m_debugLogLine = 0;
+
+	// 実行モードでない時、
+	if (RNSystem::GetMode() != RNSystem::MODE::EXECUTION){
+		if (RNLib::Input().GetKeyTrigger(DIK_F1)) {
+			m_isShowDebugLog = !m_isShowDebugLog;
+		}
+	}
 }
 
 //========================================
 // 設置処理
 //========================================
 CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
+
+	if (m_isShowDebugLog)
+		return NULL;
 
 	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
 		->SetString(string)

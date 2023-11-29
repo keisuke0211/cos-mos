@@ -66,11 +66,12 @@ namespace RNSystem {
 
 	//========== [[[ óÒãìå^íËã` ]]]
 	enum class SIGNAL { NONE, INIT, UNINIT, END_UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, END_DRAW, END, };
-	enum class MODE   { EXECUTION, DEMO, SETUP3D_EDITOR };
+	enum class MODE   { EXECUTION, DEBUG, DEMO, SETUP3D_EDITOR };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	bool          MainLoop      (HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const MODE& mode);
 	SIGNAL        GetSignal     (void);
+	MODE          GetMode       (void);
 	void          EndScene      (void);
 	int           GetFPS        (void);
 	void          SetSpace3DStop(const bool& isStop);

@@ -56,5 +56,6 @@ public:
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]
+	bool   m_isShowDebugLog;
 	UShort m_debugLogLine;
 };

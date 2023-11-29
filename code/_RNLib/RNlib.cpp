@@ -92,7 +92,8 @@ CDefaultData&      RNLib::DefaultData     (void) { return other.m_defaultData;  
 //========================================
 // ê›íË/éÊìæånä÷êî
 //========================================
-RNSystem::SIGNAL RNSystem::GetSignal      (void)               { return nowMode == RNSystem::MODE::EXECUTION ? signal : SIGNAL::NONE; }
+RNSystem::SIGNAL RNSystem::GetSignal      (void)               { return (nowMode == RNSystem::MODE::EXECUTION || nowMode == RNSystem::MODE::DEBUG) ? signal : SIGNAL::NONE; }
+RNSystem::MODE   RNSystem::GetMode        (void)               { return nowMode; }
 int              RNSystem::GetFPS         (void)               { return FPS; }
 void             RNSystem::SetSpace3DStop (const bool& isStop) { isSpace3DStopReserve = isStop; }
 bool             RNSystem::GetSpace3DStop (void)               { return isSpace3DStop; }
@@ -161,7 +162,7 @@ bool RNSystem::MainLoop(HINSTANCE& instanceHandle, const char* settingsPath, con
 	// [[[ êMçÜÇ…âûÇ∂ÇΩèàóù ]]]
 	switch (signal) {
 	case RNSystem::SIGNAL::INIT: {
-		Init(instanceHandle, settingsPath, mode == MODE::EXECUTION ? priorityMax : (UShort)RNMode::PRIORITY::MAX, mode);
+		Init(instanceHandle, settingsPath, (mode == MODE::EXECUTION || mode == MODE::DEBUG) ? priorityMax : (UShort)RNMode::PRIORITY::MAX, mode);
 	}break;
 	case RNSystem::SIGNAL::UNINIT: {
 		Uninit();

@@ -60,6 +60,7 @@ public:
 		float		fSwapMoveY;    // スワップ移動時の速度
 		bool		bGround;       // 地面に接しているか
 		bool		bGroundOld;    // 地面に接しているか(過去)
+		short       landingCounter;
 		bool		bJump;         // ジャンプ
 		bool		bRide;         // ロケットに乗っているかどうか
 		bool		bGoal;		   // ゴールしたかどうか
@@ -166,6 +167,17 @@ public:
 	//パーティクル番号取得
 	static int GetParticleIdx(PARTI_TEX tex) { return s_ParticleTex[(int)tex]; };
 
+	struct Motion {
+		short neutral;
+		short walk;
+		short jump;
+		short fall;
+		short landing;
+	};
+
+	//モーション情報取得
+	static Motion GetMotion(void) { return s_motion; }
+
 private:
 	//種類の略称を設定
 	typedef CStageObject::TYPE OBJECT_TYPE;
@@ -252,10 +264,6 @@ private:
 	};
 	static SE s_SE;		//サウンド用構造体
 
-	struct Motion {
-		short neutral;
-		short walk;
-	};
 	static Motion s_motion;
 
 	static CCollision *s_pColli;
