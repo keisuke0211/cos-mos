@@ -52,6 +52,7 @@ const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 //========================================
 // ïœêîíËã`
 //========================================
+UShort CBlock::m_num = 0;
 short CBlock::m_modelIdxes[(int)LOOKS_TYPE::MAX];
 short CBlock::m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 short CBlock::m_otherModelIdxes[(int)OTHER_MODEL::MAX];
@@ -113,6 +114,7 @@ CBlock::CBlock(void) {
 	m_addPos       = INITPOS3D;
 	m_counter      = 0;
 	m_counterMax   = 0;
+	m_num++;
 }
 
 //========================================
@@ -121,6 +123,7 @@ CBlock::CBlock(void) {
 CBlock::~CBlock() {
 
 	CMemory::Release(&m_doll);
+	m_num--;
 }
 
 //========================================
@@ -179,6 +182,7 @@ void CBlock::Uninit(void) {
 void CBlock::Update(void) {
 
 	static const short outLineIdx = 5;
+	m_num;
 
 	switch (m_looksType) {
 	case LOOKS_TYPE::LEAF_BLOCK: {

@@ -99,6 +99,7 @@ private:
 	static const char* OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX];
 
 	//========== [[[ ïœêîêÈåæ ]]]
+	static UShort m_num;
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];

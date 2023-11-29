@@ -441,6 +441,10 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
 			
+			if (m_modelIdx == 44) {
+				int n = 0;
+			}
+
 			float brightness = 1.0f;
 			if (drawInfo->m_mats[cntMat].Emissive.r +
 				drawInfo->m_mats[cntMat].Emissive.g +
@@ -449,10 +453,10 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 			}
 
 			// マテリアルの材質パラメータを設定
-			const float r = (float)(m_col.r / 255) * brightness;
-			const float g = (float)(m_col.g / 255) * brightness;
-			const float b = (float)(m_col.b / 255) * brightness;
-			const float a = (float)(m_col.a / 255);
+			const float r = ((float)m_col.r / 255) * brightness;
+			const float g = ((float)m_col.g / 255) * brightness;
+			const float b = ((float)m_col.b / 255) * brightness;
+			const float a = ((float)m_col.a / 255);
 			drawInfo->m_mats[cntMat].Diffuse.r *= r;
 			drawInfo->m_mats[cntMat].Diffuse.g *= g;
 			drawInfo->m_mats[cntMat].Diffuse.b *= b;

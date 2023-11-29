@@ -57,6 +57,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	m_isFixed         = false;
 	m_state           = STATE::NONE;
 	m_stateInfo       = NULL;
+	m_isDraw          = false;
 	m_BGCol           = Color{0,0,0,0};
 	m_isClipping      = false;
 	m_motionBlur      = {};
