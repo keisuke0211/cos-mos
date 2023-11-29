@@ -766,30 +766,46 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 		{
 			case CPlayer::VECTOL::X:
 				// 前回は左からめり込んでいない（今はめり込んだ
-				if (OLD_MAXPOS.x <= TARGET_MinPosOld.x)			return ROT::LEFT;
+				if (OLD_MAXPOS.x <= TARGET_MinPosOld.x)      return ROT::LEFT;
 
 				// 前回は右からめり込んでいない（今はめり込んだ
-				else if (OLD_MINPOS.x >= TARGET_MaxPosOld.x)	return ROT::RIGHT;
-
-				//対象が左に動いている
-				else if (target.posOld.x > target.pos.x) return ROT::RIGHT;
+				else if (OLD_MINPOS.x >= TARGET_MaxPosOld.x) return ROT::RIGHT;
 
 				//対象が右に動いている
-				else if (target.posOld.x < target.pos.x) return ROT::LEFT;
+				else if (target.posOld.x < target.pos.x)     return ROT::LEFT;
+
+				//対象が左に動いている
+				else if (target.posOld.x > target.pos.x)     return ROT::RIGHT;
+
+				//今も前も原点は対象より左にいる
+				else if (self.pos.x <= target.minPos.x &&
+						 self.posOld.x <= target.minPos.x)   return ROT::LEFT;
+
+				//今も前も原点は対象より右にいる
+				else if (self.pos.x >= target.maxPos.x &&
+						 self.posOld.x >= target.maxPos.x)   return ROT::RIGHT;
 				break;
 
 			case CPlayer::VECTOL::Y:
 				// 前回は上からめり込んでいない（今はめり込んだ
-				if (OLD_MINPOS.y >= TARGET_MaxPosOld.y)			return ROT::OVER;
+				if (OLD_MINPOS.y >= TARGET_MaxPosOld.y)      return ROT::OVER;
 
 				// 前回は下からめり込んでいない（今はめり込んだ
-				else if (OLD_MAXPOS.y <= TARGET_MinPosOld.y)	return ROT::UNDER;
+				else if (OLD_MAXPOS.y <= TARGET_MinPosOld.y) return ROT::UNDER;
 
 				//対象が上に動いている
-				else if (target.posOld.y < target.pos.y) return ROT::OVER;
+				else if (target.posOld.y < target.pos.y)     return ROT::OVER;
 
 				//対象が下に動いている
-				else if (target.posOld.y > target.pos.y) return ROT::UNDER;
+				else if (target.posOld.y > target.pos.y)     return ROT::UNDER;
+
+				//今も前も原点は対象より左にいる
+				else if (self.pos.y <= target.minPos.y &&
+						 self.posOld.y <= target.minPos.y)   return ROT::OVER;
+
+				//今も前も原点は対象より右にいる
+				else if (self.pos.y >= target.maxPos.y &&
+						 self.posOld.y >= target.maxPos.y)   return ROT::UNDER;
 				break;
 		}
 

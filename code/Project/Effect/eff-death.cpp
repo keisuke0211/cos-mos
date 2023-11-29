@@ -115,7 +115,7 @@ void CEffect_Death::UpdateType_Ball(void)
 				switch (vec)
 				{
 					case CPlayer::VECTOL::X:m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER + PlayerMove.x;break;
-					case CPlayer::VECTOL::Y:m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + PlayerMove.y;break;
+					case CPlayer::VECTOL::Y:m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + PlayerMove.y * 0.7f;break;
 				}
 			}
 		}
@@ -249,45 +249,6 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 
 		//当たり判定
 		ColliRot = CCollision::IsBoxCollider(*pSelfInfo, *pColliInfo, vec);
-
-		if (ColliRot == CCollision::ROT::UNKNOWN)
-		{
-			break;
-			switch (vec)
-			{
-				case CPlayer::VECTOL::X:
-					//原点位置がオブジェクトの最小位置(左側)よりめり込んでいない
-					if (pSelfInfo->pos.x <= pColliInfo->minPos.x)
-					{
-						pSelfInfo->pos.x = pColliInfo->minPos.x - pSelfInfo->fWidth;
-						ColliRot = CCollision::ROT::LEFT;
-					}
-
-					//原点位置がオブジェクトの最大位置(右側)よりめり込んでいない
-					else if (pSelfInfo->pos.x >= pColliInfo->maxPos.x)
-					{
-						pSelfInfo->pos.x = pColliInfo->maxPos.x + pSelfInfo->fWidth;
-						ColliRot = CCollision::ROT::RIGHT;
-					}
-					break;
-
-				case CPlayer::VECTOL::Y:
-					//原点位置がオブジェクトの最小位置(下側)よりめり込んでいない
-					if (pSelfInfo->pos.y <= pColliInfo->minPos.y)
-					{
-						pSelfInfo->pos.y = pColliInfo->minPos.y - pSelfInfo->fHeight;
-						ColliRot = CCollision::ROT::UNDER;
-					}
-
-					//原点位置がオブジェクトの最大位置(上側)よりめり込んでいない
-					else if (pSelfInfo->pos.y >= pColliInfo->maxPos.y)
-					{
-						pSelfInfo->pos.y = pColliInfo->maxPos.y + pSelfInfo->fHeight;
-						ColliRot = CCollision::ROT::OVER;
-					}
-					break;
-			}
-		}
 
 		//当たったら終了
 		if (ColliRot != CCollision::ROT::NONE)
