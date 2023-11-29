@@ -11,6 +11,8 @@
 //マクロ定義
 #define MAX_COUNT		(60)	//最大カウント数
 #define MAX_ROT_SPEED	(30.0f / (float) MAX_COUNT)	//最大回転速度
+#define MAX_COLOR		(200)	//最大カラー値
+#define ADDSUB_COLOR	(10)	//和差カラー値
 
 int CGoalGate::m_num = 0;
 int CGoalGate::m_numEntry = 0;
@@ -33,12 +35,16 @@ CGoalGate::CGoalGate(void) {
 	m_type = TYPE::GOALGATE;
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
+	m_bEntry = false;
+	m_bScale = false;
+	m_col = Color{ 200,0,0,255 };
+	m_Rainbow = RAINBOW::RED;
+	m_num++;
+
+	//モデルとテクスチャ
 	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
-	m_bEntry = false;
-	m_bScale = false;
-	m_num++;
 }
 
 //========================================
@@ -57,6 +63,7 @@ CGoalGate::~CGoalGate(void) {
 void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
+	m_Rainbow = RAINBOW::RED;
 }
 
 //========================================
@@ -74,12 +81,14 @@ void CGoalGate::Uninit(void) {
 void CGoalGate::Update(void) {
 
 	StateUpdate();
+	ColUpdate();
 
 	float fCountRateX, fCountRateY;
 
 	CountRate(&fCountRateX, &fCountRateY);
 	
-	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false);
+	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false)
+		->SetCol(m_col);
 }
 //========================================
 // 描画処理
@@ -125,7 +134,8 @@ void CGoalGate::StateUpdate(void)
 
 		if (m_nCnt > 0)
 		{
-			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 120,m_rot);
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 30,m_rot);
+			Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, INITCOLOR, CParticle::TYPE::TYPE_SPIN, 30,D3DXVECTOR3(m_rot.x,m_rot.y,m_rot.z + D3DX_PI));
 
 			m_nCnt--;
 		}
@@ -134,7 +144,6 @@ void CGoalGate::StateUpdate(void)
 			m_state = STATE::NONE;
 			m_num--;
 			m_numEntry--;
-
 
 			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 			{
@@ -161,6 +170,57 @@ void CGoalGate::StateUpdate(void)
 		{
 			m_state = STATE::SMALL;
 		}
+	}
+}
+//========================================
+// 色更新処理
+// Author:RYUKI FUJIWARA
+//========================================
+void CGoalGate::ColUpdate(void)
+{
+	switch (m_Rainbow)
+	{
+	case RAINBOW::RED:
+		if (m_col.b < MAX_COLOR)
+			m_col.b += ADDSUB_COLOR;
+		else
+			m_Rainbow = RAINBOW::PURPLE;
+		break;
+
+	case RAINBOW::PURPLE:
+		if (m_col.r > 0)
+			m_col.r -= ADDSUB_COLOR;
+		else
+			m_Rainbow = RAINBOW::BLUE;
+		break;
+
+	case RAINBOW::BLUE:
+		if (m_col.g < MAX_COLOR)
+			m_col.g += ADDSUB_COLOR;
+		else
+			m_Rainbow = RAINBOW::LIGHT_BLUE;
+		break;
+
+	case RAINBOW::LIGHT_BLUE:
+		if (m_col.b > 0)
+			m_col.b -= ADDSUB_COLOR;
+		else
+			m_Rainbow = RAINBOW::GREEN;
+		break;
+
+	case RAINBOW::GREEN:
+		if (m_col.r < MAX_COLOR)
+			m_col.r += ADDSUB_COLOR;
+		else
+			m_Rainbow = RAINBOW::YELLOW;
+		break;
+
+	case RAINBOW::YELLOW:
+		if (m_col.g > 0)
+			m_col.g -= ADDSUB_COLOR;
+		else
+			m_Rainbow = RAINBOW::RED;
+		break;
 	}
 }
 //========================================
