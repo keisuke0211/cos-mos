@@ -15,7 +15,7 @@ boneDataSum{ 3
 		relativeRot 0.0 0.00 -0.00
 	}
 	boneData{
-		idx 1
+		idx 2
 		modelIdx data\\MODEL\\Bat\\Bat_RWing.x
 		parentIdx 0
 		relativePos -2.00 0.00 1.00

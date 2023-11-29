@@ -184,6 +184,7 @@ void CStageEditor::Uninit(void)
 //========================================
 void CStageEditor::FileLoad(void)
 {
+
 	int nCntPlanet = 0;
 	int *pCntStage = NULL;
 	char aDataSearch[TXT_MAX];	// データ検索用
@@ -288,6 +289,9 @@ void CStageEditor::StageLoad(int planet, int stage)
 {
 	//プレイヤー初期化
 	CMode_Game::GetPlayer()->Init();
+
+	// エフェクト解放
+	Manager::EffectMgr()->ReleaseAll();
 
 	CSVFILE *pFile = new CSVFILE;
 

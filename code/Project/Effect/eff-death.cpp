@@ -7,15 +7,12 @@
 #include "eff-death.h"
 #include "../main.h"
 
-//ƒ{[ƒ‹ƒ‚ƒfƒ‹‚ÌƒpƒX‚Æƒ‚ƒfƒ‹”Ô†
-const char *CEffect_Death::BALL_MODEL_PATH = "data\\MODEL\\Effect\\Ball.x";
-int         CEffect_Death::s_nBallModelIdx = NONEDATA;
 const float CEffect_Death::CREATE_SPREAD_POWER = -8.0f; //¶¬‚ÌŠgU—Í
-const float CEffect_Death::PLAYER_COLLI_POWER = 3.0f;	//ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½‚Æ‚«‚Ì‚Á”ò‚Ñ—Í
+const float CEffect_Death::PLAYER_COLLI_POWER = 1.0f;   //ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½‚Æ‚«‚Ì‚Á”ò‚Ñ—Í
 const float CEffect_Death::MOVE_X_CORRECT = 0.01f;      //‡]ƒxƒNƒgƒ‹‚ÌˆÚ“®•â³ŒW”
 const float CEffect_Death::GRAVITY_POWER = 0.03f;       //d—Í‰Á‘¬“x
 const float CEffect_Death::BOUND_POWER = -0.7f;         //ƒoƒEƒ“ƒhŒW”
-const short CEffect_Death::BALL_ALPHA_DECREASE = 10; //ƒ{[ƒ‹‚Ìƒ¿’lŒ¸­—Êi“–‚½‚è”»’è‚ÅUnknown‚ªo‚½Û‚Ég—p
+const short CEffect_Death::BALL_ALPHA_DECREASE = 10;    //ƒ{[ƒ‹‚Ìƒ¿’lŒ¸­—Êi“–‚½‚è”»’è‚ÅUnknown‚ªo‚½Û‚Ég—p
 
 //=======================================
 // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -23,9 +20,6 @@ const short CEffect_Death::BALL_ALPHA_DECREASE = 10; //ƒ{[ƒ‹‚Ìƒ¿’lŒ¸­—Êi“–‚½‚
 CEffect_Death::CEffect_Death()
 {
 	Manager::EffectMgr()->AddList(this);
-
-	if (s_nBallModelIdx == NONEDATA)
-		s_nBallModelIdx = RNLib::Model().Load(BALL_MODEL_PATH);
 }
 
 //=======================================
@@ -39,13 +33,13 @@ CEffect_Death::~CEffect_Death()
 //=======================================
 // İ’èˆ—
 //=======================================
-void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nTex, const TYPE type)
+void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nIdx, const TYPE type)
 {
 	//Šî–{î•ñİ’è
 	m_Info.pos = pos;   m_Info.posOld = posOld; m_Info.move = move;
 	m_Info.rot = rot;   m_Info.spin   = spin;
 	m_Info.size = size; m_Info.color  = color;
-	m_Info.nTex = nTex; m_Info.type   = type;
+	m_Info.nIdx = nIdx; m_Info.type   = type;
 	m_Info.nLife = nLife;
 
 	//¶¬‚µ‚Ä‚·‚®ƒvƒŒƒCƒ„[‚É“–‚½‚ç‚È‚¢‚æ‚¤‚ÉƒJƒEƒ“ƒ^[‘ã“ü
@@ -67,19 +61,12 @@ void CEffect_Death::Update(void)
 	//‘O‰ñˆÊ’uXV
 	m_Info.posOld = m_Info.pos;
 
-	//í—Ş•ÊXVˆ—
+	//í—Ş•ÊXVE”z’uˆ—
 	switch (m_Info.type)
 	{
-		case TYPE::BALL:UpdateType_Ball(); break;//ƒ{[ƒ‹
-		case TYPE::INK: UpdateType_Ink();  break;//ƒCƒ“ƒN
+		case TYPE::BALL:UpdateType_Ball(); PutModel();   break;//ƒ{[ƒ‹
+		case TYPE::INK: UpdateType_Ink();  PutPolygon(); break;//ƒCƒ“ƒN
 	}
-	
-	//”z’u
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
-		->SetTex(m_Info.nTex)
-		->SetCol(m_Info.color)
-		->SetSize(m_Info.size.x, m_Info.size.y)
-		->SetZTest(false);
 
 	//mõ–½n‹¤’ÊXVˆ—
 	Life();
@@ -122,9 +109,14 @@ void CEffect_Death::UpdateType_Ball(void)
 				//ƒvƒŒƒCƒ„[‚Ü‚Å‚ÌŠp“x‚ğæ“¾
 				const float fRot = atan2f(PosDiff.x, -PosDiff.y);
 
+				const Pos3D PlayerMove = colliInfo.pos - colliInfo.posOld;
+
 				//ˆÚ“®—Êİ’è
-				m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER;
-				m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER;
+				switch (vec)
+				{
+					case CPlayer::VECTOL::X:m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER + PlayerMove.x;break;
+					case CPlayer::VECTOL::Y:m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + PlayerMove.y;break;
+				}
 			}
 		}
 
@@ -148,7 +140,7 @@ void CEffect_Death::UpdateType_Ball(void)
 						//—‰º‘¬“x‚ª‚Ù‚Ú‚O‚È‚ç‚O‚Éİ’è
 						//ˆá‚¤‚È‚ç‘¬“x‚ğã‚ß‚Â‚ÂAƒoƒEƒ“ƒh
 						case CCollision::ROT::OVER:
-						case CCollision::ROT::UNDER: m_Info.move.y *= fabsf(m_Info.move.y) < 0.1f ? 0.0f : BOUND_POWER;break;
+						case CCollision::ROT::UNDER: m_Info.move.y *= BOUND_POWER;break;
 
 						//“–‚½‚Á‚½•ûŒü‚ª•ª‚©‚ç‚È‚¢
 						case CCollision::ROT::UNKNOWN:
@@ -353,6 +345,28 @@ void CEffect_Death::Life(void)
 
 	if(RNLib::Input().GetKeyTrigger(DIK_O))
 		m_Info.bDeath = true;
+}
+
+//=======================================
+//ƒ|ƒŠƒSƒ“”z’uˆ—
+//=======================================
+void CEffect_Death::PutPolygon(void)
+{
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
+		->SetTex(m_Info.nIdx)
+		->SetCol(m_Info.color)
+		->SetSize(m_Info.size.x, m_Info.size.y)
+		->SetZTest(false);
+}
+
+//=======================================
+//ƒ‚ƒfƒ‹”z’uˆ—
+//=======================================
+void CEffect_Death::PutModel(void)
+{
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_Info.pos, m_Info.rot, Vector3D(m_Info.size.x, m_Info.size.y, (m_Info.size.x + m_Info.size.y) * 0.5f))
+		->SetZTest(false)
+		->SetCol(m_Info.color);
 }
 
 //=======================================
