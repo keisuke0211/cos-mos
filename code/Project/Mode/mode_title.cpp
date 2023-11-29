@@ -775,7 +775,7 @@ void CMode_Title::MenuSelect(void)
 		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
 		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
 
-		D3DXVECTOR3 pos = INITD3DXVECTOR3;	D3DXVECTOR2 TexSize = INITD3DXVECTOR2;	float TxtSize;	int Volume = 0;
+		D3DXVECTOR2 pos = INITD3DXVECTOR2;	D3DXVECTOR2 TexSize = INITD3DXVECTOR2;	float TxtSize;	int Volume = 0;
 		if (m_Menu.nSubSelect == SETTING_BGM) {
 			pos = m_pSubMenu[SETTING_BGM_TEXT]->GetTexPos();
 			TexSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTexSize();

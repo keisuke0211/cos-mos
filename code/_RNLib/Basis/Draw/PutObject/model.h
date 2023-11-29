@@ -65,7 +65,6 @@ public:
 		bool      m_isScaling;
 		bool      m_isZTest;
 		bool      m_isLighting;
-		float     m_brightnessOfEmissive;
 	};
 
 	// “o˜^î•ñƒNƒ‰ƒX

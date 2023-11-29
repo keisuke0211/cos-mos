@@ -360,7 +360,6 @@ CModel::CDrawInfo::CDrawInfo() {
 	m_isScaling            = false;
 	m_isZTest              = true;
 	m_isLighting           = false;
-	m_brightnessOfEmissive = 1.0f;
 }
 
 //========================================
@@ -432,7 +431,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	drawInfo->m_matNum               = modelData.m_matNum;
 	drawInfo->m_isZTest              = m_isZTest;
 	drawInfo->m_isLighting           = m_isLighting;
-	drawInfo->m_brightnessOfEmissive = m_brightnessOfEmissive;
 
 	//----------------------------------------
 	// マテリアル情報を算出
@@ -443,21 +441,26 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
 			
-			if (m_col != INITCOLOR) {
-				// マテリアルの材質パラメータを設定
-				const float r = (float)m_col.r / 255;
-				const float g = (float)m_col.g / 255;
-				const float b = (float)m_col.b / 255;
-				const float a = (float)m_col.a / 255;
-				drawInfo->m_mats[cntMat].Diffuse.r *= r;
-				drawInfo->m_mats[cntMat].Diffuse.g *= g;
-				drawInfo->m_mats[cntMat].Diffuse.b *= b;
-				drawInfo->m_mats[cntMat].Diffuse.a *= a;
-				drawInfo->m_mats[cntMat].Emissive.r *= r;
-				drawInfo->m_mats[cntMat].Emissive.g *= g;
-				drawInfo->m_mats[cntMat].Emissive.b *= b;
-				drawInfo->m_mats[cntMat].Emissive.a *= a;
+			float brightness = 1.0f;
+			if (drawInfo->m_mats[cntMat].Emissive.r +
+				drawInfo->m_mats[cntMat].Emissive.g +
+				drawInfo->m_mats[cntMat].Emissive.b > 0.0f) {
+				brightness = m_brightnessOfEmissive;
 			}
+
+			// マテリアルの材質パラメータを設定
+			const float r = (float)(m_col.r / 255) * brightness;
+			const float g = (float)(m_col.g / 255) * brightness;
+			const float b = (float)(m_col.b / 255) * brightness;
+			const float a = (float)(m_col.a / 255);
+			drawInfo->m_mats[cntMat].Diffuse.r *= r;
+			drawInfo->m_mats[cntMat].Diffuse.g *= g;
+			drawInfo->m_mats[cntMat].Diffuse.b *= b;
+			drawInfo->m_mats[cntMat].Diffuse.a *= a;
+			drawInfo->m_mats[cntMat].Emissive.r *= r;
+			drawInfo->m_mats[cntMat].Emissive.g *= g;
+			drawInfo->m_mats[cntMat].Emissive.b *= b;
+			drawInfo->m_mats[cntMat].Emissive.a *= a;
 		}
 	}
 
