@@ -753,67 +753,39 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 	target.maxPos = Pos3D(target.pos.x + target.fWidth, target.pos.y + target.fHeight, 0.0f);
 
 	// めり込んでいるか判定
-	if (self.minPos.x < target.maxPos.x && target.minPos.x < self.maxPos.x &&
-		self.minPos.y < target.maxPos.y && target.minPos.y < self.maxPos.y)
+	
+	// 自分の過去の最小・最大位置
+	const Pos3D OLD_MINPOS = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
+	const Pos3D OLD_MAXPOS = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);
+
+	// 対象の前回の最小・最大位置
+	const Pos3D TARGET_MinPosOld = Pos3D(target.posOld.x - target.fWidth, target.posOld.y - target.fHeight, 0.0f);
+	const Pos3D TARGET_MaxPosOld = Pos3D(target.posOld.x + target.fWidth, target.posOld.y + target.fHeight, 0.0f);
+
+	// 衝突ベクトルで処理分け
+	switch (vec)
 	{
-		// 自分の過去の最小・最大位置
-		const Pos3D OLD_MINPOS = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
-		const Pos3D OLD_MAXPOS = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);
+		case CPlayer::VECTOL::X:
+			if (self.minPos.y < target.maxPos.y && target.minPos.y < self.maxPos.y)
+			{// Y範囲内
+				if (self.maxPos.x >= target.minPos.x && OLD_MAXPOS.x <= TARGET_MinPosOld.x)
+					return ROT::LEFT;
 
-		// 対象の前回の最小・最大位置
-		const Pos3D TARGET_MinPosOld = Pos3D(target.posOld.x - target.fWidth, target.posOld.y - target.fHeight, 0.0f);
-		const Pos3D TARGET_MaxPosOld = Pos3D(target.posOld.x + target.fWidth, target.posOld.y + target.fHeight, 0.0f);
+				if (self.minPos.x <= target.maxPos.x && OLD_MINPOS.x >= TARGET_MaxPosOld.x)
+					return ROT::RIGHT;
+			}
+			break;
 
-		// 衝突ベクトルで処理分け
-		switch (vec)
-		{
-			case CPlayer::VECTOL::X:
-				// 前回は左からめり込んでいない（今はめり込んだ
-				if (OLD_MAXPOS.x <= TARGET_MinPosOld.x)      return ROT::LEFT;
+		case CPlayer::VECTOL::Y:
+			if (self.minPos.x < target.maxPos.x && target.minPos.x < self.maxPos.x)
+			{// X範囲内
+				if (self.maxPos.y >= target.minPos.y && OLD_MAXPOS.y <= TARGET_MinPosOld.y)
+					return ROT::UNDER;
 
-				// 前回は右からめり込んでいない（今はめり込んだ
-				else if (OLD_MINPOS.x >= TARGET_MaxPosOld.x) return ROT::RIGHT;
-
-				//対象が右に動いている
-				else if (target.posOld.x < target.pos.x)     return ROT::LEFT;
-
-				//対象が左に動いている
-				else if (target.posOld.x > target.pos.x)     return ROT::RIGHT;
-
-				//今も前も原点は対象より左にいる
-				else if (self.pos.x <= target.minPos.x &&
-						 self.posOld.x <= target.minPos.x)   return ROT::LEFT;
-
-				//今も前も原点は対象より右にいる
-				else if (self.pos.x >= target.maxPos.x &&
-						 self.posOld.x >= target.maxPos.x)   return ROT::RIGHT;
-				break;
-
-			case CPlayer::VECTOL::Y:
-				// 前回は上からめり込んでいない（今はめり込んだ
-				if (OLD_MINPOS.y >= TARGET_MaxPosOld.y)      return ROT::OVER;
-
-				// 前回は下からめり込んでいない（今はめり込んだ
-				else if (OLD_MAXPOS.y <= TARGET_MinPosOld.y) return ROT::UNDER;
-
-				//対象が上に動いている
-				else if (target.posOld.y < target.pos.y)     return ROT::OVER;
-
-				//対象が下に動いている
-				else if (target.posOld.y > target.pos.y)     return ROT::UNDER;
-
-				//今も前も原点は対象より左にいる
-				else if (self.pos.y <= target.minPos.y &&
-						 self.posOld.y <= target.minPos.y)   return ROT::OVER;
-
-				//今も前も原点は対象より右にいる
-				else if (self.pos.y >= target.maxPos.y &&
-						 self.posOld.y >= target.maxPos.y)   return ROT::UNDER;
-				break;
-		}
-
-		// 当たった方向が分からない
-		return ROT::UNKNOWN;
+				if (self.minPos.y <= target.maxPos.y && OLD_MINPOS.y >= TARGET_MaxPosOld.y)
+					return ROT::OVER;
+			}
+			break;
 	}
 
 	// 当たらなかった
