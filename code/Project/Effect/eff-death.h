@@ -32,7 +32,7 @@ public:
 		Vector2D size   = INITVECTOR2D; // サイズ（幅・高さ）
 		Color    color  = INITCOLOR;    // 色
 		int      nLife  = NONEDATA;     // 寿命（不死身ならNONEDATA
-		int      nTex   = NONEDATA;     // テクスチャ番号
+		int      nIdx = NONEDATA;       // テクスチャ or モデル番号
 		TYPE     type   = TYPE::NONE;   // 種類
 
 		//設定処理を通れば、皆共通で代入される項目
@@ -48,7 +48,7 @@ public:
 	//******************************
 	//設定処理（自己情報を一括設定）
 	//******************************
-	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nTex, const TYPE type);
+	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nIdx, const TYPE type);
 
 	//******************************
 	//設定処理（自己情報を個別設定）
@@ -61,14 +61,10 @@ public:
 	void SetSize(const Vector2D size)     { m_Info.size = size; }
 	void SetColor(const Color color)      { m_Info.color = color; }
 	void SetLife(const int nLife)         { m_Info.nLife = nLife; }
-	void SetTex(const int nTex)           { m_Info.nTex = nTex; }
+	void SetIdx(const int nIdx)           { m_Info.nIdx = nIdx; }
 	void SetType(const TYPE type)         { m_Info.type = type; }
 
 private:
-	//ボールモデルのパスとモデル番号
-	static const char *BALL_MODEL_PATH;
-	static       int s_nBallModelIdx;
-
 	static const float CREATE_SPREAD_POWER; //生成時の拡散力
 	static const float PLAYER_COLLI_POWER;  //プレイヤーに当たったときの吹っ飛び力
 	static const float MOVE_X_CORRECT;      //Ⅹベクトルの移動補正係数
@@ -86,6 +82,8 @@ private:
 	void SetSelfInfo(CCollision::SelfInfo *pSelfInfo);
 	void Move(CPlayer::VECTOL vec);
 	void Spin(void);
+	void PutPolygon(void);
+	void PutModel(void);
 	void Life(void);
 	void Death(void);
 

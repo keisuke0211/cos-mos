@@ -31,7 +31,16 @@ public:
 		TREE_TRUNK_ROOT             = 11,
 		BAOBAB_TREE                 = 12,
 		CHEST                       = 13,
+		PILE_OF_COINS               = 14,
+		STONE_MONUMENT              = 15,
+		ANCIENT_STONE_BRICK_BLOCK   = 16,
 		MAX
+	};
+
+	// その他テクスチャ
+	enum class OTHER_TEXTURE {
+		EFFECT,
+		MAX,
 	};
 
 	// その他モデル
@@ -50,6 +59,14 @@ public:
 	// その他モーション3D
 	enum class OTHER_MOTION3D {
 		CHEST_STEPPED,
+		MAX,
+	};
+
+	// その他サウンド
+	enum class OTHER_SOUND {
+		COIN,
+		LIGHT_A,
+		LIGHT_B,
 		MAX,
 	};
 
@@ -75,15 +92,20 @@ public:
 private:
 	//========== [[[ 定数宣言 ]]]
 	static const char* MODEL_PATHS[(int)LOOKS_TYPE::MAX];
+	static const char* OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX];
 	static const char* OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX];
 	static const char* OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX];
 	static const char* OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX];
+	static const char* OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX];
 
 	//========== [[[ 変数宣言 ]]]
+	static UShort m_num;
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
+	static short m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
 	static short m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::MAX];
 	static short m_otherMotion3DIdxes[(int)OTHER_MOTION3D::MAX];
+	static short m_otherSoundIdxes[(int)OTHER_SOUND::MAX];
 	CDoll3D*   m_doll;
 	LOOKS_TYPE m_looksType;		// 種類
 	bool       m_isCollision;

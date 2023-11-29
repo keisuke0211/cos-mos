@@ -79,14 +79,11 @@ void CSound::Init(void) {
 //========================================
 void CSound::Uninit(void) {
 
-	// データの解放
-	CMemory::ReleaseDouble(&m_datas, m_num);
-
-	// 全て停止する
-	Stop();
-
 	// 再生マネージャーの解放
 	CMemory::Release(&m_playMgr);
+
+	// データの解放
+	CMemory::ReleaseDouble(&m_datas, m_num);
 
 	// マスターボイスの破棄
 	if (m_masteringVoice != NULL) {

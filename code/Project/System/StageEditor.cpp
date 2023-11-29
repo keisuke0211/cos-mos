@@ -184,6 +184,7 @@ void CStageEditor::Uninit(void)
 //========================================
 void CStageEditor::FileLoad(void)
 {
+
 	int nCntPlanet = 0;
 	int *pCntStage = NULL;
 	char aDataSearch[TXT_MAX];	// データ検索用
@@ -288,6 +289,9 @@ void CStageEditor::StageLoad(int planet, int stage)
 {
 	//プレイヤー初期化
 	CMode_Game::GetPlayer()->Init();
+
+	// エフェクト解放
+	Manager::EffectMgr()->ReleaseAll();
 
 	CSVFILE *pFile = new CSVFILE;
 
@@ -663,13 +667,15 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_PLAYER_0:
 		pos.y += fSizeY * 0.5f;
 		CMode_Game::GetPlayer()->SetPos(0, pos);
+		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_PLAYER_1:
 		pos.y += -fSizeY * 0.5f;
 		CMode_Game::GetPlayer()->SetPos(1, pos);
+		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_GOALGATE:
-		Manager::StageObjectMgr()->GoalGateCreate(pos);
+		Manager::StageObjectMgr()->GoalGateCreate(pos,false);
 		break;
 	case TYPE_PARTS:
 		Manager::StageObjectMgr()->PartsCreate(pos);

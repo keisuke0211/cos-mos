@@ -1924,7 +1924,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.570000;0.567720;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\画像\\メタセコテクスチャ\\iron.jpg";
+    "data\\TEXTURE\\iron.jpg";
    }
   }
  }
