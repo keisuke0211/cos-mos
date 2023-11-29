@@ -21,7 +21,6 @@ public:
 	virtual void   Init(void);
 	virtual void   Uninit(void);
 	virtual void   Update(void);
-	virtual void   Draw(void);
 
 	void	SetModelIdx(int idx) { ModelIdx = idx; }
 

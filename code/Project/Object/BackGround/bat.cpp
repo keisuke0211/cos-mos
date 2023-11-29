@@ -62,12 +62,3 @@ void CBat::Update(void) {
 	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false);
 
 }
-
-//========================================
-// ï`âÊèàóù
-// Author:KOMURO HIROMU
-//========================================
-void CPlanet::Draw(void) {
-
-
-}
