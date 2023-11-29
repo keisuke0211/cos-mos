@@ -107,7 +107,7 @@ void CEffect_Death::UpdateType_Ball(void)
 				const Pos3D PosDiff = colliInfo.pos - SelfInfo.pos;
 
 				//ƒvƒŒƒCƒ„[‚Ü‚Å‚ÌŠp“x‚ðŽæ“¾
-				const float fRot = atan2f(PosDiff.x, -PosDiff.y);
+				const float fRot = atan2f(-PosDiff.x, -PosDiff.y);
 
 				const Pos3D PlayerMove = colliInfo.pos - colliInfo.posOld;
 
@@ -252,6 +252,7 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 
 		if (ColliRot == CCollision::ROT::UNKNOWN)
 		{
+			break;
 			switch (vec)
 			{
 				case CPlayer::VECTOL::X:
@@ -387,6 +388,6 @@ void CEffect_Death::SetSelfInfo(CCollision::SelfInfo *pSelfInfo)
 	//Ž©•ª‚Ìî•ñ‚ð”½‰f
 	pSelfInfo->pos = m_Info.pos; pSelfInfo->posOld = m_Info.posOld;
 	pSelfInfo->move = m_Info.move;
-	pSelfInfo->fWidth = m_Info.size.x * 0.5f;
-	pSelfInfo->fHeight = m_Info.size.y * 0.5f;
+	pSelfInfo->fWidth = CStageObject::SIZE_OF_1_SQUARE * m_Info.size.x * 0.5f;
+	pSelfInfo->fHeight = CStageObject::SIZE_OF_1_SQUARE * m_Info.size.y * 0.5f;
 }
