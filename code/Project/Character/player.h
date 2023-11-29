@@ -137,6 +137,9 @@ public:
 	// スワップインターバルを取得
 	static int GetSwapInterval(void) { return s_nSwapInterval; }
 
+	// 出現
+	static void Pop(void) {}
+
 	//SEラベル
 	enum class SE_LABEL {
 		JUMP = 0,// ジャンプSE
