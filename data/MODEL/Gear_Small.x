@@ -599,7 +599,7 @@ Mesh {
    0.050000;0.050000;0.050000;;
    0.050000;0.036863;0.019216;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Visual Studio 2015\\Projects\\ë≤ã∆êßçÏ\\cos-mos\\data\\TEXTURE\\Material\\Rough_Horizontal.PNG";
+    "data\\TEXTURE\\Material\\Rough_Horizontal.PNG";
    }
   }
   Material {
@@ -608,7 +608,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Visual Studio 2015\\Projects\\ë≤ã∆êßçÏ\\cos-mos\\data\\TEXTURE\\Material\\Rough_Horizontal.PNG";
+    "data\\TEXTURE\\Material\\Rough_Horizontal.PNG";
    }
   }
   Material {
