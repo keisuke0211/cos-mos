@@ -370,8 +370,10 @@ CModel::CDrawInfo::~CDrawInfo() {
 	CMemory::Release(&m_mats);
 
 	// 拡大倍率に変更があった時、解放する
-	if (m_isScaling)
-		m_mesh->Release();
+	if (m_isScaling) {
+		if (m_mesh != NULL)
+			m_mesh->Release();
+	}
 }
 
 //================================================================================
@@ -497,6 +499,12 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		// メッシュを複製する
 		D3DXCreateMeshFVF(faceNum, vtxNum, D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawInfo->m_mesh);
 		modelData.m_mesh->CloneMeshFVF(D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawInfo->m_mesh);
+
+		// メッシュがNULLであれば、
+		if (drawInfo->m_mesh == NULL) {
+			CMemory::Release(&drawInfo);
+			return NULL;
+		}
 
 		// 頂点バッファをロック
 		BYTE* vtxBuff = NULL;
