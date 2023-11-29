@@ -515,13 +515,11 @@ void CPlayer::ActionControl(void)
 				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
 				Manager::GetMainCamera()->SetVib(5.0f);
 
-				//Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
-				const int NUM_PARTICLE = 4;
+				const int NUM_PARTICLE = 8;
 				Pos3D rot = INITVECTOR3D;
 				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 				{
-					const float fSize = ((float)(rand() % 100) / 100.0f + 0.1f) * 0.0f + 0.4f;
+					const float fSize = ((float)(rand() % 100) / 100.0f + 0.1f);
 					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
 					Manager::EffectMgr()->DeathParticleCreate(
 						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, fSize, Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
