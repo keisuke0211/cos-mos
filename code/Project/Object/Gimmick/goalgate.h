@@ -25,6 +25,17 @@ public:
 		MAX,
 	};
 
+	//========== [[[ 列挙型定義 ]]]
+	enum class RAINBOW {
+		RED = 0,	//赤
+		PURPLE,		//紫
+		BLUE,		//青
+		LIGHT_BLUE,	//水
+		GREEN,		//緑
+		YELLOW,		//黄
+		MAX		
+	};
+
 	//========== [[[ 関数宣言 ]]]
 	CGoalGate();
 	virtual        ~CGoalGate();
@@ -42,10 +53,13 @@ protected:
 private:
 
 	void StateUpdate(void);
+	void ColUpdate(void);
 	void CountRate(float *CountRateX, float *CountRateY);
 
 	//========== [[[ 変数宣言 ]]]
 	STATE m_state;					//種類
+	RAINBOW m_Rainbow;				//色状態
+	Color m_col;					//色
 	int m_modelIdx;					//モデル番号
 	int m_TexIdx[2];				//テクスチャ番号
 	Scale3D m_scale;				//拡縮

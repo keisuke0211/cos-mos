@@ -36,7 +36,8 @@ public:
 		TYPE     type   = TYPE::NONE;   // 種類
 
 		//設定処理を通れば、皆共通で代入される項目
-		int      CreateCounter; // 生成されてからのカウンター(生まれてすぐはプレイヤーとの当たり判定を働かせないため
+		int  CreateCounter; // 生成されてからのカウンター(生まれてすぐはプレイヤーとの当たり判定を働かせないため
+		bool bDeath;        // 死亡フラグ
 	};
 
 	CEffect_Death();
@@ -64,17 +65,29 @@ public:
 	void SetType(const TYPE type)         { m_Info.type = type; }
 
 private:
+	//ボールモデルのパスとモデル番号
+	static const char *BALL_MODEL_PATH;
+	static       int s_nBallModelIdx;
+
+	static const float CREATE_SPREAD_POWER; //生成時の拡散力
+	static const float PLAYER_COLLI_POWER;  //プレイヤーに当たったときの吹っ飛び力
+	static const float MOVE_X_CORRECT;      //Ⅹベクトルの移動補正係数
+	static const float GRAVITY_POWER;       //重力加速度
+	static const float BOUND_POWER;         //バウンド係数
+	static const short BALL_ALPHA_DECREASE; //ボールのα値減少量（当たり判定でUnknownが出た際に使用
+
 	//種別更新処理
 	void UpdateType_Ball(void);
 	void UpdateType_Ink(void);
 
 	//情報更新処理
 	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
-	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
+	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec, CStageObject::TYPE& type);
 	void SetSelfInfo(CCollision::SelfInfo *pSelfInfo);
 	void Move(CPlayer::VECTOL vec);
 	void Spin(void);
 	void Life(void);
+	void Death(void);
 
 	Info m_Info;
 };

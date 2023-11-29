@@ -7,12 +7,25 @@
 #include "eff-death.h"
 #include "../main.h"
 
+//ボールモデルのパスとモデル番号
+const char *CEffect_Death::BALL_MODEL_PATH = "data\\MODEL\\Effect\\Ball.x";
+int         CEffect_Death::s_nBallModelIdx = NONEDATA;
+const float CEffect_Death::CREATE_SPREAD_POWER = -8.0f; //生成時の拡散力
+const float CEffect_Death::PLAYER_COLLI_POWER = 3.0f;	//プレイヤーに当たったときの吹っ飛び力
+const float CEffect_Death::MOVE_X_CORRECT = 0.01f;      //Ⅹベクトルの移動補正係数
+const float CEffect_Death::GRAVITY_POWER = 0.03f;       //重力加速度
+const float CEffect_Death::BOUND_POWER = -0.7f;         //バウンド係数
+const short CEffect_Death::BALL_ALPHA_DECREASE = 10; //ボールのα値減少量（当たり判定でUnknownが出た際に使用
+
 //=======================================
 // コンストラクタ
 //=======================================
 CEffect_Death::CEffect_Death()
 {
 	Manager::EffectMgr()->AddList(this);
+
+	if (s_nBallModelIdx == NONEDATA)
+		s_nBallModelIdx = RNLib::Model().Load(BALL_MODEL_PATH);
 }
 
 //=======================================
@@ -28,18 +41,21 @@ CEffect_Death::~CEffect_Death()
 //=======================================
 void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nTex, const TYPE type)
 {
+	//基本情報設定
 	m_Info.pos = pos;   m_Info.posOld = posOld; m_Info.move = move;
 	m_Info.rot = rot;   m_Info.spin   = spin;
 	m_Info.size = size; m_Info.color  = color;
 	m_Info.nTex = nTex; m_Info.type   = type;
 	m_Info.nLife = nLife;
 
+	//生成してすぐプレイヤーに当たらないようにカウンター代入
 	m_Info.CreateCounter = CREATE_COUNTER;
+	m_Info.bDeath = false;
 
 	if (type == TYPE::BALL)
-	{
-		m_Info.move.x = sinf(rot.z) * -8.0f;
-		m_Info.move.y = cosf(rot.z) * -8.0f;
+	{//ボールの場合、拡散力を設定
+		m_Info.move.x = sinf(rot.z) * CREATE_SPREAD_POWER;
+		m_Info.move.y = cosf(rot.z) * CREATE_SPREAD_POWER;
 	}
 }
 
@@ -54,25 +70,22 @@ void CEffect_Death::Update(void)
 	//種類別更新処理
 	switch (m_Info.type)
 	{
-		case TYPE::BALL:UpdateType_Ball(); break;
-		case TYPE::INK: UpdateType_Ink();  break;
+		case TYPE::BALL:UpdateType_Ball(); break;//ボール
+		case TYPE::INK: UpdateType_Ink();  break;//インク
 	}
 	
-	//RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, INITVECTOR3D)
-	//	->SetBillboard(true)
-	//	->SetCol(INITCOLOR)
-	//	->SetSize(m_Info.size.x, m_Info.size.y)
-	//	->SetZTest(false);
-
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, INITVECTOR3D)
+	//配置
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
 		->SetTex(m_Info.nTex)
-		->SetBillboard(true)
 		->SetCol(m_Info.color)
 		->SetSize(m_Info.size.x, m_Info.size.y)
 		->SetZTest(false);
 
 	//［寿命］共通更新処理
 	Life();
+
+	//［死亡］共通更新処理
+	Death();
 }
 
 //=======================================
@@ -104,29 +117,58 @@ void CEffect_Death::UpdateType_Ball(void)
 			ColliRot = PlayerCollider(&SelfInfo, &colliInfo, vec);
 			if (ColliRot != CCollision::ROT::NONE)
 			{
+				const Pos3D PosDiff = colliInfo.pos - SelfInfo.pos;
+
 				//プレイヤーまでの角度を取得
-				const float fRot = atan2f(powf(SelfInfo.pos.x + colliInfo.pos.x, 2.0f),
-										  powf(SelfInfo.pos.y + colliInfo.pos.y, 2.0f));
+				const float fRot = atan2f(PosDiff.x, -PosDiff.y);
 
 				//移動量設定
-				m_Info.move.x = sinf(fRot) * -3.0f;
-				m_Info.move.y = cosf(fRot) * -3.0f;
+				m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER;
+				m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER;
 			}
 		}
 
 		//ステージオブジェクトとの当たり判定
-		ColliRot = StgObjCollider(&SelfInfo, &colliInfo, vec);
+		CStageObject::TYPE type = CStageObject::TYPE::NONE;
+		ColliRot = StgObjCollider(&SelfInfo, &colliInfo, vec, type);
 		if (ColliRot != CCollision::ROT::NONE)
 		{
-			switch (ColliRot)
+			switch (type)
 			{
-				case CCollision::ROT::OVER:
-				case CCollision::ROT::UNDER: m_Info.move.y *= -0.7f; break;
-				case CCollision::ROT::LEFT:
-				case CCollision::ROT::RIGHT: m_Info.move.x *= -0.7f; break;
+					//ブロックの判定
+				case CStageObject::TYPE::BLOCK:
+					//当たった方向による処理
+					switch (ColliRot)
+					{
+						//左右に当たった場合
+						case CCollision::ROT::LEFT:
+						case CCollision::ROT::RIGHT: m_Info.move.x *= BOUND_POWER; break;
+
+						//上下に当たった場合
+						//落下速度がほぼ０なら０に設定
+						//違うなら速度を弱めつつ、バウンド
+						case CCollision::ROT::OVER:
+						case CCollision::ROT::UNDER: m_Info.move.y *= fabsf(m_Info.move.y) < 0.1f ? 0.0f : BOUND_POWER;break;
+
+						//当たった方向が分からない
+						case CCollision::ROT::UNKNOWN:
+						{//α値を減少させ、０以下で死亡
+							if (m_Info.color.a <= BALL_ALPHA_DECREASE)
+								m_Info.bDeath = true;
+							else m_Info.color.a -= BALL_ALPHA_DECREASE;
+						}
+					}break;
+
+					//穴埋めブロックの判定
+					//死亡
+				case CStageObject::TYPE::FILLBLOCK: m_Info.bDeath = true;break;
 			}
 		}
 	}
+
+	//移動ベクトルの角度を算出
+	const float fRot = atan2f(m_Info.move.x, -m_Info.move.y);
+	m_Info.rot.z = fRot;
 
 	//回転処理
 	Spin();
@@ -158,6 +200,11 @@ CCollision::ROT CEffect_Death::PlayerCollider(CCollision::SelfInfo *pSelfInfo, C
 	{
 		//プレイヤー情報反映
 		CPlayer::Info *pInfo = pPlayer->GetInfo(nCntPlayer);
+
+		//ゴールしている or 死んでいる
+		if (pInfo->bGoal || pInfo->bRide || pInfo->deathCounter != 0 || pInfo->deathCounter2 != 0)continue;
+
+		//プレイヤー情報反映
 		pColliInfo->pos = pInfo->pos;             pColliInfo->posOld  = pInfo->posOld;
 		pColliInfo->fWidth = CPlayer::SIZE_WIDTH; pColliInfo->fHeight = CPlayer::SIZE_HEIGHT;
 
@@ -183,7 +230,7 @@ CCollision::ROT CEffect_Death::PlayerCollider(CCollision::SelfInfo *pSelfInfo, C
 //=======================================
 //［ステージオブジェクト当たり判定］情報更新処理
 //=======================================
-CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec)
+CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec, CStageObject::TYPE& type)
 {
 	//自分の情報を反映
 	SetSelfInfo(pSelfInfo);
@@ -197,10 +244,11 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 		// 取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
 
-		CStageObject::TYPE type = stageObj->GetType();
+		type = stageObj->GetType();
 
 		//ブロック以外は判定しない
-		if (stageObj->GetType() != CStageObject::TYPE::BLOCK) continue;
+		if (type != CStageObject::TYPE::BLOCK &&
+			type != CStageObject::TYPE::FILLBLOCK) continue;
 
 		//情報反映
 		pColliInfo->pos    = stageObj->GetPos();   pColliInfo->posOld = stageObj->GetPosOld();
@@ -210,8 +258,47 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 		//当たり判定
 		ColliRot = CCollision::IsBoxCollider(*pSelfInfo, *pColliInfo, vec);
 
+		if (ColliRot == CCollision::ROT::UNKNOWN)
+		{
+			switch (vec)
+			{
+				case CPlayer::VECTOL::X:
+					//原点位置がオブジェクトの最小位置(左側)よりめり込んでいない
+					if (pSelfInfo->pos.x <= pColliInfo->minPos.x)
+					{
+						pSelfInfo->pos.x = pColliInfo->minPos.x - pSelfInfo->fWidth;
+						ColliRot = CCollision::ROT::LEFT;
+					}
+
+					//原点位置がオブジェクトの最大位置(右側)よりめり込んでいない
+					else if (pSelfInfo->pos.x >= pColliInfo->maxPos.x)
+					{
+						pSelfInfo->pos.x = pColliInfo->maxPos.x + pSelfInfo->fWidth;
+						ColliRot = CCollision::ROT::RIGHT;
+					}
+					break;
+
+				case CPlayer::VECTOL::Y:
+					//原点位置がオブジェクトの最小位置(下側)よりめり込んでいない
+					if (pSelfInfo->pos.y <= pColliInfo->minPos.y)
+					{
+						pSelfInfo->pos.y = pColliInfo->minPos.y - pSelfInfo->fHeight;
+						ColliRot = CCollision::ROT::UNDER;
+					}
+
+					//原点位置がオブジェクトの最大位置(上側)よりめり込んでいない
+					else if (pSelfInfo->pos.y >= pColliInfo->maxPos.y)
+					{
+						pSelfInfo->pos.y = pColliInfo->maxPos.y + pSelfInfo->fHeight;
+						ColliRot = CCollision::ROT::OVER;
+					}
+					break;
+			}
+		}
+
 		//当たったら終了
-		if (ColliRot != CCollision::ROT::NONE)break;
+		if (ColliRot != CCollision::ROT::NONE)
+			break;
 	}
 
 	//結果を返す
@@ -231,7 +318,7 @@ void CEffect_Death::Move(CPlayer::VECTOL vec)
 			m_Info.pos.x += m_Info.move.x;
 
 			//移動量を減衰させる
-			m_Info.move.x += (0.0f - m_Info.move.x) * 0.01f;
+			m_Info.move.x += (0.0f - m_Info.move.x) * MOVE_X_CORRECT;
 			break;
 
 			//Ｙベクトル移動
@@ -240,9 +327,9 @@ void CEffect_Death::Move(CPlayer::VECTOL vec)
 
 			//表の世界にいる
 			if (m_Info.pos.y > 0.0f)
-				m_Info.move.y -= 0.03f;
+				m_Info.move.y -= GRAVITY_POWER;
 			//裏の世界にいる
-			else m_Info.move.y += 0.03f;
+			else m_Info.move.y += GRAVITY_POWER;
 			break;
 	}
 }
@@ -261,10 +348,20 @@ void CEffect_Death::Spin(void)
 void CEffect_Death::Life(void)
 {
 	//寿命が存在し、尽きた
-	if (m_Info.nLife > 0 &&	--m_Info.nLife <= 0)
-		CObject::Delete();
+	if (m_Info.nLife > 0 && --m_Info.nLife <= 0)
+		m_Info.bDeath = true;
 
 	if(RNLib::Input().GetKeyTrigger(DIK_O))
+		m_Info.bDeath = true;
+}
+
+//=======================================
+//［死亡］情報更新処理
+//=======================================
+void CEffect_Death::Death(void)
+{
+	//死亡フラグが立っている
+	if(m_Info.bDeath)
 		CObject::Delete();
 }
 
@@ -274,7 +371,8 @@ void CEffect_Death::Life(void)
 void CEffect_Death::SetSelfInfo(CCollision::SelfInfo *pSelfInfo)
 {
 	//自分の情報を反映
-	pSelfInfo->pos = m_Info.pos;    pSelfInfo->posOld = m_Info.posOld; pSelfInfo->move = m_Info.move;
+	pSelfInfo->pos = m_Info.pos; pSelfInfo->posOld = m_Info.posOld;
+	pSelfInfo->move = m_Info.move;
 	pSelfInfo->fWidth = m_Info.size.x * 0.5f;
 	pSelfInfo->fHeight = m_Info.size.y * 0.5f;
 }
