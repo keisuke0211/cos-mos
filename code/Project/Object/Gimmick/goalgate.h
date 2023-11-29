@@ -9,7 +9,6 @@
 #include "../stage-object.h"
 
 #define ETR_CNT			(16)	//最大カウント数
-
 //****************************************
 // クラス定義
 //****************************************
@@ -45,6 +44,9 @@ public:
 	virtual void   Draw(void);
 
 	void SetEntry(bool bEntry);
+	void SetStartGate(bool bStartGate) { m_bStartGate = bStartGate; }
+
+	bool GetStartGate(void) { return m_bStartGate; }
 
 	static void EntrySub(void) { m_numEntry--; }
 
@@ -69,4 +71,5 @@ private:
 	int		m_nCntEtrX,m_nCntEtrY;	//XYの個別カウント
 	static int m_num;
 	static int m_numEntry;
+	bool	m_bStartGate;
 };
