@@ -525,7 +525,7 @@ void CPlayer::ActionControl(void)
 					const float fSize = (float)(rand() % 100) / 10.0f + 1.2f;
 					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
 					Manager::EffectMgr()->DeathParticleCreate(
-						RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_02.png"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, Vector2D(fSize, fSize), Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
+						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, Vector2D(fSize, fSize), Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
 				}
 				Player.deathCounter = DEATH_TIME;
 			}
