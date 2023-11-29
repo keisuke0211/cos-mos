@@ -7,6 +7,9 @@
 #include "eff-death.h"
 #include "../main.h"
 
+//É{Å[ÉãÉÇÉfÉãÇÃÉpÉXÇ∆ÉÇÉfÉãî‘çÜ
+const char *CEffect_Death::BALL_MODEL_PATH = "data\\MODEL\\Effect\\Ball.x";
+int         CEffect_Death::s_nBallModelIdx = NONEDATA;
 const float CEffect_Death::CREATE_SPREAD_POWER = -8.0f; //ê∂ê¨éûÇÃägéUóÕ
 const float CEffect_Death::PLAYER_COLLI_POWER = 3.0f;	//ÉvÉåÉCÉÑÅ[Ç…ìñÇΩÇ¡ÇΩÇ∆Ç´ÇÃêÅÇ¡îÚÇ—óÕ
 const float CEffect_Death::MOVE_X_CORRECT = 0.01f;      //á]ÉxÉNÉgÉãÇÃà⁄ìÆï‚ê≥åWêî
@@ -20,6 +23,9 @@ const short CEffect_Death::BALL_ALPHA_DECREASE = 10; //É{Å[ÉãÇÃÉøílå∏è≠ó ÅiìñÇΩÇ
 CEffect_Death::CEffect_Death()
 {
 	Manager::EffectMgr()->AddList(this);
+
+	if (s_nBallModelIdx == NONEDATA)
+		s_nBallModelIdx = RNLib::Model().Load(BALL_MODEL_PATH);
 }
 
 //=======================================
@@ -251,6 +257,44 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 
 		//ìñÇΩÇËîªíË
 		ColliRot = CCollision::IsBoxCollider(*pSelfInfo, *pColliInfo, vec);
+
+		if (ColliRot == CCollision::ROT::UNKNOWN)
+		{
+			switch (vec)
+			{
+				case CPlayer::VECTOL::X:
+					//å¥ì_à íuÇ™ÉIÉuÉWÉFÉNÉgÇÃç≈è¨à íu(ç∂ë§)ÇÊÇËÇﬂÇËçûÇÒÇ≈Ç¢Ç»Ç¢
+					if (pSelfInfo->pos.x <= pColliInfo->minPos.x)
+					{
+						pSelfInfo->pos.x = pColliInfo->minPos.x - pSelfInfo->fWidth;
+						ColliRot = CCollision::ROT::LEFT;
+					}
+
+					//å¥ì_à íuÇ™ÉIÉuÉWÉFÉNÉgÇÃç≈ëÂà íu(âEë§)ÇÊÇËÇﬂÇËçûÇÒÇ≈Ç¢Ç»Ç¢
+					else if (pSelfInfo->pos.x >= pColliInfo->maxPos.x)
+					{
+						pSelfInfo->pos.x = pColliInfo->maxPos.x + pSelfInfo->fWidth;
+						ColliRot = CCollision::ROT::RIGHT;
+					}
+					break;
+
+				case CPlayer::VECTOL::Y:
+					//å¥ì_à íuÇ™ÉIÉuÉWÉFÉNÉgÇÃç≈è¨à íu(â∫ë§)ÇÊÇËÇﬂÇËçûÇÒÇ≈Ç¢Ç»Ç¢
+					if (pSelfInfo->pos.y <= pColliInfo->minPos.y)
+					{
+						pSelfInfo->pos.y = pColliInfo->minPos.y - pSelfInfo->fHeight;
+						ColliRot = CCollision::ROT::UNDER;
+					}
+
+					//å¥ì_à íuÇ™ÉIÉuÉWÉFÉNÉgÇÃç≈ëÂà íu(è„ë§)ÇÊÇËÇﬂÇËçûÇÒÇ≈Ç¢Ç»Ç¢
+					else if (pSelfInfo->pos.y >= pColliInfo->maxPos.y)
+					{
+						pSelfInfo->pos.y = pColliInfo->maxPos.y + pSelfInfo->fHeight;
+						ColliRot = CCollision::ROT::OVER;
+					}
+					break;
+			}
+		}
 
 		//ìñÇΩÇ¡ÇΩÇÁèIóπ
 		if (ColliRot != CCollision::ROT::NONE)

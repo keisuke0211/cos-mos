@@ -65,6 +65,10 @@ public:
 	void SetType(const TYPE type)         { m_Info.type = type; }
 
 private:
+	//ボールモデルのパスとモデル番号
+	static const char *BALL_MODEL_PATH;
+	static       int s_nBallModelIdx;
+
 	static const float CREATE_SPREAD_POWER; //生成時の拡散力
 	static const float PLAYER_COLLI_POWER;  //プレイヤーに当たったときの吹っ飛び力
 	static const float MOVE_X_CORRECT;      //Ⅹベクトルの移動補正係数
