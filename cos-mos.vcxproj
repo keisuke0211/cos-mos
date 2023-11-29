@@ -166,7 +166,10 @@
     <ClCompile Include="code\Project\Mode\mode_logo.cpp" />
     <ClCompile Include="code\Project\Mode\mode_result.cpp" />
     <ClCompile Include="code\Project\Mode\mode_title.cpp" />
+    <ClCompile Include="code\Project\Object\BackGround\bat.cpp" />
+    <ClCompile Include="code\Project\Object\Block\Ghost.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\pile.cpp" />
+    <ClCompile Include="code\Project\resource.cpp" />
     <ClCompile Include="code\Project\Sound\ambient-sound-player.cpp" />
     <ClCompile Include="code\Project\System\BG-Editor.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp" />
@@ -188,6 +191,7 @@
     <ClCompile Include="code\Project\Object\Item\Parts.cpp" />
     <ClCompile Include="code\Project\Object\stage-object-manager.cpp" />
     <ClCompile Include="code\Project\Object\stage-object.cpp" />
+    <ClCompile Include="code\Project\UI\miss.cpp" />
     <ClCompile Include="code\Project\UI\rocket-parts.cpp" />
     <ClCompile Include="code\Project\precompile.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -259,6 +263,7 @@
     <ClInclude Include="code\Project\Effect\eff-meteor.h" />
     <ClInclude Include="code\Project\Effect\eff.h" />
     <ClInclude Include="code\Project\Effect\particle.h" />
+    <ClInclude Include="code\Project\resource.h" />
     <ClInclude Include="code\Project\main.h" />
     <ClInclude Include="code\Project\manager.h" />
     <ClInclude Include="code\Project\Mode\mode.h" />
@@ -266,6 +271,8 @@
     <ClInclude Include="code\Project\Mode\mode_logo.h" />
     <ClInclude Include="code\Project\Mode\mode_result.h" />
     <ClInclude Include="code\Project\Mode\mode_title.h" />
+    <ClInclude Include="code\Project\Object\BackGround\bat.h" />
+    <ClInclude Include="code\Project\Object\Block\Ghost.h" />
     <ClInclude Include="code\Project\Object\Gimmick\pile.h" />
     <ClInclude Include="code\Project\Sound\ambient-sound-player.h" />
     <ClInclude Include="code\Project\System\BG-Editor.h" />
@@ -288,6 +295,7 @@
     <ClInclude Include="code\Project\Object\Item\Parts.h" />
     <ClInclude Include="code\Project\Object\stage-object-manager.h" />
     <ClInclude Include="code\Project\Object\stage-object.h" />
+    <ClInclude Include="code\Project\UI\miss.h" />
     <ClInclude Include="code\Project\UI\rocket-parts.h" />
     <ClInclude Include="code\Project\precompile.h" />
     <ClInclude Include="code\Project\System\csv_file.h" />

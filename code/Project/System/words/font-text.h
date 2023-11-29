@@ -103,7 +103,7 @@ public:
 
 
 	// -- 取得 ------------------------------------------
-	/*　位置		*/D3DXVECTOR3 GetTexPos() { return m_Info.TexPos; }
+	/*　位置		*/D3DXVECTOR2 GetTexPos() { return m_Info.TexPos; }
 	/*　Texサイズ	*/D3DXVECTOR2 GetTexSize() { return m_Info.TexSize; }
 	/*　文字サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
 

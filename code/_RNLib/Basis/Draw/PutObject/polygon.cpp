@@ -240,4 +240,6 @@ void Polygon2DAnd3D::CSetTexInfoSum::AllocTex(CCamera*& camera) {
 	CMemory::Alloc((CCamera***)&m_setTex);
 	*(CCamera**)m_setTex = camera;
 	m_setTexType = TEX_TYPE::CAMERA;
+
+	(*(CCamera**)m_setTex)->SetDraw(true);
 }

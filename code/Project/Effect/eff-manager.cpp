@@ -74,7 +74,7 @@ CEffect_Meteor * CEffMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 //========================================
 // パーティクル
 //========================================
-CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,Color col, CParticle::TYPE type ,int nCount, D3DXVECTOR3 rot)
+CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,Color col, CParticle::TYPE type ,int nCount, D3DXVECTOR3 rot,int magni, CDrawState::ALPHA_BLEND_MODE alphamode)
 {
 	CParticle *pObj = NULL;
 
@@ -82,11 +82,15 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 
 	// 初期化処理
 	pObj->SetType(type);
-	pObj->Init(nTex, nCount);
+	pObj->SetRdmMagni(magni);
 	pObj->SetPos(pos);
 	pObj->SetRot(rot);
 	pObj->SetScale(scale);
+	pObj->SetAlphaMode(alphamode);
+	pObj->Init(nTex, nCount);
 	pObj->SetColor(col);
+
+	
 
 	return pObj;
 }
@@ -95,14 +99,14 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 // 死亡パーティクル
 // Author:HIRASAWA SHION
 //========================================
-CEffect_Death *CEffMgr::DeathParticleCreate(int nTex, Vector3D pos, Vector3D move, Vector3D rot, Vector3D spin, Vector2D size, Color color, CEffect_Death::TYPE type)
+CEffect_Death *CEffMgr::DeathParticleCreate(int nIdx, Vector3D pos, Vector3D move, Vector3D rot, Vector3D spin, Vector2D size, Color color, CEffect_Death::TYPE type)
 {
 	//インスタンス生成
 	CEffect_Death *pEff = new CEffect_Death;
 
 	//情報設定
 	if (pEff != NULL)
-		pEff->SetInfo(pos, pos, move, rot, spin, size, color, NONEDATA, nTex, type);
+		pEff->SetInfo(pos, pos, move, rot, spin, size, color, NONEDATA, nIdx, type);
 
 	//インスタンスを返す
 	return pEff;

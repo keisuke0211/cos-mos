@@ -34,8 +34,6 @@ namespace Manager {
 	void        Uninit       (void);
 	void        Update       (void);
 	void        Draw         (void);
-	void        Load         (void);
-	void        Save         (void);
 	void        SetMode      (const CMode::TYPE newMode);
 	CMode::TYPE GetMode      (void);
 	void        Transition   (const CMode::TYPE newMode, const CTransition::TYPE transType);

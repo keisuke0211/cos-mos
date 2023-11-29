@@ -7,6 +7,7 @@
 #include "System\words\object\font-object.h"
 #include "Sound/ambient-sound-player.h"
 #include "main.h"
+#include "resource.h"
 
 //****************************************
 // 名前空間
@@ -40,6 +41,9 @@ CFont* Manager::Font(void) { return &m_Font; }
 // Author:RIKU NISHIMURA
 //========================================
 void Manager::Init(CMode::TYPE mode) {
+
+	// リソースの読み込み
+	CResources::Load();
 
 	// カメラの生成
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
@@ -124,22 +128,6 @@ void Manager::Update(void) {
 void Manager::Draw(void) {
 
 	CFontObject::DrawAll();
-}
-
-//========================================
-// 読み込み処理
-// Author:RIKU NISHIMURA
-//========================================
-void Manager::Load(void) {
-	
-}
-
-//========================================
-// 書き込み処理
-// Author:RIKU NISHIMURA
-//========================================
-void Manager::Save(void) {
-	
 }
 
 //========================================
