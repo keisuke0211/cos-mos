@@ -438,16 +438,21 @@ CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool
 	m_dist     = dist;
 
 	// ソースボイスの生成
-	RNLib::Sound().GetXAudio2().CreateSourceVoice(&m_sourceVoice, &(RNLib::Sound().GetData(m_soundIdx).m_wfx.Format));
-	
-	// オーディオバッファの登録
-	m_sourceVoice->SubmitSourceBuffer(&RNLib::Sound().GetData(m_soundIdx).m_audioBuffer);
+	if (SUCCEEDED(RNLib::Sound().GetXAudio2().CreateSourceVoice(&m_sourceVoice, &(RNLib::Sound().GetData(m_soundIdx).m_wfx.Format)))) {
 
-	// 音量を0にしておく
-	m_sourceVoice->SetVolume(0.0f);
+		// オーディオバッファの登録
+		m_sourceVoice->SubmitSourceBuffer(&RNLib::Sound().GetData(m_soundIdx).m_audioBuffer);
 
-	// 再生
-	m_sourceVoice->Start(0);
+		// 音量を0にしておく
+		m_sourceVoice->SetVolume(0.0f);
+
+		// 再生
+		m_sourceVoice->Start(0);
+	}
+	else {
+		m_sourceVoice = NULL;
+		Delete();
+	}
 }
 
 //========================================
@@ -456,8 +461,10 @@ CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool
 CSound::CPlay::~CPlay() {
 
 	// 停止し、オーディオバッファの削除
-	m_sourceVoice->Stop(0);
-	m_sourceVoice->FlushSourceBuffers();
+	if (m_sourceVoice != NULL) {
+		m_sourceVoice->Stop(0);
+		m_sourceVoice->FlushSourceBuffers();
+	}
 }
 
 //========================================
