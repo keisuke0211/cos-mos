@@ -387,7 +387,6 @@ void CMode_Game::SubTextCreate(void)
 			else if (nText == SETTING_SE_TEXT)
 				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
 
-
 			// ƒTƒCƒY
 			if (nText > SETTING_BACK)
 				size = D3DXVECTOR2(180.0f, 80.0f);

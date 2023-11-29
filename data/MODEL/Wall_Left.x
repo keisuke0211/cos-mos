@@ -525,7 +525,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Game&ToolCreate\\Project\\CosMos\\cos-mos\\data\\TEXTURE\\rock000.png";
+    "data\\TEXTURE\\rock000.png";
    }
   }
   Material {
@@ -534,7 +534,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Game&ToolCreate\\Project\\CosMos\\cos-mos\\data\\TEXTURE\\rock000.png";
+    "data\\TEXTURE\\rock000.png";
    }
   }
   Material {
