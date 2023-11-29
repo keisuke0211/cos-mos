@@ -8,7 +8,7 @@
 #include "../main.h"
 
 const float CEffect_Death::CREATE_SPREAD_POWER = -8.0f; //生成時の拡散力
-const float CEffect_Death::PLAYER_COLLI_POWER = 3.0f;	//プレイヤーに当たったときの吹っ飛び力
+const float CEffect_Death::PLAYER_COLLI_POWER = 1.0f;   //プレイヤーに当たったときの吹っ飛び力
 const float CEffect_Death::MOVE_X_CORRECT = 0.01f;      //Ⅹベクトルの移動補正係数
 const float CEffect_Death::GRAVITY_POWER = 0.03f;       //重力加速度
 const float CEffect_Death::BOUND_POWER = -0.7f;         //バウンド係数
@@ -109,11 +109,13 @@ void CEffect_Death::UpdateType_Ball(void)
 				//プレイヤーまでの角度を取得
 				const float fRot = atan2f(PosDiff.x, -PosDiff.y);
 
+				const Pos3D PlayerMove = colliInfo.pos - colliInfo.posOld;
+
 				//移動量設定
 				switch (vec)
 				{
-					case CPlayer::VECTOL::X:m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER;break;
-					case CPlayer::VECTOL::Y:m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER;break;
+					case CPlayer::VECTOL::X:m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER + PlayerMove.x;break;
+					case CPlayer::VECTOL::Y:m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + PlayerMove.y;break;
 				}
 			}
 		}
@@ -138,7 +140,7 @@ void CEffect_Death::UpdateType_Ball(void)
 						//落下速度がほぼ０なら０に設定
 						//違うなら速度を弱めつつ、バウンド
 						case CCollision::ROT::OVER:
-						case CCollision::ROT::UNDER: m_Info.move.y *= fabsf(m_Info.move.y) < 0.1f ? 0.0f : BOUND_POWER;break;
+						case CCollision::ROT::UNDER: m_Info.move.y *= BOUND_POWER;break;
 
 						//当たった方向が分からない
 						case CCollision::ROT::UNKNOWN:
@@ -362,7 +364,7 @@ void CEffect_Death::PutPolygon(void)
 //=======================================
 void CEffect_Death::PutModel(void)
 {
-	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_Info.pos, m_Info.rot)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_Info.pos, m_Info.rot, Vector3D(m_Info.size.x, m_Info.size.y, (m_Info.size.x + m_Info.size.y) * 0.5f))
 		->SetZTest(false)
 		->SetCol(m_Info.color);
 }

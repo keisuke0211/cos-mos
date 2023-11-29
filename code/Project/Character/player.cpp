@@ -522,7 +522,7 @@ void CPlayer::ActionControl(void)
 				Pos3D rot = INITVECTOR3D;
 				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 				{
-					const float fSize = (float)(rand() % 100) / 10.0f + 1.2f;
+					const float fSize = ((float)(rand() % 100) / 100.0f + 0.01f);
 					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
 					Manager::EffectMgr()->DeathParticleCreate(
 						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, Vector2D(fSize, fSize), Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
