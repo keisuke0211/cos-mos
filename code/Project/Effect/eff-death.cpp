@@ -33,7 +33,7 @@ CEffect_Death::~CEffect_Death()
 //=======================================
 // 設定処理
 //=======================================
-void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const Vector2D size, const Color color, const int nLife, const int nIdx, const TYPE type)
+void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const float size, const Color color, const int nLife, const int nIdx, const TYPE type)
 {
 	//基本情報設定
 	m_Info.pos = pos;   m_Info.posOld = posOld; m_Info.move = move;
@@ -91,34 +91,51 @@ void CEffect_Death::UpdateType_Ball(void)
 	CCollision::ColliInfo colliInfo;
 	CCollision::ROT ColliRot = CCollision::ROT::NONE;
 
+	//プレイヤーの当たり判定
+	if (m_Info.CreateCounter == 0)
+	{
+		//プレイヤー取得
+		CPlayer *pPlayer = CMode_Game::GetPlayer();
+
+		for (int nCntPlayer = 0; nCntPlayer < CPlayer::NUM_PLAYER; nCntPlayer++)
+		{
+			//プレイヤー情報反映
+			CPlayer::Info *pInfo = pPlayer->GetInfo(nCntPlayer);
+
+			//ゴールしている or 死んでいる
+			if (pInfo->bGoal || pInfo->bRide || pInfo->deathCounter != 0 || pInfo->deathCounter2 != 0)continue;
+
+			const Pos3D PlayerPos = pInfo->pos;
+			const Pos3D PosDiff = PlayerPos - m_Info.pos;
+			const float fPosDiffLength = D3DXVec3Length(&PosDiff);
+			const float fSizeLength = D3DXVec2Length(&D3DXVECTOR2(m_Info.size + CPlayer::SIZE_WIDTH, m_Info.size + CPlayer::SIZE_HEIGHT));
+
+			if (fPosDiffLength < fSizeLength)
+			{
+				//プレイヤーまでの角度を取得
+				float fRot = atan2f(-PosDiff.x, -PosDiff.y);
+
+				m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER + pInfo->move.x;
+				m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + pInfo->move.y * 0.7f;
+
+				//プレイヤーが地面にいる時蹴飛ばす
+				if (pInfo->bGround &&
+					(pInfo->side == CPlayer::WORLD_SIDE::FACE && m_Info.move.y <= 0.0f) ||
+					(pInfo->side == CPlayer::WORLD_SIDE::BEHIND && m_Info.move.y >= 0.0f))
+				{
+					m_Info.move.y *= -1.8f;
+				}
+				break;
+			}
+		}
+	}
+
 	for (int nCntVec = 0; nCntVec < (int)CPlayer::VECTOL::MAX; nCntVec++)
 	{
 		const CPlayer::VECTOL vec = (CPlayer::VECTOL)nCntVec;
 
 		//移動処理
 		Move(vec);
-
-		//プレイヤーの当たり判定
-		if (m_Info.CreateCounter == 0)
-		{
-			ColliRot = PlayerCollider(&SelfInfo, &colliInfo, vec);
-			if (ColliRot != CCollision::ROT::NONE)
-			{
-				const Pos3D PosDiff = colliInfo.pos - SelfInfo.pos;
-
-				//プレイヤーまでの角度を取得
-				const float fRot = atan2f(-PosDiff.x, -PosDiff.y);
-
-				const Pos3D PlayerMove = colliInfo.pos - colliInfo.posOld;
-
-				//移動量設定
-				switch (vec)
-				{
-					case CPlayer::VECTOL::X:m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER + PlayerMove.x;break;
-					case CPlayer::VECTOL::Y:m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + PlayerMove.y * 0.7f;break;
-				}
-			}
-		}
 
 		//ステージオブジェクトとの当たり判定
 		CStageObject::TYPE type = CStageObject::TYPE::NONE;
@@ -317,7 +334,7 @@ void CEffect_Death::PutPolygon(void)
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
 		->SetTex(m_Info.nIdx)
 		->SetCol(m_Info.color)
-		->SetSize(m_Info.size.x, m_Info.size.y)
+		->SetSize(m_Info.size, m_Info.size)
 		->SetZTest(false);
 }
 
@@ -326,8 +343,7 @@ void CEffect_Death::PutPolygon(void)
 //=======================================
 void CEffect_Death::PutModel(void)
 {
-	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_Info.pos, m_Info.rot, Vector3D(m_Info.size.x, m_Info.size.y, (m_Info.size.x + m_Info.size.y) * 0.5f))
-		->SetZTest(false)
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_Info.pos, m_Info.rot, Vector3D(m_Info.size, m_Info.size, m_Info.size))
 		->SetCol(m_Info.color);
 }
 
@@ -349,6 +365,5 @@ void CEffect_Death::SetSelfInfo(CCollision::SelfInfo *pSelfInfo)
 	//自分の情報を反映
 	pSelfInfo->pos = m_Info.pos; pSelfInfo->posOld = m_Info.posOld;
 	pSelfInfo->move = m_Info.move;
-	pSelfInfo->fWidth = CStageObject::SIZE_OF_1_SQUARE * m_Info.size.x * 0.5f;
-	pSelfInfo->fHeight = CStageObject::SIZE_OF_1_SQUARE * m_Info.size.y * 0.5f;
+	pSelfInfo->fWidth = pSelfInfo->fHeight = CStageObject::SIZE_OF_1_SQUARE * m_Info.size * 0.5f;
 }
