@@ -27,6 +27,11 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"NONEDATA",
 	"NONEDATA",
 	"data\\MODEL\\coin.x",
+	"data\\MODEL\\stone_monument.x",
+	"data\\MODEL\\StageObject\\AncientStoneBrickBlock.x",
+};
+const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
+	"data\\TEXTURE\\Effect\\effect000.jpg",
 };
 const char* CBlock::OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX] = {
 	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Inside.x",
@@ -40,12 +45,15 @@ const char* CBlock::OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX] = {
 };
 const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 	"data\\SOUND\\SE\\coin.wav",
+	"data\\SOUND\\SE\\lightA.wav",
+	"data\\SOUND\\SE\\lightB.wav",
 };
 
 //========================================
 // ïœêîíËã`
 //========================================
 short CBlock::m_modelIdxes[(int)LOOKS_TYPE::MAX];
+short CBlock::m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 short CBlock::m_otherModelIdxes[(int)OTHER_MODEL::MAX];
 short CBlock::m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::MAX];
 short CBlock::m_otherMotion3DIdxes[(int)OTHER_MOTION3D::MAX];
@@ -55,6 +63,11 @@ short CBlock::m_otherSoundIdxes[(int)OTHER_SOUND::MAX];
 // ì«Ç›çûÇ›èàóù
 //========================================
 void CBlock::Load(void) {
+
+	// ÉeÉNÉXÉ`ÉÉÇÃì«Ç›çûÇ›
+	for (int cnt = 0; cnt < (int)OTHER_TEXTURE::MAX; cnt++) {
+		m_otherTextureIdxes[cnt] = RNLib::Texture().Load(OTHER_TEXTURE_PATHS[cnt]);
+	}
 
 	// ÉÇÉfÉãÇÃì«Ç›çûÇ›
 	for (int cnt = 0; cnt < (int)LOOKS_TYPE::MAX; cnt++) {
@@ -165,6 +178,8 @@ void CBlock::Uninit(void) {
 //========================================
 void CBlock::Update(void) {
 
+	static const short outLineIdx = 5;
+
 	switch (m_looksType) {
 	case LOOKS_TYPE::LEAF_BLOCK: {
 		if (--m_counter <= 0) {
@@ -179,19 +194,21 @@ void CBlock::Update(void) {
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision);
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision);
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::CHEST: {
 
 		if (m_pos.y > 0.0f) {
+			// ÉWÉÉÉìÉvÇ≈ó£ÇÍÇΩèuä‘
 			if (m_isHitOlds[(int)CCollision::ROT::OVER] && !m_isHits[(int)CCollision::ROT::OVER] && CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->bJump) {
 				m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::CHEST_STEPPED]);
 			}
 		}
 		else {
+			// ÉWÉÉÉìÉvÇ≈ó£ÇÍÇΩèuä‘
 			if (m_isHitOlds[(int)CCollision::ROT::UNDER] && !m_isHits[(int)CCollision::ROT::UNDER] && CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->bJump) {
 				m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::CHEST_STEPPED]);
 			}
@@ -200,6 +217,7 @@ void CBlock::Update(void) {
 	case LOOKS_TYPE::PILE_OF_COINS: {
 
 		if (m_pos.y > 0.0f) {
+			// èÊÇÁÇÍÇΩèuä‘
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f,8.0f,0.0f), Color{ 255,200,0,255 });
@@ -208,6 +226,7 @@ void CBlock::Update(void) {
 			RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
 		}
 		else {
+			// èÊÇÁÇÍÇΩèuä‘
 			if (!m_isHitOlds[(int)CCollision::ROT::UNDER] && m_isHits[(int)CCollision::ROT::UNDER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
@@ -218,12 +237,54 @@ void CBlock::Update(void) {
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision);
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::STONE_MONUMENT: {
+
+		if (m_pos.y > 0.0f) {
+			// èÊÇÁÇÍÇΩèuä‘
+			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
+				if (++m_counter == 1)
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, false);
+			}
+
+			// èÊÇÁÇÍÇΩÇ±Ç∆Ç™Ç†ÇÈ
+			if (m_counter > 0) {
+				if (++m_counter > 30) {
+					m_counter = 30;
+					if (rand() % 20 == 0) {
+						Manager::EffectMgr()->ParticleCreate(m_otherTextureIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (UShort)(rand() % 40),(UShort)(100 + rand() % 80),(UShort)(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
+					}
+				}
+			}
+		}
+		else {
+			// èÊÇÁÇÍÇΩèuä‘
+			if (!m_isHitOlds[(int)CCollision::ROT::UNDER] && m_isHits[(int)CCollision::ROT::UNDER]) {
+				if (++m_counter == 1)
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, false);
+			}
+
+			// èÊÇÁÇÍÇΩÇ±Ç∆Ç™Ç†ÇÈ
+			if (m_counter > 0) {
+				if (++m_counter > 30) {
+					m_counter = 30;
+					if (rand() % 20 == 0) {
+						Manager::EffectMgr()->ParticleCreate(m_otherTextureIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (UShort)(rand() % 40),(UShort)(100 + rand() % 80),(UShort)(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
+					}
+				}
+			}
+		}
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA)
+			->SetBrightnessOfEmissive((float)m_counter / 30);
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision);
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	}
 

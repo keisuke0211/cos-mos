@@ -15,6 +15,7 @@
 #include "../UI/rocket-parts.h"
 #include "../System/BG-Editor.h"
 #include "../Sound/ambient-sound-player.h"
+#include "../resource.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -192,14 +193,25 @@ void CMode_Game::Update(void) {
 		m_cameraDown->SetBGCol(m_BgColorDown);
 
 		// ã
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, Pos3D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2, 0.0f), 0.0f)
-			->SetTexUV(m_cameraUp)
-			->SetSize(windowWidth, windowHeightHalf);
+		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
+			->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
+			->SetBillboard(true);
+
+		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
+			->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
+			->SetBillboard(true);
 
 		// ‰º
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
+		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
+			->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
+			->SetBillboard(true);
+
+		/*RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
 			->SetTexUV(m_cameraDown)
-			->SetSize(windowWidth, windowHeightHalf);
+			->SetSize(windowWidth, windowHeightHalf);*/
 	}
 
 	// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
