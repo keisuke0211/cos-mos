@@ -9,10 +9,10 @@
 #include "../../Character/player.h"
 
 //マクロ定義
-#define MAX_COUNT		(60)	//最大カウント数
+#define MAX_COUNT		(60)						//最大カウント数
 #define MAX_ROT_SPEED	(30.0f / (float) MAX_COUNT)	//最大回転速度
-#define MAX_COLOR		(200)	//最大カラー値
-#define ADDSUB_COLOR	(10)	//和差カラー値
+#define MAX_COLOR		(200)						//最大カラー値
+#define ADDSUB_COLOR	(10)						//和差カラー値
 
 int CGoalGate::m_num = 0;
 int CGoalGate::m_numEntry = 0;
@@ -40,6 +40,7 @@ CGoalGate::CGoalGate(void) {
 	m_col = Color{ 200,0,0,255 };
 	m_Rainbow = RAINBOW::RED;
 	m_num++;
+	m_bStartGate = false;
 
 	//モデルとテクスチャ
 	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
@@ -78,15 +79,16 @@ void CGoalGate::Uninit(void) {
 // 更新処理
 // Author:RYUKI FUJIWARA
 //========================================
-void CGoalGate::Update(void) {
+void CGoalGate::Update(void)
+{
 
 	StateUpdate();
 	ColUpdate();
 
 	float fCountRateX, fCountRateY;
-
 	CountRate(&fCountRateX, &fCountRateY);
 	
+	//モデル配置
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false)
 		->SetCol(m_col)
 		->SetOutLineIdx(1);
@@ -108,16 +110,13 @@ void CGoalGate::StateUpdate(void)
 	if (m_state != STATE::MAX)
 	{
 		if (m_pos.y > 0)
-		{
 			m_rot.z += 0.05f;
-		}
+		
 		else if (m_pos.y < 0)
-		{
 			m_rot.z -= 0.05f;
-		}
 	}
 
-	if (m_num == m_numEntry)
+	if (m_num == m_numEntry || m_bStartGate == true)
 	{
 		m_state = STATE::MAX;
 
@@ -125,13 +124,10 @@ void CGoalGate::StateUpdate(void)
 		float CntEffRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
 		if (m_pos.y > 0)
-		{
 			m_rot.z += 0.6f - CountRateRot;
-		}
+
 		else if(m_pos.y < 0)
-		{
 			m_rot.z -= 0.6f - CountRateRot;
-		}
 
 		if (m_nCnt > 0)
 		{
@@ -159,18 +155,14 @@ void CGoalGate::StateUpdate(void)
 		m_nCnt--;
 
 		if (m_nCnt < MAX_COUNT * 0.8)
-		{
 			m_state = STATE::GROW;
-		}
 	}
 	else if (m_state == STATE::GROW)
 	{
 		m_nCnt++;
 
 		if (m_nCnt > MAX_COUNT)
-		{
 			m_state = STATE::SMALL;
-		}
 	}
 }
 //========================================
@@ -231,11 +223,9 @@ void CGoalGate::ColUpdate(void)
 void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
 {
 	if (m_state == STATE::MAX)
-	{
 		m_bEntry = false;
-	}
 
-	if (m_bEntry == true)
+	if (m_bEntry == true && m_bStartGate == false)
 	{
 		//割合計算
 		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
@@ -247,9 +237,7 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY)
 			m_nCntEtrY++;
 
 			if (m_nCntEtrX <= ETR_CNT * 0.5 && m_nCntEtrY >= ETR_CNT)
-			{
 				m_bScale = true;
-			}
 		}
 		else
 		{
