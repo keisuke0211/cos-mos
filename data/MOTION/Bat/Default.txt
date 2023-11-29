@@ -1,11 +1,20 @@
 Motion3DFile
-loopTime 180
+loopTime 60
 isLoop 1
-boneMotionDatas{ 1
-	boneMotionData{ 2
-		time 0 0 0.000000 0.000000 0.000000 30 2
-		time 30 0 0.000000 0.000000 0.000000 30 2
+boneMotionDatas{ 3
+	boneMotionData{ 4
+		time 0 1 0.000000 0.000000 3.28000 30 3
+		time 30 1 0.000000 0.000000 3.000000 30 3
+		time 0 0 0.500000 0.000000 0.000000 30 3
+		time 30 0 -0.500000 0.000000 0.000000 30 3
 	}
-
+	boneMotionData{ 2
+		time 0 1 0.000000 2.500000 -2.000000 30 0
+		time 0 0 0.000000 -1.000000 -5.000000 30 0
+	}
+	boneMotionData{ 2
+		time 0 1 0.000000 -2.500000 2.000000 30 0
+		time 0 0 0.000000 -1.000000 -5.000000 30 0
+	}
 }
 END

@@ -349,24 +349,19 @@ void CPlayer::UpdateInfo(void)
 	for each (Info &Player in m_aInfo)
 	{
 		nCntPlayer++;
-		// ロケットに乗ってたら　or ゴールしていたらスキップ
-		if (Player.bRide || Player.bGoal) continue;
 
 		// 位置設定
 		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim) {
 			Player.doll->SetPos(Player.pos - Pos3D(0.0f, (fabsf(Player.pos.y) / Player.pos.y) * SIZE_HEIGHT, 0.0f));
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
-			if (Player.move.x + Player.move.y <= 0.1f) {
-				Player.doll->OverwriteMotion(s_motion.neutral);
-			}
-			else {
-				Player.doll->OverwriteMotion(s_motion.walk);
-			}
 		}
 		else {
 			Player.doll->SetPos(Pos3D(10000.0f, 10000.0f, 10000.0f));
 		}
+
+		// ロケットに乗ってたら　or ゴールしていたらスキップ
+		if (Player.bRide || Player.bGoal) continue;
 
 		// スワップ先のマークを描画する位置
 		D3DXVECTOR3 MarkPos = Player.pos;
@@ -567,12 +562,17 @@ void CPlayer::ActionControl(void)
 		{// 右に移動
 			Player.move.x += MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
+			Player.doll->OverwriteMotion(s_motion.walk);
 		}
 		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
 			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer)) 
 		{// 左に移動
 			Player.move.x -= MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
+			Player.doll->OverwriteMotion(s_motion.walk);
+		}
+		else {
+			Player.doll->OverwriteMotion(s_motion.neutral);
 		}
 
 		// スワップ入力
@@ -653,7 +653,7 @@ void CPlayer::SwapAnimation(void)
 				setCol = Color{ (UShort)(215 + rand() % 40),(UShort)(135 + rand() % 40),(UShort)(39 + rand() % 40),255 };
 			}
 			else{
-				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(203 + rand() % 40),(UShort)(190 + rand() % 40),255 };
+				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(130 + rand() % 125),(UShort)(130 + rand() % 125),255 };
 			}
 
 			int nTex = rand() % 2 + 2;

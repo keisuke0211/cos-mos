@@ -46,6 +46,8 @@ public:
 	void        PivotToPosV         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = true; }
 	void        PivotToPosR         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = false; }
 	void        SetFixed            (const bool& isFixid)    { m_isFixed = isFixid; }
+	void        SetDraw             (const bool& isDraw)     { m_isDraw = isDraw; }
+	bool&       GetDraw             (void)                   { return m_isDraw; }
 	void        SetBGCol            (const Color& col)       { m_BGCol = col; }
 	void        SetClipping         (const bool& isClipping) { m_isClipping = isClipping; }
 	bool&       GetClipping         (void)                   { return m_isClipping; }
@@ -119,6 +121,7 @@ private:
 	STATE           m_state;
 	void*           m_stateInfo;
 	// •`‰æŠÖ˜A
+	bool            m_isDraw;
 	Color           m_BGCol;
 	bool            m_isClipping;
 	MTRenderingInfo m_MTInfo;

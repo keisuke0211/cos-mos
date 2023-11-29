@@ -88,7 +88,8 @@ void CGoalGate::Update(void) {
 	CountRate(&fCountRateX, &fCountRateY);
 	
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z), false)
-		->SetCol(m_col);
+		->SetCol(m_col)
+		->SetOutLineIdx(1);
 }
 //========================================
 // •`‰æˆ—
