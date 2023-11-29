@@ -893,10 +893,17 @@ void CPlayer::CollisionToStageObject(void)
 				// 移動するオブジェクトは、
 				// 当たり判定位置に前回位置を設定する
 				switch (type) {
-					// 移動床
+					// ブロック
 				case OBJECT_TYPE::BLOCK: {
 					CBlock* pBlock = (CBlock*)stageObj;
 					if (!pBlock->GetCollision())
+						continue;
+				}break;
+
+					// ゴールゲート
+				case OBJECT_TYPE::GOALGATE: {
+					CGoalGate* pGoalGate = (CGoalGate*)stageObj;
+					if (pGoalGate->GetStartGate())
 						continue;
 				}break;
 

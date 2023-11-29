@@ -47,7 +47,7 @@ public:
 	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move, bool bxRetrurn = false);
 	CPile       *PileCreate(D3DXVECTOR3 pos, int nNumPile, float fCaveIn);
 	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
-	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos);
+	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos,bool bStartGate);
 	CRocket     *RocketCreate    (D3DXVECTOR3 pos);
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);

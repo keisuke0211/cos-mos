@@ -308,7 +308,7 @@ CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
 //========================================
 // ƒS[ƒ‹ƒQ[ƒg
 //========================================
-CGoalGate *CStageObjectMgr::GoalGateCreate(D3DXVECTOR3 pos)
+CGoalGate *CStageObjectMgr::GoalGateCreate(D3DXVECTOR3 pos,bool bStartGate)
 {
 	CGoalGate *pObj = NULL;
 
@@ -318,6 +318,7 @@ CGoalGate *CStageObjectMgr::GoalGateCreate(D3DXVECTOR3 pos)
 	// ‰Šú‰»ˆ—
 	pObj->Init();
 	pObj->SetPos(pos);
+	pObj->SetStartGate(bStartGate);
 
 	return pObj;
 }

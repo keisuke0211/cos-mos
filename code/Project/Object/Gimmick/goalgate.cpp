@@ -52,9 +52,6 @@ CGoalGate::CGoalGate(void) {
 // デストラクタ
 //========================================
 CGoalGate::~CGoalGate(void) {
-
-	m_num = 0;
-	m_numEntry = 0;
 }
 
 //========================================
@@ -140,7 +137,11 @@ void CGoalGate::StateUpdate(void)
 		{
 			m_state = STATE::NONE;
 			m_num--;
-			m_numEntry--;
+
+			if (m_bStartGate == false)
+			{
+				m_numEntry--;
+			}
 
 			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 			{
