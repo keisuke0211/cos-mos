@@ -18,6 +18,7 @@ const float CEffect_Death::BALL_SIZE[(int)BALL_SIZE_LV::MAX] = { //É{Å[ÉãÉTÉCÉYÇ
 };
 
 int CEffect_Death::s_nNumAllBall = 0;
+int CEffect_Death::s_FusionSE = NONEDATA;
 
 //=======================================
 // ÉRÉìÉXÉgÉâÉNÉ^
@@ -68,6 +69,8 @@ void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vec
 		m_Info.move.x = sinf(rot.z) * CREATE_SPREAD_POWER;
 		m_Info.move.y = cosf(rot.z) * CREATE_SPREAD_POWER;
 		m_Info.nBallID = s_nNumAllBall++;
+		if (s_FusionSE == NONEDATA)
+			s_FusionSE = RNLib::Sound().Load("data\\SOUND\\SE\\fusion.wav");
 	}
 }
 
@@ -481,10 +484,14 @@ void CEffect_Death::BallFusion(void)
 			pEff->m_Info.size = BALL_SIZE[(int)*pEff->m_Info.pLv];
 			pEff->m_posOld = pEff->m_pos;
 			pEff->m_pos = m_pos + PosDiff * 0.5f; //2Ç¬ÇÃÉ{Å[ÉãÇÃíÜä‘Ç…à íuê›íË
+			pEff->m_pos.y += 5.0f * BALL_SIZE[(int)*pEff->m_Info.pLv];
 			pEff->m_Info.move = INITVECTOR3D;
 			pEff->m_Info.ColliderInterval = FUSION_INTERVAL;
 			pEff->UpdateType_Ball();
 		}
+
+		//SEçƒê∂
+		RNLib::Sound().Play(s_FusionSE, CSound::CATEGORY::SE, false);
 		break;
 	}
 }

@@ -103,5 +103,7 @@ private:
 	void Death(void);
 
 	static int s_nNumAllBall;
+	static int s_FusionSE;
+
 	Info m_Info;
 };
