@@ -314,10 +314,12 @@ void CModel::CData::Release(void) {
 	}
 
 	// —ÖŠsüƒƒbƒVƒ…‚Ì”jŠü
-	for (int cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
-		if (m_outLineMeshs[cntOutLine] != NULL) {
-			m_outLineMeshs[cntOutLine]->Release();
-			m_outLineMeshs[cntOutLine] = NULL;
+	if (m_outLineMeshs != NULL) {
+		for (int cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
+			if (m_outLineMeshs[cntOutLine] != NULL) {
+				m_outLineMeshs[cntOutLine]->Release();
+				m_outLineMeshs[cntOutLine] = NULL;
+			}
 		}
 	}
 	CMemory::Release(&m_outLineMeshs);

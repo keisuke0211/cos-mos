@@ -571,8 +571,7 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 			{
 				rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(
-					RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
+				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
 
 				const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
 				pEff->SetBallSize(Lv);
