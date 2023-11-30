@@ -176,6 +176,8 @@ void CDoll3D::UpdateMotion(void) {
 //========================================
 void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 
+	return;
+
 	// セットアップデータが存在しない時、処理を終了する
 	if (&setUp == NULL)
 		return;
@@ -189,7 +191,7 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 
 	// 頂点情報
 	CModel::Vertex3DInfo** vtxInfo = NULL;
-	UInt* vtxNum = 0;
+	UInt* vtxNum = NULL;
 	CMemory::Alloc(&vtxInfo, setUp.m_boneDataNum);
 	CMemory::Alloc(&vtxNum, setUp.m_boneDataNum);
 
@@ -212,8 +214,10 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 			->SetBrightnessOfEmissive(m_brightnessOfEmission);
 
 		// 頂点情報を取得
+		vtxNum[cntBone] = 0;
 		vtxInfo[cntBone] = NULL;
 		RNLib::Model().StoreVtxInfo(&vtxNum[cntBone], &vtxInfo[cntBone], setUp.m_boneDatas[cntBone].modelIdx, worldMtx);
+		// OK
 
 		// 頂点番号の描画
 		if (RNLib::Doll3DMgr().GetEditDoll() == this &&
@@ -318,10 +322,10 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 
 	// フェイスの描画
 	for (int cntFace = 0; cntFace < setUp.m_faceDataNum; cntFace++) {
-		CSetUp3D::FaceVtxData& vtx0 = setUp.m_faceDatas[cntFace].vtxs[0];
-		CSetUp3D::FaceVtxData& vtx1 = setUp.m_faceDatas[cntFace].vtxs[1];
-		CSetUp3D::FaceVtxData& vtx2 = setUp.m_faceDatas[cntFace].vtxs[2];
-		CSetUp3D::FaceVtxData& vtx3 = setUp.m_faceDatas[cntFace].vtxs[3];
+		const CSetUp3D::FaceVtxData& vtx0 = setUp.m_faceDatas[cntFace].vtxs[0];
+		const CSetUp3D::FaceVtxData& vtx1 = setUp.m_faceDatas[cntFace].vtxs[1];
+		const CSetUp3D::FaceVtxData& vtx2 = setUp.m_faceDatas[cntFace].vtxs[2];
+		const CSetUp3D::FaceVtxData& vtx3 = setUp.m_faceDatas[cntFace].vtxs[3];
 
 		if (vtx0.boneIdx >= setUp.m_boneDataNum )continue;
 		if (vtx0.vtxIdx  >= vtxNum[vtx0.boneIdx])continue;
@@ -364,8 +368,8 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 Matrix CDoll3D::FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, const Matrix& selfMtx) {
 
 	Matrix  worldMtx    = INITMATRIX;
-	Pos3D   resultPos   = boneState[idx].GetAddPos  () + boneState[idx].GetAnimPos() + boneData[idx].relativePos;
-	Rot3D   resultRot   = boneState[idx].GetAddRot  () + boneState[idx].GetAnimRot() + boneData[idx].relativeRot;
+	Pos3D   resultPos   = boneState[idx].GetAddPos() + boneState[idx].GetAnimPos() + boneData[idx].relativePos;
+	Rot3D   resultRot   = boneState[idx].GetAddRot() + boneState[idx].GetAnimRot() + boneData[idx].relativeRot;
 	Scale3D resultScale;
 	resultScale.x = boneState[idx].GetAddScale().x * boneState[idx].GetAnimScale().x;
 	resultScale.y = boneState[idx].GetAddScale().y * boneState[idx].GetAnimScale().y;
