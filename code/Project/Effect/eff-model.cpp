@@ -14,6 +14,15 @@ const char* s_nIdx[] =
 {
 	"data\\MODEL\\MeteoriteFragment_0.x",
 };
+
+//ï€ë∂óp
+
+/*if (RNLib::Input().GetKeyPress(DIK_RETURN))
+{
+Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(m_aInfo[0].pos.x, m_aInfo[0].pos.y -7.0f * cosf(m_aInfo[0].rot.z), m_aInfo[0].pos.z), m_aInfo[0].rot, INITSCALE3D * 0.2f, INITCOLOR);
+}*/
+
+
 //========================================
 // ê√ìIïœêî
 //========================================
@@ -81,16 +90,17 @@ void CEffect_Model::Update(void)
 	if (m_nCount != 0) {
 		m_nCount--;
 
+		CollisionBound();
+
 		//äÑçáåvéZ
 		float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_nCount, m_nCountMax);
 
-
-		m_move.y -= 0.98f * (m_pos.y / fabsf(m_pos.y));
+		m_move.y -= 0.49f * (m_pos.y / fabsf(m_pos.y));
 
 		m_col.a = m_col.a * fCountRate;
 		m_pos += m_move;
 
-		m_move.x += (0.0f - m_move.x) * 0.3f;
+		m_move.x += (0.0f - m_move.x) * 0.1f;
 		m_move.y += (0.0f - m_move.y) * 0.5f;
 
 		if (m_nCount <= 0)
@@ -126,12 +136,12 @@ void CEffect_Model::CollisionBound(void)
 			if (!pBlock->GetCollision())
 				continue;
 
-			if (m_pos.x >= pBlock->GetPos().x - pBlock->GetWidth()
-				&& m_pos.x <= pBlock->GetPos().x + pBlock->GetWidth()
-				&& m_pos.y >= pBlock->GetPos().y - pBlock->GetHeight()
-				&& m_pos.y <= pBlock->GetPos().y + pBlock->GetHeight())
+			if (m_pos.x >= pBlock->GetPos().x - pBlock->GetWidth() * 0.5f
+				&& m_pos.x <= pBlock->GetPos().x + pBlock->GetWidth() * 0.5f
+				&&m_pos.y >= pBlock->GetPos().y - pBlock->GetHeight() * 0.5f
+				&& m_pos.y <= pBlock->GetPos().y + pBlock->GetHeight() * 0.5f)
 			{
-
+				m_move.y *= -8;
 			}
 		}break;
 		}
