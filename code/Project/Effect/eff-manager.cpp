@@ -56,6 +56,24 @@ CEff *CEffMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color c
 	return pObj;
 }
 //========================================
+// エフェクト
+//========================================
+CEffect_Model *CEffMgr::ModelEffectCreate(int nIdx, D3DXVECTOR3 pos,D3DXVECTOR3 rot, D3DXVECTOR3 scale, Color col, int nCount, D3DXVECTOR3 move)
+{
+	CEffect_Model *pObj = NULL;
+
+	pObj = new CEffect_Model;
+
+	// 初期化処理
+	pObj->SetPos(pos);
+	pObj->Init(nIdx,nCount,move);
+	pObj->SetRot(rot);
+	pObj->SetScale(scale);
+	pObj->SetColor(col);
+
+	return pObj;
+}
+//========================================
 // 隕石エフェクト
 //========================================
 CEffect_Meteor * CEffMgr::EffectMeteorCreate(D3DXVECTOR3 pos)

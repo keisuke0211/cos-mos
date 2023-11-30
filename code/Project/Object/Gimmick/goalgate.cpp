@@ -62,6 +62,11 @@ CGoalGate::~CGoalGate(void) {
 //========================================
 void CGoalGate::Init(void) {
 
+	if ((m_numEntry % 2) != 0)
+	{
+		m_numEntry = 0;
+	}
+
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
 
