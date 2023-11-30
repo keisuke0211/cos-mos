@@ -200,7 +200,7 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 		Pos3D       resultPos = INITPOS3D;
 		Rot3D       resultRot = INITROT3D;
 
-		// ボーンの更新処理
+		// ボーン状態の更新処理
 		boneState.Update(m_motionInfo.counter, setUp.m_boneDatas[cntBone]);
 
 		// ワールドマトリックスを調べる
@@ -215,7 +215,6 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 		vtxNum[cntBone] = 0;
 		vtxInfo[cntBone] = NULL;
 		RNLib::Model().StoreVtxInfo(&vtxNum[cntBone], &vtxInfo[cntBone], setUp.m_boneDatas[cntBone].modelIdx, worldMtx);
-		// OK
 
 		// 頂点番号の描画
 		if (RNLib::Doll3DMgr().GetEditDoll() == this &&

@@ -45,6 +45,8 @@ int			CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 CPlayer::SE CPlayer::s_SE = {};	//サウンド用構造体
 CPlayer::Motion CPlayer::s_motion = {};	//モーション用構造体
 CCollision *CPlayer::s_pColli = NULL;
+bool CPlayer::ms_bSwapEnd = false;
+UShort CPlayer::ms_guideCounter = 0;
 
 //=======================================
 // コンストラクタ
@@ -71,6 +73,7 @@ CPlayer::CPlayer()
 	for each(Info &Player in m_aInfo)
 	{
 		Player.expandCounter = 0;
+		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
 		Player.StartPos = INITD3DXVECTOR3;		// 開始位置
@@ -139,6 +142,9 @@ CPlayer *CPlayer::Create(void)
 //=====================================================================================================================
 HRESULT CPlayer::Init(void)
 {
+	ms_bSwapEnd = false;
+	ms_guideCounter = 0;
+
 	// １Ｐ初期情報
 	m_aInfo[0].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
@@ -273,6 +279,7 @@ void CPlayer::InitInfo(void) {
 		Player.bGoal = false;
 		Player.bTramJump = false;
 		Player.expandCounter = 0;
+		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
 	}
@@ -312,6 +319,8 @@ void CPlayer::Update(void)
 	if (s_bSwapAnim)
 	{
 		SwapAnimation();
+		UpdateInfo();
+
 		return;
 	}
 
@@ -351,10 +360,61 @@ void CPlayer::Update(void)
 //----------------------------
 void CPlayer::UpdateInfo(void)
 {
+	//----------------------------------------
+	// ガイドテキスト
+	//----------------------------------------
+	bool isSwapGuide = false;
+	if (m_aInfo[0].deathCounter == 0 && m_aInfo[0].deathCounter2 == 0 &&
+		m_aInfo[1].deathCounter == 0 && m_aInfo[1].deathCounter2 == 0) {
+		const int planet = Manager::StgEd()->GetPlanetIdx();
+		
+		if (planet == 0) {
+			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+				if (++ms_guideCounter > 30)
+					ms_guideCounter = 30;
+				float rate = (float)ms_guideCounter / 30;
+				if (ms_bSwapEnd) {
+					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+						->SetZTest(false)
+						->SetBillboard(true);
+				}
+				else {
+					if (s_nSwapInterval == 0) {
+						RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+							->SetZTest(false)
+							->SetBillboard(true);
+						isSwapGuide = true;
+					}
+				}
+			}
+			else if (Manager::StgEd()->GetType()[0].nStageIdx == 3) {
+				if (++ms_guideCounter > 30)
+					ms_guideCounter = 30;
+				float rate = (float)ms_guideCounter / 30;
+				if (CParts::GetDispNum() == 0) {
+					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+						->SetZTest(false)
+						->SetBillboard(true);
+				}
+				else {
+					RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+						->SetZTest(false)
+						->SetBillboard(true);
+				}
+			}
+		}
+	}
+
 	int nCntPlayer = -1;
 	for each (Info &Player in m_aInfo)
 	{
 		nCntPlayer++;
+
+		UpdateDeath(Player, nCntPlayer);
 
 		// 位置設定
 		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim) {
@@ -366,8 +426,27 @@ void CPlayer::UpdateInfo(void)
 			Player.doll->SetPos(Pos3D(10000.0f, 10000.0f, 10000.0f));
 		}
 
+		// スワップアニメーション中であれば折り返す
+		if (s_bSwapAnim) {
+			continue;
+		}
+
+		if (isSwapGuide) {
+			if (-144.0f <= Player.pos.x && 144.0f >= Player.pos.x) {
+				Pos3D putPos = Player.pos;
+				putPos.y += (Player.pos.y / fabsf(Player.pos.y)) * 24.0f;
+				const int count = RNLib::Count().GetCount() % 40;
+				float sizeRate = (float)(count - ((count % 20) * (count / 20)) * 2) / 20;
+				RNLib::Text3D().Put(PRIORITY_UI, "X", CText::ALIGNMENT::CENTER, 0, CMatrix::ConvPosToMtx(putPos))
+					->SetSize(Size2D(16.0f * (0.5f + sizeRate * 0.25f), 16.0f * (0.5f + sizeRate * 0.25f)))
+					->SetZTest(false)
+					->SetBillboard(true);
+			}
+		}
+
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
-		if (Player.bRide || Player.bGoal) continue;
+		if (Player.bRide || Player.bGoal)
+			continue;
 
 		// スワップ先のマークを描画する位置
 		D3DXVECTOR3 MarkPos = Player.pos;
@@ -381,12 +460,128 @@ void CPlayer::UpdateInfo(void)
 			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha });
 
 		// 最高Ｙ座標更新
-		switch (Player.side)
-		{
+		switch (Player.side) {
 			case WORLD_SIDE::FACE:	 Player.fMaxHeight = Player.fMaxHeight < Player.pos.y ? Player.pos.y : Player.fMaxHeight; break;
 			case WORLD_SIDE::BEHIND: Player.fMaxHeight = Player.fMaxHeight > Player.pos.y ? Player.pos.y : Player.fMaxHeight; break;
 		}
-		RNLib::Text2D().PutDebugLog(CreateText("%dP最高Y座標：%f    現在Y座標：%f", nCntPlayer + 1, Player.fMaxHeight, Player.pos.y));
+		RNLib::Text2D().PutDebugLog(CreateText("%dP最高Y座標：%f    Y:%f X:%f", nCntPlayer + 1, Player.fMaxHeight, Player.pos.y, Player.pos.x));
+	}
+}
+
+//----------------------------
+// 死亡更新処理
+//----------------------------
+void CPlayer::UpdateDeath(Info& info, const int& count) {
+
+	// 死亡カウンター&演出
+	static Vector3D addVec = INITVECTOR3D;
+	static Pos3D posVTemp = INITVECTOR3D;
+	static Pos3D posRTemp = INITVECTOR3D;
+	if (info.deathCounter > 0) {
+		if (--info.deathCounter == 0) {
+			info.deathCounter2 = DEATH_TIME2;
+			addVec = INITVECTOR3D;
+			posVTemp = Manager::GetMainCamera()->GetPosV();
+			posRTemp = Manager::GetMainCamera()->GetPosR();
+
+			// ミスのテキスト生成
+			CMiss::Create();
+
+			// ゴーストの生成
+			CGhost::Create(info.pos, count);
+		}
+
+		float rate = (float)info.deathCounter / DEATH_TIME;
+		float rateOpp = 1.0f - rate;
+		Manager::GetMainCamera()->SetMotionBlurColor(Color{ 255,(UShort)(255 * rateOpp),(UShort)(255 * rateOpp),255 });
+		Manager::GetMainCamera()->SetMotionBlurPower(0.25f + rate * 0.25f);
+		Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.1f));
+	}
+	// 死亡カウンター2&演出
+	if (info.deathCounter2 > 0) {
+
+		if (--info.deathCounter2 == 0) {
+			InitInfo();
+
+			//オブジェクトのポインタを格納
+			CObject* obj = NULL;
+
+			//オブジェクトを取得
+			while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+				//取得したオブジェクトをキャスト
+				CStageObject* stageObj = (CStageObject*)obj;
+
+				//種類取得
+				const CStageObject::TYPE type = stageObj->GetType();
+
+				switch (type)
+				{
+				case CStageObject::TYPE::MISS:
+				{
+					//取得したオブジェクトをキャスト
+					CMiss* Miss = (CMiss*)obj;
+
+					Miss->Delete();	// 削除処理
+					break;
+				}
+				case CStageObject::TYPE::GHOST:
+				{
+					//取得したオブジェクトをキャスト
+					CGhost* Ghost = (CGhost*)obj;
+
+					Ghost->Delete();	// 削除処理
+					break;
+				}
+				}
+			}
+		}
+
+		bool isReturn = false;
+		int counter = info.deathCounter2;
+		if (counter > DEATH_TIME2 / 2)
+			counter -= DEATH_TIME2 / 2;
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, counter, DEATH_TIME2 / 2);
+		if (rate > 0.5f) {
+			rate = 0.5f + (0.5f - rate);
+			isReturn = true;
+		}
+		rate /= 0.5f;
+
+		float rate2 = ((float)info.deathCounter2 / DEATH_TIME2);
+		if (rate2 > 0.5f) {
+			rate2 = 0.5f + (0.5f - rate2);
+		}
+		rate2 /= 0.5f;
+
+		addVec += CGeometry::GetRandomVec();
+		Manager::GetMainCamera()->SetMotionBlurPower(isReturn ? 0.25f + rate * 0.25f : rate * 0.5f);
+		Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.02f));
+		Manager::GetMainCamera()->SetPosVAndPosR(
+			((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
+			((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
+	}
+	// 膨らみカウンター＆演出
+	else if (info.expandCounter > 0) {
+		if (--info.expandCounter == 0) {
+			RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
+			Manager::GetMainCamera()->SetVib(5.0f);
+
+			const int NUM_PARTICLE = 8;
+			Pos3D rot = INITVECTOR3D;
+			for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
+			{
+				rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
+				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(
+					RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
+
+				const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
+				pEff->SetBallSize(Lv);
+			}
+			info.deathCounter = DEATH_TIME;
+		}
+		info.scale.x =
+			info.scale.y =
+			info.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 0.2f;
 	}
 }
 
@@ -398,136 +593,23 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
-	// 操作停止フラグを算出
-	bool isControlStop = m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0 || m_aInfo[0].deathCounter2 > 0 || m_aInfo[1].deathCounter2 > 0;
-
-	if (!isControlStop) {
+	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
+	{// どちらも死んでいない
 		// [[[ カメラ制御 ]]]
 		Pos3D pos = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
 		pos.x *= 0.25f;
 		pos.y = 0.0f;
 		Manager::GetMainCamera()->SetPosVAndPosR(Manager::GetMainCamera()->GetPosV(), pos);
 	}
+	else 
+	{// どちらかが死んでいる
+		return;
+	}
 
 	for each (Info & Player in m_aInfo)
 	{
 		// 次のプレイヤー番号へ
 		nIdxPlayer++;
-
-		// 死亡カウンター&演出
-		static Vector3D addVec = INITVECTOR3D;
-		static Pos3D posVTemp = INITVECTOR3D;
-		static Pos3D posRTemp = INITVECTOR3D;
-		if (Player.deathCounter > 0) {
-			if (--Player.deathCounter == 0) {
-				Player.deathCounter2 = DEATH_TIME2;
-				addVec = INITVECTOR3D;
-				posVTemp = Manager::GetMainCamera()->GetPosV();
-				posRTemp = Manager::GetMainCamera()->GetPosR();
-
-				// ミスのテキスト生成
-				CMiss::Create();
-
-				// ゴーストの生成
-				CGhost::Create(Player.pos, nIdxPlayer);
-			}
-
-			float rate = (float)Player.deathCounter / DEATH_TIME;
-			float rateOpp = 1.0f - rate;
-			Manager::GetMainCamera()->SetMotionBlurColor(Color{ 255,(UShort)(255 * rateOpp),(UShort)(255 * rateOpp),255 });
-			Manager::GetMainCamera()->SetMotionBlurPower(0.25f + rate * 0.25f);
-			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.1f));
-		}
-		// 死亡カウンター2&演出
-		if (Player.deathCounter2 > 0) {
-
-			if (--Player.deathCounter2 == 0) {
-				InitInfo();
-
-				//オブジェクトのポインタを格納
-				CObject *obj = NULL;
-
-				//オブジェクトを取得
-				while (Manager::StageObjectMgr()->ListLoop(&obj)) {
-					//取得したオブジェクトをキャスト
-					CStageObject* stageObj = (CStageObject*)obj;
-
-					//種類取得
-					const CStageObject::TYPE type = stageObj->GetType();
-
-					switch (type)
-					{
-					case CStageObject::TYPE::MISS:
-					{
-						//取得したオブジェクトをキャスト
-						CMiss* Miss = (CMiss*)obj;
-
-						Miss->Delete();	// 削除処理
-						break;
-					}
-					case CStageObject::TYPE::GHOST:
-					{
-						//取得したオブジェクトをキャスト
-						CGhost* Ghost = (CGhost*)obj;
-
-						Ghost->Delete();	// 削除処理
-						break;
-					}
-					}
-				}
-			}
-
-			bool isReturn = false;
-			int counter = Player.deathCounter2;
-			if (counter > DEATH_TIME2 / 2)
-				counter -= DEATH_TIME2 / 2;
-			float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, counter, DEATH_TIME2 / 2);
-			if (rate > 0.5f) {
-				rate = 0.5f + (0.5f - rate);
-				isReturn = true;
-			}
-			rate /= 0.5f;
-
-			float rate2 = ((float)Player.deathCounter2 / DEATH_TIME2);
-			if (rate2 > 0.5f) {
-				rate2 = 0.5f + (0.5f - rate2);
-			}
-			rate2 /= 0.5f;
-
-			addVec += CGeometry::GetRandomVec();
-			Manager::GetMainCamera()->SetMotionBlurPower(isReturn ? 0.25f + rate * 0.25f : rate * 0.5f);
-			Manager::GetMainCamera()->SetMotionBlurScale(1.0f + (rate * 0.02f));
-			Manager::GetMainCamera()->SetPosVAndPosR(
-				((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
-				((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
-		}
-		// 膨らみカウンター＆演出
-		else if (Player.expandCounter > 0) {
-			if (--Player.expandCounter == 0) {
-				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
-				Manager::GetMainCamera()->SetVib(5.0f);
-
-				const int NUM_PARTICLE = 8;
-				Pos3D rot = INITVECTOR3D;
-				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
-				{
-					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-					CEffect_Death *pEff = Manager::EffectMgr()->DeathParticleCreate(
-						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
-					
-					const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
-					pEff->SetBallSize(Lv);
-				}
-				Player.deathCounter = DEATH_TIME;
-			}
-			Player.scale.x =
-			Player.scale.y =
-			Player.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, Player.expandCounter, EXPAND_TIME)) * 0.2f;
-		}
-
-		// 操作停止であれば折り返す
-		if (isControlStop)
-			continue;
 
 		// 相方がゴールしていなければ出る
 		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer + 1) % NUM_PLAYER].bGoal &&
@@ -592,7 +674,6 @@ void CPlayer::ActionControl(void)
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
 		{
-			//Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
 			Player.nSwapAlpha = 255;
 		}
 		//スワップ先のマークカラーを変更
@@ -605,6 +686,10 @@ void CPlayer::ActionControl(void)
 //#################################################
 void CPlayer::Swap(void)
 {
+	// どちらかが死んでいたら終了
+	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath)
+		return;
+
 	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
@@ -721,6 +806,11 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 	//最後のプレイヤーのときにスワップアニメーション終了
 	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
 	s_bSwapAnim = false;
+	ms_bSwapEnd = true;
+
+	if (Manager::StgEd()->GetPlanetIdx() == 0)
+		if (Manager::StgEd()->GetType()[0].nStageIdx == 0)
+			ms_guideCounter = 0;
 }
 
 //----------------------------
@@ -728,9 +818,10 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 //----------------------------
 void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 {
-	if (Player.expandCounter > 0 || Player.deathCounter > 0 || Player.deathCounter2 > 0)
+	if (Player.isDeath)
 		return;
 
+	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
 	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, false);
 }
@@ -740,9 +831,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 //----------------------------
 void CPlayer::Move(VECTOL vec)
 {
-	if (m_aInfo[0].expandCounter > 0 || m_aInfo[1].expandCounter > 0 || 
-		m_aInfo[0].deathCounter > 0 || m_aInfo[1].deathCounter > 0 ||
-		m_aInfo[0].deathCounter2 > 0 || m_aInfo[1].deathCounter2 > 0) {
+	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath) {
 		return;
 	}
 

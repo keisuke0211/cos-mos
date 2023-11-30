@@ -99,9 +99,34 @@ void CGoalGate::Update(void)
 	float fCountRateX, fCountRateY, fCountRateZ;
 	CountRate(&fCountRateX, &fCountRateY,&fCountRateZ);
 	
+	Color setCol = m_col;
+	setCol *= 2;
+	if (setCol.r > 255)setCol.r = 255;
+	if (setCol.g > 255)setCol.g = 255;
+	if (setCol.b > 255)setCol.b = 255;
+	if (setCol.a > 255)setCol.a = 255;
+
 	//ƒ‚ƒfƒ‹”z’u
 	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
-		->SetCol(m_col);
+		->SetCol(setCol);
+
+	if (!m_bCloseGate) {
+		const int planet = Manager::StgEd()->GetPlanetIdx();
+		if (planet == 0) {
+			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+				if (CPlayer::GetSwapEnd()) {
+					Pos3D putPos = m_pos;
+					putPos.y += (m_pos.y / fabsf(m_pos.y)) * 32.0f;
+
+					RNLib::Text3D().Put(PRIORITY_UI, "GOAL", CText::ALIGNMENT::CENTER, 0, CMatrix::ConvPosToMtx(putPos))
+						->SetSize(Size2D(8.0f, 8.0f))
+						->SetZTest(false)
+						->SetBillboard(true)
+						->SetCol(setCol);
+				}
+			}
+		}
+	}
 }
 //========================================
 // •`‰æˆ—

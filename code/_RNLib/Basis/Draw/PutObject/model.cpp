@@ -443,10 +443,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
 			
-			if (m_modelIdx == 44) {
-				int n = 0;
-			}
-
 			float brightness = 1.0f;
 			if (drawInfo->m_mats[cntMat].Emissive.r +
 				drawInfo->m_mats[cntMat].Emissive.g +
