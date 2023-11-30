@@ -109,8 +109,9 @@ void CMode_Game::Init(void) {
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
 
 	D3DXVECTOR3 pos = Manager::StgEd()->GetCameraPos();
+
 	// ƒJƒƒ‰‚ÌŽ‹“_/’Ž‹“_‚ðÝ’è
-	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// ”wŒiî•ñ‚ð“Ç‚Ýž‚Ý
 	char *pBgFile = Manager::StgEd()->GetBgFile();
