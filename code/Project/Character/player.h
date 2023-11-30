@@ -210,7 +210,7 @@ private:
 		MAX
 	};
 	static const int SWAP_PROLOGUE_INTERVAL = 10; //スワップ開始～移動までの時間
-	static const int SWAP_MIDDLE_INTERVAL   = 70; //移動～目的地到着までの時間
+	static const int SWAP_MIDDLE_INTERVAL   = 30; //移動～目的地到着までの時間
 	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
 	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
 	static const int EXPAND_TIME = 60;  //膨らみにかかる時間

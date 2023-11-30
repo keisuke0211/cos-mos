@@ -27,7 +27,7 @@ public:
 	virtual void Update(void);
 
 	CEff *EffectCreate(int nTex, D3DXVECTOR3 pos , D3DXVECTOR3 scale, Color col, int nCount = EFFECT_COUNT, D3DXVECTOR3 spin = INITD3DXVECTOR3, D3DXVECTOR3 move = INITD3DXVECTOR3,bool billboard = true, D3DXVECTOR3 scalemag = D3DXVECTOR3(1.0f,1.0f,1.0f));
-	CEffect_Model *ModelEffectCreate(int nIdx, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, Color col, int nCount = EFFECT_COUNT, D3DXVECTOR3 move = D3DXVECTOR3(16.0f, 12.0f, 0.0f));
+	CEffect_Model *ModelEffectCreate(int nIdx, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, Color col, int nCount = EFFECT_COUNT, D3DXVECTOR3 move = D3DXVECTOR3(8.0f, 6.0f, 0.0f));
 	CEffect_Meteor * EffectMeteorCreate(D3DXVECTOR3 pos);
 	CParticle *ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale, Color col, CParticle::TYPE type = CParticle::TYPE::TYPE_NORMAL, int nCount = EFFECT_COUNT, D3DXVECTOR3 rot = INITD3DXVECTOR3,int magni = RANDOM_MAGNI,CDrawState::ALPHA_BLEND_MODE alphamode = CDrawState::ALPHA_BLEND_MODE::ADD);
 	
