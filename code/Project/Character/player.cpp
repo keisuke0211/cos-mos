@@ -276,6 +276,8 @@ void CPlayer::InitInfo(void) {
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
 	}
+
+	CGoalGate::ResetEtr();
 }
 
 //=====================================================================================================================
