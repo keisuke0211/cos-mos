@@ -752,8 +752,6 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 	target.minPos = Pos3D(target.pos.x - target.fWidth, target.pos.y - target.fHeight, 0.0f);
 	target.maxPos = Pos3D(target.pos.x + target.fWidth, target.pos.y + target.fHeight, 0.0f);
 
-	// ÇﬂÇËçûÇÒÇ≈Ç¢ÇÈÇ©îªíË
-	
 	// é©ï™ÇÃâﬂãéÇÃç≈è¨ÅEç≈ëÂà íu
 	const Pos3D OLD_MINPOS = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
 	const Pos3D OLD_MAXPOS = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);

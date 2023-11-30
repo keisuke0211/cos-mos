@@ -224,17 +224,17 @@ void CModel::StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& mo
 	CMemory::Alloc(vtxInfos, *vtxNum);
 
 	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
-		Vertex3DInfo& vtx = (*vtxInfos)[cntVtx];
-		vtx.pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
-		vtx.nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
+		Vertex3DInfo* vtx = &(*vtxInfos)[cntVtx];
+		vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
+		vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 		// ワールドマトリックスを算出
-		Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx.pos, vtx.nor), modelMtx);
+		Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
 
-		vtx.worldPos = CMatrix::ConvMtxToPos(worldMtx);
-		vtx.rot      = CGeometry::FindVecRot(vtx.nor);
-		vtx.worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
-		vtx.worldRot = CGeometry::FindVecRot(vtx.worldNor);
+		vtx->worldPos = CMatrix::ConvMtxToPos(worldMtx);
+		vtx->rot      = CGeometry::FindVecRot(vtx->nor);
+		vtx->worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
+		vtx->worldRot = CGeometry::FindVecRot(vtx->worldNor);
 	}
 
 	// 頂点バッファをアンロック

@@ -453,35 +453,25 @@ void CPlayer::ActionControl(void)
 					//種類取得
 					const CStageObject::TYPE type = stageObj->GetType();
 
-					if (type == CStageObject::TYPE::MISS)
+					switch (type)
 					{
-							//取得したオブジェクトをキャスト
-							CMiss* Miss = (CMiss*)obj;
-
-							Miss->Delete();	// 削除処理
-					}
-					if (type == CStageObject::TYPE::GHOST)
+					case CStageObject::TYPE::MISS:
 					{
-							//取得したオブジェクトをキャスト
-							CGhost* Ghost = (CGhost*)obj;
+						//取得したオブジェクトをキャスト
+						CMiss* Miss = (CMiss*)obj;
 
-							Ghost->Delete();	// 削除処理
+						Miss->Delete();	// 削除処理
+						break;
 					}
-					//switch (type)
-					//{
-					//case CStageObject::TYPE::MISS:
-					//	//取得したオブジェクトをキャスト
-					//	CMiss* Miss = (CMiss*)obj;
+					case CStageObject::TYPE::GHOST:
+					{
+						//取得したオブジェクトをキャスト
+						CGhost* Ghost = (CGhost*)obj;
 
-					//	Miss->Delete();	// 削除処理
-					//	break;
-					//case CStageObject::TYPE::GHOST:
-					//	//取得したオブジェクトをキャスト
-					//	CGhost* Ghost = (CGhost*)obj;
-
-					//	Ghost->Delete();	// 削除処理
-					//	break;
-					//}
+						Ghost->Delete();	// 削除処理
+						break;
+					}
+					}
 				}
 			}
 
@@ -515,16 +505,16 @@ void CPlayer::ActionControl(void)
 				RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
 				Manager::GetMainCamera()->SetVib(5.0f);
 
-				//Manager::EffectMgr()->EffectCreate(GetParticleIdx(PARTI_TEX::DEATH_MARK), Player.pos, INIT_EFFECT_SCALE, Color{ 255,0,255,255 });
-
 				const int NUM_PARTICLE = 8;
 				Pos3D rot = INITVECTOR3D;
 				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 				{
-					const float fSize = ((float)(rand() % 100) / 100.0f + 0.01f);
 					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-					Manager::EffectMgr()->DeathParticleCreate(
-						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, Vector2D(fSize, fSize), Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
+					CEffect_Death *pEff = Manager::EffectMgr()->DeathParticleCreate(
+						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
+					
+					const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
+					pEff->SetBallSize(Lv);
 				}
 				Player.deathCounter = DEATH_TIME;
 			}
@@ -600,7 +590,7 @@ void CPlayer::ActionControl(void)
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
+			//Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
 			Player.nSwapAlpha = 255;
 		}
 		//スワップ先のマークカラーを変更
@@ -632,10 +622,10 @@ void CPlayer::Swap(void)
 			// ロケットに乗ってたらスキップ
 			if (Player.bRide) continue;
 
-			for (int i = 0; i < 16; i++)
+			/*for (int i = 0; i < 16; i++)
 			{
 				Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
-			}
+			}*/
 
 			// 位置・重力加速度・ジャンプ量・存在する世界を反転
 			Player.fSwapPosY = Player.pos.y * -1.0f;

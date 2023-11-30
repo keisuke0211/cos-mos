@@ -109,8 +109,9 @@ void CMode_Game::Init(void) {
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
 
 	D3DXVECTOR3 pos = Manager::StgEd()->GetCameraPos();
+
 	// カメラの視点/注視点を設定
-	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -400.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	Manager::GetMainCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 背景情報を読み込み
 	char *pBgFile = Manager::StgEd()->GetBgFile();
@@ -386,7 +387,6 @@ void CMode_Game::SubTextCreate(void)
 				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);
 			else if (nText == SETTING_SE_TEXT)
 				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
-
 
 			// サイズ
 			if (nText > SETTING_BACK)
