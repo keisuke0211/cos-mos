@@ -83,6 +83,8 @@ private:
 	static const float BOUND_POWER;         //バウンド係数
 	static const short BALL_ALPHA_DECREASE; //ボールのα値減少量（当たり判定でUnknownが出た際に使用
 	static const float BALL_SIZE[(int)BALL_SIZE_LV::MAX];//ボールサイズを格納
+	static       int   s_BallModelID[(int)BALL_SIZE_LV::MAX]; //ボールモデル番号を格納
+	static const char *BALL_MODEL_PATH[(int)BALL_SIZE_LV::MAX];//ボールモデルパスを格納
 
 	//種別更新処理
 	void UpdateType_Ball(void);

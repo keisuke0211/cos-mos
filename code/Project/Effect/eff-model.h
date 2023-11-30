@@ -35,6 +35,8 @@ public:
 
 private:
 
+	void CollisionBound(void);
+
 	// *** Ã“I•Ï” ***
 	static int m_nNumAll;		// ‘”
 

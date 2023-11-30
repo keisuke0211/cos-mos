@@ -96,7 +96,20 @@ void CEffect_Model::Update(void)
 		if (m_nCount <= 0)
 			Delete();
 	}
+}
 
+//========================================
+// 描画
+//========================================
+void CEffect_Model::Draw(void)
+{
+}
+
+//========================================
+// 当たり判定(バウンド)
+//========================================
+void CEffect_Model::CollisionBound(void)
+{
 	// オブジェクト1つ1つを見ていく
 	CObject* obj = NULL;
 	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
@@ -112,14 +125,15 @@ void CEffect_Model::Update(void)
 			CBlock* pBlock = (CBlock*)stageObj;
 			if (!pBlock->GetCollision())
 				continue;
+
+			if (m_pos.x >= pBlock->GetPos().x - pBlock->GetWidth()
+				&& m_pos.x <= pBlock->GetPos().x + pBlock->GetWidth()
+				&& m_pos.y >= pBlock->GetPos().y - pBlock->GetHeight()
+				&& m_pos.y <= pBlock->GetPos().y + pBlock->GetHeight())
+			{
+
+			}
 		}break;
 		}
 	}
-}
-
-//========================================
-// 描画
-//========================================
-void CEffect_Model::Draw(void)
-{
 }
