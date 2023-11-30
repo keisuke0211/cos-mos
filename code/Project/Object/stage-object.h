@@ -35,6 +35,7 @@ public:
 		BACKGROUND = 12,//背景
 		MISS	   = 13,//ミス
 		GHOST	   = 14,//幽霊
+		DEATH_EFF  = 15,//死亡エフェクト
 		MAX,
 	};
 

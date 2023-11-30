@@ -453,35 +453,25 @@ void CPlayer::ActionControl(void)
 					//種類取得
 					const CStageObject::TYPE type = stageObj->GetType();
 
-					if (type == CStageObject::TYPE::MISS)
+					switch (type)
 					{
-							//取得したオブジェクトをキャスト
-							CMiss* Miss = (CMiss*)obj;
-
-							Miss->Delete();	// 削除処理
-					}
-					if (type == CStageObject::TYPE::GHOST)
+					case CStageObject::TYPE::MISS:
 					{
-							//取得したオブジェクトをキャスト
-							CGhost* Ghost = (CGhost*)obj;
+						//取得したオブジェクトをキャスト
+						CMiss* Miss = (CMiss*)obj;
 
-							Ghost->Delete();	// 削除処理
+						Miss->Delete();	// 削除処理
+						break;
 					}
-					//switch (type)
-					//{
-					//case CStageObject::TYPE::MISS:
-					//	//取得したオブジェクトをキャスト
-					//	CMiss* Miss = (CMiss*)obj;
+					case CStageObject::TYPE::GHOST:
+					{
+						//取得したオブジェクトをキャスト
+						CGhost* Ghost = (CGhost*)obj;
 
-					//	Miss->Delete();	// 削除処理
-					//	break;
-					//case CStageObject::TYPE::GHOST:
-					//	//取得したオブジェクトをキャスト
-					//	CGhost* Ghost = (CGhost*)obj;
-
-					//	Ghost->Delete();	// 削除処理
-					//	break;
-					//}
+						Ghost->Delete();	// 削除処理
+						break;
+					}
+					}
 				}
 			}
 
@@ -519,10 +509,12 @@ void CPlayer::ActionControl(void)
 				Pos3D rot = INITVECTOR3D;
 				for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 				{
-					const float fSize = ((float)(rand() % 100) / 100.0f + 0.1f);
 					rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-					Manager::EffectMgr()->DeathParticleCreate(
-						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, fSize, Color{ 255,0,0,255 }, CEffect_Death::TYPE::BALL);
+					CEffect_Death *pEff = Manager::EffectMgr()->DeathParticleCreate(
+						RNLib::Model().Load("data\\MODEL\\Effect\\Ball.x"), Player.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
+					
+					const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
+					pEff->SetBallSize(Lv);
 				}
 				Player.deathCounter = DEATH_TIME;
 			}
