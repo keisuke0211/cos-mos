@@ -17,8 +17,14 @@ const float CEffect_Death::BALL_SIZE[(int)BALL_SIZE_LV::MAX] = { //É{Å[ÉãÉTÉCÉYÇ
 	0.3f, 0.6f, 1.0f
 };
 
-int CEffect_Death::s_nNumAllBall = 0;
-int CEffect_Death::s_FusionSE = NONEDATA;
+int         CEffect_Death::s_nNumAllBall = 0;
+int         CEffect_Death::s_FusionSE = NONEDATA;
+int         CEffect_Death::s_BallModelID[(int)BALL_SIZE_LV::MAX] = { NONEDATA, NONEDATA ,NONEDATA }; //É{Å[ÉãÉÇÉfÉãî‘çÜÇäiî[
+const char *CEffect_Death::BALL_MODEL_PATH[(int)BALL_SIZE_LV::MAX] = { //É{Å[ÉãÉÇÉfÉãÉpÉXÇäiî[
+	"data\\MODEL\\Effect\\Ball_S.x",
+	"data\\MODEL\\Effect\\Ball_M.x",
+	"data\\MODEL\\Effect\\Ball_L.x"
+};
 
 //=======================================
 // ÉRÉìÉXÉgÉâÉNÉ^
@@ -71,6 +77,12 @@ void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vec
 		m_Info.nBallID = s_nNumAllBall++;
 		if (s_FusionSE == NONEDATA)
 			s_FusionSE = RNLib::Sound().Load("data\\SOUND\\SE\\fusion.wav");
+		
+		for (int nCntID = 0; nCntID < (int)BALL_SIZE_LV::MAX; nCntID++)
+		{
+			if (s_BallModelID[nCntID] == NONEDATA)
+				s_BallModelID[nCntID] = RNLib::Model().Load(BALL_MODEL_PATH[nCntID]);
+		}
 	}
 }
 
@@ -374,7 +386,7 @@ void CEffect_Death::PutPolygon(void)
 //=======================================
 void CEffect_Death::PutModel(void)
 {
-	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_pos, m_rot, Vector3D(m_Info.size, m_Info.size, m_Info.size))
+	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nIdx, m_pos, m_rot)
 		->SetCol(m_color);
 }
 
@@ -411,6 +423,7 @@ void CEffect_Death::SetBallSize(BALL_SIZE_LV Lv)
 	//ÉTÉCÉYê›íË
 	*m_Info.pLv = Lv;
 	m_Info.size = BALL_SIZE[(int)Lv];
+	m_Info.nIdx = s_BallModelID[(int)Lv];
 }
 
 //******************************
@@ -484,10 +497,11 @@ void CEffect_Death::BallFusion(void)
 			pEff->m_Info.size = BALL_SIZE[(int)*pEff->m_Info.pLv];
 			pEff->m_posOld = pEff->m_pos;
 			pEff->m_pos = m_pos + PosDiff * 0.5f; //2Ç¬ÇÃÉ{Å[ÉãÇÃíÜä‘Ç…à íuê›íË
-			pEff->m_pos.y += 5.0f * BALL_SIZE[(int)*pEff->m_Info.pLv];
+			pEff->m_pos.y += 5.0f * pEff->m_Info.size;
 			pEff->m_Info.move = INITVECTOR3D;
 			pEff->m_Info.ColliderInterval = FUSION_INTERVAL;
 			pEff->UpdateType_Ball();
+			pEff->m_Info.nIdx = s_BallModelID[(int)*pEff->m_Info.pLv];
 		}
 
 		//SEçƒê∂
