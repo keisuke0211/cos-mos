@@ -176,8 +176,6 @@ void CDoll3D::UpdateMotion(void) {
 //========================================
 void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 
-	return;
-
 	// セットアップデータが存在しない時、処理を終了する
 	if (&setUp == NULL)
 		return;

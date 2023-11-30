@@ -224,7 +224,7 @@ void CModel::StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& mo
 	CMemory::Alloc(vtxInfos, *vtxNum);
 
 	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
-		Vertex3DInfo* vtx = vtxInfos[cntVtx];
+		Vertex3DInfo* vtx = &(*vtxInfos)[cntVtx];
 		vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
 		vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
