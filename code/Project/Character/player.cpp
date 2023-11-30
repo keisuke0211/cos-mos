@@ -164,7 +164,7 @@ HRESULT CPlayer::Init(void)
 	s_SE.dog[1]	= s_SE.pSound->Load("data\\SOUND\\SE\\shrink.wav");		// k‚Þ
 	s_SE.dog[2]	= s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");		// L‚Ñ‚é
 	s_SE.dog[3]	= s_SE.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// k‚¦‚é
-	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap.wav");
+	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap_now.wav");
 	s_SE.expand = s_SE.pSound->Load("data\\SOUND\\SE\\death_expand.wav");
 	s_SE.explosion = s_SE.pSound->Load("data\\SOUND\\SE\\death_explosion.wav");
 

@@ -766,23 +766,37 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 		case CPlayer::VECTOL::X:
 			if (self.minPos.y < target.maxPos.y && target.minPos.y < self.maxPos.y)
 			{// Y”ÍˆÍ“à
-				if (self.maxPos.x >= target.minPos.x && OLD_MAXPOS.x <= TARGET_MinPosOld.x)
+				const bool isLeft  = self.maxPos.x >= target.minPos.x;
+				const bool isRight = self.minPos.x <= target.maxPos.x;
+
+				if (isLeft && OLD_MAXPOS.x <= TARGET_MinPosOld.x)
 					return ROT::LEFT;
 
-				if (self.minPos.x <= target.maxPos.x && OLD_MINPOS.x >= TARGET_MaxPosOld.x)
+				if (isRight && OLD_MINPOS.x >= TARGET_MaxPosOld.x)
 					return ROT::RIGHT;
+
+				if (isLeft && isRight)
+					return ROT::UNKNOWN;
 			}
+
 			break;
 
 		case CPlayer::VECTOL::Y:
 			if (self.minPos.x < target.maxPos.x && target.minPos.x < self.maxPos.x)
 			{// X”ÍˆÍ“à
-				if (self.maxPos.y >= target.minPos.y && OLD_MAXPOS.y <= TARGET_MinPosOld.y)
+				const bool isUnder = self.maxPos.y >= target.minPos.y;
+				const bool isOver  = self.minPos.y <= target.maxPos.y;
+
+				if (isUnder && OLD_MAXPOS.y <= TARGET_MinPosOld.y)
 					return ROT::UNDER;
 
-				if (self.minPos.y <= target.maxPos.y && OLD_MINPOS.y >= TARGET_MaxPosOld.y)
+				if (isOver && OLD_MINPOS.y >= TARGET_MaxPosOld.y)
 					return ROT::OVER;
+
+				if(isUnder && isOver)
+					return ROT::UNKNOWN;
 			}
+
 			break;
 	}
 

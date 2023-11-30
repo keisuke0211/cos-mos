@@ -101,8 +101,6 @@ void CBat::Update(void) {
 			m_nStayCounter = 0;
 		}
 	
-		CGeometry::FindDistance()
-
 		if (m_nFlyCounter % 30 == 0)
 		{
 			if (m_bUpDown == false)
