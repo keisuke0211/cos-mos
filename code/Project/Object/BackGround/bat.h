@@ -14,6 +14,12 @@
 // ˜f¯‚Ìî•ñ\‘¢‘Ì
 class CBat : public CStageObject {
 public:
+	//========== [[[ —ñ‹“Œ^’è‹` ]]]
+	enum class STATE {
+		STATE_DEFAULT,
+		STATE_FLY,
+		STATE_MAX,
+	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CBat();
@@ -22,13 +28,18 @@ public:
 	virtual void   Uninit(void);
 	virtual void   Update(void);
 
-	void	SetModelIdx(int idx) { ModelIdx = idx; }
+	void SeState(STATE state) { m_State = state; }	// ó‘Ô‚Ìİ’è
 
 protected:
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]
-	int ModelIdx;
-
+	CDoll3D* m_doll;
+	STATE m_State;
+	D3DXVECTOR3 m_move;
+	int m_nFlyCounter;
+	int m_nStayCounter;
+	int m_nIdxMotion;
+	bool m_bUpDown;
 };
 
