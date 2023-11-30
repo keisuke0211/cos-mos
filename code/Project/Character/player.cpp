@@ -590,7 +590,7 @@ void CPlayer::ActionControl(void)
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
 		{
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
+			//Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, Color{ 255,200,0,255 });
 			Player.nSwapAlpha = 255;
 		}
 		//スワップ先のマークカラーを変更
@@ -622,10 +622,10 @@ void CPlayer::Swap(void)
 			// ロケットに乗ってたらスキップ
 			if (Player.bRide) continue;
 
-			for (int i = 0; i < 16; i++)
+			/*for (int i = 0; i < 16; i++)
 			{
 				Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
-			}
+			}*/
 
 			// 位置・重力加速度・ジャンプ量・存在する世界を反転
 			Player.fSwapPosY = Player.pos.y * -1.0f;
