@@ -158,6 +158,7 @@
     <ClCompile Include="code\Project\Effect\eff-manager.cpp" />
     <ClCompile Include="code\Project\Effect\eff-meteor.cpp" />
     <ClCompile Include="code\Project\Effect\eff.cpp" />
+    <ClCompile Include="code\Project\Effect\eff-model.cpp" />
     <ClCompile Include="code\Project\Effect\particle.cpp" />
     <ClCompile Include="code\Project\main.cpp" />
     <ClCompile Include="code\Project\manager.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="code\Project\Effect\eff-death.h" />
     <ClInclude Include="code\Project\Effect\eff-manager.h" />
     <ClInclude Include="code\Project\Effect\eff-meteor.h" />
+    <ClInclude Include="code\Project\Effect\eff-model.h" />
     <ClInclude Include="code\Project\Effect\eff.h" />
     <ClInclude Include="code\Project\Effect\particle.h" />
     <ClInclude Include="code\Project\resource.h" />

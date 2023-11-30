@@ -9,8 +9,8 @@
 #include "particle.h"
 #include "../main.h"
 
-#define PI				(628)		//‰~ü
-#define HARF_PI			(314)		//”¼‰~ü
+#define PI				(314)		//‰~ü
+#define HARF_PI			(157)		//”¼‰~ü
 #define MAGNI			(100.0f)	//”{—¦
 #define ATTEN_RATE		(0.3f)		//Œ¸Š—¦
 

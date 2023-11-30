@@ -50,6 +50,8 @@ public:
 
 	static void EntrySub(void) { m_numEntry--; }
 
+	static void ResetEtr(void) { m_numEntry = 0; }
+
 protected:
 
 private:
