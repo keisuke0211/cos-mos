@@ -744,19 +744,15 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 //========================
 CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec)
 {
-	// 自分の現在の最小・最大位置
+	// 自分の現在と前回の最小・最大位置
 	self.minPos = Pos3D(self.pos.x - self.fWidth, self.pos.y - self.fHeight, 0.0f);
 	self.maxPos = Pos3D(self.pos.x + self.fWidth, self.pos.y + self.fHeight, 0.0f);
-
-	// 対象の現在の最小・最大位置
-	target.minPos = Pos3D(target.pos.x - target.fWidth, target.pos.y - target.fHeight, 0.0f);
-	target.maxPos = Pos3D(target.pos.x + target.fWidth, target.pos.y + target.fHeight, 0.0f);
-
-	// 自分の過去の最小・最大位置
 	const Pos3D OLD_MINPOS = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
 	const Pos3D OLD_MAXPOS = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);
 
-	// 対象の前回の最小・最大位置
+	// 対象の現在と前回の最小・最大位置
+	target.minPos = Pos3D(target.pos.x - target.fWidth, target.pos.y - target.fHeight, 0.0f);
+	target.maxPos = Pos3D(target.pos.x + target.fWidth, target.pos.y + target.fHeight, 0.0f);
 	const Pos3D TARGET_MinPosOld = Pos3D(target.posOld.x - target.fWidth, target.posOld.y - target.fHeight, 0.0f);
 	const Pos3D TARGET_MaxPosOld = Pos3D(target.posOld.x + target.fWidth, target.posOld.y + target.fHeight, 0.0f);
 
@@ -778,7 +774,6 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 				if (isLeft && isRight)
 					return ROT::UNKNOWN;
 			}
-
 			break;
 
 		case CPlayer::VECTOL::Y:
@@ -796,7 +791,6 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 				if(isUnder && isOver)
 					return ROT::UNKNOWN;
 			}
-
 			break;
 	}
 

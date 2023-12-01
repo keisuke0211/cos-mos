@@ -2129,7 +2129,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\卒業制作\\cos-mos\\data\\TEXTURE\\stone_2.jpg";
+    "data\\TEXTURE\\stone_2.jpg";
    }
   }
  }

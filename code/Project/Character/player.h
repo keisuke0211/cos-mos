@@ -146,11 +146,12 @@ public:
 	enum class SE_LABEL {
 		JUMP = 0,// ジャンプSE
 		LANDING, // 着地SE
-		DOG_00,	 // 押す
-		DOG_01,	 // 縮む
-		DOG_02,	 // 伸びる
-		DOG_03,	 // 震える
-		SWAP,	 // スワップSE
+		DOG_00,  // 押す
+		DOG_01,  // 縮む
+		DOG_02,  // 伸びる
+		DOG_03,  // 震える
+		SWAPING, // スワップSE
+		SWAPEND, // スワップ終了
 		MAX
 	};
 
@@ -212,7 +213,7 @@ private:
 		MAX
 	};
 	static const int SWAP_PROLOGUE_INTERVAL = 10; //スワップ開始～移動までの時間
-	static const int SWAP_MIDDLE_INTERVAL   = 30; //移動～目的地到着までの時間
+	static const int SWAP_MIDDLE_INTERVAL   = 50; //移動～目的地到着までの時間
 	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
 	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
 	static const int ZOOM_UP_TIME = 120;  //ズームアップにかかる時間
@@ -272,12 +273,13 @@ private:
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 
 	struct SE {
-		short jump;			// ジャンプSE
-		short landing;		// 着地SE
-		short dog[4];		// 壁ギミック用SE
-		short Swap;			// スワップSE
-		short expand;		// 膨らみ
-		short explosion;	// 破裂
+		short jump;      // ジャンプSE
+		short landing;   // 着地SE
+		short dog[4];    // 壁ギミック用SE
+		short Swaping;   // スワップ中SE
+		short SwapEnd;   // スワップ終了SE
+		short expand;    // 膨らみ
+		short explosion; // 破裂
 
 		CSound *pSound;	// サウンドクラス保管用
 	};
