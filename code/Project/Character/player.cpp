@@ -579,8 +579,9 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			info.deathCounter = DEATH_TIME;
 		}
 		info.scale.x =
-			info.scale.y =
-			info.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 0.2f;
+		info.scale.y =
+		info.scale.z = 1.0f + (1.0f - CEase::Easing(CEase::TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 0.2f;
+		info.pos.z = -(1.0f - CEase::Easing(CEase::TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 8.0f;
 	}
 }
 
