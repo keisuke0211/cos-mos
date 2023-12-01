@@ -47,35 +47,36 @@ public:
 	// プレイヤー情報
 	struct Info
 	{
-		D3DXVECTOR3 StartPos;      // 開始位置
+		D3DXVECTOR3 StartPos;			// 開始位置
 		CDoll3D*    doll;
-		D3DXVECTOR3 pos;           // 位置
-		D3DXVECTOR3 posOld;        // 前回位置
+		D3DXVECTOR3 pos;				// 位置
+		D3DXVECTOR3 posOld;				// 前回位置
 		Scale3D     scale;
-		D3DXVECTOR3 rot;           // 向き
-		D3DXVECTOR3 move;          // 移動量
-		Color		color;		   // 色
-		int			nSwapAlpha;    // スワップマークのα値
-		float		fSwapPosY;     // スワップ先のＹ座標
-		float		fSwapMoveY;    // スワップ移動時の速度
-		bool		bGround;       // 地面に接しているか
-		bool		bGroundOld;    // 地面に接しているか(過去)
+		D3DXVECTOR3 rot;				// 向き
+		D3DXVECTOR3 move;				// 移動量
+		Color		color;				// 色
+		int			nSwapAlpha;			// スワップマークのα値
+		float		fSwapPosY;			// スワップ先のＹ座標
+		float		fSwapMoveY;			// スワップ移動時の速度
+		bool		bGround;			// 地面に接しているか
+		bool		bGroundOld;			// 地面に接しているか(過去)
 		short       landingCounter;
-		bool		bJump;         // ジャンプ
-		bool		bRide;         // ロケットに乗っているかどうか
-		bool		bGoal;		   // ゴールしたかどうか
-		int         expandCounter; // 膨らみカウンター
-		int         deathCounter;  // 死亡カウンター
-		int         deathCounter2; // 死亡カウンター2
-		float		fJumpPower;    // ジャンプ量
-		float		fGravity;      // 重力
-		float		fMaxHeight;    // 最高Ｙ座標
+		bool		bJump;				// ジャンプ
+		bool		bRide;				// ロケットに乗っているかどうか
+		bool		bGoal;				// ゴールしたかどうか
+		int         expandCounter;		// 膨らみカウンター
+		bool        isDeath;			// 死亡フラグ
+		int         deathCounter;		// 死亡カウンター
+		int         deathCounter2;		// 死亡カウンター2
+		float		fJumpPower;			// ジャンプ量
+		float		fGravity;			// 重力
+		float		fMaxHeight;			// 最高Ｙ座標
 		int			nTramJumpCounter;	// トランポリンによって跳ね上がる時間
 		float		fTramTargetPosY;	// トランポリン用の目標位置
 		bool		bTramJump;			// トランポリン用の特殊ジャンプ
-		bool		bExtendDog;	   // ヌイ用の接触フラグ
-		bool		bLandPile;	   // 杭に乗っているかどうか
-		WORLD_SIDE  side;          // どちらの世界に存在するか
+		bool		bExtendDog;			// ヌイ用の接触フラグ
+		bool		bLandPile;			// 杭に乗っているかどうか
+		WORLD_SIDE  side;				// どちらの世界に存在するか
 		int            Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
 		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
 	};
@@ -85,6 +86,7 @@ public:
 
 	static const int SWAP_INTERVAL;	// スワップインターバル
 	static const int NUM_PLAYER = 2;// プレイヤーの数
+
 
 	CPlayer();
 	~CPlayer();
@@ -181,6 +183,13 @@ public:
 	//モーション情報取得
 	static Motion GetMotion(void) { return s_motion; }
 
+	//スワップ完了取得
+	static bool GetSwapEnd(void) { return ms_bSwapEnd; }
+
+	// Guideカウンター取得
+	static UShort GetGuideCounter(void) { return ms_guideCounter; }
+	static void SetGuideCounter(UShort guideCounter) { ms_guideCounter = guideCounter; }
+
 private:
 	//種類の略称を設定
 	typedef CStageObject::TYPE OBJECT_TYPE;
@@ -201,7 +210,7 @@ private:
 		MAX
 	};
 	static const int SWAP_PROLOGUE_INTERVAL = 10; //スワップ開始～移動までの時間
-	static const int SWAP_MIDDLE_INTERVAL   = 70; //移動～目的地到着までの時間
+	static const int SWAP_MIDDLE_INTERVAL   = 30; //移動～目的地到着までの時間
 	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
 	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
 	static const int EXPAND_TIME = 60;  //膨らみにかかる時間
@@ -234,6 +243,9 @@ private:
 	static const int OBJ_TRAMPOLINE = 2;// オブジェクトの最大数
 	static const int OBJ_EXTENDDOG = 3;	// オブジェクトの最大数
 
+	static bool ms_bSwapEnd;
+	static UShort ms_guideCounter;
+
 	void InitKeyConfig(void);// 各プレイヤーのキーボード・ジョイパッドのキーコンフィグ初期化設定
 	void InitInfo(void);
 	void SetPosOld(void);
@@ -252,6 +264,7 @@ private:
 
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
+	void UpdateDeath(Info& info, const int& count);
 
 	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 

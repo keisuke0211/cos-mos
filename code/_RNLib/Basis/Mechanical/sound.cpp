@@ -459,6 +459,9 @@ CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool
 // デストラクタ
 //========================================
 CSound::CPlay::~CPlay() {
+	
+	// リストから削除
+	RNLib::Sound().GetPlayMgr().SubList(this);
 
 	// 停止し、オーディオバッファの削除
 	if (m_sourceVoice != NULL) {
@@ -471,6 +474,12 @@ CSound::CPlay::~CPlay() {
 // 更新処理
 //========================================
 void CSound::CPlay::Update(void) {
+
+	// ソースボイスがNULLであれば、自身を破棄して終了
+	if (m_sourceVoice == NULL) {
+		Delete();
+		return;
+	}
 
 	// 状態を取得
 	XAUDIO2_VOICE_STATE xa2state;

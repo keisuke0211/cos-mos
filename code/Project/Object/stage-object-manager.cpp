@@ -433,3 +433,19 @@ CMeteorGenerator *CStageObjectMgr::MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVE
 
 	return pObj;
 }
+//========================================
+//  ƒRƒEƒ‚ƒŠ
+//========================================
+CBat * CStageObjectMgr::BatCreate(D3DXVECTOR3 pos)
+{
+	CBat *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CBat;
+
+	// ‰Šú‰»ˆ—
+	pObj->SetPos(pos);
+	pObj->Init();
+
+	return pObj;
+}

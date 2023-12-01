@@ -314,10 +314,12 @@ void CModel::CData::Release(void) {
 	}
 
 	// —ÖŠsüƒƒbƒVƒ…‚Ì”jŠü
-	for (int cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
-		if (m_outLineMeshs[cntOutLine] != NULL) {
-			m_outLineMeshs[cntOutLine]->Release();
-			m_outLineMeshs[cntOutLine] = NULL;
+	if (m_outLineMeshs != NULL) {
+		for (int cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
+			if (m_outLineMeshs[cntOutLine] != NULL) {
+				m_outLineMeshs[cntOutLine]->Release();
+				m_outLineMeshs[cntOutLine] = NULL;
+			}
 		}
 	}
 	CMemory::Release(&m_outLineMeshs);
@@ -443,10 +445,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
 			
-			if (m_modelIdx == 44) {
-				int n = 0;
-			}
-
 			float brightness = 1.0f;
 			if (drawInfo->m_mats[cntMat].Emissive.r +
 				drawInfo->m_mats[cntMat].Emissive.g +
