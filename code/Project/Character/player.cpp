@@ -64,7 +64,8 @@ CPlayer::CPlayer()
 	s_SE.pSound = NULL;
 	s_SE.jump = 0;
 	s_SE.landing = 0;
-	s_SE.Swap = 0;
+	s_SE.Swaping = 0;
+	s_SE.SwapEnd = 0;
 	for each(short &dog in s_SE.dog)
 	{
 		dog = 0;
@@ -170,7 +171,8 @@ HRESULT CPlayer::Init(void)
 	s_SE.dog[1]	= s_SE.pSound->Load("data\\SOUND\\SE\\shrink.wav");		// 縮む
 	s_SE.dog[2]	= s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");		// 伸びる
 	s_SE.dog[3]	= s_SE.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// 震える
-	s_SE.Swap	= s_SE.pSound->Load("data\\SOUND\\SE\\swap_now.wav");
+	s_SE.Swaping = s_SE.pSound->Load("data\\SOUND\\SE\\swap_now.wav");
+	s_SE.SwapEnd = s_SE.pSound->Load("data\\SOUND\\SE\\swap_end.wav");
 	s_SE.expand = s_SE.pSound->Load("data\\SOUND\\SE\\death_expand.wav");
 	s_SE.explosion = s_SE.pSound->Load("data\\SOUND\\SE\\death_explosion.wav");
 
@@ -627,13 +629,10 @@ void CPlayer::ActionControl(void)
 		// ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
-			Player.bGround = false;				// 地面から離れた
-			Player.move.y = Player.fJumpPower;	// ジャンプ量代入
-			Player.bJump = true;				// ジャンプした
-
-												// SE再生
-			s_SE.pSound->Play(s_SE.jump, CSound::CATEGORY::SE, false);
-
+			Player.bGround = false;            // 地面から離れた
+			Player.move.y = Player.fJumpPower; // ジャンプ量代入
+			Player.bJump = true;               // ジャンプした
+			PlaySE(SE_LABEL::JUMP);            // SE再生
 			Player.doll->OverwriteMotion(s_motion.jump);
 		}
 
@@ -701,7 +700,7 @@ void CPlayer::Swap(void)
 			s_AnimState = SWAP_ANIM::PROLOGUE;
 			s_nSwapInterval = SWAP_PROLOGUE_INTERVAL;
 			s_bSwapAnim = true;
-			s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);
+			PlaySE(SE_LABEL::SWAPING);
 		}
 
 		for each (Info &Player in m_aInfo)
@@ -768,7 +767,7 @@ void CPlayer::SwapAnimation(void)
 void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
 {
 	//次のインターバルへ
-	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
+	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
 	s_nSwapInterval = SWAP_MIDDLE_INTERVAL;
 	s_AnimState = SWAP_ANIM::MIDDLE;
 }
@@ -804,9 +803,10 @@ void CPlayer::SwapAnim_Middle(Info& Player, const int nIdxPlayer)
 void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 {
 	//最後のプレイヤーのときにスワップアニメーション終了
-	if (s_nSwapInterval > 0 && nIdxPlayer == 0) return;
+	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
 	s_bSwapAnim = false;
 	ms_bSwapEnd = true;
+	PlaySE(SE_LABEL::SWAPEND);
 
 	if (Manager::StgEd()->GetPlanetIdx() == 0)
 		if (Manager::StgEd()->GetType()[0].nStageIdx == 0)
@@ -981,11 +981,9 @@ void CPlayer::CollisionToStageObject(void)
 
 				//自分の情報
 				CCollision::SelfInfo Self;
-				Self.pos = Player.pos;
-				Self.posOld = Player.posOld;
+				Self.pos = Player.pos;	Self.posOld = Player.posOld;
 				Self.move = Player.move;
-				Self.fWidth = SIZE_WIDTH;
-				Self.fHeight = SIZE_HEIGHT;
+				Self.fWidth = Self.fHeight = SIZE_HEIGHT;
 
 				// 他パーツの当たり判定フラグ
 				//bool bOtherColl = false;
@@ -1031,7 +1029,7 @@ void CPlayer::CollisionToStageObject(void)
 					OtherInfo = new CCollision::ColliInfo;
 					
 					OtherInfo->pos = pLaser->GetLaserPos();
-					OtherInfo->posOld = OtherInfo->pos;
+					OtherInfo->posOld = pLaser->GetPosOld();
 					OtherInfo->fWidth = pLaser->GetLaserSize().x * 0.5f;
 					OtherInfo->fHeight = pLaser->GetLaserSize().y * 0.5f;
 
@@ -1305,12 +1303,13 @@ void CPlayer::PlaySE(SE_LABEL label)
 {
 	switch (label)
 	{
-		case CPlayer::SE_LABEL::JUMP:	s_SE.pSound->Play(s_SE.jump, CSound::CATEGORY::SE, false);	break;
-		case CPlayer::SE_LABEL::LANDING:s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false);	break;
-		case CPlayer::SE_LABEL::DOG_00:	s_SE.pSound->Play(s_SE.dog[0], CSound::CATEGORY::SE, false);	break;
-		case CPlayer::SE_LABEL::DOG_01:	s_SE.pSound->Play(s_SE.dog[1], CSound::CATEGORY::SE, false);	break;
-		case CPlayer::SE_LABEL::DOG_02:	s_SE.pSound->Play(s_SE.dog[2], CSound::CATEGORY::SE, false);	break;
-		case CPlayer::SE_LABEL::DOG_03:	s_SE.pSound->Play(s_SE.dog[3], CSound::CATEGORY::SE, false);	break;
-		case CPlayer::SE_LABEL::SWAP:	s_SE.pSound->Play(s_SE.Swap, CSound::CATEGORY::SE, false);	break;
+		case CPlayer::SE_LABEL::JUMP:   s_SE.pSound->Play(s_SE.jump,    CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::LANDING:s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::DOG_00: s_SE.pSound->Play(s_SE.dog[0],  CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::DOG_01: s_SE.pSound->Play(s_SE.dog[1],  CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::DOG_02: s_SE.pSound->Play(s_SE.dog[2],  CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::DOG_03: s_SE.pSound->Play(s_SE.dog[3],  CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::SWAPING:s_SE.pSound->Play(s_SE.Swaping, CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::SWAPEND:s_SE.pSound->Play(s_SE.SwapEnd, CSound::CATEGORY::SE, false); break;
 	}
 }

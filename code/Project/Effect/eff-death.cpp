@@ -182,6 +182,8 @@ void CEffect_Death::UpdateType_Ball(void)
 		ColliRot = StgObjCollider(&SelfInfo, &colliInfo, vec, type);
 		if (ColliRot != CCollision::ROT::NONE)
 		{
+			ColliRot = StgObjCollider(&SelfInfo, &colliInfo, vec, type);
+
 			switch (type)
 			{
 					//ÉuÉçÉbÉNÇÃîªíË
