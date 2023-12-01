@@ -1034,7 +1034,7 @@ void CPlayer::CollisionToStageObject(void)
 					OtherInfo->fHeight = pLaser->GetLaserSize().y * 0.5f;
 
 					// “–‚½‚Á‚½•ûŒü‚ðŠi”[
-					OtherInfo->Rot = s_pColli->IsBoxCollider(Self, *OtherInfo, vec);
+					OtherInfo->Rot = s_pColli->IsBoxToBoxCollider(Self, *OtherInfo, vec);
 				}
 				break;
 
@@ -1071,7 +1071,7 @@ void CPlayer::CollisionToStageObject(void)
 					//	OtherInfo[nCnt].maxPos = D3DXVECTOR3(OtherInfo[nCnt].pos.x + OtherInfo[nCnt].fWidth, OtherInfo[nCnt].pos.y + OtherInfo[nCnt].fHeight, 0.0f);
 
 					//	// “–‚½‚Á‚½•ûŒü‚ðŠi”[
-					//	OtherInfo[nCnt].ColliRot = s_pColli->IsBoxCollider(*pSelf, colliInfo, vec);
+					//	OtherInfo[nCnt].ColliRot = s_pColli->IsBoxToBoxCollider(*pSelf, colliInfo, vec);
 
 					//	//if (OtherInfo[nCnt].ColliRot != CCollision::ROT::NONE){
 					//	//	bOtherColl = true;
@@ -1098,7 +1098,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// “–‚½‚Á‚½•ûŒü‚ðŠi”[
-				colliInfo.Rot = s_pColli->IsBoxCollider(Self, colliInfo, vec);
+				colliInfo.Rot = s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
 				nColliRot[nCntPlayer] = (int)colliInfo.Rot;
 
 				// “–‚½‚Á‚Ä‚¢‚È‚¢
