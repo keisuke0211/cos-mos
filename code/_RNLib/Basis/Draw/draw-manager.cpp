@@ -134,7 +134,7 @@ void CDrawMgr::EndDraw(Device& device) {
 		CCamera* camera = NULL;
 		CCameraMgr& cameraMgr = RNSystem::GetCameraMgr();
 		while (cameraMgr.ListLoop((CObject**)&camera)) {
-			if(!camera->GetDraw())
+			if (!camera->GetDraw())
 				continue;
 			camera->StartRendering(device);
 			Draw(device, camera->GetID(), camera->GetClipping(), false);

@@ -33,8 +33,6 @@ Color CMode_Game::m_BgColorUp = INITCOLOR;
 Color CMode_Game::m_BgColorDown = INITCOLOR;
 CPlayer *CMode_Game::s_pPlayer = NULL;
 CPlayer* CMode_Game::GetPlayer(void) { return s_pPlayer; }
-CCamera* CMode_Game::m_cameraUp = NULL;
-CCamera* CMode_Game::m_cameraDown = NULL;
 int CMode_Game::m_nStageIdx = 0;
 int CMode_Game::m_nPlanetIdx = 0;
 CRocketPartsUI *CMode_Game::m_rocketparts = NULL;
@@ -45,8 +43,6 @@ CRocketPartsUI *CMode_Game::m_rocketparts = NULL;
 //========================================
 CMode_Game::CMode_Game(void) {
 
-	m_cameraUp   = NULL;
-	m_cameraDown = NULL;
 	m_rocketparts = NULL;
 
 	m_Pause.bFullScreen = RNSettings::GetInfo().isFullScreen;
@@ -64,10 +60,6 @@ CMode_Game::CMode_Game(void) {
 // Author:RIKU NISHIMURA
 //========================================
 CMode_Game::~CMode_Game(void) {
-
-	// カメラの破棄
-	m_cameraUp->Delete();
-	m_cameraDown->Delete();
 
 	// テキストの解放
 	TextRelease(TEXT_ALL);
@@ -94,7 +86,6 @@ void CMode_Game::Init(void) {
 	// 遷移設定
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
-
 	// 状態設定
 	SetState((int)STATE::NONE);
 
@@ -108,24 +99,17 @@ void CMode_Game::Init(void) {
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
 
-	D3DXVECTOR3 pos = Manager::StgEd()->GetCameraPos();
-
-	// カメラの視点/注視点を設定
-	Manager::GetMainCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	{// [[[ カメラ ]]]
+		// カメラの視点/注視点を設定
+		Manager::GetMainCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		Manager::GetSubCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
 
 	// 背景情報を読み込み
 	char *pBgFile = Manager::StgEd()->GetBgFile();
 	if (pBgFile != NULL) {
 		CBGEditor::Load(pBgFile);
 	}
-
-	// 上下カメラの生成
-	m_cameraUp   = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
-	m_cameraDown = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight() * 0.5f));
-	m_cameraUp->SetClipping(true);
-	m_cameraUp->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
-	m_cameraDown->SetClipping(true);
-	m_cameraDown->SetPosVAndPosR(Pos3D(0.0f, 0.0f, -40.0f), Pos3D(0.0f, 0.0f, 0.0f));
 
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < MENU_MAX; m_pMenu[nCnt] = NULL, nCnt++);
@@ -182,23 +166,31 @@ void CMode_Game::Update(void) {
 	// 環境音プレイヤーの更新処理
 	AmbientSoundPlayer::Update();
 
-	{// [[[ 上下カメラ描画 ]]]
-		const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
-		const float windowWidth       = RNLib::Window().GetWidth();
-		const float windowHeight      = RNLib::Window().GetHeight();
-		const float windowHeightHalf  = windowHeight * 0.5f;
-		const float windowHeightHalf2 = windowHeightHalf * 0.5f;
+	if (CPlayer::GetZoomUpCounter() > 0) {
+		if (Manager::StgEd()->GetPlanetIdx() == 0) {
+			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+				// [[[ 上下カメラ描画 ]]]
+				const Pos2D windowCenterPos = RNLib::Window().GetCenterPos();
+				const float windowWidth = RNLib::Window().GetWidth();
+				const float windowHeight = RNLib::Window().GetHeight();
+				const float windowHeightHalf = windowHeight * 0.5f;
+				const float windowHeightHalf2 = windowHeightHalf * 0.5f;
 
-		// 背景のカラーを設定
-		m_cameraUp->SetBGCol(m_BgColorUp);
-		m_cameraDown->SetBGCol(m_BgColorDown);
+				// 下
+				RNLib::Polygon2D().Put(0, true)
+					->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
+					->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
+					->SetSize(windowWidth, windowHeightHalf);
+			}
+		}
+	}
 
+	{// [[[ 背景描画 ]]]
 		// 上
 		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
 			->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
 			->SetBillboard(true);
-
 		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 			->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
@@ -209,10 +201,6 @@ void CMode_Game::Update(void) {
 			->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 			->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 			->SetBillboard(true);
-
-		/*RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, Pos3D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2, 0.0f), 0.0f)
-			->SetTexUV(m_cameraDown)
-			->SetSize(windowWidth, windowHeightHalf);*/
 	}
 
 	// [[[ 壁モデル描画 ]]]

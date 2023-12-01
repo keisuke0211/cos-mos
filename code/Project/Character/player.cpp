@@ -19,6 +19,7 @@ bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
 CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
 
 int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
+int         CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
 
 const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
@@ -188,6 +189,8 @@ HRESULT CPlayer::Init(void)
 
 	if(s_pColli == NULL)
 	s_pColli = new CCollision;
+
+	s_zoomUpCounter = ZOOM_UP_TIME;
 
 	// 初期化成功
 	return S_OK;
@@ -370,22 +373,24 @@ void CPlayer::UpdateInfo(void)
 		
 		if (planet == 0) {
 			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-				if (++ms_guideCounter > 30)
-					ms_guideCounter = 30;
-				float rate = (float)ms_guideCounter / 30;
-				if (ms_bSwapEnd) {
-					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-						->SetZTest(false)
-						->SetBillboard(true);
-				}
-				else {
-					if (s_nSwapInterval == 0) {
-						RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+				if (s_zoomUpCounter == 0) {
+					if (++ms_guideCounter > 30)
+						ms_guideCounter = 30;
+					float rate = (float)ms_guideCounter / 30;
+					if (ms_bSwapEnd) {
+						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 							->SetZTest(false)
 							->SetBillboard(true);
-						isSwapGuide = true;
+					}
+					else {
+						if (s_nSwapInterval == 0) {
+							RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+							isSwapGuide = true;
+						}
 					}
 				}
 			}
@@ -593,13 +598,42 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
+	// [[[ カメラ制御 ]]]
 	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
 	{// どちらも死んでいない
-		// [[[ カメラ制御 ]]]
-		Pos3D pos = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
-		pos.x *= 0.25f;
-		pos.y = 0.0f;
-		Manager::GetMainCamera()->SetPosVAndPosR(Manager::GetMainCamera()->GetPosV(), pos);
+		bool isZoomUp = false;
+		if (s_zoomUpCounter > 0) {
+			if (Manager::StgEd()->GetPlanetIdx() == 0) {
+				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+					isZoomUp = true;
+				}
+			}
+		}
+
+		Pos3D targetPosV = Manager::StgEd()->GetCameraPos();
+		Pos3D targetPosR = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
+		targetPosR.x *= 0.25f;
+		targetPosR.y = 0.0f;
+
+		if (isZoomUp) {
+			s_zoomUpCounter--;
+
+			Pos3D basePosRMain = m_aInfo[0].pos + Pos3D(0.0f, -16.0f, 0.0f);
+			Pos3D basePosRSub  = m_aInfo[1].pos + Pos3D(0.0f, 16.0f, 0.0f);
+			Pos3D basePosVMain = basePosRMain + Pos3D(0.0f, 0.0f, -100.0f);
+			Pos3D basePosVSub  = basePosRSub  + Pos3D(0.0f, 0.0f, -100.0f);
+			float rate = 1.0f;
+			if (s_zoomUpCounter < 60) {
+				rate = CEase::Easing(CEase::TYPE::IN_SINE, s_zoomUpCounter, 60);
+			}
+			float rateOpp = 1.0f - rate;
+			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVMain * rate, targetPosR * rateOpp + basePosRMain * rate);
+			Manager::GetSubCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVSub * rate, targetPosR * rateOpp + basePosRSub * rate);
+			return;
+		}
+		else{
+			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
+		}
 	}
 	else 
 	{// どちらかが死んでいる

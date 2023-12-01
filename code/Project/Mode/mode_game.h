@@ -139,9 +139,8 @@ public:
 	static void SetBgDownColor(Color color) { m_BgColorDown = color; }
 	static void SetRocketParts(CRocketPartsUI *rctpar) { m_rocketparts = rctpar; }
 	// -- éÊìæ -------------------------------------------------------------------
-	static int GetStage(void)           { return m_nStageIdx;   }
-	static CCamera& GetCameraUp(void)   { return *m_cameraUp;   }
-	static CCamera& GetCameraDown(void) { return *m_cameraDown; }
+	static int GetStage(void) { return m_nStageIdx; }
+
 private:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void PauseCreate(void);
@@ -159,8 +158,6 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	static CRocketPartsUI *m_rocketparts;
-	static CCamera* m_cameraUp;
-	static CCamera* m_cameraDown;
 	static Color m_BgColorUp, m_BgColorDown;
 	short m_wallModelIdx[2];
 	Pause m_Pause;
