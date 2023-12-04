@@ -19,7 +19,7 @@
 CText2D::CText2D() {
 
 	m_isShowDebugLog = true;
-	for (int cntDebugLogType = 0; cntDebugLogType < (int)DEBUG_LOG_TYPE::MAX; m_isShowDebugLogs[cntDebugLogType] = false, cntDebugLogType++);
+	for (int cntDebugLogType = 0; cntDebugLogType < (int)DEBUG_LOG_TYPE::MAX; m_isShowDebugLogs[cntDebugLogType] = true, cntDebugLogType++);
 	m_debugLogLine   = 0;
 	m_debugCount     = 0;
 }
