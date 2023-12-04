@@ -25,7 +25,7 @@ int         CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
 const float CPlayer::SIZE_WIDTH = 8.0f;	// 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
-const float CPlayer::MOVE_SPEED = 0.003f;		// 移動量
+const float CPlayer::MOVE_SPEED = 0.3f;		// 移動量
 const float CPlayer::MAX_MOVE_SPEED = 2.3f;	// 最大移動量
 
 const float CPlayer::JUMP_POWER = 5.0f;		// 基本ジャンプ量
@@ -53,6 +53,7 @@ UShort CPlayer::ms_guideCounter = 0;
 bool  CPlayer::s_bAimPlayer = false;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
+float CPlayer::s_fAimWorkSpeed = 0.003f;
 
 //=======================================
 // コンストラクタ
@@ -911,7 +912,10 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+		if(s_bAimPlayer)
+			FloatControl(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
+		else
+			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
 
 		// 位置更新
 		Player.pos.x += Player.move.x;

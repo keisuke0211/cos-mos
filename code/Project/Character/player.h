@@ -292,4 +292,5 @@ private:
 	static bool s_bAimPlayer;
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
+	static float s_fAimWorkSpeed;
 };
