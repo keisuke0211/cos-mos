@@ -204,9 +204,9 @@ void CEffect_Death::UpdateType_Ball(void)
 						//“–‚½‚Á‚½•ûŒü‚ª•ª‚©‚ç‚È‚¢
 						case CCollision::ROT::UNKNOWN:
 						{//ƒ¿’l‚ğŒ¸­‚³‚¹A‚OˆÈ‰º‚Å€–S
-							if (m_color.a <= BALL_ALPHA_DECREASE)
-								m_Info.bDeath = true;
-							else m_color.a -= BALL_ALPHA_DECREASE;
+							//if (m_color.a <= BALL_ALPHA_DECREASE)
+							//	m_Info.bDeath = true;
+							//else m_color.a -= BALL_ALPHA_DECREASE;
 						}
 					}break;
 

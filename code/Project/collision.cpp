@@ -759,10 +759,14 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 				const bool isLeft  = self.maxPos.x >= target.minPos.x;
 				const bool isRight = self.minPos.x <= target.maxPos.x;
 
-				if (isLeft && self.maxPosOld.x <= target.minPosOld.x)
+				if (isLeft && (
+					self.maxPosOld.x <= target.minPosOld.x //|| self.posOld.x <= target.minPosOld.x
+					))
 					return ROT::LEFT;
 
-				if (isRight && self.minPosOld.x >= target.maxPosOld.x)
+				if (isRight && (
+					self.minPosOld.x >= target.maxPosOld.x //|| self.posOld.x >= target.maxPosOld.x
+					))
 					return ROT::RIGHT;
 
 				if (isLeft && isRight)
@@ -776,10 +780,14 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 				const bool isUnder = self.maxPos.y >= target.minPos.y;
 				const bool isOver  = self.minPos.y <= target.maxPos.y;
 
-				if (isUnder && self.maxPosOld.y <= target.minPosOld.y)
+				if (isUnder && (
+					self.maxPosOld.y <= target.minPosOld.y// || self.posOld.y <= target.minPosOld.y
+					))
 					return ROT::UNDER;
 
-				if (isOver && self.minPosOld.y >= target.maxPosOld.y)
+				if (isOver && (
+					self.minPosOld.y >= target.maxPosOld.y// || self.posOld.y >= target.maxPosOld.y
+					))
 					return ROT::OVER;
 
 				if (isUnder && isOver)
@@ -868,10 +876,10 @@ bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer:
 void CCollision::SetMinMaxPos(SelfInfo& self)
 {
 	// é©ï™ÇÃåªç›Ç∆ëOâÒÇÃç≈è¨ÅEç≈ëÂà íu
-	self.minPos = Pos3D(self.pos.x - self.fWidth, self.pos.y - self.fHeight, 0.0f);
-	self.maxPos = Pos3D(self.pos.x + self.fWidth, self.pos.y + self.fHeight, 0.0f);
-	self.minPosOld = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
-	self.maxPosOld = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);
+	self.minPos = Pos2D(self.pos.x - self.fWidth, self.pos.y - self.fHeight);
+	self.maxPos = Pos2D(self.pos.x + self.fWidth, self.pos.y + self.fHeight);
+	self.minPosOld = Pos2D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight);
+	self.maxPosOld = Pos2D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight);
 }
 
 //========================
@@ -879,8 +887,10 @@ void CCollision::SetMinMaxPos(SelfInfo& self)
 //========================
 void CCollision::SetMinMaxPos(ColliInfo& colli)
 {
-	colli.minPos = Pos3D(colli.pos.x - colli.fWidth, colli.pos.y - colli.fHeight, 0.0f);
-	colli.maxPos = Pos3D(colli.pos.x + colli.fWidth, colli.pos.y + colli.fHeight, 0.0f);
-	colli.minPosOld = Pos3D(colli.posOld.x - colli.fWidth, colli.posOld.y - colli.fHeight, 0.0f);
-	colli.maxPosOld = Pos3D(colli.posOld.x + colli.fWidth, colli.posOld.y + colli.fHeight, 0.0f);
+	colli.minPos = Pos2D(colli.pos.x - colli.fWidth, colli.pos.y - colli.fHeight);
+	colli.maxPos = Pos2D(colli.pos.x + colli.fWidth, colli.pos.y + colli.fHeight);
+	colli.minPosOld = Pos2D(colli.posOld.x - colli.fWidth, colli.posOld.y - colli.fHeight);
+	colli.maxPosOld = Pos2D(colli.posOld.x + colli.fWidth, colli.posOld.y + colli.fHeight);
+
+	Vec2x100 minpos = Vec2x100(1, 0);
 }
