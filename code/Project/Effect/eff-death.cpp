@@ -271,7 +271,7 @@ CCollision::ROT CEffect_Death::PlayerCollider(CCollision::SelfInfo *pSelfInfo, C
 			continue;
 
 		//ìñÇΩÇËîªíË
-		ColliRot = CCollision::IsBoxCollider(*pSelfInfo, *pColliInfo, vec);
+		ColliRot = CCollision::IsBoxToBoxCollider(*pSelfInfo, *pColliInfo, vec);
 
 		//ìñÇΩÇ¡ÇΩÇÁèIóπ
 		if (ColliRot != CCollision::ROT::NONE)break;
@@ -310,7 +310,7 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 		pColliInfo->fHeight = stageObj->GetHeight() * 0.5f;
 
 		//ìñÇΩÇËîªíË
-		ColliRot = CCollision::IsBoxCollider(*pSelfInfo, *pColliInfo, vec);
+		ColliRot = CCollision::IsBoxToBoxCollider(*pSelfInfo, *pColliInfo, vec);
 
 		//ìñÇΩÇ¡ÇΩÇÁèIóπ
 		if (ColliRot != CCollision::ROT::NONE)
