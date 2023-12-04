@@ -19,7 +19,9 @@
 CText2D::CText2D() {
 
 	m_isShowDebugLog = true;
+	for (int cntDebugLogType = 0; cntDebugLogType < (int)DEBUG_LOG_TYPE::MAX; m_isShowDebugLogs[cntDebugLogType] = true, cntDebugLogType++);
 	m_debugLogLine   = 0;
+	m_debugCount     = 0;
 }
 
 //========================================
@@ -54,8 +56,78 @@ void CText2D::Update(void) {
 
 	// 実行モードでない時、
 	if (RNSystem::GetMode() != RNSystem::MODE::EXECUTION){
+
+		// デバッグ表示のON/OFF
 		if (RNLib::Input().GetKeyTrigger(DIK_F1)) {
 			m_isShowDebugLog = !m_isShowDebugLog;
+		}
+
+		// 各デバッグ表示オプションのON/OFF
+		if (RNLib::Input().GetKeyPress(DIK_F2)) {
+			for (int cntDebugLogType = 0; cntDebugLogType < (int)DEBUG_LOG_TYPE::MAX; cntDebugLogType++) {
+				int keyIdx = NONEDATA;
+				switch (cntDebugLogType) {
+				case 0:keyIdx = DIK_1; break;
+				case 1:keyIdx = DIK_2; break;
+				case 2:keyIdx = DIK_3; break;
+				case 3:keyIdx = DIK_4; break;
+				case 4:keyIdx = DIK_5; break;
+				case 5:keyIdx = DIK_6; break;
+				case 6:keyIdx = DIK_7; break;
+				case 7:keyIdx = DIK_8; break;
+				case 8:keyIdx = DIK_9; break;
+				case 9:keyIdx = DIK_0; break;
+				}
+				if (keyIdx == NONEDATA) {
+					assert(false);
+					break;
+				}
+
+				if (RNLib::Input().GetKeyTrigger(keyIdx))
+					m_isShowDebugLogs[cntDebugLogType] = !m_isShowDebugLogs[cntDebugLogType];
+			}
+		}
+
+		// 各デバッグ表示オプション
+		if (m_isShowDebugLog) {
+			int showCount = 0;
+			for (int cntDebugLogType = 0; cntDebugLogType < (int)DEBUG_LOG_TYPE::MAX; cntDebugLogType++) {
+
+				if (!m_isShowDebugLogs[cntDebugLogType])
+					continue;
+
+				showCount++;
+				switch ((DEBUG_LOG_TYPE)cntDebugLogType) {
+				case DEBUG_LOG_TYPE::PERFORMANCE: {
+					RNLib::Text2D().PutDebugLog("----------Performance----------");
+					RNLib::Text2D().PutDebugLog(CreateText("FPS    :%d", RNSystem::GetFPS()));
+					RNLib::Text2D().PutDebugLog(CreateText("RunTime:%02d:%02d.%02d", RNLib::Count().GetCount() / 3600, (RNLib::Count().GetCount() / 60) % 60, RNLib::Count().GetCount() % 60));
+				}break;
+				case DEBUG_LOG_TYPE::DRAW_STATE: {
+					RNLib::Text2D().PutDebugLog("----------DrawState----------");
+					RNLib::Text2D().PutDebugLog(CreateText("Polygon2DNum:%d", RNLib::DrawMgr().GetPolygon2DNum()));
+					RNLib::Text2D().PutDebugLog(CreateText("Polygon3DNum:%d", RNLib::DrawMgr().GetPolygon3DNum()));
+					RNLib::Text2D().PutDebugLog(CreateText("ModelNum    :%d", RNLib::DrawMgr().GetModelNum()));
+				}break;
+				case DEBUG_LOG_TYPE::OBJECT_NUM_IN_OBJECTMGR: {
+					RNLib::Text2D().PutDebugLog("----------ObjectNumInObjectMgr----------");
+					CObjectMgr**& objectMgrs = CObjectMgr::GetObjectMgrs();
+					UShort& objectMgrNum = CObjectMgr::GetObjectMgrNum();
+
+					for (int cntObjectMgr = 0; cntObjectMgr < objectMgrNum; cntObjectMgr++) {
+						PutDebugLog(CreateText("%d < %s", objectMgrs[cntObjectMgr]->GetNum(), objectMgrs[cntObjectMgr]->GetName()));
+					}
+				}break;
+				case DEBUG_LOG_TYPE::OTHER: {
+					RNLib::Text2D().PutDebugLog("----------Other----------");
+					RNLib::Text2D().PutDebugLog(CreateText("DebugCount:%d", m_debugCount));
+				}break;
+				}
+			}
+			if (showCount > 0) {
+				RNLib::Text2D().PutDebugLog("--------------------");
+				RNLib::Text2D().PutDebugLog("");
+			}
 		}
 	}
 }
@@ -65,7 +137,7 @@ void CText2D::Update(void) {
 //========================================
 CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	if (m_isShowDebugLog)
+	if (!m_isShowDebugLog)
 		return NULL;
 
 	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)

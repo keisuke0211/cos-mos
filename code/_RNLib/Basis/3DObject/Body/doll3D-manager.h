@@ -17,8 +17,8 @@
 class CDoll3DMgr : public CObjectMgr {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CDoll3DMgr();
-	~CDoll3DMgr();
+	CDoll3DMgr                                 ();
+	~CDoll3DMgr                                ();
 	void      Update                           (void);
 	void      SetEditDoll                      (CDoll3D*& editDoll)                   { m_editInfo.editDoll = editDoll; }
 	CDoll3D*& GetEditDoll                      (void)                                 { return m_editInfo.editDoll; }

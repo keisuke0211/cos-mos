@@ -8,6 +8,7 @@
 
 #include "setup3D.h"
 #include "motion3D.h"
+#include "../../Draw/PutObject/model.h"
 #include "../../Calculation/matrix.h"
 #include "../../Calculation/ease.h"
 #include "../../../RNmain.h"
@@ -57,7 +58,6 @@ public:
 			MoveAnimState*    move    = NULL;
 			SpinAnimState*    spin    = NULL;
 			ScalingAnimState* scaling = NULL;
-			bool              isStep  = false;
 		};
 
 		// óhÇÍèÛë‘
@@ -109,15 +109,14 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CDoll3D(const UShort& priority, const short& setUpIdx);
-	~CDoll3D();
-	void Update          (void);
-	void SetUp           (const short& setUpIdx);
-	void SetMotion       (const short& motionIdx);
-	void OverwriteMotion (const short& motionIdx);
-	void SetMotionStop   (const bool& isStop)   { m_motionInfo.isStop = isStop; }
-	void SetMotionCounter(const short& counter) { m_motionInfo.counter = counter; }
-	// éÊìæê›íË
+	CDoll3D                            (const UShort& priority, const short& setUpIdx);
+	~CDoll3D                           ();
+	void        Update                 (void);
+	void        SetUp                  (const short& setUpIdx);
+	void        SetMotion              (const short& motionIdx);
+	void        OverwriteMotion        (const short& motionIdx);
+	void        SetMotionStop          (const bool& isStop)                { m_motionInfo.isStop = isStop; }
+	void        SetMotionCounter       (const short& counter)              { m_motionInfo.counter = counter; }
 	Pos3D&      GetPos                 (void)                              { return m_pos; }
 	void        SetPos                 (const Pos3D& pos)                  { m_pos = pos; m_isSetPos = true; }
 	Rot3D&      GetRot                 (void)                              { return m_rot; }
@@ -141,7 +140,9 @@ private:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void   UpdateMotion    (void);
 	void   UpdateBone      (CSetUp3D::CData& setUp);
-	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, const Matrix& selfMtx);
+	void   DrawModelVtxIdx (CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum);
+	void   DrawFace        (CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, UInt*& vtxNum);
+	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, Matrix& selfMtx);
 	void   PrepareMotion   (void);
 
 	//========== [[[ ïœêîêÈåæ ]]]

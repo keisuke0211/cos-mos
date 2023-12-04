@@ -36,6 +36,8 @@ CBGObject::~CBGObject() {
 //========================================
 void CBGObject::Update(void) {
 
+	return;
+
 	// [[[ ¶¬ˆ— ]]]
 	if (m_Info.createTime > 0) {
 		if (RNLib::Count().GetCount() % m_Info.createTime == 0) {
@@ -81,7 +83,7 @@ void CBGObject::Update(void) {
 	}
 
 	// [[[ •`‰æ ]]]
-	Color putCol = m_Info.col;
+	/*Color putCol = m_Info.col;
 	putCol.a *= lifeRate;
 	if (m_Info.side == CBGEditor::WORLD_SIDE::UP) {
 		RNLib::Model().Put(PRIORITY_BACKGROUND, m_Info.modelIdx, m_pos, m_Info.rot)
@@ -92,5 +94,5 @@ void CBGObject::Update(void) {
 		RNLib::Model().Put(PRIORITY_BACKGROUND, m_Info.modelIdx, m_pos, m_Info.rot)
 			->SetCol(putCol)
 			->SetClippingCamera(CMode_Game::GetCameraDown());
-	}
+	}*/
 }

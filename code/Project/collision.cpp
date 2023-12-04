@@ -782,7 +782,7 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 				if (isOver && self.minPosOld.y >= target.maxPosOld.y)
 					return ROT::OVER;
 
-				if(isUnder && isOver)
+				if (isUnder && isOver)
 					return ROT::UNKNOWN;
 			}
 			break;

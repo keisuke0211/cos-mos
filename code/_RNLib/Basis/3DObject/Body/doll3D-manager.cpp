@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CDoll3DMgr::CDoll3DMgr() {
+CDoll3DMgr::CDoll3DMgr() : CObjectMgr("RN_DollMgr") {
 
 	m_editInfo = {};
 }

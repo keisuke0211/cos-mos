@@ -20,6 +20,8 @@ CObject::CObject() {
 	m_prev     = NULL;
 	m_next     = NULL;
 	m_isDelete = false;
+	m_isAdd    = false;
+	m_isSub    = false;
 }
 
 //========================================

@@ -11,6 +11,7 @@
 #include "../Object/Gimmick/pile.h"
 #include"../UI/miss.h"
 #include"../Object/Block/Ghost.h"
+#include "../resource.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
@@ -19,9 +20,10 @@ bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
 CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
 
 int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
+int         CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
 
-const float CPlayer::SIZE_WIDTH = 7.0f;	// 横幅
-const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
+const float CPlayer::SIZE_WIDTH = 4.0f;	// 横幅
+const float CPlayer::SIZE_HEIGHT = 4.0f;// 高さ
 
 const float CPlayer::MOVE_SPEED = 0.3f;		// 移動量
 const float CPlayer::MAX_MOVE_SPEED = 2.3f;	// 最大移動量
@@ -147,10 +149,14 @@ HRESULT CPlayer::Init(void)
 	ms_guideCounter = 0;
 
 	// １Ｐ初期情報
+	if (m_aInfo[0].doll != NULL)
+		delete m_aInfo[0].doll;
 	m_aInfo[0].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
 
 	// ２Ｐ初期情報
+	if (m_aInfo[1].doll != NULL)
+		delete m_aInfo[1].doll;
 	m_aInfo[1].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 
@@ -190,6 +196,8 @@ HRESULT CPlayer::Init(void)
 
 	if(s_pColli == NULL)
 	s_pColli = new CCollision;
+
+	s_zoomUpCounter = ZOOM_UP_TIME;
 
 	// 初期化成功
 	return S_OK;
@@ -326,9 +334,6 @@ void CPlayer::Update(void)
 		return;
 	}
 
-	// 前回位置更新
-	SetPosOld();
-
 	// 操作処理
 	ActionControl();
 
@@ -353,8 +358,6 @@ void CPlayer::Update(void)
 
 	// 情報更新
 	UpdateInfo();
-
-	RNLib::Text2D().PutDebugLog(CreateText("FPS:%d", RNSystem::GetFPS()));
 }
 
 //----------------------------
@@ -372,22 +375,27 @@ void CPlayer::UpdateInfo(void)
 		
 		if (planet == 0) {
 			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-				if (++ms_guideCounter > 30)
-					ms_guideCounter = 30;
-				float rate = (float)ms_guideCounter / 30;
-				if (ms_bSwapEnd) {
-					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-						->SetZTest(false)
-						->SetBillboard(true);
-				}
-				else {
-					if (s_nSwapInterval == 0) {
-						RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+				if (s_zoomUpCounter == 0) {
+					if (++ms_guideCounter > 30)
+						ms_guideCounter = 30;
+					float rate = (float)ms_guideCounter / 30;
+					if (ms_bSwapEnd) {
+						if (ms_guideCounter == 1) {
+							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
+						}
+						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 							->SetZTest(false)
 							->SetBillboard(true);
-						isSwapGuide = true;
+					}
+					else {
+						if (s_nSwapInterval == 0) {
+							RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+							isSwapGuide = true;
+						}
 					}
 				}
 			}
@@ -396,6 +404,9 @@ void CPlayer::UpdateInfo(void)
 					ms_guideCounter = 30;
 				float rate = (float)ms_guideCounter / 30;
 				if (CParts::GetDispNum() == 0) {
+					if (ms_guideCounter == 1) {
+						RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
+					}
 					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
 						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 						->SetZTest(false)
@@ -595,13 +606,42 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
+	// [[[ カメラ制御 ]]]
 	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
 	{// どちらも死んでいない
-		// [[[ カメラ制御 ]]]
-		Pos3D pos = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
-		pos.x *= 0.25f;
-		pos.y = 0.0f;
-		Manager::GetMainCamera()->SetPosVAndPosR(Manager::GetMainCamera()->GetPosV(), pos);
+		bool isZoomUp = false;
+		if (s_zoomUpCounter > 0) {
+			if (Manager::StgEd()->GetPlanetIdx() == 0) {
+				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+					isZoomUp = true;
+				}
+			}
+		}
+
+		Pos3D targetPosV = Manager::StgEd()->GetCameraPos();
+		Pos3D targetPosR = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
+		targetPosR.x *= 0.25f;
+		targetPosR.y = 0.0f;
+
+		if (isZoomUp) {
+			s_zoomUpCounter--;
+
+			Pos3D basePosRMain = m_aInfo[0].pos + Pos3D(0.0f, -16.0f, 0.0f);
+			Pos3D basePosRSub  = m_aInfo[1].pos + Pos3D(0.0f, 16.0f, 0.0f);
+			Pos3D basePosVMain = basePosRMain + Pos3D(0.0f, 0.0f, -100.0f);
+			Pos3D basePosVSub  = basePosRSub  + Pos3D(0.0f, 0.0f, -100.0f);
+			float rate = 1.0f;
+			if (s_zoomUpCounter < 60) {
+				rate = CEase::Easing(CEase::TYPE::IN_SINE, s_zoomUpCounter, 60);
+			}
+			float rateOpp = 1.0f - rate;
+			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVMain * rate, targetPosR * rateOpp + basePosRMain * rate);
+			Manager::GetSubCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVSub * rate, targetPosR * rateOpp + basePosRSub * rate);
+			return;
+		}
+		else{
+			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
+		}
 	}
 	else 
 	{// どちらかが死んでいる
@@ -646,7 +686,7 @@ void CPlayer::ActionControl(void)
 			isMove = true;
 		}
 		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
-			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer)) 
+			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
 		{// 左に移動
 			Player.move.x -= MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
@@ -829,65 +869,66 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 //----------------------------
 // 移動処理
 //----------------------------
-void CPlayer::Move(VECTOL vec)
+void CPlayer::Move(VECTOL vec, int cntPlayer)
 {
 	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath) {
 		return;
 	}
 
 	// プレイヤーの位置更新
-	for each (Info &Player in m_aInfo)
+	Info& Player = m_aInfo[cntPlayer];
+
+	// ロケットに乗ってたら　or ゴールしていたらスキップ
+	if (Player.bRide || Player.bGoal) return;
+
+	// 移動量反映
+	switch (vec)
 	{
-		// ロケットに乗ってたら　or ゴールしていたらスキップ
-		if (Player.bRide || Player.bGoal) continue;
-
+	case VECTOL::X:
 		// 過去の位置を設定
-		Player.posOld = Player.pos;
+		Player.posOld.x = Player.pos.x;
 
-		// 移動量反映
-		switch (vec)
-		{
-		case VECTOL::X:
-			// 慣性処理
-			Player.move.x += (0.0f - Player.move.x) * 0.12f;
+		// 慣性処理
+		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
-			// Ⅹの移動量を修正
-			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+		// Ⅹの移動量を修正
+		FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
 
-			// 位置更新
-			Player.pos.x += Player.move.x;
-			break;
+		// 位置更新
+		Player.pos.x += Player.move.x;
+		break;
 
-			// 重力処理
-		case VECTOL::Y:
+		// 重力処理
+	case VECTOL::Y:
+		// 過去の位置を設定
+		Player.posOld.y = Player.pos.y;
 
-			// トランポリンによる特殊ジャンプ中
-			if (Player.bTramJump)
-			{// カウンターを減らして、０になったら特殊ジャンプ終了
-				
-				float diff = Player.fTramTargetPosY - Player.pos.y;
+		// トランポリンによる特殊ジャンプ中
+		if (Player.bTramJump)
+		{// カウンターを減らして、０になったら特殊ジャンプ終了
 
-				if (--Player.nTramJumpCounter <= 0)
-				{
-					Player.bTramJump = false;
-					Player.move.y = diff;
-				}
-				else
-				{
-					Player.move.y = diff / Player.nTramJumpCounter;
-				}
+			float diff = Player.fTramTargetPosY - Player.pos.y;
+
+			if (--Player.nTramJumpCounter <= 0)
+			{
+				Player.bTramJump = false;
+				Player.move.y = diff;
 			}
-			// 通常時なら、重力処理でＹの移動量を計算
-			else Player.move.y += Player.fGravity;
-
-			// 位置更新
-			Player.pos.y += Player.move.y;
-			break;
+			else
+			{
+				Player.move.y = diff / Player.nTramJumpCounter;
+			}
 		}
+		// 通常時なら、重力処理でＹの移動量を計算
+		else Player.move.y += Player.fGravity;
 
-		//位置制御
-		CtrlPos(&Player, vec);
+		// 位置更新
+		Player.pos.y += Player.move.y;
+		break;
 	}
+
+	//位置制御
+	CtrlPos(&Player, vec);
 }
 
 //----------------------------
@@ -937,41 +978,52 @@ void CPlayer::CollisionToStageObject(void)
 		// 衝突ベクトルに変換
 		const VECTOL vec = (VECTOL)nCntVec;
 
-		// 移動・位置制御処理
-		Move(vec);
+		// プレイヤー毎に処理していく
+		int nCntPlayer = NONEDATA;
+		for each (Info & Player in m_aInfo) {
+			nCntPlayer++;
 
-		// オブジェクト1つ1つを見ていく
-		CObject* obj = NULL;
-		while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+			// 移動・位置制御処理
+			Move(vec, nCntPlayer);
 
-			// 取得したオブジェクトをキャスト
-			CStageObject* stageObj = (CStageObject*)obj;
+			// ロケットに乗ってるかゴールしていたら折り返す
+			if (Player.bRide || Player.bGoal)
+				continue;
 
-			// 種類取得
-			const OBJECT_TYPE type = stageObj->GetType();
+			//自分の情報
+			CCollision::SelfInfo Self;
+			Self.pos = Player.pos;
+			Self.posOld = Player.posOld;
+			Self.move = Player.move;
+			Self.fWidth = Self.fHeight = SIZE_HEIGHT;
+			Self.minPos = Pos3D(Self.pos.x - Self.fWidth, Self.pos.y - Self.fHeight, 0.0f);
+			Self.maxPos = Pos3D(Self.pos.x + Self.fWidth, Self.pos.y + Self.fHeight, 0.0f);
 
-			// オブジェクトの当たり判定情報を設定
-			CCollision::ColliInfo colliInfo;
-			colliInfo.pos     = stageObj->GetPos();
-			colliInfo.posOld  = colliInfo.pos;
-			colliInfo.fWidth  = stageObj->GetWidth() * 0.5f;
-			colliInfo.fHeight = stageObj->GetHeight() * 0.5f;
-			colliInfo.minPos  = D3DXVECTOR3(colliInfo.pos.x - colliInfo.fWidth, colliInfo.pos.y - colliInfo.fHeight, 0.0f);
-			colliInfo.maxPos  = D3DXVECTOR3(colliInfo.pos.x + colliInfo.fWidth, colliInfo.pos.y + colliInfo.fHeight, 0.0f);
+			// オブジェクト1つ1つを見ていく
+			CObject* obj = NULL;
+			while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 
-			int nColliRot[NUM_PLAYER] = {};
-			int nCntPlayer = NONEDATA;
-			// プレイヤー毎に処理していく
-			for each(Info& Player in m_aInfo) {
-				nCntPlayer++;
-				// ロケットに乗ってるかゴールしていたら折り返す
-				if (Player.bRide || Player.bGoal)
-					continue;
+				int nColliRot[NUM_PLAYER] = {};
+
+				// 取得したオブジェクトをキャスト
+				CStageObject* stageObj = (CStageObject*)obj;
+
+				// 種類取得
+				const OBJECT_TYPE type = stageObj->GetType();
+
+				// オブジェクトの当たり判定情報を設定
+				CCollision::ColliInfo colliInfo;
+				colliInfo.pos = stageObj->GetPos();
+				colliInfo.posOld = colliInfo.pos;
+				colliInfo.fWidth = stageObj->GetWidth() * 0.5f;
+				colliInfo.fHeight = stageObj->GetHeight() * 0.5f;
+				colliInfo.minPos = D3DXVECTOR3(colliInfo.pos.x - colliInfo.fWidth, colliInfo.pos.y - colliInfo.fHeight, 0.0f);
+				colliInfo.maxPos = D3DXVECTOR3(colliInfo.pos.x + colliInfo.fWidth, colliInfo.pos.y + colliInfo.fHeight, 0.0f);
 
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
-				if (type != OBJECT_TYPE::TRAMPOLINE && 
-					type != OBJECT_TYPE::LASER && 
+				if (type != OBJECT_TYPE::TRAMPOLINE &&
+					type != OBJECT_TYPE::LASER &&
 					type != OBJECT_TYPE::EXTEND_DOG) {
 
 					if (D3DXVec3Length(&(colliInfo.pos - Player.pos)) >
@@ -979,17 +1031,8 @@ void CPlayer::CollisionToStageObject(void)
 						continue;
 				}
 
-				//自分の情報
-				CCollision::SelfInfo Self;
-				Self.pos = Player.pos;	Self.posOld = Player.posOld;
-				Self.move = Player.move;
-				Self.fWidth = Self.fHeight = SIZE_HEIGHT;
-
-				// 他パーツの当たり判定フラグ
-				//bool bOtherColl = false;
-
 				//別の当たり判定情報
-				CCollision::ColliInfo *OtherInfo = NULL;
+				CCollision::ColliInfo* OtherInfo = NULL;
 
 				// 移動するオブジェクトは、
 				// 当たり判定位置に前回位置を設定する
@@ -1009,25 +1052,25 @@ void CPlayer::CollisionToStageObject(void)
 				}break;
 
 					// 移動床
-				case OBJECT_TYPE::MOVE_BLOCK:{
-					CMoveBlock *pBlock = (CMoveBlock*)stageObj;
+				case OBJECT_TYPE::MOVE_BLOCK: {
+					CMoveBlock* pBlock = (CMoveBlock*)stageObj;
 					colliInfo.posOld = pBlock->GetPosOld();
 				}
-				break;
+											break;
 
-					// 隕石
-				case OBJECT_TYPE::METEOR:{
-					CMeteor *pMeteor = (CMeteor *)stageObj;
+											// 隕石
+				case OBJECT_TYPE::METEOR: {
+					CMeteor* pMeteor = (CMeteor*)stageObj;
 					colliInfo.posOld = pMeteor->GetPosOld();
 				}
-				break;
+										break;
 
-					// レーザー
-				case OBJECT_TYPE::LASER:{
-					CRoadTripLaser *pLaser = (CRoadTripLaser *)stageObj;
+										// レーザー
+				case OBJECT_TYPE::LASER: {
+					CRoadTripLaser* pLaser = (CRoadTripLaser*)stageObj;
 
 					OtherInfo = new CCollision::ColliInfo;
-					
+
 					OtherInfo->pos = pLaser->GetLaserPos();
 					OtherInfo->posOld = pLaser->GetPosOld();
 					OtherInfo->fWidth = pLaser->GetLaserSize().x * 0.5f;
@@ -1036,10 +1079,10 @@ void CPlayer::CollisionToStageObject(void)
 					// 当たった方向を格納
 					OtherInfo->Rot = s_pColli->IsBoxToBoxCollider(Self, *OtherInfo, vec);
 				}
-				break;
+									   break;
 
-					// ヌイ
-				case OBJECT_TYPE::EXTEND_DOG:{
+									   // ヌイ
+				case OBJECT_TYPE::EXTEND_DOG: {
 					//CExtenddog *pDog = (CExtenddog *)stageObj;
 
 					//OtherInfo = new CollInfo[OBJ_EXTENDDOG];
@@ -1084,12 +1127,12 @@ void CPlayer::CollisionToStageObject(void)
 					//	Player.bExtendDog = false;
 					//}
 				}
-				break;
+											break;
 
-					//杭
+											//杭
 				case OBJECT_TYPE::PILE:
 				{
-					CPile *pPile = (CPile *)stageObj;
+					CPile* pPile = (CPile*)stageObj;
 
 					colliInfo.pos = pPile->GetPos();
 					colliInfo.posOld = pPile->GetPosOld();
@@ -1125,16 +1168,16 @@ void CPlayer::CollisionToStageObject(void)
 				{
 				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline *)stageObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline*)stageObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock *)stageObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock*)stageObj, &colliInfo, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser *)stageObj,&colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog *)stageObj, &colliInfo, NULL, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser*)stageObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog*)stageObj, &colliInfo, NULL, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts *)stageObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket *)stageObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &colliInfo, (CPile *)stageObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts*)stageObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket*)stageObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &colliInfo, (CPile*)stageObj, &Player.side, &bDeath); break;
 				}
 
 				//別の当たり判定情報削除
@@ -1152,12 +1195,18 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				//情報代入
-				Player.pos = Self.pos;
-				Player.move = Self.move;
-			}
+				if (vec == VECTOL::X) {
+					Player.pos.x = Self.pos.x;
+					Player.move.x = Self.move.x;
+				}
+				else {
+					Player.pos.y = Self.pos.y;
+					Player.move.y = Self.move.y;
+				}
 
-			//当たり判定の事後処理
-			CollisionAfter(stageObj, type, &nColliRot[0]);
+				//当たり判定の事後処理
+				CollisionAfter(stageObj, type, &nColliRot[0]);
+			}
 		}
 	}
 }

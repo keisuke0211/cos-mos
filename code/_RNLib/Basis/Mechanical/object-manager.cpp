@@ -74,7 +74,7 @@ void CObjectMgr::SubMgr(CObjectMgr* mgr) {
 //========================================
 // コンストラクタ
 //========================================
-CObjectMgr::CObjectMgr(void) {
+CObjectMgr::CObjectMgr(const char* name) {
 
 	{// オブジェクトマネージャー列に追加する
 		int numOld = ms_objectMgrNum++;
@@ -82,9 +82,11 @@ CObjectMgr::CObjectMgr(void) {
 		ms_objectMgrs[numOld] = this;
 	}
 
-	m_top = NULL;
-	m_cur = NULL;
-	m_num = 0;
+	m_name = NULL;
+	StrCpyDynamicMemory(&m_name, name);
+	m_top  = NULL;
+	m_cur  = NULL;
+	m_num  = 0;
 }
 
 //========================================
@@ -97,6 +99,9 @@ CObjectMgr::~CObjectMgr(void) {
 
 	// 自身をマネージャー列から排除
 	SubMgr(this);
+
+	// 名前の解放
+	CMemory::Release(&m_name);
 }
 
 //========================================
@@ -119,7 +124,6 @@ void CObjectMgr::ReleaseAll(void) {
 
 //========================================
 // 一括更新処理
-// Author:RIKU NISHIMURAS
 //========================================
 void CObjectMgr::UpdateAll(void) {
 
@@ -146,7 +150,7 @@ void CObjectMgr::ReleaseDeleteObj(void) {
 		CObject* nextObj = obj->GetNext();
 
 		// 削除フラグが真の時、解放処理
-		if (obj->GetDelete())
+		if (obj->GetIsDelete())
 			Release(obj);
 
 		obj = nextObj;
@@ -187,6 +191,14 @@ void CObjectMgr::Release(CObject* obj) {
 //========================================
 void CObjectMgr::AddList(CObject* obj) {
 
+	// 既にリストに追加している場合終了
+	if (obj->GetIsAdd()) {
+		return;
+	}
+	else {
+		obj->SetIsAdd(true);
+	}
+
 	if (m_cur == NULL)
 	{// 最後尾が存在しない(※まだ1つもない)時、
 		// 先頭と最後尾を新規に設定する
@@ -216,35 +228,42 @@ void CObjectMgr::AddList(CObject* obj) {
 //========================================
 void CObjectMgr::SubList(CObject* obj) {
 
-	if (obj->GetPrev() == NULL)
-	{// 前が存在しない(※自分が先頭)時、
+	// 既にリストから削除している場合終了
+	if (obj->GetIsSub()) {
+		return;
+	}
+	else {
+		obj->SetIsSub(true);
+	}
+
+	if (m_top == obj)
+	{// 自分が先頭の時、
 		// 先頭を次に設定する
 		m_top = obj->GetNext();
 
-		if (m_top != NULL)
-		{// 先頭が存在する時、
-			m_top->SetPrev(NULL);	// 前 無し
+		// 先頭の前を無しにする
+		if (m_top != NULL) {
+			m_top->SetPrev(NULL);
 		}
 	}
 
-	if (obj->GetNext() == NULL)
-	{// 次が存在しない(※自分が最後尾)時、
+	if (m_cur == obj)
+	{// 自分が最後尾の時、
 		// 最後尾を前に設定する
 		m_cur = obj->GetPrev();
 
-		if (m_cur != NULL)
-		{// 最後尾が存在する時、
-			m_cur->SetNext(NULL);	// 次 無し
+		// 最後尾の次を無しにする
+		if (m_cur != NULL) {
+			m_cur->SetNext(NULL);
 		}
 	}
-	else
-	{// 次が存在する時、
+
+	if (obj->GetPrev() != NULL && obj->GetNext() != NULL)
+	{// 挟まれている時、
+		// 前と次を繋ぐ
 		CObject* prev = obj->GetPrev();
 		CObject* next = obj->GetNext();
-
-		// 前と次を繋ぐ
-		if (prev != NULL)
-			prev->SetNext(next);	// (※前は存在する保障が無い為チェック)
+		prev->SetNext(next);
 		next->SetPrev(prev);
 	}
 

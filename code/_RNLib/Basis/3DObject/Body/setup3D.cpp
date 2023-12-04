@@ -245,13 +245,13 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 							RNLib::File().Scan(CFile::SCAN::MODELIDX, &boneData.modelIdx, "modelIdx");
 							RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.parentIdx, "parentIdx");
 							RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.relativePos, "relativePos");
-							RNLib::File().Scan(CFile::SCAN::ROT_CORRECT, &boneData.relativeRot, "relativeRot");
+							RNLib::File().Scan(CFile::SCAN::ROT3D_CORRECT, &boneData.relativeRot, "relativeRot");
 							if (RNLib::File().CheckIdentifier("swaying{")) {
 								CMemory::Alloc(&boneData.swaying);
 
 								while (RNLib::File().SearchLoop("}")) {
-									RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.swaying->timeMin, "timeMin");
-									RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.swaying->timeAdd, "timeAdd");
+									RNLib::File().Scan(CFile::SCAN::USHORT, &boneData.swaying->timeMin, "timeMin");
+									RNLib::File().Scan(CFile::SCAN::USHORT, &boneData.swaying->timeAdd, "timeAdd");
 									RNLib::File().Scan(CFile::SCAN::FLOAT, &boneData.swaying->distMin, "distMin");
 									RNLib::File().Scan(CFile::SCAN::FLOAT, &boneData.swaying->distAdd, "distAdd");
 								}
@@ -342,8 +342,8 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 							struct LocalFunc {
 								static void LoadFaceVtxData(CSetUp3D::FaceVtxData& vtxData) {
 									while (RNLib::File().SearchLoop("}")) {
-										RNLib::File().Scan(CFile::SCAN::SHORT, &vtxData.boneIdx, "boneIdx");
-										RNLib::File().Scan(CFile::SCAN::INT, &vtxData.vtxIdx, "vtxIdx");
+										RNLib::File().Scan(CFile::SCAN::USHORT, &vtxData.boneIdx, "boneIdx");
+										RNLib::File().Scan(CFile::SCAN::UINT, &vtxData.vtxIdx, "vtxIdx");
 										RNLib::File().Scan(CFile::SCAN::POS2D, &vtxData.texPos, "texPos");
 									}
 								}

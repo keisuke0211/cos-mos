@@ -24,8 +24,20 @@ public:
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
 	static const char* TEXTURE_PATHS[(int)TEXTURE::MAX];
 
+	// ÉTÉEÉìÉh
+	// CResources::SOUND[(int)CResources::SOUND]
+	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
+	enum class SOUND {
+		OK,
+		SELECT,
+		MAX,
+	};
+	static short SOUND_IDXES[(int)SOUND::MAX];
+	static const char* SOUND_PATHS[(int)SOUND::MAX];
+
 	//========== [[[ ì«Ç›çûÇ› ]]]
 	static void Load(void) {
 		for (int cnt = 0; cnt < (int)TEXTURE::MAX; TEXTURE_IDXES[cnt] = RNLib::Texture().Load(TEXTURE_PATHS[cnt]), cnt++);
+		for (int cnt = 0; cnt < (int)SOUND::MAX; SOUND_IDXES[cnt] = RNLib::Sound().Load(SOUND_PATHS[cnt]), cnt++);
 	}
 };
