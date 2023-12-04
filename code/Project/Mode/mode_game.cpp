@@ -12,7 +12,7 @@
 #include "../System/StageEditor.h"
 #include "../System/words/font-text.h"
 #include "../Mode/mode_title.h"
-#include "../UI/rocket-parts.h"
+#include "../UI/partsUI.h"
 #include "../System/BG-Editor.h"
 #include "../Sound/ambient-sound-player.h"
 #include "../resource.h"

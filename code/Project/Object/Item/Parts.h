@@ -40,6 +40,7 @@ public:
 	//---------------------------
 	static int GetNumAll(void) { return s_nNumAll; }
 	static int GetDispNum(void) { return s_nDispNum; }
+	static int GetNumParts(void) { return s_nNumGetParts; }
 
 	//---------------------------
 	//ƒƒPƒbƒg‚Éæ‚é€”õ‚ª®‚Á‚½‚©”»’è

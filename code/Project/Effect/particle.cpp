@@ -13,6 +13,7 @@
 #define HARF_PI			(157)		//îºâ~é¸
 #define MAGNI			(100.0f)	//î{ó¶
 #define ATTEN_RATE		(0.3f)		//å∏êäó¶
+#define POISON_Y_RATE	(0.05f)		//å∏êäó¶Y
 
 //========================================
 // ê√ìIïœêî
@@ -65,6 +66,13 @@ HRESULT CParticle::Init(int nTex,int nCount)
 			10.0f * cosf(m_Info.rot.z),
 			0.0f);
 	}
+	else if (m_type == TYPE::TYPE_POISON)
+	{
+		m_Info.move = D3DXVECTOR3(
+			0.0f,
+			(80.0f - (float)(rand() % 40)) / MAGNI * cosf(m_Info.rot.z),
+			0.0f);
+	}
 	
 	m_Info.col = INITCOLOR;
 	m_Info.nTex = nTex;
@@ -104,8 +112,16 @@ void CParticle::Update(void)
 		->SetAlphaBlendMode(m_Info.alphamode);
 
 	//à⁄ìÆó å∏êä
-	m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;
-	m_Info.move.y += (0.0f - m_Info.move.y) * ATTEN_RATE;
+	if (m_type != TYPE::TYPE_POISON)
+	{
+		m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;
+		m_Info.move.y += (0.0f - m_Info.move.y) * ATTEN_RATE;
+	}
+	else
+	{
+		m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;
+		m_Info.move.y += (0.0f - m_Info.move.y) * POISON_Y_RATE;
+	}
 
 	//ìßñæÇ…ÇµÇƒÇ¢Ç≠
 	m_Info.col.a = m_Info.col.a * fCountRate;

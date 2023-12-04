@@ -33,6 +33,7 @@ public:
 	{
 		TYPE_NORMAL = 0,
 		TYPE_SPIN,
+		TYPE_POISON,
 		TYPE_FIXED,
 		MAX
 	};

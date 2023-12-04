@@ -11,7 +11,7 @@
 #include "../Character/player.h"
 #include "StageEditor.h"
 #include "../Mode/mode_title.h"
-#include "../UI/rocket-parts.h"
+#include "../UI/partsUI.h"
 
 //========================================
 // Ã“I•Ï”

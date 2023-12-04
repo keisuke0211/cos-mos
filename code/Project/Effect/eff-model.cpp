@@ -15,14 +15,6 @@ const char* s_nIdx[] =
 	"data\\MODEL\\MeteoriteFragment_0.x",
 };
 
-//•Û‘¶—p
-
-/*if (RNLib::Input().GetKeyPress(DIK_RETURN))
-{
-Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(m_aInfo[0].pos.x, m_aInfo[0].pos.y -7.0f * cosf(m_aInfo[0].rot.z), m_aInfo[0].pos.z), m_aInfo[0].rot, INITSCALE3D * 0.2f, INITCOLOR);
-}*/
-
-
 //========================================
 // Ã“I•Ï”
 //========================================
@@ -64,8 +56,8 @@ HRESULT CEffect_Model::Init(int nIdx,int nCount,D3DXVECTOR3 move)
 
 	m_move = D3DXVECTOR3(
 		sinf((float)(rand() % PI  / MAGNI)) + (float)(rand() % (int)move.x - move.x * 0.5f),	//x‚ÌˆÚ“®—Ê
-		(move.y - (float)(rand() %(int)move.y)) * (m_pos.y / fabsf(m_pos.y)),		//y‚ÌˆÚ“®—Ê
-		move.z);									//z‚ÌˆÚ“®—Ê
+		(move.y - (float)(rand() %(int)move.y)) * (m_pos.y / fabsf(m_pos.y)),					//y‚ÌˆÚ“®—Ê
+		move.z);																				//z‚ÌˆÚ“®—Ê
 
 	return S_OK;
 }
