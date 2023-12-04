@@ -50,7 +50,7 @@ const char* CBlock::OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX] = {
 };
 const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 	"data\\SOUND\\SE\\coin.wav",
-	"data\\SOUND\\SE\\lightA.wav"
+	"data\\SOUND\\SE\\lightA.wav",
 	"data\\SOUND\\SE\\lightB.wav",
 };
 

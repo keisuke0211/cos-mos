@@ -289,6 +289,22 @@ CParts *CStageObjectMgr::PartsCreate(D3DXVECTOR3 pos)
 }
 
 //========================================
+// コイン
+//========================================
+CCoin *CStageObjectMgr::CoinCreate(D3DXVECTOR3 pos)
+{
+	CCoin *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CCoin;
+
+	// 初期化処理
+	pObj->SetPos(pos);
+
+	return pObj;
+}
+
+//========================================
 // ロケット
 //========================================
 CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)

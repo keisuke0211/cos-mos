@@ -17,6 +17,7 @@
 #include "Gimmick/meteor.h"
 #include "Gimmick/rocket.h"
 #include "Item/Parts.h"
+#include "Item/coin.h"
 #include "BackGround/Planet.h"
 #include "BackGround/Star.h"
 #include "BackGround/Shiningwave.h"
@@ -47,7 +48,8 @@ public:
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
 	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move, bool bxRetrurn = false);
 	CPile       *PileCreate(D3DXVECTOR3 pos, int nNumPile, float fCaveIn);
-	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
+	CParts      *PartsCreate(D3DXVECTOR3 pos);
+	CCoin       *CoinCreate	(D3DXVECTOR3 pos);
 	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos,bool bStartGate);
 	CRocket     *RocketCreate    (D3DXVECTOR3 pos);
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
