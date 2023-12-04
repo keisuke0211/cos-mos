@@ -31,6 +31,7 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\StageObject\\AncientStoneBrickBlock.x",
 	"data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x",
 	"NONEDATA",
+	"data\\MODEL\\Three-eyes_block.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -45,6 +46,7 @@ const char* CBlock::OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX] = {
 };
 const char* CBlock::OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX] = {
 	"data\\MOTION\\ChestStepped.txt",
+	"data\\MOTION\\PalmTree_Shake.txt",
 };
 const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 	"data\\SOUND\\SE\\coin.wav",
@@ -117,6 +119,7 @@ CBlock::CBlock(void) {
 	m_addPos       = INITPOS3D;
 	m_counter      = 0;
 	m_counterMax   = 0;
+	m_nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\Eye.png");
 	m_num++;
 }
 
@@ -154,6 +157,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	case LOOKS_TYPE::PALMTREE: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
+		m_Eyepos = m_pos;
+		m_Eyepos.y += 100.0f;
+		m_Eyepos.z -= 50.0f;
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
@@ -296,7 +302,21 @@ void CBlock::Update(void) {
 			->SetBrightnessOfEmissive((float)m_counter / 30);
 	}break;
 	case LOOKS_TYPE::PALMTREE: {
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, m_Eyepos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetSize(20.0f, 20.0f)
+			->SetTex(m_nTexIdx);
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, m_Eyepos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetSize(2.0f, 2.0f)
+			->SetTex(m_nTexIdx);
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, m_Eyepos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetSize(2.0f, 2.0f)
+			->SetTex(m_nTexIdx);
 
+		if (++m_counter > 240)
+		{
+			m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::PLAMTREE_SHAKE]);
+			m_counter = 0;
+		}
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
