@@ -35,7 +35,10 @@ public:
 		STONE_MONUMENT               = 15,	// 謎の石碑
 		ANCIENT_STONE_BRICK_BLOCK    = 16,	// 古代の石レンガブロック
 		SOIL_AND_ANCIENT_STONE_BLOCK = 17,	// 土＆古代の石ブロック(中間用)
+		PALMTREE					 = 18,	// ヤシの木
+		TREE_EYES_BLOCK				 = 19,	// 三つ目のブロック
 		MAX
+
 	};
 
 	// その他テクスチャ
@@ -54,12 +57,14 @@ public:
 	enum class OTHER_SETUP3D {
 		BAOBAB_TREE,
 		CHEST,
+		PALM_TREE,
 		MAX,
 	};
 
 	// その他モーション3D
 	enum class OTHER_MOTION3D {
 		CHEST_STEPPED,
+		PLAMTREE_SHAKE,
 		MAX,
 	};
 
@@ -117,4 +122,6 @@ private:
 	Pos3D      m_addPos;
 	short      m_counter;
 	short      m_counterMax;
+	int		   m_nTexIdx;
+	D3DXVECTOR3 m_Eyepos;
 };

@@ -12,16 +12,6 @@
 //----------|---------------------------------------------------------------------
 //================================================================================
 
-//****************************************
-// 定数定義
-//****************************************
-const UShort CMotion3D::COMMAND_DATA_NUM[] = {
-	5,	// 移動 ( 目標位置X,Y,Z,移動時間,補間番号 )
-	5,	// 回転 ( 目標向きX,Y,Z,回転時間,補間番号 )
-	5,	// 拡縮 ( 拡大倍率X,Y,Z.拡縮時間,補間番号 )
-	0,	// 足踏
-};
-
 //========================================
 // コンストラクタ
 //========================================
@@ -151,20 +141,19 @@ void CMotion3D::SaveEditData(const char* savePath) {
 				fprintf(RNLib::File().GetFile(), "		time %d ", cmd.time);
 				switch (cmd.command) {
 				case COMMAND::MOVE: {
+					const CommandData_Move& data = *(CommandData_Move*)cmd.data;
 					fprintf(RNLib::File().GetFile(), "%d %f %f %f %d %d\n",
-						(int)COMMAND::MOVE, cmd.datas[0], cmd.datas[1], cmd.datas[2], (int)cmd.datas[3], (int)cmd.datas[4]);
+						(int)COMMAND::MOVE, data.targetPos.x, data.targetPos.y, data.targetPos.z, data.time, (int)data.easeType);
 				}break;
 				case COMMAND::SPIN: {
+					const CommandData_Spin& data = *(CommandData_Spin*)cmd.data;
 					fprintf(RNLib::File().GetFile(), "%d %f %f %f %d %d\n",
-						(int)COMMAND::SPIN, cmd.datas[0], cmd.datas[1], cmd.datas[2], (int)cmd.datas[3], (int)cmd.datas[4]);
+						(int)COMMAND::SPIN, data.targetRot.x, data.targetRot.y, data.targetRot.z, data.time, (int)data.easeType);
 				}break;
 				case COMMAND::SCALING: {
+					const CommandData_Scaling& data = *(CommandData_Scaling*)cmd.data;
 					fprintf(RNLib::File().GetFile(), "%d %f %f %f %d %d\n",
-						(int)COMMAND::SCALING, cmd.datas[0], cmd.datas[1], cmd.datas[2], (int)cmd.datas[3], (int)cmd.datas[4]);
-				}break;
-				case COMMAND::STEP: {
-					fprintf(RNLib::File().GetFile(), "%d %d\n",
-						(int)COMMAND::STEP, (int)cmd.datas[0]);
+						(int)COMMAND::SCALING, data.targetScale.x, data.targetScale.y, data.targetScale.z, data.time, (int)data.easeType);
 				}break;
 				default: {
 					// エラーメッセージ
@@ -217,7 +206,7 @@ bool CMotion3D::ExecutionLoad(const char* loadPath, CData& data) {
 				RNLib::File().Scan(CFile::SCAN::USHORT, &data.boneNum);
 				CMemory::Alloc<BoneMotionData>(&data.boneMotionDatas, data.boneNum);
 
-				int cntBone = 0;
+				UShort cntBone = 0;
 				while (RNLib::File().SearchLoop("}")) {
 					if (RNLib::File().CheckIdentifier("boneMotionData{")) {
 
@@ -264,21 +253,47 @@ bool CMotion3D::ExecutionLoad(const char* loadPath, CData& data) {
 										boneMotionData.commandDatas[cntCommand].command = (COMMAND)commandNum;
 									}
 									
-									// 移動/回転/拡縮フラグを立てる
-									if (boneMotionData.commandDatas[cntCommand].command == COMMAND::MOVE)
+									// コマンド毎の処理
+									boneMotionData.commandDatas[cntCommand].data = NULL;
+									switch (boneMotionData.commandDatas[cntCommand].command) {
+									case COMMAND::MOVE: {
 										boneMotionData.isMove = true;
-									else if (boneMotionData.commandDatas[cntCommand].command == COMMAND::SPIN)
+										RNLib::Memory().Alloc((CommandData_Move**)&boneMotionData.commandDatas[cntCommand].data);
+
+										CommandData_Move& data = *(CommandData_Move*)boneMotionData.commandDatas[cntCommand].data;
+										RNLib::File().Scan(CFile::SCAN::POS3D, &data.targetPos);
+										RNLib::File().Scan(CFile::SCAN::USHORT, &data.time);
+
+										int easeTypeIdx;
+										RNLib::File().Scan(CFile::SCAN::INT, &easeTypeIdx);
+										data.easeType = (CEase::TYPE)easeTypeIdx;
+									}break;
+									case COMMAND::SPIN: {
 										boneMotionData.isSpin = true;
-									else if (boneMotionData.commandDatas[cntCommand].command == COMMAND::SCALING)
+										RNLib::Memory().Alloc((CommandData_Spin**)&boneMotionData.commandDatas[cntCommand].data);
+
+										CommandData_Spin& data = *(CommandData_Spin*)boneMotionData.commandDatas[cntCommand].data;
+										RNLib::File().Scan(CFile::SCAN::ROT3D, &data.targetRot);
+										RNLib::File().Scan(CFile::SCAN::USHORT, &data.time);
+
+										int easeTypeIdx;
+										RNLib::File().Scan(CFile::SCAN::INT, &easeTypeIdx);
+										data.easeType = (CEase::TYPE)easeTypeIdx;
+									}break;
+									case COMMAND::SCALING: {
 										boneMotionData.isScale = true;
+										RNLib::Memory().Alloc((CommandData_Scaling**)&boneMotionData.commandDatas[cntCommand].data);
 
-									// 引数のメモリを確保
-									boneMotionData.commandDatas[cntCommand].datas = NULL;
-									boneMotionData.commandDatas[cntCommand].datas = new float[COMMAND_DATA_NUM[(int)boneMotionData.commandDatas[cntCommand].command]];
+										CommandData_Scaling& data = *(CommandData_Scaling*)boneMotionData.commandDatas[cntCommand].data;
+										RNLib::File().Scan(CFile::SCAN::SCALE3D, &data.targetScale);
+										RNLib::File().Scan(CFile::SCAN::USHORT, &data.time);
 
-									// 引数の読み込み
-									for (int cntData = 0; cntData < COMMAND_DATA_NUM[(int)boneMotionData.commandDatas[cntCommand].command]; cntData++)
-										RNLib::File().Scan(CFile::SCAN::FLOAT, &boneMotionData.commandDatas[cntCommand].datas[cntData]);
+										int easeTypeIdx;
+										RNLib::File().Scan(CFile::SCAN::INT, &easeTypeIdx);
+										data.easeType = (CEase::TYPE)easeTypeIdx;
+
+									}break;
+									}
 
 									// コマンドのカウント
 									cntCommand++;	
@@ -356,7 +371,11 @@ void CMotion3D::CData::Release(void) {
 	// ボーンコマンドデータを解放
 	for (int cntParts = 0; cntParts < boneNum; cntParts++) {
 		for (int cntCmd = 0; cntCmd < boneMotionDatas[cntParts].commandDataNum; cntCmd++) {
-			CMemory::Release(&boneMotionDatas[cntParts].commandDatas[cntCmd].datas);
+			switch (boneMotionDatas[cntParts].commandDatas[cntCmd].command) {
+			case COMMAND::MOVE   :CMemory::Release((CommandData_Move   **)&boneMotionDatas[cntParts].commandDatas[cntCmd].data); break;
+			case COMMAND::SPIN   :CMemory::Release((CommandData_Spin   **)&boneMotionDatas[cntParts].commandDatas[cntCmd].data); break;
+			case COMMAND::SCALING:CMemory::Release((CommandData_Scaling**)&boneMotionDatas[cntParts].commandDatas[cntCmd].data); break;
+			}
 		}
 		CMemory::Release(&boneMotionDatas[cntParts].commandDatas);
 	}

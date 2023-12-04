@@ -39,7 +39,11 @@ bool CRegist::Load(const char* loadPath, short& idx) {
 
 	// パス無し or DATANONE指定の時、
 	// 番号をDATANONE指定して読み中止
-	if ((!strcmp(loadPath, "")) || (!strcmp(loadPath, "NONEDATA"))) {
+	if (loadPath == NULL) {
+		idx = NONEDATA;
+		return false;
+	}
+	else if ((!strcmp(loadPath, "")) || (!strcmp(loadPath, "NONEDATA"))) {
 		idx = NONEDATA;
 		return false;
 	}

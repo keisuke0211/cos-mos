@@ -21,7 +21,7 @@ public:
 	static float Easing(const TYPE& ease, const float& base, const float& max);
 	CEase();
 	~CEase();
-	void Init(void);
+	void Init  (void);
 	void Uninit(void);
 	void Update(void);
 };

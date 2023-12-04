@@ -17,7 +17,7 @@ const char* CStageObjectMgr::BLOCK_INFO_FILE = "data\\GAMEDATA\\BLOCK\\BLOCK_DAT
 //========================================
 // コンストラクタ
 //========================================
-CStageObjectMgr::CStageObjectMgr(void)
+CStageObjectMgr::CStageObjectMgr(void):CObjectMgr("StageObjectMgr")
 {
 	
 }
