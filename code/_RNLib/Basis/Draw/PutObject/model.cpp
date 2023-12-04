@@ -373,8 +373,9 @@ CModel::CDrawInfo::~CDrawInfo() {
 
 	// 拡大倍率に変更があった時、解放する
 	if (m_isScaling) {
-		if (m_mesh != NULL)
+		if (m_mesh != NULL) {
 			m_mesh->Release();
+		}
 	}
 }
 
@@ -430,11 +431,11 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	const CModel::CData& modelData = RNLib::Model().GetData(m_modelIdx);
 
 	// 情報を代入
-	drawInfo->m_mtx                  = m_mtx;
-	drawInfo->m_texes                = modelData.m_texes;
-	drawInfo->m_matNum               = modelData.m_matNum;
-	drawInfo->m_isZTest              = m_isZTest;
-	drawInfo->m_isLighting           = m_isLighting;
+	drawInfo->m_mtx        = m_mtx;
+	drawInfo->m_texes      = modelData.m_texes;
+	drawInfo->m_matNum     = modelData.m_matNum;
+	drawInfo->m_isZTest    = m_isZTest;
+	drawInfo->m_isLighting = m_isLighting;
 
 	//----------------------------------------
 	// マテリアル情報を算出
@@ -495,7 +496,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		const ULong faceNum   = modelData.m_mesh->GetNumFaces();
 
 		// メッシュを複製する
-		D3DXCreateMeshFVF(faceNum, vtxNum, D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawInfo->m_mesh);
 		modelData.m_mesh->CloneMeshFVF(D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawInfo->m_mesh);
 
 		// メッシュがNULLであれば、

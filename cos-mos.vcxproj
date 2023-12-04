@@ -171,7 +171,7 @@
     <ClCompile Include="code\Project\Object\Block\Ghost.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\pile.cpp" />
     <ClCompile Include="code\Project\Object\Item\coin.cpp" />
-    <ClCompile Include="code\Project\resource.cpp" />
+    <ClCompile Include="code\Project\resource-path.cpp" />
     <ClCompile Include="code\Project\Sound\ambient-sound-player.cpp" />
     <ClCompile Include="code\Project\System\BG-Editor.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp" />
@@ -253,6 +253,7 @@
     <ClCompile Include="code\_RNLib\Demo\demo_object.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp" />
+    <ClCompile Include="code\_RNLib\RNfunction.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
     <ClCompile Include="code\_RNLib\SetUp3DEditor\setup3D-editor.cpp" />
@@ -356,6 +357,7 @@
     <ClInclude Include="code\_RNLib\Demo\demo_object.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_player.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h" />
+    <ClInclude Include="code\_RNLib\RNfunction.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />
     <ClInclude Include="code\_RNLib\RNmode.h" />

@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffect3DMgr::CEffect3DMgr() {
+CEffect3DMgr::CEffect3DMgr() : CObjectMgr("RN_Effect3DMgr") {
 
 }
 

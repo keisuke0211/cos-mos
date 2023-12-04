@@ -162,5 +162,5 @@ private:
 	short m_wallModelIdx[2];
 	Pause m_Pause;
 	short m_BGMIdx;
-	CSound::CPlay* play;
+	UShort m_BGMID;
 };

@@ -309,7 +309,7 @@
     <ClCompile Include="code\Project\Object\Block\Ghost.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\resource.cpp">
+    <ClCompile Include="code\Project\resource-path.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\Object\BackGround\bat.cpp">
@@ -319,6 +319,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\Object\Item\coin.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\RNfunction.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -633,6 +636,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\Object\Item\coin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\RNfunction.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

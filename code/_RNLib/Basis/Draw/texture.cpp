@@ -114,7 +114,7 @@ void CTexture::Update(void) {
 //========================================
 // ì«Ç›çûÇ›èàóù
 //========================================
-int CTexture::Load(const char* loadPath) {
+short CTexture::Load(const char* loadPath) {
 
 	UShort numOld = m_num;
 	short idx = NONEDATA;

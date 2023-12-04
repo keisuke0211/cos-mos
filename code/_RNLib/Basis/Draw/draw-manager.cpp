@@ -683,7 +683,6 @@ void CDrawMgr::PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& p
 		resistInfoSum.m_text3DRegistInfos[cnt]->PutPolygon3D(priority, isOnScreen);
 	}
 
-	resistInfoSum.m_text3DDrawNum = resistInfoSum.m_text3DRegistInfoNum;
 	resistInfoSum.m_text3DRegistInfoNum = 0;
 
 	//----------------------------------------
@@ -693,7 +692,6 @@ void CDrawMgr::PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& p
 		resistInfoSum.m_text2DRegistInfos[cnt]->PutPolygon2D(priority, isOnScreen);
 	}
 
-	resistInfoSum.m_text2DDrawNum = resistInfoSum.m_text2DRegistInfoNum;
 	resistInfoSum.m_text2DRegistInfoNum = 0;
 }
 
@@ -718,7 +716,6 @@ void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfo
 		drawInfoSum.m_model[cnt] = resistInfoSum.m_modelRegistInfos[cnt]->ConvToDrawInfo(device);
 	}
 
-	resistInfoSum.m_modelDrawNum = resistInfoSum.m_modelRegistInfoNum;
 	resistInfoSum.m_modelRegistInfoNum = 0;
 
 	//----------------------------------------
@@ -728,7 +725,6 @@ void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfo
 		drawInfoSum.m_polygon3D[cnt] = resistInfoSum.m_polygon3DRegistInfos[cnt]->ConvToDrawInfo();
 	}
 
-	resistInfoSum.m_polygon3DDrawNum = resistInfoSum.m_polygon3DRegistInfoNum;
 	resistInfoSum.m_polygon3DRegistInfoNum = 0;
 
 	//----------------------------------------
@@ -738,7 +734,6 @@ void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfo
 		drawInfoSum.m_polygon2D[cnt] = resistInfoSum.m_polygon2DRegistInfos[cnt]->ConvToDrawInfo();
 	}
 
-	resistInfoSum.m_polygon2DDrawNum = resistInfoSum.m_polygon2DRegistInfoNum;
 	resistInfoSum.m_polygon2DRegistInfoNum = 0;
 }
 
@@ -834,27 +829,22 @@ CDrawMgr::CRegistInfoSum::CRegistInfoSum() {
 	m_polygon2DRegistInfoNum        = 0;
 	m_polygon2DRegistInfoAllocPower = 0;
 	m_polygon2DRegistInfoAllocNum   = 0;
-	m_polygon2DDrawNum              = 0;
 	m_polygon3DRegistInfos          = NULL;
 	m_polygon3DRegistInfoNum        = 0;
 	m_polygon3DRegistInfoAllocPower = 0;
 	m_polygon3DRegistInfoAllocNum   = 0;
-	m_polygon3DDrawNum              = 0;
 	m_text2DRegistInfos             = NULL;
 	m_text2DRegistInfoNum           = 0;
 	m_text2DRegistInfoAllocPower    = 0;
 	m_text2DRegistInfoAllocNum      = 0;
-	m_text2DDrawNum                 = 0;
 	m_text3DRegistInfos             = NULL;
 	m_text3DRegistInfoNum           = 0;
 	m_text3DRegistInfoAllocPower    = 0;
 	m_text3DRegistInfoAllocNum      = 0;
-	m_text3DDrawNum                 = 0;
 	m_modelRegistInfos              = NULL;
 	m_modelRegistInfoNum            = 0;
 	m_modelRegistInfoAllocPower     = 0;
 	m_modelRegistInfoAllocNum       = 0;
-	m_modelDrawNum                  = 0;
 }
 
 //========================================
@@ -903,7 +893,7 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_polygon2DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (m_polygon2DDrawNum < allocLine)
+			if (m_polygon2DRegistInfoNum < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CMemory::ReAllocDouble(&m_polygon2DRegistInfos, m_polygon2DRegistInfoAllocNum, allocLine);
@@ -925,7 +915,7 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_polygon3DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (m_polygon3DDrawNum < allocLine)
+			if (m_polygon3DRegistInfoNum < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CMemory::ReAllocDouble(&m_polygon3DRegistInfos, m_polygon3DRegistInfoAllocNum, allocLine);
@@ -947,7 +937,7 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_text2DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (m_text2DDrawNum < allocLine)
+			if (m_text2DRegistInfoNum < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CMemory::ReAllocDouble(&m_text2DRegistInfos, m_text2DRegistInfoAllocNum, allocLine);
@@ -969,7 +959,7 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_text3DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (m_text3DDrawNum < allocLine)
+			if (m_text3DRegistInfoNum < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CMemory::ReAllocDouble(&m_text3DRegistInfos, m_text3DRegistInfoAllocNum, allocLine);
@@ -991,7 +981,7 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_modelRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (m_modelDrawNum < allocLine)
+			if (m_modelRegistInfoNum < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CMemory::ReAllocDouble(&m_modelRegistInfos, m_modelRegistInfoAllocNum, allocLine);

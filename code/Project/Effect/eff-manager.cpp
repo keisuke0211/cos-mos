@@ -16,7 +16,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffMgr::CEffMgr(void)
+CEffMgr::CEffMgr(void):CObjectMgr("EffectMgr")
 {
 }
 

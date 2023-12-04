@@ -17,7 +17,7 @@ namespace {
 	CMode*          m_modeObj;
 	CMode::TYPE     m_reserveModeType;
 	CStageObjectMgr m_blockMgr;
-	CObjectMgr      m_BGMgr;
+	CObjectMgr      m_BGMgr("BGMgr");
 	CEffMgr         m_effectMgr;
 	CStageEditor    m_StgEd;
 	CFont           m_Font;

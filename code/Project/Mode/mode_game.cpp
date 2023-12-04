@@ -124,7 +124,7 @@ void CMode_Game::Init(void) {
 
 	// BGM“Ç‚İ‚İ&Ä¶
 	m_BGMIdx = RNLib::Sound().Load("data\\SOUND\\BGM\\STAGE1.wav");
-	play = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, true);
+	m_BGMID = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, true);
 }
 
 //========================================
@@ -135,7 +135,7 @@ void CMode_Game::Uninit(void) {
 	CMode::Uninit();
 
 	// Ä¶’â~
-	play->Delete();
+	RNLib::Sound().GetPlay(m_BGMID).Delete();
 
 	// ƒvƒŒƒCƒ„[‚ğ‰ğ•ú
 	if (s_pPlayer != NULL)	{

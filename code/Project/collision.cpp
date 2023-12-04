@@ -745,8 +745,6 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec)
 {
 	// Ž©•ª‚ÌŒ»Ý‚Æ‘O‰ñ‚ÌÅ¬EÅ‘åˆÊ’u
-	self.minPos = Pos3D(self.pos.x - self.fWidth, self.pos.y - self.fHeight, 0.0f);
-	self.maxPos = Pos3D(self.pos.x + self.fWidth, self.pos.y + self.fHeight, 0.0f);
 	const Pos3D OLD_MINPOS = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
 	const Pos3D OLD_MAXPOS = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);
 
@@ -788,7 +786,7 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 				if (isOver && OLD_MINPOS.y >= TARGET_MaxPosOld.y)
 					return ROT::OVER;
 
-				if(isUnder && isOver)
+				if (isUnder && isOver)
 					return ROT::UNKNOWN;
 			}
 			break;
