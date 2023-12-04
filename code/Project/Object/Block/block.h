@@ -38,6 +38,7 @@ public:
 		PALMTREE					 = 18,	// ヤシの木
 		TREE_EYES_BLOCK				 = 19,	// 三つ目のブロック
 		MAX
+
 	};
 
 	// その他テクスチャ
