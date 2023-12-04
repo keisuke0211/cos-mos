@@ -26,10 +26,28 @@ public:
 
 	// サウンド
 	// CResources::SOUND[(int)CResources::SOUND]
-	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
+	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::], CSound::CATEGORY::, );
 	enum class SOUND {
-		OK,
-		SELECT,
+		OK,				//「OK」音声
+		SELECT,			// 決定音
+
+		//プレイヤー関連
+		JUMP,			// ジャンプ
+		LANDING,		// 着地
+		SWAPING,		// 移動中
+		SWAPEND,		// スワップ終わり
+		EXPAND,			// 膨らむ
+		EXPLPSOON,		// 破裂
+
+		DOG_00,			// 押す
+		DOG_01,			// 縮む
+		DOG_02,			// 伸びる
+		DOG_03,			// 震える
+
+		//BGM
+		STAGE1,
+		STAGE2,
+
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];
