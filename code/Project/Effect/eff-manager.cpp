@@ -57,7 +57,7 @@ CEff *CEffMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color c
 	return pObj;
 }
 //========================================
-// エフェクト
+// モデルエフェクト
 //========================================
 CEffect_Model *CEffMgr::ModelEffectCreate(int nIdx, D3DXVECTOR3 pos,D3DXVECTOR3 rot, D3DXVECTOR3 scale, Color col, int nCount, D3DXVECTOR3 move)
 {
@@ -108,8 +108,6 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 	pObj->SetAlphaMode(alphamode);
 	pObj->Init(nTex, nCount);
 	pObj->SetColor(col);
-
-	
 
 	return pObj;
 }

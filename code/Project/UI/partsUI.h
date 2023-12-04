@@ -38,10 +38,12 @@ protected:
 private:
 	//========== [[[ 変数宣言 ]]]
 	D3DXVECTOR3 m_pos;			// 位置
+	float		m_FramePos;		// フレームの位置
 	Scale2D		m_scale;		// 拡縮
 	STATE		*m_state;		// 状態
-	int			m_TexIdx;
+	int			m_TexIdx[2];
 	int			m_colorA;
 	int			m_num;
 	static bool	m_bRocketStg;	//ロケットのあるステージ？
+
 };
