@@ -51,6 +51,7 @@ public:
 		CDoll3D*    doll;
 		D3DXVECTOR3 pos;				// 位置
 		D3DXVECTOR3 posOld;				// 前回位置
+		D3DXVECTOR3 posOld2;			// 前回位置
 		Scale3D     scale;
 		D3DXVECTOR3 rot;				// 向き
 		D3DXVECTOR3 move;				// 移動量
@@ -191,6 +192,8 @@ public:
 	static UShort GetGuideCounter(void) { return ms_guideCounter; }
 	static void SetGuideCounter(UShort guideCounter) { ms_guideCounter = guideCounter; }
 
+	// ズームアップカウンター
+	static int GetZoomUpCounter(void) { return s_zoomUpCounter; }
 private:
 	//種類の略称を設定
 	typedef CStageObject::TYPE OBJECT_TYPE;
@@ -214,15 +217,16 @@ private:
 	static const int SWAP_MIDDLE_INTERVAL   = 50; //移動～目的地到着までの時間
 	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
 	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
+	static const int ZOOM_UP_TIME = 120;  //ズームアップにかかる時間
 	static const int EXPAND_TIME = 60;  //膨らみにかかる時間
 	static const int DEATH_TIME = 60;   //死亡時間
 	static const int DEATH_TIME2 = 120; //死亡時間2
 	static SWAP_ANIM s_AnimState;		//アニメーション構成
 	static       int s_nSwapInterval;	//残りスワップインターバル
 	static       bool s_bSwapAnim;		//スワップアニメーション中かどうか
-
 	static const int GOAL_INTERVAL = 120;//ゴール後の余韻
 	static       int s_nGoalInterval;    //ゴール後の余韻カウンター
+	static       int s_zoomUpCounter;	// ズームアップカウンター
 
 	void Swap(void);
 	void SwapAnimation(void);
@@ -251,7 +255,7 @@ private:
 	void InitInfo(void);
 	void SetPosOld(void);
 	void ActionControl(void);
-	void Move(VECTOL vec);
+	void Move(VECTOL vec, int cntPlayer);
 	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
 	void Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 

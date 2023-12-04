@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CCameraMgr::CCameraMgr() {
+CCameraMgr::CCameraMgr() : CObjectMgr("RN_CameraMgr") {
 
 }
 

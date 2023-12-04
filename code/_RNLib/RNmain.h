@@ -118,16 +118,16 @@ typedef unsigned short          UShort;
 typedef unsigned int            UInt;
 typedef unsigned long           ULong;
 // Vector2
+typedef D3DXVECTOR2             Vector2D;
 typedef D3DXVECTOR2             Pos2D;
 typedef D3DXVECTOR2             Rot2D;
-typedef D3DXVECTOR2             Vector2D;
 typedef D3DXVECTOR2             Normal2D;
 typedef D3DXVECTOR2             Scale2D;
 typedef D3DXVECTOR2             Size2D;
 // Vector3
+typedef D3DXVECTOR3             Vector3D;
 typedef D3DXVECTOR3             Pos3D;
 typedef D3DXVECTOR3             Rot3D;
-typedef D3DXVECTOR3             Vector3D;
 typedef D3DXVECTOR3             Normal3D;
 typedef D3DXVECTOR3             Scale3D;
 typedef D3DXVECTOR3             Size3D;

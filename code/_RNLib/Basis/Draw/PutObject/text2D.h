@@ -53,9 +53,22 @@ public:
 	void Update(void);
 	CRegistInfo* Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen = false);
 	Pos2D PutDebugLog(const char* string);
+	void IncrementDebugCount(void) { m_debugCount++; }
+	void DecrementDebugCount(void) { m_debugCount--; }
 
 private:
+	//========== [[[ óÒãìå^íËã` ]]]
+	enum class DEBUG_LOG_TYPE {
+		PERFORMANCE,
+		DRAW_STATE,
+		OBJECT_NUM_IN_OBJECTMGR,
+		OTHER,
+		MAX,
+	};
+
 	//========== [[[ ïœêîêÈåæ ]]]
 	bool   m_isShowDebugLog;
+	bool   m_isShowDebugLogs[(int)DEBUG_LOG_TYPE::MAX];
+	int    m_debugCount;
 	UShort m_debugLogLine;
 };

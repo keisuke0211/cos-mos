@@ -22,7 +22,7 @@ public:
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
-	int Load(const char *loadPath);
+	short Load(const char *loadPath);
 	void Set(Device pDevice, int nTex);
 
 	// İ’èæ“¾

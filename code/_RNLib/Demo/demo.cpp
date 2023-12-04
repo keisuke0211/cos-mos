@@ -25,7 +25,7 @@ const char* CDemo::SCREEN_TYPE_NAMES[(int)SCREEN_TYPE::MAX] = { "NORMAL", "DIVIS
 //========================================
 // コンストラクタ
 //========================================
-CDemo::CDemo() {
+CDemo::CDemo() : m_demoObjMgr("RN_DemoObjMgr") {
 
 	for (int cntPlayer = 0; cntPlayer < (int)PLAYER::MAX; m_players[cntPlayer] = NULL, cntPlayer++);
 	m_controlPlayerCount = 0;

@@ -17,11 +17,12 @@ namespace {
 	CMode*          m_modeObj;
 	CMode::TYPE     m_reserveModeType;
 	CStageObjectMgr m_blockMgr;
-	CObjectMgr      m_BGMgr;
+	CObjectMgr      m_BGMgr("BGMgr");
 	CEffMgr         m_effectMgr;
 	CStageEditor    m_StgEd;
 	CFont           m_Font;
 	CCamera*        m_camera;
+	CCamera*        m_subCamera;
 }
 
 //================================================================================
@@ -30,6 +31,7 @@ namespace {
 //----------|---------------------------------------------------------------------
 //================================================================================
 CCamera* Manager::GetMainCamera(void) { return m_camera; }
+CCamera* Manager::GetSubCamera(void) { return m_subCamera; }
 CStageObjectMgr* Manager::StageObjectMgr(void) { return &m_blockMgr; }
 CObjectMgr* Manager::BGMgr(void) { return &m_BGMgr; }
 CEffMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
@@ -47,6 +49,7 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// カメラの生成
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
+	m_subCamera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
 
 	// モード設定
 	SetMode(mode);
@@ -81,6 +84,7 @@ void Manager::Uninit(void) {
 
 	// カメラの破棄
 	RNLib::Memory().Release(&m_camera);
+	RNLib::Memory().Release(&m_subCamera);
 
 	// 環境音プレイヤーの終了処理
 	AmbientSoundPlayer::Uninit();

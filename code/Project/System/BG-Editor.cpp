@@ -35,10 +35,10 @@ void CBGEditor::Load(const char* loadPath) {
 				RNLib::File().Scan(CFile::SCAN::POS3D, &info.pos, "POS");
 				RNLib::File().Scan(CFile::SCAN::POS3D, &info.posAdd, "POSADD");
 				RNLib::File().Scan(CFile::SCAN::POS3D, &info.move, "MOVE");
-				RNLib::File().Scan(CFile::SCAN::ROT, &info.rot, "ROT");
-				RNLib::File().Scan(CFile::SCAN::ROT, &info.spin, "SPIN");
-				RNLib::File().Scan(CFile::SCAN::ROT, &info.spinAdd, "SPINADD");
-				RNLib::File().Scan(CFile::SCAN::INT, &info.life, "LIFE");
+				RNLib::File().Scan(CFile::SCAN::ROT3D, &info.rot, "ROT");
+				RNLib::File().Scan(CFile::SCAN::ROT3D, &info.spin, "SPIN");
+				RNLib::File().Scan(CFile::SCAN::ROT3D, &info.spinAdd, "SPINADD");
+				RNLib::File().Scan(CFile::SCAN::SHORT, &info.life, "LIFE");
 				RNLib::File().Scan(CFile::SCAN::COLOR, &info.col, "COLOR");
 				RNLib::File().Scan(CFile::SCAN::MODELIDX, &info.modelIdx, "PATH");
 				if (RNLib::File().CheckIdentifier("MOVE_AB{")) {
