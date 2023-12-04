@@ -58,6 +58,7 @@ const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 // •Ï”’è‹`
 //========================================
 UShort CBlock::m_num = 0;
+Scale2D CBlock::m_eyescale = Scale2D(5.0f, 5.0f);
 short CBlock::m_modelIdxes[(int)LOOKS_TYPE::MAX];
 short CBlock::m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 short CBlock::m_otherModelIdxes[(int)OTHER_MODEL::MAX];
@@ -157,9 +158,6 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	case LOOKS_TYPE::PALMTREE: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
-		m_Eyepos = m_pos;
-		m_Eyepos.y += 100.0f;
-		m_Eyepos.z -= 50.0f;
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
@@ -302,21 +300,51 @@ void CBlock::Update(void) {
 			->SetBrightnessOfEmissive((float)m_counter / 30);
 	}break;
 	case LOOKS_TYPE::PALMTREE: {
-		RNLib::Polygon3D().Put(PRIORITY_OBJECT, m_Eyepos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetSize(20.0f, 20.0f)
-			->SetTex(m_nTexIdx);
-		RNLib::Polygon3D().Put(PRIORITY_OBJECT, m_Eyepos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetSize(2.0f, 2.0f)
-			->SetTex(m_nTexIdx);
-		RNLib::Polygon3D().Put(PRIORITY_OBJECT, m_Eyepos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetSize(2.0f, 2.0f)
-			->SetTex(m_nTexIdx);
-
 		if (++m_counter > 240)
 		{
 			m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::PLAMTREE_SHAKE]);
 			m_counter = 0;
 		}
+	}break;
+	case LOOKS_TYPE::TREE_EYES_BLOCK: {
+		D3DXVECTOR3 pos;
+		if (m_pos.y > 0)
+		{
+			pos = CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->pos;
+			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
+
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y + 2.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x - 5.0f, m_pos.y - 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x + 5.0f, m_pos.y - 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+		}
+		else
+		{
+			pos = CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->pos;
+			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y - 2.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x - 5.0f, m_pos.y + 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x + 5.0f, m_pos.y + 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+
+		}
+
+		
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)

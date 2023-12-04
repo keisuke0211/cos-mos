@@ -102,9 +102,9 @@ private:
 	static const char* OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX];
 	static const char* OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX];
 	static const char* OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX];
-
 	//========== [[[ ïœêîêÈåæ ]]]
 	static UShort m_num;
+	static Scale2D m_eyescale;
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
@@ -122,5 +122,4 @@ private:
 	short      m_counter;
 	short      m_counterMax;
 	int		   m_nTexIdx;
-	D3DXVECTOR3 m_Eyepos;
 };
