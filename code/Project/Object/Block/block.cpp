@@ -30,6 +30,7 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\stone_monument.x",
 	"data\\MODEL\\StageObject\\AncientStoneBrickBlock.x",
 	"data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x",
+	"NONEDATA",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -40,13 +41,14 @@ const char* CBlock::OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX] = {
 const char* CBlock::OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX] = {
 	"data\\SETUP\\BaobabTree.txt",
 	"data\\SETUP\\Chest.txt",
+	"data\\SETUP\\PalmTree.txt",
 };
 const char* CBlock::OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX] = {
 	"data\\MOTION\\ChestStepped.txt",
 };
 const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 	"data\\SOUND\\SE\\coin.wav",
-	"data\\SOUND\\SE\\lightA.wav",
+	"data\\SOUND\\SE\\lightA.wav"
 	"data\\SOUND\\SE\\lightB.wav",
 };
 
@@ -144,6 +146,13 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	}break;
 	case LOOKS_TYPE::CHEST: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
+		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
+		if (m_pos.y < 0.0f) {
+			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
+		}
+	}break;
+	case LOOKS_TYPE::PALMTREE: {
+		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
@@ -285,6 +294,9 @@ void CBlock::Update(void) {
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA)
 			->SetBrightnessOfEmissive((float)m_counter / 30);
+	}break;
+	case LOOKS_TYPE::PALMTREE: {
+
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)

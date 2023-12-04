@@ -35,6 +35,7 @@ public:
 		STONE_MONUMENT               = 15,	// 謎の石碑
 		ANCIENT_STONE_BRICK_BLOCK    = 16,	// 古代の石レンガブロック
 		SOIL_AND_ANCIENT_STONE_BLOCK = 17,	// 土＆古代の石ブロック(中間用)
+		PALMTREE					 = 18,	// ヤシの木
 		MAX
 	};
 
@@ -54,6 +55,7 @@ public:
 	enum class OTHER_SETUP3D {
 		BAOBAB_TREE,
 		CHEST,
+		PALM_TREE,
 		MAX,
 	};
 

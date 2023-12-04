@@ -94,7 +94,6 @@ void CMode_Game::Init(void) {
 	// ‘JˆÚİ’è
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
-
 	// ó‘Ôİ’è
 	SetState((int)STATE::NONE);
 
