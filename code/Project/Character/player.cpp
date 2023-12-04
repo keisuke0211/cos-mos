@@ -336,6 +336,7 @@ void CPlayer::Update(void)
 	{
 		if (++s_nGoalInterval >= GOAL_INTERVAL)
 		{
+			CCoin::AddNumAll();
 			const int planet = Manager::StgEd()->GetPlanetIdx();
 			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
 			Manager::StgEd()->SwapStage(stage + 1);

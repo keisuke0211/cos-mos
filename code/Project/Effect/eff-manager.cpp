@@ -8,6 +8,7 @@
 #include "eff-manager.h"
 #include "../main.h"
 #include "../collision.h"
+#include "../resource.h"
 
 //========================================
 // 静的変数
@@ -56,7 +57,7 @@ CEff *CEffMgr::EffectCreate(int nTex, D3DXVECTOR3 pos, D3DXVECTOR3 scale,Color c
 	return pObj;
 }
 //========================================
-// エフェクト
+// モデルエフェクト
 //========================================
 CEffect_Model *CEffMgr::ModelEffectCreate(int nIdx, D3DXVECTOR3 pos,D3DXVECTOR3 rot, D3DXVECTOR3 scale, Color col, int nCount, D3DXVECTOR3 move)
 {
@@ -108,8 +109,6 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 	pObj->Init(nTex, nCount);
 	pObj->SetColor(col);
 
-	
-
 	return pObj;
 }
 
@@ -145,7 +144,6 @@ void CEffMgr::DeathInk(D3DXVECTOR3 pos,int Tex) {
 			float rot = (float)(rand() % ((int)(100 * 2 * D3DX_PI) + 1) - (int)(D3DX_PI * 100)) / (float)100;
 			float scale = (float)(rand() % (int)12 + 3);
 			float distance = (float)(rand() % (int)16 + 16);
-
 
 			D3DXVECTOR3 InkPos = pos;
 			D3DXVECTOR3 move = INITD3DXVECTOR3;

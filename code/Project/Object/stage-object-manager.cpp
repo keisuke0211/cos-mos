@@ -6,7 +6,7 @@
 // 
 //========================================
 #include "../main.h"
-#include "../UI/rocket-parts.h"
+#include "../UI/partsUI.h"
 
 //========================================
 // ê√ìIïœêî
@@ -284,6 +284,22 @@ CParts *CStageObjectMgr::PartsCreate(D3DXVECTOR3 pos)
 	if (pos.y <= 0) {
 		pObj->SetRot(D3DXVECTOR3(0.0f, 0.0f, D3DX_PI));
 	}
+
+	return pObj;
+}
+
+//========================================
+// ÉRÉCÉì
+//========================================
+CCoin *CStageObjectMgr::CoinCreate(D3DXVECTOR3 pos)
+{
+	CCoin *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CCoin;
+
+	// èâä˙âªèàóù
+	pObj->SetPos(pos);
 
 	return pObj;
 }

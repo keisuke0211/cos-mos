@@ -30,6 +30,8 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\stone_monument.x",
 	"data\\MODEL\\StageObject\\AncientStoneBrickBlock.x",
 	"data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x",
+	"NONEDATA",
+	"data\\MODEL\\Three-eyes_block.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -40,9 +42,11 @@ const char* CBlock::OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX] = {
 const char* CBlock::OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX] = {
 	"data\\SETUP\\BaobabTree.txt",
 	"data\\SETUP\\Chest.txt",
+	"data\\SETUP\\PalmTree.txt",
 };
 const char* CBlock::OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX] = {
 	"data\\MOTION\\ChestStepped.txt",
+	"data\\MOTION\\PalmTree_Shake.txt",
 };
 const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 	"data\\SOUND\\SE\\coin.wav",
@@ -54,6 +58,7 @@ const char* CBlock::OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX] = {
 // •Ï”’è‹`
 //========================================
 UShort CBlock::m_num = 0;
+Scale2D CBlock::m_eyescale = Scale2D(5.0f, 5.0f);
 short CBlock::m_modelIdxes[(int)LOOKS_TYPE::MAX];
 short CBlock::m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 short CBlock::m_otherModelIdxes[(int)OTHER_MODEL::MAX];
@@ -115,6 +120,7 @@ CBlock::CBlock(void) {
 	m_addPos       = INITPOS3D;
 	m_counter      = 0;
 	m_counterMax   = 0;
+	m_nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\Eye.png");
 	m_num++;
 }
 
@@ -144,6 +150,13 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	}break;
 	case LOOKS_TYPE::CHEST: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
+		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
+		if (m_pos.y < 0.0f) {
+			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
+		}
+	}break;
+	case LOOKS_TYPE::PALMTREE: {
+		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
@@ -285,6 +298,53 @@ void CBlock::Update(void) {
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA)
 			->SetBrightnessOfEmissive((float)m_counter / 30);
+	}break;
+	case LOOKS_TYPE::PALMTREE: {
+		if (++m_counter > 240)
+		{
+			m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::PLAMTREE_SHAKE]);
+			m_counter = 0;
+		}
+	}break;
+	case LOOKS_TYPE::TREE_EYES_BLOCK: {
+		D3DXVECTOR3 pos;
+		if (m_pos.y > 0)
+		{
+			pos = CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->pos;
+			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
+
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y + 2.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x - 5.0f, m_pos.y - 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x + 5.0f, m_pos.y - 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+		}
+		else
+		{
+			pos = CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->pos;
+			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y - 2.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x - 5.0f, m_pos.y + 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x + 5.0f, m_pos.y + 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
+				->SetSize(m_eyescale)
+				->SetTex(m_nTexIdx);
+
+		}
+
+		
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)

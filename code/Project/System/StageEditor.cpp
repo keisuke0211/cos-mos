@@ -11,7 +11,7 @@
 #include "../Character/player.h"
 #include "StageEditor.h"
 #include "../Mode/mode_title.h"
-#include "../UI/rocket-parts.h"
+#include "../UI/partsUI.h"
 
 //========================================
 // Ã“I•Ï”
@@ -538,7 +538,7 @@ void CStageEditor::SetStage(int nType)
 	{
 		float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 		float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-		D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+		D3DXVECTOR3 pos = INITPOS3D;
 
 		pos.x += ((m_Info.nLineMax * -0.5f) + m_Info.nLine + 0.5f) * fSizeX;
 		pos.y -= ((m_Info.nRowMax * -0.5f) + m_Info.nRow + 0.5f) * fSizeY;
@@ -1170,7 +1170,7 @@ D3DXVECTOR3 CStageEditor::GetPos(int nRow, int nLine)
 {
 	float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-	D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+	D3DXVECTOR3 pos = INITPOS3D;
 
 	pos.x += ((m_Info.nLineMax * -0.5f) + nLine + 0.5f) * fSizeX;
 	pos.y -= ((m_Info.nRowMax * -0.5f) + nRow + 0.5f) * fSizeY;
