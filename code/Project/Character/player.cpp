@@ -841,9 +841,6 @@ void CPlayer::Move(VECTOL vec)
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal) continue;
 
-		// 過去の位置を設定
-		Player.posOld = Player.pos;
-
 		// 移動量反映
 		switch (vec)
 		{
@@ -1147,6 +1144,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 死亡判定ON
 				if (bDeath)
 				{
+					s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
 					Death(Player, type, &nColliRot[nCntPlayer]);
 					break;
 				}

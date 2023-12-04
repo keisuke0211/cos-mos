@@ -411,6 +411,7 @@ void CEffect_Death::SetSelfInfo(CCollision::SelfInfo *pSelfInfo)
 	pSelfInfo->pos = m_pos; pSelfInfo->posOld = m_posOld;
 	pSelfInfo->move = m_Info.move;
 	pSelfInfo->fWidth = pSelfInfo->fHeight = CStageObject::SIZE_OF_1_SQUARE * m_Info.size * 0.5f;
+	pSelfInfo->fRadius = m_Info.size;
 }
 
 //******************************
