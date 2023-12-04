@@ -29,7 +29,7 @@ public:
 		LEAF_BLOCK	                 = 9,	// 草ブロック
 		TREE_TRUNK	                 = 10,	// 木の幹
 		TREE_TRUNK_ROOT              = 11,	// 木の根元
-		BAOBAB_TREE                  = 12,	// バオバブの木(背景用)
+		BAOBAB_TREE					 = 12,	// バオバブの木(背景用)
 		CHEST                        = 13,	// 宝箱
 		PILE_OF_COINS                = 14,	// 山積みのコイン
 		STONE_MONUMENT               = 15,	// 謎の石碑
