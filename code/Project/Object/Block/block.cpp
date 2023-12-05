@@ -140,24 +140,25 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	m_looksType = looksType;
 
 	// ÉhÅ[ÉãÇÃê∂ê¨
+	const float correctHalf = (-8.0f * (m_pos.y / fabsf(m_pos.y)));
 	switch (m_looksType) {
 	case LOOKS_TYPE::BAOBAB_TREE: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE]);
-		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f - (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
+		m_doll->SetPos(m_pos + Pos3D(0.0f, correctHalf - (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::CHEST: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
-		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
+		m_doll->SetPos(m_pos + Pos3D(0.0f, correctHalf, 0.0f));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::PALMTREE: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
-		m_doll->SetPos(m_pos + Pos3D(0.0f, -8.0f, 0.0f));
+		m_doll->SetPos(m_pos + Pos3D(0.0f, correctHalf, 0.0f));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
@@ -239,9 +240,8 @@ void CBlock::Update(void) {
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f,8.0f,0.0f), Color{ 255,200,0,255 });
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
 			}
-
-			RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
 		}
 		else {
 			// èÊÇÁÇÍÇΩèuä‘
