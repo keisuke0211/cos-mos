@@ -6,5 +6,5 @@ isFullScreen						0
 resolution							2.00
 #OtherOption
 modelOutLineAddDistanceInterval		0.10
-modelOutLineAddDistanceDelimiter	20
+modelOutLineAddDistanceDelimiter	10
 END
