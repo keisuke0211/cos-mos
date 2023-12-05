@@ -316,7 +316,7 @@ Mesh {
    0.700000;0.700000;0.700000;;
    0.600000;0.564706;0.310588;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\新しいフォルダー\\cos-mos\\data\\TEXTURE\\gold.jpg";
+    "data\\TEXTURE\\gold.jpg";
    }
   }
   Material {
@@ -325,7 +325,7 @@ Mesh {
    0.750000;0.750000;0.750000;;
    0.100000;0.096100;0.039200;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\新しいフォルダー\\cos-mos\\data\\TEXTURE\\gold_plane.jpg";
+    "data\\TEXTURE\\gold_plane.jpg";
    }
   }
  }
