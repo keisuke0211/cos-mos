@@ -160,6 +160,7 @@ private:
 		TYPE_Meteor,				// 隕石
 		TYPE_Laser,					// レーザー
 		TYPE_Extenddog,				// ヌイ
+		TYPE_COIN,					// コイン
 		TYPE_FILL_BLOCK_11 = 11,	// ブロック(判定 無) 1 * 1
 		TYPE_FILL_BLOCK_12 = 12,	// ブロック(判定 無) 1 * 2
 		TYPE_FILL_BLOCK_13 = 13,	// ブロック(判定 無) 1 * 3
