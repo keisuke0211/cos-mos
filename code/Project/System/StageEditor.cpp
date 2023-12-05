@@ -478,13 +478,13 @@ void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
 		{
 			SetColor(pFile, nRow, nLine);
 			m_StageColor.Player1 = m_StageColor.Set;
-			CMode_Game::GetPlayer()->SetColor(0, m_StageColor.Player1);
+			//CMode_Game::GetPlayer()->SetColor(0, m_StageColor.Player1);
 		}
 		else if (!strcmp(aDataSearch, "2P"))
 		{
 			SetColor(pFile, nRow, nLine);
 			m_StageColor.Player2 = m_StageColor.Set;
-			CMode_Game::GetPlayer()->SetColor(1, m_StageColor.Player2);
+			//CMode_Game::GetPlayer()->SetColor(1, m_StageColor.Player2);
 		}
 		else if (!strcmp(aDataSearch, "BgUp"))
 		{
