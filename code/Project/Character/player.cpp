@@ -487,8 +487,6 @@ void CPlayer::UpdateInfo(void)
 						   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
 						   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
 
-			const Color &c = Player.color;
-
 			//スワップ先までの中心座標
 			const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
 			const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
