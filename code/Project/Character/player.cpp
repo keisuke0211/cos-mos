@@ -383,7 +383,7 @@ void CPlayer::UpdateInfo(void)
 					if (ms_bSwapEnd) {
 						
 						if (ms_guideCounter == 1) {
-							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
+							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 						}
 						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
 							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
@@ -407,7 +407,7 @@ void CPlayer::UpdateInfo(void)
 				float rate = (float)ms_guideCounter / 30;
 				if (CParts::GetDispNum() == 0) {
 					if (ms_guideCounter == 1) {
-						RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
+						RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 					}
 					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
 						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
@@ -618,7 +618,7 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 	// 膨らみカウンター＆演出
 	else if (info.expandCounter > 0) {
 		if (--info.expandCounter == 0) {
-			RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, false);
+			RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, 1.0f, false);
 			Manager::GetMainCamera()->SetVib(5.0f);
 
 			const int NUM_PARTICLE = 8;
@@ -943,7 +943,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 
 	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
-	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, false);
+	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, 1.0f, false);
 }
 
 //----------------------------
@@ -1432,13 +1432,13 @@ void CPlayer::PlaySE(SE_LABEL label)
 {
 	switch (label)
 	{
-		case CPlayer::SE_LABEL::JUMP:   s_SE.pSound->Play(s_SE.jump,    CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::LANDING:s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::DOG_00: s_SE.pSound->Play(s_SE.dog[0],  CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::DOG_01: s_SE.pSound->Play(s_SE.dog[1],  CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::DOG_02: s_SE.pSound->Play(s_SE.dog[2],  CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::DOG_03: s_SE.pSound->Play(s_SE.dog[3],  CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::SWAPING:s_SE.pSound->Play(s_SE.Swaping, CSound::CATEGORY::SE, false); break;
-		case CPlayer::SE_LABEL::SWAPEND:s_SE.pSound->Play(s_SE.SwapEnd, CSound::CATEGORY::SE, false); break;
+		case CPlayer::SE_LABEL::JUMP:   s_SE.pSound->Play(s_SE.jump,    CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::LANDING:s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::DOG_00: s_SE.pSound->Play(s_SE.dog[0],  CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::DOG_01: s_SE.pSound->Play(s_SE.dog[1],  CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::DOG_02: s_SE.pSound->Play(s_SE.dog[2],  CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::DOG_03: s_SE.pSound->Play(s_SE.dog[3],  CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::SWAPING:s_SE.pSound->Play(s_SE.Swaping, CSound::CATEGORY::SE, 1.0f, false); break;
+		case CPlayer::SE_LABEL::SWAPEND:s_SE.pSound->Play(s_SE.SwapEnd, CSound::CATEGORY::SE, 1.0f, false); break;
 	}
 }

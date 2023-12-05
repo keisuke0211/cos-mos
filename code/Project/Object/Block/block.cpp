@@ -241,7 +241,7 @@ void CBlock::Update(void) {
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f,8.0f,0.0f), Color{ 255,200,0,255 });
-				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
 			}
 		}
 		else {
@@ -250,7 +250,7 @@ void CBlock::Update(void) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
 
-				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
 			}
 		}
 
@@ -264,7 +264,7 @@ void CBlock::Update(void) {
 			// èÊÇÁÇÍÇΩèuä‘
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				if (++m_counter == 1)
-					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, false);
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, 1.0f, false);
 			}
 
 			// èÊÇÁÇÍÇΩÇ±Ç∆Ç™Ç†ÇÈ
@@ -281,7 +281,7 @@ void CBlock::Update(void) {
 			// èÊÇÁÇÍÇΩèuä‘
 			if (!m_isHitOlds[(int)CCollision::ROT::UNDER] && m_isHits[(int)CCollision::ROT::UNDER]) {
 				if (++m_counter == 1)
-					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, false);
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, 1.0f, false);
 			}
 
 			// èÊÇÁÇÍÇΩÇ±Ç∆Ç™Ç†ÇÈ

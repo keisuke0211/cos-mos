@@ -129,7 +129,7 @@ void CMode_Game::Init(void) {
 
 	// BGMì«Ç›çûÇ›&çƒê∂
 	m_BGMIdx = RNLib::Sound().Load("data\\SOUND\\BGM\\STAGE1.wav");
-	m_BGMID = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, true);
+	m_BGMID = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, 1.0f, true);
 }
 
 //========================================
