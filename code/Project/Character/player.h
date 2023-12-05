@@ -59,11 +59,12 @@ public:
 		//-------------------------------
 		//スワップ用
 		//-------------------------------
-		int   nSwapAlpha; // スワップマークのα値
-		float fSwapPosY;  // スワップ先のＹ座標
-		float fSwapMoveY; // スワップ移動時の速度
-		float fGuideTexV; // ガイドのテクスチャＶ座標
-		float fGuideMoveSpeed; // ガイドのテクスチャ移動スピード
+		UShort nSwapAlpha; // スワップマークのα値
+		float  fSwapPosY;  // スワップ先のＹ座標
+		float  fSwapMoveY; // スワップ移動時の速度
+		float  fGuideTexVPos;   // ガイドのテクスチャＶ座標
+		float  fGuideTexVSize;  // ガイドのテクスチャＶサイズ
+		float  fGuideMoveSpeed; // ガイドのテクスチャ移動スピード
 
 		//-------------------------------
 		// ジャンプ用
