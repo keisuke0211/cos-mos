@@ -760,13 +760,11 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 				const bool isRight = self.minPos.x <= target.maxPos.x;
 
 				if (isLeft && (
-					self.maxPosOld.x <= target.minPosOld.x //|| self.posOld.x <= target.minPosOld.x
-					))
+					self.maxPosOld.x <= target.minPosOld.x || self.posOld.x <= target.minPosOld.x))
 					return ROT::LEFT;
 
 				if (isRight && (
-					self.minPosOld.x >= target.maxPosOld.x //|| self.posOld.x >= target.maxPosOld.x
-					))
+					self.minPosOld.x >= target.maxPosOld.x || self.posOld.x >= target.maxPosOld.x))
 					return ROT::RIGHT;
 
 				if (isLeft && isRight)
@@ -781,13 +779,11 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 				const bool isOver  = self.minPos.y <= target.maxPos.y;
 
 				if (isUnder && (
-					self.maxPosOld.y <= target.minPosOld.y// || self.posOld.y <= target.minPosOld.y
-					))
+					self.maxPosOld.y <= target.minPosOld.y || self.posOld.y <= target.minPosOld.y))
 					return ROT::UNDER;
 
 				if (isOver && (
-					self.minPosOld.y >= target.maxPosOld.y// || self.posOld.y >= target.maxPosOld.y
-					))
+					self.minPosOld.y >= target.maxPosOld.y || self.posOld.y >= target.maxPosOld.y))
 					return ROT::OVER;
 
 				if (isUnder && isOver)
