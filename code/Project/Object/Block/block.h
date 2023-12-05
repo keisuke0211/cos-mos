@@ -37,8 +37,8 @@ public:
 		SOIL_AND_ANCIENT_STONE_BLOCK = 17,	// 土＆古代の石ブロック(中間用)
 		PALMTREE					 = 18,	// ヤシの木
 		TREE_EYES_BLOCK				 = 19,	// 三つ目のブロック
+		LEAF_BLOCK_NUTS              = 20,	// 草ブロック(木の実)
 		MAX
-
 	};
 
 	// その他テクスチャ
