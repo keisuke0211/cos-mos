@@ -29,6 +29,7 @@ CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 	m_priority             = priority;
 	m_pos			       = INITPOS3D;
 	m_isSetPos             = false;
+	m_isShow               = true;
 	m_rot			       = INITROT3D;
 	m_scale                = INITSCALE3D;
 	m_col                  = INITCOLOR;
@@ -209,27 +210,35 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 		// ワールドマトリックスを調べる
 		const Matrix worldMtx = FindBoneWorldMtx(cntBone, m_boneStates, setUp.m_boneDatas, selfMtx);
 
-		// モデルの設置処理
-		RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
-			->SetCol(m_col)
-			->SetBrightnessOfEmissive(m_brightnessOfEmission);
-
 		// 頂点情報を取得
 		vtxNum[cntBone] = 0;
 		vtxInfo[cntBone] = NULL;
 		RNLib::Model().StoreVtxInfo(&vtxNum[cntBone], &vtxInfo[cntBone], setUp.m_boneDatas[cntBone].modelIdx, worldMtx);
 
-		// 頂点番号の描画
-		if (RNLib::Doll3DMgr().GetEditDoll() == this &&
-			RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() &&
-			RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx() == cntBone &&
-			RNLib::Doll3DMgr().GetEditCamera() != NULL) {
-			DrawModelVtxIdx(vtxInfo[cntBone], vtxNum[cntBone]);
+		// 表示フラグが真の時、
+		if (m_isShow) {
+
+			// モデルの設置処理
+			RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
+				->SetCol(m_col)
+				->SetBrightnessOfEmissive(m_brightnessOfEmission);
+
+			// 頂点番号の描画
+			if (RNLib::Doll3DMgr().GetEditDoll() == this &&
+				RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() &&
+				RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx() == cntBone &&
+				RNLib::Doll3DMgr().GetEditCamera() != NULL) {
+				DrawModelVtxIdx(vtxInfo[cntBone], vtxNum[cntBone]);
+			}
 		}
 	}
 
-	// フェイスを描画
-	DrawFace(setUp, vtxInfo, vtxNum);
+	// 表示フラグが真の時、
+	if (m_isShow) {
+
+		// フェイスを描画
+		DrawFace(setUp, vtxInfo, vtxNum);
+	}
 
 	// 頂点情報を解放
 	CMemory::ReleaseDouble(&vtxInfo, setUp.m_boneDataNum);

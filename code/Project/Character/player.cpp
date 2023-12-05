@@ -366,8 +366,7 @@ void CPlayer::UpdateInfo(void)
 	// ガイドテキスト
 	//----------------------------------------
 	bool isSwapGuide = false;
-	if (m_aInfo[0].deathCounter == 0 && m_aInfo[0].deathCounter2 == 0 &&
-		m_aInfo[1].deathCounter == 0 && m_aInfo[1].deathCounter2 == 0) {
+	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) {
 		const int planet = Manager::StgEd()->GetPlanetIdx();
 		
 		if (planet == 0) {
@@ -377,6 +376,7 @@ void CPlayer::UpdateInfo(void)
 						ms_guideCounter = 30;
 					float rate = (float)ms_guideCounter / 30;
 					if (ms_bSwapEnd) {
+						
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
 						}
@@ -427,13 +427,14 @@ void CPlayer::UpdateInfo(void)
 		UpdateDeath(Player, nCntPlayer);
 
 		// 位置設定
-		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim) {
+		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim && !Player.bRide) {
 			Player.doll->SetPos(Player.pos - Pos3D(0.0f, (fabsf(Player.pos.y) / Player.pos.y) * SIZE_HEIGHT, 0.0f));
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
+			Player.doll->SetIsShow(true);
 		}
 		else {
-			Player.doll->SetPos(Pos3D(10000.0f, 10000.0f, 10000.0f));
+			Player.doll->SetIsShow(false);
 		}
 
 		// スワップアニメーション中であれば折り返す
@@ -442,7 +443,7 @@ void CPlayer::UpdateInfo(void)
 		}
 
 		if (isSwapGuide) {
-			if (-144.0f <= Player.pos.x && 144.0f >= Player.pos.x) {
+			if (-156.0f <= Player.pos.x && 156.0f >= Player.pos.x) {
 				Pos3D putPos = Player.pos;
 				putPos.y += (Player.pos.y / fabsf(Player.pos.y)) * 24.0f;
 				const int count = RNLib::Count().GetCount() % 40;
@@ -874,7 +875,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 	//最後のプレイヤーのときにスワップアニメーション終了
 	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
 	s_bSwapAnim = false;
-	ms_bSwapEnd = true;
+	ms_bSwapEnd = (-156.0f <= m_aInfo[0].pos.x && 156.0f >= m_aInfo[0].pos.x && -156.0f <= m_aInfo[1].pos.x && 156.0f >= m_aInfo[1].pos.x);
 	PlaySE(SE_LABEL::SWAPEND);
 
 	if (Manager::StgEd()->GetPlanetIdx() == 0)

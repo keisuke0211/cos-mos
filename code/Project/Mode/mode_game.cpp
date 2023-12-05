@@ -13,6 +13,7 @@
 #include "../System/words/font-text.h"
 #include "../Mode/mode_title.h"
 #include "../UI/partsUI.h"
+#include "../UI/coinUI.h"
 #include "../System/BG-Editor.h"
 #include "../Sound/ambient-sound-player.h"
 #include "../resource.h"
@@ -36,6 +37,7 @@ CPlayer* CMode_Game::GetPlayer(void) { return s_pPlayer; }
 int CMode_Game::m_nStageIdx = 0;
 int CMode_Game::m_nPlanetIdx = 0;
 CRocketPartsUI *CMode_Game::m_rocketparts = NULL;
+CCoinUI *CMode_Game::m_Coin = NULL;
 
 //========================================
 // コンストラクタ
@@ -96,6 +98,9 @@ void CMode_Game::Init(void) {
 	if (s_pPlayer == NULL)
 		s_pPlayer = CPlayer::Create();
 
+	if (m_Coin == NULL)
+		m_Coin = CCoinUI::Create();
+
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
 
@@ -154,6 +159,13 @@ void CMode_Game::Uninit(void) {
 		delete m_rocketparts;
 		m_rocketparts = NULL;
 	}
+
+	// コインUIを解放
+	if (m_Coin != NULL) {
+		m_Coin->Uninit();
+		delete m_Coin;
+		m_Coin = NULL;
+	}
 }
 
 //========================================
@@ -204,12 +216,16 @@ void CMode_Game::Update(void) {
 	}
 
 	// [[[ 壁モデル描画 ]]]
-	RNLib::Model().Put(PRIORITY_OBJECT, m_wallModelIdx[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-	RNLib::Model().Put(PRIORITY_OBJECT, m_wallModelIdx[1], Pos3D( CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+	RNLib::Model().Put(PRIORITY_BACKGROUND, m_wallModelIdx[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+	RNLib::Model().Put(PRIORITY_BACKGROUND, m_wallModelIdx[1], Pos3D( CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 
 	// ロケットパーツの更新処理
 	if (m_rocketparts != NULL) {
 		m_rocketparts->Update();
+	}
+
+	if (m_Coin != NULL) {
+		m_Coin->Update();
 	}
 
 	// [[[ 非ポーズ時の処理 ]]]

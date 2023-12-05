@@ -117,13 +117,15 @@ public:
 	void        OverwriteMotion        (const short& motionIdx);
 	void        SetMotionStop          (const bool& isStop)                { m_motionInfo.isStop = isStop; }
 	void        SetMotionCounter       (const short& counter)              { m_motionInfo.counter = counter; }
-	Pos3D&      GetPos                 (void)                              { return m_pos; }
 	void        SetPos                 (const Pos3D& pos)                  { m_pos = pos; m_isSetPos = true; }
-	Rot3D&      GetRot                 (void)                              { return m_rot; }
+	Pos3D&      GetPos                 (void)                              { return m_pos; }
 	void        SetRot                 (const Rot3D& rot)                  { m_rot = rot; }
-	Scale3D&    GetScale               (void)                              { return m_scale; }
+	Rot3D&      GetRot                 (void)                              { return m_rot; }
 	void        SetScale               (const Scale3D& scale)              { m_scale = scale; }
+	Scale3D&    GetScale               (void)                              { return m_scale; }
 	void        SetCol                 (const Color& col)                  { m_col = col; }
+	void        SetIsShow              (const bool& isShow)                { m_isShow = isShow; }
+	bool&       GetIsShow              (void)                              { return m_isShow; }
 	void        SetBrightnessOfEmission(const float& brightnessOfEmission) { m_brightnessOfEmission = brightnessOfEmission; }
 	float&      GetBrightnessOfEmission(void)                              { return m_brightnessOfEmission; }
 	CBoneState& GetBoneState           (const UShort& boneIdx)             { return m_boneStates[boneIdx]; }
@@ -153,6 +155,7 @@ private:
 	Scale3D     m_scale;
 	Color       m_col;
 	CBoneState* m_boneStates;
+	bool        m_isShow;
 	short       m_setUpIdx;
 	MotionInfo  m_motionInfo;
 	float       m_brightnessOfEmission;

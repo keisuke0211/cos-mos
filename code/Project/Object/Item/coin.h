@@ -22,6 +22,9 @@ public:
 
 	static void AddNumAll(void) { s_NumAll += s_Num; s_Num = 0;}
 
+	static int GetNum(void) { return s_Num; }
+	static int GetNumAll(void) { return s_NumAll; }
+
 private:
 
 	int m_ModelIdx;
