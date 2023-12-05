@@ -14,6 +14,7 @@
 class CPlayer;
 class CFontText;
 class CRocketPartsUI;
+class CCoinUI;
 
 //****************************************
 // ƒNƒ‰ƒX’è‹`
@@ -158,6 +159,7 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	static CRocketPartsUI *m_rocketparts;
+	static CCoinUI *m_Coin;
 	static Color m_BgColorUp, m_BgColorDown;
 	short m_wallModelIdx[2];
 	Pause m_Pause;

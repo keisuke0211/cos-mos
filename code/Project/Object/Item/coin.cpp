@@ -17,6 +17,9 @@ CCoin::CCoin() {
 
 	Manager::StageObjectMgr()->AddList(this);
 	m_ModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Engine_break.x");
+
+	if (s_Num != 0)
+		s_Num = 0;
 }
 
 //========================================
