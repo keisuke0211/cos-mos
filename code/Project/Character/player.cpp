@@ -14,7 +14,7 @@
 #include "../resource.h"
 
 // スワップインターバル
-const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
+const int	CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
 const float CPlayer::GUIDE_WIDTH   = 10.0f; // ガイドの幅
 const float CPlayer::GUIDE_HEIGHT  = 14.0f; // ガイドの高さ
 
@@ -325,12 +325,13 @@ void CPlayer::Uninit(void)
 //=====================================================================================================================
 void CPlayer::Update(void)
 {
+	RNLib::Text2D().PutDebugLog(CreateText("インターバル:%d", s_nSwapInterval));
+
 	//スワップアニメーション中
 	if (s_bSwapAnim)
 	{
 		SwapAnimation();
 		UpdateInfo();
-
 		return;
 	}
 
@@ -463,54 +464,57 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal)
 			continue;
 
-		// スワップ先のマークを描画する位置
-		D3DXVECTOR3 MarkPos = Player.pos;
-		MarkPos.y *= -1.0f;
+		if(!Player.isDeath){
+			// スワップ先のマークを描画する位置
+			D3DXVECTOR3 MarkPos = Player.pos;
+			MarkPos.y *= -1.0f;
+			MarkPos.z = -8.0f;
 
-		//マークのテクスチャＵＶ座標
-		const float TexULeft = nCntPlayer * 0.5f;
-		const float TexURight = TexULeft + 0.5f;
-		const float TexVOver = Player.side == WORLD_SIDE::BEHIND ? 0.0f : 1.0f;
-		const float TexVUnder = 1.0f - TexVOver;
+			//マークのテクスチャＵＶ座標
+			const float TexULeft = nCntPlayer * 0.5f;
+			const float TexURight = TexULeft + 0.5f;
+			const float TexVOver = Player.side == WORLD_SIDE::BEHIND ? 0.0f : 1.0f;
+			const float TexVUnder = 1.0f - TexVOver;
 
-		//スワップ先のマーク描画
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
-			->SetSize(20.0f, 20.0f)
-			->SetBillboard(true)
-			->SetZTest(false)
-			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
-			->SetCol(Color{ 255, 255, 255, (UShort)Player.nSwapAlpha })
-			->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
-					   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
-					   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
+			//スワップ先のマーク描画
+			RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
+				->SetSize(16.0f, 16.0f)
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
+				->SetCol(Color{ 255, 255, 255, (UShort)Player.nSwapAlpha })
+				->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
+						   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
+						   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
 
-		const Color &c = Player.color;
+			const Color &c = Player.color;
 
-		//スワップ先までの中心座標
-		const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
-		const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
+			//スワップ先までの中心座標
+			const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
+			const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
 
-		//ガイドサイズを設定
-		const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
-		const float fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
-		Player.fGuideTexVSize = fabsf(fSize);
+			//ガイドサイズを設定
+			const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
+			const float fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
+			Player.fGuideTexVSize = fabsf(fSize);
 
-		//ガイドのスピードを設定
-		Player.fGuideMoveSpeed = fSize / 100.0f;
-		Player.fGuideTexVPos += Player.fGuideMoveSpeed;
+			//ガイドのスピードを設定
+			Player.fGuideMoveSpeed = fSize / 100.0f;
+			Player.fGuideTexVPos += Player.fGuideMoveSpeed;
 
-		if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
-			Player.fGuideTexVPos = 0.0f;
+			if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
+				Player.fGuideTexVPos = 0.0f;
 
-		//スワップガイドの描画
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
-			->SetSize(GUIDE_WIDTH, fabsf(Player.pos.y) * 1.75f)
-			->SetBillboard(true)
-			->SetZTest(false)
-			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
-			->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
-					   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
-					   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
+			//スワップガイドの描画
+			RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
+				->SetSize(GUIDE_WIDTH, fabsf(Player.pos.y) * 1.5f)
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+				->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+						   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
+						   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
+		}
 
 		// 最高Ｙ座標更新
 		switch (Player.side) {
@@ -802,6 +806,13 @@ void CPlayer::Swap(void)
 	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath)
 		return;
 
+	//インターバル中
+	if (s_nSwapInterval != 0)
+	{
+		s_nSwapInterval--;
+		return;
+	}
+
 	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
 	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
 		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
@@ -887,11 +898,12 @@ void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
 void CPlayer::SwapAnim_Middle(Info& Player, const int nIdxPlayer)
 {
 	//スワップ先へ移動
+	Player.posOld.y = Player.pos.y;
 	Player.pos.y += Player.fSwapMoveY;
 
 	//次のインターバルへ
 	if (s_nSwapInterval > 0) return;
-	Player.pos.y = Player.fSwapPosY;
+	Player.posOld.y = Player.pos.y = Player.fSwapPosY;
 	Player.move.y *= -1.0f;
 	Player.fGravity *= -1.0f;
 	Player.fJumpPower *= -1.0f;
@@ -914,6 +926,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 	//最後のプレイヤーのときにスワップアニメーション終了
 	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
 	s_bSwapAnim = false;
+	s_nSwapInterval = SWAP_INTERVAL;
 	ms_bSwapEnd = (-156.0f <= m_aInfo[0].pos.x && 156.0f >= m_aInfo[0].pos.x && -156.0f <= m_aInfo[1].pos.x && 156.0f >= m_aInfo[1].pos.x);
 	PlaySE(SE_LABEL::SWAPEND);
 
