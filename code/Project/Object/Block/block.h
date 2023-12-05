@@ -29,7 +29,7 @@ public:
 		LEAF_BLOCK	                 = 9,	// 草ブロック
 		TREE_TRUNK	                 = 10,	// 木の幹
 		TREE_TRUNK_ROOT              = 11,	// 木の根元
-		BAOBAB_TREE                  = 12,	// バオバブの木(背景用)
+		BAOBAB_TREE					 = 12,	// バオバブの木(背景用)
 		CHEST                        = 13,	// 宝箱
 		PILE_OF_COINS                = 14,	// 山積みのコイン
 		STONE_MONUMENT               = 15,	// 謎の石碑
@@ -103,9 +103,9 @@ private:
 	static const char* OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX];
 	static const char* OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX];
 	static const char* OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX];
-
 	//========== [[[ 変数宣言 ]]]
 	static UShort m_num;
+	static Scale2D m_eyescale;
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
@@ -123,5 +123,4 @@ private:
 	short      m_counter;
 	short      m_counterMax;
 	int		   m_nTexIdx;
-	D3DXVECTOR3 m_Eyepos;
 };

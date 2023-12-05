@@ -51,7 +51,6 @@ public:
 		CDoll3D*    doll;
 		D3DXVECTOR3 pos;				// 位置
 		D3DXVECTOR3 posOld;				// 前回位置
-		D3DXVECTOR3 posOld2;			// 前回位置
 		Scale3D     scale;
 		D3DXVECTOR3 rot;				// 向き
 		D3DXVECTOR3 move;				// 移動量
@@ -112,7 +111,8 @@ public:
 
 	// プレイヤー位置情報設定
 	// 指定したプレイヤーの位置情報を引数に渡してください。
-	void SetPos(const int nNum, D3DXVECTOR3 pos) { m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = pos; }
+	void SetPos(const int nNum, D3DXVECTOR3 pos)
+	{ m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos; }
 
 	// プレイヤー色情報設定
 	// 指定したプレイヤーの色情報を引数に渡してください。
@@ -253,7 +253,6 @@ private:
 
 	void InitKeyConfig(void);// 各プレイヤーのキーボード・ジョイパッドのキーコンフィグ初期化設定
 	void InitInfo(void);
-	void SetPosOld(void);
 	void ActionControl(void);
 	void Move(VECTOL vec, int cntPlayer);
 	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
@@ -289,4 +288,9 @@ private:
 	static Motion s_motion;
 
 	static CCollision *s_pColli;
+
+	static bool s_bAimPlayer;
+	static float s_fCorrWidth;
+	static float s_fCorrHeight;
+	static float s_fAimWorkSpeed;
 };

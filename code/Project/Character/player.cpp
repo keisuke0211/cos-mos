@@ -22,8 +22,8 @@ CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメ
 int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
 int         CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
 
-const float CPlayer::SIZE_WIDTH = 4.0f;	// 横幅
-const float CPlayer::SIZE_HEIGHT = 4.0f;// 高さ
+const float CPlayer::SIZE_WIDTH = 8.0f;	// 横幅
+const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
 const float CPlayer::MOVE_SPEED = 0.3f;		// 移動量
 const float CPlayer::MAX_MOVE_SPEED = 2.3f;	// 最大移動量
@@ -49,6 +49,11 @@ CPlayer::Motion CPlayer::s_motion = {};	//モーション用構造体
 CCollision *CPlayer::s_pColli = NULL;
 bool CPlayer::ms_bSwapEnd = false;
 UShort CPlayer::ms_guideCounter = 0;
+
+bool  CPlayer::s_bAimPlayer = false;
+float CPlayer::s_fCorrWidth = 0.0f;
+float CPlayer::s_fCorrHeight = 0.0f;
+float CPlayer::s_fAimWorkSpeed = 0.003f;
 
 //=======================================
 // コンストラクタ
@@ -305,21 +310,6 @@ void CPlayer::Uninit(void)
 
 }
 
-//=======================================
-// 前回位置更新処理
-//=======================================
-void CPlayer::SetPosOld(void)
-{
-	// プレイヤーの前回位置更新
-	for each (Info &Player in m_aInfo)
-	{
-		// ロケットに乗っていないなら　or ゴールしていないなら
-		if (!Player.bRide || Player.bGoal)
-		Player.posOld = Player.pos;
-		Player.bGroundOld = Player.bGround;
-	}
-}
-
 //=====================================================================================================================
 // 更新処理
 //=====================================================================================================================
@@ -370,8 +360,7 @@ void CPlayer::UpdateInfo(void)
 	// ガイドテキスト
 	//----------------------------------------
 	bool isSwapGuide = false;
-	if (m_aInfo[0].deathCounter == 0 && m_aInfo[0].deathCounter2 == 0 &&
-		m_aInfo[1].deathCounter == 0 && m_aInfo[1].deathCounter2 == 0) {
+	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) {
 		const int planet = Manager::StgEd()->GetPlanetIdx();
 		
 		if (planet == 0) {
@@ -381,6 +370,7 @@ void CPlayer::UpdateInfo(void)
 						ms_guideCounter = 30;
 					float rate = (float)ms_guideCounter / 30;
 					if (ms_bSwapEnd) {
+						
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, false);
 						}
@@ -431,13 +421,14 @@ void CPlayer::UpdateInfo(void)
 		UpdateDeath(Player, nCntPlayer);
 
 		// 位置設定
-		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim) {
+		if (Player.deathCounter == 0 && Player.deathCounter2 == 0 && !Player.bGoal && !s_bSwapAnim && !Player.bRide) {
 			Player.doll->SetPos(Player.pos - Pos3D(0.0f, (fabsf(Player.pos.y) / Player.pos.y) * SIZE_HEIGHT, 0.0f));
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
+			Player.doll->SetIsShow(true);
 		}
 		else {
-			Player.doll->SetPos(Pos3D(10000.0f, 10000.0f, 10000.0f));
+			Player.doll->SetIsShow(false);
 		}
 
 		// スワップアニメーション中であれば折り返す
@@ -446,7 +437,7 @@ void CPlayer::UpdateInfo(void)
 		}
 
 		if (isSwapGuide) {
-			if (-144.0f <= Player.pos.x && 144.0f >= Player.pos.x) {
+			if (-156.0f <= Player.pos.x && 156.0f >= Player.pos.x) {
 				Pos3D putPos = Player.pos;
 				putPos.y += (Player.pos.y / fabsf(Player.pos.y)) * 24.0f;
 				const int count = RNLib::Count().GetCount() % 40;
@@ -641,6 +632,34 @@ void CPlayer::ActionControl(void)
 			return;
 		}
 		else{
+			CInput *pInput = &RNLib::Input();
+			if (pInput->GetKeyTrigger(DIK_B))
+			{//視点切替
+				s_bAimPlayer = !s_bAimPlayer;
+			}
+
+			if (s_bAimPlayer)
+			{
+				if (pInput->GetKeyTrigger(DIK_V)) s_fCorrWidth -= 0.1f;
+				if (pInput->GetKeyTrigger(DIK_N)) s_fCorrWidth += 0.1f;
+				if (pInput->GetKeyTrigger(DIK_G)) s_fCorrHeight -= 0.1f;
+				if (pInput->GetKeyTrigger(DIK_H)) s_fCorrHeight += 0.1f;
+
+				targetPosV.x = targetPosR.x = m_aInfo[0].pos.x + s_fCorrWidth;
+				targetPosV.y = targetPosR.y = m_aInfo[0].pos.y + s_fCorrHeight;
+				targetPosV.z =- 100.0f;
+
+				RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_aInfo[0].pos, INITVECTOR3D)
+					->SetCol(Color{ 255,255,255,255 })
+					->SetSize(SIZE_WIDTH * 2.0f, SIZE_HEIGHT * 2.0f);
+
+				RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_aInfo[0].pos, INITVECTOR3D)
+					->SetCol(Color{ 255,100,100,255 })
+					->SetSize(SIZE_WIDTH * 1.0f, SIZE_HEIGHT * 1.0f);
+
+				RNLib::Text2D().PutDebugLog(CreateText("横の調整量:%f  縦の調整量:%f", s_fCorrWidth, s_fCorrHeight));
+			}
+
 			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
 		}
 	}
@@ -758,10 +777,11 @@ void CPlayer::Swap(void)
 			Player.fSwapPosY = Player.pos.y * -1.0f;
 			Player.fSwapMoveY = (Player.fSwapPosY - Player.pos.y) / SWAP_MIDDLE_INTERVAL;
 			Player.bTramJump = false;
-		}
 
-		// 前回位置更新
-		SetPosOld();
+			// 前回位置更新
+			Player.posOld = Player.pos;
+			Player.bGroundOld = Player.bGround;
+		}
 	}
 }
 
@@ -846,7 +866,7 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 	//最後のプレイヤーのときにスワップアニメーション終了
 	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
 	s_bSwapAnim = false;
-	ms_bSwapEnd = true;
+	ms_bSwapEnd = (-156.0f <= m_aInfo[0].pos.x && 156.0f >= m_aInfo[0].pos.x && -156.0f <= m_aInfo[1].pos.x && 156.0f >= m_aInfo[1].pos.x);
 	PlaySE(SE_LABEL::SWAPEND);
 
 	if (Manager::StgEd()->GetPlanetIdx() == 0)
@@ -893,7 +913,10 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+		if(s_bAimPlayer)
+			FloatControl(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
+		else
+			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
 
 		// 位置更新
 		Player.pos.x += Player.move.x;
@@ -929,7 +952,7 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 	}
 
 	//位置制御
-	CtrlPos(&Player, vec);
+	//CtrlPos(&Player, vec);
 }
 
 //----------------------------
@@ -997,8 +1020,6 @@ void CPlayer::CollisionToStageObject(void)
 			Self.posOld = Player.posOld;
 			Self.move = Player.move;
 			Self.fWidth = Self.fHeight = SIZE_HEIGHT;
-			Self.minPos = Pos3D(Self.pos.x - Self.fWidth, Self.pos.y - Self.fHeight, 0.0f);
-			Self.maxPos = Pos3D(Self.pos.x + Self.fWidth, Self.pos.y + Self.fHeight, 0.0f);
 
 			// オブジェクト1つ1つを見ていく
 			CObject* obj = NULL;
@@ -1018,8 +1039,6 @@ void CPlayer::CollisionToStageObject(void)
 				colliInfo.posOld = colliInfo.pos;
 				colliInfo.fWidth = stageObj->GetWidth() * 0.5f;
 				colliInfo.fHeight = stageObj->GetHeight() * 0.5f;
-				colliInfo.minPos = D3DXVECTOR3(colliInfo.pos.x - colliInfo.fWidth, colliInfo.pos.y - colliInfo.fHeight, 0.0f);
-				colliInfo.maxPos = D3DXVECTOR3(colliInfo.pos.x + colliInfo.fWidth, colliInfo.pos.y + colliInfo.fHeight, 0.0f);
 
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
@@ -1191,6 +1210,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 死亡判定ON
 				if (bDeath)
 				{
+					//s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
 					Death(Player, type, &nColliRot[nCntPlayer]);
 					break;
 				}

@@ -538,7 +538,7 @@ void CStageEditor::SetStage(int nType)
 	{
 		float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 		float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-		D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+		D3DXVECTOR3 pos = INITPOS3D;
 
 		pos.x += ((m_Info.nLineMax * -0.5f) + m_Info.nLine + 0.5f) * fSizeX;
 		pos.y -= ((m_Info.nRowMax * -0.5f) + m_Info.nRow + 0.5f) * fSizeY;
@@ -629,6 +629,9 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		break;
 	case TYPE_Extenddog:
 		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::LOOKS_TYPE::SOIL_BLOCK_GRASSY);
+		break;
+	case TYPE_COIN:
+		Manager::StageObjectMgr()->CoinCreate(pos);
 		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::StageObjectMgr()->FillBlockCreate(pos, CFillBlock::BLOCKTYPE::TYPE_1x1, m_StageColor.FillBlock);
@@ -1170,7 +1173,7 @@ D3DXVECTOR3 CStageEditor::GetPos(int nRow, int nLine)
 {
 	float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-	D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+	D3DXVECTOR3 pos = INITPOS3D;
 
 	pos.x += ((m_Info.nLineMax * -0.5f) + nLine + 0.5f) * fSizeX;
 	pos.y -= ((m_Info.nRowMax * -0.5f) + nRow + 0.5f) * fSizeY;
