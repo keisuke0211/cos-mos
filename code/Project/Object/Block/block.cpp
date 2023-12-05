@@ -196,7 +196,7 @@ void CBlock::Uninit(void) {
 //========================================
 void CBlock::Update(void) {
 
-	static const short outLineIdx = 5;
+	static const short outLineIdx = 10;
 	m_num;
 
 	switch (m_looksType) {

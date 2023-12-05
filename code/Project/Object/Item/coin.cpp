@@ -16,7 +16,7 @@ int CCoin::s_Num = 0;
 CCoin::CCoin() {
 
 	Manager::StageObjectMgr()->AddList(this);
-	m_ModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Engine_break.x");
+	m_ModelIdx = RNLib::Model().Load("data\\MODEL\\Item\\Coin.x");
 
 	if (s_Num != 0)
 		s_Num = 0;
@@ -34,10 +34,10 @@ CCoin::~CCoin() {
 // XVˆ—
 //========================================
 void CCoin::Update(void) {
-	m_rot.y += 0.01f;
+	m_rot.y -= 0.01f;
 
 	RNLib::Model().Put(PRIORITY_OBJECT, m_ModelIdx, m_pos, m_rot, false)
-		->SetOutLineIdx(true);
+		->SetOutLineIdx(8);
 
 	CPlayer *pPlayer = CMode_Game::GetPlayer();
 	CPlayer::Info *pInfo[2];
