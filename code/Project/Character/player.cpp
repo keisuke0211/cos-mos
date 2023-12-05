@@ -15,7 +15,7 @@
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
-const float CPlayer::GUIDE_WIDTH   = 7.0f;  // ガイドの幅
+const float CPlayer::GUIDE_WIDTH   = 10.0f; // ガイドの幅
 const float CPlayer::GUIDE_HEIGHT  = 14.0f; // ガイドの高さ
 
 int                CPlayer::s_nSwapInterval = 0; // 残りスワップインターバル
@@ -98,8 +98,9 @@ CPlayer::CPlayer()
 		Player.nSwapAlpha = NORMAL_SWAP_ALPHA; // スワップマークのα値
 		Player.fSwapPosY = 0.0f;               // スワップ先のＹ座標
 		Player.fSwapMoveY = 0.0f;              // スワップ移動時の速度
-		Player.fGuideTexV;                     // ガイドのテクスチャＶ座標
-		Player.fGuideMoveSpeed;                // ガイドのテクスチャ移動スピード
+		Player.fGuideTexVPos = 0.0f;           // ガイドのテクスチャＶ座標
+		Player.fGuideTexVSize = 0.0f;          // ガイドのテクスチャＶサイズ
+		Player.fGuideMoveSpeed = 0.0f;         // ガイドのテクスチャ移動スピード
 		Player.bGround = false;                // 地面に接しているか
 		Player.bGroundOld = false;             // 地面に接しているか(過去)
 		Player.landingCounter = false;
@@ -164,12 +165,14 @@ HRESULT CPlayer::Init(void)
 		delete m_aInfo[0].doll;
 	m_aInfo[0].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
+	m_aInfo[0].color = Color{255, 155, 59, m_aInfo[0].nSwapAlpha };
 
 	// ２Ｐ初期情報
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
 	m_aInfo[1].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
+	m_aInfo[1].color = Color{65, 233, 210, m_aInfo[1].nSwapAlpha };
 
 	// キーコンフィグ初期化
 	InitKeyConfig();
@@ -464,11 +467,40 @@ void CPlayer::UpdateInfo(void)
 		MarkPos.z = -10.0f;
 		MarkPos.y *= -1.0f;
 
+		//スワップ先のマーク描画
 		RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
 			->SetSize(20.0f, 20.0f)
 			->SetBillboard(true)
 			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
 			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha });
+
+			//スワップ先までの中心座標
+			const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
+			const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
+
+			//ガイドサイズを設定
+			const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
+			const float fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
+			Player.fGuideTexVSize = fabsf(fSize);
+
+			//ガイドのスピードを設定
+			Player.fGuideMoveSpeed = fSize / 100.0f;
+			Player.fGuideTexVPos += Player.fGuideMoveSpeed;
+
+			if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
+				Player.fGuideTexVPos = 0.0f;
+
+			//スワップガイドの描画
+			RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
+				->SetSize(GUIDE_WIDTH, fabsf(Player.pos.y) * 1.75f)
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+				->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+						   Pos2D(0.0f, Player.fGuideTexVPos),
+						   Pos2D(1.0f, Player.fGuideTexVPos),
+						   Pos2D(0.0f, BottomPosV),
+						   Pos2D(1.0f, BottomPosV));
 
 		// 最高Ｙ座標更新
 		switch (Player.side) {
@@ -742,9 +774,6 @@ void CPlayer::ActionControl(void)
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
 		{
 			Player.nSwapAlpha = 255;
-			
-			const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
-			const float fTexVSize = YDiff / (int)GUIDE_HEIGHT;
 		}
 		//スワップマークカラーを変更
 		else
@@ -824,7 +853,7 @@ void CPlayer::SwapAnimation(void)
 				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(130 + rand() % 125),(UShort)(130 + rand() % 125),255 };
 			}
 
-			int nTex = rand() % 2 + 2;
+			const int nTex = rand() % 2 + 2;
 
 			Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol,CParticle::TYPE::TYPE_NORMAL,300,D3DXVECTOR3(0.0f,0.0f,(float)(rand() % 629 - 314) / 100.0f),8, CDrawState::ALPHA_BLEND_MODE::NORMAL);
 		}
