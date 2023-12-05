@@ -15,40 +15,44 @@
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 90;	// スワップインターバル
-int			CPlayer::s_nSwapInterval = 0;	// 残りスワップインターバル
-bool		CPlayer::s_bSwapAnim = false;	//スワップアニメーション中かどうか
+const float CPlayer::GUIDE_WIDTH   = 7.0f;  // ガイドの幅
+const float CPlayer::GUIDE_HEIGHT  = 14.0f; // ガイドの高さ
+
+int                CPlayer::s_nSwapInterval = 0; // 残りスワップインターバル
+bool               CPlayer::s_bSwapAnim = false; //スワップアニメーション中かどうか
 CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメーション構成
 
-int			CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
-int         CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
+int CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
+int CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
 
-const float CPlayer::SIZE_WIDTH = 8.0f;	// 横幅
+const float CPlayer::SIZE_WIDTH = 7.0f; // 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
-const float CPlayer::MOVE_SPEED = 0.3f;		// 移動量
-const float CPlayer::MAX_MOVE_SPEED = 2.3f;	// 最大移動量
+const float CPlayer::MOVE_SPEED = 0.3f;     // 移動量
+const float CPlayer::MAX_MOVE_SPEED = 2.3f; // 最大移動量
 
-const float CPlayer::JUMP_POWER = 5.0f;		// 基本ジャンプ量
-const float CPlayer::GRAVITY_POWER = -0.3f;	// 基本重力加速度
+const float CPlayer::JUMP_POWER = 5.0f;     // 基本ジャンプ量
+const float CPlayer::GRAVITY_POWER = -0.3f; // 基本重力加速度
 
-const int	CPlayer::TRAMPOLINE_JUMP_COUNTER = 10;
+const int CPlayer::TRAMPOLINE_JUMP_COUNTER = 10;
 
 const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 	"data\\TEXTURE\\Effect\\eff_Circle_005.png",// スワップマーク
 	"data\\TEXTURE\\Effect\\eff_Star_000.png",	// スワップパーティクル00
 	"data\\TEXTURE\\Effect\\ink001.png",		// スワップパーティクル01
 	"data\\TEXTURE\\Effect\\ink002.png",		// スワップパーティクル02
+	"data\\TEXTURE\\Effect\\swap_guide.png",	// スワップガイド
 	"data\\TEXTURE\\Effect\\mark_Skull_000.png",// 死亡マーク
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",	// 死亡パーティクル
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",	// ゴール・ロケット乗車時のエフェクト
 };
-int			CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
+int CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 
-CPlayer::SE CPlayer::s_SE = {};	//サウンド用構造体
+CPlayer::SE     CPlayer::s_SE = {};	//サウンド用構造体
 CPlayer::Motion CPlayer::s_motion = {};	//モーション用構造体
-CCollision *CPlayer::s_pColli = NULL;
-bool CPlayer::ms_bSwapEnd = false;
-UShort CPlayer::ms_guideCounter = 0;
+CCollision     *CPlayer::s_pColli = NULL;
+bool            CPlayer::ms_bSwapEnd = false;
+UShort          CPlayer::ms_guideCounter = 0;
 
 bool  CPlayer::s_bAimPlayer = false;
 float CPlayer::s_fCorrWidth = 0.0f;
@@ -84,31 +88,33 @@ CPlayer::CPlayer()
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
-		Player.StartPos = INITD3DXVECTOR3;		// 開始位置
+		Player.StartPos = INITD3DXVECTOR3;     // 開始位置
 		Player.doll = NULL;
-		Player.pos = INITD3DXVECTOR3;			// 位置
-		Player.posOld = INITD3DXVECTOR3;		// 前回位置
-		Player.rot = INITD3DXVECTOR3;			// 向き
-		Player.move = INITD3DXVECTOR3;			// 移動量
-		Player.color = INITCOLOR;				// 色
-		Player.nSwapAlpha = NORMAL_SWAP_ALPHA;	// スワップマークのα値
-		Player.fSwapPosY = 0.0f;				// スワップ先のＹ座標
-		Player.fSwapMoveY = 0.0f;				// スワップ移動時の速度
-		Player.bGround = false;					// 地面に接しているか
-		Player.bGroundOld = false;				// 地面に接しているか(過去)7
+		Player.pos = INITD3DXVECTOR3;          // 位置
+		Player.posOld = INITD3DXVECTOR3;       // 前回位置
+		Player.rot = INITD3DXVECTOR3;          // 向き
+		Player.move = INITD3DXVECTOR3;         // 移動量
+		Player.color = INITCOLOR;              // 色
+		Player.nSwapAlpha = NORMAL_SWAP_ALPHA; // スワップマークのα値
+		Player.fSwapPosY = 0.0f;               // スワップ先のＹ座標
+		Player.fSwapMoveY = 0.0f;              // スワップ移動時の速度
+		Player.fGuideTexV;                     // ガイドのテクスチャＶ座標
+		Player.fGuideMoveSpeed;                // ガイドのテクスチャ移動スピード
+		Player.bGround = false;                // 地面に接しているか
+		Player.bGroundOld = false;             // 地面に接しているか(過去)
 		Player.landingCounter = false;
-		Player.bJump = false;					// ジャンプ
-		Player.bRide = false;					// ロケットに乗っているかどうか
-		Player.bGoal = false;					// ゴールしたかどうか
-		Player.fJumpPower = 0.0f;				// ジャンプ量
-		Player.fGravity = 0.0f;					// 重力
-		Player.fMaxHeight = 0.0f;				// 最高Ｙ座標
-		Player.nTramJumpCounter = 0;			// トランポリンによって跳ね上がる最高到達地点
-		Player.fTramTargetPosY = 0.0f;			// トランポリン用の目標位置
-		Player.bTramJump = false;				// トランポリン用の特殊ジャンプ
-		Player.bExtendDog = false;				// ヌイ用の接触フラグ
-		Player.bLandPile = false;				// 杭に乗っているかどうか
-		Player.side = WORLD_SIDE::FACE;			// どちらの世界に存在するか
+		Player.bJump = false;                  // ジャンプ
+		Player.bRide = false;                  // ロケットに乗っているかどうか
+		Player.bGoal = false;                  // ゴールしたかどうか
+		Player.fJumpPower = 0.0f;              // ジャンプ量
+		Player.fGravity = 0.0f;                // 重力
+		Player.fMaxHeight = 0.0f;              // 最高Ｙ座標
+		Player.nTramJumpCounter = 0;           // トランポリンによって跳ね上がる最高到達地点
+		Player.fTramTargetPosY = 0.0f;         // トランポリン用の目標位置
+		Player.bTramJump = false;              // トランポリン用の特殊ジャンプ
+		Player.bExtendDog = false;             // ヌイ用の接触フラグ
+		Player.bLandPile = false;              // 杭に乗っているかどうか
+		Player.side = WORLD_SIDE::FACE;        // どちらの世界に存在するか
 	}
 
 	s_pColli = NULL;	// 当たり判定クラス
@@ -649,10 +655,12 @@ void CPlayer::ActionControl(void)
 				targetPosV.y = targetPosR.y = m_aInfo[0].pos.y + s_fCorrHeight;
 				targetPosV.z =- 100.0f;
 
+				//本来の当たり判定範囲
 				RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_aInfo[0].pos, INITVECTOR3D)
 					->SetCol(Color{ 255,255,255,255 })
 					->SetSize(SIZE_WIDTH * 2.0f, SIZE_HEIGHT * 2.0f);
 
+				//半分の当たり判定範囲
 				RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_aInfo[0].pos, INITVECTOR3D)
 					->SetCol(Color{ 255,100,100,255 })
 					->SetSize(SIZE_WIDTH * 1.0f, SIZE_HEIGHT * 1.0f);
@@ -699,14 +707,14 @@ void CPlayer::ActionControl(void)
 		bool isMove = false;
 
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
-			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT, nIdxPlayer)) 
+			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT, nIdxPlayer))
 		{// 右に移動
 			Player.move.x += MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
 			isMove = true;
 		}
 		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
-			RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
+				 RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
 		{// 左に移動
 			Player.move.x -= MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
@@ -734,9 +742,15 @@ void CPlayer::ActionControl(void)
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
 		{
 			Player.nSwapAlpha = 255;
+			
+			const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
+			const float fTexVSize = YDiff / (int)GUIDE_HEIGHT;
 		}
-		//スワップ先のマークカラーを変更
-		else Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
+		//スワップマークカラーを変更
+		else
+		{
+			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
+		}
 	}
 }
 
@@ -767,11 +781,6 @@ void CPlayer::Swap(void)
 		{
 			// ロケットに乗ってたらスキップ
 			if (Player.bRide) continue;
-
-			/*for (int i = 0; i < 16; i++)
-			{
-				Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SWAP_PARTI00), Player.pos, INIT_EFFECT_SCALE, INITCOLOR);
-			}*/
 
 			// 位置・重力加速度・ジャンプ量・存在する世界を反転
 			Player.fSwapPosY = Player.pos.y * -1.0f;

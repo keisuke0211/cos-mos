@@ -47,38 +47,62 @@ public:
 	// プレイヤー情報
 	struct Info
 	{
-		D3DXVECTOR3 StartPos;			// 開始位置
-		CDoll3D*    doll;
-		D3DXVECTOR3 pos;				// 位置
-		D3DXVECTOR3 posOld;				// 前回位置
-		Scale3D     scale;
-		D3DXVECTOR3 rot;				// 向き
-		D3DXVECTOR3 move;				// 移動量
-		Color		color;				// 色
-		int			nSwapAlpha;			// スワップマークのα値
-		float		fSwapPosY;			// スワップ先のＹ座標
-		float		fSwapMoveY;			// スワップ移動時の速度
-		bool		bGround;			// 地面に接しているか
-		bool		bGroundOld;			// 地面に接しているか(過去)
-		short       landingCounter;
-		bool		bJump;				// ジャンプ
-		bool		bRide;				// ロケットに乗っているかどうか
-		bool		bGoal;				// ゴールしたかどうか
-		int         expandCounter;		// 膨らみカウンター
-		bool        isDeath;			// 死亡フラグ
-		int         deathCounter;		// 死亡カウンター
-		int         deathCounter2;		// 死亡カウンター2
-		float		fJumpPower;			// ジャンプ量
-		float		fGravity;			// 重力
-		float		fMaxHeight;			// 最高Ｙ座標
-		int			nTramJumpCounter;	// トランポリンによって跳ね上がる時間
-		float		fTramTargetPosY;	// トランポリン用の目標位置
-		bool		bTramJump;			// トランポリン用の特殊ジャンプ
-		bool		bExtendDog;			// ヌイ用の接触フラグ
-		bool		bLandPile;			// 杭に乗っているかどうか
-		WORLD_SIDE  side;				// どちらの世界に存在するか
-		int            Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
-		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];                         // ジョイパッドのボタン配置
+		Pos3D    StartPos;// 開始位置
+		CDoll3D* doll;
+		Pos3D    pos;     // 位置
+		Pos3D    posOld;  // 前回位置
+		Scale3D  scale;
+		Pos3D    rot;     // 向き
+		Pos3D    move;    // 移動量
+		Color    color;   // 色
+
+		//-------------------------------
+		//スワップ用
+		//-------------------------------
+		int   nSwapAlpha; // スワップマークのα値
+		float fSwapPosY;  // スワップ先のＹ座標
+		float fSwapMoveY; // スワップ移動時の速度
+		float fGuideTexV; // ガイドのテクスチャＶ座標
+		float fGuideMoveSpeed; // ガイドのテクスチャ移動スピード
+
+		//-------------------------------
+		// ジャンプ用
+		//-------------------------------
+		bool  bGround;    // 地面に接しているか
+		bool  bGroundOld; // 地面に接しているか(過去)
+		short landingCounter;
+		bool  bJump;      // ジャンプ
+		float fJumpPower; // ジャンプ量
+		float fGravity;   // 重力
+		float fMaxHeight; // 最高Ｙ座標
+
+		//-------------------------------
+		//特定のギミック用
+		//-------------------------------
+		bool  bRide; // ロケットに乗っているかどうか
+		bool  bGoal; // ゴールしたかどうか
+		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間
+		float fTramTargetPosY;  // トランポリン用の目標位置
+		bool  bTramJump;        // トランポリン用の特殊ジャンプ
+		bool  bExtendDog;       // ヌイ用の接触フラグ
+		bool  bLandPile;        // 杭に乗っているかどうか
+
+		//-------------------------------
+		//死亡アニメーション用
+		//-------------------------------
+		int  expandCounter; // 膨らみカウンター
+		bool isDeath;       // 死亡フラグ
+		int  deathCounter;  // 死亡カウンター
+		int  deathCounter2; // 死亡カウンター2
+
+		// どちらの世界に存在するか
+		WORLD_SIDE side;
+
+		//-------------------------------
+		//キーコンフィグ
+		//-------------------------------
+		int Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
+		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
 
 	static const float SIZE_WIDTH;	// 横幅
@@ -165,6 +189,7 @@ public:
 		SWAP_PARTI00,	// スワップパーティクル00
 		SWAP_PARTI01,	// スワップパーティクル01
 		SWAP_PARTI02,	// スワップパーティクル02
+		SWAP_GUIDE,		// スワップガイド
 		DEATH_MARK,		// 死亡マーク
 		DEATH_PARTI,	// 死亡パーティクル
 		GOAL_EFFECT,	// ゴール・ロケット乗車時のエフェクト
@@ -213,20 +238,22 @@ private:
 		EPILOGUE,		//エピローグ
 		MAX
 	};
-	static const int SWAP_PROLOGUE_INTERVAL = 10; //スワップ開始～移動までの時間
-	static const int SWAP_MIDDLE_INTERVAL   = 50; //移動～目的地到着までの時間
-	static const int SWAP_EPILOGUE_INTERVAL = 10; //目的地到着～終了までの時間
-	static const int NORMAL_SWAP_ALPHA = 100;  //通常時のスワップマークのα値
-	static const int ZOOM_UP_TIME = 120;  //ズームアップにかかる時間
-	static const int EXPAND_TIME = 60;  //膨らみにかかる時間
-	static const int DEATH_TIME = 60;   //死亡時間
-	static const int DEATH_TIME2 = 120; //死亡時間2
-	static SWAP_ANIM s_AnimState;		//アニメーション構成
-	static       int s_nSwapInterval;	//残りスワップインターバル
-	static       bool s_bSwapAnim;		//スワップアニメーション中かどうか
-	static const int GOAL_INTERVAL = 120;//ゴール後の余韻
-	static       int s_nGoalInterval;    //ゴール後の余韻カウンター
-	static       int s_zoomUpCounter;	// ズームアップカウンター
+	static const int SWAP_PROLOGUE_INTERVAL = 10; // スワップ開始～移動までの時間
+	static const int SWAP_MIDDLE_INTERVAL   = 50; // 移動～目的地到着までの時間
+	static const int SWAP_EPILOGUE_INTERVAL = 10; // 目的地到着～終了までの時間
+	static const int NORMAL_SWAP_ALPHA = 100;     // 通常時のスワップマークのα値
+	static const float GUIDE_WIDTH;      // ガイドの幅
+	static const float GUIDE_HEIGHT;     // ガイドの高さ
+	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
+	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
+	static const int DEATH_TIME = 60;    // 死亡時間
+	static const int DEATH_TIME2 = 120;  // 死亡時間2
+	static SWAP_ANIM s_AnimState;        // アニメーション構成
+	static       int s_nSwapInterval;    // 残りスワップインターバル
+	static       bool s_bSwapAnim;       // スワップアニメーション中かどうか
+	static const int GOAL_INTERVAL = 120;// ゴール後の余韻
+	static       int s_nGoalInterval;    // ゴール後の余韻カウンター
+	static       int s_zoomUpCounter;    // ズームアップカウンター
 
 	void Swap(void);
 	void SwapAnimation(void);
