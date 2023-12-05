@@ -630,6 +630,9 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_Extenddog:
 		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::LOOKS_TYPE::SOIL_BLOCK_GRASSY);
 		break;
+	case TYPE_COIN:
+		Manager::StageObjectMgr()->CoinCreate(pos);
+		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::StageObjectMgr()->FillBlockCreate(pos, CFillBlock::BLOCKTYPE::TYPE_1x1, m_StageColor.FillBlock);
 		break;

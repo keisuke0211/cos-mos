@@ -204,8 +204,8 @@ void CMode_Game::Update(void) {
 	}
 
 	// [[[ 壁モデル描画 ]]]
-	RNLib::Model().Put(PRIORITY_OBJECT, m_wallModelIdx[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-	RNLib::Model().Put(PRIORITY_OBJECT, m_wallModelIdx[1], Pos3D( CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+	RNLib::Model().Put(PRIORITY_BACKGROUND, m_wallModelIdx[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+	RNLib::Model().Put(PRIORITY_BACKGROUND, m_wallModelIdx[1], Pos3D( CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 
 	// ロケットパーツの更新処理
 	if (m_rocketparts != NULL) {
