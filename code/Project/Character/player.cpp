@@ -38,13 +38,14 @@ const int CPlayer::TRAMPOLINE_JUMP_COUNTER = 10;
 
 const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 	"data\\TEXTURE\\Effect\\eff_Circle_005.png",// スワップマーク
-	"data\\TEXTURE\\Effect\\eff_Star_000.png",	// スワップパーティクル00
-	"data\\TEXTURE\\Effect\\ink001.png",		// スワップパーティクル01
-	"data\\TEXTURE\\Effect\\ink002.png",		// スワップパーティクル02
-	"data\\TEXTURE\\Effect\\swap_guide.png",	// スワップガイド
+	"data\\TEXTURE\\Effect\\eff_Star_000.png",  // スワップパーティクル00
+	"data\\TEXTURE\\Effect\\ink001.png",        // スワップパーティクル01
+	"data\\TEXTURE\\Effect\\ink002.png",        // スワップパーティクル02
+	"data\\TEXTURE\\Effect\\swap_guide.png",    // スワップガイド
+	"data\\TEXTURE\\player.PNG",                // プレイヤーアイコン
 	"data\\TEXTURE\\Effect\\mark_Skull_000.png",// 死亡マーク
-	"data\\TEXTURE\\Effect\\eff_Hit_002.png",	// 死亡パーティクル
-	"data\\TEXTURE\\Effect\\eff_Hit_002.png",	// ゴール・ロケット乗車時のエフェクト
+	"data\\TEXTURE\\Effect\\eff_Hit_002.png",   // 死亡パーティクル
+	"data\\TEXTURE\\Effect\\eff_Hit_002.png",   // ゴール・ロケット乗車時のエフェクト
 };
 int CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 
@@ -464,43 +465,52 @@ void CPlayer::UpdateInfo(void)
 
 		// スワップ先のマークを描画する位置
 		D3DXVECTOR3 MarkPos = Player.pos;
-		MarkPos.z = -10.0f;
 		MarkPos.y *= -1.0f;
+
+		//マークのテクスチャＵＶ座標
+		const float TexULeft = nCntPlayer * 0.5f;
+		const float TexURight = TexULeft + 0.5f;
+		const float TexVOver = Player.side == WORLD_SIDE::BEHIND ? 0.0f : 1.0f;
+		const float TexVUnder = 1.0f - TexVOver;
 
 		//スワップ先のマーク描画
 		RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
 			->SetSize(20.0f, 20.0f)
 			->SetBillboard(true)
+			->SetZTest(false)
 			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
-			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha });
+			->SetCol(Color{ 255, 255, 255, (UShort)Player.nSwapAlpha })
+			->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
+					   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
+					   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
 
-			//スワップ先までの中心座標
-			const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
-			const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
+		const Color &c = Player.color;
 
-			//ガイドサイズを設定
-			const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
-			const float fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
-			Player.fGuideTexVSize = fabsf(fSize);
+		//スワップ先までの中心座標
+		const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
+		const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
 
-			//ガイドのスピードを設定
-			Player.fGuideMoveSpeed = fSize / 100.0f;
-			Player.fGuideTexVPos += Player.fGuideMoveSpeed;
+		//ガイドサイズを設定
+		const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
+		const float fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
+		Player.fGuideTexVSize = fabsf(fSize);
 
-			if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
-				Player.fGuideTexVPos = 0.0f;
+		//ガイドのスピードを設定
+		Player.fGuideMoveSpeed = fSize / 100.0f;
+		Player.fGuideTexVPos += Player.fGuideMoveSpeed;
 
-			//スワップガイドの描画
-			RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
-				->SetSize(GUIDE_WIDTH, fabsf(Player.pos.y) * 1.75f)
-				->SetBillboard(true)
-				->SetZTest(false)
-				->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
-				->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
-						   Pos2D(0.0f, Player.fGuideTexVPos),
-						   Pos2D(1.0f, Player.fGuideTexVPos),
-						   Pos2D(0.0f, BottomPosV),
-						   Pos2D(1.0f, BottomPosV));
+		if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
+			Player.fGuideTexVPos = 0.0f;
+
+		//スワップガイドの描画
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
+			->SetSize(GUIDE_WIDTH, fabsf(Player.pos.y) * 1.75f)
+			->SetBillboard(true)
+			->SetZTest(false)
+			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+			->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+					   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
+					   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
 
 		// 最高Ｙ座標更新
 		switch (Player.side) {
