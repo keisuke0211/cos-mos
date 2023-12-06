@@ -130,6 +130,9 @@ void CMode_Game::Init(void) {
 	// BGM読み込み&再生
 	m_BGMIdx = RNLib::Sound().Load("data\\SOUND\\BGM\\STAGE1.wav");
 	m_BGMID = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, 1.0f, true);
+
+	// 環境音プレイヤーの開始処理
+	AmbientSoundPlayer::Start();
 }
 
 //========================================
@@ -166,6 +169,9 @@ void CMode_Game::Uninit(void) {
 		delete m_Coin;
 		m_Coin = NULL;
 	}
+
+	// 環境音プレイヤーの終了処理
+	AmbientSoundPlayer::End();
 }
 
 //========================================

@@ -156,7 +156,7 @@ private:
 	/* メニュー生成				*/void MenuCreate(void);
 	/* メニュー選択				*/void MenuSelect(void);
 	/* サブテキストの生成		*/void SubTextCreate(void);
-	/* ステージ読込				*/void StageLoad(void);
+	/* ステージ読込				*/void CreateStageSelectInfo(void);
 	/* ステージ選択				*/void StageSelect(void);
 	/* テキスト削除				*/void TextRelease(TEXT type);
 	/* モード切り替え			*/void SwapMode(TITLE aTitle);

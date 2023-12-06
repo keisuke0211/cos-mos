@@ -224,14 +224,23 @@ short CSound::Load(const char* loadPath, short idx) {
 //========================================
 // セグメント再生(再生中なら停止)
 //========================================
-UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop) {
-	return (new CSound::CPlay(sountIdx, category, volume, isLoop, NULL, NULL, 0.0f))->GetID();
+short CSound::Play(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop) {
+	if (soundIdx == NONEDATA)
+		return NONEDATA;
+
+	return (new CSound::CPlay(soundIdx, category, volume, isLoop, NULL, NULL, 0.0f))->GetID();
 }
-UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist) {
-	return (new CSound::CPlay(sountIdx, category, volume, isLoop, &pos, NULL, dist))->GetID();
+short CSound::Play(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist) {
+	if (soundIdx == NONEDATA)
+		return NONEDATA;
+
+	return (new CSound::CPlay(soundIdx, category, volume, isLoop, &pos, NULL, dist))->GetID();
 }
-UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist) {
-	return (new CSound::CPlay(sountIdx, category, volume, isLoop, NULL, &pos, dist))->GetID();
+short CSound::Play(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist) {
+	if (soundIdx == NONEDATA)
+		return NONEDATA;
+
+	return (new CSound::CPlay(soundIdx, category, volume, isLoop, NULL, &pos, dist))->GetID();
 }
 
 //========================================
@@ -294,7 +303,7 @@ void CSound::ChangeSetVolume(const CATEGORY& category, float& volume) {
 //========================================
 // プレイオブジェクト取得
 //========================================
-CSound::CPlay& CSound::GetPlay(const UShort& ID) {
+CSound::CPlay& CSound::GetPlay(const short& ID) {
 
 	CSound::CPlay* play = NULL;
 	while (m_playMgr.ListLoop((CObject**)&play)) {
@@ -441,21 +450,21 @@ void CSound::CData::Release(void) {
 //****************************************
 // 静的変数定義
 //****************************************
-UShort CSound::CPlay::ms_IDCount = 0;
+short CSound::CPlay::ms_IDCount = 0;
 
 //========================================
 // コンストラクタ
 //========================================
-CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist) {
+CSound::CPlay::CPlay(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist) {
 
 	// リストに追加
 	RNLib::Sound().GetPlayMgr().AddList(this);
 
 	// IDを設定
 	m_ID = ms_IDCount;
-	ms_IDCount = (ms_IDCount + 1) % USHRT_MAX;
+	ms_IDCount = (ms_IDCount + 1) % SHRT_MAX;
 
-	m_soundIdx = sountIdx;
+	m_soundIdx = soundIdx;
 	m_volume   = volume;
 	m_category = category;
 	m_isLoop   = isLoop;

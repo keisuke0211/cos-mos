@@ -24,7 +24,6 @@ bool CMode_Title::s_bStageSelect = false;
 
 //========================================
 // コンストラクタ
-// Author:KEISUKE OTONO
 //========================================
 CMode_Title::CMode_Title(void) {
 
@@ -60,7 +59,6 @@ CMode_Title::CMode_Title(void) {
 
 //========================================
 // デストラクタ
-// Author:KEISUKE OTONO
 //========================================
 CMode_Title::~CMode_Title(void) {
 
@@ -97,7 +95,6 @@ CMode_Title::~CMode_Title(void) {
 
 //========================================
 // 初期化処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::Init(void) {
 	CMode::Init();
@@ -119,15 +116,15 @@ void CMode_Title::Init(void) {
 	TextLoad();
 
 	// ステージ読込
-	StageLoad();
+	CreateStageSelectInfo();
 
 	if (s_bStageSelect) 
 	{// ステージ選択時、
 		SwapMode(TITLE_SELECT);
 		s_bStageSelect = false;
 	}
-	else if (!s_bStageSelect) {
-
+	else
+	{// ステージ非選択時、
 		// モード設定
 		SwapMode(TITLE_TITLE);
 	}
@@ -136,17 +133,16 @@ void CMode_Title::Init(void) {
 	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
 	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
 
+	// 選択番号
 	m_nSelect = 0;
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
 	}
 
+	// テクスチャの読み込み
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Planet.png");
-
-	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 1);
 
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -160,21 +156,18 @@ void CMode_Title::Init(void) {
 
 //========================================
 // 終了処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::Uninit(void) {
 	CMode::Uninit();
-
-	TextRelease(TEXT_ALL);
 }
 
 //========================================
 // 更新処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::Update(void) {
 	CMode::Update();
 
+	// 背景の描画
 	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_BG], 0.0f, false)
 		->SetSize(1280.0f, 720.0f)
 		->SetCol(Color{ 255,255,255,255 })
@@ -323,7 +316,6 @@ void CMode_Title::Update(void) {
 
 //========================================
 // 更新処理(状態)
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::ProcessState(const PROCESS process) {
 	switch ((STATE)m_state) {
@@ -351,7 +343,6 @@ void CMode_Title::ProcessState(const PROCESS process) {
 
 //========================================
 // タイトルテキストアニメーション
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::TextAnime(void)
 {
@@ -389,7 +380,6 @@ void CMode_Title::TextAnime(void)
 
 //========================================
 // メニュー生成
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::MenuCreate(void)
 {
@@ -425,7 +415,6 @@ void CMode_Title::MenuCreate(void)
 
 //========================================
 // サブテキストの生成
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::SubTextCreate(void)
 {
@@ -487,7 +476,6 @@ void CMode_Title::SubTextCreate(void)
 
 //========================================
 // メニュー演出
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::MenuAnime(void)
 {
@@ -655,7 +643,6 @@ void CMode_Title::MenuAnime(void)
 
 //========================================
 // メニュー
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::MenuSelect(void)
 {
@@ -849,7 +836,6 @@ void CMode_Title::MenuSelect(void)
 
 //========================================
 // 設定処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::SettingMenu(void)
 {
@@ -857,11 +843,9 @@ void CMode_Title::SettingMenu(void)
 }
 
 //========================================
-// ステージ選択の生成
-// Author:KEISUKE OTONO
+// ステージ選択情報の生成
 //========================================
-void CMode_Title::StageLoad(void)
-{
+void CMode_Title::CreateStageSelectInfo(void) {
 	Manager::StgEd()->Uninit();
 	Manager::StgEd()->FileLoad();
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
@@ -881,54 +865,39 @@ void CMode_Title::StageLoad(void)
 
 //========================================
 // ステージ選択
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::StageSelect(void)
-{
+void CMode_Title::StageSelect(void) {
+
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
-	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-	int nChoiceTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_smiley_000.png");
-	int nNoChoiceTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Circle_005.png");
-	int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
-	int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
+	int nStageMax  = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+	int nPrevTex   = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
+	int nNextTex   = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
 
-	int nTexIdx = 0;
+	{// 惑星の描画
+		RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
+			->SetOutLineIdx(5);
+	}
 
-	// 惑星
-	RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-		->SetOutLineIdx(true);
+	{// 矢印の描画
+		if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0)) {
+			// 矢印の描画(左)
 
-	// 矢印
-	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(400.0f, 550.0f, 0.0), 0.0f, false)
-		->SetSize(100.0f, 100.0f)
-		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nPrevTex);
-
-	if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1))
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(880.0f, 550.0f, 0.0), 0.0f, false)
-		->SetSize(100.0f, 100.0f)
-		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nNextTex);
-
-	// 選択アイコン
-	for (int nCnt = 0; nCnt < nStageMax; nCnt++)
-	{
-		if (nCnt == m_nSelect)
-		{
-			nTexIdx = nChoiceTex;
 		}
-		else
-		{
-			nTexIdx = nNoChoiceTex;
-		}
-		D3DXVECTOR3 pos = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 680, 1.0f);
-		pos.x += ((nStageMax * -0.5f) + nCnt + 0.5f) * 50;
 
-		RNLib::Polygon2D().Put(PRIORITY_UI, pos, 0.0f, false)
-			->SetSize(40.0f, 40.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(nTexIdx);
+		if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1)) {
+			// 矢印の描画(右)
+
+		}
+	}
+
+	// 選択アイコンの処理
+	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
+		if (nCnt == m_nSelect) {
+			// 選択時
+		}
+		else {
+			// 非選択時
+		}
 	}
 
 	bool bInput = false;
@@ -997,10 +966,8 @@ void CMode_Title::StageSelect(void)
 
 //========================================
 // モード切替
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::SwapMode(TITLE aTitle)
-{
+void CMode_Title::SwapMode(TITLE aTitle) {
 	Title = aTitle;
 
 	switch (aTitle)
@@ -1080,10 +1047,8 @@ void CMode_Title::SwapMode(TITLE aTitle)
 
 //========================================
 // テキスト読込
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::TextLoad(void)
-{
+void CMode_Title::TextLoad(void) {
 	int nCntPlanet = 0;
 	char aDataSearch[TXT_MAX];	// データ検索用
 
@@ -1175,10 +1140,8 @@ void CMode_Title::TextLoad(void)
 
 //========================================
 // テキスト削除
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::TextRelease(TEXT type)
-{
+void CMode_Title::TextRelease(TEXT type) {
 	// タイトル
 	if (type == TEXT_TITLE || type == TEXT_ALL) {
 		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++){

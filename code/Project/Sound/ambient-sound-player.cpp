@@ -23,11 +23,15 @@ struct AmbientSEInfo {
 // 定数定義
 //****************************************
 #define AMBIENT_SE_1_MAX (2)
+#define AMBIENT_SE_1_LOOP_PATH "NONEDATA"
+#define AMBIENT_SE_1_LOOP_VOLUME (0.5f)
 static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bard.wav", 200, 500, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.5f, 0.5f },
 };
 #define AMBIENT_SE_2_MAX (3)
+#define AMBIENT_SE_2_LOOP_PATH "NONEDATA"
+#define AMBIENT_SE_2_LOOP_VOLUME (0.5f)
 static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bubble.wav", 100, 700, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 600, 0.5f, 0.5f },
@@ -41,6 +45,7 @@ static short ambientSE1Idxes[AMBIENT_SE_1_MAX];
 static short ambientSE1Counter[AMBIENT_SE_1_MAX];
 static short ambientSE2Idxes[AMBIENT_SE_2_MAX];
 static short ambientSE2Counter[AMBIENT_SE_2_MAX];
+static short loopPlayID;
 
 //========================================
 // 初期化処理
@@ -88,4 +93,30 @@ void AmbientSoundPlayer::Update(void) {
 			}
 		}
 	}
+}
+
+//========================================
+// 開始処理
+//========================================
+void AmbientSoundPlayer::Start(void) {
+
+	const int planet = Manager::StgEd()->GetPlanetIdx();
+	if (planet == 0) {
+		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_1_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_1_LOOP_VOLUME, true);
+	}
+	else if (planet == 1) {
+		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_2_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_2_LOOP_VOLUME, true);
+	}
+	else {
+		loopPlayID = NONEDATA;
+	}
+}
+
+//========================================
+// 終了処理
+//========================================
+void AmbientSoundPlayer::End(void) {
+
+	// 再生オブジェクトの破棄
+	RNLib::Sound().GetPlay(loopPlayID).Delete();
 }
