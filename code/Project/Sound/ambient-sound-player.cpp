@@ -27,9 +27,11 @@ static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bard.wav", 200, 500, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.5f, 0.5f },
 };
-#define AMBIENT_SE_2_MAX (1)
+#define AMBIENT_SE_2_MAX (3)
 static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
-	{ "data\\SOUND\\SE\\AmbientSound\\subs.wav", 100, 500, 0.25f, 0.5f },
+	{ "data\\SOUND\\SE\\AmbientSound\\bubble.wav", 100, 700, 0.5f, 0.5f },
+	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 600, 0.5f, 0.5f },
+	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 800, 0.5f, 0.5f },
 };
 
 //****************************************
