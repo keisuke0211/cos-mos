@@ -46,17 +46,17 @@ public:
 	class CPlay : public CObject {
 	public:
 		// [[[ ä÷êîêÈåæ ]]]
-		CPlay(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
+		CPlay(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
 		~CPlay();
 		void Update(void);
-		UShort&              GetID         (void) { return m_ID; }
+		short&               GetID         (void) { return m_ID; }
 		CATEGORY&            GetCategory   (void) { return m_category; }
 		IXAudio2SourceVoice& GetSourceVoice(void) { return *m_sourceVoice; }
 
 	private:
 		// [[[ ïœêîêÈåæ ]]]
-		static UShort        ms_IDCount;
-		UShort               m_ID;
+		static short         ms_IDCount;
+		short                m_ID;
 		short                m_soundIdx;
 		CATEGORY             m_category;
 		float                m_volume;
@@ -74,16 +74,16 @@ public:
 	void Uninit(void);
 	void Update(void);
 	short          Load                (const char* loadPath, short idx = NONEDATA);
-	UShort         Play                (const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop);
-	UShort         Play                (const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist);
-	UShort         Play                (const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist);
+	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop);
+	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist);
+	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist);
 	void           StopCategory        (const CATEGORY& category);
 	void           StopAll             (void);
 	void           ChangeCategoryVolume(const CATEGORY& category, float& volume);
 	void           ChangeSetVolume	   (const CATEGORY& category, float& volume);
 	void           SetMic3DPos         (const Pos3D& pos) { m_mic3DPos = pos; }
 	CData&         GetData             (const short& idx) { return *m_datas[idx]; }
-	CPlay&         GetPlay             (const UShort& ID);
+	CPlay&         GetPlay             (const short& ID);
 	CObjectMgr&    GetPlayMgr          (void) { return m_playMgr; }
 	CategoryState& GetCategoryState    (const CATEGORY& category) { return m_categoryStates[(int)category]; }
 	Pos3D&         GetMic3DPos         (void) { return m_mic3DPos; }

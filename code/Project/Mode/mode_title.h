@@ -149,17 +149,17 @@ private:
 	};
 
 	// *** 関数 ***
-	/* テキストの読込			*/void TextLoad(void);
-	/* 設定処理					*/void SettingMenu(void);
-	/* テキストアニメーション	*/void TextAnime(void);
-	/* メニューアニメーション	*/void MenuAnime(void);
-	/* メニュー生成				*/void MenuCreate(void);
-	/* メニュー選択				*/void MenuSelect(void);
-	/* サブテキストの生成		*/void SubTextCreate(void);
-	/* ステージ読込				*/void StageLoad(void);
-	/* ステージ選択				*/void StageSelect(void);
-	/* テキスト削除				*/void TextRelease(TEXT type);
-	/* モード切り替え			*/void SwapMode(TITLE aTitle);
+	void TextLoad(void);
+	void SettingMenu(void);
+	void TextAnime(void);
+	void MenuAnime(void);
+	void MenuCreate(void);
+	void MenuSelect(void);
+	void SubTextCreate(void);
+	void CreateStageSelectInfo(void);
+	void StageSelect(void);
+	void TextRelease(TEXT type);
+	void SwapMode(TITLE aTitle);
 
 	// *** 静的変数 ***
 	static bool s_bStageSelect;
