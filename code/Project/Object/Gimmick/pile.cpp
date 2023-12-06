@@ -47,9 +47,9 @@ CPile::~CPile()
 void CPile::Init(void)
 {
 	m_TrunkModelID = RNLib::Model().Load("data\\MODEL\\Trunk.x");
-
-	m_nTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png");
-	m_nTex[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
+	//テクスチャ番号
+	m_nTex[0] =	RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png"),
+	m_nTex[1] =	RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png"),
 
 	//前回情報を保存
 	SetOld(0.0f);
@@ -123,7 +123,7 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	if (NumTrunk < MIN_TRUNK) NumTrunk = MIN_TRUNK;
 
 	//情報設定
-	m_PilePos = Initpos = pos ;
+	m_PilePos = pos ;
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = TrunkHeight;
 	m_StartTrunkHeight = TrunkHeight;
@@ -142,15 +142,35 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 void CPile::CaveInTrunkHeight(float fCaveInHeight)
 {
 	//引数保存
-	float fCaveTemp = fCaveInHeight;
+	CFloat fCaveTemp = fCaveInHeight;
+
+	//一旦絶対値にする
+	fCaveInHeight = fabsf(fCaveInHeight);
+
+	CFloat FixHeight = SIZE_OF_1_SQUARE * 0.5f;//修正量
+	const int NumFix = 3;   //修正回数
+	for (int nCntFix = 0; nCntFix <= NumFix; nCntFix++)
+	{
+		//最大修正判定回数に到達 or 修正量以下
+		if (nCntFix == NumFix ||
+			fCaveInHeight <= FixHeight * nCntFix)
+		{//修正して終了
+			fCaveInHeight = FixHeight * nCntFix;
+			break;
+		}
+	}
+
+	//もともとマイナスなら負の数に
+	if (fCaveTemp < 0.0f)
+		fCaveInHeight *= -1.0f;
 
 	//へこみ量反映
 	fCaveInHeight += m_TrunkHeight;
 
 	//杭の最大・最低高さを計算
-	const int nNumHalf = m_NumTrunk / EVENPARITY;
-	const float fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf - m_fEvenTrunkCorrHeight * 2.0f;
-	const float fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
+	CInt   nNumHalf = m_NumTrunk / EVENPARITY;
+	CFloat fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf - m_fEvenTrunkCorrHeight * 2.0f;
+	CFloat fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
 
 	//杭が抜けないように調整
 	if (fCaveInHeight < fMinHeight)		fCaveInHeight = fMinHeight;
@@ -162,29 +182,39 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 	//モデル配置
 	PutModel();
 
-	//パーティクル
-	D3DXVECTOR3 rot = INITD3DXVECTOR3;
-	float m_ScaleTex,world = 0.0f,side = 0.785f;
-	int RandNum;
+	//パーティクル放出方向（最初は下向き
+	float world = 0.0;
+	float side = 0.785f;
+	float PopPosY = SIZE_OF_1_SQUARE * 0.5f;
 
-	if (fCaveTemp > 0.0f){
-		world = -D3DX_PI;
-		side = -0.785f;
-	}
+	CInt NumEffect = 24;
+	for (int Cnt = 0; Cnt < NumEffect; Cnt++)
+	{
+		//生成するエフェクトの半数から反転
+		if (Cnt == NumEffect * 0.5f){
+			world = -D3DX_PI;
+			side *= -1.0f;
+			PopPosY *= -1.0f;
+		}
 
-	for (int Cnt = 0; Cnt < 24; Cnt++){
-		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(Initpos.x + (float)(rand() % (int)m_width - m_width * 0.5), Initpos.y, Initpos.z);
+		//向きを決める
+		D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, world + side);
+		if (rand() % 2 != 0) rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
 
-		RandNum = rand() % 2;
-		if (RandNum == 0)
-			rot = D3DXVECTOR3(0.0f,0.0f, world + side);
-		else
-			rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
+		//テクスチャの大小(ランダム)
+		CFloat ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
 
-		m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
-		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,CDrawState::ALPHA_BLEND_MODE::NORMAL);
-
-		rot = INITD3DXVECTOR3;
+		//エフェクト生成
+		Manager::EffectMgr()->ParticleCreate(
+			/*テクスチャ番号*/ m_nTex[RAND_TEX],
+			/*テクスチャ座標*/ D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), PopPosY, m_pos.z),
+			/*   スケール   */ D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f),
+			/*    カラー    */ Color{ 255,255,155,30 },
+			/*   種類設定   */ CParticle::TYPE::TYPE_FLOATUP,
+			/*   寿命設定   */ 300,
+			/*   向き設定   */ rot,
+			/* スケール拡縮 */ 16,
+			/*αブレンド設定*/ CDrawState::ALPHA_BLEND_MODE::NORMAL);
 	}
 }
 
@@ -197,12 +227,8 @@ void CPile::SetOld(float fCaveInHeight)
 	m_TrunkHeightOld = m_TrunkHeight;
 	m_TrunkHeight = fCaveInHeight;
 
-	m_pos = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight + m_fEvenTrunkCorrHeight, 0.0f);
+	m_pos    = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight    + m_fEvenTrunkCorrHeight, 0.0f);
 	m_posOld = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld + m_fEvenTrunkCorrHeight, 0.0f);
-
-	//D3DXVECTOR3 pos = m_pos;
-	//pos.z = -30.0f;
-	//Manager::EffectMgr()->EffectCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png"), pos, INIT_EFFECT_SCALE, INITCOLOR, 1);
 }
 
 //===============================
