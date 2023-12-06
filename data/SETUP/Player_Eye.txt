@@ -1,10 +1,10 @@
 SetUp3DFile
-boneDataSum{ 25
+boneDataSum{ 19
 	boneData{
 		idx 0
 		modelIdx Data\\MODEL\\Player_Eye\\Head.x
 		parentIdx -1
-		relativePos 0.00 7.50 0.00
+		relativePos 0.00 5.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	
@@ -21,7 +21,7 @@ boneDataSum{ 25
 		idx 2
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 1
-		relativePos 0.00 -4.00 0.00
+		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -45,7 +45,7 @@ boneDataSum{ 25
 		idx 5
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 4
-		relativePos 0.00 -4.00 0.00
+		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -62,14 +62,14 @@ boneDataSum{ 25
 		idx 7
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 0
-		relativePos 0.00 1.75 4.00
+		relativePos 2.00 1.75 3.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 8
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 7
-		relativePos 0.00 -4.00 0.00
+		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -86,14 +86,14 @@ boneDataSum{ 25
 		idx 10
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 0
-		relativePos 3.20 1.75 3.00
+		relativePos -2.00 1.75 3.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 11
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 10
-		relativePos 0.00 -4.00 0.00
+		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -110,14 +110,14 @@ boneDataSum{ 25
 		idx 13
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 0
-		relativePos -3.20 1.75 3.00
+		relativePos 2.00 1.75 -3.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 14
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 13
-		relativePos 0.00 -4.00 0.00
+		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -134,14 +134,14 @@ boneDataSum{ 25
 		idx 16
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 0
-		relativePos 0.00 1.75 -4.00
+		relativePos -2.00 1.75 -3.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 17
 		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
 		parentIdx 16
-		relativePos 0.00 -4.00 0.00
+		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
@@ -151,250 +151,2356 @@ boneDataSum{ 25
 		relativePos 0.00 -3.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
-	
-	
-	
-	boneData{
-		idx 19
-		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
-		parentIdx 0
-		relativePos 3.20 1.75 -3.00
-		relativeRot 0.00 0.00 0.00
-	}
-	boneData{
-		idx 20
-		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
-		parentIdx 19
-		relativePos 0.00 -4.00 0.00
-		relativeRot 0.00 0.00 0.00
-	}
-	boneData{
-		idx 21
-		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
-		parentIdx 20
-		relativePos 0.00 -3.00 0.00
-		relativeRot 0.00 0.00 0.00
-	}
-	
-	
-	
-	boneData{
-		idx 22
-		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
-		parentIdx 0
-		relativePos -3.20 1.75 -3.00
-		relativeRot 0.00 0.00 0.00
-	}
-	boneData{
-		idx 23
-		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
-		parentIdx 22
-		relativePos 0.00 -4.00 0.00
-		relativeRot 0.00 0.00 0.00
-	}
-	boneData{
-		idx 24
-		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
-		parentIdx 23
-		relativePos 0.00 -3.00 0.00
-		relativeRot 0.00 0.00 0.00
-	}
 }
 
 
 
-
-
-faceDataSum{ 8
+faceDataSum{ 96
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
 			boneIdx 1
-			vtxIdx 43
+			vtxIdx 2
 			texPos 0.00 0.00
 		}
 		vtx1{
 			boneIdx 1
-			vtxIdx 34
+			vtxIdx 5
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 33
+			boneIdx 2
+			vtxIdx 1
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
+			boneIdx 2
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 2
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 2
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 2
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 2
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 2
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
 			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 2
+			vtxIdx 16
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
 			boneIdx 1
-			vtxIdx 34
-			texPos 0.00 0.00
-		}
-		vtx1{
-			boneIdx 1
-			vtxIdx 36
-			texPos 1.00 0.00
-		}
-		vtx2{
-			boneIdx 0
 			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 2
+			vtxIdx 16
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 21
+			boneIdx 2
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 2
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 2
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 3
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 3
+			vtxIdx 4
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
-			boneIdx 1
-			vtxIdx 36
+			boneIdx 2
+			vtxIdx 5
 			texPos 0.00 0.00
 		}
 		vtx1{
-			boneIdx 1
-			vtxIdx 37
+			boneIdx 2
+			vtxIdx 7
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 21
+			boneIdx 3
+			vtxIdx 4
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 23
+			boneIdx 3
+			vtxIdx 6
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
-			boneIdx 1
-			vtxIdx 37
+			boneIdx 2
+			vtxIdx 7
 			texPos 0.00 0.00
 		}
 		vtx1{
-			boneIdx 1
-			vtxIdx 38
+			boneIdx 2
+			vtxIdx 9
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 23
+			boneIdx 3
+			vtxIdx 6
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 25
+			boneIdx 3
+			vtxIdx 8
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
-			boneIdx 1
-			vtxIdx 38
+			boneIdx 2
+			vtxIdx 9
 			texPos 0.00 0.00
 		}
 		vtx1{
-			boneIdx 1
-			vtxIdx 39
+			boneIdx 2
+			vtxIdx 11
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 25
+			boneIdx 3
+			vtxIdx 8
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 30
+			boneIdx 3
+			vtxIdx 10
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
-			boneIdx 1
-			vtxIdx 39
+			boneIdx 2
+			vtxIdx 11
 			texPos 0.00 0.00
 		}
 		vtx1{
-			boneIdx 1
-			vtxIdx 40
+			boneIdx 2
+			vtxIdx 13
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 30
+			boneIdx 3
+			vtxIdx 10
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 27
+			boneIdx 3
+			vtxIdx 12
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
-			boneIdx 1
-			vtxIdx 40
+			boneIdx 2
+			vtxIdx 13
 			texPos 0.00 0.00
 		}
 		vtx1{
-			boneIdx 1
-			vtxIdx 41
+			boneIdx 2
+			vtxIdx 15
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 27
+			boneIdx 3
+			vtxIdx 12
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 31
+			boneIdx 3
+			vtxIdx 14
 			texPos 1.00 1.00
 		}
 	}
 	faceData{
 		texIdx NONEDATA
-		col 255 255 255 255
+		col 52 178 168 255
 		vtx0{
-			boneIdx 1
-			vtxIdx 41
+			boneIdx 2
+			vtxIdx 15
 			texPos 0.00 0.00
 		}
 		vtx1{
-			boneIdx 1
-			vtxIdx 43
+			boneIdx 2
+			vtxIdx 17
 			texPos 1.00 0.00
 		}
 		vtx2{
-			boneIdx 0
-			vtxIdx 31
+			boneIdx 3
+			vtxIdx 14
 			texPos 0.00 1.00
 		}
 		vtx3{
-			boneIdx 0
-			vtxIdx 33
+			boneIdx 3
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 2
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 2
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 3
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 3
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 4
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 4
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 5
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 5
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 5
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 5
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 6
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 6
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 7
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 7
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 8
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 8
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 8
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 8
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 9
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 9
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 10
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 10
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 11
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 11
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 11
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 11
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 12
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 12
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 13
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 13
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 14
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 14
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 14
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 14
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 15
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 15
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 16
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 16
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 17
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 17
+			vtxIdx 1
+			texPos 1.00 1.00
+		}
+	}
+	
+	
+	
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 2
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 5
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 1
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 4
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 5
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 7
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 4
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 6
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 7
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 9
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 6
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 8
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 9
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 11
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 8
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 10
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 11
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 13
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 10
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 12
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 13
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 15
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 12
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 14
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 15
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 17
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 14
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 16
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 52 178 168 255
+		vtx0{
+			boneIdx 17
+			vtxIdx 17
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 17
+			vtxIdx 2
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 18
+			vtxIdx 16
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 18
+			vtxIdx 1
 			texPos 1.00 1.00
 		}
 	}
