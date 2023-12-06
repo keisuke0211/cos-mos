@@ -371,17 +371,42 @@ void CPlayer::UpdateInfo(void)
 	// ガイドテキスト
 	//----------------------------------------
 	bool isSwapGuide = false;
-	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) {
-		const int planet = Manager::StgEd()->GetPlanetIdx();
-		
-		if (planet == 0) {
-			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-				if (s_zoomUpCounter == 0) {
+	if (!s_bSwapAnim) {
+		if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) {
+			const int planet = Manager::StgEd()->GetPlanetIdx();
+
+			if (planet == 0) {
+				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+					if (s_zoomUpCounter == 0) {
+						if (++ms_guideCounter > 30)
+							ms_guideCounter = 30;
+						float rate = (float)ms_guideCounter / 30;
+						if (ms_bSwapEnd) {
+
+							if (ms_guideCounter == 1) {
+								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
+							}
+							RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+						}
+						else {
+							if (s_nSwapInterval == 0) {
+								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+									->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+									->SetZTest(false)
+									->SetBillboard(true);
+								isSwapGuide = true;
+							}
+						}
+					}
+				}
+				else if (Manager::StgEd()->GetType()[0].nStageIdx == 3) {
 					if (++ms_guideCounter > 30)
 						ms_guideCounter = 30;
 					float rate = (float)ms_guideCounter / 30;
-					if (ms_bSwapEnd) {
-						
+					if (CParts::GetDispNum() == 0) {
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 						}
@@ -391,34 +416,11 @@ void CPlayer::UpdateInfo(void)
 							->SetBillboard(true);
 					}
 					else {
-						if (s_nSwapInterval == 0) {
-							RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-								->SetZTest(false)
-								->SetBillboard(true);
-							isSwapGuide = true;
-						}
+						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+							->SetZTest(false)
+							->SetBillboard(true);
 					}
-				}
-			}
-			else if (Manager::StgEd()->GetType()[0].nStageIdx == 3) {
-				if (++ms_guideCounter > 30)
-					ms_guideCounter = 30;
-				float rate = (float)ms_guideCounter / 30;
-				if (CParts::GetDispNum() == 0) {
-					if (ms_guideCounter == 1) {
-						RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
-					}
-					RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-						->SetZTest(false)
-						->SetBillboard(true);
-				}
-				else {
-					RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
-						->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-						->SetZTest(false)
-						->SetBillboard(true);
 				}
 			}
 		}
@@ -851,6 +853,11 @@ void CPlayer::SwapAnimation(void)
 {
 	//インターバル減少
 	s_nSwapInterval--;
+
+	RNLib::Polygon2D().Put(PRIORITY_SWAP_CURTAIN)
+		->SetPos(INITPOS2D)
+		->SetSize(10000.0f, 10000.0f)
+		->SetCol(Color{ 0,0,0,100 });
 
 	for (int nCntPlayer = 0; nCntPlayer < NUM_PLAYER; nCntPlayer++)
 	{
