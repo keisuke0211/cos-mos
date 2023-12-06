@@ -30,7 +30,7 @@ static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 #define AMBIENT_SE_2_MAX (3)
 static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bubble.wav", 100, 700, 0.5f, 0.5f },
-	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 600, 0.5f, 0.5f },
+	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 900, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 800, 0.5f, 0.5f },
 };
 
