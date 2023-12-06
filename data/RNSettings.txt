@@ -5,6 +5,6 @@ windowHeight						720.00
 isFullScreen						0
 resolution							2.00
 #OtherOption
-modelOutLineAddDistanceInterval		0.00
-modelOutLineAddDistanceDelimiter	0
+modelOutLineAddDistanceInterval		0.10
+modelOutLineAddDistanceDelimiter	20
 END
