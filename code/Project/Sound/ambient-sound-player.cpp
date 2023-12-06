@@ -29,7 +29,7 @@ static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 };
 #define AMBIENT_SE_2_MAX (1)
 static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
-	{ "data\\SOUND\\SE\\AmbientSound\\bubblelong.wav", 100, 700, 0.5f, 0.5f },
+	{ "data\\SOUND\\SE\\AmbientSound\\subs.wav", 100, 500, 0.25f, 0.5f },
 };
 
 //****************************************
