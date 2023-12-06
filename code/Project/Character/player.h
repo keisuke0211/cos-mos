@@ -214,6 +214,7 @@ public:
 
 	//スワップ完了取得
 	static bool GetSwapEnd(void) { return ms_bSwapEnd; }
+	static bool GetSwapAnim(void) { return s_bSwapAnim; }
 
 	// Guideカウンター取得
 	static UShort GetGuideCounter(void) { return ms_guideCounter; }

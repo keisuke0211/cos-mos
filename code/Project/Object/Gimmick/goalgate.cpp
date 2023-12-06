@@ -117,19 +117,21 @@ void CGoalGate::Update(void)
 	RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
 		->SetCol(setCol);
 
-	if (!m_bCloseGate) {
-		const int planet = Manager::StgEd()->GetPlanetIdx();
-		if (planet == 0) {
-			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-				if (CPlayer::GetSwapEnd()) {
-					Pos3D putPos = m_pos;
-					putPos.y += (m_pos.y / fabsf(m_pos.y)) * 20.0f;
+	if (!CPlayer::GetSwapAnim()) {
+		if (!m_bCloseGate) {
+			const int planet = Manager::StgEd()->GetPlanetIdx();
+			if (planet == 0) {
+				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+					if (CPlayer::GetSwapEnd()) {
+						Pos3D putPos = m_pos;
+						putPos.y += (m_pos.y / fabsf(m_pos.y)) * 20.0f;
 
-					RNLib::Text3D().Put(PRIORITY_UI, "GOAL", CText::ALIGNMENT::CENTER, 0, CMatrix::ConvPosToMtx(putPos))
-						->SetSize(Size2D(8.0f, 8.0f))
-						->SetZTest(false)
-						->SetBillboard(true)
-						->SetCol(setCol);
+						RNLib::Text3D().Put(PRIORITY_UI, "GOAL", CText::ALIGNMENT::CENTER, 0, CMatrix::ConvPosToMtx(putPos))
+							->SetSize(Size2D(8.0f, 8.0f))
+							->SetZTest(false)
+							->SetBillboard(true)
+							->SetCol(setCol);
+					}
 				}
 			}
 		}

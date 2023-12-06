@@ -316,7 +316,7 @@ Mesh {
    0.750000;0.750000;0.750000;;
    0.100000;0.096100;0.039200;;
    TextureFilename {
-    "data\\TEXTURE\\gold_plane.jpg";
+    "data\\TEXTURE\\gold.jpg";
    }
   }
  }
