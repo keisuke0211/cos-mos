@@ -15,7 +15,7 @@
 #include "../UI/partsUI.h"
 #include "../UI/coinUI.h"
 #include "../System/BG-Editor.h"
-#include "../Sound/ambient-sound-player.h"
+#include "../Sound/stage-sound-player.h"
 #include "../resource.h"
 
 //================================================================================
@@ -127,12 +127,8 @@ void CMode_Game::Init(void) {
 	m_wallModelIdx[0] = RNLib::Model().Load("data\\MODEL\\Wall_Left.x");
 	m_wallModelIdx[1] = RNLib::Model().Load("data\\MODEL\\Wall_Right.x");
 
-	// BGM読み込み&再生
-	m_BGMIdx = RNLib::Sound().Load("data\\SOUND\\BGM\\STAGE1.wav");
-	m_BGMID = RNLib::Sound().Play(m_BGMIdx, CSound::CATEGORY::BGM, 1.0f, true);
-
 	// 環境音プレイヤーの開始処理
-	AmbientSoundPlayer::Start();
+	StageSoundPlayer::Start();
 }
 
 //========================================
@@ -141,9 +137,6 @@ void CMode_Game::Init(void) {
 //========================================
 void CMode_Game::Uninit(void) {
 	CMode::Uninit();
-
-	// 再生停止
-	RNLib::Sound().GetPlay(m_BGMID).Delete();
 
 	// プレイヤーを解放
 	if (s_pPlayer != NULL)	{
@@ -171,7 +164,7 @@ void CMode_Game::Uninit(void) {
 	}
 
 	// 環境音プレイヤーの終了処理
-	AmbientSoundPlayer::End();
+	StageSoundPlayer::End();
 }
 
 //========================================
@@ -182,7 +175,7 @@ void CMode_Game::Update(void) {
 	CMode::Update();
 
 	// 環境音プレイヤーの更新処理
-	AmbientSoundPlayer::Update();
+	StageSoundPlayer::Update();
 
 	if (CPlayer::GetZoomUpCounter() > 0) {
 		if (Manager::StgEd()->GetPlanetIdx() == 0) {

@@ -1,11 +1,11 @@
 //========================================
 // 
-// 環境音プレイヤー処理
+// ステージプレイヤー処理
 // Author:RIKU NISHIMURA
 // 
 //========================================
 #include "../../_RNLib/RNlib.h"
-#include "ambient-sound-player.h"
+#include "stage-sound-player.h"
 #include "../manager.h"
 
 //****************************************
@@ -25,6 +25,8 @@ struct AmbientSEInfo {
 #define AMBIENT_SE_1_MAX (2)
 #define AMBIENT_SE_1_LOOP_PATH "NONEDATA"
 #define AMBIENT_SE_1_LOOP_VOLUME (0.5f)
+#define BGM_1_PATH "data\\SOUND\\BGM\\STAGE1.wav"
+#define BGM_1_VOLUME (0.5f)
 static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bard.wav", 200, 500, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.5f, 0.5f },
@@ -32,9 +34,11 @@ static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 #define AMBIENT_SE_2_MAX (2)
 #define AMBIENT_SE_2_LOOP_PATH "data\\SOUND\\SE\\AmbientSound\\bubble.wav"
 #define AMBIENT_SE_2_LOOP_VOLUME (0.5f)
+#define BGM_2_PATH "data\\SOUND\\BGM\\STAGE2.wav"
+#define BGM_2_VOLUME (0.5f)
 static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 900, 0.5f, 0.5f },
-	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 800, 0.5f, 0.5f },
+	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 600, 0.25f, 0.25f },
 };
 
 //****************************************
@@ -45,11 +49,12 @@ static short ambientSE1Counter[AMBIENT_SE_1_MAX];
 static short ambientSE2Idxes[AMBIENT_SE_2_MAX];
 static short ambientSE2Counter[AMBIENT_SE_2_MAX];
 static short loopPlayID;
+static short BGMPlayID;
 
 //========================================
 // 初期化処理
 //========================================
-void AmbientSoundPlayer::Init(void) {
+void StageSoundPlayer::Init(void) {
 
 	// サウンドの読み込み&カウンター
 	for (int cnt = 0; cnt < AMBIENT_SE_1_MAX; cnt++) {
@@ -65,14 +70,14 @@ void AmbientSoundPlayer::Init(void) {
 //========================================
 // 終了処理
 //========================================
-void AmbientSoundPlayer::Uninit(void) {
+void StageSoundPlayer::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void AmbientSoundPlayer::Update(void) {
+void StageSoundPlayer::Update(void) {
 
 	const int planet = Manager::StgEd()->GetPlanetIdx();
 
@@ -97,25 +102,29 @@ void AmbientSoundPlayer::Update(void) {
 //========================================
 // 開始処理
 //========================================
-void AmbientSoundPlayer::Start(void) {
+void StageSoundPlayer::Start(void) {
 
 	const int planet = Manager::StgEd()->GetPlanetIdx();
 	if (planet == 0) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_1_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_1_LOOP_VOLUME, true);
+		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_1_PATH), CSound::CATEGORY::SE, BGM_1_VOLUME, true);
 	}
 	else if (planet == 1) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_2_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_2_LOOP_VOLUME, true);
+		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_2_PATH), CSound::CATEGORY::SE, BGM_2_VOLUME, true);
 	}
 	else {
 		loopPlayID = NONEDATA;
+		BGMPlayID = NONEDATA;
 	}
 }
 
 //========================================
 // 終了処理
 //========================================
-void AmbientSoundPlayer::End(void) {
+void StageSoundPlayer::End(void) {
 
 	// 再生オブジェクトの破棄
 	RNLib::Sound().GetPlay(loopPlayID).Delete();
+	RNLib::Sound().GetPlay(BGMPlayID).Delete();
 }

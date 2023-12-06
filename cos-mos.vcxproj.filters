@@ -282,7 +282,7 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D-manager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Sound\ambient-sound-player.cpp">
+    <ClCompile Include="code\Project\Sound\stage-sound-player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.cpp">
@@ -605,7 +605,7 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Sound\ambient-sound-player.h">
+    <ClInclude Include="code\Project\Sound\stage-sound-player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D-base.h">

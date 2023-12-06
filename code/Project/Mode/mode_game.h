@@ -163,6 +163,4 @@ private:
 	static Color m_BgColorUp, m_BgColorDown;
 	short m_wallModelIdx[2];
 	Pause m_Pause;
-	short m_BGMIdx;
-	UShort m_BGMID;
 };

@@ -5,7 +5,7 @@
 // 
 //========================================
 #include "System\words\object\font-object.h"
-#include "Sound/ambient-sound-player.h"
+#include "Sound/stage-sound-player.h"
 #include "main.h"
 #include "resource.h"
 
@@ -61,7 +61,7 @@ void Manager::Init(CMode::TYPE mode) {
 	CBlock::Load();
 
 	// 環境音プレイヤーの初期化処理
-	AmbientSoundPlayer::Init();
+	StageSoundPlayer::Init();
 
 	// 標準エフェクトの優先度設定
 	RNLib::StandardEffect3D().SetPriority(PRIORITY_EFFECT);
@@ -87,7 +87,7 @@ void Manager::Uninit(void) {
 	RNLib::Memory().Release(&m_subCamera);
 
 	// 環境音プレイヤーの終了処理
-	AmbientSoundPlayer::Uninit();
+	StageSoundPlayer::Uninit();
 }
 
 //========================================
