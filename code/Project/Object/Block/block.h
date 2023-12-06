@@ -38,6 +38,7 @@ public:
 		PALMTREE					 = 18,	// ヤシの木
 		TREE_EYES_BLOCK				 = 19,	// 三つ目のブロック
 		LEAF_BLOCK_NUTS              = 20,	// 草ブロック(木の実)
+		NUI_HOUSE_BLOCK              = 21,	// ヌイの家ブロック
 		MAX
 	};
 

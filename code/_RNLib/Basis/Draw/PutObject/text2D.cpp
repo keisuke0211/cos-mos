@@ -37,7 +37,7 @@ CText2D::~CText2D() {
 void CText2D::Init(void) {
 
 	// 実行モードであればデバッグ表示を行わない
-	m_debugLogLine = (RNSystem::GetMode() != RNSystem::MODE::EXECUTION);
+	m_isShowDebugLog = (RNSystem::GetMode() != RNSystem::MODE::EXECUTION);
 }
 
 //========================================
@@ -137,9 +137,6 @@ void CText2D::Update(void) {
 //========================================
 CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	if (!m_isShowDebugLog)
-		return NULL;
-
 	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)
@@ -150,6 +147,9 @@ CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, c
 // デバッグログ設置処理
 //========================================
 Pos2D CText2D::PutDebugLog(const char* string) {
+
+	if (!m_isShowDebugLog)
+		return INITPOS2D;
 
 	// 設置位置
 	Pos2D putPos = Pos2D(0.0f, 8.0f + m_debugLogLine * 16.0f);

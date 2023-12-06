@@ -39,8 +39,11 @@ public:
 	Pos3D&      GetPosV             (void)                   { return m_posV; }
 	Pos3D&      GetPosR             (void)                   { return m_posR; }
 	Rot3D&      GetRot              (void)                   { return m_rot; }
+	Scale2D&    GetScale2D          (void)                   { return m_scale; }
 	Vector3D    GetVec              (void)                   { return m_posR - m_posV; }
 	Vector3D    GetNor              (void)                   { Vector3D vec = GetVec(); return *D3DXVec3Normalize(&vec, &vec); }
+	Viewport    GetViewport         (void)                   { return m_MTInfo.viewport; }
+	float&      GetRadian           (void)                   { return m_radian; }
 	void        SetRadianGoal       (const float& goal)      { m_radianGoal = goal; }
 	void        SetVib              (const float& vibPower);
 	void        PivotToPosV         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = true; }
@@ -49,8 +52,8 @@ public:
 	void        SetDraw             (const bool& isDraw)     { m_isDraw = isDraw; }
 	bool&       GetDraw             (void)                   { return m_isDraw; }
 	void        SetBGCol            (const Color& col)       { m_BGCol = col; }
-	void        SetClipping         (const bool& isClipping) { m_isClipping = isClipping; }
-	bool&       GetClipping         (void)                   { return m_isClipping; }
+	void        SetIsClipping       (const bool& isClipping) { m_isClipping = isClipping; }
+	bool&       GetIsClipping       (void)                   { return m_isClipping; }
 	Texture&    GetTexture          (void)                   { return m_MTInfo.textures[0]; }
 	float&      GetMotionBlurPower  (void)                   { return m_motionBlur.power; }
 	void        SetMotionBlurPower  (const float& power)     { m_motionBlur.power = power; }
@@ -111,6 +114,7 @@ private:
 	Pos3D           m_posVib;	// êUìÆà íu
 	Rot3D           m_rot;
 	Vector3D        m_spin;
+	Scale2D         m_scale;
 	float           m_dist;
 	float           m_radian;
 	float           m_radianGoal;

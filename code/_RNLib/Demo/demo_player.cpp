@@ -103,7 +103,7 @@ void CDemoPlayer::Update(void) {
 		Pos3D posV = m_pos + Pos3D(0.0f, 10.0f, 0.0f);
 		Pos3D posR = posV + CGeometry::FindRotVec(m_rot);
 		m_camera->SetPosVAndPosR(posV, posR);
-		m_camera->SetClipping(ms_isCameraClipping);
+		m_camera->SetIsClipping(ms_isCameraClipping);
 	}
 
 	// ƒ‚ƒfƒ‹”z’u

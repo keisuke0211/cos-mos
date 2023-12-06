@@ -24,95 +24,64 @@ bool CMode_Title::s_bStageSelect = false;
 
 //========================================
 // コンストラクタ
-// Author:KEISUKE OTONO
 //========================================
 CMode_Title::CMode_Title(void) {
 
-	for (int nCnt = 0; nCnt < TEX_MAX; nCnt++)
-	{
+	for (int nCnt = 0; nCnt < TEX_MAX; nCnt++) {
 		m_BgPos[nCnt] = INITD3DXVECTOR3;
 		m_TexIdx[nCnt] = 0;
 	}
 
-	m_Anime[ANIME_PLAYER00].fDistance = 5.0f;
-	m_Anime[ANIME_PLAYER01].fDistance = 10.0f;
-	for (int nCnt = 0; nCnt < ANIME_MAX; nCnt++)
-	{
-		m_Anime[nCnt].InitPos = INITD3DXVECTOR3;
-		m_Anime[nCnt].TargetPos = INITD3DXVECTOR3;
-		m_Anime[nCnt].FormerPos = INITD3DXVECTOR3;
-		m_Anime[nCnt].nTime = 0;
-		m_Anime[nCnt].nTimeMax = rand() % (PLAYER_MOVE_TIME - (PLAYER_MOVE_TIME / 2) + 1) + PLAYER_MOVE_TIME / 2;
-	}
-
-	Title = TITLE_TITLE;
-	m_nSelect = 0;
-	m_nOldSelect = 0;
-	m_nPlanetIdx = 0;
-	m_nOldnPlanet = 0;
-	m_PlanetAngle = 0.0f;
-	m_nSelect = 0;
-	m_nOldSelect = 0;
-	m_PlanetType = NULL;
-	m_bBackMode = false;
-
-	m_RocketIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
-
-	m_Menu.pOperation = NULL;
-	m_Menu.pSetting = NULL;
-
+	Title              = TITLE_TITLE;
+	m_nSelect          = 0;
+	m_nOldSelect       = 0;
+	m_nPlanetIdx       = 0;
+	m_nOldnPlanet      = 0;
+	m_PlanetAngle      = 0.0f;
+	m_nSelect          = 0;
+	m_nOldSelect       = 0;
+	m_PlanetType       = NULL;
+	m_bBackMode        = false;
+	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
+	m_Menu.pOperation  = NULL;
+	m_Menu.pSetting    = NULL;
 	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
 
-	float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
-	float SE = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
-	m_Menu.nBGMVolume = BGM * VOLUME_MSX;
-	m_Menu.nSEVolume = SE * VOLUME_MSX;
-	m_Menu.nBGMOldVolume = BGM * VOLUME_MSX;
-	m_Menu.nSEOldVolume = SE * VOLUME_MSX;
-
-	m_player1 = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
-	m_player2 = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
+	{// 音量設定の初期化
+		float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
+		float SE  = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
+		m_Menu.nBGMVolume    = BGM * VOLUME_MSX;
+		m_Menu.nSEVolume     = SE * VOLUME_MSX;
+		m_Menu.nBGMOldVolume = BGM * VOLUME_MSX;
+		m_Menu.nSEOldVolume  = SE * VOLUME_MSX;
+	}
 }
 
 //========================================
 // デストラクタ
-// Author:KEISUKE OTONO
 //========================================
 CMode_Title::~CMode_Title(void) {
 
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-	{
-		if (m_TITLE[nCnt] != NULL)
-		{
+	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
+		if (m_TITLE[nCnt] != NULL) {
 			m_TITLE[nCnt]->Uninit();
 			m_TITLE[nCnt] = NULL;
 		}
-		if (m_TitleShadow[nCnt] != NULL)
-		{
+
+		if (m_TitleShadow[nCnt] != NULL) {
 			m_TitleShadow[nCnt]->Uninit();
 			m_TitleShadow[nCnt] = NULL;
 		}
 	}
 
-	if (m_PlanetType != NULL)
-	{
+	if (m_PlanetType != NULL) {
 		delete[] m_PlanetType;
 		m_PlanetType = NULL;
 	}
 
-	if (m_player1 != NULL) {
-		delete m_player1;
-		m_player1 = NULL;
-	}
-
-	if (m_player2 != NULL) {
-		delete m_player2;
-		m_player2 = NULL;
-	}
-
+	// テキストの破棄
 	TextRelease(TEXT_ALL);
 
-	// テキスト関連
 	if (m_Menu.pOperation != NULL) {
 		delete[] m_Menu.pOperation;
 		m_Menu.pOperation = NULL;
@@ -126,7 +95,6 @@ CMode_Title::~CMode_Title(void) {
 
 //========================================
 // 初期化処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::Init(void) {
 	CMode::Init();
@@ -135,60 +103,46 @@ void CMode_Title::Init(void) {
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// テキストの初期化
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)m_pMenu[nCnt] = { NULL };
-	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++)m_pSubMenu[nCnt] = { NULL };
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
+		m_pMenu[nCnt] = NULL;
+	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++) 
+		m_pSubMenu[nCnt] = NULL;
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
-		m_bMove[nCnt] = false; m_TITLE[nCnt] = NULL; m_TitleShadow[nCnt] = NULL;
+		m_bMove[nCnt] = false; 
+		m_TITLE[nCnt] = m_TitleShadow[nCnt] = NULL;
 	}
 
 	// テキスト読込
 	TextLoad();
 
 	// ステージ読込
-	StageLoad();
+	CreateStageSelectInfo();
 
-	if (s_bStageSelect)
-	{
+	if (s_bStageSelect) 
+	{// ステージ選択時、
 		SwapMode(TITLE_SELECT);
 		s_bStageSelect = false;
 	}
-	else if(!s_bStageSelect)
+	else
+	{// ステージ非選択時、
 		// モード設定
 		SwapMode(TITLE_TITLE);
-
-	m_player1->SetPos(D3DXVECTOR3(60.0f,10.0f,-30.0f));
-	m_player1->SetRot(D3DXVECTOR3(0.0f, 0.0f, 0.3f));
-
-	m_player2->SetPos(D3DXVECTOR3(80.0f,-28.0f,-30.0f));
-	m_player2->SetRot(D3DXVECTOR3(0.0f, 0.0f, -0.3f));
-
-	for (int nCnt = 0; nCnt < ANIME_MAX; nCnt++)
-	{
-		D3DXVECTOR3 pos = INITD3DXVECTOR3;
-		if (nCnt == ANIME_PLAYER00)	pos = m_player1->GetPos();
-		else if (nCnt == ANIME_PLAYER01)	pos = m_player2->GetPos();
-
-		m_Anime[nCnt].InitPos = pos;
-		m_Anime[nCnt].FormerPos = pos;
-
-		m_Anime[nCnt].TargetPos = m_Anime[nCnt].InitPos + CGeometry::GetRandomVec() * fRand() *m_Anime[nCnt].fDistance;
 	}
 
 	// テクスチャ
 	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
 	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
 
+	// 選択番号
 	m_nSelect = 0;
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
 	}
 
+	// テクスチャの読み込み
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Planet.png");
-
-	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 1);
 
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -202,21 +156,18 @@ void CMode_Title::Init(void) {
 
 //========================================
 // 終了処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::Uninit(void) {
 	CMode::Uninit();
-
-	TextRelease(TEXT_ALL);
 }
 
 //========================================
 // 更新処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::Update(void) {
 	CMode::Update();
 
+	// 背景の描画
 	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_BG], 0.0f, false)
 		->SetSize(1280.0f, 720.0f)
 		->SetCol(Color{ 255,255,255,255 })
@@ -234,8 +185,6 @@ void CMode_Title::Update(void) {
 
 	if (Title <= TITLE_MENU)
 	{
-		TitleAnime();
-
 		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_PLANET], m_PlanetAngle, false)
 			->SetSize(1400.0f, 1400.0f)
 			->SetCol(Color{ 255,255,255,255 })
@@ -367,7 +316,6 @@ void CMode_Title::Update(void) {
 
 //========================================
 // 更新処理(状態)
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::ProcessState(const PROCESS process) {
 	switch ((STATE)m_state) {
@@ -394,40 +342,7 @@ void CMode_Title::ProcessState(const PROCESS process) {
 }
 
 //========================================
-// タイトルアニメーション
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Title::TitleAnime(void)
-{
-	for (int nCnt = 0; nCnt < ANIME_MAX; nCnt++)
-	{
-		D3DXVECTOR3 pos = INITD3DXVECTOR3;
-		if (nCnt == ANIME_PLAYER00)	pos = m_player1->GetPos();
-		else if (nCnt == ANIME_PLAYER01)	pos = m_player2->GetPos();
-
-		if (++m_Anime[nCnt].nTime >= m_Anime[nCnt].nTimeMax) {
-			m_Anime[nCnt].nTime = 0;
-			m_Anime[nCnt].nTimeMax = rand() % (PLAYER_MOVE_TIME - (PLAYER_MOVE_TIME/2) + 1) + PLAYER_MOVE_TIME/2;
-
-			pos = m_Anime[nCnt].TargetPos;
-			m_Anime[nCnt].FormerPos = pos;
-
-			m_Anime[nCnt].TargetPos = m_Anime[nCnt].InitPos + CGeometry::GetRandomVec() * (m_Anime[nCnt].fDistance * (0.5f + fRand() * 0.5f));
-		}
-
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Anime[nCnt].nTime, m_Anime[nCnt].nTimeMax);
-
-		// 現在位置 = 目標位置 * 割合 + 元の位置 * 割合の逆数
-		pos = m_Anime[nCnt].TargetPos * rate + m_Anime[nCnt].FormerPos * (1.0f - rate);
-
-		if (nCnt == ANIME_PLAYER00)	m_player1->SetPos(pos);
-		else if (nCnt == ANIME_PLAYER01)	m_player2->SetPos(pos);
-	}
-}
-
-//========================================
 // タイトルテキストアニメーション
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::TextAnime(void)
 {
@@ -465,7 +380,6 @@ void CMode_Title::TextAnime(void)
 
 //========================================
 // メニュー生成
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::MenuCreate(void)
 {
@@ -501,7 +415,6 @@ void CMode_Title::MenuCreate(void)
 
 //========================================
 // サブテキストの生成
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::SubTextCreate(void)
 {
@@ -563,7 +476,6 @@ void CMode_Title::SubTextCreate(void)
 
 //========================================
 // メニュー演出
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::MenuAnime(void)
 {
@@ -731,7 +643,6 @@ void CMode_Title::MenuAnime(void)
 
 //========================================
 // メニュー
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::MenuSelect(void)
 {
@@ -925,7 +836,6 @@ void CMode_Title::MenuSelect(void)
 
 //========================================
 // 設定処理
-// Author:KEISUKE OTONO
 //========================================
 void CMode_Title::SettingMenu(void)
 {
@@ -933,20 +843,20 @@ void CMode_Title::SettingMenu(void)
 }
 
 //========================================
-// ステージ選択の生成
-// Author:KEISUKE OTONO
+// ステージ選択情報の生成
 //========================================
-void CMode_Title::StageLoad(void)
-{
+void CMode_Title::CreateStageSelectInfo(void) {
+
 	Manager::StgEd()->Uninit();
 	Manager::StgEd()->FileLoad();
+	
+	// 惑星最大数取得
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 
 	m_PlanetType = new PlanetType[nPlanetMax];
 	m_PlanetAngle = 0.0f;
 
-	for (int nCnt = 0; nCnt < nPlanetMax; nCnt++)
-	{
+	for (int nCnt = 0; nCnt < nPlanetMax; nCnt++) {
 		char *aTexFile = Manager::StgEd()->GetType()[nCnt].aTexFile;
 		char *aStgName = Manager::StgEd()->GetType()[nCnt].aName;
 
@@ -957,86 +867,67 @@ void CMode_Title::StageLoad(void)
 
 //========================================
 // ステージ選択
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::StageSelect(void)
-{
+void CMode_Title::StageSelect(void) {
+
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
-	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-	int nChoiceTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\mark_smiley_000.png");
-	int nNoChoiceTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Circle_005.png");
-	int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
-	int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
-
-	int nTexIdx = 0;
-
-	// 惑星
-	RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-		->SetOutLineIdx(true);
-
-	// 矢印
-	if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0))
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(400.0f, 550.0f, 0.0), 0.0f, false)
-		->SetSize(100.0f, 100.0f)
-		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nPrevTex);
-
-	if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1))
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(880.0f, 550.0f, 0.0), 0.0f, false)
-		->SetSize(100.0f, 100.0f)
-		->SetCol(Color{ 50,255,0,255 })
-		->SetTex(nNextTex);
-
-	// 選択アイコン
-	for (int nCnt = 0; nCnt < nStageMax; nCnt++)
-	{
-		if (nCnt == m_nSelect)
-		{
-			nTexIdx = nChoiceTex;
-		}
-		else
-		{
-			nTexIdx = nNoChoiceTex;
-		}
-		D3DXVECTOR3 pos = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 680, 1.0f);
-		pos.x += ((nStageMax * -0.5f) + nCnt + 0.5f) * 50;
-
-		RNLib::Polygon2D().Put(PRIORITY_UI, pos, 0.0f, false)
-			->SetSize(40.0f, 40.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(nTexIdx);
+	int nStageMax  = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+	 
+	//----------------------------------------
+	// 描画処理
+	//----------------------------------------
+	{// 惑星の描画
+		RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
+			->SetOutLineIdx(5);
 	}
 
+	{// 矢印の描画
+		if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0)) {
+			// 矢印の描画(左)
+
+		}
+
+		if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1)) {
+			// 矢印の描画(右)
+
+		}
+	}
+
+	// 選択アイコンの処理
+	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
+		if (nCnt == m_nSelect) {
+			// 選択時
+		}
+		else {
+			// 非選択時
+		}
+	}
+
+	//----------------------------------------
+	// ステージ選択処理
+	//----------------------------------------
 	bool bInput = false;
-	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
-	{
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK)) {
 		TextRelease(TEXT_MENU);
 		SwapMode(TITLE_MENU_ANIME);
 		return;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
-	{
+	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
 		m_nSelect--;
 		bInput = true;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
-	{
+	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
 		m_nSelect++;
 		bInput = true;
 	}
 
-	if (bInput)
-	{
-		if (m_nSelect < 0 && m_nPlanetIdx != 0)
-		{
+	if (bInput) {
+		if (m_nSelect < 0 && m_nPlanetIdx != 0) {
 			m_nPlanetIdx--;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 			m_nSelect = nStageMax - 1;
-			
 		}
-		else if (m_nSelect >= nStageMax && m_nPlanetIdx != nPlanetMax-1)
-		{
+		else if (m_nSelect >= nStageMax && m_nPlanetIdx != nPlanetMax-1) {
 			m_nPlanetIdx++;
 			m_nSelect = 0;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
@@ -1044,8 +935,7 @@ void CMode_Title::StageSelect(void)
 
 		IntControl(&m_nSelect, nStageMax - 1, 0);
 
-		if (m_nSelect != m_nOldSelect)
-		{
+		if (m_nSelect != m_nOldSelect) {
 			m_nOldSelect = m_nSelect;
 
 			m_pMenu[1]->Uninit();
@@ -1055,8 +945,8 @@ void CMode_Title::StageSelect(void)
 				CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
 				Manager::StgEd()->GetType()[m_nPlanetIdx].StageType[m_nSelect].aName, CFont::FONT_ROND_B, &pFont);
 		}
-		if (m_nPlanetIdx != m_nOldnPlanet)
-		{
+
+		if (m_nPlanetIdx != m_nOldnPlanet) {
 			m_nOldnPlanet = m_nPlanetIdx;
 			m_PlanetAngle = 0.0f;
 
@@ -1073,10 +963,8 @@ void CMode_Title::StageSelect(void)
 
 //========================================
 // モード切替
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::SwapMode(TITLE aTitle)
-{
+void CMode_Title::SwapMode(TITLE aTitle) {
 	Title = aTitle;
 
 	switch (aTitle)
@@ -1156,10 +1044,8 @@ void CMode_Title::SwapMode(TITLE aTitle)
 
 //========================================
 // テキスト読込
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::TextLoad(void)
-{
+void CMode_Title::TextLoad(void) {
 	int nCntPlanet = 0;
 	char aDataSearch[TXT_MAX];	// データ検索用
 
@@ -1251,10 +1137,8 @@ void CMode_Title::TextLoad(void)
 
 //========================================
 // テキスト削除
-// Author:KEISUKE OTONO
 //========================================
-void CMode_Title::TextRelease(TEXT type)
-{
+void CMode_Title::TextRelease(TEXT type) {
 	// タイトル
 	if (type == TEXT_TITLE || type == TEXT_ALL) {
 		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++){

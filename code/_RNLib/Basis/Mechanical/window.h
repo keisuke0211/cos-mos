@@ -53,13 +53,14 @@ public:
 	D3DXVECTOR3       GetPos       (void) { return m_pos;         }
 	float             GetWidth     (void) { return m_fWidth;      }
 	float             GetHeight    (void) { return m_fHeight;     }
+	Scale2D           GetScale     (void) { return Pos2D(m_fWidth, m_fHeight); }
 	float             GetCenterX   (void) { return m_fCenterX;    }
 	float             GetCenterY   (void) { return m_fCenterY;    }
 	Pos2D             GetCenterPos (void) { return Pos2D(m_fCenterX, m_fCenterY); }
 	float             GetAreaWidth (void) { return m_fAreaWidth;  }
 	float             GetAreaHeight(void) { return m_fAreaHeight; }
 	float             GetResolution(void) { return m_fResolution; }
-	Device& GetD3DDevice (void) { return m_pD3DDevice;  }
+	Device&           GetD3DDevice (void) { return m_pD3DDevice;  }
 	HWND              GetHandle    (void) { return m_hWnd;        }
 
 private:
