@@ -48,9 +48,9 @@ public:
 
 	bool GetStartGate(void) { return m_bStartGate; }
 
-	static void EntrySub(void) { m_numEntry--; }
+	static void EntrySub(void) { s_numEntry--; }
 
-	static void ResetEtr(void) { m_numEntry = 0; }
+	static void ResetEtr(void) { s_numEntry = 0; }
 
 protected:
 
@@ -59,21 +59,27 @@ private:
 	void StateUpdate(void);
 	void ColUpdate(void);
 	void CountRate(float *CountRateX, float *CountRateY,float *CountRateZ);
+	void EscapeGuide(void);
 
 	//========== [[[ 変数宣言 ]]]
 	STATE m_state;							//種類
 	RAINBOW m_Rainbow;						//色状態
 	Color m_col;							//色
 	Color m_RainbowCol[(int)RAINBOW::MAX];	//色
-	int m_modelIdx;							//モデル番号
-	int m_TexIdx[2];						//テクスチャ番号
+	static int s_modelIdx;					//モデル番号
+	static int s_TexIdx[2];					//テクスチャ番号
 	Scale3D m_scale;						//拡縮
 	int		m_nCnt;							//カウント
 	bool	m_bEntry;						//入ったかどうか
 	bool	m_bScale;						//拡大するか縮小するか
 	int		m_nCntEtrX,m_nCntEtrY;			//XYの個別カウント
-	static int m_num;
-	static int m_numEntry;
+	static int s_num;
+	static int s_numEntry;
 	bool	m_bStartGate;
 	bool	m_bCloseGate;
+
+	static const int ESCAPE_GUIDE_POPUP_TIME = 60;
+	static int s_nEscapeGuideTexID; // 脱出アイコンのテクスチャID
+	int m_nEntryNo;      // エントリーNo
+	int m_nEntryCounter; // 入ってからの時間カウンター
 };

@@ -14,8 +14,12 @@
 #define MAX_COLOR		(200)						//最大カラー値
 #define ADDSUB_COLOR	(10)						//和差カラー値
 
-int CGoalGate::m_num = 0;
-int CGoalGate::m_numEntry = 0;
+int CGoalGate::s_num = 0;
+int CGoalGate::s_numEntry = 0;
+int CGoalGate::s_modelIdx = NONEDATA;
+int CGoalGate::s_TexIdx[2] = {NONEDATA, NONEDATA};
+int CGoalGate::s_nEscapeGuideTexID = NONEDATA;
+
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CGoalGateクラスのメンバ関数
@@ -39,21 +43,24 @@ CGoalGate::CGoalGate(void) {
 	m_bScale = false;
 	m_col = Color{ 200,0,0,255 };
 	m_Rainbow = RAINBOW::RED;
-	m_num++;
+	s_num++;
 	m_bStartGate = false;
 	m_bCloseGate = false;
+	m_nEntryNo = NONEDATA;
+	m_nEntryCounter = 0;
 
 	//モデルとテクスチャ
-	m_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
-	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
-	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
+	if(s_modelIdx			== NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
+	if(s_TexIdx[0]			== NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
+	if(s_TexIdx[1]			== NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
+	if(s_nEscapeGuideTexID	== NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
 }
 
 //========================================
 // デストラクタ
 //========================================
 CGoalGate::~CGoalGate(void) {
-	m_num--;
+	s_num--;
 }
 
 //========================================
@@ -62,9 +69,9 @@ CGoalGate::~CGoalGate(void) {
 //========================================
 void CGoalGate::Init(void) {
 
-	if ((m_numEntry % 2) != 0)
+	if ((s_numEntry % 2) != 0)
 	{
-		m_numEntry = 0;
+		s_numEntry = 0;
 	}
 
 	m_state = STATE::SMALL;
@@ -92,9 +99,9 @@ void CGoalGate::Uninit(void) {
 //========================================
 void CGoalGate::Update(void)
 {
-
 	StateUpdate();
 	ColUpdate();
+	EscapeGuide();
 
 	float fCountRateX, fCountRateY, fCountRateZ;
 	CountRate(&fCountRateX, &fCountRateY,&fCountRateZ);
@@ -107,7 +114,7 @@ void CGoalGate::Update(void)
 	if (setCol.a > 255)setCol.a = 255;
 
 	//モデル配置
-	RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
+	RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
 		->SetCol(setCol);
 
 	if (!m_bCloseGate) {
@@ -116,7 +123,7 @@ void CGoalGate::Update(void)
 			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
 				if (CPlayer::GetSwapEnd()) {
 					Pos3D putPos = m_pos;
-					putPos.y += (m_pos.y / fabsf(m_pos.y)) * 32.0f;
+					putPos.y += (m_pos.y / fabsf(m_pos.y)) * 20.0f;
 
 					RNLib::Text3D().Put(PRIORITY_UI, "GOAL", CText::ALIGNMENT::CENTER, 0, CMatrix::ConvPosToMtx(putPos))
 						->SetSize(Size2D(8.0f, 8.0f))
@@ -151,7 +158,7 @@ void CGoalGate::StateUpdate(void)
 			m_rot.z -= 0.05f;
 	}
 
-	if (m_num == m_numEntry || m_bCloseGate == true)
+	if (s_num == s_numEntry || m_bCloseGate == true)
 	{
 		m_state = STATE::MAX;
 
@@ -168,8 +175,8 @@ void CGoalGate::StateUpdate(void)
 		{
 			if (!m_bStartGate)
 			{
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, m_rot);
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z + D3DX_PI));
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, m_rot);
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z + D3DX_PI));
 			}
 
 			m_nCnt--;
@@ -180,12 +187,12 @@ void CGoalGate::StateUpdate(void)
 
 			if (m_bStartGate == false)
 			{
-				m_numEntry--;
+				s_numEntry--;
 			}
 
 			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 			{
-				Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, m_RainbowCol[rand() % 6]);
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, m_RainbowCol[rand() % 6]);
 			}
 
 			Delete();
@@ -318,6 +325,50 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRate
 
 	*CountRateZ = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 }
+
+//========================================
+// 脱出ガイド表示処理
+// Author:HIRASAWA SHION
+//========================================
+void CGoalGate::EscapeGuide(void)
+{
+	//入っている
+	if (0 <= m_nEntryNo && m_nEntryNo < s_numEntry)
+	{
+		//表示時間になった
+		if (++m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME)
+		{
+			//表示時間×２の時間になったら、表示時間に直す
+			if (m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME * 2)
+				m_nEntryCounter = ESCAPE_GUIDE_POPUP_TIME;
+
+			//テクスチャ切り替え判定（int型
+			//この判定を使ってテクスチャアニメーションを行う
+			const int IsChange = m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME * 1.5f;
+			const float LeftTexU = 0.5f * IsChange;
+			const float size = 16.0f;
+
+			//配置座標（ゲートの座標を使って、その座標より上下どちらに置くか計算
+			Pos3D putPos = m_pos;
+			putPos.y += (m_pos.y / fabsf(m_pos.y)) * 38.0f;
+
+			//ポリゴン配置
+			RNLib::Polygon3D().Put(PRIORITY_EFFECT, putPos, INITPOS3D)
+				->SetSize(size, size * 2.0f)
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetTexUV(s_nEscapeGuideTexID,
+						   Pos2D(LeftTexU, 0.0f), Pos2D(LeftTexU + 0.5f, 0.0f),
+						   Pos2D(LeftTexU, 1.0f), Pos2D(LeftTexU + 0.5f, 1.0f));
+		}
+	}
+	else
+	{//誰も入っていない
+		m_nEntryCounter = 0;   // カウンタークリア
+		m_nEntryNo = NONEDATA; // エントリーNoクリア
+	}
+}
+
 //========================================
 // エントリー設定処理
 // Author:RYUKI FUJIWARA
@@ -327,13 +378,13 @@ void CGoalGate::SetEntry(bool bEntry)
 	m_bEntry = bEntry;
 
 	if (bEntry == true) {
-		m_numEntry++;
+		m_nEntryNo = s_numEntry++;
 		m_nCntEtrX = ETR_CNT;
 		m_nCntEtrY = ETR_CNT * 0.5;
 
 		for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 		{
-			Manager::EffectMgr()->ParticleCreate(m_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+			Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
 		}
 	}
 }

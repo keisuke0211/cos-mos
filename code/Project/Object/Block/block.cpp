@@ -33,6 +33,7 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"NONEDATA",
 	"data\\MODEL\\Three-eyes_block.x",
 	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x",
+	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternA.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
