@@ -22,25 +22,19 @@ class CMode_Title :public CMode {
 public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
-	static const int WORDS_MAX = 7;				// 文字の最大数
-	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
-	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
+	static const int WORDS_MAX         = 7;		// 文字の最大数
+	static const int FONT_TEXT_MAX     = 10;	// テキストの最大数
+	static const int PAUSE_LEFT_ANIME  = 15;	// 画面左のアニメーション時間
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
-	static const int VOLUME_MSX = 20;			// サウンドの最大値
-	static const int COOLDOWN = 20;				// クールダウン
+	static const int VOLUME_MSX        = 20;	// サウンドの最大値
+	static const int COOLDOWN          = 20;	// クールダウン
 
 
-	static const int PLAYER_MOVE_TIME = 120;	// プレイヤーの移動時間
-
-
-	// *** 列挙型 ***
+	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
 		NONE,
 	};
-
-	// タイトルモード
-	enum TITLE
-	{
+	enum TITLE {
 		TITLE_TITLE = 0,	// タイトル
 		TITLE_OUTSET,		// 演出終了
 		TITLE_MENU_ANIME,	// メニュー演出
@@ -50,7 +44,8 @@ public:
 		TITLE_MAX
 	};	
 
-	// *** 関数 ***
+	//========== [[[ 関数宣言 ]]]
+	static void SetSelect(bool bSelect) { s_bStageSelect = bSelect; }
 	CMode_Title();
 	~CMode_Title();
 	void  Init(void);
@@ -58,12 +53,8 @@ public:
 	void  Update(void);
 	void  ProcessState(const PROCESS process);
 
-	/*　タイトルモード	*/static void SetSelect(bool bSelect) { s_bStageSelect = bSelect; }
-
 private:
-	// *** 列挙型 ***
-	
-	// メニュー
+	//========== [[[ 列挙型定義 ]]]
 	enum MENU{
 		MENU_GAME = 0,	// ゲーム
 		MENU_CONTROLLER,// 操作方法
@@ -71,22 +62,11 @@ private:
 		MENU_END,		// 終了
 		MENU_MAX
 	};
-
-	// アニメーション
-	enum ANIME {
-		ANIME_PLAYER00 = 0,	// プレイヤー0
-		ANIME_PLAYER01,		// プレイヤー１
-		ANIME_MAX
-	};
-
-	// テクスチャ
 	enum TEX{
 		TEX_BG = 0,		// 背景
 		TEX_PLANET,		// 惑星
 		TEX_MAX
 	};
-
-	// 操作方法
 	enum CONTROLLER {
 		INPUT_TITLE = 0,// タイトル
 		INPUT_MOVE,		// 移動
@@ -96,8 +76,6 @@ private:
 		INPUT_BACK,		// 戻る
 		INPUT_MAX
 	};
-
-	// 設定
 	enum SETTING {
 		SETTING_SCREEN = 1,	// フルスクリーン
 		SETTING_BGM ,		// BGM
@@ -107,8 +85,6 @@ private:
 		SETTING_SE_TEXT,
 		SETTING_MAX
 	};
-
-	// テキスト
 	enum TEXT {
 		TEXT_TITLE = 0,	// タイトル
 		TEXT_MENU,		// メニュー
@@ -117,22 +93,11 @@ private:
 		TEXT_MAX
 	};
 
-	// *** 構造体 ***
-
+	//========== [[[ 構造体定義 ]]]
 	// ステージ種類情報
 	struct PlanetType{
 		int nModel;				// モデル
 		char Text[TXT_MAX];		// ステージ名
-	};
-
-	// アニメーション情報
-	struct Anime {
-		D3DXVECTOR3 InitPos;	// 初期位置
-		D3DXVECTOR3 TargetPos;	// 目標位置
-		D3DXVECTOR3 FormerPos;	// 元の位置
-		float fDistance;		// 距離
-		int nTime;				// 時間
-		int nTimeMax;			// 時間の最大値
 	};
 
 	// 操作方法のテキスト情報
@@ -184,7 +149,6 @@ private:
 	};
 
 	// *** 関数 ***
-	/* タイトルアニメーション	*/void TitleAnime(void);
 	/* テキストの読込			*/void TextLoad(void);
 	/* 設定処理					*/void SettingMenu(void);
 	/* テキストアニメーション	*/void TextAnime(void);
@@ -218,7 +182,4 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
-	Anime m_Anime[ANIME_MAX];
-	CDoll3D *m_player1;
-	CDoll3D *m_player2;
 };

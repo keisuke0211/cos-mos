@@ -113,7 +113,7 @@ void CDrawMgr::StartDraw(Device& device) {
 
 	// [[[ スクリーン描画 ]]]
 	CCamera::StartRenderingScreen(device);
-	Draw(device, NONEDATA, false, true);
+	Draw(device, NULL, true);
 }
 
 //========================================
@@ -137,7 +137,7 @@ void CDrawMgr::EndDraw(Device& device) {
 			if (!camera->GetDraw())
 				continue;
 			camera->StartRendering(device);
-			Draw(device, camera->GetID(), camera->GetClipping(), false);
+			Draw(device, camera, false);
 			camera->EndRendering(device);
 			camera->SetDraw(false);
 		}
@@ -369,7 +369,7 @@ CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mt
 //========================================
 // 描画処理
 //========================================
-void CDrawMgr::Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
+void CDrawMgr::Draw(Device& device, CCamera* camera, const bool& isOnScreen) {
 
 	// ビューマトリックスを取得
 	Matrix viewMtx;
@@ -377,17 +377,23 @@ void CDrawMgr::Draw(Device& device, const short& cameraID, const bool& isCameraC
 
 	// 描画していく
 	if (isOnScreen) {
-		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSumScreen, viewMtx);
+		ExecutionDraw(device, camera, ms_drawInfoSumScreen, viewMtx);
 	}
 	else {
-		ExecutionDraw(device, cameraID, isCameraClipping, ms_drawInfoSum, viewMtx);
+		ExecutionDraw(device, camera, ms_drawInfoSum, viewMtx);
 	}
 }
 
 //========================================
 // 描画実行処理
 //========================================
-void CDrawMgr::ExecutionDraw(Device& device, const short& cameraID, const bool& isCameraClipping, CDrawInfoSum*& drawInfo, Matrix& viewMtx) {
+void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx) {
+
+	short   cameraID         = camera == NULL ? NONEDATA : camera->GetID();
+	bool    isCameraClipping = camera == NULL ? false : camera->GetIsClipping();
+	Pos3D   cameraPosV       = camera == NULL ? Pos3D(0.0f, 0.0f, 0.0f) : camera->GetPosV();
+	Pos3D   cameraPosR       = camera == NULL ? Pos3D(0.0f, 0.0f, 1.0f) : camera->GetPosR();
+	Scale2D cameraScale      = camera == NULL ? RNLib::Window().GetScale() : camera->GetScale2D();
 
 	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
 		//----------------------------------------
@@ -402,6 +408,9 @@ void CDrawMgr::ExecutionDraw(Device& device, const short& cameraID, const bool& 
 			if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != NONEDATA || isCameraClipping)
 				if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != cameraID)
 					continue;
+			
+			/*if (!CHitTest::XYZ::InPointToCameraView(CMatrix::ConvMtxToPos(drawInfo[cntPriority].m_model[cntModel]->m_mtx), cameraPosV, cameraPosR, cameraScale.x, cameraScale.y, D3DXToRadian(45.0f)))
+				continue;*/
 
 			// 本体のワールドマトリックスの設定
 			device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_model[cntModel]->m_mtx);

@@ -1,0 +1,402 @@
+SetUp3DFile
+boneDataSum{ 25
+	boneData{
+		idx 0
+		modelIdx Data\\MODEL\\Player_Eye\\Head.x
+		parentIdx -1
+		relativePos 0.00 7.50 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 1
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos 5.00 1.75 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 2
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 1
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 3
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 2
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 4
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos -5.00 1.75 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 5
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 4
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 6
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 5
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 7
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos 0.00 1.75 4.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 8
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 7
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 9
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 8
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 10
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos 3.20 1.75 3.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 11
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 10
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 12
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 11
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 13
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos -3.20 1.75 3.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 14
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 13
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 15
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 14
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 16
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos 0.00 1.75 -4.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 17
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 16
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 18
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 17
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 19
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos 3.20 1.75 -3.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 20
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 19
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 21
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 20
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	
+	
+	boneData{
+		idx 22
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 0
+		relativePos -3.20 1.75 -3.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 23
+		modelIdx Data\\MODEL\\Player_Eye\\Limb.x
+		parentIdx 22
+		relativePos 0.00 -4.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 24
+		modelIdx Data\\MODEL\\Player_Eye\\TipOfLimb.x
+		parentIdx 23
+		relativePos 0.00 -3.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+}
+
+
+
+
+
+faceDataSum{ 8
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 43
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 34
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 33
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 17
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 34
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 36
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 17
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 21
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 36
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 37
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 21
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 23
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 37
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 38
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 23
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 25
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 38
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 39
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 25
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 30
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 39
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 40
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 30
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 27
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 40
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 41
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 27
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 31
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 41
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 43
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 31
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 33
+			texPos 1.00 1.00
+		}
+	}
+}
+END

@@ -72,3 +72,35 @@ bool CHitTest::XZ::OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targe
 
 	return false;
 }
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| [公開]当たり判定クラスのメンバ関数(三次元空間)
+//----------|---------------------------------------------------------------------
+//================================================================================
+
+//========================================
+// [静的]球がカメラの描画範囲内にあるかどうか判定
+//========================================
+bool CHitTest::XYZ::InPointToCameraView(const D3DXVECTOR3& point, const D3DXVECTOR3& cameraPosition, const D3DXVECTOR3& cameraLookAt, float cameraWidth, float cameraHeight, float fov)
+{
+    // Calculate the view matrix
+    D3DXMATRIX viewMatrix;
+    D3DXMatrixLookAtLH(&viewMatrix, &cameraPosition, &cameraLookAt, &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+
+    // Calculate the projection matrix
+    D3DXMATRIX projectionMatrix;
+    D3DXMatrixPerspectiveFovLH(&projectionMatrix, fov, cameraWidth / cameraHeight, 0.1f, 1000.0f);
+
+    // Combine view and projection matrices
+    D3DXMATRIX viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+    // Transform the point to clip space
+    D3DXVECTOR4 clipSpace;
+    D3DXVec3Transform(&clipSpace, &point, &viewProjectionMatrix);
+
+    // Check if the point is within the clip space boundaries
+    return (clipSpace.x >= -1.0f && clipSpace.x <= 1.0f &&
+        clipSpace.y >= -1.0f && clipSpace.y <= 1.0f &&
+        clipSpace.z >= 0.0f && clipSpace.z <= 1.0f);
+}

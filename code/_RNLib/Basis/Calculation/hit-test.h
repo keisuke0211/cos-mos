@@ -24,4 +24,8 @@ public:
 	public:
 		static bool OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targetPos, const Scale2D& targetScale);
 	};
+	class XYZ {
+	public:
+		static bool InPointToCameraView(const D3DXVECTOR3& point, const D3DXVECTOR3& cameraPosition, const D3DXVECTOR3& cameraLookAt, float cameraWidth, float cameraHeight, float fov);
+	};
 };
