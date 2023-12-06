@@ -9,6 +9,8 @@
 #include "Spike.h"
 #include "../../main.h"
 
+#define MAX_COUNT (30 + (rand() % 30))	//カウント
+#define RAND_TEX  (rand() % 2)			//テクスチャランダム
 //========================================
 // コンストラクタ
 //========================================
@@ -22,6 +24,10 @@ CSpike::CSpike(void)
 
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Spike.x");
+
+	m_nCnt = MAX_COUNT;
+	m_nTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Bubble.png");
+	m_nTex[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 }
 
 //========================================
@@ -59,6 +65,16 @@ void CSpike::Update(void)
 	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot, false)
 		->SetOutLineIdx(true)
 		->SetCol(m_color);
+
+	if (m_nCnt > 0)
+		m_nCnt--;
+	else
+	{
+		m_nCnt = MAX_COUNT;
+		m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
+		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y, m_pos.z);
+		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos,D3DXVECTOR3(m_ScaleTex, m_ScaleTex,0.0f), Color{ 255,0,255,255 }, CParticle::TYPE::TYPE_POISON, 300,m_rot);
+	}
 }
 
 //========================================

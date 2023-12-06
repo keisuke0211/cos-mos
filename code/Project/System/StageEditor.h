@@ -151,15 +151,16 @@ private:
 	// *** 列挙型 ***
 	enum Type
 	{
-		TYPE_BLOCK = 0,				// ブロック
-		TYPE_TRAMPOLINE,			// トランポリン
-		TYPE_SPIKE,					// 棘
-		TYPE_SPIKE_L	= 24,		// 棘左
-		TYPE_SPIKE_R	= 25,		// 棘右
-		TYPE_LIFT		= 3,		// リフト
-		TYPE_Meteor,				// 隕石
-		TYPE_Laser,					// レーザー
-		TYPE_Extenddog,				// ヌイ
+		TYPE_BLOCK         = 0,		// ブロック
+		TYPE_TRAMPOLINE    = 1,		// トランポリン
+		TYPE_SPIKE         = 2,		// 棘
+		TYPE_SPIKE_L	   = 24,	// 棘左
+		TYPE_SPIKE_R	   = 25,	// 棘右
+		TYPE_LIFT		   = 3,		// リフト
+		TYPE_Meteor        = 4,		// 隕石
+		TYPE_Laser         = 5,		// レーザー
+		TYPE_Extenddog     = 6,		// ヌイ
+		TYPE_COIN          = 7,		// コイン
 		TYPE_FILL_BLOCK_11 = 11,	// ブロック(判定 無) 1 * 1
 		TYPE_FILL_BLOCK_12 = 12,	// ブロック(判定 無) 1 * 2
 		TYPE_FILL_BLOCK_13 = 13,	// ブロック(判定 無) 1 * 3
@@ -168,11 +169,11 @@ private:
 		TYPE_FILL_BLOCK_31 = 31,	// ブロック(判定 無) 3 * 1
 		TYPE_FILL_BLOCK_33 = 33,	// ブロック(判定 無) 3 * 3
 		TYPE_FILL_BLOCK_44 = 44,	// ブロック(判定 無) 4 * 4
-		TYPE_PLAYER_0 = 90,			// １Ｐ
-		TYPE_PLAYER_1,				// ２Ｐ
-		TYPE_GOALGATE = 97,			// ゴールゲート
-		TYPE_PARTS,					// パーツ
-		TYPE_GOAL,					// ゴール
+		TYPE_PLAYER_0      = 90,	// １Ｐ
+		TYPE_PLAYER_1      = 91,	// ２Ｐ
+		TYPE_GOALGATE      = 97,	// ゴールゲート
+		TYPE_PARTS         = 98,	// パーツ
+		TYPE_GOAL          = 99,	// ゴール
 		TYPE_MAX
 	};
 

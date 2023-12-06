@@ -44,11 +44,11 @@ public:
 
 		// [[[ ïœêîêÈåæ ]]]
 		CModel::CDrawInfo**     m_model;
-		int                     m_modelNum;
+		UShort                  m_modelNum;
 		CPolygon3D::CDrawInfo** m_polygon3D;
-		int                     m_polygon3DNum;
+		UShort                  m_polygon3DNum;
 		CPolygon2D::CDrawInfo** m_polygon2D;
-		int                     m_polygon2DNum;
+		UShort                  m_polygon2DNum;
 	};
 
 	//----------------------------------------
@@ -69,34 +69,29 @@ public:
 		UShort                    m_polygon2DRegistInfoNum;
 		UShort                    m_polygon2DRegistInfoAllocPower;
 		UShort                    m_polygon2DRegistInfoAllocNum;
-		UShort                    m_polygon2DDrawNum;
 		CPolygon3D::CRegistInfo** m_polygon3DRegistInfos;
 		UShort                    m_polygon3DRegistInfoNum;
 		UShort                    m_polygon3DRegistInfoAllocPower;
 		UShort                    m_polygon3DRegistInfoAllocNum;
-		UShort                    m_polygon3DDrawNum;
 		CText2D::CRegistInfo**    m_text2DRegistInfos;
 		UShort                    m_text2DRegistInfoNum;
 		UShort                    m_text2DRegistInfoAllocPower;
 		UShort                    m_text2DRegistInfoAllocNum;
-		UShort                    m_text2DDrawNum;
 		CText3D::CRegistInfo**    m_text3DRegistInfos;
 		UShort                    m_text3DRegistInfoNum;
 		UShort                    m_text3DRegistInfoAllocPower;
 		UShort                    m_text3DRegistInfoAllocNum;
-		UShort                    m_text3DDrawNum;
 		CModel::CRegistInfo**     m_modelRegistInfos;
 		UShort                    m_modelRegistInfoNum;
 		UShort                    m_modelRegistInfoAllocPower;
 		UShort                    m_modelRegistInfoAllocNum;
-		UShort                    m_modelDrawNum;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	static const UShort& GetPriorityMax (void) { return ms_priorityMax; }
-	static UInt          GetPolygon2DNum(void) { UInt num = 0; for (int cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
-	static UInt          GetPolygon3DNum(void) { UInt num = 0; for (int cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
-	static UInt          GetModelNum    (void) { UInt num = 0; for (int cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
+	static UShort        GetPolygon2DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
+	static UShort        GetPolygon3DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
+	static UShort        GetModelNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
 	static void StartDraw(Device& device);
 	static void EndDraw(Device& device);
 	CDrawMgr();

@@ -12,6 +12,7 @@
 #include "mode_game.h"
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
+#include "../resource.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -277,6 +278,8 @@ void CMode_Title::Update(void) {
 
 	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
 	{
+		//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
+
 		switch (Title)
 		{
 		case TITLE_OUTSET:

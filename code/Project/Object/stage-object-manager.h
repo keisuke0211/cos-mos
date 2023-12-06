@@ -17,6 +17,7 @@
 #include "Gimmick/meteor.h"
 #include "Gimmick/rocket.h"
 #include "Item/Parts.h"
+#include "Item/coin.h"
 #include "BackGround/Planet.h"
 #include "BackGround/Star.h"
 #include "BackGround/Shiningwave.h"
@@ -25,6 +26,7 @@
 #include "Gimmick/pile.h"
 #include "Gimmick/goalgate.h"
 #include "Gimmick/meteor_generator.h"
+#include "BackGround/bat.h"
 
 //****************************************
 // ÉNÉâÉX
@@ -46,7 +48,8 @@ public:
 	CMeteor     *MeteorCreate    (D3DXVECTOR3 pos, D3DXVECTOR3 move);
 	CMoveBlock  *MoveBlockCreate (D3DXVECTOR3 posV, D3DXVECTOR3 posL, D3DXVECTOR3 move, bool bxRetrurn = false);
 	CPile       *PileCreate(D3DXVECTOR3 pos, int nNumPile, float fCaveIn);
-	CParts      *PartsCreate	 (D3DXVECTOR3 pos);
+	CParts      *PartsCreate(D3DXVECTOR3 pos);
+	CCoin       *CoinCreate	(D3DXVECTOR3 pos);
 	CGoalGate   *GoalGateCreate	 (D3DXVECTOR3 pos,bool bStartGate);
 	CRocket     *RocketCreate    (D3DXVECTOR3 pos);
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
@@ -54,7 +57,7 @@ public:
 	CRoadTripLaser*RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,D3DXVECTOR3 move,bool bxRetrurn = false);
 	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bShrink,bool bReturn);
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
-
+	CBat * BatCreate(D3DXVECTOR3 pos);
 private:
 	// *** ç\ë¢ëÃ ***
 	// éÌóﬁèÓïÒ

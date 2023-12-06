@@ -6,7 +6,7 @@
 // 
 //========================================
 #include "../main.h"
-#include "../UI/rocket-parts.h"
+#include "../UI/partsUI.h"
 
 //========================================
 // 静的変数
@@ -17,7 +17,7 @@ const char* CStageObjectMgr::BLOCK_INFO_FILE = "data\\GAMEDATA\\BLOCK\\BLOCK_DAT
 //========================================
 // コンストラクタ
 //========================================
-CStageObjectMgr::CStageObjectMgr(void)
+CStageObjectMgr::CStageObjectMgr(void):CObjectMgr("StageObjectMgr")
 {
 	
 }
@@ -289,6 +289,22 @@ CParts *CStageObjectMgr::PartsCreate(D3DXVECTOR3 pos)
 }
 
 //========================================
+// コイン
+//========================================
+CCoin *CStageObjectMgr::CoinCreate(D3DXVECTOR3 pos)
+{
+	CCoin *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CCoin;
+
+	// 初期化処理
+	pObj->SetPos(pos);
+
+	return pObj;
+}
+
+//========================================
 // ロケット
 //========================================
 CRocket *CStageObjectMgr::RocketCreate(D3DXVECTOR3 pos)
@@ -429,6 +445,22 @@ CMeteorGenerator *CStageObjectMgr::MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVE
 	pObj->SetPos(pos);
 	pObj->SetMove(move);
 	pObj->SetInterval(nSummonInterval);
+	pObj->Init();
+
+	return pObj;
+}
+//========================================
+//  コウモリ
+//========================================
+CBat * CStageObjectMgr::BatCreate(D3DXVECTOR3 pos)
+{
+	CBat *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CBat;
+
+	// 初期化処理
+	pObj->SetPos(pos);
 	pObj->Init();
 
 	return pObj;

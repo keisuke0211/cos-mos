@@ -42,5 +42,7 @@ private:
 
 	// *** •Ï” ***
 	Info m_Info;		// ‹¤’Êî•ñ
-
+	int m_nTex[2];
+	int m_nCnt;
+	float m_ScaleTex;
 };

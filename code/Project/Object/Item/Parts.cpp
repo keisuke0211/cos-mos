@@ -14,6 +14,7 @@
 //================================================================================
 int					CParts::s_nNumGetParts = 0;
 int					CParts::s_nNumAll = 0;
+int					CParts::s_nDispNum = 0;
 const D3DXVECTOR3	CParts::PARTS_ADDROT = { 0.0f,0.02f,0.0f };
 
 //========================================
@@ -35,6 +36,7 @@ CParts::CParts(void) {
 	m_nEffctAnimCnt = 0;
 	s_nNumGetParts = 0;
 	s_nNumAll++;
+	s_nDispNum++;
 }
 
 //========================================
@@ -43,6 +45,8 @@ CParts::CParts(void) {
 CParts::~CParts(void) {
 	s_nNumGetParts = 0;
 	s_nNumAll--;
+	if (m_bDisp)
+		s_nDispNum--;
 }
 
 //========================================
@@ -90,6 +94,8 @@ void CParts::Update(void) {
 	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false)
 		->SetCol(Color{ (UShort)(255 * fBrightness),(UShort)(255 * fBrightness),(UShort)(255 * fBrightness),255 })
 		->SetOutLineIdx(true);
+
+
 }
 
 //---------------------------
@@ -98,6 +104,18 @@ void CParts::Update(void) {
 //---------------------------
 void CParts::DispSwitch(bool bGet)
 {
+	if (!m_bDisp && bGet) {
+		s_nDispNum++;
+	}
+	else if (m_bDisp && !bGet) {
+		s_nDispNum--;
+	}
+
+	if (Manager::StgEd()->GetPlanetIdx() == 0)
+		if (Manager::StgEd()->GetType()[0].nStageIdx == 3)
+			if (s_nDispNum == 0)
+				CPlayer::SetGuideCounter(0);
+
 	//•`‰æØ‚è‘Ö‚¦
 	m_bDisp = bGet;
 }

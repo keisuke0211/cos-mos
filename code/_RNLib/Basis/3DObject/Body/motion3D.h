@@ -8,6 +8,7 @@
 
 #include "setup3D.h"
 #include "../../Mechanical/regist.h"
+#include "../../Calculation/ease.h"
 
 //****************************************
 // クラス定義
@@ -21,16 +22,30 @@ public:
 		MOVE,		// 移動
 		SPIN,		// 回転
 		SCALING,	// 拡縮
-		STEP,		// 足踏
 		MAX,
 	};
 
 	//========== [[[ 構造体定義 ]]]
 	// コマンド構造体
+	struct CommandData_Move {
+		UShort      time;
+		Pos3D       targetPos;
+		CEase::TYPE easeType;
+	};
+	struct CommandData_Spin {
+		UShort      time;
+		Rot3D       targetRot;
+		CEase::TYPE easeType;
+	};
+	struct CommandData_Scaling {
+		UShort      time;
+		Scale3D     targetScale;
+		CEase::TYPE easeType;
+	};
 	struct CommandData {
 		short   time    = 0;
-		COMMAND command = (COMMAND)0;
-		float*  datas   = NULL;
+		COMMAND command = COMMAND::NONE;
+		void*   data    = NULL;
 	};
 
 	// ボーンモーションデータ構造体
@@ -46,8 +61,8 @@ public:
 	class CData {
 	public:
 		// [[[ 関数宣言 ]]]
-		CData();
-		~CData();
+		CData       ();
+		~CData      ();
 		void Release(void);
 
 		// [[[ 変数宣言 ]]]
@@ -58,11 +73,11 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CMotion3D();
-	~CMotion3D();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
+	CMotion3D          ();
+	~CMotion3D         ();
+	void   Init        (void);
+	void   Uninit      (void);
+	void   Update      (void);
 	short  Load        (const char* loadPath, short idx = NONEDATA);
 	bool   LoadEditData(const char* loadPath);
 	void   SaveEditData(const char* savePath);
@@ -72,9 +87,6 @@ public:
 private:
 	//========== [[[ 関数宣言 ]]]
 	bool ExecutionLoad(const char* loadPath, CData& data);
-
-	//========== [[[ 定数宣言 ]]]
-	static const UShort COMMAND_DATA_NUM[(int)COMMAND::MAX];
 
 	//========== [[[ 変数宣言 ]]]
 	CData** m_datas;

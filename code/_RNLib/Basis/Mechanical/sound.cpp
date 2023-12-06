@@ -16,7 +16,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CSound::CSound() {
+CSound::CSound() : m_playMgr("RN_PlayMgr") {
 
 }
 
@@ -33,14 +33,10 @@ CSound::~CSound() {
 void CSound::Init(void) {
 
 	m_datas = NULL;
-	m_playMgr = NULL;
 	for (int cntCategory = 0; cntCategory < (int)CATEGORY::MAX; m_categoryStates[cntCategory] = {}, cntCategory++);
 	m_mic3DPos = INITPOS3D;
 	m_XAudio2 = NULL;
 	m_masteringVoice = NULL;
-
-	// 再生マネージャーを生成
-	CMemory::Alloc(&m_playMgr);
 
 	// COMライブラリの初期化
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
@@ -79,8 +75,8 @@ void CSound::Init(void) {
 //========================================
 void CSound::Uninit(void) {
 
-	// 再生マネージャーの解放
-	CMemory::Release(&m_playMgr);
+	// 再生マネージャーの全解放
+	m_playMgr.ReleaseAll();
 
 	// データの解放
 	CMemory::ReleaseDouble(&m_datas, m_num);
@@ -228,18 +224,23 @@ short CSound::Load(const char* loadPath, short idx) {
 //========================================
 // セグメント再生(再生中なら停止)
 //========================================
-CSound::CPlay* CSound::Play(const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space, const Pos3D& pos, const float& dist) {
-
-	return new CSound::CPlay(sountIdx, category, isLoop, space, pos, dist);
+UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop) {
+	return (new CSound::CPlay(sountIdx, category, volume, isLoop, NULL, NULL, 0.0f))->GetID();
+}
+UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist) {
+	return (new CSound::CPlay(sountIdx, category, volume, isLoop, &pos, NULL, dist))->GetID();
+}
+UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist) {
+	return (new CSound::CPlay(sountIdx, category, volume, isLoop, NULL, &pos, dist))->GetID();
 }
 
 //========================================
 // 停止(分類指定)
 //========================================
-void CSound::Stop(const CATEGORY& category) {
+void CSound::StopCategory(const CATEGORY& category) {
 
 	CSound::CPlay* play = NULL;
-	while (m_playMgr->ListLoop((CObject**)&play)) {
+	while (m_playMgr.ListLoop((CObject**)&play)) {
 
 		// 分類が一致している時、削除
 		if (play->GetCategory() == category)
@@ -250,10 +251,10 @@ void CSound::Stop(const CATEGORY& category) {
 //========================================
 // 停止(全て)
 //========================================
-void CSound::Stop(void) {
+void CSound::StopAll(void) {
 	
 	CSound::CPlay* play = NULL;
-	while (m_playMgr->ListLoop((CObject**)&play)) {
+	while (m_playMgr.ListLoop((CObject**)&play)) {
 
 		// 削除
 		play->Delete();
@@ -288,6 +289,21 @@ void CSound::ChangeSetVolume(const CATEGORY& category, float& volume) {
 
 	// 設定音量を設定
 	m_categoryStates[(int)category].settingVolume = volume;
+}
+
+//========================================
+// プレイオブジェクト取得
+//========================================
+CSound::CPlay& CSound::GetPlay(const UShort& ID) {
+
+	CSound::CPlay* play = NULL;
+	while (m_playMgr.ListLoop((CObject**)&play)) {
+
+		if (play->GetID() == ID)
+			return *play;
+	}
+
+	return *(CPlay*)nullptr;
 }
 
 //================================================================================
@@ -422,48 +438,88 @@ void CSound::CData::Release(void) {
 //----------|---------------------------------------------------------------------
 //================================================================================
 
+//****************************************
+// 静的変数定義
+//****************************************
+UShort CSound::CPlay::ms_IDCount = 0;
+
 //========================================
 // コンストラクタ
 //========================================
-CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space, const Pos3D& pos, const float& dist) {
+CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist) {
 
 	// リストに追加
 	RNLib::Sound().GetPlayMgr().AddList(this);
 
+	// IDを設定
+	m_ID = ms_IDCount;
+	ms_IDCount = (ms_IDCount + 1) % USHRT_MAX;
+
 	m_soundIdx = sountIdx;
+	m_volume   = volume;
 	m_category = category;
 	m_isLoop   = isLoop;
-	m_space    = space;
-	m_pos      = pos;
 	m_dist     = dist;
 
+	// 位置情報の確保
+	if (pos2D == NULL) { m_pos2D = NULL; }
+	else {
+		CMemory::Alloc(&m_pos2D);
+		*m_pos2D = *pos2D;
+	}
+	if (pos3D == NULL) { m_pos3D = NULL; }
+	else {
+		CMemory::Alloc(&m_pos3D);
+		*m_pos3D = *pos3D;
+	}
+
 	// ソースボイスの生成
-	RNLib::Sound().GetXAudio2().CreateSourceVoice(&m_sourceVoice, &(RNLib::Sound().GetData(m_soundIdx).m_wfx.Format));
-	
-	// オーディオバッファの登録
-	m_sourceVoice->SubmitSourceBuffer(&RNLib::Sound().GetData(m_soundIdx).m_audioBuffer);
+	if (SUCCEEDED(RNLib::Sound().GetXAudio2().CreateSourceVoice(&m_sourceVoice, &(RNLib::Sound().GetData(m_soundIdx).m_wfx.Format)))) {
 
-	// 音量を0にしておく
-	m_sourceVoice->SetVolume(0.0f);
+		// オーディオバッファの登録
+		m_sourceVoice->SubmitSourceBuffer(&RNLib::Sound().GetData(m_soundIdx).m_audioBuffer);
 
-	// 再生
-	m_sourceVoice->Start(0);
+		// 音量を0にしておく
+		m_sourceVoice->SetVolume(0.0f);
+
+		// 再生
+		m_sourceVoice->Start(0);
+	}
+	else {
+		m_sourceVoice = NULL;
+		Delete();
+	}
 }
 
 //========================================
 // デストラクタ
 //========================================
 CSound::CPlay::~CPlay() {
+	
+	// 位置情報の解放
+	CMemory::Release(&m_pos2D);
+	CMemory::Release(&m_pos3D);
+
+	// リストから削除
+	RNLib::Sound().GetPlayMgr().SubList(this);
 
 	// 停止し、オーディオバッファの削除
-	m_sourceVoice->Stop(0);
-	m_sourceVoice->FlushSourceBuffers();
+	if (m_sourceVoice != NULL) {
+		m_sourceVoice->Stop(0);
+		m_sourceVoice->FlushSourceBuffers();
+	}
 }
 
 //========================================
 // 更新処理
 //========================================
 void CSound::CPlay::Update(void) {
+
+	// ソースボイスがNULLであれば、自身を破棄して終了
+	if (m_sourceVoice == NULL) {
+		Delete();
+		return;
+	}
 
 	// 状態を取得
 	XAUDIO2_VOICE_STATE xa2state;
@@ -484,27 +540,23 @@ void CSound::CPlay::Update(void) {
 		}
 	}
 
-	switch (m_space) {
-		// [[[ NONE ]]]
-	case SPACE::NONE: {
+	if (m_pos2D != NULL) {
 
-		// 音量を反映させる
-		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume);
-
-	}break;
-		// [[[ 3D ]]]
-	case SPACE::_3D: {
+	}
+	else if (m_pos3D != NULL) {
 
 		// 距離の割合を求める
-		float distRateOpp = 1.0f - (CGeometry::FindDistance(m_pos, RNLib::Sound().GetMic3DPos()) / m_dist);
+		float distRateOpp = 1.0f - (CGeometry::FindDistance(*m_pos3D, RNLib::Sound().GetMic3DPos()) / m_dist);
 		if (distRateOpp <= 0.0f) {
 			m_sourceVoice->SetVolume(0.0f);
-			break;
 		}
-
+		else {
+			// 音量を反映させる
+			m_sourceVoice->SetVolume(m_volume * RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume * distRateOpp);
+		}
+	}
+	else {
 		// 音量を反映させる
-		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume * distRateOpp);
-
-	}break;
+		m_sourceVoice->SetVolume(m_volume * RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume);
 	}
 }

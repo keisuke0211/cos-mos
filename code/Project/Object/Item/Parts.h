@@ -39,6 +39,8 @@ public:
 	//パーツの全体数を取得
 	//---------------------------
 	static int GetNumAll(void) { return s_nNumAll; }
+	static int GetDispNum(void) { return s_nDispNum; }
+	static int GetNumParts(void) { return s_nNumGetParts; }
 
 	//---------------------------
 	//ロケットに乗る準備が整ったか判定
@@ -49,9 +51,10 @@ private:
 	//========== [[[ 変数宣言 ]]]
 	static int s_nNumGetParts;				// パーツの取得数
 	static int s_nNumAll;					// パーツがいくつ存在するか
+	static int s_nDispNum;					// パーツがいくつ表示されているか
 	static const D3DXVECTOR3 PARTS_ADDROT;	// パーツの回転の移動量
 
-	int m_nEffctAnimCnt;	// エフェクトアニメカウント 
+	int m_nEffctAnimCnt;	// エフェクトアニメカウント
 	int ModelIdx;
 	bool m_bDisp;		//　取得したかどうか
 }; 

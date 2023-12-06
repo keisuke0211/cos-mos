@@ -8,6 +8,35 @@
 #include "Object/stage-object-manager.h"
 #include "Character\player.h"
 
+//位置を１００倍整数にする構造体（D3DXVECTOR2用
+struct Vec2x100{
+public:
+	Vec2x100(){};
+	Vec2x100(int vx, int vy) { x = vx; y = vy; }
+
+	// 代入
+	Vec2x100 &operator =(const Vec2x100 &v) { return Vec2x100(x = v.x, y = v.y); }
+	Vec2x100 &operator =(const Vector2D &v) { return Vec2x100(x = (int)(v.x * 100), (int)(y = v.y * 100)); }
+
+	// 加算
+	Vec2x100 operator +(const Vec2x100 &v) { return Vec2x100(x + v.x, y + v.y); }
+	Vec2x100 operator +(const Vector2D &v) { return Vec2x100(x + (int)(v.x * 100), y + (int)(v.y * 100)); }
+
+	// 減算
+	Vec2x100 operator -(const Vec2x100 &v) { return Vec2x100(x - v.x, y - v.y); }
+	Vec2x100 operator -(const Vector2D &v) { return Vec2x100(x - (int)(v.x * 100), y - (int)(v.y * 100)); }
+
+	// 乗算
+	Vec2x100 operator *(const int &v) {	return Vec2x100(x * v, y * v); }
+
+	// 徐算
+	Vec2x100 operator /(const int &v) { if (v == 0) return Vec2x100(0, 0);  return Vec2x100(x / v, y / v); }
+
+	//位置ベクトルを代入
+	int x = 0;
+	int y = 0;
+};
+
 //当たり判定クラス
 class CCollision{
 public:
@@ -25,39 +54,56 @@ public:
 	// 当たり判定を行うものの情報
 	struct SelfInfo
 	{
-		Vector3D pos;		// 位置
-		Vector3D posOld;	// 前回位置
-		Vector3D minPos;	// 最小位置
-		Vector3D maxPos;	// 最大位置
-		Vector3D move;		// 移動量
-		float	 fWidth;	// 幅
-		float	 fHeight;	// 高さ
+		Pos3D pos;	    // 位置
+		Pos3D posOld;   // 前回位置
+		Pos2D minPos;   // 最小位置
+		Pos2D maxPos;   // 最大位置
+		Pos2D minPosOld;// 前回最小位置
+		Pos2D maxPosOld;// 前回最大位置
+		Pos3D move;     // 移動量
+		float fWidth;   // 幅
+		float fHeight;  // 高さ
+		float fRadius;  // 半径
 	};
 
 	// 当たり判定情報
 	struct ColliInfo
 	{
-		D3DXVECTOR3 pos;        // 位置
-		D3DXVECTOR3 posOld;     // 前回位置
-		D3DXVECTOR3 minPos;		// 最小位置
-		D3DXVECTOR3 maxPos;		// 最大位置
-		float		fWidth;		// 幅
-		float		fHeight;	// 高さ
-		ROT			Rot;		// 当たった方向
+		Pos3D pos;      // 位置
+		Pos3D posOld;   // 前回位置
+		Pos2D minPos;   // 最小位置
+		Pos2D maxPos;   // 最大位置
+		Pos2D minPosOld;// 前回最小位置
+		Pos2D maxPosOld;// 前回最大位置
+		float fWidth;   // 幅
+		float fHeight;  // 高さ
+		float fRadius;  // 半径
+		ROT   Rot;      // 当たった方向
 	};
 
 	CCollision();
 	~CCollision();
 
 	//========================
-	// 対象物の中にめり込んでいるかどうか判定
+	// 矩形と矩形の当たり判定
 	//------------------------
 	// 引数１	self	：自分の情報
 	// 引数２	target	：対象の情報
 	// 引数３	value	：ベクトル
 	// 返り値	対象物にめりこんでいる方向を返す（NONEなら当たっていない
 	//========================
-	static ROT IsBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec);
+	static ROT IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec);
+
+	//========================
+	// 円と矩形の当たり判定
+	//------------------------
+	// 引数１	self	：自分の情報
+	// 引数２	target	：対象の情報
+	// 引数３	value	：ベクトル
+	// 引数４	pAngle	：当たった方向を返す
+	// 返り値	対象物にめりこんでいるか返す  true:めり込んだ  false:めり込んでいない
+	//========================
+	static bool CircleToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec, float *pAngle);
 
 	void Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
 	void FillBlock(SelfInfo *pSelfInfo, ROT ColliRot, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
@@ -87,4 +133,8 @@ private:
 
 	//上下どちらかに当たった（乗った）プレイヤーの設定処理
 	void LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY);
+
+	//最小最大位置設定処理
+	static void SetMinMaxPos(SelfInfo& self);
+	static void SetMinMaxPos(ColliInfo& colli);
 };

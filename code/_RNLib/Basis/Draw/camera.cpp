@@ -29,7 +29,7 @@
 //****************************************
 // 静的変数定義
 //****************************************
-short CCamera::ms_IDCount = 0;
+UShort CCamera::ms_IDCount = 0;
 
 //========================================
 // コンストラクタ
@@ -41,7 +41,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 
 	// IDを設定
 	m_ID       = ms_IDCount;
-	ms_IDCount = (ms_IDCount + 1) % SHRT_MAX;
+	ms_IDCount = (ms_IDCount + 1) % USHRT_MAX;
 
 	// 変数を初期化
 	m_posV            = INITPOS3D;

@@ -17,9 +17,9 @@
 //========================================
 CFile::CFile() {
 
-	files   = NULL;
-	fileNum = 0;
-	strcpy(searchString, "");
+	m_files   = NULL;
+	m_fileNum = 0;
+	strcpy(m_searchString, "");
 }
 
 //========================================
@@ -173,12 +173,12 @@ void CFile::ConvPathToDataStartPath(char** path) {
 bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 
 	// ファイルを再確保(増やす)
-	const int fileNumOld = fileNum++;
-	CMemory::ReAlloc(&files, fileNumOld, fileNum);
+	const int fileNumOld = m_fileNum++;
+	CMemory::ReAlloc(&m_files, fileNumOld, m_fileNum);
 
 	// ファイルを開く
-	files[fileNumOld] = fopen(path, "r");
-	if (files[fileNumOld] == NULL) {
+	m_files[fileNumOld] = fopen(path, "r");
+	if (m_files[fileNumOld] == NULL) {
 
 		// エラーメッセージ
 		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
@@ -224,11 +224,11 @@ bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 //========================================
 bool CFile::OpenSaveFile(const char* path) {
 
-	int fileNumOld = fileNum++;
-	CMemory::ReAlloc<FILE*>(&files, fileNumOld, fileNum);
-	files[fileNumOld] = fopen(path, "w");
-	if (files[fileNumOld] == NULL) {
-		CMemory::ReAlloc<FILE*>(&files, fileNum, fileNumOld);
+	int fileNumOld = m_fileNum++;
+	CMemory::ReAlloc<FILE*>(&m_files, fileNumOld, m_fileNum);
+	m_files[fileNumOld] = fopen(path, "w");
+	if (m_files[fileNumOld] == NULL) {
+		CMemory::ReAlloc<FILE*>(&m_files, m_fileNum, fileNumOld);
 
 		// エラーメッセージ
 		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
@@ -247,13 +247,13 @@ bool CFile::OpenSaveFile(const char* path) {
 //========================================
 void CFile::CloseFile(void) {
 
-	if (fileNum <= 0)
+	if (m_fileNum <= 0)
 		return;
 
-	if (files[fileNum-1] != NULL) {
-		fclose(files[fileNum-1]);
-		fileNum--;
-		CMemory::ReAlloc(&files, fileNum + 1, fileNum);
+	if (m_files[m_fileNum-1] != NULL) {
+		fclose(m_files[m_fileNum-1]);
+		m_fileNum--;
+		CMemory::ReAlloc(&m_files, m_fileNum + 1, m_fileNum);
 	}
 }
 
@@ -262,148 +262,13 @@ void CFile::CloseFile(void) {
 //========================================
 bool CFile::SearchLoop(const char* endIdentifier) {
 
-	if (files == NULL)
+	if (m_files == NULL)
 		return false;
 
 	do{
-		strcpy(searchString, "");
-		fscanf(files[fileNum - 1], "%s", searchString);
-	} while (searchString[0] == '#');
+		strcpy(m_searchString, "");
+		fscanf(m_files[m_fileNum - 1], "%s", m_searchString);
+	} while (m_searchString[0] == '#');
 
-	return (strcmp(searchString, endIdentifier) != 0);
-}
-
-//========================================
-// 読み取り処理
-//========================================
-void CFile::Scan(const SCAN scan, void* data, const char* identifier) {
-
-	// 識別子が在る時、識別子と不一致なら終了
-	if (identifier != NULL) {
-		if (strcmp(searchString, identifier))
-			return;
-	}
-
-	// 読み取り実行
-	ScanExecution(scan, data, false, false);
-}
-
-//========================================
-// 読み取り処理(CSV)
-//========================================
-void CFile::ScanCSV(const SCAN scan, void* data, bool isEnd) {
-
-	// 読み取り実行
-	ScanExecution(scan, data, true, isEnd);
-}
-
-//========================================
-// 読み取り処理(実行部分)
-//========================================
-void CFile::ScanExecution(const SCAN scan, void* data, bool isCSV, bool isEnd) {
-
-	searchString;
-
-	switch (scan) {
-	case SCAN::INT: {
-		int* castData = (int*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%d ", castData) :
-			fscanf(files[fileNum - 1], "%d,", castData);
-	}break;
-	case SCAN::SHORT: {
-		short* castData = (short*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%hd ", castData) :
-			fscanf(files[fileNum - 1], "%hd,", castData);
-	}break;
-	case SCAN::USHORT: {
-		UShort* castData = (UShort*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%hu ", castData) :
-			fscanf(files[fileNum - 1], "%hu,", castData);
-	}break;
-	case SCAN::FLOAT: {
-		float* castData = (float*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%f ", castData) :
-			fscanf(files[fileNum - 1], "%f,", castData);
-	}break;
-	case SCAN::CAHR: {
-		char scanString[TXT_MAX];
-		ScanExecution(SCAN::STRING, scanString, isCSV, isEnd);
-		char* castData = (char*)data;
-		*castData = scanString[0];
-	}break;
-	case SCAN::STRING: {
-		char* castData = (char*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%s ", castData) :
-			fscanf(files[fileNum - 1], "%[^,],", castData);
-	}break;
-	case SCAN::STRING_DYNAMIC: {
-		char scanString[TXT_MAX];
-		ScanExecution(SCAN::STRING, scanString, isCSV, isEnd);
-		StrCpyDynamicMemory((char**)data, scanString);
-	}break;
-	case SCAN::BOOL: {
-		int temp;
-		ScanExecution(SCAN::INT, &temp, isCSV, isEnd);
-		bool* castData = (bool*)data;
-		*castData = (temp != 0);
-	}break;
-	case SCAN::POS2D: {
-		Pos2D* castData = (Pos2D*)data;
-		fscanf(files[fileNum-1], "%f %f", &castData->x, &castData->y);
-	}break;
-	case SCAN::POS3D: {
-		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%f %f %f ", &castData->x, &castData->y, &castData->z) :
-			fscanf(files[fileNum - 1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
-	}break;
-	case SCAN::ROT: {
-		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%f %f %f ", &castData->x, &castData->y, &castData->z) :
-			fscanf(files[fileNum - 1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
-	}break;
-	case SCAN::ROT_CORRECT: {
-		D3DXVECTOR3* castData = (D3DXVECTOR3*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum-1], "%f %f %f ", &castData->x, &castData->y, &castData->z):
-			fscanf(files[fileNum-1], "%f %f %f,", &castData->x, &castData->y, &castData->z);
-		*castData *= D3DX_PI;
-	}break;
-	case SCAN::COLOR: {
-		Color* castData = (Color*)data;
-		!isCSV || isEnd ?
-			fscanf(files[fileNum - 1], "%hu %hu %hu %hu ", &castData->r, &castData->g, &castData->b, &castData->a) :
-			fscanf(files[fileNum - 1], "%hu %hu %hu %hu,", &castData->r, &castData->g, &castData->b, &castData->a);
-	}break;
-	case SCAN::TEXIDX: {
-		char texPath[TXT_MAX];
-		ScanExecution(SCAN::STRING, texPath, isCSV, isEnd);
-		short* castData = (short*)data;
-		*castData = RNLib::Texture().Load(texPath);
-	}break;
-	case SCAN::MODELIDX: {
-		char modelPath[TXT_MAX];
-		ScanExecution(SCAN::STRING, modelPath, isCSV, isEnd);
-		short* castData = (short*)data;
-		*castData = RNLib::Model().Load(modelPath);
-	}break;
-	case SCAN::MODELSUIDX: {
-		char modelSUPath[TXT_MAX];
-		ScanExecution(SCAN::STRING, modelSUPath, isCSV, isEnd);
-		short* castData = (short*)data;
-		*castData = RNLib::SetUp3D().Load(modelSUPath);
-	}break;
-	case SCAN::MOTION3DIDX: {
-		char motion3DPath[TXT_MAX];
-		ScanExecution(SCAN::STRING, motion3DPath, isCSV, isEnd);
-		short* castData = (short*)data;
-		*castData = RNLib::Motion3D().Load(motion3DPath);
-	}break;
-	}
+	return (strcmp(m_searchString, endIdentifier) != 0);
 }

@@ -338,7 +338,7 @@ void CCollision::MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInf
 				self.fHeight = pColli->fHeight;		colliInfo.fHeight = pSelfInfo->fHeight;
 
 				// プレイヤーのどの方向に当たっているか
-				pColli->Rot = IsBoxCollider(self, colliInfo, (CPlayer::VECTOL)nCntVec);
+				pColli->Rot = IsBoxToBoxCollider(self, colliInfo, (CPlayer::VECTOL)nCntVec);
 
 				// それでも当たらないなら、スキップ
 				if (pColli->Rot == ROT::NONE || pColli->Rot == ROT::UNKNOWN) continue;
@@ -440,7 +440,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 					self.fHeight = pColli->fHeight;		colliInfo.fHeight = pSelfInfo->fHeight;
 
 					// プレイヤーのどの方向に当たっているか
-					pColli->Rot = IsBoxCollider(self, colliInfo, (CPlayer::VECTOL)nCntVec);
+					pColli->Rot = IsBoxToBoxCollider(self, colliInfo, (CPlayer::VECTOL)nCntVec);
 
 					// それでも当たらないなら、スキップ
 					if (pColli->Rot == ROT::NONE || pColli->Rot == ROT::UNKNOWN) continue;
@@ -735,30 +735,20 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 }
 
 //========================
-// 対象物の中にめり込んでいるかどうか判定
+// 矩形と矩形の当たり判定
 //------------------------
 // 引数１	self	：自分の情報
 // 引数２	target	：対象の情報
 // 引数３	value	：ベクトル
 // 返り値	対象物にめりこんでいる方向を返す（NONEなら当たっていない
 //========================
-CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec)
+CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec)
 {
-	// 自分の現在の最小・最大位置
-	self.minPos = Pos3D(self.pos.x - self.fWidth, self.pos.y - self.fHeight, 0.0f);
-	self.maxPos = Pos3D(self.pos.x + self.fWidth, self.pos.y + self.fHeight, 0.0f);
+	// 自分の現在と前回の最小・最大位置
+	SetMinMaxPos(self);
 
-	// 対象の現在の最小・最大位置
-	target.minPos = Pos3D(target.pos.x - target.fWidth, target.pos.y - target.fHeight, 0.0f);
-	target.maxPos = Pos3D(target.pos.x + target.fWidth, target.pos.y + target.fHeight, 0.0f);
-
-	// 自分の過去の最小・最大位置
-	const Pos3D OLD_MINPOS = Pos3D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight, 0.0f);
-	const Pos3D OLD_MAXPOS = Pos3D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight, 0.0f);
-
-	// 対象の前回の最小・最大位置
-	const Pos3D TARGET_MinPosOld = Pos3D(target.posOld.x - target.fWidth, target.posOld.y - target.fHeight, 0.0f);
-	const Pos3D TARGET_MaxPosOld = Pos3D(target.posOld.x + target.fWidth, target.posOld.y + target.fHeight, 0.0f);
+	// 対象の現在と前回の最小・最大位置
+	SetMinMaxPos(target);
 
 	// 衝突ベクトルで処理分け
 	switch (vec)
@@ -766,26 +756,137 @@ CCollision::ROT CCollision::IsBoxCollider(SelfInfo& self, ColliInfo& target, CPl
 		case CPlayer::VECTOL::X:
 			if (self.minPos.y < target.maxPos.y && target.minPos.y < self.maxPos.y)
 			{// Y範囲内
-				if (self.maxPos.x >= target.minPos.x && OLD_MAXPOS.x <= TARGET_MinPosOld.x)
+				const bool isLeft  = self.maxPos.x >= target.minPos.x;
+				const bool isRight = self.minPos.x <= target.maxPos.x;
+
+				if (isLeft && (
+					self.maxPosOld.x <= target.minPosOld.x || self.posOld.x <= target.minPosOld.x))
 					return ROT::LEFT;
 
-				if (self.minPos.x <= target.maxPos.x && OLD_MINPOS.x >= TARGET_MaxPosOld.x)
+				if (isRight && (
+					self.minPosOld.x >= target.maxPosOld.x || self.posOld.x >= target.maxPosOld.x))
 					return ROT::RIGHT;
+
+				if (isLeft && isRight)
+					return ROT::UNKNOWN;
 			}
 			break;
 
 		case CPlayer::VECTOL::Y:
 			if (self.minPos.x < target.maxPos.x && target.minPos.x < self.maxPos.x)
 			{// X範囲内
-				if (self.maxPos.y >= target.minPos.y && OLD_MAXPOS.y <= TARGET_MinPosOld.y)
+				const bool isUnder = self.maxPos.y >= target.minPos.y;
+				const bool isOver  = self.minPos.y <= target.maxPos.y;
+
+				if (isUnder && (
+					self.maxPosOld.y <= target.minPosOld.y || self.posOld.y <= target.minPosOld.y))
 					return ROT::UNDER;
 
-				if (self.minPos.y <= target.maxPos.y && OLD_MINPOS.y >= TARGET_MaxPosOld.y)
+				if (isOver && (
+					self.minPosOld.y >= target.maxPosOld.y || self.posOld.y >= target.maxPosOld.y))
 					return ROT::OVER;
+
+				if (isUnder && isOver)
+					return ROT::UNKNOWN;
 			}
 			break;
 	}
 
 	// 当たらなかった
 	return ROT::NONE;
+}
+
+//========================
+// 円と矩形の当たり判定
+//------------------------
+// 引数１	self	：自分の情報
+// 引数２	target	：対象の情報
+// 引数３	value	：ベクトル
+// 引数４	pAngle	：当たった方向を返す
+// 返り値	対象物にめりこんでいる方向を返す（NONEなら当たっていない
+//========================
+bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec, float *pAngle)
+{
+	// 自分の現在と前回の最小・最大位置
+	SetMinMaxPos(self);
+
+	// 対象の現在と前回の最小・最大位置
+	SetMinMaxPos(target);
+
+	//対象までの距離と、対象の対角線を算出
+	const Pos3D PosDiff = self.pos - target.pos;
+	const float PosDiffLen = D3DXVec3Length(&PosDiff);
+	const float TargetLen = D3DXVec2Length(&Pos2D(target.fWidth, target.fWidth));
+
+	//距離が、自分の半径＋対象の対角線の長さより大きい
+	if (PosDiffLen > self.fRadius + TargetLen) return false;
+
+	//当たった方向を代入する
+	if (pAngle != NULL)
+	{
+		*pAngle = atan2f(PosDiff.x, PosDiff.y);
+	}
+
+	switch (vec)
+	{
+		case CPlayer::VECTOL::X:
+			//左から当たっているか
+			if (self.maxPosOld.x < target.minPosOld.x &&
+				self.maxPos.x >= target.minPos.x)
+			{
+				self.pos.x = target.minPos.x - self.fRadius;
+			}
+
+			//右から当たっているか
+			else if (self.minPosOld.x > target.maxPosOld.x &&
+					 self.minPos.x <= target.maxPos.x)
+			{
+				self.pos.x = target.maxPos.x + self.fRadius;
+			}
+			break;
+
+		case CPlayer::VECTOL::Y:
+			//下から当たっているか
+			if (self.maxPosOld.y < target.minPosOld.y &&
+				self.maxPos.y >= target.minPos.y)
+			{
+				self.pos.y = target.minPos.y - self.fRadius;
+			}
+
+			//上から当たっているか
+			else if (self.minPosOld.y > target.maxPosOld.y &&
+					 self.minPos.y <= target.maxPos.y)
+			{
+				self.pos.y = target.maxPos.y + self.fRadius;
+			}
+			break;
+	}
+
+	//当たった
+	return true;
+}
+
+//========================
+//最小最大位置設定処理
+//========================
+void CCollision::SetMinMaxPos(SelfInfo& self)
+{
+	// 自分の現在と前回の最小・最大位置
+	self.minPos = Pos2D(self.pos.x - self.fWidth, self.pos.y - self.fHeight);
+	self.maxPos = Pos2D(self.pos.x + self.fWidth, self.pos.y + self.fHeight);
+	self.minPosOld = Pos2D(self.posOld.x - self.fWidth, self.posOld.y - self.fHeight);
+	self.maxPosOld = Pos2D(self.posOld.x + self.fWidth, self.posOld.y + self.fHeight);
+}
+
+//========================
+//最小最大位置設定処理
+//========================
+void CCollision::SetMinMaxPos(ColliInfo& colli)
+{
+	colli.minPos = Pos2D(colli.pos.x - colli.fWidth, colli.pos.y - colli.fHeight);
+	colli.maxPos = Pos2D(colli.pos.x + colli.fWidth, colli.pos.y + colli.fHeight);
+	colli.minPosOld = Pos2D(colli.posOld.x - colli.fWidth, colli.posOld.y - colli.fHeight);
+	colli.maxPosOld = Pos2D(colli.posOld.x + colli.fWidth, colli.posOld.y + colli.fHeight);
+
+	Vec2x100 minpos = Vec2x100(1, 0);
 }

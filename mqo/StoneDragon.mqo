@@ -2,7 +2,7 @@ Metasequoia Document
 Format Text Ver 1.0
 
 Scene {
-	pos -200.5704 -126.1925 1500.0000
+	pos -69.6115 -113.0419 1500.0000
 	lookat 0.0000 0.0000 0.0000
 	head -6.1738
 	pich 0.0936
@@ -18,7 +18,7 @@ Scene {
 	}
 }
 Material 1 {
-	"mat1" col(0.525 0.525 0.525 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00)
+	"mat1" col(1.000 1.000 1.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("C:\Users\student\OneDrive\デスクトップ\卒業制作\cos-mos\data\TEXTURE\stone_2.jpg")
 }
 Object "obj1" {
 	visible 15

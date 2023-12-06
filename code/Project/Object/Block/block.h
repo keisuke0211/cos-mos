@@ -17,23 +17,27 @@ public:
 	//========== [[[ 列挙型定義 ]]]
 	// 見た目の種類
 	enum class LOOKS_TYPE {
-		SOIL_BLOCK					= 0,
-		SOIL_BLOCK_GRASSY			= 1,
-		ANCIENT_STONE_BLOCK			= 2,
-		ANCIENT_STONE_BLOCK_PTN_A	= 3,
-		ANCIENT_STONE_BLOCK_PTN_B	= 4,
-		ANCIENT_STONE_BLOCK_PTN_C	= 5,
-		ANCIENT_STONE_PILLAR_UP		= 6,
-		ANCIENT_STONE_PILLAR_CENTER	= 7,
-		ANCIENT_STONE_PILLAR_DOWN	= 8,
-		LEAF_BLOCK	                = 9,
-		TREE_TRUNK	                = 10,
-		TREE_TRUNK_ROOT             = 11,
-		BAOBAB_TREE                 = 12,
-		CHEST                       = 13,
-		PILE_OF_COINS               = 14,
-		STONE_MONUMENT              = 15,
-		ANCIENT_STONE_BRICK_BLOCK   = 16,
+		SOIL_BLOCK					 = 0,	// 土ブロック
+		SOIL_BLOCK_GRASSY			 = 1,	// 草の生えた土ブロック
+		ANCIENT_STONE_BLOCK			 = 2,	// 古代の石ブロック
+		ANCIENT_STONE_BLOCK_PTN_A	 = 3,	// 古代の石ブロックA
+		ANCIENT_STONE_BLOCK_PTN_B	 = 4,	// 古代の石ブロックB
+		ANCIENT_STONE_BLOCK_PTN_C	 = 5,	// 古代の石ブロックC
+		ANCIENT_STONE_PILLAR_UP		 = 6,	// 柱の上
+		ANCIENT_STONE_PILLAR_CENTER	 = 7,	// 柱の繋ぎ
+		ANCIENT_STONE_PILLAR_DOWN	 = 8,	// 柱の根本
+		LEAF_BLOCK	                 = 9,	// 草ブロック
+		TREE_TRUNK	                 = 10,	// 木の幹
+		TREE_TRUNK_ROOT              = 11,	// 木の根元
+		BAOBAB_TREE					 = 12,	// バオバブの木(背景用)
+		CHEST                        = 13,	// 宝箱
+		PILE_OF_COINS                = 14,	// 山積みのコイン
+		STONE_MONUMENT               = 15,	// 謎の石碑
+		ANCIENT_STONE_BRICK_BLOCK    = 16,	// 古代の石レンガブロック
+		SOIL_AND_ANCIENT_STONE_BLOCK = 17,	// 土＆古代の石ブロック(中間用)
+		PALMTREE					 = 18,	// ヤシの木
+		TREE_EYES_BLOCK				 = 19,	// 三つ目のブロック
+		LEAF_BLOCK_NUTS              = 20,	// 草ブロック(木の実)
 		MAX
 	};
 
@@ -53,12 +57,14 @@ public:
 	enum class OTHER_SETUP3D {
 		BAOBAB_TREE,
 		CHEST,
+		PALM_TREE,
 		MAX,
 	};
 
 	// その他モーション3D
 	enum class OTHER_MOTION3D {
 		CHEST_STEPPED,
+		PLAMTREE_SHAKE,
 		MAX,
 	};
 
@@ -97,9 +103,9 @@ private:
 	static const char* OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX];
 	static const char* OTHER_MOTION3D_PATHS[(int)OTHER_MOTION3D::MAX];
 	static const char* OTHER_SOUND_PATHS[(int)OTHER_SOUND::MAX];
-
 	//========== [[[ 変数宣言 ]]]
 	static UShort m_num;
+	static Scale2D m_eyescale;
 	static short m_modelIdxes[(int)LOOKS_TYPE::MAX];
 	static short m_otherTextureIdxes[(int)OTHER_TEXTURE::MAX];
 	static short m_otherModelIdxes[(int)OTHER_MODEL::MAX];
@@ -116,4 +122,5 @@ private:
 	Pos3D      m_addPos;
 	short      m_counter;
 	short      m_counterMax;
+	int		   m_nTexIdx;
 };

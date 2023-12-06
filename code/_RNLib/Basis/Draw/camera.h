@@ -34,7 +34,7 @@ public:
 	void        Update              (void);
 	void        StartRendering      (Device& device);
 	void        EndRendering        (Device& device);
-	short&      GetID               (void)                   { return m_ID; }
+	UShort&     GetID               (void)                   { return m_ID; }
 	void        SetPosVAndPosR      (const Pos3D& posV, const Pos3D& posR);
 	Pos3D&      GetPosV             (void)                   { return m_posV; }
 	Pos3D&      GetPosR             (void)                   { return m_posR; }
@@ -104,8 +104,8 @@ private:
 	void SetState(const STATE state);
 
 	//========== [[[ ïœêîÇÃêÈåæ ]]]
-	static short    ms_IDCount;
-	short           m_ID;
+	static UShort   ms_IDCount;
+	UShort          m_ID;
 	Pos3D           m_posV;		// éãì_
 	Pos3D           m_posR;		// íçéãì_
 	Pos3D           m_posVib;	// êUìÆà íu

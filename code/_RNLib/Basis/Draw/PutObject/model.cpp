@@ -224,17 +224,17 @@ void CModel::StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& mo
 	CMemory::Alloc(vtxInfos, *vtxNum);
 
 	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
-		Vertex3DInfo& vtx = (*vtxInfos)[cntVtx];
-		vtx.pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
-		vtx.nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
+		Vertex3DInfo* vtx = &(*vtxInfos)[cntVtx];
+		vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
+		vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 		// ワールドマトリックスを算出
-		Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx.pos, vtx.nor), modelMtx);
+		Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
 
-		vtx.worldPos = CMatrix::ConvMtxToPos(worldMtx);
-		vtx.rot      = CGeometry::FindVecRot(vtx.nor);
-		vtx.worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
-		vtx.worldRot = CGeometry::FindVecRot(vtx.worldNor);
+		vtx->worldPos = CMatrix::ConvMtxToPos(worldMtx);
+		vtx->rot      = CGeometry::FindVecRot(vtx->nor);
+		vtx->worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
+		vtx->worldRot = CGeometry::FindVecRot(vtx->worldNor);
 	}
 
 	// 頂点バッファをアンロック
@@ -314,10 +314,12 @@ void CModel::CData::Release(void) {
 	}
 
 	// 輪郭線メッシュの破棄
-	for (int cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
-		if (m_outLineMeshs[cntOutLine] != NULL) {
-			m_outLineMeshs[cntOutLine]->Release();
-			m_outLineMeshs[cntOutLine] = NULL;
+	if (m_outLineMeshs != NULL) {
+		for (int cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
+			if (m_outLineMeshs[cntOutLine] != NULL) {
+				m_outLineMeshs[cntOutLine]->Release();
+				m_outLineMeshs[cntOutLine] = NULL;
+			}
 		}
 	}
 	CMemory::Release(&m_outLineMeshs);
@@ -371,8 +373,9 @@ CModel::CDrawInfo::~CDrawInfo() {
 
 	// 拡大倍率に変更があった時、解放する
 	if (m_isScaling) {
-		if (m_mesh != NULL)
+		if (m_mesh != NULL) {
 			m_mesh->Release();
+		}
 	}
 }
 
@@ -428,11 +431,11 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	const CModel::CData& modelData = RNLib::Model().GetData(m_modelIdx);
 
 	// 情報を代入
-	drawInfo->m_mtx                  = m_mtx;
-	drawInfo->m_texes                = modelData.m_texes;
-	drawInfo->m_matNum               = modelData.m_matNum;
-	drawInfo->m_isZTest              = m_isZTest;
-	drawInfo->m_isLighting           = m_isLighting;
+	drawInfo->m_mtx        = m_mtx;
+	drawInfo->m_texes      = modelData.m_texes;
+	drawInfo->m_matNum     = modelData.m_matNum;
+	drawInfo->m_isZTest    = m_isZTest;
+	drawInfo->m_isLighting = m_isLighting;
 
 	//----------------------------------------
 	// マテリアル情報を算出
@@ -443,10 +446,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
 			
-			if (m_modelIdx == 44) {
-				int n = 0;
-			}
-
 			float brightness = 1.0f;
 			if (drawInfo->m_mats[cntMat].Emissive.r +
 				drawInfo->m_mats[cntMat].Emissive.g +
@@ -497,7 +496,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		const ULong faceNum   = modelData.m_mesh->GetNumFaces();
 
 		// メッシュを複製する
-		D3DXCreateMeshFVF(faceNum, vtxNum, D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawInfo->m_mesh);
 		modelData.m_mesh->CloneMeshFVF(D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &drawInfo->m_mesh);
 
 		// メッシュがNULLであれば、

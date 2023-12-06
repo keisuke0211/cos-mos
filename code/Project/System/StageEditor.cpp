@@ -11,7 +11,7 @@
 #include "../Character/player.h"
 #include "StageEditor.h"
 #include "../Mode/mode_title.h"
-#include "../UI/rocket-parts.h"
+#include "../UI/partsUI.h"
 
 //========================================
 // Ã“I•Ï”
@@ -478,13 +478,13 @@ void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
 		{
 			SetColor(pFile, nRow, nLine);
 			m_StageColor.Player1 = m_StageColor.Set;
-			CMode_Game::GetPlayer()->SetColor(0, m_StageColor.Player1);
+			//CMode_Game::GetPlayer()->SetColor(0, m_StageColor.Player1);
 		}
 		else if (!strcmp(aDataSearch, "2P"))
 		{
 			SetColor(pFile, nRow, nLine);
 			m_StageColor.Player2 = m_StageColor.Set;
-			CMode_Game::GetPlayer()->SetColor(1, m_StageColor.Player2);
+			//CMode_Game::GetPlayer()->SetColor(1, m_StageColor.Player2);
 		}
 		else if (!strcmp(aDataSearch, "BgUp"))
 		{
@@ -538,7 +538,7 @@ void CStageEditor::SetStage(int nType)
 	{
 		float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 		float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-		D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+		D3DXVECTOR3 pos = INITPOS3D;
 
 		pos.x += ((m_Info.nLineMax * -0.5f) + m_Info.nLine + 0.5f) * fSizeX;
 		pos.y -= ((m_Info.nRowMax * -0.5f) + m_Info.nRow + 0.5f) * fSizeY;
@@ -629,6 +629,9 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		break;
 	case TYPE_Extenddog:
 		Manager::StageObjectMgr()->BlockCreate(pos,CBlock::LOOKS_TYPE::SOIL_BLOCK_GRASSY);
+		break;
+	case TYPE_COIN:
+		Manager::StageObjectMgr()->CoinCreate(pos);
 		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::StageObjectMgr()->FillBlockCreate(pos, CFillBlock::BLOCKTYPE::TYPE_1x1, m_StageColor.FillBlock);
@@ -1170,7 +1173,7 @@ D3DXVECTOR3 CStageEditor::GetPos(int nRow, int nLine)
 {
 	float fSizeX = CStageObject::SIZE_OF_1_SQUARE;
 	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
-	D3DXVECTOR3 pos = Manager::GetMainCamera()->GetPosR();
+	D3DXVECTOR3 pos = INITPOS3D;
 
 	pos.x += ((m_Info.nLineMax * -0.5f) + nLine + 0.5f) * fSizeX;
 	pos.y -= ((m_Info.nRowMax * -0.5f) + nRow + 0.5f) * fSizeY;
