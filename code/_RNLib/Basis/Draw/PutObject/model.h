@@ -65,6 +65,7 @@ public:
 		bool      m_isScaling;
 		bool      m_isZTest;
 		bool      m_isLighting;
+		float     m_radiusMax;
 	};
 
 	// “o˜^î•ñƒNƒ‰ƒX

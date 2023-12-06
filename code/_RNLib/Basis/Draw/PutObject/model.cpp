@@ -436,6 +436,29 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	drawInfo->m_matNum     = modelData.m_matNum;
 	drawInfo->m_isZTest    = m_isZTest;
 	drawInfo->m_isLighting = m_isLighting;
+	drawInfo->m_radiusMax  = modelData.m_radiusMax;{
+
+		// —ÖŠsƒƒbƒVƒ…î•ñ‚ðŽZo
+		if (m_outLineIdx == NONEDATA) {
+			drawInfo->m_outLineMesh = NULL;
+		}
+		else {
+			if (m_outLineIdx >= RNSettings::GetInfo().modelOutLineAddDistanceDelimiter) {
+				m_outLineIdx = RNSettings::GetInfo().modelOutLineAddDistanceDelimiter - 1;
+			}
+			drawInfo->m_outLineMesh = modelData.m_outLineMeshs[m_outLineIdx];
+			drawInfo->m_radiusMax += RNSettings::GetInfo().modelOutLineAddDistanceInterval * m_outLineIdx;
+		}
+
+		const Scale3D scale = CMatrix::ConvMtxToScale(m_mtx);
+		float scaleMax = scale.x;
+		if (scaleMax < scale.y)
+			scaleMax = scale.y;
+		if (scaleMax < scale.z)
+			scaleMax = scale.z;
+
+		drawInfo->m_radiusMax *= scaleMax;
+	}
 
 	//----------------------------------------
 	// ƒ}ƒeƒŠƒAƒ‹î•ñ‚ðŽZo
@@ -467,19 +490,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 			drawInfo->m_mats[cntMat].Emissive.b *= b;
 			drawInfo->m_mats[cntMat].Emissive.a *= a;
 		}
-	}
-
-	//----------------------------------------
-	// —ÖŠsƒƒbƒVƒ…î•ñ‚ðŽZo
-	//----------------------------------------
-	if (m_outLineIdx == NONEDATA) {
-		drawInfo->m_outLineMesh = NULL;
-	}
-	else {
-		if (m_outLineIdx > RNSettings::GetInfo().modelOutLineAddDistanceDelimiter) {
-			m_outLineIdx = RNSettings::GetInfo().modelOutLineAddDistanceDelimiter;
-		}
-		drawInfo->m_outLineMesh = modelData.m_outLineMeshs[m_outLineIdx];
 	}
 
 	//----------------------------------------

@@ -110,8 +110,8 @@ private:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	static void PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
 	static void ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
-	static void Draw(Device& device, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
-	static void ExecutionDraw(Device& device, const short& cameraID, const bool& isCameraClipping, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
+	static void Draw(Device& device, CCamera* camera, const bool& isOnScreen);
+	static void ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
 	static void AssignVertexInfo(void);
 	static void ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
 	static void ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
