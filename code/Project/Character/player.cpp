@@ -164,14 +164,14 @@ HRESULT CPlayer::Init(void)
 	// ‚P‚o‰Šúî•ñ
 	if (m_aInfo[0].doll != NULL)
 		delete m_aInfo[0].doll;
-	m_aInfo[0].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
+	m_aInfo[0].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
 	m_aInfo[0].color = Color{255, 155, 59, m_aInfo[0].nSwapAlpha };
 
 	// ‚Q‚o‰Šúî•ñ
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
-	m_aInfo[1].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
+	m_aInfo[1].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 	m_aInfo[1].color = Color{65, 233, 210, m_aInfo[1].nSwapAlpha };
 
@@ -1127,6 +1127,12 @@ void CPlayer::CollisionToStageObject(void)
 					CBlock* pBlock = (CBlock*)stageObj;
 					if (!pBlock->GetCollision())
 						continue;
+					else if (// Œ©‚½–Ú‚ÌŽí—Þ‚É‚æ‚é“–‚½‚è”»’è‚ÌœŠO
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::BAOBAB_TREE ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE    ||
+						false
+						)
+						continue;
 				}break;
 
 					// ƒS[ƒ‹ƒQ[ƒg
@@ -1251,7 +1257,7 @@ void CPlayer::CollisionToStageObject(void)
 				// Ží—Þ‚²‚Æ‚ÉŠÖ”•ª‚¯
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, (CBlock*)stageObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline*)stageObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;

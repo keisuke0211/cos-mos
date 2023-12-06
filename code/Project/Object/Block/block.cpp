@@ -34,6 +34,15 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\Three-eyes_block.x",
 	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x",
 	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternA.x",
+	"data\\MODEL\\StageObject\\AsphaltBlock.x",
+	"data\\MODEL\\StageObject\\AsphaltBlock_Cracked.x",
+	"data\\MODEL\\StageObject\\IronBar.x",
+	"data\\MODEL\\StageObject\\IronBar1.x",
+	"data\\MODEL\\StageObject\\IronBar2.x",
+	"data\\MODEL\\StageObject\\IronBar3.x",
+	"data\\MODEL\\StageObject\\MudBlock.x",
+	"data\\MODEL\\StageObject\\SandAndAsphaltBlock.x",
+	"data\\MODEL\\StageObject\\SandBlock.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",

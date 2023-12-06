@@ -18,6 +18,7 @@
 //****************************************
 typedef enum {
 	PRIORITY_BACKGROUND,
+	PRIORITY_PLAYER,
 	PRIORITY_OBJECT,
 	PRIORITY_UI,
 	PRIORITY_SWAP_CURTAIN,

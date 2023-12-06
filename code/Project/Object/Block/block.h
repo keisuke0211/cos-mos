@@ -39,7 +39,16 @@ public:
 		TREE_EYES_BLOCK				 = 19,	// 三つ目のブロック
 		LEAF_BLOCK_NUTS              = 20,	// 草ブロック(木の実)
 		NUI_HOUSE_BLOCK              = 21,	// ヌイの家ブロック
-		MAX
+		ASPHALT_BLOCK				 = 22,	// アスファルトブロック
+		ASPHALT_BLOCK_CRACKED		 = 23,	// ひび割れたアスファルトブロック
+		IRON_BAR					 = 24,	// 鉄格子(当たり判定無し想定)
+		IRON_BAR_1					 = 25,	// 鉄格子1
+		IRON_BAR_2					 = 26,	// 鉄格子2
+		IRON_BAR_3					 = 27,	// 鉄格子3
+		MUD_BLOCK					 = 28,	// 泥ブロック
+		SAND_BLOCK					 = 29,	// 砂ブロック
+		SAND_AND_ASPHALT_BLOCK		 = 30,	// 砂＆アスファルトブロック(中間用)
+		MAX,
 	};
 
 	// その他テクスチャ
@@ -87,6 +96,7 @@ public:
 	void Draw(void);
 	void SetCollision(bool isCollision) { m_isCollision = isCollision; }
 	bool& GetCollision(void) { return m_isCollision; }
+	LOOKS_TYPE GetLooksType(void) { return m_looksType; }
 
 	//========== [[[ リアクション用関数宣言 ]]]
 	bool IsGetOld(const int nRot) { return m_isHitOlds[nRot]; }
