@@ -180,9 +180,10 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 			rot = D3DXVECTOR3(0.0f,0.0f, world + side);
 		else
 			rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
-
+		
 		m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
 		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,CDrawState::ALPHA_BLEND_MODE::NORMAL);
+		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(m_TexPos.x,m_TexPos.y + 10.0f * cosf(world),m_TexPos.z), rot, INITSCALE3D * 0.1f,INITCOLOR);
 
 		rot = INITD3DXVECTOR3;
 	}
