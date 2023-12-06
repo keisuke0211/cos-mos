@@ -857,25 +857,22 @@ void CPlayer::SwapAnimation(void)
 
 		switch (s_AnimState)
 		{
-			case CPlayer::SWAP_ANIM::PROLOGUE: SwapAnim_Prologue(Player, nCntPlayer);break; //プロローグ
+			case CPlayer::SWAP_ANIM::PROLOGUE: SwapAnim_Prologue(Player, nCntPlayer); break; //プロローグ
 			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	break;	//中間
-			case CPlayer::SWAP_ANIM::EPILOGUE: SwapAnim_Epilogue(Player, nCntPlayer);break;//エピローグ
+			case CPlayer::SWAP_ANIM::EPILOGUE: SwapAnim_Epilogue(Player, nCntPlayer); break;//エピローグ
 		}
 
-		for (int nCntPar = 0; nCntPar < 1; nCntPar++)
-		{
-			Color setCol;
-			if (nCntPlayer == 0){
-				setCol = Color{ (UShort)(215 + rand() % 40),(UShort)(135 + rand() % 40),(UShort)(39 + rand() % 40),255 };
-			}
-			else{
-				setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(130 + rand() % 125),(UShort)(130 + rand() % 125),255 };
-			}
-
-			const int nTex = rand() % 2 + 2;
-
-			Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol,CParticle::TYPE::TYPE_NORMAL,300,D3DXVECTOR3(0.0f,0.0f,(float)(rand() % 629 - 314) / 100.0f),8, CDrawState::ALPHA_BLEND_MODE::NORMAL);
+		Color setCol;
+		if (nCntPlayer == 0){
+			setCol = Color{ (UShort)(215 + rand() % 40),(UShort)(135 + rand() % 40),(UShort)(39 + rand() % 40),255 };
 		}
+		else{
+			setCol = Color{ (UShort)(45 + rand() % 40),(UShort)(130 + rand() % 125),(UShort)(130 + rand() % 125),255 };
+		}
+
+		const int nTex = rand() % 2 + 2;
+
+		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300, D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f), 8, CDrawState::ALPHA_BLEND_MODE::NORMAL);
 	}
 }
 
