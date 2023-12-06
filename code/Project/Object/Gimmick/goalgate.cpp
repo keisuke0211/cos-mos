@@ -346,15 +346,15 @@ void CGoalGate::EscapeGuide(void)
 			//この判定を使ってテクスチャアニメーションを行う
 			const int IsChange = m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME * 1.5f;
 			const float LeftTexU = 0.5f * IsChange;
-			const float size = 16.0f;
+			const float size = 32.0f;
 
 			//配置座標（ゲートの座標を使って、その座標より上下どちらに置くか計算
 			Pos3D putPos = m_pos;
-			putPos.y += (m_pos.y / fabsf(m_pos.y)) * 38.0f;
+			putPos.y += (m_pos.y / fabsf(m_pos.y)) * -10.0f;
 
 			//ポリゴン配置
 			RNLib::Polygon3D().Put(PRIORITY_EFFECT, putPos, INITPOS3D)
-				->SetSize(size, size * 2.0f)
+				->SetSize(size, size)
 				->SetBillboard(true)
 				->SetZTest(false)
 				->SetTexUV(s_nEscapeGuideTexID,
