@@ -846,15 +846,17 @@ void CMode_Title::SettingMenu(void)
 // ステージ選択情報の生成
 //========================================
 void CMode_Title::CreateStageSelectInfo(void) {
+
 	Manager::StgEd()->Uninit();
 	Manager::StgEd()->FileLoad();
+	
+	// 惑星最大数取得
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 
 	m_PlanetType = new PlanetType[nPlanetMax];
 	m_PlanetAngle = 0.0f;
 
-	for (int nCnt = 0; nCnt < nPlanetMax; nCnt++)
-	{
+	for (int nCnt = 0; nCnt < nPlanetMax; nCnt++) {
 		char *aTexFile = Manager::StgEd()->GetType()[nCnt].aTexFile;
 		char *aStgName = Manager::StgEd()->GetType()[nCnt].aName;
 
@@ -870,9 +872,10 @@ void CMode_Title::StageSelect(void) {
 
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 	int nStageMax  = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-	int nPrevTex   = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
-	int nNextTex   = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
-
+	 
+	//----------------------------------------
+	// 描画処理
+	//----------------------------------------
 	{// 惑星の描画
 		RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
 			->SetOutLineIdx(5);
@@ -900,36 +903,31 @@ void CMode_Title::StageSelect(void) {
 		}
 	}
 
+	//----------------------------------------
+	// ステージ選択処理
+	//----------------------------------------
 	bool bInput = false;
-	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
-	{
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK)) {
 		TextRelease(TEXT_MENU);
 		SwapMode(TITLE_MENU_ANIME);
 		return;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
-	{
+	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
 		m_nSelect--;
 		bInput = true;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
-	{
+	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
 		m_nSelect++;
 		bInput = true;
 	}
 
-	if (bInput)
-	{
-		if (m_nSelect < 0 && m_nPlanetIdx != 0)
-		{
+	if (bInput) {
+		if (m_nSelect < 0 && m_nPlanetIdx != 0) {
 			m_nPlanetIdx--;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 			m_nSelect = nStageMax - 1;
-			
 		}
-		else if (m_nSelect >= nStageMax && m_nPlanetIdx != nPlanetMax-1)
-		{
+		else if (m_nSelect >= nStageMax && m_nPlanetIdx != nPlanetMax-1) {
 			m_nPlanetIdx++;
 			m_nSelect = 0;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
@@ -937,8 +935,7 @@ void CMode_Title::StageSelect(void) {
 
 		IntControl(&m_nSelect, nStageMax - 1, 0);
 
-		if (m_nSelect != m_nOldSelect)
-		{
+		if (m_nSelect != m_nOldSelect) {
 			m_nOldSelect = m_nSelect;
 
 			m_pMenu[1]->Uninit();
@@ -948,8 +945,8 @@ void CMode_Title::StageSelect(void) {
 				CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
 				Manager::StgEd()->GetType()[m_nPlanetIdx].StageType[m_nSelect].aName, CFont::FONT_ROND_B, &pFont);
 		}
-		if (m_nPlanetIdx != m_nOldnPlanet)
-		{
+
+		if (m_nPlanetIdx != m_nOldnPlanet) {
 			m_nOldnPlanet = m_nPlanetIdx;
 			m_PlanetAngle = 0.0f;
 

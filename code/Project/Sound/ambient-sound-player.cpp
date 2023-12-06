@@ -29,7 +29,7 @@ static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bard.wav", 200, 500, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.5f, 0.5f },
 };
-#define AMBIENT_SE_2_MAX (3)
+#define AMBIENT_SE_2_MAX (2)
 #define AMBIENT_SE_2_LOOP_PATH "data\\SOUND\\SE\\AmbientSound\\bubble.wav"
 #define AMBIENT_SE_2_LOOP_VOLUME (0.5f)
 static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
