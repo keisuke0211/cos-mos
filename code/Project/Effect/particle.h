@@ -31,9 +31,9 @@ public:
 	// 共通情報
 	enum class TYPE
 	{
-		TYPE_NORMAL = 0,
-		TYPE_SPIN,
-		TYPE_POISON,
+		TYPE_NORMAL = 0,	//スタンダード
+		TYPE_SPIN,			//回転する
+		TYPE_FLOATUP,		//上に行く
 		TYPE_FIXED,
 		MAX
 	};

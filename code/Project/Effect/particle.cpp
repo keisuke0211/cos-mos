@@ -66,10 +66,10 @@ HRESULT CParticle::Init(int nTex,int nCount)
 			10.0f * cosf(m_Info.rot.z),
 			0.0f);
 	}
-	else if (m_type == TYPE::TYPE_POISON)
+	else if (m_type == TYPE::TYPE_FLOATUP)
 	{
 		m_Info.move = D3DXVECTOR3(
-			0.0f,
+			0.0f + sinf(m_Info.rot.z),
 			(80.0f - (float)(rand() % 40)) / MAGNI * cosf(m_Info.rot.z),
 			0.0f);
 	}
@@ -112,7 +112,7 @@ void CParticle::Update(void)
 		->SetAlphaBlendMode(m_Info.alphamode);
 
 	//à⁄ìÆó å∏êä
-	if (m_type != TYPE::TYPE_POISON)
+	if (m_type != TYPE::TYPE_FLOATUP)
 	{
 		m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;
 		m_Info.move.y += (0.0f - m_Info.move.y) * ATTEN_RATE;

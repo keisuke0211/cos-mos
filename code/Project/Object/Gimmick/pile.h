@@ -60,4 +60,9 @@ private:
 	float m_TrunkHeight;	//幹座標
 	float m_TrunkHeightOld;	//前回の幹座標
 	float m_StartTrunkHeight;
+
+	//エフェクト
+	D3DXVECTOR3 Initpos;	//設置された時の位置
+	int m_nTex[2];			//テクスチャ番号
+	float m_ScaleTex;		//テクスチャの大小(ランダム)
 };

@@ -10,6 +10,8 @@
 //杭をめり込ませる最低高さ
 const float CPile::CAVEIN_DIFF_HEIGHT = 35.0f;
 
+const int NUMTEX = 2;
+const int RAND_TEX = rand() % NUMTEX;
 //=======================================
 // コンストラクタ
 //=======================================
@@ -19,7 +21,7 @@ CPile::CPile()
 
 	//初期状態
 	m_type = TYPE::PILE;
-	m_width = SIZE_OF_1_SQUARE;
+	m_width = SIZE_OF_1_SQUARE * 2;
 	m_height = SIZE_OF_1_SQUARE;
 
 	m_TrunkModelID = NONEDATA;
@@ -45,6 +47,9 @@ CPile::~CPile()
 void CPile::Init(void)
 {
 	m_TrunkModelID = RNLib::Model().Load("data\\MODEL\\Trunk.x");
+
+	m_nTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png");
+	m_nTex[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 
 	//前回情報を保存
 	SetOld(0.0f);
@@ -118,7 +123,7 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	if (NumTrunk < MIN_TRUNK) NumTrunk = MIN_TRUNK;
 
 	//情報設定
-	m_PilePos = pos;
+	m_PilePos = Initpos = pos ;
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = TrunkHeight;
 	m_StartTrunkHeight = TrunkHeight;
@@ -136,6 +141,9 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 //===============================
 void CPile::CaveInTrunkHeight(float fCaveInHeight)
 {
+	//引数保存
+	float fCaveTemp = fCaveInHeight;
+
 	//へこみ量反映
 	fCaveInHeight += m_TrunkHeight;
 
@@ -153,6 +161,31 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 
 	//モデル配置
 	PutModel();
+
+	//パーティクル
+	D3DXVECTOR3 rot = INITD3DXVECTOR3;
+	float m_ScaleTex,world = 0.0f,side = 0.785f;
+	int RandNum;
+
+	if (fCaveTemp > 0.0f){
+		world = -D3DX_PI;
+		side = -0.785f;
+	}
+
+	for (int Cnt = 0; Cnt < 24; Cnt++){
+		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(Initpos.x + (float)(rand() % (int)m_width - m_width * 0.5), Initpos.y, Initpos.z);
+
+		RandNum = rand() % 2;
+		if (RandNum == 0)
+			rot = D3DXVECTOR3(0.0f,0.0f, world + side);
+		else
+			rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
+
+		m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
+		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,CDrawState::ALPHA_BLEND_MODE::NORMAL);
+
+		rot = INITD3DXVECTOR3;
+	}
 }
 
 //===============================

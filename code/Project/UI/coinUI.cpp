@@ -8,9 +8,9 @@
 #include "../main.h"
 #include "../Object/Item/coin.h"
 
-#define FRAME_INTER (Scale2D(256.0f,64.0f))				//フレーム間隔
-#define SCALE		(50.0f)								//拡縮値
-#define INITPOS		(D3DXVECTOR3(1000.0f,50.0f, 0.0f))	//初期位置
+#define FRAME_INTER (Scale2D(128.0f,30.0f))				//フレーム間隔
+#define SCALE		(24.0f)								//拡縮値
+#define INITPOS		(D3DXVECTOR3(-250.0f,150.0f, 0.0f))	//初期位置
 
 //静的メンバ変数
 
@@ -57,19 +57,22 @@ void CCoinUI::Uninit(void) {
 void CCoinUI::Update(void) {
 
 	//UIフレーム
-	RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + 48.0f, m_pos.y), 0.0f)
+	RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x + 24.0f, m_pos.y,m_pos.z), INITROT3D)
 		->SetSize(FRAME_INTER.x, FRAME_INTER.y)
-		->SetTex(m_TexIdx[1]);
+		->SetTex(m_TexIdx[1])
+		->SetZTest(false);
 
 	//数
-	RNLib::Text2D().Put(PRIORITY_UI, CreateText("%d",CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + 30.0f, m_pos.y), 0.0f, true)
-		->SetSize(Size2D(32.0f, 32.0f))
-		->SetCol(INITCOLOR);
+	RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d",CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 30.0f, m_pos.y, 0.0f), INITROT3D)
+		->SetSize(Size2D(16.0f, 16.0f))
+		->SetCol(INITCOLOR)
+		->SetZTest(false);
 
 	//コイン
-	RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x, m_pos.y), 0.0f)
+	RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x, m_pos.y,m_pos.z), INITROT3D)
 		->SetSize(m_scale.x, m_scale.y)
-		->SetTex(m_TexIdx[0]);
+		->SetTex(m_TexIdx[0])
+		->SetZTest(false);
 }
 
 //========================================
