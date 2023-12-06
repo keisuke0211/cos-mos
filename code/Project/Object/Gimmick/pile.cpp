@@ -123,7 +123,7 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	if (NumTrunk < MIN_TRUNK) NumTrunk = MIN_TRUNK;
 
 	//î•ñÝ’è
-	m_PilePos = Initpos = pos ;
+	m_PilePos = pos ;
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = TrunkHeight;
 	m_StartTrunkHeight = TrunkHeight;
@@ -142,15 +142,15 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 void CPile::CaveInTrunkHeight(float fCaveInHeight)
 {
 	//ˆø”•Û‘¶
-	float fCaveTemp = fCaveInHeight;
+	CFloat fCaveTemp = fCaveInHeight;
 
 	//‚Ö‚±‚Ý—Ê”½‰f
 	fCaveInHeight += m_TrunkHeight;
 
 	//Y‚ÌÅ‘åEÅ’á‚‚³‚ðŒvŽZ
-	const int nNumHalf = m_NumTrunk / EVENPARITY;
-	const float fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf - m_fEvenTrunkCorrHeight * 2.0f;
-	const float fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
+	CInt nNumHalf = m_NumTrunk / EVENPARITY;
+	CFloat fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf - m_fEvenTrunkCorrHeight * 2.0f;
+	CFloat fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
 
 	//Y‚ª”²‚¯‚È‚¢‚æ‚¤‚É’²®
 	if (fCaveInHeight < fMinHeight)		fCaveInHeight = fMinHeight;
@@ -163,29 +163,27 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 	PutModel();
 
 	//ƒp[ƒeƒBƒNƒ‹
-	D3DXVECTOR3 rot = INITD3DXVECTOR3;
-	float m_ScaleTex,world = 0.0f,side = 0.785f;
-	int RandNum;
+	float world = 0.0f;
+	float side = 0.785f;
+	float PopPosY = SIZE_OF_1_SQUARE * 0.5f;
 
-	if (fCaveTemp > 0.0f){
-		world = -D3DX_PI;
-		side = -0.785f;
-	}
+	CInt NumEffect = 24;
+	for (int Cnt = 0; Cnt < NumEffect; Cnt++){
 
-	for (int Cnt = 0; Cnt < 24; Cnt++){
-		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(Initpos.x + (float)(rand() % (int)m_width - m_width * 0.5), Initpos.y, Initpos.z);
+		if (NumEffect == NumEffect * 0.5f){
+			world = -D3DX_PI;
+			side *= -1.0f;
+			PopPosY *= -1.0f;
+		}
 
-		RandNum = rand() % 2;
-		if (RandNum == 0)
-			rot = D3DXVECTOR3(0.0f,0.0f, world + side);
-		else
-			rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
+		const Pos3D TexPos = Pos3D(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), PopPosY, m_pos.z);
+
+		D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, world + side);
+		if (rand() % 2 != 0) rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
 		
-		m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
-		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,CDrawState::ALPHA_BLEND_MODE::NORMAL);
-		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(m_TexPos.x,m_TexPos.y + 10.0f * cosf(world),m_TexPos.z), rot, INITSCALE3D * 0.1f,INITCOLOR);
-
-		rot = INITD3DXVECTOR3;
+		CFloat ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
+		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,CDrawState::ALPHA_BLEND_MODE::NORMAL);
+		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(TexPos.x, TexPos.y + 10.0f * cosf(world), TexPos.z), rot, INITSCALE3D * 0.1f,INITCOLOR);
 	}
 }
 
