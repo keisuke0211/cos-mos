@@ -171,7 +171,7 @@ HRESULT CPlayer::Init(void)
 	// ‚Q‚o‰Šúî•ñ
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
-	m_aInfo[1].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
+	m_aInfo[1].doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 	m_aInfo[1].color = Color{65, 233, 210, m_aInfo[1].nSwapAlpha };
 
@@ -483,6 +483,7 @@ void CPlayer::UpdateInfo(void)
 				->SetZTest(false)
 				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
 				->SetCol(Color{ 255, 255, 255, (UShort)Player.nSwapAlpha })
+				->SetLighting(false)
 				->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
 						   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
 						   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
@@ -509,6 +510,7 @@ void CPlayer::UpdateInfo(void)
 				->SetBillboard(true)
 				->SetZTest(false)
 				->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+				->SetLighting(false)
 				->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
 						   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
 						   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
