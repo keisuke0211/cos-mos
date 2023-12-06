@@ -508,7 +508,7 @@ void CEffect_Death::BallFusion(void)
 		}
 
 		//SEçƒê∂
-		RNLib::Sound().Play(s_FusionSE, CSound::CATEGORY::SE, false);
+		RNLib::Sound().Play(s_FusionSE, CSound::CATEGORY::SE, 1.0f, false);
 		break;
 	}
 }

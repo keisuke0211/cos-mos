@@ -18,7 +18,6 @@ class CSound :public CRegist {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	enum class CATEGORY { BGM, SE, MAX, };
-	enum class SPACE    { NONE, _3D, _2D, };
 
 	//========== [[[ 構造体定義 ]]]
 	// 分類毎の状態構造体
@@ -47,7 +46,7 @@ public:
 	class CPlay : public CObject {
 	public:
 		// [[[ 関数宣言 ]]]
-		CPlay(const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space, const Pos3D& pos, const float& dist);
+		CPlay(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
 		~CPlay();
 		void Update(void);
 		UShort&              GetID         (void) { return m_ID; }
@@ -60,9 +59,10 @@ public:
 		UShort               m_ID;
 		short                m_soundIdx;
 		CATEGORY             m_category;
+		float                m_volume;
 		bool                 m_isLoop;
-		SPACE                m_space;
-		Pos3D                m_pos;
+		Pos2D*               m_pos2D;
+		Pos3D*               m_pos3D;
 		float                m_dist;
 		IXAudio2SourceVoice* m_sourceVoice;
 	};
@@ -74,7 +74,9 @@ public:
 	void Uninit(void);
 	void Update(void);
 	short          Load                (const char* loadPath, short idx = NONEDATA);
-	UShort         Play                (const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space = SPACE::NONE, const Pos3D& pos = INITPOS3D, const float& dist = 0.0f);
+	UShort         Play                (const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop);
+	UShort         Play                (const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist);
+	UShort         Play                (const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist);
 	void           StopCategory        (const CATEGORY& category);
 	void           StopAll             (void);
 	void           ChangeCategoryVolume(const CATEGORY& category, float& volume);

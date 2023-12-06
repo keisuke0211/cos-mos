@@ -32,6 +32,7 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x",
 	"NONEDATA",
 	"data\\MODEL\\Three-eyes_block.x",
+	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -240,7 +241,7 @@ void CBlock::Update(void) {
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f,8.0f,0.0f), Color{ 255,200,0,255 });
-				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
 			}
 		}
 		else {
@@ -249,7 +250,7 @@ void CBlock::Update(void) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
 
-				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, false);
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
 			}
 		}
 
@@ -263,7 +264,7 @@ void CBlock::Update(void) {
 			// æ‚ç‚ê‚½uŠÔ
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				if (++m_counter == 1)
-					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, false);
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, 1.0f, false);
 			}
 
 			// æ‚ç‚ê‚½‚±‚Æ‚ª‚ ‚é
@@ -280,7 +281,7 @@ void CBlock::Update(void) {
 			// æ‚ç‚ê‚½uŠÔ
 			if (!m_isHitOlds[(int)CCollision::ROT::UNDER] && m_isHits[(int)CCollision::ROT::UNDER]) {
 				if (++m_counter == 1)
-					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, false);
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, 1.0f, false);
 			}
 
 			// æ‚ç‚ê‚½‚±‚Æ‚ª‚ ‚é
@@ -345,6 +346,24 @@ void CBlock::Update(void) {
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 
+	}break;
+	case LOOKS_TYPE::LEAF_BLOCK_NUTS: {
+		if (--m_counter <= 0) {
+			m_counterMax = 60 + rand() % 60;
+			m_counter = m_counterMax;
+			m_oldAddPos = m_addPos;
+			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+		}
+
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)

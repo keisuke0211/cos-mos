@@ -224,9 +224,14 @@ short CSound::Load(const char* loadPath, short idx) {
 //========================================
 // セグメント再生(再生中なら停止)
 //========================================
-UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space, const Pos3D& pos, const float& dist) {
-
-	return (new CSound::CPlay(sountIdx, category, isLoop, space, pos, dist))->GetID();
+UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop) {
+	return (new CSound::CPlay(sountIdx, category, volume, isLoop, NULL, NULL, 0.0f))->GetID();
+}
+UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist) {
+	return (new CSound::CPlay(sountIdx, category, volume, isLoop, &pos, NULL, dist))->GetID();
+}
+UShort CSound::Play(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos3D& pos, const float& dist) {
+	return (new CSound::CPlay(sountIdx, category, volume, isLoop, NULL, &pos, dist))->GetID();
 }
 
 //========================================
@@ -441,7 +446,7 @@ UShort CSound::CPlay::ms_IDCount = 0;
 //========================================
 // コンストラクタ
 //========================================
-CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool& isLoop, const SPACE& space, const Pos3D& pos, const float& dist) {
+CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist) {
 
 	// リストに追加
 	RNLib::Sound().GetPlayMgr().AddList(this);
@@ -451,11 +456,22 @@ CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool
 	ms_IDCount = (ms_IDCount + 1) % USHRT_MAX;
 
 	m_soundIdx = sountIdx;
+	m_volume   = volume;
 	m_category = category;
 	m_isLoop   = isLoop;
-	m_space    = space;
-	m_pos      = pos;
 	m_dist     = dist;
+
+	// 位置情報の確保
+	if (pos2D == NULL) { m_pos2D = NULL; }
+	else {
+		CMemory::Alloc(&m_pos2D);
+		*m_pos2D = *pos2D;
+	}
+	if (pos3D == NULL) { m_pos3D = NULL; }
+	else {
+		CMemory::Alloc(&m_pos3D);
+		*m_pos3D = *pos3D;
+	}
 
 	// ソースボイスの生成
 	if (SUCCEEDED(RNLib::Sound().GetXAudio2().CreateSourceVoice(&m_sourceVoice, &(RNLib::Sound().GetData(m_soundIdx).m_wfx.Format)))) {
@@ -480,6 +496,10 @@ CSound::CPlay::CPlay(const short& sountIdx, const CATEGORY& category, const bool
 //========================================
 CSound::CPlay::~CPlay() {
 	
+	// 位置情報の解放
+	CMemory::Release(&m_pos2D);
+	CMemory::Release(&m_pos3D);
+
 	// リストから削除
 	RNLib::Sound().GetPlayMgr().SubList(this);
 
@@ -520,27 +540,23 @@ void CSound::CPlay::Update(void) {
 		}
 	}
 
-	switch (m_space) {
-		// [[[ NONE ]]]
-	case SPACE::NONE: {
+	if (m_pos2D != NULL) {
 
-		// 音量を反映させる
-		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume);
-
-	}break;
-		// [[[ 3D ]]]
-	case SPACE::_3D: {
+	}
+	else if (m_pos3D != NULL) {
 
 		// 距離の割合を求める
-		float distRateOpp = 1.0f - (CGeometry::FindDistance(m_pos, RNLib::Sound().GetMic3DPos()) / m_dist);
+		float distRateOpp = 1.0f - (CGeometry::FindDistance(*m_pos3D, RNLib::Sound().GetMic3DPos()) / m_dist);
 		if (distRateOpp <= 0.0f) {
 			m_sourceVoice->SetVolume(0.0f);
-			break;
 		}
-
+		else {
+			// 音量を反映させる
+			m_sourceVoice->SetVolume(m_volume * RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume * distRateOpp);
+		}
+	}
+	else {
 		// 音量を反映させる
-		m_sourceVoice->SetVolume(RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume * distRateOpp);
-
-	}break;
+		m_sourceVoice->SetVolume(m_volume * RNLib::Sound().GetCategoryState(m_category).volume * RNLib::Sound().GetCategoryState(m_category).settingVolume);
 	}
 }

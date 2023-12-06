@@ -26,7 +26,7 @@ public:
 
 	// サウンド
 	// CResources::SOUND[(int)CResources::SOUND]
-	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::], CSound::CATEGORY::, );
+	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::], CSound::CATEGORY::, 1.0f, );
 	enum class SOUND {
 		OK,				//「OK」音声
 		SELECT,			// 決定音
