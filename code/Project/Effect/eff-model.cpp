@@ -30,7 +30,6 @@ CEffect_Model::CEffect_Model(void)
 	m_pos = INITD3DXVECTOR3;
 	m_move = INITD3DXVECTOR3;
 	m_scale = INITD3DXVECTOR3;
-	m_scalemag = INITD3DXVECTOR3;
 	m_rot = INITD3DXVECTOR3;
 	m_col = INITCOLOR;
 	m_nNumAll++;
@@ -75,14 +74,15 @@ void CEffect_Model::Uninit(void)
 //========================================
 void CEffect_Model::Update(void)
 {
+	//位置記憶
+	m_posold = m_pos;
+
 	//モデル配置
 	RNLib::Model().Put(PRIORITY_EFFECT, m_nIdx, m_pos, m_rot,m_scale, false)
 		->SetCol(m_col);
 
 	if (m_nCount != 0) {
 		m_nCount--;
-
-		CollisionBound();
 
 		//割合計算
 		float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_nCount, m_nCountMax);
@@ -94,6 +94,8 @@ void CEffect_Model::Update(void)
 
 		m_move.x += (0.0f - m_move.x) * 0.1f;
 		m_move.y += (0.0f - m_move.y) * 0.5f;
+
+		CollisionBound();
 
 		if (m_nCount <= 0)
 			Delete();
@@ -133,7 +135,20 @@ void CEffect_Model::CollisionBound(void)
 				&&m_pos.y >= pBlock->GetPos().y - pBlock->GetHeight() * 0.5f
 				&& m_pos.y <= pBlock->GetPos().y + pBlock->GetHeight() * 0.5f)
 			{
-				m_move.y *= -8;
+				if (m_posold.x  <= pBlock->GetPos().x - pBlock->GetWidth() * 0.5f
+					&& m_pos.x  >= pBlock->GetPos().x - pBlock->GetWidth() * 0.5f
+					|| m_posold.x >= pBlock->GetPos().x + pBlock->GetWidth() * 0.5f
+					&& m_pos.x <= pBlock->GetPos().x + pBlock->GetWidth() * 0.5f)
+				{//ブロックの横判定
+					Delete();
+				}
+				else if (m_posold.y <= pBlock->GetPos().y - pBlock->GetHeight() * 0.5f
+					&& m_pos.y >= pBlock->GetPos().y - pBlock->GetHeight() * 0.5f
+					|| m_posold.y >= pBlock->GetPos().y + pBlock->GetHeight() * 0.5f
+					&& m_pos.y <= pBlock->GetPos().y + pBlock->GetHeight() * 0.5f)
+				{//ブロックの縦判定
+					m_move.y *= -8.0f;
+				}
 			}
 		}break;
 		}

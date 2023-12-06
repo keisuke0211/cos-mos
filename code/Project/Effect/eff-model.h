@@ -26,7 +26,6 @@ public:
 	/* 位置		*/void SetPos(const D3DXVECTOR3 pos) { m_pos = pos; }
 	/* 位置		*/void SetRot(const D3DXVECTOR3 rot) { m_rot = rot; }
 	/* 位置		*/void SetScale(const D3DXVECTOR3 scale) { m_scale = scale; }
-	/* スケールの倍率		*/void SetScalemag(const D3DXVECTOR3 scale) { m_scalemag = scale; }
 
 	// -- 所得 ---------------------------------------------
 	/* 色		*/Color GetColor(void) { return m_col; }
@@ -42,11 +41,11 @@ private:
 
 	// *** 変数 ***
 	D3DXVECTOR3 m_pos;		// 位置
+	D3DXVECTOR3 m_posold;	// 前回位置
 	D3DXVECTOR3 m_move;		// 移動量
 	D3DXVECTOR3 m_rot;		// 向き
 	D3DXVECTOR3 m_spin;		// 回転量
 	D3DXVECTOR3 m_scale;		// 拡縮
-	D3DXVECTOR3 m_scalemag;	// 拡縮倍率
 	Color m_col;				// 頂点カラー
 	int m_nCount;
 	int m_nCountMax;
