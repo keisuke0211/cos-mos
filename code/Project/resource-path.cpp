@@ -22,6 +22,4 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\shrink.wav",
 	"data\\SOUND\\SE\\extend.wav",
 	"data\\SOUND\\SE\\vibration.wav",
-	"data\\SOUND\\BGM\\STAGE1.wav",
-	"data\\SOUND\\BGM\\STAGE2.wav",
 };

@@ -304,7 +304,6 @@ private:
 
 	struct SE {
 		short jump;      // ジャンプSE
-		short landing;   // 着地SE
 		short dog[4];    // 壁ギミック用SE
 		short Swaping;   // スワップ中SE
 		short SwapEnd;   // スワップ終了SE
