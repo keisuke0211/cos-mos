@@ -65,6 +65,7 @@ private:
 	enum TEX{
 		TEX_BG = 0,		// 背景
 		TEX_PLANET,		// 惑星
+		TEX_NUM,		// 数字
 		TEX_MAX
 	};
 	enum CONTROLLER {
@@ -97,7 +98,6 @@ private:
 	// ステージ種類情報
 	struct PlanetType{
 		int nModel;				// モデル
-		char Text[TXT_MAX];		// ステージ名
 	};
 
 	// 操作方法のテキスト情報
@@ -175,6 +175,9 @@ private:
 	int m_nPlanetIdx;
 	int m_nOldnPlanet;
 	int m_RocketIdx;
+	int m_SelIdx;
+	int m_StgBoardIdx;
+	int m_CoinBoardIdx;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	CWords *m_TITLE[WORDS_MAX];

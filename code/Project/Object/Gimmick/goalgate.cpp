@@ -48,12 +48,13 @@ CGoalGate::CGoalGate(void) {
 	m_bCloseGate = false;
 	m_nEntryNo = NONEDATA;
 	m_nEntryCounter = 0;
+	m_GuideAlpha = 0; // ガイドUIのα値
 
 	//モデルとテクスチャ
-	if(s_modelIdx			== NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
-	if(s_TexIdx[0]			== NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
-	if(s_TexIdx[1]			== NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
-	if(s_nEscapeGuideTexID	== NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
+	if(s_modelIdx          == NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
+	if(s_TexIdx[0]         == NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
+	if(s_TexIdx[1]         == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
+	if(s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
 }
 
 //========================================
@@ -334,8 +335,8 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRate
 //========================================
 void CGoalGate::EscapeGuide(void)
 {
-	//入っている
-	if (0 <= m_nEntryNo && m_nEntryNo < s_numEntry)
+	//一人だけ入っている
+	if (0 <= m_nEntryNo && m_nEntryNo < s_numEntry && s_numEntry != CPlayer::NUM_PLAYER)
 	{
 		//表示時間になった
 		if (++m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME)
@@ -344,21 +345,22 @@ void CGoalGate::EscapeGuide(void)
 			if (m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME * 2)
 				m_nEntryCounter = ESCAPE_GUIDE_POPUP_TIME;
 
+			//α値加算　超えたら修正
+			m_GuideAlpha += 10;
+			if (m_GuideAlpha > 255) m_GuideAlpha = 255;
+
 			//テクスチャ切り替え判定（int型
 			//この判定を使ってテクスチャアニメーションを行う
-			const int IsChange = m_nEntryCounter >= ESCAPE_GUIDE_POPUP_TIME * 1.5f;
-			const float LeftTexU = 0.5f * IsChange;
-			const float size = 32.0f;
-
-			//配置座標（ゲートの座標を使って、その座標より上下どちらに置くか計算
-			Pos3D putPos = m_pos;
-			putPos.y += (m_pos.y / fabsf(m_pos.y)) * -10.0f;
+			CInt IsChange = m_nEntryCounter / (ESCAPE_GUIDE_POPUP_TIME * 1.5f);
+			CFloat LeftTexU = 0.5f * IsChange;
+			CFloat size = 32.0f;
 
 			//ポリゴン配置
-			RNLib::Polygon3D().Put(PRIORITY_EFFECT, putPos, INITPOS3D)
+			RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, INITPOS3D)
 				->SetSize(size, size)
 				->SetBillboard(true)
 				->SetZTest(false)
+				->SetCol(Color{ 255,255,255,(int)m_GuideAlpha })
 				->SetTexUV(s_nEscapeGuideTexID,
 						   Pos2D(LeftTexU, 0.0f), Pos2D(LeftTexU + 0.5f, 0.0f),
 						   Pos2D(LeftTexU, 1.0f), Pos2D(LeftTexU + 0.5f, 1.0f));
@@ -368,6 +370,7 @@ void CGoalGate::EscapeGuide(void)
 	{//誰も入っていない
 		m_nEntryCounter = 0;   // カウンタークリア
 		m_nEntryNo = NONEDATA; // エントリーNoクリア
+		m_GuideAlpha = 0;      // α値クリア
 	}
 }
 
@@ -375,11 +378,11 @@ void CGoalGate::EscapeGuide(void)
 // エントリー設定処理
 // Author:RYUKI FUJIWARA
 //========================================
-void CGoalGate::SetEntry(bool bEntry) 
+void CGoalGate::SetEntry(bool bEntry)
 {
 	m_bEntry = bEntry;
 
-	if (bEntry == true) {
+	if (bEntry) {
 		m_nEntryNo = s_numEntry++;
 		m_nCntEtrX = ETR_CNT;
 		m_nCntEtrY = ETR_CNT * 0.5;

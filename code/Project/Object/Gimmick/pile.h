@@ -49,6 +49,11 @@ public:
 	//===============================
 	D3DXVECTOR3 GetPosOldCaveIn(void);
 
+	//===============================
+	//全体のめり込み量を初期化
+	//===============================
+	static void ResetTrunkHeightAll(void);
+
 private:
 	void SetOld(float fCaveInHeight);	//前回情報を保存
 	void PutModel(void);//モデル配置

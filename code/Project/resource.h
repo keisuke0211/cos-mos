@@ -19,6 +19,7 @@ public:
 		BG_WILDERNESS,
 		BG_FOREST,
 		BG_CAVE,
+		UI_WAITBUBBLE,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
@@ -38,16 +39,10 @@ public:
 		SWAPEND,		// ÉXÉèÉbÉvèIÇÌÇË
 		EXPAND,			// ñcÇÁÇﬁ
 		EXPLPSOON,		// îjóÙ
-
 		DOG_00,			// âüÇ∑
 		DOG_01,			// èkÇﬁ
 		DOG_02,			// êLÇ—ÇÈ
 		DOG_03,			// êkÇ¶ÇÈ
-
-		//BGM
-		STAGE1,
-		STAGE2,
-
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];
