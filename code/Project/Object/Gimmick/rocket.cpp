@@ -106,25 +106,11 @@ void CRocket::Uninit(void)
 //========================================
 void CRocket::Update(void)
 {
-	//乗るアニメーションに移動
-	if (RNLib::Input().GetKeyTrigger(DIK_R))
-	{
-		switch (m_Info.Animstate)
-		{
-			case CRocket::ANIME_STATE::RIDE:
-				m_Info.Animstate = CRocket::ANIME_STATE::FLY;
-				break;
-
-			case CRocket::ANIME_STATE::NONE:
-				m_Info.Animstate = CRocket::ANIME_STATE::RIDE;
-				Ride();
-				break;
-		}
-	}
-
 	switch (m_Info.Animstate)
 	{
 	case CRocket::ANIME_STATE::NONE:
+		if (CParts::GetNumParts() == CPlayer::NUM_PLAYER)
+			m_Info.Animstate = ANIME_STATE::RIDE;		// 乗る状態に移行
 		break;
 	case CRocket::ANIME_STATE::RIDE:
 		m_Info.bEffect = true;
@@ -230,18 +216,27 @@ void CRocket::UpdateState_Fly(void)
 
 	m_pos += m_Info.move;	// 位置に移動量の増加
 }
+
 //========================================
-// 乗ってる状態
+// 搭乗
 //========================================
-void CRocket::Ride(void)
+void CRocket::RideOn(void)
 {
 	if (!s_bReady) return;
 
 	s_nCountPlayer++;												// プレイヤーの乗った人数の増加
-	if (s_nCountPlayer == CPlayer::NUM_PLAYER) s_bReady = true;		// 乗車OK
+	if (s_nCountPlayer == CPlayer::NUM_PLAYER) s_bReady = true;		// 搭乗OK
 	m_Info.fScaleMag = s_RideAnimeMag;								// スケール倍率の設定
 	m_Info.SmallSpeed = (m_Info.fScaleMag - 1.0f) / s_RideAnimeMax;	// 小さくなる速度の設定
 	m_Info.nRideAnimeCounter = 0;									// 乗るアニメーションカウンターを初期化
 	m_Info.nFlyAnimeCounter = 0;									// 飛ぶアニメーションカウンターを初期化
-	m_Info.Animstate = ANIME_STATE::RIDE;		// 乗る状態に移行
+}
+
+//========================================
+// 降機
+//========================================
+void CRocket::RideOff(void)
+{
+	s_nCountPlayer--;//搭乗者数減少
+	if (s_nCountPlayer < 0) s_nCountPlayer = 0;
 }
