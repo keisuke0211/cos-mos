@@ -103,7 +103,7 @@ void CMode_Game::Init(void) {
 
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
-
+	Manager::StageObjectMgr()->TorchCreate(D3DXVECTOR3(-300.0f, 100.0f, 0.0f));
 	{// [[[ カメラ ]]]
 		// カメラの視点/注視点を設定
 		Manager::GetMainCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));

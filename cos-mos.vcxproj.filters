@@ -69,9 +69,6 @@
     <ClCompile Include="code\Project\Object\Gimmick\trampoline.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Object\Block\block.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\Project\Object\Block\fill-block.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -325,6 +322,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\UI\coinUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Block\block.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\torch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -645,6 +648,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\UI\coinUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\torch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
