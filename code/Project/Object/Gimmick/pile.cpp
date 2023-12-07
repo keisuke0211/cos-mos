@@ -21,7 +21,7 @@ CPile::CPile()
 
 	//初期状態
 	m_type = TYPE::PILE;
-	m_width = SIZE_OF_1_SQUARE * 2;
+	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE;
 
 	m_TrunkModelID = NONEDATA;
@@ -107,6 +107,18 @@ void CPile::PutModel(void)
 		//配置座標を下げる
 		PilePos.y -= SIZE_OF_1_SQUARE;
 	}
+
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(16.0f, 0.0f, 0.0f), INITROT3D)
+		->SetSize(m_width, m_height)
+		->SetCol(INITCOLOR);
+
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, INITROT3D)
+		->SetSize(16.0f, 16.0f)
+		->SetCol(INITCOLOR)
+		->SetZTest(false)
+		->SetTexUV(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00),
+				   Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f),
+				   Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f));
 }
 
 //===============================
@@ -127,7 +139,7 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = TrunkHeight;
 	m_StartTrunkHeight = TrunkHeight;
-	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY == 0 ? SIZE_OF_1_SQUARE * 0.5f : 0.0f;
+	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY != 0 ? -SIZE_OF_1_SQUARE * 0.5f : 0.0f;
 
 	//当たり判定の高さを再設定
 	m_height = SIZE_OF_1_SQUARE * NumTrunk;
@@ -199,10 +211,6 @@ void CPile::SetOld(float fCaveInHeight)
 
 	m_pos = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight + m_fEvenTrunkCorrHeight, 0.0f);
 	m_posOld = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld + m_fEvenTrunkCorrHeight, 0.0f);
-
-	//D3DXVECTOR3 pos = m_pos;
-	//pos.z = -30.0f;
-	//Manager::EffectMgr()->EffectCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png"), pos, INIT_EFFECT_SCALE, INITCOLOR, 1);
 }
 
 //===============================
@@ -224,4 +232,23 @@ D3DXVECTOR3 CPile::GetPosOldCaveIn(void)
 	ReturnPos.y += m_TrunkHeightOld;//前回のめり込み量を反映
 	ReturnPos.y += m_fEvenTrunkCorrHeight;//補正値を反映
 	return ReturnPos;				//座標を返す
+}
+
+//===============================
+//全体のめり込み量を初期化
+//===============================
+void CPile::ResetTrunkHeightAll(void)
+{
+	// オブジェクト1つ1つを見ていく
+	CObject* obj = NULL;
+	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+
+		//ステージオブジェクトに変換して種類が合致
+		CStageObject *stg = (CStageObject *)obj;
+		if (stg->GetType() != CStageObject::TYPE::PILE) continue;
+
+		//初期めり込み量に設定
+		CPile *pPile = (CPile *)stg;
+		pPile->m_TrunkHeight = pPile->m_TrunkHeightOld = pPile->m_StartTrunkHeight;
+	}
 }
