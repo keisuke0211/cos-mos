@@ -745,7 +745,19 @@ void CPlayer::ActionControl(void)
 			Player.move.y = Player.fJumpPower; // ジャンプ量代入
 			Player.bJump = true;               // ジャンプした
 			PlaySE(SE_LABEL::JUMP);            // SE再生
+
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].jump);
+			Pos3D createPos = Player.pos;
+			Rot3D createRot = INITROT3D;
+
+			if (Player.pos.y > 0.0f) {
+				createPos.y -= CPlayer::SIZE_HEIGHT * 0.5f;
+			}
+			else {
+				createPos.y += CPlayer::SIZE_HEIGHT * 0.5f;
+				createRot.x += D3DX_PI;
+			}
+			RNLib::StandardEffect3D().CreateDustStormOnLanding(createPos, createRot, Color{ 169,158,93,255 }, 20.0f);
 		}
 
 		bool isMove = false;
