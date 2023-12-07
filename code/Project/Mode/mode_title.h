@@ -177,6 +177,7 @@ private:
 	int m_RocketIdx;
 	int m_SelIdx;
 	int m_StgBoardIdx;
+	int m_CoinBoardIdx;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	CWords *m_TITLE[WORDS_MAX];

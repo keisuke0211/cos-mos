@@ -19,8 +19,8 @@
 //==========| CMode_Titleクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
-const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(-30.0f, -10.0f, -130.0f);
-const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(-30.0f, -20.0f, -120.0f);
+const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(7.5f, -10.0f, -130.0f);
+const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(7.5f, -20.0f, -120.0f);
 const D3DXVECTOR3 NUMPOSSELBOX = D3DXVECTOR3(15.0f, 0.0f, 0.0f);
 const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
@@ -48,6 +48,7 @@ CMode_Title::CMode_Title(void) {
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
 	m_StgBoardIdx      = RNLib::Model().Load("data\\MODEL\\Stage_Board.x");
+	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_Menu.pOperation  = NULL;
 	m_Menu.pSetting    = NULL;
 	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
@@ -886,10 +887,12 @@ void CMode_Title::StageSelect(void) {
 			->SetOutLineIdx(5);
 	}
 
-	{//ステージの看板
-		RNLib::Model().Put(PRIORITY_OBJECT,m_StgBoardIdx, D3DXVECTOR3(0.0f, 17.5f, -145.0f),INITD3DXVECTOR3, INITSCALE3D)
-			->SetCol(INITCOLOR)
-			->SetOutLineIdx(5);
+	{//看板
+		RNLib::Model().Put(PRIORITY_OBJECT,m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f, -145.0f),INITD3DXVECTOR3, INITSCALE3D)
+			->SetOutLineIdx(5); 
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f,0.58875f,0.0f), INITSCALE3D)
+		->SetOutLineIdx(5);
 	}
 
 	{// 矢印の描画
@@ -904,23 +907,26 @@ void CMode_Title::StageSelect(void) {
 		}
 	}
 
+	//位置補正
+	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f),0.0f,0.0f);
+
 	// 選択アイコンの処理
 	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
 		if (nCnt == m_nSelect) {
 			 //選択時
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX + nCnt * NUMPOSSELBOX, INITD3DXVECTOR3, INITSCALE3D, false)
+			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - PosCor + nCnt * NUMPOSSELBOX, INITD3DXVECTOR3, INITSCALE3D, false)
 				->SetCol(Color{ 243,191,63,255 });
 			
-			RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(SELECTBOX.x + nCnt * NUMPOSSELBOX.x, SELECTBOX.y, SELECTBOX.z - 5.0f), INITROT3D)
+			RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f), INITROT3D)
 				->SetSize(5.0f, 5.0f)
 				->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
 		}
 		else {
 			// 非選択時
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, UNSELECTBOX + nCnt * NUMPOSSELBOX, INITD3DXVECTOR3, INITSCALE3D, false)
+			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX, INITD3DXVECTOR3, INITSCALE3D, false)
 				->SetCol(Color{ 81,63,21,255 });
 
-			RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(UNSELECTBOX.x + nCnt * NUMPOSSELBOX.x, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), INITROT3D)
+			RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), INITROT3D)
 				->SetSize(5.0f, 5.0f)
 				->SetCol(Color{ 85,85,85,255 })
 				->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
