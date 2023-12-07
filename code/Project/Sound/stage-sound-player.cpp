@@ -72,8 +72,8 @@ static const char* sc_blockLandingSE[(int)CBlock::LOOKS_TYPE::MAX] = {
 	"data\\SOUND\\SE\\iron.wav",	// 鉄格子2
 	"data\\SOUND\\SE\\iron.wav",	// 鉄格子3
 	"data\\SOUND\\SE\\jamp.wav",	// 泥ブロック
-	"data\\SOUND\\SE\\sand.wav",	// 砂ブロック
 	"data\\SOUND\\SE\\jamp.wav",	// 砂＆アスファルトブロック(中間用)
+	"data\\SOUND\\SE\\sand.wav",	// 砂ブロック
 };
 
 //****************************************
@@ -146,11 +146,11 @@ void StageSoundPlayer::Start(void) {
 	const int planet = Manager::StgEd()->GetPlanetIdx();
 	if (planet == 0) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_1_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_1_LOOP_VOLUME, true);
-		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_1_PATH), CSound::CATEGORY::SE, BGM_1_VOLUME, true);
+		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_1_PATH), CSound::CATEGORY::BGM, BGM_1_VOLUME, true);
 	}
 	else if (planet == 1) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_2_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_2_LOOP_VOLUME, true);
-		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_2_PATH), CSound::CATEGORY::SE, BGM_2_VOLUME, true);
+		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_2_PATH), CSound::CATEGORY::BGM, BGM_2_VOLUME, true);
 	}
 	else {
 		loopPlayID = NONEDATA;
