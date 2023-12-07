@@ -694,11 +694,11 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
-	if (pRocket->GetReady() && pInfo->bRide) return;
+	if (!pRocket->GetReady() && !pInfo->bRide) return;
 
 	// ƒƒPƒbƒg‚É“‹æ
 	pInfo->bRide = true;
-	pRocket->Ride();
+	pRocket->RideOn();
 	
 	const int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
