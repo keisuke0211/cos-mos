@@ -174,7 +174,7 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 		PopPosY *= -1.0f;
 	}
 
-	CInt NumEffect = 24;
+	CInt NumEffect = 12;
 	for (int Cnt = 0; Cnt < NumEffect; Cnt++){
 
 		const Pos3D TexPos = Pos3D(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), PopPosY, m_pos.z);
