@@ -405,7 +405,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Desktop\\data\\TEXTURE\\Wood.png";
+    "data\\TEXTURE\\Wood.png";
    }
   }
   Material {
@@ -414,7 +414,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\卒業制作\\cos-mos\\data\\TEXTURE\\leaf.jpg";
+    "data\\TEXTURE\\leaf.jpg";
    }
   }
  }
