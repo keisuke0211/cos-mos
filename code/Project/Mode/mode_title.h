@@ -65,6 +65,7 @@ private:
 	enum TEX{
 		TEX_BG = 0,		// îwåi
 		TEX_PLANET,		// òfêØ
+		TEX_NUM,		// êîéö
 		TEX_MAX
 	};
 	enum CONTROLLER {
@@ -175,6 +176,8 @@ private:
 	int m_nPlanetIdx;
 	int m_nOldnPlanet;
 	int m_RocketIdx;
+	int m_SelIdx;
+	int m_StgBoardIdx;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	CWords *m_TITLE[WORDS_MAX];
