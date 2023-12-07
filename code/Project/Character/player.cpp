@@ -799,7 +799,7 @@ void CPlayer::ActionControl(void)
 				Player.swapWaitBalloonCounter = 0;
 		}
 
-		//RNLib::Polygon3D().Put(PRIORITY_UI, Player.pos.y + GetPlusMinus(Player.pos.y) * 16.0f,)
+		//RNLib::Polygon3D().Put(PRIORITY_UI, Player.pos.y + GetPlusMinus(Player.pos.y) * 16.0f, )
 	}
 }
 
