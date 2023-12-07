@@ -38,16 +38,10 @@ public:
 		SWAPEND,		// スワップ終わり
 		EXPAND,			// 膨らむ
 		EXPLPSOON,		// 破裂
-
 		DOG_00,			// 押す
 		DOG_01,			// 縮む
 		DOG_02,			// 伸びる
 		DOG_03,			// 震える
-
-		//BGM
-		STAGE1,
-		STAGE2,
-
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];

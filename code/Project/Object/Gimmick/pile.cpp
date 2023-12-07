@@ -167,13 +167,14 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 	float side = 0.785f;
 	float PopPosY = SIZE_OF_1_SQUARE * 0.5f;
 
-	if (fCaveTemp < 0.0f) {
+	if (fCaveTemp < 0.0f)
+	{
 		world = D3DX_PI;
 		side *= -1.0f;
 		PopPosY *= -1.0f;
 	}
 
-	CInt NumEffect = 12;
+	CInt NumEffect = 24;
 	for (int Cnt = 0; Cnt < NumEffect; Cnt++){
 
 		const Pos3D TexPos = Pos3D(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), PopPosY, m_pos.z);

@@ -867,7 +867,6 @@ void CMode_Title::CreateStageSelectInfo(void) {
 		char *aStgName = Manager::StgEd()->GetType()[nCnt].aName;
 
 		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
-		sprintf(m_PlanetType[nCnt].Text, aStgName);
 	}
 }
 
@@ -959,29 +958,6 @@ void CMode_Title::StageSelect(void) {
 		}
 
 		IntControl(&m_nSelect, nStageMax - 1, 0);
-
-		if (m_nSelect != m_nOldSelect) {
-			m_nOldSelect = m_nSelect;
-
-			m_pMenu[1]->Uninit();
-			m_pMenu[1] = NULL;
-			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
-			m_pMenu[1] = CFontText::Create(
-				CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
-				Manager::StgEd()->GetType()[m_nPlanetIdx].StageType[m_nSelect].aName, CFont::FONT_ROND_B, &pFont);
-		}
-
-		if (m_nPlanetIdx != m_nOldnPlanet) {
-			m_nOldnPlanet = m_nPlanetIdx;
-			m_PlanetAngle = 0.0f;
-
-			m_pMenu[0]->Uninit();
-			m_pMenu[0] = NULL;
-			FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };
-			m_pMenu[0] = CFontText::Create(
-				CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
-				m_PlanetType[m_nPlanetIdx].Text, CFont::FONT_ROND_B, &pFont,true);
-		}
 	}
 
 }
@@ -1052,13 +1028,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		s_bStageSelect = false;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
-		m_pMenu[0] = CFontText::Create(
-			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(640.0f, 50.0f, 0.0f), D3DXVECTOR2(360.0f, 70.0f),
-			m_PlanetType[0].Text, CFont::FONT_ROND_B, &pFont);
-
-		m_pMenu[1] = CFontText::Create(
-			CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(640.0f, 550.0f, 0.0f), D3DXVECTOR2(400.0f, 80.0f),
-			Manager::StgEd()->GetType()[0].StageType[0].aName, CFont::FONT_ROND_B, &pFont);
 	}
 		break;
 	case CMode_Title::TITLE_NEXT:

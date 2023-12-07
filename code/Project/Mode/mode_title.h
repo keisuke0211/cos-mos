@@ -98,7 +98,6 @@ private:
 	// ステージ種類情報
 	struct PlanetType{
 		int nModel;				// モデル
-		char Text[TXT_MAX];		// ステージ名
 	};
 
 	// 操作方法のテキスト情報

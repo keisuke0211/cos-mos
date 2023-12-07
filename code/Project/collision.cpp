@@ -7,6 +7,7 @@
 #include "main.h"
 #include "Character/player.h"
 #include "collision.h"
+#include "Sound/stage-sound-player.h"
 
 //=======================================
 // コンストラクタ
@@ -113,7 +114,7 @@ void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 //----------------------------
 // ブロックの当たり判定処理
 //----------------------------
-void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CBlock* pBlock, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
+void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::Info& Player, CBlock* pBlock, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 当たった方向ごとに処理を切り替え
 	switch (pColli->Rot)
@@ -123,13 +124,16 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CBlock* pBlock, C
 		//*********************************
 		case ROT::OVER:
 			if (// 見た目の種類による当たり判定の除外
-				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR && pSelfInfo->pos.y < 0.0f) ||
+				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR   && pSelfInfo->pos.y < 0.0f) ||
 				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_1 && pSelfInfo->pos.y < 0.0f) ||
 				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_2 && pSelfInfo->pos.y < 0.0f) ||
 				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_3 && pSelfInfo->pos.y < 0.0f) ||
-				false
-				)
+				false)
 				break;
+
+			// 着地
+			if (pSelfInfo->pos.y > 0.0f && !Player.bGroundOld)
+				StageSoundPlayer::PlayLandingSEIdx(pBlock->GetLooksType());
 
 			// 位置・移動量修正
 			FixPos_OVER(&pSelfInfo->pos.y, pColli->maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
@@ -150,13 +154,16 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CBlock* pBlock, C
 			//*********************************
 		case ROT::UNDER:
 			if (// 見た目の種類による当たり判定の除外
-				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR && pSelfInfo->pos.y > 0.0f) ||
+				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR   && pSelfInfo->pos.y > 0.0f) ||
 				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_1 && pSelfInfo->pos.y > 0.0f) ||
 				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_2 && pSelfInfo->pos.y > 0.0f) ||
 				(pBlock->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_3 && pSelfInfo->pos.y > 0.0f) ||
-				false
-				)
+				false)
 				break;
+
+			// 着地
+			if (pSelfInfo->pos.y < 0.0f && !Player.bGroundOld)
+				StageSoundPlayer::PlayLandingSEIdx(pBlock->GetLooksType());
 
 			// 位置・移動量修正
 			FixPos_UNDER(&pSelfInfo->pos.y, pColli->minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
