@@ -169,6 +169,8 @@ void CDoll3D::UpdateMotion(void) {
 
 	// モーションデータ取得
 	const CMotion3D::CData& motionData = RNLib::Motion3D().GetData(m_motionInfo.idx);
+	if (&motionData == NULL)
+		return;
 
 	// モーションカウンターを進める
 	if (++m_motionInfo.counter >= motionData.loopTime)
