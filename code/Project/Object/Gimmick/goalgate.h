@@ -82,4 +82,5 @@ private:
 	static int s_nEscapeGuideTexID; // 脱出アイコンのテクスチャID
 	int m_nEntryNo;      // エントリーNo
 	int m_nEntryCounter; // 入ってからの時間カウンター
+	UShort m_GuideAlpha; // ガイドUIのα値
 };
