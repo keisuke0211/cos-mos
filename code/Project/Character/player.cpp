@@ -480,57 +480,9 @@ void CPlayer::UpdateInfo(void)
 		if (Player.bRide || Player.bGoal)
 			continue;
 
-		if(!Player.isDeath){
-			// スワップ先のマークを描画する位置
-			D3DXVECTOR3 MarkPos = Player.pos;
-			MarkPos.y *= -1.0f;
-			MarkPos.z = -8.0f;
-
-			//マークのテクスチャＵＶ座標
-			const float TexULeft = nCntPlayer * 0.5f;
-			const float TexURight = TexULeft + 0.5f;
-			const float TexVOver = Player.side == WORLD_SIDE::BEHIND ? 0.0f : 1.0f;
-			const float TexVUnder = 1.0f - TexVOver;
-
-			//スワップ先のマーク描画
-			RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
-				->SetSize(16.0f, 16.0f)
-				->SetBillboard(true)
-				->SetZTest(false)
-				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
-				->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
-				->SetLighting(false)
-				->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
-						   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
-						   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
-
-			//スワップ先までの中心座標
-			const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
-			const float BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
-
-			//ガイドサイズを設定
-			const int YDiff = (-Player.pos.y - Player.pos.y) * 100;
-			const float fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
-			Player.fGuideTexVSize = fabsf(fSize);
-
-			//ガイドのスピードを設定
-			Player.fGuideMoveSpeed = fSize / 100.0f;
-			Player.fGuideTexVPos += Player.fGuideMoveSpeed;
-
-			if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
-				Player.fGuideTexVPos = 0.0f;
-
-			//スワップガイドの描画
-			RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
-				->SetSize(GUIDE_WIDTH, fabsf(Player.pos.y) * 1.5f)
-				->SetBillboard(true)
-				->SetZTest(false)
-				->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
-				->SetLighting(false)
-				->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
-						   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
-						   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
-		}
+		//スワップガイド表示
+		if (!Player.isDeath)
+			SwapGuide(Player);
 
 		// 最高Ｙ座標更新
 		switch (Player.side) {
@@ -687,11 +639,17 @@ void CPlayer::ActionControl(void)
 			if (pInput->GetKeyTrigger(DIK_B))
 			{//視点切替
 				if (!s_bAimPlayer)
+				{
 					s_bAimPlayer = !s_bAimPlayer;
+					s_nAimNo = 0;
+				}
 				else if (s_nAimNo == 0)
 					s_nAimNo = 1;
 				else
+				{
 					s_bAimPlayer = false;
+					s_nAimNo = 0;
+				}
 			}
 
 			if (s_bAimPlayer)
@@ -986,6 +944,60 @@ void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
 	if (Manager::StgEd()->GetPlanetIdx() == 0)
 		if (Manager::StgEd()->GetType()[0].nStageIdx == 0)
 			ms_guideCounter = 0;
+}
+
+//*************************************************
+// ガイド表示
+//*************************************************
+void CPlayer::SwapGuide(Info& Player)
+{
+	// スワップ先のマークを描画する位置
+	const Pos3D MarkPos = Pos3D(Player.pos.x, Player.pos.y * -1.0f, -8.0f);
+	CFloat MarkSize = 16.0f;
+
+	//マークのテクスチャＵＶ座標
+	CFloat TexULeft = Player.idx * 0.5f;	CFloat TexURight = TexULeft + 0.5f;
+	CFloat TexVOver = Player.side == WORLD_SIDE::BEHIND ? 0.0f : 1.0f;
+	CFloat TexVUnder = 1.0f - TexVOver;
+
+	//スワップ先のマーク描画
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
+		->SetSize(MarkSize, MarkSize)
+		->SetBillboard(true)
+		->SetZTest(false)
+		->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
+		->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
+		->SetLighting(false)
+		->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
+				   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
+				   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
+
+	//スワップ先までの中心座標
+	const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
+	CFloat BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
+
+	//ガイドサイズを設定
+	CInt YDiff = fabsf(Player.pos.y) * 200;
+	CFloat fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
+	Player.fGuideTexVSize = fabsf(fSize);
+
+	//ガイドのスピードを設定
+	Player.fGuideMoveSpeed = fSize / 100.0f;
+	Player.fGuideTexVPos += Player.fGuideMoveSpeed;
+
+	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
+		Player.fGuideTexVPos = 0.0f;
+
+	//スワップガイドの描画
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
+		->SetSize(GUIDE_WIDTH, (fabsf(Player.pos.y) - SIZE_HEIGHT) * 2.0f)
+		->SetBillboard(true)
+		->SetZTest(false)
+		->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+		->SetLighting(false)
+		->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+				   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
+				   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
 }
 
 //----------------------------
