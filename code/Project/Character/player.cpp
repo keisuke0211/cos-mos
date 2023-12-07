@@ -82,7 +82,7 @@ CPlayer::CPlayer()
 		dog = 0;
 	}
 
-	int cntPlayer = -1;
+	int cntPlayer = 0;
 	for each(Info &Player in m_aInfo)
 	{
 		Player.idx = cntPlayer;
