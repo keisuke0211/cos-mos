@@ -312,3 +312,19 @@ float GetPlusMinus(const float& num) {
 		return 1.0f;
 	return num / fabsf(num);
 }
+
+//========================================
+// 折り返した数を取得
+//========================================
+int GetTurnNum(const int& num, const int& max) {
+	if ((num / max) % 2 == 0)
+	{// 値を上限で除算した結果が偶数だった時、
+		// 値を上限で剰余算した結果を返す
+		return num % max;
+	}
+	else
+	{//パターンを上限で除算した結果が奇数だった時、
+		//上限からパターンを上限で剰余算した結果を減算した結果を返す
+		return max - (num % max);
+	}
+}

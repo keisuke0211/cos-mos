@@ -360,7 +360,7 @@ void CGoalGate::EscapeGuide(void)
 				->SetSize(size, size)
 				->SetBillboard(true)
 				->SetZTest(false)
-				->SetCol(Color{ 255,255,255,m_GuideAlpha })
+				->SetCol(Color{ 255,255,255,(int)m_GuideAlpha })
 				->SetTexUV(s_nEscapeGuideTexID,
 						   Pos2D(LeftTexU, 0.0f), Pos2D(LeftTexU + 0.5f, 0.0f),
 						   Pos2D(LeftTexU, 1.0f), Pos2D(LeftTexU + 0.5f, 1.0f));

@@ -178,6 +178,7 @@ private:
 	int m_SelIdx;
 	int m_StgBoardIdx;
 	int m_CoinBoardIdx;
+	int m_ArrowIdx;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	CWords *m_TITLE[WORDS_MAX];

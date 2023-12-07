@@ -40,5 +40,6 @@ int   OR(std::initializer_list<int> args);
 int*  CreateRandList(int nNum);
 bool  EqualFloat(const float& numA, const float& numB, const float& allowableError);
 float GetPlusMinus(const float& num);
+int GetTurnNum(const int& num, const int& max);
 
 #endif

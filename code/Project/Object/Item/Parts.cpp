@@ -92,7 +92,7 @@ void CParts::Update(void) {
 	fBrightness = 0.5f + fBrightness * 0.5f;
 
 	RNLib::Model().Put(PRIORITY_OBJECT, ModelIdx, m_pos, m_rot, false)
-		->SetCol(Color{ (UShort)(255 * fBrightness),(UShort)(255 * fBrightness),(UShort)(255 * fBrightness),255 })
+		->SetCol(Color{ (UShort)(255 * fBrightness),(UShort)(255 * fBrightness),(UShort)(255 * fBrightness),(UShort)255 })
 		->SetOutLineIdx(true);
 
 

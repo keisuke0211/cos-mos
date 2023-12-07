@@ -169,6 +169,8 @@ void CDoll3D::UpdateMotion(void) {
 
 	// モーションデータ取得
 	const CMotion3D::CData& motionData = RNLib::Motion3D().GetData(m_motionInfo.idx);
+	if (&motionData == NULL)
+		return;
 
 	// モーションカウンターを進める
 	if (++m_motionInfo.counter >= motionData.loopTime)
@@ -330,7 +332,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
 
 			RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, vtxInfo[cntVtx].worldPos, INITROT3D)
 				->SetSize(0.25f, 0.25f)
-				->SetCol(Color{ 255,0,0,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) })
+				->SetCol(Color{ 255,0,0,(int)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) })
 				->SetLighting(false)
 				->SetZTest(false)
 				->SetBillboard(true);
@@ -339,7 +341,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
 				->SetLighting(false)
 				->SetZTest(false)
 				->SetBillboard(true)
-				->SetCol(Color{ 255,255,255,(UShort)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) });
+				->SetCol(Color{ 255,255,255,(int)(255 * ((float)(drawVtxIdxNum - cntVtx) / drawVtxIdxNum)) });
 		}
 	}
 }

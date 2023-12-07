@@ -79,7 +79,7 @@ void CMode_Logo::Update(void) {
 	struct LocalFunc {
 		static void FillScreen(const float& fRate) {
 			RNLib::Polygon2D().Put(PRIORITY_UI, RNLib::Window().GetCenterPos(), 0.0f)
-				->SetCol(Color{ 255,255,255,(UShort)(255 * fRate) })
+				->SetCol(Color{ 255,255,255,(int)(255 * fRate) })
 				->SetSize(480, 480)
 				->SetTex(m_TexLogo);
 		}
