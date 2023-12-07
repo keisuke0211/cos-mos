@@ -57,21 +57,21 @@ bool RNSettings::LoadAndSave(const char* path) {
 	}
 
 	// 書き込むファイルとして開く
-	if (RNLib::File().OpenSaveFile(path)) {
-		fprintf(RNLib::File().GetFile(), /*  */"#KeyOption\n");	
-		fprintf(RNLib::File().GetFile(), /*  */"projectName							%s\n"  , info.projectName);
-		fprintf(RNLib::File().GetFile(), /*  */"windowWidth							%.2f\n", info.windowWidth);
-		fprintf(RNLib::File().GetFile(), /*  */"windowHeight						%.2f\n", info.windowHeight);
-		fprintf(RNLib::File().GetFile(), /*  */"isFullScreen						%d\n"  , info.isFullScreen);
-		fprintf(RNLib::File().GetFile(), /*  */"resolution							%.2f\n", info.resolution);
-	 	fprintf(RNLib::File().GetFile(), /*  */"#OtherOption\n");
-		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistanceInterval		%.2f\n", info.modelOutLineAddDistanceInterval);
-		fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistanceDelimiter	%d\n"  , info.modelOutLineAddDistanceDelimiter);
-		fprintf(RNLib::File().GetFile(), /*  */"END");
+	//if (RNLib::File().OpenSaveFile(path)) {
+	//	fprintf(RNLib::File().GetFile(), /*  */"#KeyOption\n");	
+	//	fprintf(RNLib::File().GetFile(), /*  */"projectName							%s\n"  , info.projectName);
+	//	fprintf(RNLib::File().GetFile(), /*  */"windowWidth							%.2f\n", info.windowWidth);
+	//	fprintf(RNLib::File().GetFile(), /*  */"windowHeight						%.2f\n", info.windowHeight);
+	//	fprintf(RNLib::File().GetFile(), /*  */"isFullScreen						%d\n"  , info.isFullScreen);
+	//	fprintf(RNLib::File().GetFile(), /*  */"resolution							%.2f\n", info.resolution);
+	// 	fprintf(RNLib::File().GetFile(), /*  */"#OtherOption\n");
+	//	fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistanceInterval		%.2f\n", info.modelOutLineAddDistanceInterval);
+	//	fprintf(RNLib::File().GetFile(), /*  */"modelOutLineAddDistanceDelimiter	%d\n"  , info.modelOutLineAddDistanceDelimiter);
+	//	fprintf(RNLib::File().GetFile(), /*  */"END");
 
-		// ファイルを閉じる
-		RNLib::File().CloseFile();
-	}
+	//	// ファイルを閉じる
+	//	RNLib::File().CloseFile();
+	//}
 
 	return isLoad;
 }

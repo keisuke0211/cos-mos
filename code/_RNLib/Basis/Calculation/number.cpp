@@ -303,3 +303,10 @@ int* CreateRandList(int num) {
 bool EqualFloat(const float& numA, const float& numB, const float& allowableError) {
 	return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB))));
 }
+
+//========================================
+// ³•‰‚Ì
+//========================================
+float GetPlusMinus(const float& num) {
+
+}
