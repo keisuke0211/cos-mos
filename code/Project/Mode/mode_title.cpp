@@ -882,12 +882,12 @@ void CMode_Title::StageSelect(void) {
 	// •`‰æˆ—
 	//----------------------------------------
 	{// ˜f¯‚Ì•`‰æ
-		/*RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, -4.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-			->SetOutLineIdx(5);*/
+		RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nPlanetIdx].nModel, D3DXVECTOR3(0.0f, 0.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
+			->SetOutLineIdx(5);
 	}
 
 	{//ƒXƒe[ƒW‚ÌŠÅ”Â
-		RNLib::Model().Put(PRIORITY_OBJECT,m_StgBoardIdx, D3DXVECTOR3(0.0f, 0.0f, -60.0f),INITD3DXVECTOR3, INITD3DXVECTOR3)
+		RNLib::Model().Put(PRIORITY_OBJECT,m_StgBoardIdx, D3DXVECTOR3(0.0f, 17.5f, -145.0f),INITD3DXVECTOR3, INITSCALE3D)
 			->SetCol(INITCOLOR)
 			->SetOutLineIdx(5);
 	}
