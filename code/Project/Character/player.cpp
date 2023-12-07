@@ -75,7 +75,6 @@ CPlayer::CPlayer()
 
 	s_SE.pSound = NULL;
 	s_SE.jump = 0;
-	s_SE.landing = 0;
 	s_SE.Swaping = 0;
 	s_SE.SwapEnd = 0;
 	for each(short &dog in s_SE.dog)
@@ -102,8 +101,8 @@ CPlayer::CPlayer()
 		Player.fGuideTexVPos = 0.0f;           // ガイドのテクスチャＶ座標
 		Player.fGuideTexVSize = 0.0f;          // ガイドのテクスチャＶサイズ
 		Player.fGuideMoveSpeed = 0.0f;         // ガイドのテクスチャ移動スピード
-		Player.bGround = false;                // 地面に接しているか
-		Player.bGroundOld = false;             // 地面に接しているか(過去)
+		Player.bGround = true;                // 地面に接しているか
+		Player.bGroundOld = true;             // 地面に接しているか(過去)
 		Player.landingCounter = false;
 		Player.bJump = false;                  // ジャンプ
 		Player.bRide = false;                  // ロケットに乗っているかどうか
@@ -187,7 +186,6 @@ HRESULT CPlayer::Init(void)
 
 	s_SE.pSound	= &RNLib::Sound();
 	s_SE.jump	= s_SE.pSound->Load("data\\SOUND\\SE\\jamp_01.wav");
-	s_SE.landing = s_SE.pSound->Load("data\\SOUND\\SE\\jamp.wav");
 	s_SE.dog[0]	= s_SE.pSound->Load("data\\SOUND\\SE\\heron2.wav");		// 押す
 	s_SE.dog[1]	= s_SE.pSound->Load("data\\SOUND\\SE\\shrink.wav");		// 縮む
 	s_SE.dog[2]	= s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");		// 伸びる
@@ -1060,6 +1058,8 @@ void CPlayer::CtrlPos(Info *pInfo, VECTOL vec)
 void CPlayer::CollisionToStageObject(void)
 {
 	// 一旦両プレイヤーともにジャンプ不可
+	m_aInfo[0].bGroundOld = m_aInfo[0].bGround;
+	m_aInfo[1].bGroundOld = m_aInfo[1].bGround;
 	m_aInfo[0].bGround = m_aInfo[1].bGround = false;
 
 	for (int nCntVec = 0; nCntVec < (int)VECTOL::MAX; nCntVec++) {
@@ -1130,8 +1130,7 @@ void CPlayer::CollisionToStageObject(void)
 					else if (// 見た目の種類による当たり判定の除外
 						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::BAOBAB_TREE ||
 						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE    ||
-						false
-						)
+						false)
 						continue;
 				}break;
 
@@ -1257,7 +1256,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, (CBlock*)stageObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, Player, (CBlock*)stageObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline*)stageObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
@@ -1445,7 +1444,6 @@ void CPlayer::PlaySE(SE_LABEL label)
 	switch (label)
 	{
 		case CPlayer::SE_LABEL::JUMP:   s_SE.pSound->Play(s_SE.jump,    CSound::CATEGORY::SE, 1.0f, false); break;
-		case CPlayer::SE_LABEL::LANDING:s_SE.pSound->Play(s_SE.landing, CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::DOG_00: s_SE.pSound->Play(s_SE.dog[0],  CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::DOG_01: s_SE.pSound->Play(s_SE.dog[1],  CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::DOG_02: s_SE.pSound->Play(s_SE.dog[2],  CSound::CATEGORY::SE, 1.0f, false); break;
