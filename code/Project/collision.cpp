@@ -101,7 +101,7 @@ void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 			createRot.x += D3DX_PI;
 		}
 		pInfo->landingCounter = 30;
-		pInfo->doll->OverwriteMotion(CPlayer::GetMotion().landing);
+		pInfo->doll->OverwriteMotion(CPlayer::GetMotion(pInfo->idx).landing);
 
 		RNLib::StandardEffect3D().CreateDustStormOnLanding(createPos, createRot,  Color{ 169,158,93,255 }, 10.0f);
 	}

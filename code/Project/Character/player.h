@@ -47,6 +47,7 @@ public:
 	// プレイヤー情報
 	struct Info
 	{
+		int      idx;
 		Pos3D    StartPos;// 開始位置
 		CDoll3D* doll;
 		Pos3D    pos;     // 位置
@@ -95,6 +96,11 @@ public:
 		bool isDeath;       // 死亡フラグ
 		int  deathCounter;  // 死亡カウンター
 		int  deathCounter2; // 死亡カウンター2
+
+		//-------------------------------
+		//SWAP待ちの吹き出し用
+		//-------------------------------
+		int  swapWaitBalloonCounter;
 
 		// どちらの世界に存在するか
 		WORLD_SIDE side;
@@ -210,7 +216,7 @@ public:
 	};
 
 	//モーション情報取得
-	static Motion GetMotion(void) { return s_motion; }
+	static Motion GetMotion(int idx) { return s_motion[idx]; }
 
 	//スワップ完了取得
 	static bool GetSwapEnd(void) { return ms_bSwapEnd; }
@@ -251,6 +257,7 @@ private:
 	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
 	static const int DEATH_TIME = 60;    // 死亡時間
 	static const int DEATH_TIME2 = 120;  // 死亡時間2
+	static const int SWAP_WAIT_BALLOON_TIME = 5;  // スワップ待ち吹き出し時間
 	static SWAP_ANIM s_AnimState;        // アニメーション構成
 	static       int s_nSwapInterval;    // 残りスワップインターバル
 	static       bool s_bSwapAnim;       // スワップアニメーション中かどうか
@@ -285,7 +292,6 @@ private:
 	void InitInfo(void);
 	void ActionControl(void);
 	void Move(VECTOL vec, int cntPlayer);
-	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
 	void Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
@@ -314,7 +320,7 @@ private:
 	};
 	static SE s_SE;		//サウンド用構造体
 
-	static Motion s_motion;
+	static Motion s_motion[2];
 
 	static CCollision *s_pColli;
 

@@ -2,13 +2,13 @@ Metasequoia Document
 Format Text Ver 1.0
 
 Scene {
-	pos 28.8823 -77.7527 937.5000
+	pos -69.1999 -3.2322 1500.0000
 	lookat 0.0000 0.0000 0.0000
-	head -37.7841
-	pich 0.3408
+	head -38.0339
+	pich 0.0308
 	bank 0.0000
 	ortho 0
-	zoom2 8.0000
+	zoom2 5.0000
 	amb 0.250 0.250 0.250
 	dirlights 1 {
 		light {
@@ -19,7 +19,7 @@ Scene {
 }
 Material 2 {
 	"mat1" col(0.639 0.404 0.137 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("C:\Users\student\Desktop\data\TEXTURE\Wood.png")
-	"mat2" col(0.000 0.769 0.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00)
+	"mat2" col(0.451 0.627 0.027 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("C:\Users\student\OneDrive\デスクトップ\卒業制作\cos-mos\data\TEXTURE\leaf.jpg")
 }
 Object "obj1" {
 	visible 0
@@ -383,7 +383,7 @@ Object "ヤシの幹＿頂点＿書き出し" {
 }
 Object "ヤシの枝＿書き出し" {
 	visible 15
-	locking 1
+	locking 0
 	shading 1
 	facet 59.5
 	color 0.898 0.498 0.698

@@ -303,3 +303,28 @@ int* CreateRandList(int num) {
 bool EqualFloat(const float& numA, const float& numB, const float& allowableError) {
 	return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB))));
 }
+
+//========================================
+// 正負の1を返す
+//========================================
+float GetPlusMinus(const float& num) {
+	if (num == 0.0f)
+		return 1.0f;
+	return num / fabsf(num);
+}
+
+//========================================
+// 折り返した数を取得
+//========================================
+int GetTurnNum(const int& num, const int& max) {
+	if ((num / max) % 2 == 0)
+	{// 値を上限で除算した結果が偶数だった時、
+		// 値を上限で剰余算した結果を返す
+		return num % max;
+	}
+	else
+	{//パターンを上限で除算した結果が奇数だった時、
+		//上限からパターンを上限で剰余算した結果を減算した結果を返す
+		return max - (num % max);
+	}
+}

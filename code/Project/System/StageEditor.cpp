@@ -17,7 +17,7 @@
 // ê√ìIïœêî
 //========================================
 CStageEditor::PlanetType *CStageEditor::m_PlanetType = NULL;
-CStageEditor::StageColor CStageEditor::m_StageColor = {NULL};
+CStageEditor::StageColor CStageEditor::m_StageColor;
 const char* CStageEditor::STAGE_INFO_FILE = "data\\GAMEDATA\\STAGE\\STAGE_FILE.txt";
 
 //========================================
