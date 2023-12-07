@@ -56,9 +56,10 @@ bool            CPlayer::ms_bSwapEnd = false;
 UShort          CPlayer::ms_guideCounter = 0;
 
 bool  CPlayer::s_bAimPlayer = false;
+int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
-float CPlayer::s_fAimWorkSpeed = 0.003f;
+float CPlayer::s_fAimWorkSpeed = 0.05f;
 
 //=======================================
 // コンストラクタ
@@ -82,7 +83,7 @@ CPlayer::CPlayer()
 		dog = 0;
 	}
 
-	int cntPlayer = -1;
+	int cntPlayer = 0;
 	for each(Info &Player in m_aInfo)
 	{
 		Player.idx = cntPlayer;
@@ -685,7 +686,12 @@ void CPlayer::ActionControl(void)
 			CInput *pInput = &RNLib::Input();
 			if (pInput->GetKeyTrigger(DIK_B))
 			{//視点切替
-				s_bAimPlayer = !s_bAimPlayer;
+				if (!s_bAimPlayer)
+					s_bAimPlayer = !s_bAimPlayer;
+				else if (s_nAimNo == 0)
+					s_nAimNo = 1;
+				else
+					s_bAimPlayer = false;
 			}
 
 			if (s_bAimPlayer)
@@ -695,8 +701,8 @@ void CPlayer::ActionControl(void)
 				if (pInput->GetKeyTrigger(DIK_G)) s_fCorrHeight -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_H)) s_fCorrHeight += 0.1f;
 
-				targetPosV.x = targetPosR.x = m_aInfo[0].pos.x + s_fCorrWidth;
-				targetPosV.y = targetPosR.y = m_aInfo[0].pos.y + s_fCorrHeight;
+				targetPosV.x = targetPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
+				targetPosV.y = targetPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
 				targetPosV.z =- 100.0f;
 
 				//本来の当たり判定範囲
@@ -1020,7 +1026,7 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		if(s_bAimPlayer)
+		if(s_bAimPlayer && s_nAimNo == cntPlayer)
 			FloatControl(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
 		else
 			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
