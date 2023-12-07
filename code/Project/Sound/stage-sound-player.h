@@ -6,6 +6,8 @@
 //========================================
 #pragma once
 
+#include "../Object/Block/block.h"
+
 //****************************************
 // –¼‘O‹óŠÔ
 //****************************************
@@ -16,4 +18,5 @@ namespace StageSoundPlayer {
 	void Update(void);
 	void Start(void);
 	void End(void);
+	void PlayLandingSEIdx(const CBlock::LOOKS_TYPE& looksType);
 };
