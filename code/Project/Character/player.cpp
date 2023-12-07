@@ -209,9 +209,9 @@ HRESULT CPlayer::Init(void)
 		else {
 			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
 			s_motion[cnt].walk    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Walk.txt");
-			s_motion[cnt].jump    = RNLib::Motion3D().Load("NONEDATA");
-			s_motion[cnt].fall    = RNLib::Motion3D().Load("NONEDATA");
-			s_motion[cnt].landing = RNLib::Motion3D().Load("NONEDATA");
+			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Jump.txt");
+			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
+			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
 		}
 	}
 
