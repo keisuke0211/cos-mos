@@ -56,9 +56,10 @@ bool            CPlayer::ms_bSwapEnd = false;
 UShort          CPlayer::ms_guideCounter = 0;
 
 bool  CPlayer::s_bAimPlayer = false;
+int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
-float CPlayer::s_fAimWorkSpeed = 0.003f;
+float CPlayer::s_fAimWorkSpeed = 0.05f;
 
 //=======================================
 // コンストラクタ
@@ -209,9 +210,9 @@ HRESULT CPlayer::Init(void)
 		else {
 			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
 			s_motion[cnt].walk    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Walk.txt");
-			s_motion[cnt].jump    = RNLib::Motion3D().Load("NONEDATA");
-			s_motion[cnt].fall    = RNLib::Motion3D().Load("NONEDATA");
-			s_motion[cnt].landing = RNLib::Motion3D().Load("NONEDATA");
+			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Jump.txt");
+			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
+			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
 		}
 	}
 
@@ -685,7 +686,12 @@ void CPlayer::ActionControl(void)
 			CInput *pInput = &RNLib::Input();
 			if (pInput->GetKeyTrigger(DIK_B))
 			{//視点切替
-				s_bAimPlayer = !s_bAimPlayer;
+				if (!s_bAimPlayer)
+					s_bAimPlayer = !s_bAimPlayer;
+				else if (s_nAimNo == 0)
+					s_nAimNo = 1;
+				else
+					s_bAimPlayer = false;
 			}
 
 			if (s_bAimPlayer)
@@ -695,8 +701,8 @@ void CPlayer::ActionControl(void)
 				if (pInput->GetKeyTrigger(DIK_G)) s_fCorrHeight -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_H)) s_fCorrHeight += 0.1f;
 
-				targetPosV.x = targetPosR.x = m_aInfo[0].pos.x + s_fCorrWidth;
-				targetPosV.y = targetPosR.y = m_aInfo[0].pos.y + s_fCorrHeight;
+				targetPosV.x = targetPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
+				targetPosV.y = targetPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
 				targetPosV.z =- 100.0f;
 
 				//本来の当たり判定範囲
@@ -745,7 +751,19 @@ void CPlayer::ActionControl(void)
 			Player.move.y = Player.fJumpPower; // ジャンプ量代入
 			Player.bJump = true;               // ジャンプした
 			PlaySE(SE_LABEL::JUMP);            // SE再生
+
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].jump);
+			Pos3D createPos = Player.pos;
+			Rot3D createRot = INITROT3D;
+
+			if (Player.pos.y > 0.0f) {
+				createPos.y -= CPlayer::SIZE_HEIGHT * 0.5f;
+			}
+			else {
+				createPos.y += CPlayer::SIZE_HEIGHT * 0.5f;
+				createRot.x += D3DX_PI;
+			}
+			RNLib::StandardEffect3D().CreateDustStormOnLanding(createPos, createRot, Color{ 169,158,93,255 }, 20.0f);
 		}
 
 		bool isMove = false;
@@ -1020,7 +1038,7 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		if(s_bAimPlayer)
+		if(s_bAimPlayer && s_nAimNo == cntPlayer)
 			FloatControl(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
 		else
 			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
