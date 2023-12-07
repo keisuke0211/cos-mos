@@ -736,6 +736,7 @@ void CPlayer::ActionControl(void)
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
 			CGoalGate::EntrySub();
+			CRocket::RideOff();
 			Player.bRide = false;
 			Player.bGoal = false;
 			Player.move.x *= -2.0f;
@@ -903,6 +904,9 @@ void CPlayer::SwapAnimation(void)
 			case CPlayer::SWAP_ANIM::MIDDLE:   SwapAnim_Middle(Player, nCntPlayer);	break;	//中間
 			case CPlayer::SWAP_ANIM::EPILOGUE: SwapAnim_Epilogue(Player, nCntPlayer); break;//エピローグ
 		}
+
+		//ゴールしてたらエフェクト非表示
+		if (Player.bGoal || Player.bRide) continue;
 
 		Color setCol;
 		if (nCntPlayer == 0){
