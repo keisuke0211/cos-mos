@@ -308,5 +308,5 @@ bool EqualFloat(const float& numA, const float& numB, const float& allowableErro
 // ³•‰‚Ì
 //========================================
 float GetPlusMinus(const float& num) {
-
+	return num / fabsf(num);
 }
