@@ -272,9 +272,10 @@ private:
 
 	void Swap(void);
 	void SwapAnimation(void);
-	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); //プロローグ処理
-	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);	//中間処理
-	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); //エピローグ処理
+	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); // プロローグ処理
+	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);   // 中間処理
+	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); // エピローグ処理
+	void SwapGuide(Info& Player);                               // ガイド表示
 
 	static const char *PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX];
 	static int s_ParticleTex[(int)PARTI_TEX::MAX];

@@ -465,3 +465,19 @@ CBat * CStageObjectMgr::BatCreate(D3DXVECTOR3 pos)
 
 	return pObj;
 }
+//========================================
+//  ¼–¾
+//========================================
+CTorch * CStageObjectMgr::TorchCreate(D3DXVECTOR3 pos)
+{
+	CTorch *pObj = NULL;
+
+	if (pObj != NULL) { return pObj; }
+	pObj = new CTorch;
+
+	// ‰Šú‰»ˆ—
+	pObj->SetPos(pos);
+	pObj->Init();
+
+	return pObj;
+}
