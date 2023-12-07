@@ -573,37 +573,20 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 	if (info.deathCounter2 > 0) {
 
 		if (--info.deathCounter2 == 0) {
+			//プレイヤー情報初期化　＋　特定のオブジェクトの初期化
 			InitInfo();
-
-			//オブジェクトのポインタを格納
-			CObject* obj = NULL;
+			CPile::ResetTrunkHeightAll();
 
 			//オブジェクトを取得
+			CObject* obj = NULL;
 			while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 				//取得したオブジェクトをキャスト
 				CStageObject* stageObj = (CStageObject*)obj;
 
-				//種類取得
-				const CStageObject::TYPE type = stageObj->GetType();
-
-				switch (type)
-				{
-				case CStageObject::TYPE::MISS:
-				{
-					//取得したオブジェクトをキャスト
-					CMiss* Miss = (CMiss*)obj;
-
-					Miss->Delete();	// 削除処理
-					break;
-				}
-				case CStageObject::TYPE::GHOST:
-				{
-					//取得したオブジェクトをキャスト
-					CGhost* Ghost = (CGhost*)obj;
-
-					Ghost->Delete();	// 削除処理
-					break;
-				}
+				switch (stageObj->GetType())
+				{//オブジェクトを変換して削除
+				case CStageObject::TYPE::MISS:  { CMiss*  Miss  = (CMiss*)obj;  Miss->Delete(); }break;
+				case CStageObject::TYPE::GHOST: { CGhost* Ghost = (CGhost*)obj; Ghost->Delete();} break;
 				}
 			}
 		}
@@ -991,6 +974,21 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
 	if (Player.isDeath)
 		return;
 
+	switch (type)
+	{
+		case OBJECT_TYPE::BLOCK:
+		case OBJECT_TYPE::FILLBLOCK:
+		case OBJECT_TYPE::TRAMPOLINE:
+		case OBJECT_TYPE::MOVE_BLOCK:
+		case OBJECT_TYPE::EXTEND_DOG:
+		case OBJECT_TYPE::GOALGATE:
+		case OBJECT_TYPE::PARTS:
+		case OBJECT_TYPE::ROCKET:
+		case OBJECT_TYPE::PILE:
+			if (s_nSwapInterval == 0) return;
+			break;
+	}
+
 	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
 	RNLib::Sound().Play(s_SE.expand, CSound::CATEGORY::SE, 1.0f, false);
@@ -1058,41 +1056,6 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		// 位置更新
 		Player.pos.y += Player.move.y;
 		break;
-	}
-
-	//位置制御
-	//CtrlPos(&Player, vec);
-}
-
-//----------------------------
-// 制御処理
-//----------------------------
-void CPlayer::CtrlPos(Info *pInfo, VECTOL vec)
-{
-	int RowMax = Manager::StgEd()->GetRowMax() - 1;
-	int LineMax = Manager::StgEd()->GetLineMax() - 1;
-
-	D3DXVECTOR3 MinPos = Manager::StgEd()->GetPos(0, 0);
-	D3DXVECTOR3 MaxPos = Manager::StgEd()->GetPos(RowMax, LineMax);
-
-	// 1マスずらす
-	MinPos.y = -MinPos.y - CStageObject::SIZE_OF_1_SQUARE * 0.5f;
-	MaxPos.y = -MaxPos.y + CStageObject::SIZE_OF_1_SQUARE * 0.5f;
-
-	// プレイヤーの位置更新
-	switch (vec)
-	{
-			//Ｘ座標
-		case CPlayer::VECTOL::X:
-			if		(pInfo->pos.x <= MinPos.x)	pInfo->pos.x = MinPos.x;
-			else if (pInfo->pos.x > MaxPos.x)	pInfo->pos.x = MaxPos.x;
-			break;
-
-			//Ｙ座標
-		case CPlayer::VECTOL::Y:
-			if		(pInfo->pos.y <= MinPos.y)	pInfo->pos.y = MinPos.y;
-			else if (pInfo->pos.y > MaxPos.y)	pInfo->pos.y = MaxPos.y;
-			break;
 	}
 }
 
@@ -1391,8 +1354,8 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		case CStageObject::TYPE::PILE:
 		{
 			CPile *pPile = (CPile *)pStageObj;
-			const float CaveInPos = pPile->GetPosCaveIn().y;
-			const float Height = pPile->GetHeight() * 0.5f;
+			CFloat CaveInPos = pPile->GetPosCaveIn().y;
+			CFloat Height = pPile->GetHeight() * 0.5f;
 
 			for each (Info &Player in m_aInfo)
 			{
@@ -1403,6 +1366,9 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 					case WORLD_SIDE::FACE:	Player.pos.y = CaveInPos + Height + SIZE_HEIGHT;	break;
 					case WORLD_SIDE::BEHIND:Player.pos.y = CaveInPos - Height - SIZE_HEIGHT;	break;
 				}
+
+				Player.move.y = 0.0f;
+
 				//次の杭で判定しないよう初期化
 				Player.bLandPile = false;
 			}

@@ -292,7 +292,6 @@ private:
 	void InitInfo(void);
 	void ActionControl(void);
 	void Move(VECTOL vec, int cntPlayer);
-	void CtrlPos(Info *pInfo, VECTOL vec);	// 範囲外の制御
 	void Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
