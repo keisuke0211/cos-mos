@@ -107,18 +107,6 @@ void CPile::PutModel(void)
 		//”z’uÀ•W‚ð‰º‚°‚é
 		PilePos.y -= SIZE_OF_1_SQUARE;
 	}
-
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(16.0f, 0.0f, 0.0f), INITROT3D)
-		->SetSize(m_width, m_height)
-		->SetCol(INITCOLOR);
-
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, INITROT3D)
-		->SetSize(16.0f, 16.0f)
-		->SetCol(INITCOLOR)
-		->SetZTest(false)
-		->SetTexUV(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00),
-				   Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f),
-				   Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f));
 }
 
 //===============================
