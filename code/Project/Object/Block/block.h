@@ -46,8 +46,8 @@ public:
 		IRON_BAR_2					 = 26,	// 鉄格子2
 		IRON_BAR_3					 = 27,	// 鉄格子3
 		MUD_BLOCK					 = 28,	// 泥ブロック
-		SAND_BLOCK					 = 29,	// 砂＆アスファルトブロック(中間用)
-		SAND_AND_ASPHALT_BLOCK		 = 30,	// 砂ブロック
+		SAND_AND_ASPHALT_BLOCK       = 29,	// 砂＆アスファルトブロック(中間用)
+		SAND_BLOCK					 = 30,	// 砂ブロック
 		MAX,
 	};
 
