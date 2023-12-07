@@ -325,6 +325,7 @@ private:
 	static CCollision *s_pColli;
 
 	static bool s_bAimPlayer;
+	static int s_nAimNo;
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;
