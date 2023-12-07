@@ -61,6 +61,7 @@ CExtenddog::~CExtenddog(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Init(void) {
+	m_nHeight--;
 	m_HeadPos.y = m_nHeight * SIZE_OF_1_SQUARE;
 	m_BodyPos = m_HeadPos;
 }
@@ -178,7 +179,7 @@ void CExtenddog::Update(void) {
 
 		// ‘Ì
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) / 2;
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, (-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight + (SIZE_OF_1_SQUARE * m_nHeight * (1.0f - fCountRate))) * 7, 1.0f),  false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), Scale3D(1.0f, (-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight + (SIZE_OF_1_SQUARE * m_nHeight * (1.0f - fCountRate))) * 8, 1.0f),  false)
 			->SetOutLineIdx(true); 
 	}
 	else
@@ -203,7 +204,7 @@ void CExtenddog::Update(void) {
 		// ‘Ì
 		//m_BodyPos.y = (m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight - (SIZE_OF_1_SQUARE * (m_nHeight - 1.5) * fCountRate)) * 11, 1.0f),  false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight - (SIZE_OF_1_SQUARE * (m_nHeight - 1.5) * fCountRate)) * 12, 1.0f),  false)
 			->SetOutLineIdx(true);
 	}
 }
