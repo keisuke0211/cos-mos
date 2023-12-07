@@ -305,6 +305,7 @@ void CPlayer::InitInfo(void) {
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
+		Player.swapWaitBalloonCounter = 0;
 	}
 
 	CGoalGate::ResetEtr();
@@ -758,6 +759,7 @@ void CPlayer::ActionControl(void)
 			Player.move.x += MOVE_SPEED;
 			Player.rot.y += CGeometry::FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
 			isMove = true;
+
 		}
 		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
 				 RNLib::Input().GetStickAnglePress(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT, nIdxPlayer))
@@ -785,15 +787,19 @@ void CPlayer::ActionControl(void)
 		}
 
 		// スワップ入力
-		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP))
-		{
+		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
 			Player.nSwapAlpha = 255;
+			if (++Player.swapWaitBalloonCounter > SWAP_WAIT_BALLOON_TIME)
+				Player.swapWaitBalloonCounter = SWAP_WAIT_BALLOON_TIME;
 		}
-		//スワップマークカラーを変更
-		else
-		{
+		//スワップ非入力
+		else {
 			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
+			if (--Player.swapWaitBalloonCounter < 0)
+				Player.swapWaitBalloonCounter = 0;
 		}
+
+		//RNLib::Polygon3D().Put(PRIORITY_UI, Player.pos.y)
 	}
 }
 
