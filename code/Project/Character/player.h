@@ -96,6 +96,11 @@ public:
 		int  deathCounter;  // 死亡カウンター
 		int  deathCounter2; // 死亡カウンター2
 
+		//-------------------------------
+		//SWAP待ちの吹き出し用
+		//-------------------------------
+		int  swapWaitBalloonCounter;
+
 		// どちらの世界に存在するか
 		WORLD_SIDE side;
 
@@ -251,6 +256,7 @@ private:
 	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
 	static const int DEATH_TIME = 60;    // 死亡時間
 	static const int DEATH_TIME2 = 120;  // 死亡時間2
+	static const int SWAP_WAIT_BALLOON_TIME = 30;  // スワップ待ち吹き出し時間
 	static SWAP_ANIM s_AnimState;        // アニメーション構成
 	static       int s_nSwapInterval;    // 残りスワップインターバル
 	static       bool s_bSwapAnim;       // スワップアニメーション中かどうか
