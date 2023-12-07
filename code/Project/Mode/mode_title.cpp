@@ -49,6 +49,7 @@ CMode_Title::CMode_Title(void) {
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
 	m_StgBoardIdx      = RNLib::Model().Load("data\\MODEL\\Stage_Board.x");
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
+	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
 	m_Menu.pOperation  = NULL;
 	m_Menu.pSetting    = NULL;
 	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
@@ -879,6 +880,9 @@ void CMode_Title::StageSelect(void) {
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 	int nStageMax  = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 	 
+	//位置補正
+	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
+
 	//----------------------------------------
 	// 描画処理
 	//----------------------------------------
@@ -898,17 +902,18 @@ void CMode_Title::StageSelect(void) {
 	{// 矢印の描画
 		if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0)) {
 			// 矢印の描画(左)
-
+			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - PosCor.x - NUMPOSSELBOX.x, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D)
+				->SetCol(Color{0,168,112,255})
+				->SetOutLineIdx(5);
 		}
 
 		if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1)) {
 			// 矢印の描画(右)
-
+			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + PosCor.x, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D)
+				->SetCol(Color{ 0,168,112,255 })
+				->SetOutLineIdx(5);
 		}
 	}
-
-	//位置補正
-	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f),0.0f,0.0f);
 
 	// 選択アイコンの処理
 	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
