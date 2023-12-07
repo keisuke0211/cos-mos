@@ -24,7 +24,6 @@ public:
 		// [[[ 関数宣言 ]]]
 		CDrawInfo();
 		~CDrawInfo();
-		void Draw(Device& device, const Matrix& viewMtx);
 		static void InitCreateVertexBuffer(void);
 		static void CreateVertexBuffer(const UShort& num);
 		static void ReleaseVertexBuffer(void);
@@ -43,10 +42,10 @@ public:
 		Vertex3D                     m_vtxs[4];
 
 		// [[[ 静的変数宣言 ]]]
-		static VertexBuffer m_vtxBuff;
-		static UShort       m_allocPower;
-		static UShort       m_allocNum;
-		static UShort       m_idxCount;
+		static VertexBuffer ms_vtxBuff;
+		static UShort       ms_allocPower;
+		static UShort       ms_allocNum;
+		static UShort       ms_idxCount;
 	};
 
 	// 登録情報
@@ -68,7 +67,7 @@ public:
 		CRegistInfo* SetVtxNor           (const Vector3D nor0, const Vector3D nor1, const Vector3D nor2, const Vector3D nor3);
 		// <<< 色情報設定 >>>
 		CRegistInfo* SetCol              (const Color& col);
-		CRegistInfo* SetVtxCol              (const Color col0, const Color col1, const Color col2, const Color col3);
+		CRegistInfo* SetVtxCol           (const Color col0, const Color col1, const Color col2, const Color col3);
 		// <<< テクスチャ情報設定 >>>
 		CRegistInfo* SetTex              (const short& texIdx, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
 		CRegistInfo* SetTex              (CCamera* camera, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);

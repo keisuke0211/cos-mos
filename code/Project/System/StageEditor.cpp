@@ -287,9 +287,6 @@ void CStageEditor::FileLoad(void)
 //========================================
 void CStageEditor::StageLoad(int planet, int stage)
 {
-	//プレイヤー初期化
-	CMode_Game::GetPlayer()->Init();
-
 	// エフェクト解放
 	Manager::EffectMgr()->ReleaseAll();
 

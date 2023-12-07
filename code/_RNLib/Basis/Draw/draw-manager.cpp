@@ -57,20 +57,20 @@ void CDrawMgr::StartDraw(Device& device) {
 	}
 
 	// ポリゴン2Dの頂点バッファ再確保
-	if (CPolygon2D::CDrawInfo::m_allocPower > POLYGON2D_ALLOC_BASE_POWER) {
+	if (CPolygon2D::CDrawInfo::ms_allocPower > POLYGON2D_ALLOC_BASE_POWER) {
 
-		for (int cntAlloc = POLYGON2D_ALLOC_BASE_POWER; cntAlloc < CPolygon2D::CDrawInfo::m_allocPower; cntAlloc++) {
+		for (int cntAlloc = POLYGON2D_ALLOC_BASE_POWER; cntAlloc < CPolygon2D::CDrawInfo::ms_allocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (CPolygon2D::CDrawInfo::m_idxCount < allocLine)
+			if (CPolygon2D::CDrawInfo::ms_idxCount < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
 				CPolygon2D::CDrawInfo::CreateVertexBuffer(allocLine);
 
 				// 確保した数/べき乗数を保存
-				CPolygon2D::CDrawInfo::m_allocNum = allocLine;
-				CPolygon2D::CDrawInfo::m_allocPower = cntAlloc;
+				CPolygon2D::CDrawInfo::ms_allocNum = allocLine;
+				CPolygon2D::CDrawInfo::ms_allocPower = cntAlloc;
 
 				break;
 			}
@@ -78,20 +78,20 @@ void CDrawMgr::StartDraw(Device& device) {
 	}
 
 	// ポリゴン3Dの頂点バッファ再確保
-	if (CPolygon3D::CDrawInfo::m_allocPower > POLYGON3D_ALLOC_BASE_POWER) {
+	if (CPolygon3D::CDrawInfo::ms_allocPower > POLYGON3D_ALLOC_BASE_POWER) {
 
-		for (int cntAlloc = POLYGON3D_ALLOC_BASE_POWER; cntAlloc < CPolygon3D::CDrawInfo::m_allocPower; cntAlloc++) {
+		for (int cntAlloc = POLYGON3D_ALLOC_BASE_POWER; cntAlloc < CPolygon3D::CDrawInfo::ms_allocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
-			if (CPolygon3D::CDrawInfo::m_idxCount < allocLine)
+			if (CPolygon3D::CDrawInfo::ms_idxCount < allocLine)
 			{// 確保ラインよりも数が少ない時、
 				// その確保ライン分確保し直す
 				CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
 				CPolygon3D::CDrawInfo::CreateVertexBuffer(allocLine);
 
 				// 確保した数/べき乗数を保存
-				CPolygon3D::CDrawInfo::m_allocNum = allocLine;
-				CPolygon3D::CDrawInfo::m_allocPower = cntAlloc;
+				CPolygon3D::CDrawInfo::ms_allocNum = allocLine;
+				CPolygon3D::CDrawInfo::ms_allocPower = cntAlloc;
 
 				break;
 			}
@@ -99,8 +99,8 @@ void CDrawMgr::StartDraw(Device& device) {
 	}
 
 	// 番号カウント初期化
-	CPolygon2D::CDrawInfo::m_idxCount = 0;
-	CPolygon3D::CDrawInfo::m_idxCount = 0;
+	CPolygon2D::CDrawInfo::ms_idxCount = 0;
+	CPolygon3D::CDrawInfo::ms_idxCount = 0;
 
 	// 頂点情報を代入
 	AssignVertexInfo();
@@ -268,11 +268,11 @@ void CDrawMgr::Release(void) {
 CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
 
 	// 番号カウントが最大数に達した時、頂点バッファを再生成する
-	if (CPolygon2D::CDrawInfo::m_idxCount == CPolygon2D::CDrawInfo::m_allocNum) {
-		CPolygon2D::CDrawInfo::m_allocPower++;
-		CPolygon2D::CDrawInfo::m_allocNum = pow(2, CPolygon2D::CDrawInfo::m_allocPower);
+	if (CPolygon2D::CDrawInfo::ms_idxCount == CPolygon2D::CDrawInfo::ms_allocNum) {
+		CPolygon2D::CDrawInfo::ms_allocPower++;
+		CPolygon2D::CDrawInfo::ms_allocNum = pow(2, CPolygon2D::CDrawInfo::ms_allocPower);
 		CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
-		CPolygon2D::CDrawInfo::CreateVertexBuffer(CPolygon2D::CDrawInfo::m_allocNum);
+		CPolygon2D::CDrawInfo::CreateVertexBuffer(CPolygon2D::CDrawInfo::ms_allocNum);
 	}
 
 	// 登録情報
@@ -281,7 +281,7 @@ CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bo
 		RegistPolygon2D(ms_resistInfoSum[priority]);
 
 	// 番号を代入
-	registInfo->SetIdx(CPolygon2D::CDrawInfo::m_idxCount++);
+	registInfo->SetIdx(CPolygon2D::CDrawInfo::ms_idxCount++);
 
 	return registInfo;
 }
@@ -292,11 +292,11 @@ CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bo
 CPolygon3D::CRegistInfo* CDrawMgr::PutPolygon3D(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
 	
 	// 番号カウントが最大数に達した時、頂点バッファを再生成する
-	if (CPolygon3D::CDrawInfo::m_idxCount == CPolygon3D::CDrawInfo::m_allocNum) {
-		CPolygon3D::CDrawInfo::m_allocPower++;
-		CPolygon3D::CDrawInfo::m_allocNum = pow(2, CPolygon3D::CDrawInfo::m_allocPower);
+	if (CPolygon3D::CDrawInfo::ms_idxCount == CPolygon3D::CDrawInfo::ms_allocNum) {
+		CPolygon3D::CDrawInfo::ms_allocPower++;
+		CPolygon3D::CDrawInfo::ms_allocNum = pow(2, CPolygon3D::CDrawInfo::ms_allocPower);
 		CPolygon3D::CDrawInfo::ReleaseVertexBuffer();
-		CPolygon3D::CDrawInfo::CreateVertexBuffer(CPolygon3D::CDrawInfo::m_allocNum);
+		CPolygon3D::CDrawInfo::CreateVertexBuffer(CPolygon3D::CDrawInfo::ms_allocNum);
 	}
 
 	// 登録情報
@@ -305,7 +305,7 @@ CPolygon3D::CRegistInfo* CDrawMgr::PutPolygon3D(const UShort& priority, const Ma
 		RegistPolygon3D(ms_resistInfoSum[priority]);
 
 	// 情報を代入
-	registInfo->SetIdx(CPolygon3D::CDrawInfo::m_idxCount++);
+	registInfo->SetIdx(CPolygon3D::CDrawInfo::ms_idxCount++);
 	registInfo->SetMtx(mtx);
 
 	return registInfo;
@@ -394,8 +394,14 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 	Pos3D   cameraPosV       = camera == NULL ? Pos3D(0.0f, 0.0f, 0.0f) : camera->GetPosV();
 	Pos3D   cameraPosR       = camera == NULL ? Pos3D(0.0f, 0.0f, 1.0f) : camera->GetPosR();
 	Scale2D cameraScale      = camera == NULL ? RNLib::Window().GetScale() : camera->GetScale2D();
+	Matrix  cameraBillboardMtx;
+	D3DXMatrixInverse(&cameraBillboardMtx, NULL, &viewMtx);
+	cameraBillboardMtx._41 = 0.0f;
+	cameraBillboardMtx._42 = 0.0f;
+	cameraBillboardMtx._43 = 0.0f;
 
 	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+
 		//----------------------------------------
 		// モデル描画
 		//----------------------------------------
@@ -416,14 +422,7 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 			device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_model[cntModel]->m_mtx);
 
 			// [[[ Zテストの設定 ]]]
-			if (drawInfo[cntPriority].m_model[cntModel]->m_isZTest) {
-				device->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-				device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-			}
-			else {
-				device->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-				device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-			}
+			RNLib::DrawStateMgr().SetIsZTest(device, drawInfo[cntPriority].m_model[cntModel]->m_isZTest);
 
 			// 描画
 			for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
@@ -434,7 +433,7 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 				// [[[ テクスチャの設定 ]]]
 				device->SetTexture(0, drawInfo[cntPriority].m_model[cntModel]->m_texes[cntMat]);
 
-				// [[[ 描画 ]]]
+				// 描画
 				drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat);
 			}
 
@@ -445,48 +444,104 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 				device->SetMaterial(&CModel::CDrawInfo::ms_outLineMat);
 
 				// 裏面
-				device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+				RNLib::DrawStateMgr().SetCullingMode(device, CDrawState::CULLING_MODE::BACK_SIDE);
 
 				for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
 					drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh->DrawSubset(cntMat);
 				}
 
 				// 表面
-				device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+				RNLib::DrawStateMgr().SetCullingMode(device, CDrawState::CULLING_MODE::FRONT_SIDE);
 			}
 		}
+
+		// 可変設定のリセット
+		RNLib::DrawStateMgr().ResetVariableSetting(device);
 
 		//----------------------------------------
 		// ポリゴン3D
 		//----------------------------------------
-		for (int cntPolygon3D = 0; cntPolygon3D < drawInfo[cntPriority].m_polygon3DNum; cntPolygon3D++) {
+		if (CPolygon3D::CDrawInfo::ms_vtxBuff != NULL) {
 
-			if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D] == NULL)
-				continue;
+			// 頂点フォーマットの設定
+			device->SetFVF(FVF_VERTEX_3D);
 
-			// クリッピングIDが対象外であれば折り返す
-			if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != NONEDATA || isCameraClipping)
-				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != cameraID)
+			// 頂点バッファをデータストリームに設定
+			device->SetStreamSource(0, CPolygon3D::CDrawInfo::ms_vtxBuff, 0, sizeof(Vertex3D));
+
+			for (int cntPolygon3D = 0; cntPolygon3D < drawInfo[cntPriority].m_polygon3DNum; cntPolygon3D++) {
+
+				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D] == NULL)
 					continue;
 
-			drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->Draw(device, viewMtx);
+				// クリッピングIDが対象外であれば折り返す
+				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != NONEDATA || isCameraClipping)
+					if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_clippingID != cameraID)
+						continue;
+
+				// [[[ Zテストの設定 ]]]
+				RNLib::DrawStateMgr().SetIsZTest(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_isZTest);
+
+				// [[[ ライティングを有効/無効にする ]]]
+				RNLib::DrawStateMgr().SetIsLighting(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_isLighting);
+
+				// [[[ 加算合成を有効/無効にする ]]]
+				RNLib::DrawStateMgr().SetAlphaBlendMode(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_alphaBlendMode);
+
+				// [[[ カリングの設定 ]]]
+				RNLib::DrawStateMgr().SetCullingMode(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_cullingMode);
+
+				// [[[ ビルボードフラグに応じてマトリックスを設定 ]]]
+				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_isBillboard)
+					device->SetTransform(D3DTS_WORLD, &CMatrix::MultiplyMtx(drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx, cameraBillboardMtx));
+				else
+					device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx);
+
+				// [[[ テクスチャの設定 ]]]
+				Polygon2DAnd3D::SetTexture(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_tex, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_texType);
+
+				// 描画
+				device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_idx, 2);
+			}
 		}
+
+		// 可変設定のリセット
+		RNLib::DrawStateMgr().ResetVariableSetting(device);
 
 		//----------------------------------------
 		// ポリゴン2D
 		//----------------------------------------
-		for (int cntPolygon2D = 0; cntPolygon2D < drawInfo[cntPriority].m_polygon2DNum; cntPolygon2D++) {
+		if (CPolygon2D::CDrawInfo::ms_vtxBuff != NULL) {
 
-			if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D] == NULL)
-				continue;
+			// ZテストをOFFに
+			RNLib::DrawStateMgr().SetIsZTest(device, false);
 
-			// クリッピングIDが対象外であれば折り返す
-			if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != NONEDATA || isCameraClipping)
-				if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != cameraID)
+			// 頂点フォーマットの設定
+			device->SetFVF(FVF_VERTEX_2D);
+
+			// 頂点バッファをデータストリームに設定
+			device->SetStreamSource(0, CPolygon2D::CDrawInfo::ms_vtxBuff, 0, sizeof(Vertex2D));
+
+			for (int cntPolygon2D = 0; cntPolygon2D < drawInfo[cntPriority].m_polygon2DNum; cntPolygon2D++) {
+
+				if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D] == NULL)
 					continue;
 
-			drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->Draw(device, viewMtx);
+				// クリッピングIDが対象外であれば折り返す
+				if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != NONEDATA || isCameraClipping)
+					if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != cameraID)
+						continue;
+
+				// [[[ テクスチャの設定 ]]]
+				Polygon2DAnd3D::SetTexture(device, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_tex, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_texType);
+
+				// ポリゴンの描画
+				device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_idx, 2);
+			}
 		}
+
+		// 可変設定のリセット
+		RNLib::DrawStateMgr().ResetVariableSetting(device);
 	}
 }
 
@@ -496,11 +551,11 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 void CDrawMgr::AssignVertexInfo(void) {
 
 	// 頂点2D情報に変換
-	if (CPolygon2D::CDrawInfo::m_vtxBuff != NULL) {
+	if (CPolygon2D::CDrawInfo::ms_vtxBuff != NULL) {
 
 		// 頂点バッファをロック
 		Vertex2D* vtxs = NULL;
-		CPolygon2D::CDrawInfo::m_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
+		CPolygon2D::CDrawInfo::ms_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
 		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
 			ConvDrawInfoToVertex2DInfo(vtxs, ms_drawInfoSum[cntPriority]);
@@ -508,15 +563,15 @@ void CDrawMgr::AssignVertexInfo(void) {
 		}
 
 		// 頂点バッファをアンロック
-		CPolygon2D::CDrawInfo::m_vtxBuff->Unlock();
+		CPolygon2D::CDrawInfo::ms_vtxBuff->Unlock();
 	}
 
 	// 頂点3D情報に変換
-	if (CPolygon3D::CDrawInfo::m_vtxBuff != NULL) {
+	if (CPolygon3D::CDrawInfo::ms_vtxBuff != NULL) {
 
 		// 頂点バッファをロック
 		Vertex3D* vtxs = NULL;
-		CPolygon3D::CDrawInfo::m_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
+		CPolygon3D::CDrawInfo::ms_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
 		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
 			ConvDrawInfoToVertex3DInfo(vtxs, ms_drawInfoSum[cntPriority]);
@@ -524,7 +579,7 @@ void CDrawMgr::AssignVertexInfo(void) {
 		}
 
 		// 頂点バッファをアンロック
-		CPolygon3D::CDrawInfo::m_vtxBuff->Unlock();
+		CPolygon3D::CDrawInfo::ms_vtxBuff->Unlock();
 	}
 }
 
@@ -540,7 +595,7 @@ void CDrawMgr::ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInf
 
 		for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 			const int vtxIdx = vtxStartIdx + cntVtx;
-			assert(vtxIdx < CPolygon2D::CDrawInfo::m_allocNum * 4);
+			assert(vtxIdx < CPolygon2D::CDrawInfo::ms_allocNum * 4);
 			vtxs[vtxIdx] = drawInfoSum.m_polygon2D[cntDrawInfo]->m_vtxs[cntVtx];
 		}
 	}
@@ -558,7 +613,7 @@ void CDrawMgr::ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInf
 
 		for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 			const int vtxIdx = vtxStartIdx + cntVtx;
-			assert(vtxIdx < CPolygon3D::CDrawInfo::m_allocNum * 4);
+			assert(vtxIdx < CPolygon3D::CDrawInfo::ms_allocNum * 4);
 			vtxs[vtxIdx] = drawInfoSum.m_polygon3D[cntPolygon3D]->m_vtxs[cntVtx];
 		}
 	}

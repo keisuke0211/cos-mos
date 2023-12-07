@@ -24,16 +24,16 @@ void Polygon2DAnd3D::SetTexture(Device& device, void*& tex, TEX_TYPE& texType) {
 		switch (texType) {
 		case TEX_TYPE::IDX: {
 			RNLib::Texture().Set(device, *(short*)tex);
+			RNLib::DrawStateMgr().SetIsTextureAlpha(device, true);
 		}break;
 		case TEX_TYPE::CAMERA: {
 			CCamera** camera = (CCamera**)tex;
-			if (*camera == NULL) {
+			if (*camera == NULL)
 				device->SetTexture(0, NULL);
-			}
-			else {
+			else
 				device->SetTexture(0, (*camera)->GetTexture());
-				device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-			}
+
+			RNLib::DrawStateMgr().SetIsTextureAlpha(device, false);
 		}break;
 		}
 	}
