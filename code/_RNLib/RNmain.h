@@ -157,6 +157,37 @@ typedef D3DVIEWPORT9            Viewport;
 class Color{
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
+	Color() {
+		r = g = b = a = 0;
+	}
+	Color(UShort setR, UShort setG, UShort setB, UShort setA) {
+		setR = setR > 255 ? 255 : setR;
+		setG = setG > 255 ? 255 : setG;
+		setB = setB > 255 ? 255 : setB;
+		setA = setA > 255 ? 255 : setA;
+		r = setR; g = setG; b = setB; a = setA;
+	}
+	Color(short setR, short setG, short setB, short setA) {
+		setR = setR < 0 ? 0 : setR > 255 ? 255 : setR;
+		setG = setR < 0 ? 0 : setG > 255 ? 255 : setG;
+		setB = setR < 0 ? 0 : setB > 255 ? 255 : setB;
+		setA = setR < 0 ? 0 : setA > 255 ? 255 : setA;
+		r = setR; g = setG; b = setB; a = setA;
+	}
+	Color(UInt setR, UInt setG, UInt setB, UInt setA) {
+		setR = setR > 255 ? 255 : setR;
+		setG = setG > 255 ? 255 : setG;
+		setB = setB > 255 ? 255 : setB;
+		setA = setA > 255 ? 255 : setA;
+		r = setR; g = setG; b = setB; a = setA;
+	}
+	Color(int setR, int setG, int setB, int setA) {
+		setR = setR < 0 ? 0 : setR > 255 ? 255 : setR;
+		setG = setR < 0 ? 0 : setG > 255 ? 255 : setG;
+		setB = setR < 0 ? 0 : setB > 255 ? 255 : setB;
+		setA = setR < 0 ? 0 : setA > 255 ? 255 : setA;
+		r = setR; g = setG; b = setB; a = setA;
+	}
 	Color operator +(Color ovr) const {
 		Color col = *this;
 		col.r += ovr.r;

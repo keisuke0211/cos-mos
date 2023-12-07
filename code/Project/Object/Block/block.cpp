@@ -282,7 +282,7 @@ void CBlock::Update(void) {
 				if (++m_counter > 30) {
 					m_counter = 30;
 					if (rand() % 20 == 0) {
-						Manager::EffectMgr()->ParticleCreate(m_otherTextureIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (UShort)(rand() % 40),(UShort)(100 + rand() % 80),(UShort)(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
+						Manager::EffectMgr()->ParticleCreate(m_otherTextureIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (rand() % 40),(100 + rand() % 80),(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
 					}
 				}
 			}
@@ -299,7 +299,7 @@ void CBlock::Update(void) {
 				if (++m_counter > 30) {
 					m_counter = 30;
 					if (rand() % 20 == 0) {
-						Manager::EffectMgr()->ParticleCreate(m_otherTextureIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (UShort)(rand() % 40),(UShort)(100 + rand() % 80),(UShort)(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
+						Manager::EffectMgr()->ParticleCreate(m_otherTextureIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (rand() % 40),(100 + rand() % 80),(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
 					}
 				}
 			}
