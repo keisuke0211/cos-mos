@@ -60,6 +60,7 @@ int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
 float CPlayer::s_fAimWorkSpeed = 0.05f;
+CPlayer::Info CPlayer::m_aInfo[CPlayer::NUM_PLAYER];	// 各プレイヤーの情報
 
 //=======================================
 // コンストラクタ

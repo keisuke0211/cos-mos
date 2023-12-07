@@ -231,8 +231,10 @@ void CMode_Game::Update(void) {
 	if (m_state != (int)STATE::PAUSE) {
 
 		// ポーズ
-		if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START)) {
-			SetState((int)STATE::PAUSE);
+		if (!CPlayer::GetSwapAnim() && !CPlayer::GetDeath() && CPlayer::GetZoomUpCounter() == 0) {
+			if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START)) {
+				SetState((int)STATE::PAUSE);
+			}
 		}
 
 		// プレイヤーの更新処理
