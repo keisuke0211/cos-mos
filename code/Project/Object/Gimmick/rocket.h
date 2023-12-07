@@ -64,7 +64,8 @@ public:
 	/* モデル番号	*/void SetModelIdx(const int nIdx) { m_Info.nModelIdx = nIdx; }
 	/* アニメーションの状態の設定*/void SetState(const ANIME_STATE state) { m_Info.Animstate = state; }
 	/* 乗る準備完了*/	static void ReadyRide(void) { s_bReady = true; }
-	/* 乗ってる状態		*/void Ride(void);
+	/* 搭乗	*/void RideOn(void);
+	/* 降機 */ static void RideOff(void);
 	/*搭乗しているプレイヤー数リセット*/static void ResetCounter(void) { s_nCountPlayer = 0; }
 
 	// -- 所得 ---------------------------------------------

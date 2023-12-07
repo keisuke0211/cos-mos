@@ -90,6 +90,21 @@ void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 	// 着地SE再生
 	if (pInfo->bJump == true) {
 		CPlayer::PlaySE(CPlayer::SE_LABEL::LANDING);
+		
+		// エフェクト
+		Pos3D createPos = pInfo->pos;
+		Rot3D createRot = INITROT3D;
+
+		if (pInfo->pos.y > 0.0f) {
+			createPos.y -= CPlayer::SIZE_HEIGHT * 0.5f;
+		}
+		else {
+			createPos.y += CPlayer::SIZE_HEIGHT * 0.5f;
+			createRot.x += D3DX_PI;
+		}
+		RNLib::StandardEffect3D().CreateDustStormOnLanding(createPos, createRot, Color{ 169,158,93,255 }, 20.0f);
+
+		// モーション
 		pInfo->landingCounter = 30;
 		pInfo->doll->OverwriteMotion(CPlayer::GetMotion(pInfo->idx).landing);
 	}
@@ -679,11 +694,11 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
-	if (pRocket->GetReady() && pInfo->bRide) return;
+	if (!pRocket->GetReady() && !pInfo->bRide) return;
 
 	// ロケットに搭乗
 	pInfo->bRide = true;
-	pRocket->Ride();
+	pRocket->RideOn();
 	
 	const int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
