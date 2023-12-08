@@ -125,12 +125,14 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	//î•ñİ’è
 	m_PilePos = pos ;
 	m_NumTrunk = NumTrunk;
-	m_TrunkHeight = TrunkHeight;
-	m_StartTrunkHeight = TrunkHeight;
-	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY != 0 ? -SIZE_OF_1_SQUARE * 0.5f : 0.0f;
+	m_TrunkHeight = m_StartTrunkHeight = SIZE_OF_1_SQUARE * TrunkHeight;
+	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY == 0 ? 0.0f: -SIZE_OF_1_SQUARE * 0.5f;
 
 	//“–‚½‚è”»’è‚Ì‚‚³‚ğÄİ’è
 	m_height = SIZE_OF_1_SQUARE * NumTrunk;
+
+	//‚ß‚è‚İ—Ê’²®
+	CaveInTrunkHeight(0.0f);
 
 	//ƒ‚ƒfƒ‹”z’u
 	PutModel();
