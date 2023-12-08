@@ -27,7 +27,6 @@
 #include "Gimmick/goalgate.h"
 #include "Gimmick/meteor_generator.h"
 #include "BackGround/bat.h"
-#include "Gimmick/torch.h"
 //****************************************
 // ÉNÉâÉX
 //****************************************
@@ -58,7 +57,6 @@ public:
 	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bShrink,bool bReturn);
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 	CBat * BatCreate(D3DXVECTOR3 pos);
-	CTorch * TorchCreate(D3DXVECTOR3 pos);
 private:
 	// *** ç\ë¢ëÃ ***
 	// éÌóﬁèÓïÒ
