@@ -13,6 +13,7 @@
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
 #include "../resource.h"
+#include "../stage.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -316,7 +317,7 @@ void CMode_Title::Update(void) {
 		case TITLE_SELECT:
 		{
 			SwapMode(TITLE_NEXT);
-			CMode_Game::SetStage(m_nPlanetIdx,m_nSelect);
+			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
 			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
 			if (m_PlanetType != NULL)

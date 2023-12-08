@@ -6,6 +6,7 @@
 //========================================================
 #include "eff-death.h"
 #include "../main.h"
+#include "../stage.h"
 
 const float CEffect_Death::CREATE_SPREAD_POWER = -8.0f; //生成時の拡散力
 const float CEffect_Death::PLAYER_COLLI_POWER = 1.0f;   //プレイヤーに当たったときの吹っ飛び力
@@ -135,7 +136,7 @@ void CEffect_Death::UpdateType_Ball(void)
 	if (m_Info.ColliderInterval == 0)
 	{
 		//プレイヤー取得
-		CPlayer *pPlayer = CMode_Game::GetPlayer();
+		CPlayer *pPlayer = Stage::GetPlayer();
 
 		for (int nCntPlayer = 0; nCntPlayer < CPlayer::NUM_PLAYER; nCntPlayer++)
 		{
@@ -248,7 +249,7 @@ CCollision::ROT CEffect_Death::PlayerCollider(CCollision::SelfInfo *pSelfInfo, C
 	CCollision::ROT ColliRot = CCollision::ROT::NONE;
 
 	//プレイヤー取得
-	CPlayer *pPlayer = CMode_Game::GetPlayer();
+	CPlayer *pPlayer = Stage::GetPlayer();
 
 	for (int nCntPlayer = 0; nCntPlayer < CPlayer::NUM_PLAYER; nCntPlayer++)
 	{

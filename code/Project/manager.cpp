@@ -8,6 +8,7 @@
 #include "Sound/stage-sound-player.h"
 #include "main.h"
 #include "resource.h"
+#include "stage.h"
 
 //****************************************
 // 名前空間
@@ -54,14 +55,11 @@ void Manager::Init(CMode::TYPE mode) {
 	// モード設定
 	SetMode(mode);
 
+	// ステージ初期化処理
+	Stage::Init();
+
 	// 使用するコントローラーの数を指定する
 	RNLib::Input().SetJoyPadNum(2);
-
-	// ブロックの読み込み処理(※主にモデルなど)
-	CBlock::Load();
-
-	// 環境音プレイヤーの初期化処理
-	StageSoundPlayer::Init();
 
 	// 標準エフェクトの優先度設定
 	RNLib::StandardEffect3D().SetPriority(PRIORITY_EFFECT);
@@ -86,8 +84,8 @@ void Manager::Uninit(void) {
 	RNLib::Memory().Release(&m_camera);
 	RNLib::Memory().Release(&m_subCamera);
 
-	// 環境音プレイヤーの終了処理
-	StageSoundPlayer::Uninit();
+	// ステージ終了処理
+	Stage::Uninit();
 }
 
 //========================================

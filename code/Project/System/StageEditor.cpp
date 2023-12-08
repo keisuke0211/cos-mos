@@ -12,6 +12,7 @@
 #include "StageEditor.h"
 #include "../Mode/mode_title.h"
 #include "../UI/partsUI.h"
+#include "../stage.h"
 
 //========================================
 // Ã“I•Ï”
@@ -410,7 +411,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 
 				if (bRocket == true)
 				{
-					CMode_Game::SetRocketParts(CRocketPartsUI::Create());
+					Stage::SetRocketPartsUI(CRocketPartsUI::Create());
 				}
 				
 			}
@@ -475,23 +476,21 @@ void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
 		{
 			SetColor(pFile, nRow, nLine);
 			m_StageColor.Player1 = m_StageColor.Set;
-			//CMode_Game::GetPlayer()->SetColor(0, m_StageColor.Player1);
+			//Stage::GetPlayer()->SetColor(0, m_StageColor.Player1);
 		}
 		else if (!strcmp(aDataSearch, "2P"))
 		{
 			SetColor(pFile, nRow, nLine);
 			m_StageColor.Player2 = m_StageColor.Set;
-			//CMode_Game::GetPlayer()->SetColor(1, m_StageColor.Player2);
+			//Stage::GetPlayer()->SetColor(1, m_StageColor.Player2);
 		}
 		else if (!strcmp(aDataSearch, "BgUp"))
 		{
 			SetColor(pFile, nRow, nLine);
-			CMode_Game::SetBgUpColor(m_StageColor.Set);
 		}
 		else if (!strcmp(aDataSearch, "BgDown"))
 		{
 			SetColor(pFile, nRow, nLine);
-			CMode_Game::SetBgDownColor(m_StageColor.Set);
 		}
 		else if (!strcmp(aDataSearch, "Block"))
 		{
@@ -570,7 +569,7 @@ void CStageEditor::SwapStage(int nStageIdx)
 			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
 			{
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
-				CMode_Game::SetStage(planet, NecstStage);
+				Stage::SetStageNumber(planet, NecstStage);
 			}
 		}
 		else
@@ -666,12 +665,12 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 		break;
 	case TYPE_PLAYER_0:
 		pos.y += fSizeY * 0.5f;
-		CMode_Game::GetPlayer()->SetPos(0, pos);
+		Stage::GetPlayer()->SetPos(0, pos);
 		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_PLAYER_1:
 		pos.y += -fSizeY * 0.5f;
-		CMode_Game::GetPlayer()->SetPos(1, pos);
+		Stage::GetPlayer()->SetPos(1, pos);
 		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_GOALGATE:

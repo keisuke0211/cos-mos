@@ -7,6 +7,7 @@
 #include "block.h"
 #include "../../main.h"
 #include "../../collision.h"
+#include "../../stage.h"
 
 //========================================
 // 定数定義
@@ -253,13 +254,13 @@ void CBlock::Update(void) {
 
 		if (m_pos.y > 0.0f) {
 			// ジャンプで離れた瞬間
-			if (m_isHitOlds[(int)CCollision::ROT::OVER] && !m_isHits[(int)CCollision::ROT::OVER] && CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->bJump) {
+			if (m_isHitOlds[(int)CCollision::ROT::OVER] && !m_isHits[(int)CCollision::ROT::OVER] && Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->bJump) {
 				m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::CHEST_STEPPED]);
 			}
 		}
 		else {
 			// ジャンプで離れた瞬間
-			if (m_isHitOlds[(int)CCollision::ROT::UNDER] && !m_isHits[(int)CCollision::ROT::UNDER] && CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->bJump) {
+			if (m_isHitOlds[(int)CCollision::ROT::UNDER] && !m_isHits[(int)CCollision::ROT::UNDER] && Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->bJump) {
 				m_doll->SetMotion(m_otherMotion3DIdxes[(int)OTHER_MOTION3D::CHEST_STEPPED]);
 			}
 		}
@@ -341,7 +342,7 @@ void CBlock::Update(void) {
 		D3DXVECTOR3 pos;
 		if (m_pos.y > 0)
 		{
-			pos = CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->pos;
+			pos = Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->pos;
 			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
 
 			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y + 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
@@ -356,7 +357,7 @@ void CBlock::Update(void) {
 		}
 		else
 		{
-			pos = CMode_Game::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->pos;
+			pos = Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->pos;
 			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
 			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y - 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
 				->SetSize(m_eyescale)
