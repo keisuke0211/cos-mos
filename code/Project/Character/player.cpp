@@ -1251,18 +1251,17 @@ void CPlayer::CollisionToStageObject(void)
 					//	(OtherInfo[2].ColliRot != CCollision::ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
 					//	Player.bExtendDog = false;
 					//}
-				}
-											break;
+				}break;
 
-											//Y
+				//Y
 				case OBJECT_TYPE::PILE:
 				{
 					CPile* pPile = (CPile*)stageObj;
-
 					colliInfo.pos = pPile->GetPos();
 					colliInfo.posOld = pPile->GetPosOld();
-				}
-				break;
+					CFloat corr = pPile->GetCorrHeight();
+					colliInfo.fHeight += pPile->GetCorrHeight();
+				}break;
 				}
 
 				// “–‚½‚Á‚½•ûŒü‚ğŠi”[
