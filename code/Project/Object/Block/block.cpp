@@ -12,45 +12,45 @@
 // 定数定義
 //========================================
 const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
-	"data\\MODEL\\StageObject\\SoilBlock.x",
-	"data\\MODEL\\StageObject\\SoilBlock_Grassy.x",
-	"data\\MODEL\\StageObject\\AncientStoneBlock.x",
-	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternA.x",
-	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternB.x",
-	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternC.x",
-	"data\\MODEL\\StageObject\\AncientStonePillar_Up.x",
-	"data\\MODEL\\StageObject\\AncientStonePillar_Center.x",
-	"data\\MODEL\\StageObject\\AncientStonePillar_Down.x",
-	"data\\MODEL\\StageObject\\LeafBlock\\Leaf.x",
-	"data\\MODEL\\StageObject\\TreeTrunk.x",
-	"data\\MODEL\\StageObject\\TreeTrunk_Root.x",
-	"NONEDATA",
-	"NONEDATA",
-	"data\\MODEL\\coin.x",
-	"data\\MODEL\\stone_monument.x",
-	"data\\MODEL\\StageObject\\AncientStoneBrickBlock.x",
-	"data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x",
-	"NONEDATA",
-	"data\\MODEL\\Three-eyes_block.x",
-	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x",
-	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternA.x",
-	"data\\MODEL\\StageObject\\AsphaltBlock.x",
-	"data\\MODEL\\StageObject\\AsphaltBlock_Cracked.x",
-	"data\\MODEL\\StageObject\\IronBar.x",
-	"data\\MODEL\\StageObject\\IronBar1.x",
-	"data\\MODEL\\StageObject\\IronBar2.x",
-	"data\\MODEL\\StageObject\\IronBar3.x",
-	"data\\MODEL\\StageObject\\MudBlock.x",
-	"data\\MODEL\\StageObject\\SandAndAsphaltBlock.x",
-	"data\\MODEL\\StageObject\\SandBlock.x",
-	"data\\MODEL\\Torch.x",
-	"data\\MODEL\\Snake.x",
-	"data\\MODEL\\leaf_large.x",
-	"data\\MODEL\\leaf_small.x",
-	"data\\MODEL\\dry-leaf_large.x",
-	"data\\MODEL\\dry-leaf_small.x",
-	"data\\MODEL\\StoneDragon.x",
-	"data\\MODEL\\StoneSword.x",
+	"data\\MODEL\\StageObject\\SoilBlock.x",						//[0]  土ブロック
+	"data\\MODEL\\StageObject\\SoilBlock_Grassy.x",					//[1]  草の生えた土ブロック
+	"data\\MODEL\\StageObject\\AncientStoneBlock.x",				//[2]  古代の石ブロック
+	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternA.x",		//[3]  古代の石ブロックA
+	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternB.x",		//[4]  古代の石ブロックB
+	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternC.x",		//[5]  古代の石ブロックC
+	"data\\MODEL\\StageObject\\AncientStonePillar_Up.x",			//[6]  柱の上
+	"data\\MODEL\\StageObject\\AncientStonePillar_Center.x",		//[7]  柱の繋ぎ
+	"data\\MODEL\\StageObject\\AncientStonePillar_Down.x",			//[8]  柱の根本
+	"data\\MODEL\\StageObject\\LeafBlock\\Leaf.x",					//[9]  草ブロック
+	"data\\MODEL\\StageObject\\TreeTrunk.x",						//[10] 木の幹
+	"data\\MODEL\\StageObject\\TreeTrunk_Root.x",					//[11] 木の根元
+	"NONEDATA",														//[12] バオバブの木(背景用)
+	"NONEDATA",														//[13] 宝箱
+	"data\\MODEL\\coin.x",											//[14] 山積みのコイン
+	"data\\MODEL\\stone_monument.x",								//[15] 謎の石碑
+	"data\\MODEL\\StageObject\\AncientStoneBrickBlock.x",			//[16] 古代の石レンガブロック
+	"data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x",			//[17] 土＆古代の石ブロック(中間用)
+	"NONEDATA",														//[18] ヤシの木
+	"data\\MODEL\\Three-eyes_block.x",								//[19] 三つ目のブロック
+	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x",				//[20] 草ブロック(木の実)
+	"data\\MODEL\\StageObject\\AncientStoneBlock_PatternA.x",		//[21] ヌイの家ブロック
+	"data\\MODEL\\StageObject\\AsphaltBlock.x",						//[22] アスファルトブロック
+	"data\\MODEL\\StageObject\\AsphaltBlock_Cracked.x",				//[23] ひび割れたアスファルトブロック
+	"data\\MODEL\\StageObject\\IronBar.x",							//[24] 鉄格子(当たり判定無し想定)
+	"data\\MODEL\\StageObject\\IronBar1.x",							//[25] 鉄格子1
+	"data\\MODEL\\StageObject\\IronBar2.x",							//[26] 鉄格子2
+	"data\\MODEL\\StageObject\\IronBar3.x",							//[27] 鉄格子3
+	"data\\MODEL\\StageObject\\MudBlock.x",							//[28] 泥ブロック
+	"data\\MODEL\\StageObject\\SandAndAsphaltBlock.x",				//[29] 砂＆アスファルトブロック(中間用)
+	"data\\MODEL\\StageObject\\SandBlock.x",						//[30] 砂ブロック
+	"data\\MODEL\\Torch.x",											//[31] 松明
+	"data\\MODEL\\Snake.x",											//[32] 蛇の壁画
+	"data\\MODEL\\leaf_large.x",									//[33] 緑色の葉っぱ(大)
+	"data\\MODEL\\leaf_small.x",									//[34] 緑色の葉っぱ(小)
+	"data\\MODEL\\dry-leaf_large.x",								//[35] 茶色の葉っぱ(大)
+	"data\\MODEL\\dry-leaf_small.x",								//[36] 茶色の葉っぱ(小)
+	"data\\MODEL\\StoneDragon.x",									//[37] 龍の石像
+	"data\\MODEL\\StoneSword.x",									//[38] 剣の石像
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
