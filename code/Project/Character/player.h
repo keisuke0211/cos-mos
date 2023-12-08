@@ -20,7 +20,7 @@ class CCollision;
 class CPlayer {
 public:
 	// 表裏どちらの世界に存在するか
-	enum class WORLD_SIDE	{
+	enum class WORLD_SIDE {
 		FACE = 0,	// 表
 		BEHIND,		// 裏
 		MAX,
@@ -129,7 +129,7 @@ public:
 	// プレイヤー生成
 	// プレイヤーのポインタを返します
 	//----------------------------
-	static CPlayer *Create(void);
+	static CPlayer* Create(void);
 
 	// プレイヤー情報設定
 	// 指定された番号のプレイヤー情報を設定します。
@@ -143,7 +143,9 @@ public:
 	// プレイヤー位置情報設定
 	// 指定したプレイヤーの位置情報を引数に渡してください。
 	void SetPos(const int nNum, D3DXVECTOR3 pos)
-	{ m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos; }
+	{
+		m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos;
+	}
 
 	// プレイヤー色情報設定
 	// 指定したプレイヤーの色情報を引数に渡してください。
@@ -158,11 +160,11 @@ public:
 
 	// プレイヤー情報取得
 	// 指定された番号のプレイヤー情報のアドレスを返します
-	Info *GetInfo(int nNum) { return &m_aInfo[nNum]; }
+	Info* GetInfo(int nNum) { return &m_aInfo[nNum]; }
 
 	// プレイヤー情報取得
 	// 指定された世界にいるプレイヤーの情報を返します
-	Info *GetInfo(WORLD_SIDE side);
+	Info* GetInfo(WORLD_SIDE side);
 
 	// スワップインターバルを設定
 	// 既にインターバルがあれば設定しない
@@ -222,6 +224,9 @@ public:
 	static bool GetSwapEnd(void) { return ms_bSwapEnd; }
 	static bool GetSwapAnim(void) { return s_bSwapAnim; }
 
+	// 死亡取得
+	static bool GetDeath(void) { return m_aInfo[0].isDeath || m_aInfo[1].isDeath; }
+
 	// Guideカウンター取得
 	static UShort GetGuideCounter(void) { return ms_guideCounter; }
 	static void SetGuideCounter(UShort guideCounter) { ms_guideCounter = guideCounter; }
@@ -267,9 +272,10 @@ private:
 
 	void Swap(void);
 	void SwapAnimation(void);
-	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); //プロローグ処理
-	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);	//中間処理
-	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); //エピローグ処理
+	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); // プロローグ処理
+	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);   // 中間処理
+	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); // エピローグ処理
+	void SwapGuide(Info& Player);                               // ガイド表示
 
 	static const char *PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX];
 	static int s_ParticleTex[(int)PARTI_TEX::MAX];
@@ -306,7 +312,7 @@ private:
 	void UpdateInfo(void);
 	void UpdateDeath(Info& info, const int& count);
 
-	Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
+	static Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 
 	struct SE {
 		short jump;      // ジャンプSE

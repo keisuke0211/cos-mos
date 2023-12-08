@@ -293,7 +293,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Visual Studio 2015\\Projects\\GraduationCreate\\data\\TEXTURE\\Trunk.jpg";
+    "data\\TEXTURE\\Trunk.jpg";
    }
   }
   Material {

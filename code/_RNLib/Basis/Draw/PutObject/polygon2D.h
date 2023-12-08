@@ -22,9 +22,8 @@ public:
 	class CDrawInfo : public CDrawInfoBase {
 	public:
 		// [[[ ŠÖ”éŒ¾ ]]]
-		            CDrawInfo             ();
-		            ~CDrawInfo            ();
-		void        Draw                  (Device& device, const Matrix& viewMtx);
+		CDrawInfo                         ();
+		~CDrawInfo                        ();
 		static void InitCreateVertexBuffer(void);
 		static void CreateVertexBuffer    (const UShort& num);
 		static void ReleaseVertexBuffer   (void);
@@ -37,10 +36,10 @@ public:
 		Vertex2D                 m_vtxs[4];
 
 		// [[[ Ã“I•Ï”éŒ¾ ]]]
-		static VertexBuffer m_vtxBuff;
-		static UShort       m_allocPower;
-		static UShort       m_allocNum;
-		static UShort       m_idxCount;
+		static VertexBuffer ms_vtxBuff;
+		static UShort       ms_allocPower;
+		static UShort       ms_allocNum;
+		static UShort       ms_idxCount;
 	};
 
 	// “o˜^î•ñ

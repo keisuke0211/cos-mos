@@ -19,9 +19,12 @@
 //==========| CMode_Titleクラスのメンバ関数
 //----------|---------------------------------------------------------------------
 //================================================================================
-const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(7.5f, -10.0f, -130.0f);
+const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(7.5f, -15.0f, -125.0f);
 const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(7.5f, -20.0f, -120.0f);
+const D3DXVECTOR3 SELBOXRATE = SELECTBOX - UNSELECTBOX;
 const D3DXVECTOR3 NUMPOSSELBOX = D3DXVECTOR3(15.0f, 0.0f, 0.0f);
+CInt ANIMCOUNT = 10;
+
 const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
 
@@ -53,6 +56,7 @@ CMode_Title::CMode_Title(void) {
 	m_Menu.pOperation  = NULL;
 	m_Menu.pSetting    = NULL;
 	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
+	m_AnimCnt = 0;
 
 	{// 音量設定の初期化
 		float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
@@ -167,6 +171,8 @@ void CMode_Title::Init(void) {
 //========================================
 void CMode_Title::Uninit(void) {
 	CMode::Uninit();
+
+	CMemory::Release(&m_AnimCnt);
 }
 
 //========================================
@@ -870,6 +876,11 @@ void CMode_Title::CreateStageSelectInfo(void) {
 
 		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
 	}
+
+	CMemory::Alloc(&m_AnimCnt, Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax);
+
+	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
+		m_AnimCnt[AnimInit] = 0;
 }
 
 //========================================
@@ -878,8 +889,8 @@ void CMode_Title::CreateStageSelectInfo(void) {
 void CMode_Title::StageSelect(void) {
 
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
-	int nStageMax  = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-	 
+	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
 	//位置補正
 	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
 
@@ -892,46 +903,59 @@ void CMode_Title::StageSelect(void) {
 	}
 
 	{//看板
-		RNLib::Model().Put(PRIORITY_OBJECT,m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f, -145.0f),INITD3DXVECTOR3, INITSCALE3D)
-			->SetOutLineIdx(5); 
+		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f, -145.0f), INITD3DXVECTOR3, INITSCALE3D)
+			->SetOutLineIdx(5);
 
-		RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f,0.58875f,0.0f), INITSCALE3D)
-		->SetOutLineIdx(5);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
+			->SetOutLineIdx(5);
 	}
 
 	{// 矢印の描画
-		if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0)) {
+		if (m_nPlanetIdx > 0) {
 			// 矢印の描画(左)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - PosCor.x - NUMPOSSELBOX.x * 0.7f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D)
-				->SetCol(Color{0,168,112,255})
+				->SetCol(Color{ 0,168,112,255 })
 				->SetOutLineIdx(5);
 		}
 
-		if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1)) {
+		if (m_nPlanetIdx < nPlanetMax - 1) {
 			// 矢印の描画(右)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + PosCor.x - NUMPOSSELBOX.x * 0.3f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D)
 				->SetCol(Color{ 0,168,112,255 })
 				->SetOutLineIdx(5);
 		}
-	}
+	}	
 
 	// 選択アイコンの処理
 	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
+
 		if (nCnt == m_nSelect) {
-			 //選択時
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - PosCor + nCnt * NUMPOSSELBOX, INITD3DXVECTOR3, INITSCALE3D, false)
+			//アニメーション割合
+			float CountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
+			if (m_AnimCnt[nCnt] < ANIMCOUNT) m_AnimCnt[nCnt]++;
+
+			 //選択時	//ブロック
+			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + (SELBOXRATE * CountRate), INITD3DXVECTOR3, INITSCALE3D, false)
 				->SetCol(Color{ 243,191,63,255 });
 			
-			RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f), INITROT3D)
+			const D3DXVECTOR3 pos = D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f);
+			//数字
+			RNLib::Polygon3D().Put(PRIORITY_UI, pos + (SELBOXRATE * CountRate), INITROT3D)
 				->SetSize(5.0f, 5.0f)
 				->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
 		}
 		else {
-			// 非選択時
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX, INITD3DXVECTOR3, INITSCALE3D, false)
+			//アニメーション割合
+			float CountRate = 1.0f - CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
+			if (m_AnimCnt[nCnt] > 0) m_AnimCnt[nCnt]--;
+
+			// 非選択時	//ブロック
+			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - PosCor + nCnt * NUMPOSSELBOX - (SELBOXRATE * CountRate), INITD3DXVECTOR3, INITSCALE3D, false)
 				->SetCol(Color{ 81,63,21,255 });
 
-			RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), INITROT3D)
+			const D3DXVECTOR3 pos = D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
+			//数字
+			RNLib::Polygon3D().Put(PRIORITY_UI, pos - (SELBOXRATE * CountRate), INITROT3D)
 				->SetSize(5.0f, 5.0f)
 				->SetCol(Color{ 85,85,85,255 })
 				->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
@@ -957,6 +981,8 @@ void CMode_Title::StageSelect(void) {
 	}
 
 	if (bInput) {
+		int nStageMaxOld = nStageMax;
+
 		if (m_nSelect < 0 && m_nPlanetIdx != 0) {
 			m_nPlanetIdx--;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
@@ -969,8 +995,13 @@ void CMode_Title::StageSelect(void) {
 		}
 
 		IntControl(&m_nSelect, nStageMax - 1, 0);
-	}
 
+		if (nStageMax != nStageMaxOld) {
+			CMemory::Alloc(&m_AnimCnt, nStageMax);
+			for (int AnimInit = 0; AnimInit < nStageMax; AnimInit++)
+				m_AnimCnt[AnimInit] = 0;
+		}
+	}
 }
 
 //========================================

@@ -215,19 +215,19 @@ CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const bool& isO
 //****************************************
 // 静的変数定義
 //****************************************
-VertexBuffer CPolygon2D::CDrawInfo::m_vtxBuff = NULL;
-UShort CPolygon2D::CDrawInfo::m_allocPower = 0;
-UShort CPolygon2D::CDrawInfo::m_allocNum   = 0;
-UShort CPolygon2D::CDrawInfo::m_idxCount   = 0;
+VertexBuffer CPolygon2D::CDrawInfo::ms_vtxBuff = NULL;
+UShort CPolygon2D::CDrawInfo::ms_allocPower = 0;
+UShort CPolygon2D::CDrawInfo::ms_allocNum   = 0;
+UShort CPolygon2D::CDrawInfo::ms_idxCount   = 0;
 
 //========================================
 // [静的] 頂点バッファ初期生成処理
 //========================================
 void CPolygon2D::CDrawInfo::InitCreateVertexBuffer(void) {
 
-	m_allocPower = CDrawMgr::POLYGON2D_ALLOC_BASE_POWER;
-	m_allocNum   = pow(2, m_allocPower);
-	CreateVertexBuffer(m_allocNum);
+	ms_allocPower = CDrawMgr::POLYGON2D_ALLOC_BASE_POWER;
+	ms_allocNum   = pow(2, ms_allocPower);
+	CreateVertexBuffer(ms_allocNum);
 }
 
 //========================================
@@ -236,7 +236,7 @@ void CPolygon2D::CDrawInfo::InitCreateVertexBuffer(void) {
 void CPolygon2D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
 
 	// 頂点バッファの生成
-	RNLib::Window().GetD3DDevice()->CreateVertexBuffer(sizeof(Vertex2D) * 4 * num, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &m_vtxBuff, NULL);
+	RNLib::Window().GetD3DDevice()->CreateVertexBuffer(sizeof(Vertex2D) * 4 * num, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &ms_vtxBuff, NULL);
 }
 
 //========================================
@@ -245,9 +245,9 @@ void CPolygon2D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
 void CPolygon2D::CDrawInfo::ReleaseVertexBuffer(void) {
 
 	// 頂点バッファの破棄
-	if (m_vtxBuff != NULL) {
-		m_vtxBuff->Release();
-		m_vtxBuff = NULL;
+	if (ms_vtxBuff != NULL) {
+		ms_vtxBuff->Release();
+		ms_vtxBuff = NULL;
 	}
 }
 
@@ -256,10 +256,10 @@ void CPolygon2D::CDrawInfo::ReleaseVertexBuffer(void) {
 //========================================
 CPolygon2D::CDrawInfo::CDrawInfo() {
 
-	m_idx         = 0;
-	m_tex         = NULL;
-	m_texType     = Polygon2DAnd3D::TEX_TYPE::NONE;
-	m_isZTest     = true;
+	m_idx     = 0;
+	m_tex     = NULL;
+	m_texType = Polygon2DAnd3D::TEX_TYPE::NONE;
+	m_isZTest = true;
 	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}
@@ -270,48 +270,7 @@ CPolygon2D::CDrawInfo::CDrawInfo() {
 //========================================
 CPolygon2D::CDrawInfo::~CDrawInfo() {
 
-	CMemory::Release<void>(&m_tex);
-}
-
-//========================================
-// 描画処理
-//========================================
-void CPolygon2D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
-
-	// 頂点バッファがNULLの時、終了
-	if (m_vtxBuff == NULL)
-		return;
-
-	//----------------------------------------
-	// 一時的な描画モード設定を開始
-	//----------------------------------------
-	RNLib::DrawStateMgr().StartTemporarySetMode();
-
-	//----------------------------------------
-	// 事前準備
-	//----------------------------------------
-	// フォグを無効化
-	RNLib::DrawStateMgr().SetFogMode(CDrawState::FOG_MODE::DISABLED, device);
-
-	// ZテストをOFFに
-	RNLib::DrawStateMgr().SetZTestMode(false, device);
-
-	// 頂点フォーマットの設定
-	device->SetFVF(FVF_VERTEX_2D);
-
-	// 頂点バッファをデータストリームに設定
-	device->SetStreamSource(0, m_vtxBuff, 0, sizeof(Vertex2D));
-
-	// [[[ テクスチャの設定 ]]]
-	Polygon2DAnd3D::SetTexture(device, m_tex, m_texType);
-
-	// ポリゴンの描画
-	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * m_idx, 2);
-
-	//----------------------------------------
-	// 一時的な描画モード設定を終了
-	//----------------------------------------
-	RNLib::DrawStateMgr().EndTemporarySetMode(device);
+	CMemory::Release(&m_tex);
 }
 
 //================================================================================
