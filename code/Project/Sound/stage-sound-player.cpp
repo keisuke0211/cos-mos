@@ -74,6 +74,14 @@ static const char* sc_blockLandingSE[(int)CBlock::LOOKS_TYPE::MAX] = {
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[28] 泥ブロック
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[29] 砂＆アスファルトブロック(中間用)
 	"data\\SOUND\\SE\\landing\\sand.wav",	//[30] 砂ブロック
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
 };
 
 //****************************************

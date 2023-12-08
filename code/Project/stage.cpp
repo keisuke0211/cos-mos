@@ -61,6 +61,9 @@ void Stage::Init(void) {
 
 	// ブロックの読み込み処理
 	CBlock::Load();
+
+	// 環境音プレイヤーの初期化処理
+	StageSoundPlayer::Init();
 }
 
 //========================================
@@ -68,6 +71,8 @@ void Stage::Init(void) {
 //========================================
 void Stage::Uninit(void) {
 
+	// 環境音プレイヤーの終了処理
+	StageSoundPlayer::Uninit();
 }
 
 //========================================
