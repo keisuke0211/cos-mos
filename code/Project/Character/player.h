@@ -6,6 +6,8 @@
 //================================================================================================
 #pragma once
 
+#include "../Object/stage-object.h"
+
 // ‘O•ûéŒ¾
 class CStageObject;
 class CMoveBlock;

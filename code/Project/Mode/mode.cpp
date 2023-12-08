@@ -45,6 +45,8 @@ void CMode::Init(void) {
 //========================================
 void CMode::Uninit(void) {
 	
+	// ó‘Ô‚ÌI—¹ˆ—
+	ProcessState(PROCESS::UNINIT);
 }
 
 //========================================

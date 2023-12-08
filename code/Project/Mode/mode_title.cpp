@@ -13,6 +13,7 @@
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
 #include "../resource.h"
+#include "../stage.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -23,6 +24,7 @@ const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(7.5f, -15.0f, -125.0f);
 const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(7.5f, -20.0f, -120.0f);
 const D3DXVECTOR3 SELBOXRATE = SELECTBOX - UNSELECTBOX;
 const D3DXVECTOR3 NUMPOSSELBOX = D3DXVECTOR3(15.0f, 0.0f, 0.0f);
+const D3DXVECTOR3 NUMPOSROCKET = D3DXVECTOR3(0.0f, 15.0f, 0.0f);
 CInt ANIMCOUNT = 10;
 
 const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
@@ -45,7 +47,6 @@ CMode_Title::CMode_Title(void) {
 	m_nOldnPlanet      = 0;
 	m_PlanetAngle      = 0.0f;
 	m_nSelect          = 0;
-	m_nOldSelect       = 0;
 	m_PlanetType       = NULL;
 	m_bBackMode        = false;
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
@@ -57,6 +58,8 @@ CMode_Title::CMode_Title(void) {
 	m_Menu.pSetting    = NULL;
 	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
 	m_AnimCnt = 0;
+	m_RotCnt = 0;
+	m_bStageChange = false;
 
 	{// 音量設定の初期化
 		float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
@@ -314,7 +317,7 @@ void CMode_Title::Update(void) {
 		case TITLE_SELECT:
 		{
 			SwapMode(TITLE_NEXT);
-			CMode_Game::SetStage(m_nPlanetIdx,m_nSelect);
+			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
 			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
 			if (m_PlanetType != NULL)
@@ -877,7 +880,15 @@ void CMode_Title::CreateStageSelectInfo(void) {
 		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
 	}
 
-	CMemory::Alloc(&m_AnimCnt, Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax);
+	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+	CMemory::Alloc(&m_AnimCnt,nStageMax);
+
+	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
+	m_RocketPos = m_RocketPosOld = UNSELECTBOX - PosCor + NUMPOSROCKET;
+	m_RocketposRate = INITD3DXVECTOR3;
+	m_RocketRot = m_RocketRotOld = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
+	m_RocketRotRate = INITD3DXVECTOR3;
+	m_RotCnt = ANIMCOUNT;
 
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
@@ -933,14 +944,38 @@ void CMode_Title::StageSelect(void) {
 			//アニメーション割合
 			float CountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
 			if (m_AnimCnt[nCnt] < ANIMCOUNT) m_AnimCnt[nCnt]++;
+			float RotRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RotCnt,ANIMCOUNT);
+			if (m_RotCnt < ANIMCOUNT) m_RotCnt++;
+
+			//選択時	//ロケット
+			if (m_AnimCnt[nCnt] == ANIMCOUNT) { m_RocketPosOld = m_RocketPos; m_RocketposRate = INITD3DXVECTOR3; }
+			m_RocketPos = UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
+			if (m_nSelect != m_nOldSelect)
+			{
+				m_RocketposRate = m_RocketPos - m_RocketPosOld;
+				m_RocketRotOld = m_RocketRot;
+
+				if (m_bStageChange == false)
+				{
+					if (m_nSelect > m_nOldSelect)
+						m_RocketRot = D3DXVECTOR3(0.0f,D3DX_PI, D3DX_PI * 0.5f);
+					else if (m_nSelect < m_nOldSelect)
+						m_RocketRot = D3DXVECTOR3(0.0f,0.0f,D3DX_PI * 0.5f);
+				}
+				else
+					m_bStageChange = false;
+
+				m_RocketRotRate = m_RocketRot - m_RocketRotOld;
+			}
+			RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * CountRate) , m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
 
 			 //選択時	//ブロック
 			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + (SELBOXRATE * CountRate), INITD3DXVECTOR3, INITSCALE3D, false)
 				->SetCol(Color{ 243,191,63,255 });
-			
-			const D3DXVECTOR3 pos = D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f);
-			//数字
-			RNLib::Polygon3D().Put(PRIORITY_UI, pos + (SELBOXRATE * CountRate), INITROT3D)
+
+			//数字テクスチャ
+			const D3DXVECTOR3 numpos = D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f);
+			RNLib::Polygon3D().Put(PRIORITY_UI, numpos + (SELBOXRATE * CountRate), INITROT3D)
 				->SetSize(5.0f, 5.0f)
 				->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
 		}
@@ -953,9 +988,9 @@ void CMode_Title::StageSelect(void) {
 			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - PosCor + nCnt * NUMPOSSELBOX - (SELBOXRATE * CountRate), INITD3DXVECTOR3, INITSCALE3D, false)
 				->SetCol(Color{ 81,63,21,255 });
 
-			const D3DXVECTOR3 pos = D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
 			//数字
-			RNLib::Polygon3D().Put(PRIORITY_UI, pos - (SELBOXRATE * CountRate), INITROT3D)
+			const D3DXVECTOR3 numpos = D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
+			RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * CountRate), INITROT3D)
 				->SetSize(5.0f, 5.0f)
 				->SetCol(Color{ 85,85,85,255 })
 				->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
@@ -965,6 +1000,7 @@ void CMode_Title::StageSelect(void) {
 	//----------------------------------------
 	// ステージ選択処理
 	//----------------------------------------
+	m_nOldSelect = m_nSelect;
 	bool bInput = false;
 	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK)) {
 		TextRelease(TEXT_MENU);
@@ -973,10 +1009,14 @@ void CMode_Title::StageSelect(void) {
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
 		m_nSelect--;
+		m_RocketPosOld = m_RocketPos;
+		m_RotCnt = 0;
 		bInput = true;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
 		m_nSelect++;
+		m_RocketPosOld = m_RocketPos;
+		m_RotCnt = 0;
 		bInput = true;
 	}
 
@@ -998,8 +1038,11 @@ void CMode_Title::StageSelect(void) {
 
 		if (nStageMax != nStageMaxOld) {
 			CMemory::Alloc(&m_AnimCnt, nStageMax);
+			m_RocketPos = m_RocketPosOld = UNSELECTBOX - PosCor + NUMPOSROCKET;
+			m_RocketposRate = INITD3DXVECTOR3;
 			for (int AnimInit = 0; AnimInit < nStageMax; AnimInit++)
 				m_AnimCnt[AnimInit] = 0;
+			m_bStageChange = true;
 		}
 	}
 }

@@ -43,37 +43,45 @@ static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
 };
 // 着地SE
 static const char* sc_blockLandingSE[(int)CBlock::LOOKS_TYPE::MAX] = {
-	"data\\SOUND\\SE\\landingSE\\soil.wav",	// 土ブロック
-	"data\\SOUND\\SE\\landingSE\\grass.wav",	// 草の生えた土ブロック
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// 古代の石ブロック
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// 古代の石ブロックA
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// 古代の石ブロックB
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// 古代の石ブロックC
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 柱の上
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 柱の繋ぎ
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 柱の根本
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 草ブロック
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 木の幹
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 木の根元
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// バオバブの木(背景用)
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 宝箱
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 山積みのコイン
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// 謎の石碑
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// 古代の石レンガブロック
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 土＆古代の石ブロック(中間用)
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// ヤシの木
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 三つ目のブロック
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 草ブロック(木の実)
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// ヌイの家ブロック
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// アスファルトブロック
-	"data\\SOUND\\SE\\landingSE\\ground.wav",	// ひび割れたアスファルトブロック
-	"data\\SOUND\\SE\\landingSE\\iron.wav",	// 鉄格子(当たり判定無し想定)
-	"data\\SOUND\\SE\\landingSE\\iron.wav",	// 鉄格子1
-	"data\\SOUND\\SE\\landingSE\\iron.wav",	// 鉄格子2
-	"data\\SOUND\\SE\\landingSE\\iron.wav",	// 鉄格子3
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 泥ブロック
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",	// 砂＆アスファルトブロック(中間用)
-	"data\\SOUND\\SE\\landingSE\\sand.wav",	// 砂ブロック
+	"data\\SOUND\\SE\\landing\\soil.wav",	//[0] 土ブロック
+	"data\\SOUND\\SE\\landing\\grass.wav",	//[1] 草の生えた土ブロック
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[2] 古代の石ブロック
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[3] 古代の石ブロックA
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[4] 古代の石ブロックB
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[5] 古代の石ブロックC
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[6] 柱の上
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[7] 柱の繋ぎ
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[8] 柱の根本
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[9] 草ブロック
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[10] 木の幹
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[11] 木の根元
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[12] バオバブの木(背景用)
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[13] 宝箱
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[14] 山積みのコイン
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[15] 謎の石碑
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[16] 古代の石レンガブロック
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[17] 土＆古代の石ブロック(中間用)
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[18] ヤシの木
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[19] 三つ目のブロック
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[20] 草ブロック(木の実)
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[21] ヌイの家ブロック
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[22] アスファルトブロック
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[23] ひび割れたアスファルトブロック
+	"data\\SOUND\\SE\\landing\\iron.wav",	//[24] 鉄格子(当たり判定無し想定)
+	"data\\SOUND\\SE\\landing\\iron.wav",	//[25] 鉄格子1
+	"data\\SOUND\\SE\\landing\\iron.wav",	//[26] 鉄格子2
+	"data\\SOUND\\SE\\landing\\iron.wav",	//[27] 鉄格子3
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[28] 泥ブロック
+	"data\\SOUND\\SE\\landing\\jamp.wav",	//[29] 砂＆アスファルトブロック(中間用)
+	"data\\SOUND\\SE\\landing\\sand.wav",	//[30] 砂ブロック
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
+	"NONEDATA",
 };
 
 //****************************************

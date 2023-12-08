@@ -127,20 +127,12 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	static CPlayer* GetPlayer(void);
 	CMode_Game();
 	~CMode_Game();
 	void Init(void);
 	void Uninit(void);
 	void Update(void);
 	void ProcessState(const PROCESS process);
-	// -- ê›íË -------------------------------------------------------------------
-	static void SetStage(int planet, int stage) { m_nPlanetIdx = planet; m_nStageIdx = stage; }
-	static void SetBgUpColor(Color color) { m_BgColorUp = color; }
-	static void SetBgDownColor(Color color) { m_BgColorDown = color; }
-	static void SetRocketParts(CRocketPartsUI *rctpar) { m_rocketparts = rctpar; }
-	// -- éÊìæ -------------------------------------------------------------------
-	static int GetStage(void) { return m_nStageIdx; }
 
 private:
 	//========== [[[ ä÷êîêÈåæ ]]]
@@ -153,14 +145,7 @@ private:
 	void TextRelease(TEXT type);
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	static CPlayer *s_pPlayer;
-	static int m_nPlanetIdx;
-	static int m_nStageIdx;
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
-	static CRocketPartsUI *m_rocketparts;
-	static CCoinUI *m_Coin;
-	static Color m_BgColorUp, m_BgColorDown;
-	short m_wallModelIdx[2];
 	Pause m_Pause;
 };

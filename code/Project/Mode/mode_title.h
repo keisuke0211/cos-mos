@@ -168,6 +168,12 @@ private:
 	TITLE Title;
 	Menu m_Menu;
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
+	D3DXVECTOR3 m_RocketPos;
+	D3DXVECTOR3 m_RocketposRate;
+	D3DXVECTOR3 m_RocketPosOld;
+	D3DXVECTOR3 m_RocketRot;
+	D3DXVECTOR3 m_RocketRotOld;
+	D3DXVECTOR3 m_RocketRotRate;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
 	int m_nSelect;
@@ -180,8 +186,10 @@ private:
 	int m_CoinBoardIdx;
 	int m_ArrowIdx;
 	int *m_AnimCnt;
+	int m_RotCnt;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
+	bool m_bStageChange;
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];
