@@ -72,19 +72,19 @@ CPolygon3D::CRegistInfo* CPolygon3D::Put(const UShort& priority, const Pos3D& po
 //****************************************
 // 静的変数定義
 //****************************************
-VertexBuffer CPolygon3D::CDrawInfo::m_vtxBuff = NULL;
-UShort CPolygon3D::CDrawInfo::m_allocPower = 0;
-UShort CPolygon3D::CDrawInfo::m_allocNum   = 0;
-UShort CPolygon3D::CDrawInfo::m_idxCount   = 0;
+VertexBuffer CPolygon3D::CDrawInfo::ms_vtxBuff = NULL;
+UShort CPolygon3D::CDrawInfo::ms_allocPower = 0;
+UShort CPolygon3D::CDrawInfo::ms_allocNum   = 0;
+UShort CPolygon3D::CDrawInfo::ms_idxCount   = 0;
 
 //========================================
 // [静的] 頂点バッファ初期生成処理
 //========================================
 void CPolygon3D::CDrawInfo::InitCreateVertexBuffer(void) {
 
-	m_allocPower = CDrawMgr::POLYGON3D_ALLOC_BASE_POWER;
-	m_allocNum   = pow(2, m_allocPower);
-	CreateVertexBuffer(m_allocNum);
+	ms_allocPower = CDrawMgr::POLYGON3D_ALLOC_BASE_POWER;
+	ms_allocNum   = pow(2, ms_allocPower);
+	CreateVertexBuffer(ms_allocNum);
 }
 
 //========================================
@@ -98,7 +98,7 @@ void CPolygon3D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
-		&m_vtxBuff,
+		&ms_vtxBuff,
 		NULL);
 }
 
@@ -108,9 +108,9 @@ void CPolygon3D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
 void CPolygon3D::CDrawInfo::ReleaseVertexBuffer(void) {
 
 	// 頂点バッファの破棄
-	if (m_vtxBuff != NULL) {
-		m_vtxBuff->Release();
-		m_vtxBuff = NULL;
+	if (ms_vtxBuff != NULL) {
+		ms_vtxBuff->Release();
+		ms_vtxBuff = NULL;
 	}
 }
 
@@ -140,94 +140,6 @@ CPolygon3D::CDrawInfo::CDrawInfo() {
 CPolygon3D::CDrawInfo::~CDrawInfo() {
 
 	CMemory::Release<void>(&m_tex);
-}
-
-//========================================
-// 描画処理
-//========================================
-void CPolygon3D::CDrawInfo::Draw(Device& device, const Matrix& viewMtx) {
-
-	// 頂点バッファがNULLの時、終了
-	if (m_vtxBuff == NULL)
-		return;
-
-	//----------------------------------------
-	// 事前準備
-	//----------------------------------------
-	// 頂点フォーマットの設定
-	device->SetFVF(FVF_VERTEX_3D);
-
-	// 頂点バッファをデータストリームに設定
-	device->SetStreamSource(0, m_vtxBuff, 0, sizeof(Vertex3D));
-
-	//----------------------------------------
-	// 一時的な描画モード設定を開始
-	//----------------------------------------
-	RNLib::DrawStateMgr().StartTemporarySetMode();
-
-	//----------------------------------------
-	// パラメーターに応じた設定
-	//----------------------------------------
-	// [[[ Zテストを有効/無効にする ]]]
-	RNLib::DrawStateMgr().SetZTestMode(m_isZTest, device);
-
-	// [[[ ライティングを有効/無効にする ]]]
-	RNLib::DrawStateMgr().SetLightingMode(m_isLighting, device);
-
-	// [[[ 加算合成を有効/無効にする ]]]
-	RNLib::DrawStateMgr().SetAlphaBlendMode(m_alphaBlendMode, device);
-
-	// カリング設定
-	switch (m_cullingMode) {
-	case CDrawState::CULLING_MODE::FRONT_SIDE:device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW ); break;
-	case CDrawState::CULLING_MODE::BACK_SIDE :device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW  ); break;
-	case CDrawState::CULLING_MODE::BOTH_SIDES:device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE); break;
-	}
-
-	{
-		Matrix mtxTrans(INITMATRIX);	// 計算用マトリックス
-		Matrix mtxSelf (INITMATRIX);	// 本体マトリックス
-		
-		// [[[ ビルボードフラグに応じて向きを設定 ]]]
-		if (m_isBillboard) {
-
-			// 位置マトリックスを設定
-			const Pos3D setPos(CMatrix::ConvMtxToPos(m_mtx));
-			D3DXMatrixTranslation(&mtxTrans, setPos.x, setPos.y, setPos.z);
-
-			// ポリゴンをカメラに対して正面に向ける
-			D3DXMatrixInverse(&mtxSelf, NULL, &viewMtx);
-			mtxSelf._41 = 0.0f;
-			mtxSelf._42 = 0.0f;
-			mtxSelf._43 = 0.0f;
-
-			// 位置マトリックスを設定
-			D3DXMatrixMultiply(&mtxSelf, &mtxSelf, &mtxTrans);
-		}
-		else {
-			// 位置と向きを反映
-			D3DXMatrixMultiply(&mtxSelf, &mtxSelf, &m_mtx);
-		}
-
-		// [[[ ワールドマトリックスの設定 ]]]
-		device->SetTransform(D3DTS_WORLD, &mtxSelf);
-	}
-
-	// [[[ テクスチャの設定 ]]]
-	Polygon2DAnd3D::SetTexture(device, m_tex, m_texType);
-
-	//----------------------------------------
-	// 描画
-	//----------------------------------------
-	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * m_idx, 2);
-
-	//----------------------------------------
-	// 一時的な描画モード設定を終了
-	//----------------------------------------
-	RNLib::DrawStateMgr().EndTemporarySetMode(device);
-
-	// 元に戻す
-	device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 //================================================================================

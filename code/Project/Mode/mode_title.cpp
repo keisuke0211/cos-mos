@@ -921,14 +921,14 @@ void CMode_Title::StageSelect(void) {
 	}
 
 	{// –îˆó‚Ì•`‰æ
-		if ((m_nPlanetIdx == 0 && m_nSelect != 0) || (m_nPlanetIdx != 0)) {
+		if (m_nPlanetIdx > 0) {
 			// –îˆó‚Ì•`‰æ(¶)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - PosCor.x - NUMPOSSELBOX.x * 0.7f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D)
 				->SetCol(Color{ 0,168,112,255 })
 				->SetOutLineIdx(5);
 		}
 
-		if ((m_nPlanetIdx != nPlanetMax - 1) || (m_nPlanetIdx == nPlanetMax - 1 && m_nSelect != nStageMax - 1)) {
+		if (m_nPlanetIdx < nPlanetMax - 1) {
 			// –îˆó‚Ì•`‰æ(‰E)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + PosCor.x - NUMPOSSELBOX.x * 0.3f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D)
 				->SetCol(Color{ 0,168,112,255 })

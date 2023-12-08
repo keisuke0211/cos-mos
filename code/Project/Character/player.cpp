@@ -92,7 +92,6 @@ CPlayer::CPlayer()
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
-		Player.StartPos = INITD3DXVECTOR3;     // 開始位置
 		Player.doll = NULL;
 		Player.pos = INITD3DXVECTOR3;          // 位置
 		Player.posOld = INITD3DXVECTOR3;       // 前回位置
@@ -226,7 +225,12 @@ HRESULT CPlayer::Init(void)
 	if(s_pColli == NULL)
 	s_pColli = new CCollision;
 
-	s_zoomUpCounter = ZOOM_UP_TIME;
+	s_zoomUpCounter = 0;
+	if (Manager::StgEd()->GetPlanetIdx() == 0) {
+		if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+			s_zoomUpCounter = ZOOM_UP_TIME;
+		}
+	}
 
 	// 初期化成功
 	return S_OK;
@@ -1160,7 +1164,10 @@ void CPlayer::CollisionToStageObject(void)
 						continue;
 					else if (// 見た目の種類による当たり判定の除外
 						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::BAOBAB_TREE ||
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE    ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE	  ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::TORCH		  ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::STONE_DRAGON||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::STONE_SWORD ||
 						false)
 						continue;
 				}break;
@@ -1247,18 +1254,17 @@ void CPlayer::CollisionToStageObject(void)
 					//	(OtherInfo[2].ColliRot != CCollision::ROT::OVER && state == CExtenddog::STATE::DOWN_LAND)) {
 					//	Player.bExtendDog = false;
 					//}
-				}
-											break;
+				}break;
 
-											//杭
+				//杭
 				case OBJECT_TYPE::PILE:
 				{
 					CPile* pPile = (CPile*)stageObj;
-
 					colliInfo.pos = pPile->GetPos();
 					colliInfo.posOld = pPile->GetPosOld();
-				}
-				break;
+					CFloat corr = pPile->GetCorrHeight();
+					colliInfo.fHeight += pPile->GetCorrHeight();
+				}break;
 				}
 
 				// 当たった方向を格納
