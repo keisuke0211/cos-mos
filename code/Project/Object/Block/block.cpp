@@ -45,6 +45,12 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\StageObject\\SandBlock.x",
 	"data\\MODEL\\Torch.x",
 	"data\\MODEL\\Snake.x",
+	"data\\MODEL\\leaf_large.x",
+	"data\\MODEL\\leaf_small.x",
+	"data\\MODEL\\dry-leaf_large.x",
+	"data\\MODEL\\dry-leaf_small.x",
+	"data\\MODEL\\StoneDragon.x",
+	"data\\MODEL\\StoneSword.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -187,8 +193,17 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_B	:
 	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_C	:
 	case LOOKS_TYPE::LEAF_BLOCK					:
-	case LOOKS_TYPE::TORCH						:
+	case LOOKS_TYPE::LEAF_LARGE					:
+	case LOOKS_TYPE::LEAF_SMALL					:
+	case LOOKS_TYPE::DRY_LEAF_LARGE				:
+	case LOOKS_TYPE::DRY_LEAF_SMALL				:
 		m_pos.z -= ((int)fabsf(m_pos.x + m_pos.y) % 20) * 0.5f;
+		break;
+	case LOOKS_TYPE::TORCH						:
+	case LOOKS_TYPE::SNAKE						:
+	case LOOKS_TYPE::STONE_DRAGON				:
+	case LOOKS_TYPE::STONE_SWORD				:
+		m_pos.z += 30.0f + ((int)fabsf(m_pos.x) % 20);
 		break;
 	case LOOKS_TYPE::PILE_OF_COINS:
 		m_pos.y -= (m_pos.y / fabsf(m_pos.y)) * SIZE_OF_1_SQUARE * 0.5f;
@@ -391,7 +406,37 @@ void CBlock::Update(void) {
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::SNAKE: {
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f,m_pos.z) , m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::LEAF_LARGE: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::LEAF_SMALL: {
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::DRY_LEAF_LARGE: {
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::DRY_LEAF_SMALL: {
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::STONE_DRAGON: {
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+	case LOOKS_TYPE::STONE_SWORD: {
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;

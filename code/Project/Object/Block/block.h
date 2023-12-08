@@ -50,6 +50,12 @@ public:
 		SAND_BLOCK					 = 30,	// 砂ブロック
 		TORCH						 = 31,	// 松明
 		SNAKE						 = 32,	// 蛇の壁画
+		LEAF_LARGE					 = 33,	// 緑色の葉っぱ(大)
+		LEAF_SMALL					 = 34,	// 緑色の葉っぱ(小)
+		DRY_LEAF_LARGE				 = 35,	// 茶色の葉っぱ(大)
+		DRY_LEAF_SMALL				 = 36,	// 茶色の葉っぱ(小)
+		STONE_DRAGON				 = 37,	// 龍の石像
+		STONE_SWORD					 = 38,	// 剣の石像
 		MAX,
 	};
 

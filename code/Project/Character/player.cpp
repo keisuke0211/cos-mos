@@ -1164,7 +1164,10 @@ void CPlayer::CollisionToStageObject(void)
 						continue;
 					else if (// Œ©‚½–Ú‚ÌŽí—Þ‚É‚æ‚é“–‚½‚è”»’è‚ÌœŠO
 						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::BAOBAB_TREE ||
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE    ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE	  ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::TORCH		  ||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::STONE_DRAGON||
+						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::STONE_SWORD ||
 						false)
 						continue;
 				}break;
