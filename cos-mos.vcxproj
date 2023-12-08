@@ -170,7 +170,6 @@
     <ClCompile Include="code\Project\Object\BackGround\bat.cpp" />
     <ClCompile Include="code\Project\Object\Block\Ghost.cpp" />
     <ClCompile Include="code\Project\Object\Gimmick\pile.cpp" />
-    <ClCompile Include="code\Project\Object\Gimmick\torch.cpp" />
     <ClCompile Include="code\Project\Object\Item\coin.cpp" />
     <ClCompile Include="code\Project\resource-path.cpp" />
     <ClCompile Include="code\Project\Sound\stage-sound-player.cpp" />
@@ -269,7 +268,6 @@
     <ClInclude Include="code\Project\Effect\eff-model.h" />
     <ClInclude Include="code\Project\Effect\eff.h" />
     <ClInclude Include="code\Project\Effect\particle.h" />
-    <ClInclude Include="code\Project\Object\Gimmick\torch.h" />
     <ClInclude Include="code\Project\Object\Item\coin.h" />
     <ClInclude Include="code\Project\resource.h" />
     <ClInclude Include="code\Project\main.h" />

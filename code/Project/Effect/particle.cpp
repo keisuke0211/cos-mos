@@ -73,6 +73,10 @@ HRESULT CParticle::Init(int nTex,int nCount)
 			(80.0f - (float)(rand() % 40)) / MAGNI * cosf(m_Info.rot.z),
 			0.0f);
 	}
+	else if (m_type == TYPE::TYPE_STOP)
+	{
+		m_Info.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	}
 	
 	m_Info.col = INITCOLOR;
 	m_Info.nTex = nTex;

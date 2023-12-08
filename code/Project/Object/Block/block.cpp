@@ -43,6 +43,7 @@ const char* CBlock::MODEL_PATHS[(int)LOOKS_TYPE::MAX] = {
 	"data\\MODEL\\StageObject\\MudBlock.x",
 	"data\\MODEL\\StageObject\\SandAndAsphaltBlock.x",
 	"data\\MODEL\\StageObject\\SandBlock.x",
+	"data\\MODEL\\Torch.x",
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -185,6 +186,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_B	:
 	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_C	:
 	case LOOKS_TYPE::LEAF_BLOCK					:
+	case LOOKS_TYPE::TORCH						:
 		m_pos.z -= ((int)fabsf(m_pos.x + m_pos.y) % 20) * 0.5f;
 		break;
 	case LOOKS_TYPE::PILE_OF_COINS:
@@ -375,6 +377,19 @@ void CBlock::Update(void) {
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
+	case LOOKS_TYPE::TORCH: {
+		// 炎のエフェクト
+		float m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + 1.0f);
+
+		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y > 0.0f ? m_pos.y + 15.0f : m_pos.y - 15.0f, m_pos.z);
+
+		Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png"), m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,50,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 200, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI));
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+	}break;
+
 	default: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)

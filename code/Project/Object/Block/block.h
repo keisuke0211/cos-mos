@@ -48,6 +48,7 @@ public:
 		MUD_BLOCK					 = 28,	// 泥ブロック
 		SAND_AND_ASPHALT_BLOCK       = 29,	// 砂＆アスファルトブロック(中間用)
 		SAND_BLOCK					 = 30,	// 砂ブロック
+		TORCH						 = 31,	// 松明
 		MAX,
 	};
 
