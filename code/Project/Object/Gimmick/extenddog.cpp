@@ -2,12 +2,12 @@
 // 
 // 伸びる犬の処理
 // Author:KOMURO HIROMU
+// Arrange:HIRASAWA SHION
 // 
 //========================================
 #include "extenddog.h"
 #include "../../main.h"
 #include "../../Character/player.h"
-
 
 #define RADIUS_WIDTH	(0.5f)	//横半径
 #define RADIUS_HEIGHT	(0.5f)	//縦半径
@@ -44,7 +44,7 @@ CExtenddog::CExtenddog(void) {
 	m_fcurrenty = 0.0f;
 	m_nHeight = 0;
 	m_HeadPos = INITD3DXVECTOR3;
-	m_HeadPosOid = INITD3DXVECTOR3;
+	m_HeadPosOld = INITD3DXVECTOR3;
 	m_BodyPos = INITD3DXVECTOR3;
 	m_HipPos = INITD3DXVECTOR3;
 }
@@ -80,16 +80,15 @@ void CExtenddog::Uninit(void) {
 //========================================
 void CExtenddog::Update(void) {
 
-	m_HeadPosOid = m_HeadPos;
+	//前回位置更新
+	m_HeadPosOld = m_HeadPos;
 	
 	CObject *obj = NULL;
-
 	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 		//取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
 
-		TYPE type = stageObj->GetType();
-		if (type == CStageObject::TYPE::BLOCK)
+		if (stageObj->GetType() == CStageObject::TYPE::BLOCK)
 		{// 想定された種類の時
 
 			D3DXVECTOR3 stagepos = stageObj->GetPos();
@@ -112,55 +111,21 @@ void CExtenddog::Update(void) {
 		}
 	}
 
-	if (m_state == STATE::NONE)
-	{//伸びる犬が作動している
-
-		if (m_bShrink == false)
-		{
-			// 縮むカウント
-			m_nCntShrink--;
-			if (m_nCntShrink <= 0)
-				m_nCntShrink = 0;
-		}
-		else
-		{
-			// 縮むカウント
-			m_nCntShrink++;
-			if (m_nCntShrink >= MAX_COUNT)
-				m_nCntShrink = MAX_COUNT;
-		}
-	}
-	else if (m_state == STATE::RETURN)
-	{//伸びる犬が作動していない
-
-		if (m_bShrink == false)
-		{
-			// 縮むカウント
-				m_nCntShrink++;
-			if (m_nCntShrink >= MAX_COUNT){
-				m_nCntShrink = MAX_COUNT;
-				m_state = STATE::NONE;
-			}
-		}
-		else
-		{
-			// 縮むカウント
-			m_nCntShrink--;
-			if (m_nCntShrink <= 0) {
-				m_nCntShrink = 0;
-				m_state = STATE::NONE;
-
-			}
-		}
+	//状態別更新処理
+	switch (m_state)
+	{
+		case STATE::NONE:     UpdateState_None();break;
+		case STATE::RETURN:   UpdateState_Return();break;
+		case STATE::DOWN_LAND:UpdateState_DownLand();break;
 	}
 
 	// 割合計算 
-	float fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
+	CFloat fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
 
 	if (m_bInversion == false)
 	{
 		//y座標の更新
-		float fDowncurrenty = (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
+		CFloat fDowncurrenty = (SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		if (fDowncurrenty < 0.0f)
 		{
@@ -173,7 +138,6 @@ void CExtenddog::Update(void) {
 
 		// 頭
 		m_HeadPos.y = fDowncurrenty + m_pos.y;
-		
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
 			->SetOutLineIdx(true);
 
@@ -185,7 +149,7 @@ void CExtenddog::Update(void) {
 	else
 	{// 反転状態の時
 		// y座標の更新
-		float fDowncurrenty = -(SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
+		CFloat fDowncurrenty = -(SIZE_OF_1_SQUARE * m_nHeight - (fCountRate * (SIZE_OF_1_SQUARE * (m_nHeight - 1))));
 
 		if (fDowncurrenty > 0.0f)
 		{
@@ -202,16 +166,125 @@ void CExtenddog::Update(void) {
 			->SetOutLineIdx(true);
 
 		// 体
-		//m_BodyPos.y = (m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
 		m_BodyPos.y = (m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[5], m_BodyPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), Scale3D(1.0f, (-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight - (SIZE_OF_1_SQUARE * (m_nHeight - 1.5) * fCountRate)) * 12, 1.0f),  false)
 			->SetOutLineIdx(true);
 	}
+
+	//******************************
+	//お尻　　結果：Rotだけが違う
+	//******************************
+	{
+		//Inversion false
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[3], m_HipPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetOutLineIdx(true);
+
+		//Inversion true
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[3], m_HipPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), false)
+			->SetOutLineIdx(true);
+	}
+
+	//******************************
+	//頭　　結果：Rotだけが違う
+	//******************************
+	{
+		CFloat fDowncurrenty = 0.0f;
+
+		//Inversion false
+		m_HeadPos.y = fDowncurrenty + m_pos.y;
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetOutLineIdx(true);
+
+		//Inversion true
+		m_HeadPos.y = fDowncurrenty + m_pos.y;
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdx[4], m_HeadPos, D3DXVECTOR3(0.0f, 0.0f, D3DX_PI), false)
+			->SetOutLineIdx(true);
+	}
+
+	//******************************
+	//体　　結果：細かいところで＋ーが違う
+	//******************************
+	{
+		//Inversion false
+		m_BodyPos.y = (m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) / 2;
+		RNLib::Model().Put(PRIORITY_OBJECT, 
+						m_modelIdx[5], 
+						m_BodyPos, 
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f), 
+						Scale3D(1.0f, 
+								(-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight + (SIZE_OF_1_SQUARE * m_nHeight * (1.0f - fCountRate))) * 8,
+								1.0f), 
+						false)
+			->SetOutLineIdx(true);
+
+		//Inversion true
+		m_BodyPos.y = (m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
+		RNLib::Model().Put(PRIORITY_OBJECT, 
+						 m_modelIdx[5], 
+						 m_BodyPos, 
+						 D3DXVECTOR3(0.0f, 0.0f, D3DX_PI),
+						 Scale3D(1.0f,
+								(-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight - (SIZE_OF_1_SQUARE * (m_nHeight - 1.5) * fCountRate)) * 12, 
+								1.0f),
+						 false)
+			->SetOutLineIdx(true);
+	}
 }
+
 //========================================
-// 描画処理
-// Author:KOMURO HIROMU
+// 状態【何もなし】更新処理
+// Author:HIRASAWA SHION
 //========================================
-void CExtenddog::Draw(void) {
+void CExtenddog::UpdateState_None(void)
+{
+	if (m_bShrink == false)
+	{
+		// 縮むカウント
+		m_nCntShrink--;
+		if (m_nCntShrink <= 0)
+			m_nCntShrink = 0;
+	}
+	else
+	{
+		// 縮むカウント
+		m_nCntShrink++;
+		if (m_nCntShrink >= MAX_COUNT)
+			m_nCntShrink = MAX_COUNT;
+	}
+}
+
+//========================================
+// 状態【戻る】更新処理
+// Author:HIRASAWA SHION
+//========================================
+void CExtenddog::UpdateState_Return(void)
+{
+	if (m_bShrink == false)
+	{
+		// 縮むカウント
+		m_nCntShrink++;
+		if (m_nCntShrink >= MAX_COUNT){
+			m_nCntShrink = MAX_COUNT;
+			m_state = STATE::NONE;
+		}
+	}
+	else
+	{
+		// 縮むカウント
+		m_nCntShrink--;
+		if (m_nCntShrink <= 0) {
+			m_nCntShrink = 0;
+			m_state = STATE::NONE;
+
+		}
+	}
+}
+
+//========================================
+// 状態【作動中】更新処理
+// Author:HIRASAWA SHION
+//========================================
+void CExtenddog::UpdateState_DownLand(void)
+{
 
 }

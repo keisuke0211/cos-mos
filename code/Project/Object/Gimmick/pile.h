@@ -30,7 +30,7 @@ public:
 	//-------------------------------
 	//引数１  pos：配置座標
 	//引数２  NumTrunk：幹の数（最低３個 MIN_TRUNK）
-	//引数３  TrunkHeight：幹のめり込み座標（めり込みなし = 0.0f）
+	//引数３  TrunkHeight：幹のめり込み係数（めり込みなし = 0.0f）
 	//===============================
 	void Set(Pos3D pos, int NumTrunk, float TrunkHeight);
 
@@ -48,6 +48,11 @@ public:
 	//前回位置取得（めり込み量も含める）
 	//===============================
 	D3DXVECTOR3 GetPosOldCaveIn(void);
+
+	//===============================
+	//判定修正量取得
+	//===============================
+	float GetCorrHeight(void) { return m_fEvenTrunkCorrHeight; }
 
 	//===============================
 	//全体のめり込み量を初期化
