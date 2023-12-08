@@ -96,7 +96,6 @@ void CMode_Game::Init(void) {
 
 	// ステージ生成
 	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
-	Manager::StageObjectMgr()->TorchCreate(D3DXVECTOR3(-300.0f, 100.0f, 0.0f));
 
 	// プレイヤーを生成
 	if (s_pPlayer == NULL)

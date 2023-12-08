@@ -34,6 +34,7 @@ public:
 		TYPE_NORMAL = 0,	//スタンダード
 		TYPE_SPIN,			//回転する
 		TYPE_FLOATUP,		//上に行く
+		TYPE_STOP,			//とどまる
 		TYPE_FIXED,
 		MAX
 	};
