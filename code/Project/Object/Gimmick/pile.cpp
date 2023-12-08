@@ -102,6 +102,8 @@ void CPile::Update(void)
 			->SetSize(m_width, m_height);
 
 		//上部線
+		float y = m_pos.y + height + m_fEvenTrunkCorrHeight;
+		float uy = m_pos.y -(height - m_fEvenTrunkCorrHeight);
 		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, height + m_fEvenTrunkCorrHeight, -SIZE_OF_1_SQUARE), INITROT3D)
 			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
 			->SetCol(Color{ 255,0,0,255 });
@@ -112,7 +114,7 @@ void CPile::Update(void)
 			->SetCol(Color{ 0,255,0,255 });
 
 		//下部線
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, -(height + m_fEvenTrunkCorrHeight),-SIZE_OF_1_SQUARE), INITROT3D)
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, -(height - m_fEvenTrunkCorrHeight),-SIZE_OF_1_SQUARE), INITROT3D)
 			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
 			->SetCol(Color{ 0,0,255,255 });
 	}
@@ -235,29 +237,8 @@ void CPile::SetOld(float fCaveInHeight)
 	m_TrunkHeightOld = m_TrunkHeight;
 	m_TrunkHeight = fCaveInHeight;
 
-	m_pos = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeight + m_fEvenTrunkCorrHeight, 0.0f);
-	m_posOld = D3DXVECTOR3(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld + m_fEvenTrunkCorrHeight, 0.0f);
-}
-
-//===============================
-//位置取得（めり込み量も含める）
-//===============================
-D3DXVECTOR3 CPile::GetPosCaveIn(void)
-{
-	D3DXVECTOR3 ReturnPos = m_pos;	//現在座標を格納
-	ReturnPos.y += m_fEvenTrunkCorrHeight;//補正値を反映
-	return m_pos;//座標を返す
-}
-
-//===============================
-//前回位置取得（めり込み量も含める）
-//===============================
-D3DXVECTOR3 CPile::GetPosOldCaveIn(void)
-{
-	D3DXVECTOR3 ReturnPos = m_pos;	//現在座標を格納
-	ReturnPos.y += m_TrunkHeightOld;//前回のめり込み量を反映
-	ReturnPos.y += m_fEvenTrunkCorrHeight;//補正値を反映
-	return ReturnPos;				//座標を返す
+	m_pos =    Pos3D(m_PilePos.x, m_PilePos.y + m_TrunkHeight + m_fEvenTrunkCorrHeight, 0.0f);
+	m_posOld = Pos3D(m_PilePos.x, m_PilePos.y + m_TrunkHeightOld + m_fEvenTrunkCorrHeight, 0.0f);
 }
 
 //===============================
