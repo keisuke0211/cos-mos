@@ -96,7 +96,7 @@ bool Stage::CheckStageNumber(const int& planetIdx, const int& stageIdx) {
 }
 
 //========================================
-// ステージ開始処理
+// ステージ開始処理（※やり直しを含む）
 //========================================
 void Stage::StartStage(void) {
 
