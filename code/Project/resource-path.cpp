@@ -14,7 +14,7 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\ok.wav",
 	"data\\SOUND\\SE\\scratch_02.wav",
 	"data\\SOUND\\SE\\jamp_01.wav",
-	"data\\SOUND\\SE\\landingSE\\jamp.wav",
+	"data\\SOUND\\SE\\landing\\jamp.wav",
 	"data\\SOUND\\SE\\swap_now.wav",
 	"data\\SOUND\\SE\\swap_end.wav",
 	"data\\SOUND\\SE\\death_expand.wav",

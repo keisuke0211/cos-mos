@@ -76,6 +76,46 @@ void CPile::Update(void)
 
 	//モデル配置
 	PutModel();
+
+	//一番上の幹から配置するため、配置する高さを計算
+	{
+		//幹数の半分（切り捨て）
+		const int nNumHalf = m_NumTrunk / EVENPARITY;
+
+		//幹座標
+		Pos3D PilePos = Pos3D(
+			m_PilePos.x,
+			//本体サイズ  ＋  サイズ × 上の幹数  ＋  幹のめり込み量
+			SIZE_OF_1_SQUARE * -0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight,
+			m_PilePos.z);
+
+		CFloat height = m_height * 0.5f;
+
+		RNLib::Text2D().PutDebugLog(CreateText(
+			"杭Y:%.2f  幹数:%d  めり込み:%.2f  高さ:%.2f  Max:%.2f  Min:%.2f  補正:%.2f",
+			PilePos.y, m_NumTrunk, m_TrunkHeight, height, m_pos.y + height, m_pos.y - height, m_fEvenTrunkCorrHeight));
+
+		Pos3D Pos = Pos3D(m_pos.x + 16.0f, m_pos.y + m_fEvenTrunkCorrHeight, m_pos.z - 16.0f);
+
+		//全体サイズ
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Pos, INITROT3D)
+			->SetSize(m_width, m_height);
+
+		//上部線
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, height + m_fEvenTrunkCorrHeight, -SIZE_OF_1_SQUARE), INITROT3D)
+			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
+			->SetCol(Color{ 255,0,0,255 });
+
+		//中心位置
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Pos, INITROT3D)
+			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
+			->SetCol(Color{ 0,255,0,255 });
+
+		//下部線
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, -(height + m_fEvenTrunkCorrHeight),-SIZE_OF_1_SQUARE), INITROT3D)
+			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
+			->SetCol(Color{ 0,0,255,255 });
+	}
 }
 
 //===============================
@@ -92,11 +132,7 @@ void CPile::PutModel(void)
 		const int nNumHalf = m_NumTrunk / EVENPARITY;
 
 		//本体サイズ  ＋  サイズ × 上の幹数  ＋  幹のめり込み量
-		PilePos.y = SIZE_OF_1_SQUARE * -0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight;
-
-		RNLib::Text2D().PutDebugLog(CreateText(
-			"杭Y位置:%.2f  めり込み:%.2f  高さ:%.2f  MaxY:%.2f  MinY:%.2f  補正値:%.2f",
-			PilePos.y,	 m_TrunkHeight, m_height, m_pos.y + m_height, m_pos.y - m_height, m_fEvenTrunkCorrHeight));
+		PilePos.y = SIZE_OF_1_SQUARE * 0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight;
 	}
 
 	for (int nCntPile = 0; nCntPile < m_NumTrunk; nCntPile++)
@@ -115,7 +151,7 @@ void CPile::PutModel(void)
 //-------------------------------
 //引数１  pos：配置座標
 //引数２  NumTrunk：幹の数（最低３個）
-//引数３  TrunkHeight：幹のめり込み座標（めり込みなし = 0.0f）
+//引数３  TrunkHeight：幹のめり込み係数（めり込みなし = 0.0f）
 //===============================
 void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 {
@@ -123,10 +159,10 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	if (NumTrunk < MIN_TRUNK) NumTrunk = MIN_TRUNK;
 
 	//情報設定
-	m_PilePos = pos ;
+	m_PilePos = pos;
 	m_NumTrunk = NumTrunk;
 	m_TrunkHeight = m_StartTrunkHeight = SIZE_OF_1_SQUARE * TrunkHeight;
-	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY == 0 ? 0.0f: -SIZE_OF_1_SQUARE * 0.5f;
+	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY == 0 ? SIZE_OF_1_SQUARE * 0.5f : 0.0f;
 
 	//当たり判定の高さを再設定
 	m_height = SIZE_OF_1_SQUARE * NumTrunk;
