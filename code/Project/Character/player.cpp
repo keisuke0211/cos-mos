@@ -60,6 +60,7 @@ int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
 float CPlayer::s_fAimWorkSpeed = 0.05f;
+CPlayer::Info CPlayer::m_aInfo[CPlayer::NUM_PLAYER];	// 各プレイヤーの情報
 
 //=======================================
 // コンストラクタ
@@ -91,7 +92,6 @@ CPlayer::CPlayer()
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
-		Player.StartPos = INITD3DXVECTOR3;     // 開始位置
 		Player.doll = NULL;
 		Player.pos = INITD3DXVECTOR3;          // 位置
 		Player.posOld = INITD3DXVECTOR3;       // 前回位置
@@ -225,7 +225,12 @@ HRESULT CPlayer::Init(void)
 	if(s_pColli == NULL)
 	s_pColli = new CCollision;
 
-	s_zoomUpCounter = ZOOM_UP_TIME;
+	s_zoomUpCounter = 0;
+	if (Manager::StgEd()->GetPlanetIdx() == 0) {
+		if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+			s_zoomUpCounter = ZOOM_UP_TIME;
+		}
+	}
 
 	// 初期化成功
 	return S_OK;

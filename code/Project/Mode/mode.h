@@ -25,8 +25,8 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	               CMode        ();
-	virtual        ~CMode       ();
+	CMode                       ();
+	virtual ~CMode              ();
 	virtual void   Init         (void);
 	virtual void   Uninit       (void);
 	virtual void   Update       (void);

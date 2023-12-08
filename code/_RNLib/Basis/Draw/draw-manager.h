@@ -26,9 +26,7 @@ public:
 	//----------------------------------------
 	static const UShort POLYGON2D_ALLOC_BASE_POWER = 8;
 	static const UShort POLYGON3D_ALLOC_BASE_POWER = 8;
-	static const UShort REGIST_ALLOC_BASE_POWER    = 8;	// 2‚Ì‰½æ‚ğŠî€‚Æ‚·‚é‚©
-	static const UShort WAIT_MILLISECONDS_MIN      = 1;
-	static const UShort WAIT_MILLISECONDS_MAX      = 5;
+	static const UShort REGIST_ALLOC_BASE_POWER    = 0;	// 2‚Ì‰½æ‚ğŠî€‚Æ‚·‚é‚©
 
 	//----------------------------------------
 	// ƒNƒ‰ƒX’è‹`
