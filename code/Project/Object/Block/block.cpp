@@ -411,22 +411,90 @@ void CBlock::Update(void) {
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::LEAF_LARGE: {
+		if (--m_counter <= 0) {
+			m_counterMax = 60 + rand() % 60;
+			m_counter = m_counterMax;
+			m_oldAddPos = m_addPos;
+			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+		}
+
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::LEAF_SMALL: {
+		if (--m_counter <= 0) {
+			m_counterMax = 60 + rand() % 60;
+			m_counter = m_counterMax;
+			m_oldAddPos = m_addPos;
+			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+		}
+
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::DRY_LEAF_LARGE: {
+		if (--m_counter <= 0) {
+			m_counterMax = 60 + rand() % 60;
+			m_counter = m_counterMax;
+			m_oldAddPos = m_addPos;
+			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+		}
+
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::DRY_LEAF_SMALL: {
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+		if (--m_counter <= 0) {
+			m_counterMax = 60 + rand() % 60;
+			m_counter = m_counterMax;
+			m_oldAddPos = m_addPos;
+			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+		}
+
+		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+			->SetCol(m_color)
+			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
+
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y + 5.0f : m_pos.y - 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
