@@ -68,6 +68,7 @@ public:
 	// ‚»‚Ì‘¼ƒ‚ƒfƒ‹
 	enum class OTHER_MODEL {
 		LEAF_INSIDE,
+		SOIL_BLOCK_GRASSY,
 		MAX,
 	};
 

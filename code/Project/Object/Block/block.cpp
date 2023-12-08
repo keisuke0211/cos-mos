@@ -57,6 +57,8 @@ const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 };
 const char* CBlock::OTHER_MODEL_PATHS[(int)OTHER_MODEL::MAX] = {
 	"data\\MODEL\\StageObject\\LeafBlock\\Leaf_Inside.x",
+	"data\\MODEL\\StageObject\\SoilBlock_Grassy.x",					// ‘‚Ì¶‚¦‚½“yƒuƒƒbƒN
+
 };
 const char* CBlock::OTHER_SETUP3D_PATHS[(int)OTHER_SETUP3D::MAX] = {
 	"data\\SETUP\\BaobabTree.txt",
@@ -411,42 +413,16 @@ void CBlock::Update(void) {
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::LEAF_LARGE: {
-		if (--m_counter <= 0) {
-			m_counterMax = 60 + rand() % 60;
-			m_counter = m_counterMax;
-			m_oldAddPos = m_addPos;
-			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
-		}
-
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
-		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
-
-		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+	
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::SOIL_BLOCK_GRASSY], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
-
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::LEAF_SMALL: {
-		if (--m_counter <= 0) {
-			m_counterMax = 60 + rand() % 60;
-			m_counter = m_counterMax;
-			m_oldAddPos = m_addPos;
-			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
-		}
-
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
-		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
-
-		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::SOIL_BLOCK_GRASSY], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 
@@ -455,20 +431,7 @@ void CBlock::Update(void) {
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::DRY_LEAF_LARGE: {
-		if (--m_counter <= 0) {
-			m_counterMax = 60 + rand() % 60;
-			m_counter = m_counterMax;
-			m_oldAddPos = m_addPos;
-			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
-		}
-
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
-		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
-
-		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::SOIL_BLOCK_GRASSY], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 
@@ -477,20 +440,7 @@ void CBlock::Update(void) {
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 	}break;
 	case LOOKS_TYPE::DRY_LEAF_SMALL: {
-		if (--m_counter <= 0) {
-			m_counterMax = 60 + rand() % 60;
-			m_counter = m_counterMax;
-			m_oldAddPos = m_addPos;
-			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
-		}
-
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
-		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
-
-		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetCol(m_color)
-			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::SOIL_BLOCK_GRASSY], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			->SetOutLineIdx(m_isCollision ? outLineIdx : NONEDATA);
 
