@@ -960,10 +960,17 @@ void CMode_Title::StageSelect(void) {
 					if (m_nSelect > m_nOldSelect)
 						m_RocketRot = D3DXVECTOR3(0.0f,D3DX_PI, D3DX_PI * 0.5f);
 					else if (m_nSelect < m_nOldSelect)
-						m_RocketRot = D3DXVECTOR3(0.0f,0.0f,D3DX_PI * 0.5f);
+						m_RocketRot = D3DXVECTOR3(D3DX_PI,0.0f,D3DX_PI * 0.5f);
 				}
 				else
+				{
+					if (m_nSelect > m_nOldSelect)
+						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
+					else if (m_nSelect < m_nOldSelect)
+						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
 					m_bStageChange = false;
+				}
+					
 
 				m_RocketRotRate = m_RocketRot - m_RocketRotOld;
 			}
