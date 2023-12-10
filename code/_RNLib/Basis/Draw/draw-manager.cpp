@@ -8,20 +8,73 @@
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]描画マネージャークラスのメンバ関数
+//==========| [公開]描画マネージャークラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
-//****************************************
-// 静的変数定義
-//****************************************
-CDrawMgr::CRegistInfoSum* CDrawMgr::ms_resistInfoSum		= NULL;
-CDrawMgr::CRegistInfoSum* CDrawMgr::ms_resistInfoSumScreen	= NULL;
-CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSum			= NULL;
-CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumOvr		= NULL;
-CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumScreen	= NULL;
-CDrawMgr::CDrawInfoSum*   CDrawMgr::ms_drawInfoSumScreenOvr = NULL;
-UShort                    CDrawMgr::ms_priorityMax;
+//========================================
+// コンストラクタ
+//========================================
+CDrawMgr::CDrawMgr() {
+
+	m_reAllocCount = 0;
+}
+
+//========================================
+// デストラクタ
+//========================================
+CDrawMgr::~CDrawMgr() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void CDrawMgr::Init(const UShort& priorityMax) {
+
+	// 最大優先度を保存
+	if (priorityMax <= 0) {
+		assert(false);
+		m_priorityMax = 1;
+	}
+	else {
+		m_priorityMax = priorityMax;
+	}
+
+	// 登録/描画情報のメモリ確保
+	CMemory::Alloc(&m_drawInfoSum		  , m_priorityMax);
+	CMemory::Alloc(&m_drawInfoSumOvr	  , m_priorityMax);
+	CMemory::Alloc(&m_drawInfoSumScreen   , m_priorityMax);
+	CMemory::Alloc(&m_drawInfoSumScreenOvr, m_priorityMax);
+	CMemory::Alloc(&m_resistInfoSum	      , m_priorityMax);
+	CMemory::Alloc(&m_resistInfoSumScreen , m_priorityMax);
+
+	// 登録情報の初期メモリ確保
+	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
+		m_resistInfoSum      [cntPriority].InitAlloc();
+		m_resistInfoSumScreen[cntPriority].InitAlloc();
+	}
+
+	// 頂点バッファの初期生成
+	CPolygon2D::CDrawInfo::InitCreateVertexBuffer();
+	CPolygon3D::CDrawInfo::InitCreateVertexBuffer();
+}
+
+//========================================
+// 終了処理
+//========================================
+void CDrawMgr::Uninit(void) {
+
+	// 解放処理
+	Release();
+}
+
+//========================================
+// 更新処理
+//========================================
+void CDrawMgr::Update(void) {
+
+}
 
 //========================================
 // 描画開始処理
@@ -31,29 +84,29 @@ void CDrawMgr::StartDraw(Device& device) {
 	//----------------------------------------
 	// 登録情報を適用
 	//----------------------------------------
-	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
 
 		// 登録情報を元に設置する
-		PutBasedRegistInfo(ms_resistInfoSum[cntPriority], cntPriority, false);
-		PutBasedRegistInfo(ms_resistInfoSumScreen[cntPriority], cntPriority, true);
+		PutBasedRegistInfo(m_resistInfoSum[cntPriority], cntPriority, false);
+		PutBasedRegistInfo(m_resistInfoSumScreen[cntPriority], cntPriority, true);
 
 		// 登録情報を描画情報に変換する
-		ConvRegistInfoToDrawInfo(ms_resistInfoSum[cntPriority], ms_drawInfoSumOvr[cntPriority], device);
-		ConvRegistInfoToDrawInfo(ms_resistInfoSumScreen[cntPriority], ms_drawInfoSumScreenOvr[cntPriority], device);
+		ConvRegistInfoToDrawInfo(m_resistInfoSum[cntPriority], m_drawInfoSumOvr[cntPriority], device);
+		ConvRegistInfoToDrawInfo(m_resistInfoSumScreen[cntPriority], m_drawInfoSumScreenOvr[cntPriority], device);
 	}
 
 	//----------------------------------------
 	// 描画情報を入れ替える
 	//----------------------------------------
-	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
 
 		// 描画情報を上書きする
-		ms_drawInfoSum[cntPriority].Overwrite(&ms_drawInfoSumOvr[cntPriority]);
-		ms_drawInfoSumScreen[cntPriority].Overwrite(&ms_drawInfoSumScreenOvr[cntPriority]);
+		m_drawInfoSum[cntPriority].Overwrite(&m_drawInfoSumOvr[cntPriority]);
+		m_drawInfoSumScreen[cntPriority].Overwrite(&m_drawInfoSumScreenOvr[cntPriority]);
 
 		// 不要メモリ破棄の為、再確保
-		ms_resistInfoSum[cntPriority].ReAlloc();
-		ms_resistInfoSumScreen[cntPriority].ReAlloc();
+		m_resistInfoSum[cntPriority].ReAlloc();
+		m_resistInfoSumScreen[cntPriority].ReAlloc();
 	}
 
 	// ポリゴン2Dの頂点バッファ再確保
@@ -156,106 +209,42 @@ void CDrawMgr::EndDraw(Device& device) {
 }
 
 //========================================
-// コンストラクタ
-//========================================
-CDrawMgr::CDrawMgr() {
-
-	m_reAllocCount = 0;
-}
-
-//========================================
-// デストラクタ
-//========================================
-CDrawMgr::~CDrawMgr() {
-
-}
-
-//========================================
-// 初期化処理
-//========================================
-void CDrawMgr::Init(const UShort& priorityMax) {
-
-	// 最大優先度を保存
-	if (priorityMax <= 0) {
-		assert(false);
-		ms_priorityMax = 1;
-	}
-	else {
-		ms_priorityMax = priorityMax;
-	}
-
-	// 登録/描画情報のメモリ確保
-	CMemory::Alloc(&ms_drawInfoSum		   , ms_priorityMax);
-	CMemory::Alloc(&ms_drawInfoSumOvr	   , ms_priorityMax);
-	CMemory::Alloc(&ms_drawInfoSumScreen   , ms_priorityMax);
-	CMemory::Alloc(&ms_drawInfoSumScreenOvr, ms_priorityMax);
-	CMemory::Alloc(&ms_resistInfoSum	   , ms_priorityMax);
-	CMemory::Alloc(&ms_resistInfoSumScreen , ms_priorityMax);
-
-	// 登録情報の初期メモリ確保
-	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-		ms_resistInfoSum      [cntPriority].InitAlloc();
-		ms_resistInfoSumScreen[cntPriority].InitAlloc();
-	}
-
-	// 頂点バッファの初期生成
-	CPolygon2D::CDrawInfo::InitCreateVertexBuffer();
-	CPolygon3D::CDrawInfo::InitCreateVertexBuffer();
-}
-
-//========================================
-// 終了処理
-//========================================
-void CDrawMgr::Uninit(void) {
-
-	// 解放処理
-	Release();
-}
-
-//========================================
-// 更新処理
-//========================================
-void CDrawMgr::Update(void) {
-
-}
-
-//========================================
 // 解放処理
 //========================================
 void CDrawMgr::Release(void) {
 
-	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
 
 		// 描画情報を解放
-		ms_drawInfoSum         [cntPriority].Release();
-		ms_drawInfoSumOvr      [cntPriority].Release();
-		ms_drawInfoSumScreen   [cntPriority].Release();
-		ms_drawInfoSumScreenOvr[cntPriority].Release();
-		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_model);
-		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_polygon3D);
-		CMemory::Release(&ms_drawInfoSum         [cntPriority].m_polygon2D);
-		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_model);
-		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_polygon3D);
-		CMemory::Release(&ms_drawInfoSumOvr      [cntPriority].m_polygon2D);
-		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_model);
-		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_polygon3D);
-		CMemory::Release(&ms_drawInfoSumScreen   [cntPriority].m_polygon2D);
-		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_model);
-		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_polygon3D);
-		CMemory::Release(&ms_drawInfoSumScreenOvr[cntPriority].m_polygon2D);
+		m_drawInfoSum         [cntPriority].Release();
+		m_drawInfoSumOvr      [cntPriority].Release();
+		m_drawInfoSumScreen   [cntPriority].Release();
+		m_drawInfoSumScreenOvr[cntPriority].Release();
+		CMemory::Release(&m_drawInfoSum         [cntPriority].m_model);
+		CMemory::Release(&m_drawInfoSum         [cntPriority].m_polygon3D);
+		CMemory::Release(&m_drawInfoSum         [cntPriority].m_polygon2D);
+		CMemory::Release(&m_drawInfoSumOvr      [cntPriority].m_model);
+		CMemory::Release(&m_drawInfoSumOvr      [cntPriority].m_polygon3D);
+		CMemory::Release(&m_drawInfoSumOvr      [cntPriority].m_polygon2D);
+		CMemory::Release(&m_drawInfoSumScreen   [cntPriority].m_model);
+		CMemory::Release(&m_drawInfoSumScreen   [cntPriority].m_polygon3D);
+		CMemory::Release(&m_drawInfoSumScreen   [cntPriority].m_polygon2D);
+		CMemory::Release(&m_drawInfoSumScreenOvr[cntPriority].m_model);
+		CMemory::Release(&m_drawInfoSumScreenOvr[cntPriority].m_polygon3D);
+		CMemory::Release(&m_drawInfoSumScreenOvr[cntPriority].m_polygon2D);
 
 		// 登録情報を解放
-		ms_resistInfoSum      [cntPriority].Release();
-		ms_resistInfoSumScreen[cntPriority].Release();
+		m_resistInfoSum      [cntPriority].Release();
+		m_resistInfoSumScreen[cntPriority].Release();
 	}
 
 	// 登録/描画情報のメモリ解放
-	CMemory::Release(&ms_drawInfoSum);
-	CMemory::Release(&ms_drawInfoSumOvr);
-	CMemory::Release(&ms_drawInfoSumScreen);
-	CMemory::Release(&ms_drawInfoSumScreenOvr);
-	CMemory::Release(&ms_resistInfoSum);
-	CMemory::Release(&ms_resistInfoSumScreen);
+	CMemory::Release(&m_drawInfoSum);
+	CMemory::Release(&m_drawInfoSumOvr);
+	CMemory::Release(&m_drawInfoSumScreen);
+	CMemory::Release(&m_drawInfoSumScreenOvr);
+	CMemory::Release(&m_resistInfoSum);
+	CMemory::Release(&m_resistInfoSumScreen);
 
 	// 頂点バッファを解放する
 	CPolygon2D::CDrawInfo::ReleaseVertexBuffer();
@@ -277,8 +266,8 @@ CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bo
 
 	// 登録情報
 	CPolygon2D::CRegistInfo* registInfo = isOnScreen ?
-		RegistPolygon2D(ms_resistInfoSumScreen[priority]) :
-		RegistPolygon2D(ms_resistInfoSum[priority]);
+		RegistPolygon2D(m_resistInfoSumScreen[priority]) :
+		RegistPolygon2D(m_resistInfoSum[priority]);
 
 	// 番号を代入
 	registInfo->SetIdx(CPolygon2D::CDrawInfo::ms_idxCount++);
@@ -301,8 +290,8 @@ CPolygon3D::CRegistInfo* CDrawMgr::PutPolygon3D(const UShort& priority, const Ma
 
 	// 登録情報
 	CPolygon3D::CRegistInfo* registInfo = isOnScreen ?
-		RegistPolygon3D(ms_resistInfoSumScreen[priority]) :
-		RegistPolygon3D(ms_resistInfoSum[priority]);
+		RegistPolygon3D(m_resistInfoSumScreen[priority]) :
+		RegistPolygon3D(m_resistInfoSum[priority]);
 
 	// 情報を代入
 	registInfo->SetIdx(CPolygon3D::CDrawInfo::ms_idxCount++);
@@ -318,8 +307,8 @@ CText2D::CRegistInfo* CDrawMgr::PutText2D(const UShort& priority, const Pos2D& p
 
 	// 登録情報
 	CText2D::CRegistInfo* registInfo = isOnScreen ?
-		RegistText2D(ms_resistInfoSumScreen[priority]) :
-		RegistText2D(ms_resistInfoSum[priority]);
+		RegistText2D(m_resistInfoSumScreen[priority]) :
+		RegistText2D(m_resistInfoSum[priority]);
 
 	// 情報を代入
 	registInfo->SetPos(pos);
@@ -335,8 +324,8 @@ CText3D::CRegistInfo* CDrawMgr::PutText3D(const UShort& priority, const Matrix& 
 
 	// 登録情報
 	CText3D::CRegistInfo* registInfo = isOnScreen ?
-		RegistText3D(ms_resistInfoSumScreen[priority]) :
-		RegistText3D(ms_resistInfoSum[priority]);
+		RegistText3D(m_resistInfoSumScreen[priority]) :
+		RegistText3D(m_resistInfoSum[priority]);
 
 	// 情報を代入
 	registInfo->SetMtx(mtx);
@@ -351,8 +340,8 @@ CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mt
 
 	// 登録情報
 	CModel::CRegistInfo* registInfo = isOnScreen ?
-		RegistModel(ms_resistInfoSumScreen[priority]) :
-		RegistModel(ms_resistInfoSum[priority]);
+		RegistModel(m_resistInfoSumScreen[priority]) :
+		RegistModel(m_resistInfoSum[priority]);
 
 	// 情報を代入
 	registInfo->SetMtx(mtx);
@@ -362,7 +351,7 @@ CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mt
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [非公開]描画マネージャークラスのメンバ関数
+//==========| [非公開]描画マネージャークラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -377,10 +366,10 @@ void CDrawMgr::Draw(Device& device, CCamera* camera, const bool& isOnScreen) {
 
 	// 描画していく
 	if (isOnScreen) {
-		ExecutionDraw(device, camera, ms_drawInfoSumScreen, viewMtx);
+		ExecutionDraw(device, camera, m_drawInfoSumScreen, viewMtx);
 	}
 	else {
-		ExecutionDraw(device, camera, ms_drawInfoSum, viewMtx);
+		ExecutionDraw(device, camera, m_drawInfoSum, viewMtx);
 	}
 }
 
@@ -390,17 +379,22 @@ void CDrawMgr::Draw(Device& device, CCamera* camera, const bool& isOnScreen) {
 void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx) {
 
 	short   cameraID         = camera == NULL ? NONEDATA : camera->GetID();
-	bool    isCameraClipping = camera == NULL ? false : camera->GetIsClipping();
+	bool    isCameraClipping = camera == NULL ? false    : camera->GetIsClipping();
 	Pos3D   cameraPosV       = camera == NULL ? Pos3D(0.0f, 0.0f, 0.0f) : camera->GetPosV();
 	Pos3D   cameraPosR       = camera == NULL ? Pos3D(0.0f, 0.0f, 1.0f) : camera->GetPosR();
-	Scale2D cameraScale      = camera == NULL ? RNLib::Window().GetScale() : camera->GetScale2D();
+	Scale2D cameraScale      = camera == NULL ? RNLib::Window().GetSize() : camera->GetScale2D();
 	Matrix  cameraBillboardMtx;
 	D3DXMatrixInverse(&cameraBillboardMtx, NULL, &viewMtx);
 	cameraBillboardMtx._41 = 0.0f;
 	cameraBillboardMtx._42 = 0.0f;
 	cameraBillboardMtx._43 = 0.0f;
 
-	for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
+	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
+
+		//----------------------------------------
+		// マテリアルメッシュ描画
+		//----------------------------------------
+		RNLib::MatMesh().Draw(device, cntPriority, cameraID, isCameraClipping);
 
 		//----------------------------------------
 		// モデル描画
@@ -493,7 +487,7 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 
 				// [[[ ビルボードフラグに応じてマトリックスを設定 ]]]
 				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_isBillboard)
-					device->SetTransform(D3DTS_WORLD, &CMatrix::MultiplyMtx(drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx, cameraBillboardMtx));
+					device->SetTransform(D3DTS_WORLD, &CMatrix::MultiplyMtx(cameraBillboardMtx, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx));
 				else
 					device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx);
 
@@ -557,9 +551,9 @@ void CDrawMgr::AssignVertexInfo(void) {
 		Vertex2D* vtxs = NULL;
 		CPolygon2D::CDrawInfo::ms_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
-		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-			ConvDrawInfoToVertex2DInfo(vtxs, ms_drawInfoSum[cntPriority]);
-			ConvDrawInfoToVertex2DInfo(vtxs, ms_drawInfoSumScreen[cntPriority]);
+		for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
+			ConvDrawInfoToVertex2DInfo(vtxs, m_drawInfoSum[cntPriority]);
+			ConvDrawInfoToVertex2DInfo(vtxs, m_drawInfoSumScreen[cntPriority]);
 		}
 
 		// 頂点バッファをアンロック
@@ -573,9 +567,9 @@ void CDrawMgr::AssignVertexInfo(void) {
 		Vertex3D* vtxs = NULL;
 		CPolygon3D::CDrawInfo::ms_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
-		for (int cntPriority = 0; cntPriority < ms_priorityMax; cntPriority++) {
-			ConvDrawInfoToVertex3DInfo(vtxs, ms_drawInfoSum[cntPriority]);
-			ConvDrawInfoToVertex3DInfo(vtxs, ms_drawInfoSumScreen[cntPriority]);
+		for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
+			ConvDrawInfoToVertex3DInfo(vtxs, m_drawInfoSum[cntPriority]);
+			ConvDrawInfoToVertex3DInfo(vtxs, m_drawInfoSumScreen[cntPriority]);
 		}
 
 		// 頂点バッファをアンロック
@@ -803,7 +797,7 @@ void CDrawMgr::ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfo
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]描画情報総括クラスのメンバ関数
+//==========| [公開]描画情報総括クラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -880,7 +874,7 @@ void CDrawMgr::CDrawInfoSum::Overwrite(CDrawInfoSum* pOvr) {
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]登録情報情報総括クラスのメンバ関数
+//==========| [公開]登録情報情報総括クラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 

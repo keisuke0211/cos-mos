@@ -68,7 +68,7 @@ private:
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	bool   m_isShowDebugLog;
-	bool   m_isShowDebugLogs[(int)DEBUG_LOG_TYPE::MAX];
+	bool   m_isShowDebugLogOptions;
 	int    m_debugCount;
 	UShort m_debugLogLine;
 };

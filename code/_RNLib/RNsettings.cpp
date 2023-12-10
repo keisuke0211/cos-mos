@@ -90,5 +90,5 @@ RNSettings::Info RNSettings::GetInfo(void) {
 void RNSettings::SetFulScreen(bool screen) {
 
 	info.isFullScreen = screen;
-	RNLib::Window().SetFullScreen(screen);
+	RNLib::Window().SetIsFullScreen(screen);
 }

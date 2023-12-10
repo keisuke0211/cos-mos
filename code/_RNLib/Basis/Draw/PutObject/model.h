@@ -25,7 +25,7 @@ public:
 		Rot3D    worldRot;
 		Normal3D nor;
 		Normal3D worldNor;
-		Pos3D    texPos;
+		Pos2D    texPos;
 	};
 
 	//========== [[[ ÉNÉâÉXíËã` ]]]
@@ -40,6 +40,8 @@ public:
 		// [[[ ïœêîêÈåæ ]]]
 		short*   m_texIdxes;
 		Texture* m_texes;
+		UShort*  m_idxes;
+		UInt     m_idxNum;
 		Mesh     m_mesh;
 		Mesh*    m_outLineMeshs;
 		Buffer   m_matBuff;
@@ -108,7 +110,7 @@ public:
 	void         Release     (void);
 	short        Load        (const char* loadPath, short idx = NONEDATA);
 	CData&       GetData     (const short& idx) { return *m_datas[idx]; }
-	void         StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& modelIdx, const Matrix& modelMtx);
+	void         StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, UInt* vtxNum, Vertex3DInfo** vtxInfos);
 	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Matrix& mtx,                                        const bool& isOnScreen = false);
 	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot,                       const bool& isOnScreen = false);
 	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const bool& isOnScreen = false);

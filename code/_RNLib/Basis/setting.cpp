@@ -110,7 +110,7 @@ void UpdateSetting(void)
 		if (g_nCounterScreenModeChange == 0)
 		{// 画面モード切り替えカウンターが0の時、
 			// ウインドウのモードを切り替える
-			RNLib::Window().SetFullScreen(g_setting.bFullScreen);
+			RNLib::Window().SetIsFullScreen(g_setting.bFullScreen);
 		}
 	}
 

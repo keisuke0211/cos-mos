@@ -35,9 +35,9 @@ public:
 	class CDrawInfoSum {
 	public:
 		// [[[ ŠÖ”éŒ¾ ]]]
-		CDrawInfoSum();
-		~CDrawInfoSum();
-		void Release(void);
+		CDrawInfoSum  ();
+		~CDrawInfoSum ();
+		void Release  (void);
 		void Overwrite(CDrawInfoSum* pOvr);
 
 		// [[[ •Ï”éŒ¾ ]]]
@@ -49,18 +49,15 @@ public:
 		UShort                  m_polygon2DNum;
 	};
 
-	//----------------------------------------
-	// “o˜^î•ñî•ñ
-	//----------------------------------------
-	// “o˜^î•ñî•ñ‘Š‡
+	// “o˜^î•ñî•ñ‘Š‡ƒNƒ‰ƒX
 	class CRegistInfoSum {
 	public:
 		// [[[ ŠÖ”éŒ¾ ]]]
-		CRegistInfoSum();
+		CRegistInfoSum ();
 		~CRegistInfoSum();
-		void InitAlloc(void);
-		void ReAlloc(void);
-		void Release(void);
+		void InitAlloc (void);
+		void ReAlloc   (void);
+		void Release   (void);
 
 		// [[[ •Ï”éŒ¾ ]]]
 		CPolygon2D::CRegistInfo** m_polygon2DRegistInfos;
@@ -86,46 +83,46 @@ public:
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	static const UShort& GetPriorityMax (void) { return ms_priorityMax; }
-	static UShort        GetPolygon2DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
-	static UShort        GetPolygon3DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
-	static UShort        GetModelNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < ms_priorityMax; num += ms_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
-	static void StartDraw(Device& device);
-	static void EndDraw(Device& device);
-	CDrawMgr();
-	~CDrawMgr();
-	void Init(const UShort& priorityMax);
-	void Uninit(void);
-	void Update(void);
-	void Release(void);
-	CPolygon2D::CRegistInfo* PutPolygon2D(const UShort& priority, const bool& isOnScreen);
-	CPolygon3D::CRegistInfo* PutPolygon3D(const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	CText2D::CRegistInfo*    PutText2D   (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
-	CText3D::CRegistInfo*    PutText3D   (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	CModel::CRegistInfo*     PutModel    (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	CDrawMgr                                ();
+	~CDrawMgr                               ();
+	void                     Init           (const UShort& priorityMax);
+	void                     Uninit         (void);
+	void                     Update         (void);
+	void                     StartDraw      (Device& device);
+	void                     EndDraw        (Device& device);
+	void                     Release        (void);
+	CPolygon2D::CRegistInfo* PutPolygon2D   (const UShort& priority, const bool& isOnScreen);
+	CPolygon3D::CRegistInfo* PutPolygon3D   (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	CText2D::CRegistInfo*    PutText2D      (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
+	CText3D::CRegistInfo*    PutText3D      (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	CModel::CRegistInfo*     PutModel       (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	const UShort&            GetPriorityMax (void) { return m_priorityMax; }
+	UShort                   GetPolygon2DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
+	UShort                   GetPolygon3DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
+	UShort                   GetModelNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
 
 private:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	static void PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
-	static void ConvRegistInfoToDrawInfo(CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
-	static void Draw(Device& device, CCamera* camera, const bool& isOnScreen);
-	static void ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
-	static void AssignVertexInfo(void);
-	static void ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
-	static void ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
-	CPolygon2D::CRegistInfo* RegistPolygon2D(CRegistInfoSum& resistInfo);
-	CPolygon3D::CRegistInfo* RegistPolygon3D(CRegistInfoSum& resistInfo);
-	CText2D::CRegistInfo*    RegistText2D   (CRegistInfoSum& resistInfo);
-	CText3D::CRegistInfo*    RegistText3D   (CRegistInfoSum& resistInfo);
-	CModel::CRegistInfo*     RegistModel    (CRegistInfoSum& resistInfo);
+	void                     Draw                      (Device& device, CCamera* camera, const bool& isOnScreen);
+	void                     PutBasedRegistInfo        (CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
+	void                     ExecutionDraw             (Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
+	void                     AssignVertexInfo          (void);
+	void                     ConvRegistInfoToDrawInfo  (CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
+	void                     ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
+	void                     ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
+	CPolygon2D::CRegistInfo* RegistPolygon2D           (CRegistInfoSum& resistInfo);
+	CPolygon3D::CRegistInfo* RegistPolygon3D           (CRegistInfoSum& resistInfo);
+	CText2D::CRegistInfo*    RegistText2D              (CRegistInfoSum& resistInfo);
+	CText3D::CRegistInfo*    RegistText3D              (CRegistInfoSum& resistInfo);
+	CModel::CRegistInfo*     RegistModel               (CRegistInfoSum& resistInfo);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
-	static CRegistInfoSum* ms_resistInfoSum;
-	static CRegistInfoSum* ms_resistInfoSumScreen;
-	static CDrawInfoSum*   ms_drawInfoSum;				// •`‰æî•ñ
-	static CDrawInfoSum*   ms_drawInfoSumOvr;			// •`‰æî•ñ(ã‘‚«)
-	static CDrawInfoSum*   ms_drawInfoSumScreen;		// ƒXƒNƒŠ[ƒ“•`‰æî•ñ
-	static CDrawInfoSum*   ms_drawInfoSumScreenOvr;		// ƒXƒNƒŠ[ƒ“•`‰æî•ñ(ã‘‚«)
-	static UShort          ms_priorityMax;
-	UShort m_reAllocCount;
+	CRegistInfoSum* m_resistInfoSum;
+	CRegistInfoSum* m_resistInfoSumScreen;
+	CDrawInfoSum*   m_drawInfoSum;				// •`‰æî•ñ
+	CDrawInfoSum*   m_drawInfoSumOvr;			// •`‰æî•ñ(ã‘‚«)
+	CDrawInfoSum*   m_drawInfoSumScreen;		// ƒXƒNƒŠ[ƒ“•`‰æî•ñ
+	CDrawInfoSum*   m_drawInfoSumScreenOvr;		// ƒXƒNƒŠ[ƒ“•`‰æî•ñ(ã‘‚«)
+	UShort          m_priorityMax;
+	UShort          m_reAllocCount;
 };

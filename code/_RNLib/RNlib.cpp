@@ -7,7 +7,6 @@
 #include "RNlib.h"
 #include "RNmode.h"
 #include "RNobject.h"
-#include "RNsettings.h"
 #include "Demo/demo.h"
 #include "SetUp3DEditor/setup3D-editor.h"
 
@@ -64,6 +63,7 @@ CEase&             RNLib::Ease            (void) { return calculation.m_ease;   
 CGeometry&         RNLib::Geometry        (void) { return calculation.m_geometry;       }
 CHitTest&          RNLib::HitTest         (void) { return calculation.m_hitTest;        }
 CMatrix&           RNLib::Matrix          (void) { return calculation.m_matrix;         }
+CMatMesh&          RNLib::MatMesh         (void) { return draw.m_matMesh;               }
 CModel&            RNLib::Model           (void) { return draw.m_model;                 }
 CPolygon2D&        RNLib::Polygon2D       (void) { return draw.m_polygon2D;             }
 CPolygon3D&        RNLib::Polygon3D       (void) { return draw.m_polygon3D;             }
@@ -241,21 +241,8 @@ namespace {
 
 		// 設定ファイルを読み込み&書き出し
 		if (RNSettings::LoadAndSave(settingsPath))
-		{// 成功した時、
-			// 設定情報を元にウィンドウを生成
-			RNSettings::Info settingsInfo = RNSettings::GetInfo();
-			mechanical.m_window.Create(
-				instanceHandle,
-				{
-					WindowProc,						// ウィンドウプロシージャ
-					settingsInfo.projectName,		// ウィンドウクラスの名前
-					settingsInfo.projectName,		// ウィンドウの名前
-					settingsInfo.windowWidth,		// ウィンドウの幅
-					settingsInfo.windowHeight,		// ウィンドウの高さ
-					settingsInfo.isFullScreen,		// ウィンドウモード
-					settingsInfo.resolution,		// 解像度倍率
-				}
-			);
+		{// 成功した時、設定情報を元にウィンドウを生成
+			mechanical.m_window.Create(instanceHandle, WindowProc);
 		}
 		else
 		{// 失敗した時、シグナルを終了にする
