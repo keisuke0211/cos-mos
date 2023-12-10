@@ -9,7 +9,7 @@
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]モデルクラスのメンバ関数
+//==========| [公開]モデルクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -154,6 +154,31 @@ short CModel::Load(const char* loadPath, short idx) {
 				m_datas[idx]->m_mesh->UnlockVertexBuffer();
 			}
 
+			{// インデックス情報を代入
+				// インデックスバッファをロック
+				WORD* idxBuff = NULL;
+				m_datas[idx]->m_mesh->LockIndexBuffer(D3DLOCK_READONLY, (void**)&idxBuff);
+
+				// インデックス数を取得
+				m_datas[idx]->m_idxNum = faceNum * 3;
+
+				// インデックス情報を生成
+				CMemory::Alloc(&m_datas[idx]->m_idxes, m_datas[idx]->m_idxNum);
+
+				{// インデックス情報を代入
+					UInt count = 0;
+					for (UInt cntIdx = 0; cntIdx < m_datas[idx]->m_idxNum; cntIdx++) {
+						m_datas[idx]->m_idxes[cntIdx] = idxBuff[cntIdx];
+						count++;
+						if (cntIdx % 4 != 0) {
+						}
+					}
+				}
+
+				// インデックスバッファをアンロック
+				m_datas[idx]->m_mesh->UnlockIndexBuffer();
+			}
+
 			// 輪郭メッシュを生成する
 			CMemory::Alloc(&m_datas[idx]->m_outLineMeshs, RNSettings::GetInfo().modelOutLineAddDistanceDelimiter);
 
@@ -202,7 +227,7 @@ short CModel::Load(const char* loadPath, short idx) {
 //========================================
 // 頂点情報を格納
 //========================================
-void CModel::StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& modelIdx, const Matrix& modelMtx) {
+void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, UInt* vtxNum, Vertex3DInfo** vtxInfos) {
 
 	if (modelIdx == NONEDATA) {
 		*vtxNum   = 0;
@@ -223,6 +248,7 @@ void CModel::StoreVtxInfo(UInt* vtxNum, Vertex3DInfo** vtxInfos, const short& mo
 	// 頂点情報を生成
 	CMemory::Alloc(vtxInfos, *vtxNum);
 
+	// 頂点情報を代入
 	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
 		Vertex3DInfo* vtx = &(*vtxInfos)[cntVtx];
 		vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
@@ -272,7 +298,7 @@ CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, 
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| データクラスのメンバ関数
+//==========| データクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -283,6 +309,8 @@ CModel::CData::CData() {
 
 	m_texIdxes     = NULL;
 	m_texes        = NULL;
+	m_idxes        = NULL;
+	m_idxNum       = 0;
 	m_mesh         = NULL;
 	m_outLineMeshs = NULL;
 	m_matBuff      = NULL;
@@ -306,6 +334,9 @@ void CModel::CData::Release(void) {
 	// テクスチャの破棄
 	CMemory::Release(&m_texIdxes);
 	CMemory::Release(&m_texes);
+
+	// インデックスの破棄
+	CMemory::Release(&m_idxes);
 
 	// メッシュの破棄
 	if (m_mesh != NULL) {
@@ -333,7 +364,7 @@ void CModel::CData::Release(void) {
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| 描画情報クラスのメンバ関数
+//==========| 描画情報クラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -381,7 +412,7 @@ CModel::CDrawInfo::~CDrawInfo() {
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]登録情報クラスのメンバ関数
+//==========| [公開]登録情報クラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 

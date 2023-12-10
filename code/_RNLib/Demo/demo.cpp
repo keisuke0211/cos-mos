@@ -12,7 +12,7 @@
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]デモクラスのメンバ関数
+//==========| [公開]デモクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -77,7 +77,7 @@ void CDemo::Uninit(void) {
 //========================================
 void CDemo::Update(void) {
 
-	RNLib::Text2D().PutDebugLog(CreateText("FPS             :%d", RNSystem::GetFPS()));
+	RNLib::Text2D().PutDebugLog(CreateText("----------Demo"));
 	RNLib::Text2D().PutDebugLog(CreateText("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
 	RNLib::Text2D().PutDebugLog(CreateText("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
 
