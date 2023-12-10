@@ -60,7 +60,10 @@ void CMatMesh::Update(void) {
 //========================================
 // 描画処理
 //========================================
-void CMatMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping) {
+void CMatMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
+
+	if (m_meshNums == NULL)
+		return;
 
 	// ワールドマトリックスの設定
 	device->SetTransform(D3DTS_WORLD, &INITMATRIX);
@@ -69,6 +72,12 @@ void CMatMesh::Draw(Device& device, const UShort& priority, const short& cameraI
 	device->SetFVF(FVF_VERTEX_3D);
 
 	for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
+
+		if (m_meshes[priority][cntMesh] == NULL)
+			continue;
+
+		if (m_meshes[priority][cntMesh]->m_isOnScreen != isOnScreen)
+			continue;
 
 		// クリッピングIDが対象外であれば折り返す
 		if (m_meshes[priority][cntMesh]->m_clippingID != NONEDATA || isCameraClipping)
@@ -92,16 +101,32 @@ void CMatMesh::Release(void) {
 }
 
 //========================================
+// 削除処理
+//========================================
+void CMatMesh::Delete(void) {
+
+	const UShort& priorityMax = RNLib::DrawMgr().GetPriorityMax();
+	for (int cnt = 0; cnt < priorityMax; cnt++) {
+		for (int cntMesh = 0; cntMesh < m_meshNums[cnt]; cntMesh++) {
+			CMemory::Release(&m_meshes[cnt][cntMesh]);
+		}
+		m_meshNums[cnt] = 0;
+	}
+}
+
+//========================================
 // メッシュ設定処理
 //========================================
-void CMatMesh::SetMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, Color& col) {
+void CMatMesh::SetMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
 
 	for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
 		CMesh& mesh = *m_meshes[priority][cntMesh];
 
-		if (mesh.m_texIdx == texIdx) {
-			mesh.SetMesh(mtx, modelIdx, col);
-			return;
+		if (mesh.m_texIdx == texIdx && mesh.m_isOnScreen == isOnScreen) {
+			if (mesh.SetMesh(mtx, modelIdx, col)) 
+			{// メッシュの設定に成功した
+				return;
+			}
 		}
 	}
 
@@ -113,6 +138,7 @@ void CMatMesh::SetMesh(const UShort& priority, const Matrix& mtx, const short& m
 
 	// メッシュを設定
 	m_meshes[priority][oldNum]->m_texIdx = texIdx;
+	m_meshes[priority][oldNum]->m_isOnScreen = isOnScreen;
 	m_meshes[priority][oldNum]->SetMesh(mtx, modelIdx, col);
 }
 
@@ -172,7 +198,7 @@ void CMatMesh::CMesh::Draw(Device& device) {
 //========================================
 // メッシュ設定処理
 //========================================
-void CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col) {
+bool CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col) {
 
 	// デバイスを取得
 	Device& device = RNLib::Window().GetD3DDevice();
@@ -194,6 +220,14 @@ void CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Co
 	// 頂点とインデックス数を加算
 	m_vtxNum += addVtxNum;
 	m_idxNum += addIdxNum + (m_idxBuff != NULL) * 3;	// ※縮退ポリゴンに使用する分加算
+
+	if (m_vtxNum > USHRT_MAX || m_idxNum > USHRT_MAX) {
+
+		// 追加する頂点情報を解放
+		CMemory::Release(&addVtxes);
+
+		return false;
+	}
 
 	// 頂点バッファとインデックスバッファを新しく生成
 	VertexBuffer newVtxBuff = NULL;
@@ -276,4 +310,6 @@ void CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Co
 	// 新しい頂点バッファとインデックスバッファを代入
 	m_vtxBuff = newVtxBuff;
 	m_idxBuff = newIdxBuff;
+
+	return true;
 }

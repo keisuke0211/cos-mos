@@ -105,7 +105,7 @@ private:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void                     Draw                      (Device& device, CCamera* camera, const bool& isOnScreen);
 	void                     PutBasedRegistInfo        (CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
-	void                     ExecutionDraw             (Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx);
+	void                     ExecutionDraw             (Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx, const bool& isOnSreen);
 	void                     AssignVertexInfo          (void);
 	void                     ConvRegistInfoToDrawInfo  (CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
 	void                     ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);

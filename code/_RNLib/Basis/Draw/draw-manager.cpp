@@ -366,17 +366,17 @@ void CDrawMgr::Draw(Device& device, CCamera* camera, const bool& isOnScreen) {
 
 	// 描画していく
 	if (isOnScreen) {
-		ExecutionDraw(device, camera, m_drawInfoSumScreen, viewMtx);
+		ExecutionDraw(device, camera, m_drawInfoSumScreen, viewMtx, isOnScreen);
 	}
 	else {
-		ExecutionDraw(device, camera, m_drawInfoSum, viewMtx);
+		ExecutionDraw(device, camera, m_drawInfoSum, viewMtx, isOnScreen);
 	}
 }
 
 //========================================
 // 描画実行処理
 //========================================
-void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx) {
+void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx, const bool& isOnSreen) {
 
 	short   cameraID         = camera == NULL ? NONEDATA : camera->GetID();
 	bool    isCameraClipping = camera == NULL ? false    : camera->GetIsClipping();
@@ -394,7 +394,7 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 		//----------------------------------------
 		// マテリアルメッシュ描画
 		//----------------------------------------
-		RNLib::MatMesh().Draw(device, cntPriority, cameraID, isCameraClipping);
+		RNLib::MatMesh().Draw(device, cntPriority, cameraID, isCameraClipping, isOnSreen);
 
 		//----------------------------------------
 		// モデル描画

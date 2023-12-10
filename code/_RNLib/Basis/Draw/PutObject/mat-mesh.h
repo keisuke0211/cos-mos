@@ -18,9 +18,10 @@ public:
 	void Init   (const UShort& priorityMax);
 	void Uninit (void);
 	void Update (void);
-	void Draw   (Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping);
+	void Draw   (Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
 	void Release(void);
-	void SetMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, Color& col);
+	void Delete (void);
+	void SetMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen);
 
 private:
 	//========== [[[ óÒãìå^íËã` ]]]
@@ -31,11 +32,12 @@ private:
 		CMesh();
 		~CMesh();
 		void Draw(Device& device);
-		void SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col);
+		bool SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col);
 
 		// [[[ ïœêîêÈåæ ]]]
 		short        m_texIdx;
 		short        m_clippingID;
+		bool         m_isOnScreen;
 		VertexBuffer m_vtxBuff;
 		UInt         m_vtxNum;
 		IndexBuffer  m_idxBuff;

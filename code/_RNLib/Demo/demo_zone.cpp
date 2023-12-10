@@ -20,11 +20,11 @@
 // 静的変数定義
 //****************************************
 const CDemoZone::TypeData CDemoZone::TYPE_DATAS[(int)TYPE2::MAX] = {
-	{"DrawTest"  ,Pos3D(100.0f *  0.0f, 0.0f,100.0f * 0.5f),{90.0f,190.0f}},
-	{"CameraTest",Pos3D(100.0f *  1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
-	{"DollTest"  ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
-	{"EffectTest",Pos3D(100.0f * -1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
-	{"MatrixTest",Pos3D(100.0f * -1.0f, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
+	{"DrawTest"   ,Pos3D(100.0f *  0.0f, 0.0f,100.0f * 0.5f),{90.0f,190.0f}},
+	{"CameraTest" ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
+	{"DollTest"   ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
+	{"EffectTest" ,Pos3D(100.0f * -1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
+	{"MatMeshTest",Pos3D(100.0f * -1.0f, 0.0f,100.0f * 1.5f),{90.0f,190.0f}},
 };
 CDemoZone* CDemoZone::ms_active = NULL;
 
@@ -40,8 +40,7 @@ CDemoZone::CDemoZone(const TYPE2& type2) : CDemoObject(TYPE::ZONE) {
 	switch (m_type2) {
 	case TYPE2::DRAW_TEST: {
 		CMemory::Alloc((TypeInfo_DrawTest**)&m_typeInfo);
-		TypeInfo_DrawTest* typeInfo = (TypeInfo_DrawTest*)m_typeInfo;
-		*typeInfo = {};
+		*(TypeInfo_DrawTest*)m_typeInfo = {};
 	}break;
 	case TYPE2::CAMERA_TEST: {
 
@@ -55,13 +54,8 @@ CDemoZone::CDemoZone(const TYPE2& type2) : CDemoObject(TYPE::ZONE) {
 
 	}break;
 	case TYPE2::MATMESH_TEST: {
-		RNLib::MatMesh().SetMesh((UShort)RNMode::PRIORITY::OBJECT3D, CMatrix::ConvPosRotToMtx(pos + Pos3D(0.0f, 5.0f, -15.0f), Rot3D(0.0f, D3DX_PI, 0.0f)), RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), NONEDATA, INITCOLOR);
-		
 		CMemory::Alloc((TypeInfo_MatMeshTest**)&m_typeInfo);
-		TypeInfo_MatMeshTest* typeInfo = (TypeInfo_MatMeshTest*)m_typeInfo;
-		typeInfo->vtxCount = 0;
-		typeInfo->idxCount = 0;
-		typeInfo->setNum = 0;
+		*(TypeInfo_MatMeshTest*)m_typeInfo = {};
 	}break;
 	}
 }
@@ -337,11 +331,11 @@ void CDemoZone::UpdateActive(void) {
 			bone1.AddAddRot(addRot);
 		}
 
-		RNLib::Text2D().PutDebugLog(CreateText("-----Bone0"));
+		RNLib::Text2D().PutDebugLog(CreateText("Bone0"));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinX[R][T]:%f", bone0.GetAddRot().x));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinY[F][G]:%f", bone0.GetAddRot().y));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[V][B]:%f", bone0.GetAddRot().z));
-		RNLib::Text2D().PutDebugLog(CreateText("-----Bone1"));
+		RNLib::Text2D().PutDebugLog(CreateText("Bone1"));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinX[Y][U]:%f", bone1.GetAddRot().x));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinY[H][J]:%f", bone1.GetAddRot().y));
 		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[N][M]:%f", bone1.GetAddRot().z));
@@ -363,40 +357,61 @@ void CDemoZone::UpdateActive(void) {
 		UInt vtxNum = 0;
 		RNLib::Model().StoreVtxInfo(CMatrix::ConvPosToMtx(pos + Pos3D(-10.0f, 5.0f, 0.0f)), RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), &vtxNum, &vtxes);
 
-		if (RNLib::Input().GetKeyTrigger(DIK_R) && typeInfo->vtxCount > 0)
-			typeInfo->vtxCount--;
-		if (RNLib::Input().GetKeyTrigger(DIK_T))
-			typeInfo->vtxCount++;
-		if (RNLib::Input().GetKeyTrigger(DIK_F) && typeInfo->idxCount > 0)
-			typeInfo->idxCount--;
-		if (RNLib::Input().GetKeyTrigger(DIK_G))
-			typeInfo->idxCount++;
+		const Pos3D basePos = pos + Pos3D(75.0f, 5.0f, -75.0f);
+		struct LocalFunc {
+			static Pos3D FindPos(const UShort& putNum) {
+				UShort x = putNum % 5;
+				UShort y = putNum / 25;
+				UShort z = (putNum / 5) % 5;
+
+				return Pos3D(x * 12.0f, y * 12.0f, z * -12.0f);
+			}
+		};
 
 		if (RNLib::Input().GetKeyPress(DIK_1)) {
-			typeInfo->setNum++;
-			RNLib::MatMesh().SetMesh((UShort)RNMode::PRIORITY::OBJECT3D, CMatrix::ConvPosRotToMtx(pos + Pos3D((typeInfo->setNum % 3) * 10.0f, (typeInfo->setNum / 9) * 10.0f, ((typeInfo->setNum / 3) % 3) * 10.0f), Rot3D(0.0f, D3DX_PI, 0.0f)), RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), NONEDATA, Color{ rand() % 255 ,rand() % 255,rand() % 255,255 });
+			for (int cnt = 0; cnt < 5; cnt++) {
+				typeInfo->setNum++;
+				if (typeInfo->isMesh)
+					RNLib::MatMesh().SetMesh(
+						(UShort)RNMode::PRIORITY::OBJECT3D,
+						CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
+						RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+						RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)),
+						Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
+						false);
+			}
 		}
 
-		if (typeInfo->vtxCount >= vtxNum)
-			typeInfo->vtxCount = vtxNum;
+		if (RNLib::Input().GetKeyTrigger(DIK_2)) {
+			typeInfo->isMesh = !typeInfo->isMesh;
 
-		if (typeInfo->idxCount >= modelData.m_idxNum)
-			typeInfo->idxCount = modelData.m_idxNum;
-
-		RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", typeInfo->vtxCount), CText::ALIGNMENT::CENTER, 1, vtxes[typeInfo->vtxCount].worldPos, INITROT3D)
-			->SetSize(Size2D(1.0f, 1.0f))
-			->SetLighting(false)
-			->SetZTest(false)
-			->SetBillboard(true);
-		RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", typeInfo->idxCount), CText::ALIGNMENT::CENTER, 1, vtxes[modelData.m_idxes[typeInfo->idxCount]].worldPos, INITROT3D)
-			->SetSize(Size2D(0.5f, 0.5f))
-			->SetLighting(false)
-			->SetZTest(false)
-			->SetBillboard(true)
-			->SetCol(Color{ 255,255,0,255 });
+			if (typeInfo->isMesh) {
+				for (int cnt = 0; cnt < typeInfo->setNum; cnt++)
+					RNLib::MatMesh().SetMesh(
+						(UShort)RNMode::PRIORITY::OBJECT3D,
+						CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
+						RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+						RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)), 
+						Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
+						false);
+			}
+			else {
+				RNLib::MatMesh().Delete();
+			}
+		}
 
 		// 頂点情報を解放
 		CMemory::Release(&vtxes);
+
+		// モデルを設置
+		if (!typeInfo->isMesh) {
+			for (int cnt = 0; cnt < typeInfo->setNum; cnt++)
+				RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f));
+		}
+
+		RNLib::Text2D().PutDebugLog(CreateText("SetModel[1]   :%d", typeInfo->setNum));
+		RNLib::Text2D().PutDebugLog(CreateText("IsMesh  [2]   :%s", typeInfo->isMesh ? "TRUE" : "FALSE"));
+
 	}break;
 	}
 }

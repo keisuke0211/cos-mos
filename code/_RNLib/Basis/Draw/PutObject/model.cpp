@@ -248,6 +248,9 @@ void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, UInt* v
 	// 頂点情報を生成
 	CMemory::Alloc(vtxInfos, *vtxNum);
 
+	// テクスチャ座標のオフセットを計算
+	const DWORD texCoordOffset = dwSizeFVF - sizeof(float) * 2;  // 2は2次元のテクスチャ座標の要素数
+
 	// 頂点情報を代入
 	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
 		Vertex3DInfo* vtx = &(*vtxInfos)[cntVtx];
@@ -261,6 +264,7 @@ void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, UInt* v
 		vtx->rot      = CGeometry::FindVecRot(vtx->nor);
 		vtx->worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
 		vtx->worldRot = CGeometry::FindVecRot(vtx->worldNor);
+		vtx->texPos   = *(Pos2D*)(vtxBuff + (dwSizeFVF * cntVtx) + texCoordOffset);
 	}
 
 	// 頂点バッファをアンロック

@@ -70,9 +70,8 @@ private:
 	};
 	// 『マテリアルメッシュ』の情報
 	struct TypeInfo_MatMeshTest {
-		UShort vtxCount;
-		UShort idxCount;
-		int    setNum;
+		int  setNum = 0;
+		bool isMesh = false;
 	};
 
 	//========== [[[ 関数宣言 ]]]
