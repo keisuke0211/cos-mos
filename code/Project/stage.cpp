@@ -34,13 +34,13 @@ namespace {
 	short           wallModelIdxes[2];
 }
 
-static const float cloudmove[MAX_CLOUD] = {
-	0.2f,
-	0.14f,
-	0.3f,
-	0.03f,
-	0.1f,
-};
+//static const float cloudmove[MAX_CLOUD] = {
+//	0.2f,
+//	0.14f,
+//	0.3f,
+//	0.03f,
+//	0.1f,
+//};
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| ステージの関数
@@ -247,17 +247,17 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
 				->SetBillboard(true);
-			　
-			// 雲
-			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
-			{
-				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
-					->SetVtxPos(Pos3D(-1000.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-1000.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f))
-					->SetBillboard(true)
-					->SetZTest(false)
-					->SetCol(Color{ 255,255,255,100 });
-			}
+			
+			//// 雲
+			//for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)..
+			//{
+			//	RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			//		->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+			//		->SetVtxPos(Pos3D(-1000.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-1000.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f))
+			//		->SetBillboard(true)
+			//		->SetZTest(false)
+			//		->SetCol(Color{ 255,255,255,100 });
+			//}
 		
 
 			// 下

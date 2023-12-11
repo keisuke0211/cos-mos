@@ -44,6 +44,9 @@ public:
 		DOG_01,			// 縮む
 		DOG_02,			// 伸びる
 		DOG_03,			// 震える
+
+		GET_PARTS,		//ロケットパーツ取得
+		GET_COIN,		//コイン取得
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];
