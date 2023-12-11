@@ -53,13 +53,22 @@ public:
 	int   GetHipRot(void); //‚¨K‚Ì•ûŒü‚ğæ“¾
 
 private:
+	//========== [[[ —ñ‹“Œ^’è‹` ]]]
+	enum class Parts
+	{
+		Body = 0, // ‘Ì
+		Head,     // “ª
+		Hip,      // ‚¨K
+		Max
+	};
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	void UpdateState_None(void);
 	void UpdateState_Return(void);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
+	int   m_modelIdx[(int)Parts::Max]; // ƒ‚ƒfƒ‹”Ô†
+	static const char *MODEL_PATH[(int)Parts::Max];//ƒ‚ƒfƒ‹ƒpƒX
 	STATE m_state;       // í—Ş
-	int   m_modelIdx[3]; // ƒ‚ƒfƒ‹”Ô†
 	Pos3D m_scale;       // ‘å‚«‚³
 	bool  m_bElasticity; // G‚Á‚Äk‚Ş‚©L‚Ñ‚é‚©
 	bool  m_bInversion;  // ”½“]

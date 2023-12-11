@@ -59,7 +59,7 @@ bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
-float CPlayer::s_fAimWorkSpeed = 0.05f;
+float CPlayer::s_fAimWorkSpeed = 0.1f;
 CPlayer::Info CPlayer::m_aInfo[CPlayer::NUM_PLAYER];	// 各プレイヤーの情報
 
 //=======================================
@@ -1319,7 +1319,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		// ヌイの状態設定
 		case CStageObject::TYPE::EXTEND_DOG:
 		{
-			//ヌイに変換し、反転してるか取得
+			//ヌイに変換
 			CExtenddog *pDog = (CExtenddog *)pStageObj;
 
 			//お尻の方向と当たった方向が同じ
