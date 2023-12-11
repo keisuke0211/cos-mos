@@ -28,7 +28,7 @@
 #include "Basis/Calculation/matrix.h"
 #include "Basis/Calculation/number.h"
 //========== [[[ Draw ]]]
-#include "Basis/Draw/PutObject/mat-mesh.h"
+#include "Basis/Draw/PutObject/static-mesh.h"
 #include "Basis/Draw/PutObject/model.h"
 #include "Basis/Draw/PutObject/polygon2D.h"
 #include "Basis/Draw/PutObject/polygon3D.h"
@@ -97,7 +97,7 @@ namespace RNLib {
 	CHitTest&          HitTest         (void);
 	CMatrix&           Matrix          (void);
 	// Draw						       
-	CMatMesh&          MatMesh         (void);
+	CStaticMesh&          MatMesh         (void);
 	CModel&            Model           (void);
 	CPolygon2D&        Polygon2D       (void);
 	CPolygon3D&        Polygon3D       (void);

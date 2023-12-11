@@ -13,51 +13,56 @@
 // 定数定義
 //========================================
 const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Soil.PNG"              , Color(255,255,255,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\SoilBlock_Grassy.x"          , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\AncientStonePillar_Up.x"     , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\AncientStonePillar_Center.x" , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\AncientStonePillar_Down.x"   , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\LeafBlock\\Leaf.x"           , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\TreeTrunk.x"                 , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\TreeTrunk_Root.x"            , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\coin.x"                                   , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\stone_monument.x"                         , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneBrick.PNG"        , Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x"  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\Three-eyes_block.x"                       , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x"      , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\AsphaltBlock.x"              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\AsphaltBlock_Cracked.x"      , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\IronBar.x"                   , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\IronBar1.x"                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\IronBar2.x"                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\IronBar3.x"                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Mud.PNG"               , Color(255,255,255,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\SandAndAsphaltBlock.x"       , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\SandBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\Torch.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\Snake.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\leaf_large.x"                             , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\leaf_small.x"                             , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\dry-leaf_large.x"                         , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\dry-leaf_small.x"                         , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StoneDragon.x"                            , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StoneSword.x"                             , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), SET_TYPE::FORWARD_AND_BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), SET_TYPE::BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), SET_TYPE::BACKWARD },
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), SET_TYPE::BACKWARD },
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Soil.PNG"              , Color(255,255,255,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 土ブロック
+	{ "data\\MODEL\\StageObject\\SoilBlock_Grassy.x"          , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 草の生えた土ブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロックA
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロックB
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロックC
+	{ "data\\MODEL\\StageObject\\AncientStonePillar_Up.x"     , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 柱の上
+	{ "data\\MODEL\\StageObject\\AncientStonePillar_Center.x" , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 柱の繋ぎ
+	{ "data\\MODEL\\StageObject\\AncientStonePillar_Down.x"   , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 柱の根本
+	{ "data\\MODEL\\StageObject\\LeafBlock\\Leaf.x"           , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 草ブロック
+	{ "data\\MODEL\\StageObject\\TreeTrunk.x"                 , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 木の幹
+	{ "data\\MODEL\\StageObject\\TreeTrunk_Root.x"            , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 木の根元
+	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -16.0f , 0.0f , },	  // バオバブの木(背景用)
+	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 宝箱
+	{ "data\\MODEL\\coin.x"                                   , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -8.0f  , 0.0f , },	  // 山積みのコイン
+	{ "data\\MODEL\\stone_monument.x"                         , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 謎の石碑
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneBrick.PNG"        , Color(191,158,85 ,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石レンガブロック
+	{ "data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x"  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 土＆古代の石ブロック(中間用)
+	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -8.0f  , 0.0f , },	  // ヤシの木
+	{ "data\\MODEL\\Three-eyes_block.x"                       , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 三つ目のブロック
+	{ "data\\MODEL\\StageObject\\LeafBlock\\Leaf_Nuts.x"      , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 草ブロック(木の実)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // ヌイの家ブロック
+	{ "data\\MODEL\\StageObject\\AsphaltBlock.x"              , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // アスファルトブロック
+	{ "data\\MODEL\\StageObject\\AsphaltBlock_Cracked.x"      , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // ひび割れたアスファルトブロック
+	{ "data\\MODEL\\StageObject\\IronBar.x"                   , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 鉄格子(当たり判定無し想定)
+	{ "data\\MODEL\\StageObject\\IronBar1.x"                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 鉄格子1
+	{ "data\\MODEL\\StageObject\\IronBar2.x"                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 鉄格子2
+	{ "data\\MODEL\\StageObject\\IronBar3.x"                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 鉄格子3
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Mud.PNG"               , Color(255,255,255,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 泥ブロック
+	{ "data\\MODEL\\StageObject\\SandAndAsphaltBlock.x"       , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 砂＆アスファルトブロック(中間用)
+	{ "data\\MODEL\\StageObject\\SandBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 砂ブロック
+	{ "data\\MODEL\\Torch.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 30.0f, },	  // 松明
+	{ "data\\MODEL\\Snake.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 30.0f, },	  // 蛇の壁画
+	{ "data\\MODEL\\leaf_large.x"                             , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 緑色の葉っぱ(大)
+	{ "data\\MODEL\\leaf_small.x"                             , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 緑色の葉っぱ(小)
+	{ "data\\MODEL\\dry-leaf_large.x"                         , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 茶色の葉っぱ(大)
+	{ "data\\MODEL\\dry-leaf_small.x"                         , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 0.0f , },	  // 茶色の葉っぱ(小)
+	{ "data\\MODEL\\StoneDragon.x"                            , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 30.0f, },	  // 龍の石像
+	{ "data\\MODEL\\StoneSword.x"                             , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 30.0f, },	  // 剣の石像
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // なめらかなコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // なめらかなひび割れたコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // コンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)なめらかなコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)なめらかなひび割れたコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)コンクリートブロック
+	{ "data\\MODEL\\sango_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -12.0f , 30.0f, },	  // サンゴ礁1
+	{ "data\\MODEL\\sango_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -12.0f , 30.0f, },	  // サンゴ礁2
+	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -8.0f  , 30.0f, },	  // サンゴ礁3
+	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 30.0f, },	  // 岩1
+	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -8.0f  , 30.0f, },	  // 岩2
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -140,18 +145,18 @@ CBlock::CBlock(void) {
 	Manager::StageObjectMgr()->AddList(this);
 	for (int cnt = 0; cnt < 6; cnt++) {
 		m_isHits[cnt] =
-		m_isHitOlds[cnt] = false;
+			m_isHitOlds[cnt] = false;
 	}
-	m_isCollision  = true;
-	m_doll         = NULL;
-	m_type         = TYPE::BLOCK;
-	m_width        = SIZE_OF_1_SQUARE;
-	m_height       = SIZE_OF_1_SQUARE;
+	m_isCollision = true;
+	m_doll = NULL;
+	m_type = TYPE::BLOCK;
+	m_width = SIZE_OF_1_SQUARE;
+	m_height = SIZE_OF_1_SQUARE;
 	m_targetAddPos = INITPOS3D;
-	m_oldAddPos    = INITPOS3D;
-	m_addPos       = INITPOS3D;
-	m_counter      = 0;
-	m_counterMax   = 0;
+	m_oldAddPos = INITPOS3D;
+	m_addPos = INITPOS3D;
+	m_counter = 0;
+	m_counterMax = 0;
 	m_nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\Eye.png");
 	m_num++;
 }
@@ -171,26 +176,28 @@ CBlock::~CBlock() {
 HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	m_looksType = looksType;
 
+	m_pos.z += LOOKS_DATAS[(int)m_looksType].depth;
+	m_pos.y += LOOKS_DATAS[(int)m_looksType].height * GetPlusMinus(m_pos.y);
+
 	// ドールの生成
-	const float correctHalf = (-8.0f * (m_pos.y / fabsf(m_pos.y)));
 	switch (m_looksType) {
 	case LOOKS_TYPE::BAOBAB_TREE: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE]);
-		m_doll->SetPos(m_pos + Pos3D(0.0f, correctHalf - (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
+		m_doll->SetPos(m_pos + Pos3D(0.0f, (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::CHEST: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
-		m_doll->SetPos(m_pos + Pos3D(0.0f, correctHalf, 0.0f));
+		m_doll->SetPos(m_pos);
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::PALMTREE: {
 		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
-		m_doll->SetPos(m_pos + Pos3D(0.0f, correctHalf, 0.0f));
+		m_doll->SetPos(m_pos);
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
@@ -199,34 +206,25 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 
 	// 位置調整
 	switch (m_looksType) {
-	case LOOKS_TYPE::SOIL_BLOCK					:
-	case LOOKS_TYPE::SOIL_BLOCK_GRASSY			:
-	case LOOKS_TYPE::ANCIENT_STONE_BLOCK		:
-	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_A	:
-	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_B	:
-	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_C	:
-	case LOOKS_TYPE::LEAF_BLOCK					:
-	case LOOKS_TYPE::LEAF_LARGE					:
-	case LOOKS_TYPE::LEAF_SMALL					:
-	case LOOKS_TYPE::DRY_LEAF_LARGE				:
-	case LOOKS_TYPE::DRY_LEAF_SMALL				:
+	case LOOKS_TYPE::SOIL_BLOCK:
+	case LOOKS_TYPE::SOIL_BLOCK_GRASSY:
+	case LOOKS_TYPE::ANCIENT_STONE_BLOCK:
+	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_A:
+	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_B:
+	case LOOKS_TYPE::ANCIENT_STONE_BLOCK_PTN_C:
+	case LOOKS_TYPE::LEAF_BLOCK:
+	case LOOKS_TYPE::LEAF_LARGE:
+	case LOOKS_TYPE::LEAF_SMALL:
+	case LOOKS_TYPE::DRY_LEAF_LARGE:
+	case LOOKS_TYPE::DRY_LEAF_SMALL:
 		m_pos.z -= ((int)fabsf(m_pos.x + m_pos.y) % 20) * 0.5f;
-		break;
-	case LOOKS_TYPE::TORCH						:
-	case LOOKS_TYPE::SNAKE						:
-	case LOOKS_TYPE::STONE_DRAGON				:
-	case LOOKS_TYPE::STONE_SWORD				:
-		m_pos.z += 30.0f + ((int)fabsf(m_pos.x) % 20);
-		break;
-	case LOOKS_TYPE::PILE_OF_COINS:
-		m_pos.y -= (m_pos.y / fabsf(m_pos.y)) * SIZE_OF_1_SQUARE * 0.5f;
 		break;
 	}
 
-	if (m_pasteTexIdxes[(int)m_looksType] != NONEDATA) {
+	if (m_modelIdxes[(int)m_looksType] != NONEDATA && m_pasteTexIdxes[(int)m_looksType] != NONEDATA) {
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
-			RNLib::MatMesh().SetMesh(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+			RNLib::MatMesh().SetMaterialMesh(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 		}
 
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::BACKWARD ||
@@ -235,7 +233,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 			setCol.r *= 0.7f;
 			setCol.g *= 0.7f;
 			setCol.b *= 0.7f;
-			RNLib::MatMesh().SetMesh(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
+			RNLib::MatMesh().SetMaterialMesh(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
 		}
 
 		if (!m_isCollision)
@@ -249,7 +247,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 // 終了
 //========================================
 void CBlock::Uninit(void) {
-	
+
 }
 
 //========================================
@@ -272,11 +270,9 @@ void CBlock::Update(void) {
 		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetCol(m_color)
-			;
+			->SetCol(m_color);
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
-			->SetCol(m_color)
-			;
+			->SetCol(m_color);
 	}break;
 	case LOOKS_TYPE::CHEST: {
 
@@ -299,7 +295,7 @@ void CBlock::Update(void) {
 			// 乗られた瞬間
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
-					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f,8.0f,0.0f), Color{ 255,200,0,255 });
+					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
 				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
 			}
 		}
@@ -398,7 +394,7 @@ void CBlock::Update(void) {
 
 		}
 
-		
+
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
@@ -436,12 +432,12 @@ void CBlock::Update(void) {
 			;
 	}break;
 	case LOOKS_TYPE::SNAKE: {
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f,m_pos.z) , m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			;
 	}break;
 	case LOOKS_TYPE::LEAF_LARGE: {
-	
+
 		RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::SOIL_BLOCK_GRASSY], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			;
@@ -478,19 +474,16 @@ void CBlock::Update(void) {
 	}break;
 	case LOOKS_TYPE::STONE_DRAGON: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
-			->SetCol(m_color)
-			;
+			->SetCol(m_color);
 	}break;
 	case LOOKS_TYPE::STONE_SWORD: {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
-			->SetCol(m_color)
-			;
+			->SetCol(m_color);
 	}break;
 	default: {
 		if (m_pasteTexIdxes[(int)m_looksType] == NONEDATA) {
 			RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y >= 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
-				->SetCol(m_color)
-				;
+				->SetCol(m_color);
 		}
 	}break;
 	}

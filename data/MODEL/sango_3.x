@@ -377,7 +377,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\画像\\メタセコテクスチャ\\iwa.jpg";
+    "data\\TEXTURE\\iwa.jpg";
    }
   }
   Material {
@@ -386,7 +386,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\画像\\メタセコテクスチャ\\bluesango.jpg";
+    "data\\TEXTURE\\bluesango.jpg";
    }
   }
  }
