@@ -62,6 +62,11 @@ public:
 		BACK_SMOOTH_CONCRETE_BLOCK         = 42,	// (後ろ)なめらかなコンクリートブロック
 		BACK_SMOOTH_CONCRETE_BLOCK_CRACKED = 43,	// (後ろ)なめらかなひび割れたコンクリートブロック
 		BACK_CONCRETE_BLOCK                = 44,	// (後ろ)コンクリートブロック
+		CORAL_REEF_1                       = 45,	// サンゴ礁1
+		CORAL_REEF_2                       = 46,	// サンゴ礁2
+		CORAL_REEF_3                       = 47,	// サンゴ礁3
+		STONE_1                            = 48,	// 岩1
+		STONE_2                            = 49,	// 岩2
 		MAX,
 	};
 	enum class OTHER_TEXTURE {
@@ -130,6 +135,8 @@ private:
 		const char* pasteTexPath;
 		Color col;
 		SET_TYPE setType;
+		float height;
+		float depth;
 	};
 
 	//========== [[[ 定数宣言 ]]]

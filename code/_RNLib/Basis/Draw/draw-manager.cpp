@@ -392,7 +392,7 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
 
 		//----------------------------------------
-		// マテリアルメッシュ描画
+		// スタティックメッシュ描画
 		//----------------------------------------
 		RNLib::MatMesh().Draw(device, cntPriority, cameraID, isCameraClipping, isOnSreen);
 

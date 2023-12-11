@@ -59,6 +59,7 @@ public:
 		CRegistInfo* SetSize       (const float& width, const float& height);
 		// <<< 色情報設定 >>>
 		CRegistInfo* SetCol        (const Color& col);
+		CRegistInfo* SetVtxCol     (const Color col0, const Color col1, const Color col2, const Color col3);
 		// <<< テクスチャ設定 >>>
 		CRegistInfo* SetTex        (const short& texIdx, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
 		CRegistInfo* SetTex        (CCamera* camera,     const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
@@ -87,7 +88,7 @@ public:
 		SET_VTX_POS_INFO_TYPE m_setVtxPosInfoType;
 
 		// <<< 色設定 >>>
-		Color m_col;
+		Color m_vtxCols[4];
 
 		// <<< テクスチャ設定 >>>
 		Polygon2DAnd3D::CSetTexInfoSum m_setTexInfoSum;

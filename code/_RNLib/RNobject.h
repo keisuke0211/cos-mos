@@ -122,7 +122,7 @@ public:
 	}
 
 	//========== [[[ •Ï”éŒ¾ ]]]
-	CMatMesh    m_matMesh;
+	CStaticMesh    m_matMesh;
 	CModel      m_model;
 	CPolygon2D  m_polygon2D;
 	CPolygon3D  m_polygon3D;

@@ -20,11 +20,11 @@
 // 静的変数定義
 //****************************************
 const CDemoZone::TypeData CDemoZone::TYPE_DATAS[(int)TYPE2::MAX] = {
-	{"DrawTest"   ,Pos3D(100.0f *  0.0f, 0.0f,100.0f * 0.5f),{90.0f,190.0f}},
-	{"CameraTest" ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
-	{"DollTest"   ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
-	{"EffectTest" ,Pos3D(100.0f * -1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
-	{"MatMeshTest",Pos3D(100.0f * -1.0f, 0.0f,100.0f * 1.5f),{90.0f,190.0f}},
+	{"DrawTest"      ,Pos3D(100.0f *  0.0f, 0.0f,100.0f * 0.5f),{90.0f,190.0f}},
+	{"CameraTest"    ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
+	{"DollTest"      ,Pos3D(100.0f *  1.0f, 0.0f,100.0f * 1.0f),{90.0f,90.0f }},
+	{"EffectTest"    ,Pos3D(100.0f * -1.0f, 0.0f,100.0f * 0.0f),{90.0f,90.0f }},
+	{"StaticMeshTest",Pos3D(100.0f * -1.0f, 0.0f,100.0f * 1.5f),{90.0f,190.0f}},
 };
 CDemoZone* CDemoZone::ms_active = NULL;
 
@@ -53,7 +53,7 @@ CDemoZone::CDemoZone(const TYPE2& type2) : CDemoObject(TYPE::ZONE) {
 	case TYPE2::EFFECT_TEST: {
 
 	}break;
-	case TYPE2::MATMESH_TEST: {
+	case TYPE2::STATICMESH_TEST: {
 		CMemory::Alloc((TypeInfo_MatMeshTest**)&m_typeInfo);
 		*(TypeInfo_MatMeshTest*)m_typeInfo = {};
 	}break;
@@ -79,7 +79,7 @@ CDemoZone::~CDemoZone() {
 	case TYPE2::EFFECT_TEST: {
 
 	}break;
-	case TYPE2::MATMESH_TEST: {
+	case TYPE2::STATICMESH_TEST: {
 
 	}break;
 	}
@@ -208,7 +208,7 @@ void CDemoZone::Update(void) {
 	case TYPE2::EFFECT_TEST: {
 
 	}break;
-	case TYPE2::MATMESH_TEST: {
+	case TYPE2::STATICMESH_TEST: {
 
 	}break;
 	}
@@ -346,7 +346,7 @@ void CDemoZone::UpdateActive(void) {
 			RNLib::StandardEffect3D().CreateDustStormOnLanding(pos, INITROT3D, Color{ 214,209,176,255 }, 10.0f);
 
 	}break;
-	case TYPE2::MATMESH_TEST: {
+	case TYPE2::STATICMESH_TEST: {
 		TypeInfo_MatMeshTest* typeInfo = (TypeInfo_MatMeshTest*)m_typeInfo;
 
 		// モデルデータを取得
@@ -372,7 +372,7 @@ void CDemoZone::UpdateActive(void) {
 			for (int cnt = 0; cnt < 5; cnt++) {
 				typeInfo->setNum++;
 				if (typeInfo->isMesh)
-					RNLib::MatMesh().SetMesh(
+					RNLib::MatMesh().SetMaterialMesh(
 						(UShort)RNMode::PRIORITY::OBJECT3D,
 						CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
 						RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
@@ -387,7 +387,7 @@ void CDemoZone::UpdateActive(void) {
 
 			if (typeInfo->isMesh) {
 				for (int cnt = 0; cnt < typeInfo->setNum; cnt++)
-					RNLib::MatMesh().SetMesh(
+					RNLib::MatMesh().SetMaterialMesh(
 						(UShort)RNMode::PRIORITY::OBJECT3D,
 						CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
 						RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),

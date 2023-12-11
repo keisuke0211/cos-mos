@@ -63,7 +63,7 @@ CEase&             RNLib::Ease            (void) { return calculation.m_ease;   
 CGeometry&         RNLib::Geometry        (void) { return calculation.m_geometry;       }
 CHitTest&          RNLib::HitTest         (void) { return calculation.m_hitTest;        }
 CMatrix&           RNLib::Matrix          (void) { return calculation.m_matrix;         }
-CMatMesh&          RNLib::MatMesh         (void) { return draw.m_matMesh;               }
+CStaticMesh&       RNLib::MatMesh         (void) { return draw.m_matMesh;               }
 CModel&            RNLib::Model           (void) { return draw.m_model;                 }
 CPolygon2D&        RNLib::Polygon2D       (void) { return draw.m_polygon2D;             }
 CPolygon3D&        RNLib::Polygon3D       (void) { return draw.m_polygon3D;             }

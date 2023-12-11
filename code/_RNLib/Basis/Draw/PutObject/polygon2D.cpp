@@ -306,7 +306,7 @@ void CPolygon2D::CRegistInfo::ClearParameter(void) {
 	CMemory::Release(&m_setVtxPosInfo);
 	m_pos               = INITPOS2D;
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
-	m_col               = INITCOLOR;
+	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = INITCOLOR, cntVtx++);
 	m_setTexInfoSum.ClearParameter();
 	m_isZtest           = false;
 }
@@ -350,7 +350,10 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	RNLib::Polygon2D().SetVtxRHW(drawInfo->m_vtxs);
 
 	// [[[ êF ]]]
-	RNLib::Polygon2D().SetVtxCol(drawInfo->m_vtxs, m_col);
+	drawInfo->m_vtxs[0].col = D3DCOLOR_RGBA(m_vtxCols[0].r, m_vtxCols[0].g, m_vtxCols[0].b, m_vtxCols[0].a);
+	drawInfo->m_vtxs[1].col = D3DCOLOR_RGBA(m_vtxCols[1].r, m_vtxCols[1].g, m_vtxCols[1].b, m_vtxCols[1].a);
+	drawInfo->m_vtxs[2].col = D3DCOLOR_RGBA(m_vtxCols[2].r, m_vtxCols[2].g, m_vtxCols[2].b, m_vtxCols[2].a);
+	drawInfo->m_vtxs[3].col = D3DCOLOR_RGBA(m_vtxCols[3].r, m_vtxCols[3].g, m_vtxCols[3].b, m_vtxCols[3].a);
 
 	// [[[ UVç¿ïW ]]]
 	m_setTexInfoSum.AssignTexInfo(
@@ -462,7 +465,22 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetCol(const Color& col) {
 	if (this == NULL)
 		return NULL;
 
-	m_col = col;
+	m_vtxCols[0] =
+	m_vtxCols[1] =
+	m_vtxCols[2] =
+	m_vtxCols[3] = col;
+
+	return this;
+}
+CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxCol(const Color col0, const Color col1, const Color col2, const Color col3) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_vtxCols[0] = col0;
+	m_vtxCols[1] = col1;
+	m_vtxCols[2] = col2;
+	m_vtxCols[3] = col3;
 
 	return this;
 }

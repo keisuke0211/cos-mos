@@ -12,6 +12,8 @@
 #include "UI/partsUI.h"
 #include "resource.h"
 
+#define  MAX_COUNT		(2000)
+#define  MAX_CLOUD		(5)
 //****************************************
 // 無名空間
 //****************************************
@@ -22,6 +24,9 @@ namespace {
 	//========== [[[ 変数宣言 ]]]
 	int             planetIdx;
 	int             stageIdx;
+	int				Count;
+	Pos3D			cloudpos[MAX_CLOUD];
+	static const float	cloudmove[MAX_CLOUD];
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -29,6 +34,13 @@ namespace {
 	short           wallModelIdxes[2];
 }
 
+//static const float cloudmove[MAX_CLOUD] = {
+//	0.2f,
+//	0.14f,
+//	0.3f,
+//	0.03f,
+//	0.1f,
+//};
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| ステージの関数
@@ -54,11 +66,15 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
+	Count = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
-
+	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
+	{
+		cloudpos[MAX_CLOUD] = Pos3D(-1000.0f,-600.0f,200.0f + rand() % 200 - 100);
+	}
 	// ブロックの読み込み処理
 	CBlock::Load();
 
@@ -205,7 +221,7 @@ void Stage::EndStage(void) {
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::End();
 
-	// マテリアルメッシュの削除
+	// スタティックメッシュの削除
 	RNLib::MatMesh().Delete();
 }
 
@@ -217,6 +233,11 @@ namespace {
 
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ 背景描画 ]]]
+			Count++;
+
+			// 割合計算 
+			CFloat fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, Count, MAX_COUNT);
+
 			// 上
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
@@ -226,12 +247,29 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
 				->SetBillboard(true);
+			
+			//// 雲
+			//for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)..
+			//{
+			//	RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			//		->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+			//		->SetVtxPos(Pos3D(-1000.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-1000.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f))
+			//		->SetBillboard(true)
+			//		->SetZTest(false)
+			//		->SetCol(Color{ 255,255,255,100 });
+			//}
+		
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true);
+
+			if (Count > MAX_COUNT)
+			{
+				Count = 0;
+			}
 		}
 
 		// [[[ 壁モデル描画 ]]]
