@@ -76,48 +76,6 @@ void CPile::Update(void)
 
 	//モデル配置
 	PutModel();
-
-	//一番上の幹から配置するため、配置する高さを計算
-	{
-		//幹数の半分（切り捨て）
-		const int nNumHalf = m_NumTrunk / EVENPARITY;
-
-		//幹座標
-		Pos3D PilePos = Pos3D(
-			m_PilePos.x,
-			//本体サイズ  ＋  サイズ × 上の幹数  ＋  幹のめり込み量
-			SIZE_OF_1_SQUARE * -0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight,
-			m_PilePos.z);
-
-		CFloat height = m_height * 0.5f;
-
-		RNLib::Text2D().PutDebugLog(CreateText(
-			"杭Y:%.2f  幹数:%d  めり込み:%.2f  高さ:%.2f  Max:%.2f  Min:%.2f  補正:%.2f",
-			PilePos.y, m_NumTrunk, m_TrunkHeight, height, m_pos.y + height, m_pos.y - height, m_fEvenTrunkCorrHeight));
-
-		Pos3D Pos = Pos3D(m_pos.x + 16.0f, m_pos.y + m_fEvenTrunkCorrHeight, m_pos.z - 16.0f);
-
-		//全体サイズ
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Pos, INITROT3D)
-			->SetSize(m_width, m_height);
-
-		//上部線
-		float y = m_pos.y + height + m_fEvenTrunkCorrHeight;
-		float uy = m_pos.y -(height - m_fEvenTrunkCorrHeight);
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, height + m_fEvenTrunkCorrHeight, -SIZE_OF_1_SQUARE), INITROT3D)
-			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
-			->SetCol(Color{ 255,0,0,255 });
-
-		//中心位置
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Pos, INITROT3D)
-			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
-			->SetCol(Color{ 0,255,0,255 });
-
-		//下部線
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, -(height - m_fEvenTrunkCorrHeight),-SIZE_OF_1_SQUARE), INITROT3D)
-			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
-			->SetCol(Color{ 0,0,255,255 });
-	}
 }
 
 //===============================
@@ -131,10 +89,11 @@ void CPile::PutModel(void)
 	//一番上の幹から配置するため、配置する高さを計算
 	{
 		//幹数の半分（切り捨て）
-		const int nNumHalf = m_NumTrunk / EVENPARITY;
+		CInt nNumHalf = m_NumTrunk / EVENPARITY;
+		CInt Under = (m_NumTrunk + 1) % EVENPARITY;
 
 		//本体サイズ  ＋  サイズ × 上の幹数  ＋  幹のめり込み量
-		PilePos.y = SIZE_OF_1_SQUARE * 0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight;
+		PilePos.y = SIZE_OF_1_SQUARE * 0.5f * Under + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight;
 	}
 
 	for (int nCntPile = 0; nCntPile < m_NumTrunk; nCntPile++)
@@ -163,7 +122,7 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 	//情報設定
 	m_PilePos = pos;
 	m_NumTrunk = NumTrunk;
-	m_TrunkHeight = m_StartTrunkHeight = SIZE_OF_1_SQUARE * TrunkHeight;
+	m_TrunkHeight = SIZE_OF_1_SQUARE * TrunkHeight;
 	m_fEvenTrunkCorrHeight = NumTrunk % EVENPARITY == 0 ? SIZE_OF_1_SQUARE * 0.5f : 0.0f;
 
 	//当たり判定の高さを再設定
@@ -171,6 +130,9 @@ void CPile::Set(Pos3D pos, int NumTrunk, float TrunkHeight)
 
 	//めり込み量調整
 	CaveInTrunkHeight(0.0f);
+
+	//初期めり込み量設定
+	m_StartTrunkHeight = m_TrunkHeight;
 
 	//モデル配置
 	PutModel();
@@ -189,12 +151,11 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 
 	//杭の最大・最低高さを計算
 	CInt nNumHalf = m_NumTrunk / EVENPARITY;
-	CFloat fMaxHeight = SIZE_OF_1_SQUARE * nNumHalf - m_fEvenTrunkCorrHeight * 2.0f;
-	CFloat fMinHeight = -SIZE_OF_1_SQUARE * nNumHalf;
+	CFloat HalfSize = SIZE_OF_1_SQUARE * nNumHalf;
+	CFloat CorrHeight = m_fEvenTrunkCorrHeight * 2.0f;
 
 	//杭が抜けないように調整
-	if (fCaveInHeight < fMinHeight)		fCaveInHeight = fMinHeight;
-	else if (fCaveInHeight > fMaxHeight)fCaveInHeight = fMaxHeight;
+	FloatControl(&fCaveInHeight, HalfSize - CorrHeight, -HalfSize - CorrHeight);
 
 	//前回情報を保存
 	SetOld(fCaveInHeight);
@@ -258,4 +219,23 @@ void CPile::ResetTrunkHeightAll(void)
 		CPile *pPile = (CPile *)stg;
 		pPile->m_TrunkHeight = pPile->m_TrunkHeightOld = pPile->m_StartTrunkHeight;
 	}
+}
+
+//===============================
+//当たり判定情報取得
+//引数１　中心位置
+//引数２　中心位置（前回
+//引数３　高さ
+//===============================
+void CPile::GetCollisionInfo(Pos3D& CenterPos, Pos3D& CenterPosOld, float& height)
+{
+	height = m_height * 0.5f;
+
+	const Pos2D Upper = Pos2D(m_pos.x, m_pos.y + height + m_fEvenTrunkCorrHeight);
+	const Pos2D Lower = Pos2D(m_pos.x, m_pos.y - height + m_fEvenTrunkCorrHeight);
+
+	CFloat center = m_pos.y + m_fEvenTrunkCorrHeight;
+
+	CenterPos    = Pos3D(m_pos.x, m_pos.y + m_fEvenTrunkCorrHeight, 0.0f);
+	CenterPosOld = Pos3D(m_posOld.x, m_posOld.y + m_fEvenTrunkCorrHeight, 0.0f);
 }

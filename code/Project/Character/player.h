@@ -300,12 +300,13 @@ private:
 	void InitInfo(void);
 	void ActionControl(void);
 	void Move(VECTOL vec, int cntPlayer);
-	void Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
+	void Death(Info& Player, const OBJECT_TYPE type);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	void CollisionToStageObject(void);
+	bool UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Info &Player, Pos3D *pPos, Pos3D *pPosOld, float *pWidth, float *pHeight);
 
 	// 各プレイヤーの当たり判定が終わった後の処理
-	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, int *pColliRot);
+	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);

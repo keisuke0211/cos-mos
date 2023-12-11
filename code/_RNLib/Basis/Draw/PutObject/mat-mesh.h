@@ -13,15 +13,16 @@
 class CMatMesh {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CMatMesh    ();
-	~CMatMesh   ();
-	void Init   (const UShort& priorityMax);
-	void Uninit (void);
-	void Update (void);
-	void Draw   (Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
-	void Release(void);
-	void Delete (void);
-	void SetMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen);
+	CMatMesh         ();
+	~CMatMesh        ();
+	void   Init      (const UShort& priorityMax);
+	void   Uninit    (void);
+	void   Update    (void);
+	void   Draw      (Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
+	void   Release   (void);
+	void   Delete    (void);
+	void   SetMesh   (const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen);
+	UShort GetMeshNum(void);
 
 private:
 	//========== [[[ óÒãìå^íËã` ]]]

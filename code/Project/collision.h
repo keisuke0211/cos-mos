@@ -79,6 +79,7 @@ public:
 		float fHeight;  // ‚‚³
 		float fRadius;  // ”¼Œa
 		ROT   Rot;      // “–‚½‚Á‚½•ûŒü
+		int   vec;      // ƒxƒNƒgƒ‹
 	};
 
 	CCollision();
