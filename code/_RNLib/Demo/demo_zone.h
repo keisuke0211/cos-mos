@@ -16,7 +16,7 @@
 class CDemoZone : public CDemoObject {
 public:
 	//========== [[[ 列挙型定義 ]]]
-	enum class TYPE2 { DRAW_TEST, CAMERA_TEST, DOLL_TEST, EFFECT_TEST, MAX,};
+	enum class TYPE2 { DRAW_TEST, CAMERA_TEST, DOLL_TEST, EFFECT_TEST, MATMESH_TEST, MAX,};
 
 	//========== [[[ 関数宣言 ]]]
 	static void        SetActive(CDemoZone* demoZone) { ms_active = demoZone; }
@@ -67,6 +67,11 @@ private:
 		CDoll3D* doll;
 		Pos3D    poses[2];
 		Rot3D    rots[2];
+	};
+	// 『マテリアルメッシュ』の情報
+	struct TypeInfo_MatMeshTest {
+		int  setNum = 0;
+		bool isMesh = false;
 	};
 
 	//========== [[[ 関数宣言 ]]]

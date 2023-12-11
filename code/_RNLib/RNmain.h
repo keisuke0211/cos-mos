@@ -144,6 +144,7 @@ typedef D3DXMATRIX              Matrix;
 typedef D3DMATERIAL9            Material;
 typedef LPDIRECT3DDEVICE9       Device;
 typedef LPDIRECT3DVERTEXBUFFER9 VertexBuffer;
+typedef LPDIRECT3DINDEXBUFFER9  IndexBuffer;
 typedef LPD3DXMESH              Mesh;
 typedef LPD3DXBUFFER            Buffer;
 typedef LPDIRECT3DTEXTURE9      Texture;
