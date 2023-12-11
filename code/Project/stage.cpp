@@ -204,6 +204,9 @@ void Stage::EndStage(void) {
 
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::End();
+
+	// マテリアルメッシュの削除
+	RNLib::MatMesh().Delete();
 }
 
 namespace {

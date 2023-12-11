@@ -411,6 +411,7 @@ void CDemoZone::UpdateActive(void) {
 
 		RNLib::Text2D().PutDebugLog(CreateText("SetModel[1]   :%d", typeInfo->setNum));
 		RNLib::Text2D().PutDebugLog(CreateText("IsMesh  [2]   :%s", typeInfo->isMesh ? "TRUE" : "FALSE"));
+		RNLib::Text2D().PutDebugLog(CreateText("MeshNum       :%d", RNLib::MatMesh().GetMeshNum()));
 
 	}break;
 	}

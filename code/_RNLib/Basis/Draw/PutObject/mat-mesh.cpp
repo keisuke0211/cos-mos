@@ -105,6 +105,9 @@ void CMatMesh::Release(void) {
 //========================================
 void CMatMesh::Delete(void) {
 
+	if (m_meshNums == NULL)
+		return;
+
 	const UShort& priorityMax = RNLib::DrawMgr().GetPriorityMax();
 	for (int cnt = 0; cnt < priorityMax; cnt++) {
 		for (int cntMesh = 0; cntMesh < m_meshNums[cnt]; cntMesh++) {
@@ -312,4 +315,19 @@ bool CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Co
 	m_idxBuff = newIdxBuff;
 
 	return true;
+}
+
+//========================================
+// ƒƒbƒVƒ…Žæ“¾ˆ—
+//========================================
+UShort CMatMesh::GetMeshNum(void) {
+
+	const UShort priorityMax = RNLib::DrawMgr().GetPriorityMax();
+
+	UShort totalMeshNum = 0;
+	for (int cnt = 0; cnt < priorityMax; cnt++) {
+		totalMeshNum += m_meshNums[cnt];
+	}
+
+	return totalMeshNum;
 }
