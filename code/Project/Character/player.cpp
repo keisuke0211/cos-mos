@@ -1178,7 +1178,7 @@ void CPlayer::CollisionToStageObject(void)
 				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
+				//case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
