@@ -19,6 +19,7 @@ public:
 		BG_WILDERNESS,
 		BG_FOREST,
 		BG_CAVE,
+		BG_CLOUD,
 		UI_WAITBUBBLE,
 		MAX,
 	};
