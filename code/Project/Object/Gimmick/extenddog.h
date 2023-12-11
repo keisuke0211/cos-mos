@@ -36,7 +36,7 @@ public:
 	// -- İ’è ---------------------------------------------
 	void  SetState(STATE state)     { m_state = state; }      //í—Şİ’è
 	void  SetScale(Pos3D scale)     { m_scale = scale; }      //Šgkİ’è
-	void  SetShrink(bool shrink)    { m_bElasticity = shrink; }   //Lkİ’è
+	void  SetElasticity(bool Elast) { m_bElasticity = Elast; }//Lkİ’è
 	void  SetHead(Pos3D pos)        { m_HeadPos = pos; }      //“ª‚ÌˆÊ’uİ’è
 	void  SetHip(Pos3D pos)         { m_HipPos = pos; }       //‚¨K‚ÌˆÊ’uİ’è
 	void  SetHeadHeight(int height) { m_nHeight = height; }   //“ª‚Ì‚‚³
