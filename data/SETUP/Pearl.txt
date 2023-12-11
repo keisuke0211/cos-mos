@@ -1,0 +1,212 @@
+SetUp3DFile
+boneDataSum{ 2
+	boneData{
+		idx 0
+		modelIdx data\\Model\\Pearl_Down.x
+		parentIdx -1
+		relativePos 0.00 0.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\Model\\Pearl_Up.x
+		parentIdx 0
+		relativePos 0.00 5.00 11.2
+		relativeRot 0.03 0.00 0.00
+	}
+}
+faceDataSum{ 8
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 43
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 34
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 33
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 17
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 34
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 36
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 17
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 21
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 36
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 37
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 21
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 23
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 37
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 38
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 23
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 25
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 38
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 39
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 25
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 30
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 39
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 40
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 30
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 27
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 40
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 41
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 27
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 31
+			texPos 1.00 1.00
+		}
+	}
+	faceData{
+		texIdx NONEDATA
+		col 255 255 255 255
+		vtx0{
+			boneIdx 1
+			vtxIdx 41
+			texPos 0.00 0.00
+		}
+		vtx1{
+			boneIdx 1
+			vtxIdx 43
+			texPos 1.00 0.00
+		}
+		vtx2{
+			boneIdx 0
+			vtxIdx 31
+			texPos 0.00 1.00
+		}
+		vtx3{
+			boneIdx 0
+			vtxIdx 33
+			texPos 1.00 1.00
+		}
+	}
+}
+END
