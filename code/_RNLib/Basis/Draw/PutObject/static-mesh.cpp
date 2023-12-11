@@ -1,6 +1,6 @@
 //========================================
 // 
-// マテリアルメッシュの処理
+// スタティックメッシュの処理
 // Author:RIKU NISHIMURA
 // 
 //========================================
@@ -8,14 +8,14 @@
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| [公開]マテリアルメッシュクラス
+//==========| [公開]スタティックメッシュクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
 //========================================
 // コンストラクタ
 //========================================
-CMatMesh::CMatMesh() {
+CStaticMesh::CStaticMesh() {
 
 	m_meshes   = NULL;
 	m_meshNums = NULL;
@@ -24,14 +24,14 @@ CMatMesh::CMatMesh() {
 //========================================
 // デストラクタ
 //========================================
-CMatMesh::~CMatMesh() {
+CStaticMesh::~CStaticMesh() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CMatMesh::Init(const UShort& priorityMax) {
+void CStaticMesh::Init(const UShort& priorityMax) {
 
 	CMemory::Alloc(&m_meshes, priorityMax);
 	CMemory::Alloc(&m_meshNums, priorityMax);
@@ -44,7 +44,7 @@ void CMatMesh::Init(const UShort& priorityMax) {
 //========================================
 // 終了処理
 //========================================
-void CMatMesh::Uninit(void) {
+void CStaticMesh::Uninit(void) {
 
 	// 解放処理
 	Release();
@@ -53,14 +53,14 @@ void CMatMesh::Uninit(void) {
 //========================================
 // 更新処理
 //========================================
-void CMatMesh::Update(void) {
+void CStaticMesh::Update(void) {
 
 }
 
 //========================================
 // 描画処理
 //========================================
-void CMatMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
+void CStaticMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
 
 	if (m_meshNums == NULL)
 		return;
@@ -91,7 +91,7 @@ void CMatMesh::Draw(Device& device, const UShort& priority, const short& cameraI
 //========================================
 // 解放処理
 //========================================
-void CMatMesh::Release(void) {
+void CStaticMesh::Release(void) {
 
 	const UShort& priorityMax = RNLib::DrawMgr().GetPriorityMax();
 	for (int cnt = 0; cnt < priorityMax; cnt++)
@@ -103,7 +103,7 @@ void CMatMesh::Release(void) {
 //========================================
 // 削除処理
 //========================================
-void CMatMesh::Delete(void) {
+void CStaticMesh::Delete(void) {
 
 	if (m_meshNums == NULL)
 		return;
@@ -120,7 +120,13 @@ void CMatMesh::Delete(void) {
 //========================================
 // メッシュ設定処理
 //========================================
-void CMatMesh::SetMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+void CStaticMesh::SetMaterialMesh(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	SetMaterialMesh(priority, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, texIdx, col, isOnScreen);
+}
+void CStaticMesh::SetMaterialMesh(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	SetMaterialMesh(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, texIdx, col, isOnScreen);
+}
+void CStaticMesh::SetMaterialMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
 
 	for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
 		CMesh& mesh = *m_meshes[priority][cntMesh];
@@ -154,7 +160,7 @@ void CMatMesh::SetMesh(const UShort& priority, const Matrix& mtx, const short& m
 //========================================
 // コンストラクタ
 //========================================
-CMatMesh::CMesh::CMesh() {
+CStaticMesh::CMesh::CMesh() {
 
 	m_texIdx     = NONEDATA;
 	m_clippingID = NONEDATA;
@@ -167,7 +173,7 @@ CMatMesh::CMesh::CMesh() {
 //========================================
 // デストラクタ
 //========================================
-CMatMesh::CMesh::~CMesh() {
+CStaticMesh::CMesh::~CMesh() {
 
 	if (m_vtxBuff != NULL) {
 		m_vtxBuff->Release();
@@ -183,7 +189,7 @@ CMatMesh::CMesh::~CMesh() {
 //========================================
 // 描画処理
 //========================================
-void CMatMesh::CMesh::Draw(Device& device) {
+void CStaticMesh::CMesh::Draw(Device& device) {
 
 	// 頂点バッファをデータストリームに設定
 	device->SetStreamSource(0, m_vtxBuff, 0, sizeof(Vertex3D));
@@ -201,7 +207,7 @@ void CMatMesh::CMesh::Draw(Device& device) {
 //========================================
 // メッシュ設定処理
 //========================================
-bool CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col) {
+bool CStaticMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col) {
 
 	// デバイスを取得
 	Device& device = RNLib::Window().GetD3DDevice();
@@ -320,7 +326,7 @@ bool CMatMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Co
 //========================================
 // メッシュ取得処理
 //========================================
-UShort CMatMesh::GetMeshNum(void) {
+UShort CStaticMesh::GetMeshNum(void) {
 
 	const UShort priorityMax = RNLib::DrawMgr().GetPriorityMax();
 

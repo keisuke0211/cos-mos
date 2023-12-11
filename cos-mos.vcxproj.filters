@@ -330,7 +330,7 @@
     <ClCompile Include="code\Project\stage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\mat-mesh.cpp">
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -656,7 +656,7 @@
     <ClInclude Include="code\Project\stage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\mat-mesh.h">
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

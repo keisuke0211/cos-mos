@@ -66,6 +66,9 @@ void CText2D::Update(void) {
 			m_isShowDebugLogOptions = !m_isShowDebugLogOptions;
 
 		// 各デバッグ表示オプション
+		RNLib::Text2D().PutDebugLog("----------StanderdInformation");
+		RNLib::Text2D().PutDebugLog("HideDebugLog      [F1]:TRUE");
+		RNLib::Text2D().PutDebugLog(CreateText("DefaultDebugOption[F2]:%s", m_isShowDebugLogOptions ? "TRUE" : "FALSE"));
 		if (m_isShowDebugLogOptions) {
 			RNLib::Text2D().PutDebugLog("----------Performance");
 			RNLib::Text2D().PutDebugLog(CreateText("FPS    :%d", RNSystem::GetFPS()));
@@ -84,10 +87,9 @@ void CText2D::Update(void) {
 
 			RNLib::Text2D().PutDebugLog("----------Other");
 			RNLib::Text2D().PutDebugLog(CreateText("DebugCount:%d", m_debugCount));
-
-			RNLib::Text2D().PutDebugLog("----------");
-			RNLib::Text2D().PutDebugLog("");
 		}
+		RNLib::Text2D().PutDebugLog("----------");
+		RNLib::Text2D().PutDebugLog("");
 	}
 }
 
@@ -109,6 +111,23 @@ Pos2D CText2D::PutDebugLog(const char* string) {
 
 	if (!m_isShowDebugLog)
 		return INITPOS2D;
+
+	{
+		setlocale(LC_ALL, "");
+		size_t    length = strlen(string);
+		wchar_t*  wstr   = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
+		mbstowcs(wstr, string, length + 1);
+		const int strLen = (int)wcslen(wstr);
+
+		const float top    = m_debugLogLine * 16.0f;
+		const float bottom = (m_debugLogLine + 1) * 16.0f;
+		const float right  = strLen * 16.0f;
+		free(wstr);
+
+		RNLib::Polygon2D().Put(0, true)
+			->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
+			->SetVtxCol(Color(0,0,0,255), Color(0,0,0,0), Color(0,0,0,255), Color(0,0,0,0));
+	}
 
 	// 設置位置
 	Pos2D putPos = Pos2D(0.0f, 8.0f + m_debugLogLine * 16.0f);

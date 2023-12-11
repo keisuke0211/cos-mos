@@ -367,10 +367,6 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetCol(const Color& col) {
 
 	return this;
 }
-
-//========================================
-// êFÇê›íË
-//========================================
 CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetVtxCol(const Color col0, const Color col1, const Color col2, const Color col3) {
 
 	if (this == NULL)
