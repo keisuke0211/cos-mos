@@ -454,7 +454,7 @@ void CBlock::Update(void) {
 			->SetCol(m_color)
 			;
 
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			;
 	}break;
@@ -463,7 +463,7 @@ void CBlock::Update(void) {
 			->SetCol(m_color)
 			;
 
-		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], D3DXVECTOR3(m_pos.x, m_pos.y > 0.0f ? m_pos.y - 5.0f : m_pos.y + 5.0f, m_pos.z), m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			;
 	}break;

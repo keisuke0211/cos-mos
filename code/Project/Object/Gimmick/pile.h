@@ -50,6 +50,14 @@ public:
 	Pos3D GetPilePos(void) { return m_PilePos; }
 
 	//===============================
+	//当たり判定情報取得
+	//引数１　中心位置
+	//引数２　中心位置（前回
+	//引数３　高さ
+	//===============================
+	void GetCollisionInfo(Pos3D& CenterPos, Pos3D& CenterPosOld, float& height);
+
+	//===============================
 	//全体のめり込み量を初期化
 	//===============================
 	static void ResetTrunkHeightAll(void);

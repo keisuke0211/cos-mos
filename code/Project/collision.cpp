@@ -777,18 +777,22 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 			if (pSide == NULL) return;
 
 			if (CPlayer::GetSwapInterval() != 0) *pDeath = true;
-			else
+			else if(pColli->vec == (int)CPlayer::VECTOL::Y)
 			{
+				//当たった方向を適当に上にして修正
+				pColli->Rot = ROT::OVER;
+				Pile(pSelfInfo, pColli, pPile, pSide, pDeath);
+
 				//プレイヤー取得
-				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
-
-				if (*pSide == CPlayer::WORLD_SIDE::FACE)pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
-				else 									pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
-
-				pInfo->move.y = 0.0f;
-				pInfo->bLandPile = true;// 乗った
-				pInfo->bGround = true;	// 地面に接している
-				pInfo->bJump = false;	// ジャンプ可能
+				//CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+				//
+				//if (*pSide == CPlayer::WORLD_SIDE::FACE)pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
+				//else 									pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定
+				//
+				//pInfo->move.y = 0.0f;
+				//pInfo->bLandPile = true;// 乗った
+				//pInfo->bGround = true;	// 地面に接している
+				//pInfo->bJump = false;	// ジャンプ可能
 			}
 		}break;
 	}
