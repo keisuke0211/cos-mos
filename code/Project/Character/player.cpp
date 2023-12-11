@@ -1160,14 +1160,6 @@ void CPlayer::CollisionToStageObject(void)
 					CBlock* pBlock = (CBlock*)stageObj;
 					if (!pBlock->GetCollision())
 						continue;
-					else if (// 見た目の種類による当たり判定の除外
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::BAOBAB_TREE ||
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::PALMTREE	  ||
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::TORCH		  ||
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::STONE_DRAGON||
-						pBlock->GetLooksType() == CBlock::LOOKS_TYPE::STONE_SWORD ||
-						false)
-						continue;
 				}break;
 
 				// ゴールゲート
