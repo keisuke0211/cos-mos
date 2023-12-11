@@ -45,9 +45,10 @@ public:
 	// -- 取得 ---------------------------------------------
 	STATE GetState(void)      { return m_state; }      //種類
 	Pos3D GetHeadPos(void)    { return m_HeadPos; }    //頭位置
-	Pos3D GetHeadPosOld(void) { return m_HeadPosOld; } //頭位置（前回
 	Pos3D GetBodyPos(void)    { return m_BodyPos; }    //体位置
+	Pos3D GetBodyPosOld(void) { return m_BodyPosOld; } //体位置（前回
 	Pos3D GetHipPos(void)     { return m_HipPos; }     //お尻位置
+	float GetColliHeight(void); //当たり判定用の高さ取得
 
 private:
 	//========== [[[ 関数宣言 ]]]
@@ -65,7 +66,7 @@ private:
 	int   m_nHeight;     // 高さ
 
 	Pos3D m_HeadPos;     // 頭の位置
-	Pos3D m_HeadPosOld;  // 頭の過去位置
 	Pos3D m_BodyPos;     // 体の位置
+	Pos3D m_BodyPosOld;  // 頭の過去位置
 	Pos3D m_HipPos;      // 尻の位置
 };

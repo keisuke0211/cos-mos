@@ -39,7 +39,7 @@ CExtenddog::CExtenddog(void) {
 	m_nCntShrink = 0;
 	m_fcurrenty = 0.0f;
 	m_HeadPos = INITD3DXVECTOR3;
-	m_HeadPosOld = INITD3DXVECTOR3;
+	m_BodyPosOld = INITD3DXVECTOR3;
 	m_BodyPos = INITD3DXVECTOR3;
 	m_HipPos = INITD3DXVECTOR3;
 }
@@ -78,7 +78,7 @@ void CExtenddog::Uninit(void) {
 void CExtenddog::Update(void) {
 
 	//前回位置更新
-	m_HeadPosOld = m_HeadPos;
+	m_BodyPosOld = m_BodyPos;
 	
 	//CObject *obj = NULL;
 	//while (Manager::StageObjectMgr()->ListLoop(&obj)) {
@@ -112,8 +112,8 @@ void CExtenddog::Update(void) {
 	//状態別更新処理
 	switch (m_state)
 	{
-		case STATE::NONE:   UpdateState_None();break;
-		case STATE::RETURN: UpdateState_Return();break;
+		case STATE::NONE:   UpdateState_None(); break;
+		case STATE::RETURN: UpdateState_Return(); break;
 	}
 
 	// 割合計算 
@@ -135,8 +135,8 @@ void CExtenddog::Update(void) {
 
 	// 体
 	m_BodyPos.y = !m_bInversion ?
-		(m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 0.5f) * 0.5f :
-		(m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 0.5f) * 0.5f;
+		(m_HeadPos.y + m_pos.y - SIZE_OF_1_SQUARE * 1.5f) * 0.5f :
+		(m_HeadPos.y + m_pos.y + SIZE_OF_1_SQUARE * 1.5f) * 0.5f;
 
 	m_scale = !m_bInversion ?
 		Scale3D(1.0f, (-m_HeadPos.y * 0.5) + (SIZE_OF_1_SQUARE * m_nHeight + (SIZE_OF_1_SQUARE * m_nHeight * (1.0f - fCountRate))) * 8, 1.0f) :
@@ -169,7 +169,7 @@ void CExtenddog::Update(void) {
 		->SetCol(Color{ 0,0,255,255 })
 		->SetZTest(false);
 
-#if 0
+#if 1
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, INITROT3D)
 		->SetSize(3.0f, 3.0f)
 		->SetCol(INITCOLOR)
@@ -186,6 +186,21 @@ void CExtenddog::Update(void) {
 		->SetSize(SIZE_OF_1_SQUARE, 1.0f)
 		->SetCol(INITCOLOR)
 		->SetZTest(false);
+
+	if (!m_bInversion)
+	{
+		CFloat IDealMax = m_HeadPos.y + SIZE_OF_1_SQUARE * 0.5f;
+		CFloat IDealMin = m_HipPos.y - SIZE_OF_1_SQUARE * 0.5f;
+		RNLib::Text2D().PutDebugLog(CreateText("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
+									IDealMax, IDealMin, IDealMax - IDealMin, m_height));
+	}
+	else
+	{
+		CFloat IDealMax = m_HipPos.y + SIZE_OF_1_SQUARE * 0.5f;
+		CFloat IDealMin = m_HeadPos.y - SIZE_OF_1_SQUARE * 0.5f;
+		RNLib::Text2D().PutDebugLog(CreateText("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
+									IDealMax, IDealMin, IDealMax - IDealMin, m_height));
+	}
 #endif
 }
 
@@ -235,4 +250,30 @@ void CExtenddog::UpdateState_Return(void)
 			m_state = STATE::NONE;
 		}
 	}
+}
+
+//========================================
+//当たり判定用の高さ取得
+// Author:HIRASAWA SHION
+//========================================
+float CExtenddog::GetColliHeight(void)
+{
+	//最高・最低座標
+	float MaxY = 0.0f;
+	float MinY = 0.0f;
+
+	//頭・お尻から最高・最低座標を算出（反転してたら頭・お尻が逆
+	if (!m_bInversion)
+	{
+		MaxY = m_HeadPos.y + SIZE_OF_1_SQUARE * 0.5f;
+		MinY = m_HipPos.y - SIZE_OF_1_SQUARE * 0.5f;
+	}
+	else
+	{
+		MaxY = m_HipPos.y + SIZE_OF_1_SQUARE * 0.5f;
+		MinY = m_HeadPos.y - SIZE_OF_1_SQUARE * 0.5f;
+	}
+
+	//最高と最低の半分を返す
+	return (MaxY - MinY) * 0.5f;
 }

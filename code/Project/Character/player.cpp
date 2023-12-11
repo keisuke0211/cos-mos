@@ -1210,6 +1210,9 @@ void CPlayer::CollisionToStageObject(void)
 	}
 }
 
+//----------------------------
+//独自のオブジェクトの当たり判定設定
+//----------------------------
 bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Info &Player, Pos3D *pPos, Pos3D *pPosOld, float *pWidth, float *pHeight)
 {
 	switch (type) {
@@ -1259,6 +1262,10 @@ bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Inf
 
 			// ヌイ
 		case OBJECT_TYPE::EXTEND_DOG: {
+			CExtenddog *pDog = (CExtenddog *)pObj;
+			if (pPos    != NULL)*pPos    = pDog->GetBodyPos();
+			if (pPosOld != NULL)*pPosOld = pDog->GetBodyPosOld();
+			if (pHeight != NULL)*pHeight = pDog->GetColliHeight();
 		}break;
 
 			//杭
