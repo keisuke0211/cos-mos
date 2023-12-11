@@ -995,7 +995,7 @@ void CPlayer::SwapGuide(Info& Player)
 //----------------------------
 // 死亡処理
 //----------------------------
-void CPlayer::Death(Info& Player, const OBJECT_TYPE type, const int *pColliRot)
+void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 {
 	if (Player.isDeath)
 		return;
@@ -1125,8 +1125,6 @@ void CPlayer::CollisionToStageObject(void)
 			CObject* obj = NULL;
 			while (Manager::StageObjectMgr()->ListLoop(&obj)) {
 
-				int nColliRot[NUM_PLAYER] = {};
-
 				// 取得したオブジェクトをキャスト
 				CStageObject* stageObj = (CStageObject*)obj;
 
@@ -1139,12 +1137,12 @@ void CPlayer::CollisionToStageObject(void)
 				colliInfo.posOld = colliInfo.pos;
 				colliInfo.fWidth = stageObj->GetWidth() * 0.5f;
 				colliInfo.fHeight = stageObj->GetHeight() * 0.5f;
+				colliInfo.vec = nCntVec;
 
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
-				if (type != OBJECT_TYPE::TRAMPOLINE &&
-					type != OBJECT_TYPE::LASER &&
-					type != OBJECT_TYPE::EXTEND_DOG) {
+				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
+					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE) {
 
 					if (D3DXVec3Length(&(colliInfo.pos - Player.pos)) >
 						D3DXVec2Length(&D3DXVECTOR2(colliInfo.fWidth + SIZE_WIDTH, colliInfo.fHeight + SIZE_HEIGHT)))
@@ -1257,21 +1255,17 @@ void CPlayer::CollisionToStageObject(void)
 				case OBJECT_TYPE::PILE:
 				{
 					CPile* pPile = (CPile*)stageObj;
-					CFloat CorrHeight = pPile->GetCorrHeight();
-					colliInfo.pos = pPile->GetPos();
-					colliInfo.posOld = pPile->GetPosOld();
+					pPile->GetCollisionInfo(colliInfo.pos, colliInfo.posOld, colliInfo.fHeight);
 
-					colliInfo.pos.y += CorrHeight;
-					colliInfo.posOld.y += CorrHeight;
-
-					CFloat corr = pPile->GetHeight() * 0.5f;
-					colliInfo.fHeight = corr;
+					if (D3DXVec3Length(&(colliInfo.pos - Player.pos)) >
+						D3DXVec2Length(&D3DXVECTOR2(colliInfo.fWidth + SIZE_WIDTH, colliInfo.fHeight + SIZE_HEIGHT)))
+						continue;
 				}break;
 				}
 
 				// 当たった方向を格納
 				colliInfo.Rot = s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
-				nColliRot[nCntPlayer] = (int)colliInfo.Rot;
+				CInt nColliRot = (int)colliInfo.Rot;
 
 				// 当たっていない
 				if (colliInfo.Rot == CCollision::ROT::NONE)
@@ -1283,7 +1277,7 @@ void CPlayer::CollisionToStageObject(void)
 						OtherInfo = NULL;
 					}
 
-					//杭に当たっていないなら乗っていない
+					//杭なら乗っていない
 					if (type == OBJECT_TYPE::PILE)
 						Player.bLandPile = false;
 					continue;
@@ -1320,7 +1314,7 @@ void CPlayer::CollisionToStageObject(void)
 				if (bDeath)
 				{
 					//s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
-					Death(Player, type, &nColliRot[nCntPlayer]);
+					Death(Player, type);
 					break;
 				}
 
@@ -1335,7 +1329,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				//当たり判定の事後処理
-				CollisionAfter(stageObj, type, &nColliRot[0]);
+				CollisionAfter(stageObj, type, &nColliRot);
 			}
 		}
 	}
@@ -1344,7 +1338,7 @@ void CPlayer::CollisionToStageObject(void)
 //----------------------------
 // 各プレイヤーの当たり判定が終わった後の処理
 //----------------------------
-void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, int *pColliRot)
+void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot)
 {
 	// 種類ごとに関数分け
 	switch (type)
@@ -1356,7 +1350,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			Info *pInfo = &m_aInfo[0];			 //プレイヤー情報のポインタ
 			CBlock *pBlock = (CBlock *)pStageObj;//ブロックへキャスト
 
-			for (int nCntPlayer = 0; nCntPlayer < NUM_PLAYER; nCntPlayer++, pInfo++, pColliRot++)
+			for (int nCntPlayer = 0; nCntPlayer < NUM_PLAYER; nCntPlayer++, pInfo++)
 			{
 				pBlock->IsReaction_HitsRot(*pColliRot);	//当たった方向を代入
 				pBlock->IsReaction_Move(D3DXVec3Length(&pInfo->move) != 0.0f);
@@ -1383,20 +1377,19 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		//杭に乗っているプレイヤー
 		case CStageObject::TYPE::PILE:
 		{
+			//杭の判定情報取得
 			CPile *pPile = (CPile *)pStageObj;
-			CFloat CaveInPos = pPile->GetPos().y + pPile->GetCorrHeight();
-			CFloat Height = pPile->GetHeight() * 0.5f ;
+			Pos3D Pos, null;float height;
+			pPile->GetCollisionInfo(Pos, null, height);
 
 			for each (Info &Player in m_aInfo)
 			{
 				if(!Player.bLandPile) continue;
 
-				float& posy = Player.pos.y;
-
 				switch (Player.side)
 				{
-					case WORLD_SIDE::FACE:	Player.pos.y = CaveInPos + Height + SIZE_HEIGHT;	break;
-					case WORLD_SIDE::BEHIND:Player.pos.y = CaveInPos - Height - SIZE_HEIGHT;	break;
+					case WORLD_SIDE::FACE:	Player.pos.y = Pos.y + height + SIZE_HEIGHT;	break;
+					case WORLD_SIDE::BEHIND:Player.pos.y = Pos.y - height - SIZE_HEIGHT;	break;
 				}
 
 				Player.move.y = 0.0f;
