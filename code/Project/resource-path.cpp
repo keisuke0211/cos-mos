@@ -13,7 +13,7 @@ const char* CResources::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 short CResources::SOUND_IDXES[(int)SOUND::MAX] = {};
 const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\ok.wav",
-	"data\\SOUND\\SE\\scratch_02.wav",
+	"data\\SOUND\\SE\\scratch_00.wav",
 	"data\\SOUND\\SE\\jamp_01.wav",
 	"data\\SOUND\\SE\\landing\\jamp.wav",
 	"data\\SOUND\\SE\\swap_now.wav",
@@ -24,4 +24,6 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\shrink.wav",
 	"data\\SOUND\\SE\\extend.wav",
 	"data\\SOUND\\SE\\vibration.wav",
+	"data\\SOUND\\SE\\rocket\\parts_get.wav",
+	"NONEDATA",
 };
