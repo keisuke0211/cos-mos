@@ -76,7 +76,7 @@ void CExtenddog::Uninit(void) {
 
 //========================================
 // 更新処理
-// Author:KOMURO HIROMU
+// Author:KOMURO HIROMU / HIRASAWA SHION
 //========================================
 void CExtenddog::Update(void) {
 
@@ -85,6 +85,7 @@ void CExtenddog::Update(void) {
 	
 	CObject *obj = NULL;
 	while (Manager::StageObjectMgr()->ListLoop(&obj)) {
+		break;
 		//取得したオブジェクトをキャスト
 		CStageObject* stageObj = (CStageObject*)obj;
 
@@ -171,6 +172,7 @@ void CExtenddog::Update(void) {
 			->SetOutLineIdx(true);
 	}
 
+	return;
 	//******************************
 	//お尻　　結果：Rotだけが違う
 	//******************************
