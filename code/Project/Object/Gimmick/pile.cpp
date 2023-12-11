@@ -76,48 +76,6 @@ void CPile::Update(void)
 
 	//モデル配置
 	PutModel();
-
-	//一番上の幹から配置するため、配置する高さを計算
-	{
-		//幹数の半分（切り捨て）
-		const int nNumHalf = m_NumTrunk / EVENPARITY;
-
-		//幹座標
-		Pos3D PilePos = Pos3D(
-			m_PilePos.x,
-			//本体サイズ  ＋  サイズ × 上の幹数  ＋  幹のめり込み量
-			SIZE_OF_1_SQUARE * -0.5f + SIZE_OF_1_SQUARE * nNumHalf + m_TrunkHeight,
-			m_PilePos.z);
-
-		CFloat height = m_height * 0.5f;
-
-		RNLib::Text2D().PutDebugLog(CreateText(
-			"杭Y:%.2f  幹数:%d  めり込み:%.2f  高さ:%.2f  Max:%.2f  Min:%.2f  補正:%.2f",
-			m_pos.y, m_NumTrunk, m_TrunkHeight, height, m_pos.y + height, m_pos.y - height, m_fEvenTrunkCorrHeight));
-
-		Pos3D Pos = Pos3D(m_pos.x + 16.0f, m_pos.y + m_fEvenTrunkCorrHeight, 0.0f);
-
-		//全体サイズ
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Pos, INITROT3D)
-			->SetSize(m_width, m_height);
-
-		//上部線
-		float y = m_pos.y + height + m_fEvenTrunkCorrHeight;
-		float un = m_pos.y - height + m_fEvenTrunkCorrHeight;
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, height + m_fEvenTrunkCorrHeight, 0.0f), INITROT3D)
-			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
-			->SetCol(Color{ 255,0,0,255 });
-
-		//中心位置
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Pos, INITROT3D)
-			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
-			->SetCol(Color{ 0,255,0,255 });
-
-		//下部線
-		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos + Pos3D(SIZE_OF_1_SQUARE, -height + m_fEvenTrunkCorrHeight, 0.0f), INITROT3D)
-			->SetSize(SIZE_OF_1_SQUARE, 1.0f)
-			->SetCol(Color{ 0,0,255,255 });
-	}
 }
 
 //===============================
