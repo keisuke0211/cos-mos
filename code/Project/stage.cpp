@@ -22,6 +22,7 @@ namespace {
 	//========== [[[ •Ï”éŒ¾ ]]]
 	int             planetIdx;
 	int             stageIdx;
+	int				Count;
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -29,6 +30,7 @@ namespace {
 	short           wallModelIdxes[2];
 }
 
+#define  MAX_COUNT		(1800)
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| ƒXƒe[ƒW‚ÌŠÖ”
@@ -54,6 +56,7 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
+	Count = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
@@ -214,6 +217,11 @@ namespace {
 
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ ”wŒi•`‰æ ]]]
+			Count++;
+
+			// Š„‡ŒvŽZ 
+			CFloat fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, Count, MAX_COUNT);
+
 			// ã
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
@@ -223,12 +231,35 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
 				->SetBillboard(true);
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+				->SetVtxPos(Pos3D(-1000.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-1000.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f))
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetCol(Color{ 255,255,255,100 });
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+				->SetVtxPos(Pos3D(-1200.0f + (2200.0f * fCountRate), 200.0f + 32.0f, 300.0f), Pos3D(-800.0f + (2200.0f * fCountRate), 200.0f + 32.0f, 300.0f), Pos3D(-1200.0f + (2200.0f * fCountRate), 100.0f + 32.0f, 300.0f), Pos3D(-800.0f + (2200.0f * fCountRate), 100.0f + 32.0f, 300.0f))
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetCol(Color{ 255,255,255,100 });
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+				->SetVtxPos(Pos3D(-1000.0f + (2500.0f * fCountRate), 200.0f + 32.0f, 400.0f), Pos3D(-600.0f + (2500.0f * fCountRate), 200.0f + 32.0f, 400.0f), Pos3D(-1000.0f + (2500.0f * fCountRate), 100.0f + 32.0f, 400.0f), Pos3D(-600.0f + (2500.0f * fCountRate), 100.0f + 32.0f, 400.0f))
+				->SetBillboard(true)
+				->SetZTest(false)
+				->SetCol(Color{ 255,255,255,100 });
 
 			// ‰º
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true);
+
+			if (Count > MAX_COUNT)
+			{
+				Count = 0;
+			}
 		}
 
 		// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
