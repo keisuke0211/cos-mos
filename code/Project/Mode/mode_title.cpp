@@ -13,10 +13,11 @@
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
 #include "../resource.h"
+#include "../stage.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| CMode_Titleクラスのメンバ関数
+//==========| CMode_Titleクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(7.5f, -15.0f, -125.0f);
@@ -316,7 +317,7 @@ void CMode_Title::Update(void) {
 		case TITLE_SELECT:
 		{
 			SwapMode(TITLE_NEXT);
-			CMode_Game::SetStage(m_nPlanetIdx,m_nSelect);
+			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
 			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
 			if (m_PlanetType != NULL)
@@ -959,10 +960,17 @@ void CMode_Title::StageSelect(void) {
 					if (m_nSelect > m_nOldSelect)
 						m_RocketRot = D3DXVECTOR3(0.0f,D3DX_PI, D3DX_PI * 0.5f);
 					else if (m_nSelect < m_nOldSelect)
-						m_RocketRot = D3DXVECTOR3(0.0f,0.0f,D3DX_PI * 0.5f);
+						m_RocketRot = D3DXVECTOR3(D3DX_PI,0.0f,D3DX_PI * 0.5f);
 				}
 				else
+				{
+					if (m_nSelect > m_nOldSelect)
+						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
+					else if (m_nSelect < m_nOldSelect)
+						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
 					m_bStageChange = false;
+				}
+					
 
 				m_RocketRotRate = m_RocketRot - m_RocketRotOld;
 			}

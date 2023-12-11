@@ -7,6 +7,7 @@
 #include "coin.h"
 #include "../../manager.h"
 #include "../../Mode/mode_game.h"
+#include "../../stage.h"
 
 int CCoin::s_NumAll = 0;
 int CCoin::s_Num = 0;
@@ -39,7 +40,7 @@ void CCoin::Update(void) {
 	RNLib::Model().Put(PRIORITY_OBJECT, m_ModelIdx, m_pos, m_rot, false)
 		->SetOutLineIdx(8);
 
-	CPlayer *pPlayer = CMode_Game::GetPlayer();
+	CPlayer *pPlayer = Stage::GetPlayer();
 	CPlayer::Info *pInfo[2];
 	pPlayer->GetInfo(pInfo[0],pInfo[1]);
 	

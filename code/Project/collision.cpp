@@ -8,6 +8,7 @@
 #include "Character/player.h"
 #include "collision.h"
 #include "Sound/stage-sound-player.h"
+#include "stage.h"
 
 //=======================================
 // コンストラクタ
@@ -145,7 +146,7 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::Info& Pl
 			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->maxPos.y);
@@ -175,7 +176,7 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::Info& Pl
 			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->minPos.y);
@@ -259,7 +260,7 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 				*pSide == CPlayer::WORLD_SIDE::FACE)
 			{
 				//プレイヤー取得
-				CPlayer *pPlayer = CMode_Game::GetPlayer();
+				CPlayer *pPlayer = Stage::GetPlayer();
 				CPlayer::Info *pInfo = pPlayer->GetInfo(*pSide);
 
 				// 着地した
@@ -287,7 +288,7 @@ void CCollision::Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline 
 				*pSide == CPlayer::WORLD_SIDE::BEHIND)
 			{
 				//プレイヤー取得
-				CPlayer *pPlayer = CMode_Game::GetPlayer();
+				CPlayer *pPlayer = Stage::GetPlayer();
 				CPlayer::Info *pInfo = pPlayer->GetInfo(*pSide);
 
 				// 着地した
@@ -349,7 +350,7 @@ void CCollision::MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInf
 			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->maxPos.y);
@@ -368,7 +369,7 @@ void CCollision::MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInf
 			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 				//プレイヤーオプション設定
 				LandPlayerOption(pInfo, pColli->minPos.y);
@@ -448,7 +449,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
 				{
 					//プレイヤー取得
-					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 					//プレイヤーオプション設定
 					LandPlayerOption(pInfo, pColli->maxPos.y);
@@ -467,7 +468,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
 				{
 					//プレイヤー取得
-					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 					//プレイヤーオプション設定
 					LandPlayerOption(pInfo, pColli->minPos.y);
@@ -546,7 +547,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
 				{
 					//プレイヤー取得
-					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 					//プレイヤーオプション設定
 					LandPlayerOption(pInfo, pColli->maxPos.y);
@@ -564,7 +565,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
 				{
 					//プレイヤー取得
-					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 					//プレイヤーオプション設定
 					LandPlayerOption(pInfo, pColli->minPos.y);
@@ -605,7 +606,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
 				{
 					//プレイヤー取得
-					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 					//プレイヤーオプション設定
 					LandPlayerOption(pInfo, pColli->maxPos.y);
@@ -623,7 +624,7 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
 				{
 					//プレイヤー取得
-					CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 					//プレイヤーオプション設定
 					LandPlayerOption(pInfo, pColli->minPos.y);
@@ -657,7 +658,7 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CObject *obj, 
 	if (pSide == NULL) return;
 
 	//プレイヤー取得
-	CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+	CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 	if (!pInfo->bGoal)
 	{
@@ -693,7 +694,7 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 //----------------------------
 void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
-	CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+	CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 	if (!pRocket->GetReady() && !pInfo->bRide) return;
 
 	// ロケットに搭乗
@@ -723,7 +724,7 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 			if (pSide != NULL)
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 				// 表の世界のプレイヤー
 				if (*pSide == CPlayer::WORLD_SIDE::FACE)
@@ -779,7 +780,7 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 			else
 			{
 				//プレイヤー取得
-				CPlayer::Info *pInfo = CMode_Game::GetPlayer()->GetInfo(*pSide);
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
 				if (*pSide == CPlayer::WORLD_SIDE::FACE)pInfo->fMaxHeight = pColli->maxPos.y;// 最高Ｙ座標設定
 				else 									pInfo->fMaxHeight = pColli->minPos.y;// 最高Ｙ座標設定

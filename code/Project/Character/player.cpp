@@ -1157,7 +1157,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 移動するオブジェクトは、
 				// 当たり判定位置に前回位置を設定する
 				switch (type) {
-					// ブロック
+				// ブロック
 				case OBJECT_TYPE::BLOCK: {
 					CBlock* pBlock = (CBlock*)stageObj;
 					if (!pBlock->GetCollision())
@@ -1172,28 +1172,26 @@ void CPlayer::CollisionToStageObject(void)
 						continue;
 				}break;
 
-					// ゴールゲート
+				// ゴールゲート
 				case OBJECT_TYPE::GOALGATE: {
 					CGoalGate* pGoalGate = (CGoalGate*)stageObj;
 					if (pGoalGate->GetStartGate())
 						continue;
 				}break;
 
-					// 移動床
+				// 移動床
 				case OBJECT_TYPE::MOVE_BLOCK: {
 					CMoveBlock* pBlock = (CMoveBlock*)stageObj;
 					colliInfo.posOld = pBlock->GetPosOld();
-				}
-											break;
+				}break;
 
-											// 隕石
+				// 隕石
 				case OBJECT_TYPE::METEOR: {
 					CMeteor* pMeteor = (CMeteor*)stageObj;
 					colliInfo.posOld = pMeteor->GetPosOld();
-				}
-										break;
+				}break;
 
-										// レーザー
+				// レーザー
 				case OBJECT_TYPE::LASER: {
 					CRoadTripLaser* pLaser = (CRoadTripLaser*)stageObj;
 
@@ -1206,10 +1204,9 @@ void CPlayer::CollisionToStageObject(void)
 
 					// 当たった方向を格納
 					OtherInfo->Rot = s_pColli->IsBoxToBoxCollider(Self, *OtherInfo, vec);
-				}
-									   break;
+				}break;
 
-									   // ヌイ
+				// ヌイ
 				case OBJECT_TYPE::EXTEND_DOG: {
 					//CExtenddog *pDog = (CExtenddog *)stageObj;
 
@@ -1260,10 +1257,15 @@ void CPlayer::CollisionToStageObject(void)
 				case OBJECT_TYPE::PILE:
 				{
 					CPile* pPile = (CPile*)stageObj;
+					CFloat CorrHeight = pPile->GetCorrHeight();
 					colliInfo.pos = pPile->GetPos();
 					colliInfo.posOld = pPile->GetPosOld();
-					CFloat corr = pPile->GetCorrHeight();
-					colliInfo.fHeight += pPile->GetCorrHeight();
+
+					colliInfo.pos.y += CorrHeight;
+					colliInfo.posOld.y += CorrHeight;
+
+					CFloat corr = pPile->GetHeight() * 0.5f;
+					colliInfo.fHeight = corr;
 				}break;
 				}
 
@@ -1382,12 +1384,14 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		case CStageObject::TYPE::PILE:
 		{
 			CPile *pPile = (CPile *)pStageObj;
-			CFloat CaveInPos = pPile->GetPosCaveIn().y;
-			CFloat Height = pPile->GetHeight() * 0.5f;
+			CFloat CaveInPos = pPile->GetPos().y + pPile->GetCorrHeight();
+			CFloat Height = pPile->GetHeight() * 0.5f ;
 
 			for each (Info &Player in m_aInfo)
 			{
 				if(!Player.bLandPile) continue;
+
+				float& posy = Player.pos.y;
 
 				switch (Player.side)
 				{

@@ -79,6 +79,7 @@ class CDraw {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init(Device& device, const UShort& priorityMax) {
+		m_matMesh   .Init(priorityMax);
 		m_model		.Init();
 		m_polygon2D	.Init();
 		m_polygon3D	.Init();
@@ -92,6 +93,7 @@ public:
 		m_transition.Init();
 	}
 	void Uninit(void) {
+		m_matMesh   .Uninit();
 		m_model		.Uninit();
 		m_polygon2D	.Uninit();
 		m_polygon3D	.Uninit();
@@ -105,6 +107,7 @@ public:
 		m_transition.Uninit();
 	}
 	void Update(void) {
+		m_matMesh   .Update();
 		m_model		.Update();
 		m_polygon2D	.Update();
 		m_polygon3D	.Update();
@@ -119,6 +122,7 @@ public:
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
+	CMatMesh    m_matMesh;
 	CModel      m_model;
 	CPolygon2D  m_polygon2D;
 	CPolygon3D  m_polygon3D;

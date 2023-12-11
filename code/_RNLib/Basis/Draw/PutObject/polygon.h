@@ -60,5 +60,5 @@ namespace Polygon2DAnd3D {
 	};
 
 	//========== [[[ ŠÖ”‚Ì’è‹` ]]]
-	void SetTexture(Device& device, void*& tex, TEX_TYPE& texType);
+	void SetTexture(Device& device, void* tex, const TEX_TYPE& texType);
 }

@@ -17,35 +17,22 @@
 #include "../System/BG-Editor.h"
 #include "../Sound/stage-sound-player.h"
 #include "../resource.h"
+#include "../stage.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| CMode_Gameクラスのメンバ関数
+//==========| CMode_Gameクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 const char* CMode_Game::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 static const int s_PlanetMaxSummon = 8;		// 出現する位置の最大数
 static const int s_StarMaxSummon = 10;		// 出現する位置の最大数
 
-//****************************************
-// 静的変数定義
-//****************************************
-Color CMode_Game::m_BgColorUp = INITCOLOR;
-Color CMode_Game::m_BgColorDown = INITCOLOR;
-CPlayer *CMode_Game::s_pPlayer = NULL;
-CPlayer* CMode_Game::GetPlayer(void) { return s_pPlayer; }
-int CMode_Game::m_nStageIdx = 0;
-int CMode_Game::m_nPlanetIdx = 0;
-CRocketPartsUI *CMode_Game::m_rocketparts = NULL;
-CCoinUI *CMode_Game::m_Coin = NULL;
-
 //========================================
 // コンストラクタ
 // Author:RIKU NISHIMURA
 //========================================
 CMode_Game::CMode_Game(void) {
-
-	m_rocketparts = NULL;
 
 	m_Pause.bFullScreen = RNSettings::GetInfo().isFullScreen;
 
@@ -85,6 +72,9 @@ CMode_Game::~CMode_Game(void) {
 void CMode_Game::Init(void) {
 	CMode::Init();
 
+	// ステージ開始処理
+	Stage::StartStage();
+
 	// 遷移設定
 	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
@@ -93,42 +83,13 @@ void CMode_Game::Init(void) {
 
 	// ステージオブジェクトの読み込み
 	Manager::StageObjectMgr()->Load();
-
-	// ステージ生成
-	Manager::StgEd()->StageLoad(m_nPlanetIdx, m_nStageIdx);
-
-	// プレイヤーを生成
-	if (s_pPlayer == NULL)
-		s_pPlayer = CPlayer::Create();
-
-	if (m_Coin == NULL)
-		m_Coin = CCoinUI::Create();
-
-	{// [[[ カメラ ]]]
-		// カメラの視点/注視点を設定
-		Manager::GetMainCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-		Manager::GetSubCamera()->SetPosVAndPosR(Manager::StgEd()->GetCameraPos(), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	}
-
-	// 背景情報を読み込み
-	char *pBgFile = Manager::StgEd()->GetBgFile();
-	if (pBgFile != NULL) {
-		CBGEditor::Load(pBgFile);
-	}
-
+	
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < MENU_MAX; m_pMenu[nCnt] = NULL, nCnt++);
 	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; m_pSubMenu[nCnt] = NULL, nCnt++);
 
 	// テキスト読込
 	TextLoad();
-
-	// 壁モデル読み込み
-	m_wallModelIdx[0] = RNLib::Model().Load("data\\MODEL\\Wall_Left.x");
-	m_wallModelIdx[1] = RNLib::Model().Load("data\\MODEL\\Wall_Right.x");
-
-	// 環境音プレイヤーの開始処理
-	StageSoundPlayer::Start();
 }
 
 //========================================
@@ -138,33 +99,8 @@ void CMode_Game::Init(void) {
 void CMode_Game::Uninit(void) {
 	CMode::Uninit();
 
-	// プレイヤーを解放
-	if (s_pPlayer != NULL)	{
-		s_pPlayer->Uninit();
-		delete s_pPlayer;
-		s_pPlayer = NULL;
-	}
-
-	// ステージオブジェクトと背景を解放
-	Manager::StageObjectMgr()->ReleaseAll();
-	Manager::BGMgr()->ReleaseAll();
-
-	// ロケットパーツUIを解放
-	if (m_rocketparts != NULL) {
-		m_rocketparts->Uninit();
-		delete m_rocketparts;
-		m_rocketparts = NULL;
-	}
-
-	// コインUIを解放
-	if (m_Coin != NULL) {
-		m_Coin->Uninit();
-		delete m_Coin;
-		m_Coin = NULL;
-	}
-
-	// 環境音プレイヤーの終了処理
-	StageSoundPlayer::End();
+	// ステージ終了処理
+	Stage::EndStage();
 }
 
 //========================================
@@ -174,58 +110,8 @@ void CMode_Game::Uninit(void) {
 void CMode_Game::Update(void) {
 	CMode::Update();
 
-	// 環境音プレイヤーの更新処理
-	StageSoundPlayer::Update();
-
-	if (CPlayer::GetZoomUpCounter() > 0) {
-		if (Manager::StgEd()->GetPlanetIdx() == 0) {
-			if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-				// [[[ 上下カメラ描画 ]]]
-				const Pos2D windowCenterPos = RNLib::Window().GetCenterPos();
-				const float windowWidth = RNLib::Window().GetWidth();
-				const float windowHeight = RNLib::Window().GetHeight();
-				const float windowHeightHalf = windowHeight * 0.5f;
-				const float windowHeightHalf2 = windowHeightHalf * 0.5f;
-
-				// 下
-				RNLib::Polygon2D().Put(0, true)
-					->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
-					->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-					->SetSize(windowWidth, windowHeightHalf);
-			}
-		}
-	}
-
-	{// [[[ 背景描画 ]]]
-		// 上
-		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
-			->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-			->SetBillboard(true);
-		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
-			->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
-			->SetBillboard(true);
-
-		// 下
-		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-			->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
-			->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-			->SetBillboard(true);
-	}
-
-	// [[[ 壁モデル描画 ]]]
-	RNLib::Model().Put(PRIORITY_BACKGROUND, m_wallModelIdx[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-	RNLib::Model().Put(PRIORITY_BACKGROUND, m_wallModelIdx[1], Pos3D( CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-
-	// ロケットパーツの更新処理
-	if (m_rocketparts != NULL) {
-		m_rocketparts->Update();
-	}
-
-	if (m_Coin != NULL) {
-		m_Coin->Update();
-	}
+	// ステージ更新処理
+	Stage::UpdateStage();
 
 	// [[[ 非ポーズ時の処理 ]]]
 	if (m_state != (int)STATE::PAUSE) {
@@ -236,10 +122,6 @@ void CMode_Game::Update(void) {
 				SetState((int)STATE::PAUSE);
 			}
 		}
-
-		// プレイヤーの更新処理
-		if (s_pPlayer != NULL)
-			s_pPlayer->Update();
 	}
 }
 
@@ -275,10 +157,16 @@ void CMode_Game::ProcessState(const PROCESS process) {
 			PauseCreate();
 
 			m_Pause.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
+
+			// ステージをポーズ状態に
+			Stage::SetPause(true);
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
 			TextRelease(TEXT_ALL);
+
+			// ステージを非ポーズ状態に
+			Stage::SetPause(false);
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {

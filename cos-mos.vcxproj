@@ -173,6 +173,7 @@
     <ClCompile Include="code\Project\Object\Item\coin.cpp" />
     <ClCompile Include="code\Project\resource-path.cpp" />
     <ClCompile Include="code\Project\Sound\stage-sound-player.cpp" />
+    <ClCompile Include="code\Project\stage.cpp" />
     <ClCompile Include="code\Project\System\BG-Editor.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp" />
     <ClCompile Include="code\Project\Object\BackGround\Planet.cpp" />
@@ -229,6 +230,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-state.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\light3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\mat-mesh.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\polygon2D.cpp" />
@@ -281,6 +283,7 @@
     <ClInclude Include="code\Project\Object\Block\Ghost.h" />
     <ClInclude Include="code\Project\Object\Gimmick\pile.h" />
     <ClInclude Include="code\Project\Sound\stage-sound-player.h" />
+    <ClInclude Include="code\Project\stage.h" />
     <ClInclude Include="code\Project\System\BG-Editor.h" />
     <ClInclude Include="code\Project\Object\BackGround\BG-object.h" />
     <ClInclude Include="code\Project\Object\BackGround\Planet.h" />
@@ -334,6 +337,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-state.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\light3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\mat-mesh.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\polygon2D.h" />
