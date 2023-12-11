@@ -1319,11 +1319,15 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		// ƒkƒC‚Ìó‘ÔÝ’è
 		case CStageObject::TYPE::EXTEND_DOG:
 		{
-			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
-			{
-				CExtenddog *pDog = (CExtenddog *)pStageObj;
+			//ƒkƒC‚É•ÏŠ·‚µA”½“]‚µ‚Ä‚é‚©Žæ“¾
+			CExtenddog *pDog = (CExtenddog *)pStageObj;
+			const bool bInversion = pDog->IsInversion();
+
+			//”½“]‚µ‚Ä‚¢‚È‚©‚Á‚½‚çA‰ºi‚¨Kj‚É“–‚½‚Á‚Ä‚¢‚é
+			//”½“]‚µ‚Ä‚½‚çAãi‚¨Kj‚É“–‚½‚Á‚Ä‚¢‚é@@‚Ç‚¿‚ç‚©–ž‚½‚¹‚ÎAƒAƒNƒVƒ‡ƒ“‚³‚¹‚é
+			if ((!bInversion && *pColliRot == (int)CCollision::ROT::UNDER) ||
+				(bInversion && *pColliRot == (int)CCollision::ROT::OVER))
 				pDog->SetState(CExtenddog::STATE::RETURN);
-			}
 			break;
 		}
 

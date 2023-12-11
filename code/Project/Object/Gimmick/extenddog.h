@@ -48,6 +48,7 @@ public:
 	Pos3D GetBodyPos(void)    { return m_BodyPos; }    //体位置
 	Pos3D GetBodyPosOld(void) { return m_BodyPosOld; } //体位置（前回
 	Pos3D GetHipPos(void)     { return m_HipPos; }     //お尻位置
+	bool  IsInversion(void)   { return m_bInversion; } //反転してるかどうか
 	float GetColliHeight(void); //当たり判定用の高さ取得
 
 private:
