@@ -522,7 +522,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 	// ƒŒ[ƒU[
 	{
 		// €–Sˆ—
-		*pDeath = true;
+		//*pDeath = true;
 	}
 }
 
