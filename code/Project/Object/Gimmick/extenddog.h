@@ -50,6 +50,7 @@ public:
 	Pos3D GetHipPos(void)     { return m_HipPos; }     //‚¨KˆÊ’u
 	bool  IsInversion(void)   { return m_bInversion; } //”½“]‚µ‚Ä‚é‚©‚Ç‚¤‚©
 	float GetColliHeight(void); //“–‚½‚è”»’è—p‚Ì‚‚³æ“¾
+	int   GetHipRot(void); //‚¨K‚Ì•ûŒü‚ğæ“¾
 
 private:
 	//========== [[[ ŠÖ”éŒ¾ ]]]

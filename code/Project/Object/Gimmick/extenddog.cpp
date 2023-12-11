@@ -277,3 +277,13 @@ float CExtenddog::GetColliHeight(void)
 	//Å‚‚ÆÅ’á‚Ì”¼•ª‚ğ•Ô‚·
 	return (MaxY - MinY) * 0.5f;
 }
+
+//========================================
+//‚¨K‚Ì•ûŒü‚ğæ“¾
+//========================================
+int CExtenddog::GetHipRot(void)
+{
+	//”½“]‚µ‚Ä‚¢‚È‚¢‚È‚ç‰º‘¤A”½“]‚µ‚Ä‚é‚È‚çã‘¤
+	if (!m_bInversion) return (int)CCollision::ROT::UNDER;
+	else return (int)CCollision::ROT::OVER;
+}
