@@ -11,6 +11,7 @@
 //****************************************
 // 前方宣言
 //****************************************
+class CMenuUI;
 class CFontText;
 class CWords;
 
@@ -18,7 +19,7 @@ class CWords;
 // クラス定義
 //****************************************
 // モード(タイトル)クラス
-class CMode_Title :public CMode {
+class CMode_Title :public CMode{
 public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
@@ -28,7 +29,6 @@ public:
 	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX        = 20;	// サウンドの最大値
 	static const int COOLDOWN          = 20;	// クールダウン
-
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -89,7 +89,6 @@ private:
 	enum TEXT {
 		TEXT_TITLE = 0,	// タイトル
 		TEXT_MENU,		// メニュー
-		TEXT_RIGHT,		// 左画面
 		TEXT_ALL,		// 全部
 		TEXT_MAX
 	};
@@ -110,63 +109,20 @@ private:
 		char Text[TXT_MAX];		// テキスト
 	};
 
-	// メニュー情報
-	struct Menu {
-		D3DXVECTOR3 LeftPos;
-		D3DXVECTOR3 RightPos;
-		D3DXVECTOR3 LeftTargetPos;
-		D3DXVECTOR3 RightTargetPos;
-		int nCntLeftAnime;
-		int nCntRightAnime;
-		int nRightCoolDown;	//　左画面出現のクールダウン
-		int nMaineSelect;
-		int nMaineOldSelect;
-		int nSubSelect;
-		int nRightTextType;
-		bool bMenu;
-		bool bRightMove;
-		bool bRightDisp;
-		bool bRightCoolDown;
-		bool bClose;
-		bool bSubMenu;
-
-		int BoxTex;
-		int OperationMax;
-		int SettingMax;
-
-		// スクリーン
-		int nCntScrChg;		// スクリーン変更のカウント
-		bool bFullScreen;	// スクリーンモード
-
-		// サウンド
-		int nBGMVolume;
-		int nSEVolume;
-		int nBGMOldVolume;
-		int nSEOldVolume;
-
-		Operation *pOperation;
-		Setting *pSetting;
-	};
-
 	// *** 関数 ***
-	void TextLoad(void);
-	void SettingMenu(void);
-	void TextAnime(void);
 	void MenuAnime(void);
-	void MenuCreate(void);
-	void MenuSelect(void);
-	void SubTextCreate(void);
+	void TextAnime(void);
 	void CreateStageSelectInfo(void);
 	void StageSelect(void);
 	void TextRelease(TEXT type);
 	void SwapMode(TITLE aTitle);
 
 	// *** 静的変数 ***
+	static CMenuUI *m_MenuUI;
 	static bool s_bStageSelect;
 
 	// *** 変数 ***
 	TITLE Title;
-	Menu m_Menu;
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	D3DXVECTOR3 m_RocketPos;
 	D3DXVECTOR3 m_RocketposRate;
@@ -190,9 +146,9 @@ private:
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	bool m_bStageChange;
+
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];
-	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 	PlanetType *m_PlanetType;
 };
