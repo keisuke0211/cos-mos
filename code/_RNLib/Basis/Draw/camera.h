@@ -8,6 +8,7 @@
 
 #include "../Mechanical/object.h"
 #include "../Mechanical/memory.h"
+#include "color.h"
 
 //****************************************
 // ƒNƒ‰ƒX’è‹`

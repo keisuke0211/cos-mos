@@ -186,7 +186,7 @@ void CDrawState::SetIsFog(Device& device, const bool& isFog) {
 //========================================
 void CDrawState::SetFogParameter(Device& device, const Color& col, const float& startDist, const float& endDist) {
 
-	device->SetRenderState(D3DRS_FOGCOLOR, ColorToD3DCOLOR(col));
+	device->SetRenderState(D3DRS_FOGCOLOR, col.ConvD3DCOLOR());
 	device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&startDist));
 	device->SetRenderState(D3DRS_FOGEND  , *(DWORD*)(&endDist));
 }

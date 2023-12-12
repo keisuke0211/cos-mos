@@ -26,7 +26,7 @@ namespace {
 	int             stageIdx;
 	int				Count;
 	Pos3D			cloudpos[MAX_CLOUD];
-	static const float	cloudmove[MAX_CLOUD];
+	float			cloudmove[MAX_CLOUD];
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -34,13 +34,6 @@ namespace {
 	short           wallModelIdxes[2];
 }
 
-//static const float cloudmove[MAX_CLOUD] = {
-//	0.2f,
-//	0.14f,
-//	0.3f,
-//	0.03f,
-//	0.1f,
-//};
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| ÉXÉeÅ[ÉWÇÃä÷êî
@@ -73,7 +66,8 @@ void Stage::Init(void) {
 	isPause = false;
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[MAX_CLOUD] = Pos3D(-1000.0f,-600.0f,200.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 200,200.0f,200.0f + rand() % 200 - 100);
+		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 	}
 	// ÉuÉçÉbÉNÇÃì«Ç›çûÇ›èàóù
 	CBlock::Load();
@@ -233,11 +227,7 @@ namespace {
 
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ îwåiï`âÊ ]]]
-			Count++;
-
-			// äÑçáåvéZ 
-			CFloat fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, Count, MAX_COUNT);
-
+			
 			// è„
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
@@ -248,16 +238,23 @@ namespace {
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
 				->SetBillboard(true);
 			
-			//// â_
-			//for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)..
-			//{
-			//	RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-			//		->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
-			//		->SetVtxPos(Pos3D(-1000.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 200.0f + 32.0f, 200.0f), Pos3D(-1000.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f), Pos3D(-600.0f + (2000.0f * fCountRate), 100.0f + 32.0f, 200.0f))
-			//		->SetBillboard(true)
-			//		->SetZTest(false)
-			//		->SetCol(Color{ 255,255,255,100 });
-			//}
+			// â_
+			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
+			{
+				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+					->SetVtxPos(Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z))
+					->SetBillboard(true)
+					->SetZTest(false)
+					->SetCol(Color{ 255,255,255,100 });
+
+				cloudpos[nCnt].x += cloudmove[nCnt];	// à⁄ìÆó ÇÃëùâ¡
+
+				if (cloudpos[nCnt].x >= 550.0f)
+				{
+					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 100 - 100, 200.0f, 200.0f + rand() % 200 - 100);
+				}
+			}
 		
 
 			// â∫
@@ -266,10 +263,21 @@ namespace {
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true);
 
-			if (Count > MAX_COUNT)
-			{
-				Count = 0;
-			}
+		}
+		if (Stage::CheckPlanetIdx(1))
+		{// [[[ îwåiï`âÊ ]]]
+
+			// è„
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
+				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
+				->SetBillboard(true);
+
+			// â∫
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
+				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
+				->SetBillboard(true);
 		}
 
 		// [[[ ï«ÉÇÉfÉãï`âÊ ]]]

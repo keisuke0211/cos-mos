@@ -112,21 +112,21 @@ Pos2D CText2D::PutDebugLog(const char* string) {
 	if (!m_isShowDebugLog)
 		return INITPOS2D;
 
-	{
+	if (0) {
 		setlocale(LC_ALL, "");
 		size_t    length = strlen(string);
-		wchar_t*  wstr   = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
+		wchar_t* wstr = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
 		mbstowcs(wstr, string, length + 1);
 		const int strLen = (int)wcslen(wstr);
 
-		const float top    = m_debugLogLine * 16.0f;
+		const float top = m_debugLogLine * 16.0f;
 		const float bottom = (m_debugLogLine + 1) * 16.0f;
-		const float right  = strLen * 16.0f;
+		const float right = strLen * 16.0f;
 		free(wstr);
 
 		RNLib::Polygon2D().Put(0, true)
 			->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
-			->SetVtxCol(Color(0,0,0,255), Color(0,0,0,0), Color(0,0,0,255), Color(0,0,0,0));
+			->SetVtxCol(Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100));
 	}
 
 	// ê›íuà íu

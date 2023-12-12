@@ -63,6 +63,8 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -8.0f  , 30.0f, },	  // ÉTÉìÉSè 3
 	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  0.0f  , 30.0f, },	  // ä‚1
 	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                , -8.0f  , 30.0f, },	  // ä‚2
+	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  -7.0f  , 30.0f, },	  // åöï®1
+	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), SET_TYPE::NONE                ,  -7.0f  , 30.0f, },	  // åöï®2
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -224,7 +226,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	if (m_modelIdxes[(int)m_looksType] != NONEDATA && m_pasteTexIdxes[(int)m_looksType] != NONEDATA) {
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
-			RNLib::MatMesh().SetMaterialMesh(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+			RNLib::MatMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 		}
 
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::BACKWARD ||
@@ -233,7 +235,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 			setCol.r *= 0.7f;
 			setCol.g *= 0.7f;
 			setCol.b *= 0.7f;
-			RNLib::MatMesh().SetMaterialMesh(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
+			RNLib::MatMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
 		}
 
 		if (!m_isCollision)

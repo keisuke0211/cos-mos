@@ -349,14 +349,6 @@ void CDemoZone::UpdateActive(void) {
 	case TYPE2::STATICMESH_TEST: {
 		TypeInfo_MatMeshTest* typeInfo = (TypeInfo_MatMeshTest*)m_typeInfo;
 
-		// モデルデータを取得
-		CModel::CData& modelData = RNLib::Model().GetData(RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD));
-
-		// 頂点情報を取得
-		CModel::Vertex3DInfo* vtxes = NULL;
-		UInt vtxNum = 0;
-		RNLib::Model().StoreVtxInfo(CMatrix::ConvPosToMtx(pos + Pos3D(-10.0f, 5.0f, 0.0f)), RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), &vtxNum, &vtxes);
-
 		const Pos3D basePos = pos + Pos3D(75.0f, 5.0f, -75.0f);
 		struct LocalFunc {
 			static Pos3D FindPos(const UShort& putNum) {
@@ -370,15 +362,26 @@ void CDemoZone::UpdateActive(void) {
 
 		if (RNLib::Input().GetKeyPress(DIK_1)) {
 			for (int cnt = 0; cnt < 5; cnt++) {
+				if (typeInfo->isMesh) {
+					if ((typeInfo->setNum / 25) % 2 == 0) {
+						RNLib::MatMesh().SetModel(
+							(UShort)RNMode::PRIORITY::OBJECT3D,
+							pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f),
+							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+							Color{ 255,255,255,255 },
+							false);
+					}
+					else {
+						RNLib::MatMesh().SetMaterialModel(
+							(UShort)RNMode::PRIORITY::OBJECT3D,
+							CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
+							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+							RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)),
+							Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
+							false);
+					}
+				}
 				typeInfo->setNum++;
-				if (typeInfo->isMesh)
-					RNLib::MatMesh().SetMaterialMesh(
-						(UShort)RNMode::PRIORITY::OBJECT3D,
-						CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
-						RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
-						RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)),
-						Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
-						false);
 			}
 		}
 
@@ -386,22 +389,30 @@ void CDemoZone::UpdateActive(void) {
 			typeInfo->isMesh = !typeInfo->isMesh;
 
 			if (typeInfo->isMesh) {
-				for (int cnt = 0; cnt < typeInfo->setNum; cnt++)
-					RNLib::MatMesh().SetMaterialMesh(
-						(UShort)RNMode::PRIORITY::OBJECT3D,
-						CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
-						RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
-						RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)), 
-						Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
-						false);
+				for (int cnt = 0; cnt < typeInfo->setNum; cnt++) {
+					if ((typeInfo->setNum / 25) % 2 == 0) {
+						RNLib::MatMesh().SetModel(
+							(UShort)RNMode::PRIORITY::OBJECT3D,
+							pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f),
+							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+							Color{ 255,255,255,255 },
+							false);
+					}
+					else {
+						RNLib::MatMesh().SetMaterialModel(
+							(UShort)RNMode::PRIORITY::OBJECT3D,
+							CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
+							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+							RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)),
+							Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
+							false);
+					}
+				}
 			}
 			else {
 				RNLib::MatMesh().Delete();
 			}
 		}
-
-		// 頂点情報を解放
-		CMemory::Release(&vtxes);
 
 		// モデルを設置
 		if (!typeInfo->isMesh) {
