@@ -78,7 +78,6 @@ public:
 	};
 	enum class OTHER_MODEL {
 		// その他モデル
-		LEAF_INSIDE,
 		SOIL_BLOCK_GRASSY,
 		MAX,
 	};
@@ -101,6 +100,12 @@ public:
 		LIGHT_A,
 		LIGHT_B,
 		MAX,
+	};
+	enum class MODEL_TYPE {
+		// モデルタイプ
+		PUT,
+		MATERIAL_MESH,
+		MESH,
 	};
 	enum class SET_TYPE {
 		// 設定タイプ
@@ -136,6 +141,7 @@ private:
 		const char* modelPath;
 		const char* pasteTexPath;
 		Color col;
+		MODEL_TYPE modelType;
 		SET_TYPE setType;
 		float height;
 		float depth;

@@ -32,7 +32,6 @@ void Polygon2DAnd3D::SetTexture(Device& device, void* tex, const TEX_TYPE& texTy
 				device->SetTexture(0, NULL);
 			else
 				device->SetTexture(0, (*camera)->GetTexture());
-
 			RNLib::DrawStateMgr().SetIsTextureAlpha(device, false);
 		}break;
 		}

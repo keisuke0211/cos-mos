@@ -59,6 +59,8 @@ public:
 		// <<< Šî–{î•ñÝ’è >>>
 		CRegistInfo* SetIdx              (const short& idx);
 		CRegistInfo* SetMtx              (const Matrix& mtx);
+		CRegistInfo* SetClippingCamera   (CCamera& camera); 
+		CRegistInfo* SetClippingCamera   (const short& ID);
 		// <<< ’¸“_ˆÊ’uî•ñÝ’è >>>
 		CRegistInfo* SetVtxPos           (const Pos3D pos0, const Pos3D pos1, const Pos3D pos2, const Pos3D pos3);
 		CRegistInfo* SetSize             (const float& width, const float& height);
