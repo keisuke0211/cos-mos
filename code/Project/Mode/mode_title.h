@@ -136,7 +136,6 @@ private:
 	D3DXVECTOR3 m_RocketRotOld;
 	D3DXVECTOR3 m_RocketRotRate;
 	float m_PlanetAngle;
-	float m_RocketAnimRate;
 	int m_TexIdx[TEX_MAX];
 	int m_nSelect;
 	int m_nSelectTemp;
@@ -156,7 +155,7 @@ private:
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	bool m_bStageChange;
-
+	bool m_bRocketMove;
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];
