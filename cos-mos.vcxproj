@@ -225,7 +225,6 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\camera-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\camera.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\camera_control.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\Draw\color.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-info.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-state.cpp" />

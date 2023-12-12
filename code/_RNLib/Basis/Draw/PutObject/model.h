@@ -32,6 +32,17 @@ public:
 	// データクラス
 	class CData {
 	public:
+		// [[[ 構造体定義 ]]]
+		struct VtxData {
+			bool* isMats = NULL;
+		};
+		struct MatData {
+			Color  col    = INITCOLOR;
+			ULong  vtxNum = 0;
+			ULong* idxes  = NULL;
+			ULong  idxNum = 0;
+		};
+
 		// [[[ 関数宣言 ]]]
 		CData();
 		~CData();
@@ -40,12 +51,17 @@ public:
 		// [[[ 変数宣言 ]]]
 		short*   m_texIdxes;
 		Texture* m_texes;
-		UShort*  m_idxes;
-		UInt     m_idxNum;
+		VtxData* m_vtxDatas;
+		ULong    m_vtxNum;
+		ULong*   m_idxes;
+		ULong    m_idxNum;
+		Buffer   m_matBuff;
+		MatData* m_matDatas;
+		UShort   m_matNum;
+		UShort*  m_faceMatIdxes;
+		ULong    m_faceNum;
 		Mesh     m_mesh;
 		Mesh*    m_outLineMeshs;
-		Buffer   m_matBuff;
-		UShort   m_matNum;
 		float    m_radiusMax;
 	};
 
@@ -110,12 +126,15 @@ public:
 	void         Release     (void);
 	short        Load        (const char* loadPath, short idx = NONEDATA);
 	CData&       GetData     (const short& idx) { return *m_datas[idx]; }
-	void         StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, UInt* vtxNum, Vertex3DInfo** vtxInfos);
+	void         StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Vertex3DInfo** vtxInfos, const short& matIdx = NONEDATA);
 	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Matrix& mtx,                                        const bool& isOnScreen = false);
 	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot,                       const bool& isOnScreen = false);
 	CRegistInfo* Put         (const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const bool& isOnScreen = false);
 
 private:
+	//========== [[[ 関数宣言 ]]]
+	void ExecutionStoreVtxInfo(Vertex3DInfo* vtx, const Matrix& modelMtx, const ULong& cntVtx, BYTE*& vtxBuff, const DWORD& dwSizeFVF, const DWORD& texCoordOffset);
+
 	//========== [[[ 変数宣言 ]]]
 	CData** m_datas;
 };
