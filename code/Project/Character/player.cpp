@@ -59,7 +59,7 @@ bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
-float CPlayer::s_fAimWorkSpeed = 0.05f;
+float CPlayer::s_fAimWorkSpeed = 0.1f;
 CPlayer::Info CPlayer::m_aInfo[CPlayer::NUM_PLAYER];	// 各プレイヤーの情報
 
 //=======================================
@@ -1210,6 +1210,9 @@ void CPlayer::CollisionToStageObject(void)
 	}
 }
 
+//----------------------------
+//独自のオブジェクトの当たり判定設定
+//----------------------------
 bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Info &Player, Pos3D *pPos, Pos3D *pPosOld, float *pWidth, float *pHeight)
 {
 	switch (type) {
@@ -1259,6 +1262,10 @@ bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Inf
 
 			// ヌイ
 		case OBJECT_TYPE::EXTEND_DOG: {
+			CExtenddog *pDog = (CExtenddog *)pObj;
+			if (pPos    != NULL)*pPos    = pDog->GetBodyPos();
+			if (pPosOld != NULL)*pPosOld = pDog->GetBodyPosOld();
+			if (pHeight != NULL)*pHeight = pDog->GetColliHeight();
 		}break;
 
 			//杭
@@ -1312,11 +1319,12 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		// ヌイの状態設定
 		case CStageObject::TYPE::EXTEND_DOG:
 		{
-			if (!m_aInfo[0].bExtendDog && !m_aInfo[1].bExtendDog)
-			{
-				CExtenddog *pDog = (CExtenddog *)pStageObj;
+			//ヌイに変換
+			CExtenddog *pDog = (CExtenddog *)pStageObj;
+
+			//お尻の方向と当たった方向が同じ
+			if (pDog->GetHipRot() == *pColliRot)
 				pDog->SetState(CExtenddog::STATE::RETURN);
-			}
 			break;
 		}
 

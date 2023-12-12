@@ -1020,7 +1020,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 							m_DogInfo[nDog].HipPos.y = m_DogInfo[nDog].HipPos.y + AddPosY;
 						}
 
-						Manager::StageObjectMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, m_DogInfo[nDog].bShrink, bReturn);
+						Manager::StageObjectMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, m_DogInfo[nDog].bElasticity, bReturn);
 					}
 
 					nDog++;
@@ -1049,9 +1049,9 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(nShrink, pFile, nRow, nLine); nLine++;
 
 					if (nShrink <= 0)
-						m_DogInfo[nDog].bShrink = false;
+						m_DogInfo[nDog].bElasticity = false;
 					else
-						m_DogInfo[nDog].bShrink = true;
+						m_DogInfo[nDog].bElasticity = true;
 				}
 
 				if (cstr != NULL) {
