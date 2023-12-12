@@ -6,6 +6,8 @@ const char* CResources::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"data\\TEXTURE\\BackGround\\Wilderness.png",
 	"data\\TEXTURE\\BackGround\\Forest.png",
 	"data\\TEXTURE\\BackGround\\Cave.png",
+	"data\\TEXTURE\\BackGround\\Ocean.png",
+	"data\\TEXTURE\\BackGround\\City.png",
 	"data\\TEXTURE\\BackGround\\Cloud.png",
 	"data\\TEXTURE\\WaitBalloon.PNG",
 };

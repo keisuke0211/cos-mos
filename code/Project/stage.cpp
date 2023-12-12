@@ -271,6 +271,21 @@ namespace {
 				Count = 0;
 			}
 		}
+		if (Stage::CheckPlanetIdx(1))
+		{// [[[ ”wŒi•`‰æ ]]]
+
+			// ã
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
+				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
+				->SetBillboard(true);
+
+			// ‰º
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
+				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
+				->SetBillboard(true);
+		}
 
 		// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
