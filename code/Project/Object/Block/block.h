@@ -69,6 +69,7 @@ public:
 		STONE_2                            = 49,	// ä‚2
 		BUILDING_1                         = 50,	// åöï®1
 		BUILDING_2                         = 51,	// åöï®2
+		WOOD_FENCE						   = 52,	// ñÿÇÃçÚ
 		MAX,
 	};
 	enum class OTHER_TEXTURE {
