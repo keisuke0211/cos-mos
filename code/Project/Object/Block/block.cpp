@@ -229,9 +229,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
-				RNLib::MatMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+				RNLib::MatMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 			else 
-				RNLib::MatMesh().SetModel(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos), m_modelIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+				RNLib::MatMesh().SetModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 		}
 
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::BACKWARD ||
@@ -241,9 +241,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 			setCol.g *= 0.7f;
 			setCol.b *= 0.7f;
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
-				RNLib::MatMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
+				RNLib::MatMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
 			else
-				RNLib::MatMesh().SetModel(PRIORITY_OBJECT, CMatrix::ConvPosToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f)), m_modelIdxes[(int)m_looksType], setCol, false);
+				RNLib::MatMesh().SetModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], setCol, false);
 		}
 
 		if (!m_isCollision)
