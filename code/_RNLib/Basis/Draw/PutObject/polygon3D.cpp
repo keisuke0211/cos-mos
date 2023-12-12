@@ -292,6 +292,35 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetMtx(const Matrix& mtx) {
 }
 
 //========================================
+// クリッピングカメラ設定
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetClippingCamera(CCamera& camera) {
+
+	if (this == NULL)
+		return NULL;
+
+	if (&camera == NULL)
+		return this;
+
+	m_clippingID = camera.GetID();
+
+	return this;
+}
+
+//========================================
+// クリッピングカメラ設定(ID指定)
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetClippingCamera(const short& ID) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_clippingID = ID;
+
+	return this;
+}
+
+//========================================
 // 頂点位置を設定
 //========================================
 CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetVtxPos(const Pos3D pos0, const Pos3D pos1, const Pos3D pos2, const Pos3D pos3) {
