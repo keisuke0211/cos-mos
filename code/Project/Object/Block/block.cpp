@@ -65,8 +65,8 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // ä‚2
 	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // åöï®1
 	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // åöï®2
-	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , 0.0f  , 0.0f, },		  // ñÿÇÃçÚ
-	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , 0.0f  , 30.0f, },		  // ïΩâÆ
+	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f,  },	  // ñÿÇÃçÚ
+	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // ïΩâÆ
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
