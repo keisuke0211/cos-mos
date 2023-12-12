@@ -25,8 +25,9 @@ const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(7.5f, -20.0f, -120.0f);
 const D3DXVECTOR3 SELBOXRATE = SELECTBOX - UNSELECTBOX;
 const D3DXVECTOR3 NUMPOSSELBOX = D3DXVECTOR3(15.0f, 0.0f, 0.0f);
 const D3DXVECTOR3 NUMPOSROCKET = D3DXVECTOR3(0.0f, 15.0f, 0.0f);
-const int MAX_COUNT = 12;
-CInt ANIMCOUNT = 10;
+const D3DXVECTOR3 FADEROCKET = D3DXVECTOR3(70.0f, UNSELECTBOX.y, UNSELECTBOX.z) + NUMPOSROCKET;
+const int MAX_COUNT = 24;
+CInt ANIMCOUNT = MAX_COUNT;
 
 const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
@@ -61,6 +62,7 @@ CMode_Title::CMode_Title(void) {
 	m_AnimCnt = 0;
 	m_RotCnt = 0;
 	m_bStageChange = false;
+	m_bRocketMove = false;
 
 	{// 音量設定の初期化
 		float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
@@ -903,6 +905,9 @@ void CMode_Title::StageSelect(void) {
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 	float CountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	float RocketAnimRate;
+	float AnimRate;
+	D3DXVECTOR3 numpos;
 
 	//位置補正
 	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
@@ -920,7 +925,6 @@ void CMode_Title::StageSelect(void) {
 			m_nCnt--;
 
 		if (m_nCnt == 0 && m_bStageChange == true){
-			m_bStageChange = false;
 			if (m_nOldSelect == nStageMax)
 				m_nOldSelect = 0;
 			else if (m_nOldSelect == -1)
@@ -958,24 +962,52 @@ void CMode_Title::StageSelect(void) {
 
 		if (nCnt == m_nSelect) {
 			//アニメーション割合
-			float AnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
+			AnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
 			if (m_AnimCnt[nCnt] < ANIMCOUNT) m_AnimCnt[nCnt]++;
+
 			float RotRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RotCnt,ANIMCOUNT);
 			if (m_RotCnt < ANIMCOUNT) m_RotCnt++;
 
 			//選択時	//ロケット
-			m_RocketAnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT * 2);
-			if (m_bStageChange == false)
-			{
-				if (m_RocketAnimCnt < ANIMCOUNT * 2) m_RocketAnimCnt++;
-				if (m_RocketAnimCnt == ANIMCOUNT * 2) {
+			RocketAnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT);
+
+			if (m_RocketAnimCnt < ANIMCOUNT) m_RocketAnimCnt++;
+			if (m_RocketAnimCnt == ANIMCOUNT) {
+				if (m_bStageChange == true) {
+					m_RocketAnimCnt = 0;
+					m_bStageChange = false;
+					m_bRocketMove = true;
+					if (m_nSelect == 0)
+						m_RocketPosOld = FADEROCKET;
+					else if (m_nSelect == nStageMax - 1)
+						m_RocketPosOld = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+				}
+				else{
+					m_bRocketMove = false;
 					m_RocketPosOld = m_RocketPos; m_RocketposRate = INITD3DXVECTOR3;
 				}
 			}
-		
-			m_RocketPos = UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
-			if (m_nSelect != m_nOldSelect)
-			{
+
+			if (m_bRocketMove == false) {
+				if (m_bStageChange == false)
+					m_RocketPos = UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
+				if (m_bStageChange == true) {
+					if (m_nSelect == 0)
+						m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+					else if (m_nSelect == nStageMax - 1)
+						m_RocketPos = FADEROCKET;
+				}
+			}
+			else{
+				if (m_RocketAnimCnt > 0) {
+					if (m_nSelect == 0)
+						m_RocketPos = UNSELECTBOX - PosCor + 0.0f * NUMPOSSELBOX + NUMPOSROCKET;
+					else if (m_nSelect == nStageMax - 1)
+						m_RocketPos = UNSELECTBOX - PosCor + (nStageMax - 1) * NUMPOSSELBOX + NUMPOSROCKET;
+				}
+			}
+
+			if (m_nSelect != m_nOldSelect){
 				m_RocketposRate = m_RocketPos - m_RocketPosOld;
 				m_RocketRotOld = m_RocketRot;
 
@@ -997,7 +1029,7 @@ void CMode_Title::StageSelect(void) {
 			}
 			
 			{//ロケット
-				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate), m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
+				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * RocketAnimRate), m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
 			}
 
 			 //選択時	//ブロック
@@ -1006,7 +1038,7 @@ void CMode_Title::StageSelect(void) {
 
 			//数字テクスチャ
 			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
-				const D3DXVECTOR3 numpos = D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f);
+				numpos = D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f);
 				RNLib::Polygon3D().Put(PRIORITY_UI, numpos + (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
@@ -1014,7 +1046,7 @@ void CMode_Title::StageSelect(void) {
 		}
 		else {
 			//アニメーション割合
-			float AnimRate = 1.0f - CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
+			AnimRate = 1.0f - CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
 			if (m_AnimCnt[nCnt] > 0) m_AnimCnt[nCnt]--;
 
 			// 非選択時	//ブロック
@@ -1023,7 +1055,7 @@ void CMode_Title::StageSelect(void) {
 
 			//数字
 			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
-				const D3DXVECTOR3 numpos = D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
+				numpos = D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
 				RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
@@ -1037,48 +1069,58 @@ void CMode_Title::StageSelect(void) {
 	if(m_bStageChange == false)
 	m_nOldSelect = m_nSelect;
 	bool bInput = false;
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK)) {
-		TextRelease(TEXT_MENU);
-		SwapMode(TITLE_MENU_ANIME);
-		return;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
-		m_nSelect--;
-		m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate);
-		m_RotCnt = 0;
-		m_RocketAnimCnt = 0;
-		bInput = true;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
-		m_nSelect++;
-		m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate);
-		m_RocketAnimCnt = 0;
-		m_RotCnt = 0;
-		bInput = true;
-	}
 
-	if (bInput) {
-		m_nOldnPlanet = m_nPlanetIdx;
-		m_nDrawPlanet = m_nOldnPlanet;
+	if (m_bStageChange == false) {
+		if (m_bRocketMove == false) {
 
-		if (m_nSelect < 0) {
-			m_nSelectTemp = m_nSelect;
-			m_nSelect = 0;
-
-			if (m_nPlanetIdx != 0) {
-				m_nOldSelect = -1;
-				m_bStageChange = true;
-				m_StgFlag = STAGE::DESPAWN;
+			if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK)) {
+				TextRelease(TEXT_MENU);
+				SwapMode(TITLE_MENU_ANIME);
+				return;
 			}
-		}
-		else if (m_nSelect >= nStageMax) {
-			m_nSelectTemp = m_nSelect;
-			m_nSelect = nStageMax -1;
+			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
+				m_nSelect--;
+				bInput = true;
+			}
+			else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
+				m_nSelect++;
+				bInput = true;
+			}
 
-			if (m_nPlanetIdx < nPlanetMax - 1) {
-				m_nOldSelect = 5;
-				m_bStageChange = true;
-				m_StgFlag = STAGE::DESPAWN;
+			if (bInput) {
+				m_nOldnPlanet = m_nPlanetIdx;
+				m_nDrawPlanet = m_nOldnPlanet;
+
+				if (m_nSelect > -1 && m_nSelect < nStageMax) {
+					m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * RocketAnimRate);
+					m_RotCnt = 0;
+					m_RocketAnimCnt = 0;
+				}
+
+				if (m_nSelect < 0) {
+					m_nSelectTemp = m_nSelect;
+					m_nSelect = 0;
+
+					if (m_nPlanetIdx != 0) {
+						m_RotCnt = 0;
+						m_RocketAnimCnt = 0;
+						m_nOldSelect = -1;
+						m_bStageChange = true;
+						m_StgFlag = STAGE::DESPAWN;
+					}
+				}
+				else if (m_nSelect >= nStageMax) {
+					m_nSelectTemp = m_nSelect;
+					m_nSelect = nStageMax - 1;
+
+					if (m_nPlanetIdx < nPlanetMax - 1) {
+						m_RotCnt = 0;
+						m_RocketAnimCnt = 0;
+						m_nOldSelect = 5;
+						m_bStageChange = true;
+						m_StgFlag = STAGE::DESPAWN;
+					}
+				}
 			}
 		}
 	}
