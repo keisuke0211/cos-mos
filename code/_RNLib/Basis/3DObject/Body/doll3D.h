@@ -142,8 +142,8 @@ private:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void   UpdateMotion    (void);
 	void   UpdateBone      (CSetUp3D::CData& setUp);
-	void   DrawModelVtxIdx (CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum);
-	void   DrawFace        (CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, UInt*& vtxNum);
+	void   DrawModelVtxIdx (CModel::Vertex3DInfo*& vtxInfo, ULong& vtxNum);
+	void   DrawFace        (CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, ULong*& vtxNum);
 	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, Matrix& selfMtx);
 	void   PrepareMotion   (void);
 

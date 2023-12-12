@@ -247,7 +247,7 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
 				->SetBillboard(true);
-			Å@
+			
 			// â_
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 			{

@@ -13,20 +13,26 @@
 class CStaticMesh {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CStaticMesh           ();
-	~CStaticMesh          ();
-	void   Init           (const UShort& priorityMax);
-	void   Uninit         (void);
-	void   Update         (void);
-	void   Draw           (Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
-	void   Release        (void);
-	void   Delete         (void);
-	void   SetMaterialMesh(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen = false);
-	void   SetMaterialMesh(const UShort& priority, const Pos3D& pos, const Rot3D& rot,                       const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen = false);
-	void   SetMaterialMesh(const UShort& priority, const Matrix& mtx,                                        const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen = false);
-	UShort GetMeshNum     (void);
+	CStaticMesh            ();
+	~CStaticMesh           ();
+	void   Init            (const UShort& priorityMax);
+	void   Uninit          (void);
+	void   Update          (void);
+	void   Draw            (Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen);
+	void   Release         (void);
+	void   Delete          (void);
+	void   SetModel        (const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const Color& col, const bool& isOnScreen = false);
+	void   SetModel        (const UShort& priority, const Pos3D& pos, const Rot3D& rot,                       const short& modelIdx, const Color& col, const bool& isOnScreen = false);
+	void   SetModel        (const UShort& priority, const Matrix& mtx,                                        const short& modelIdx, const Color& col, const bool& isOnScreen = false);
+	void   SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen = false);
+	void   SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot,                       const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen = false);
+	void   SetMaterialModel(const UShort& priority, const Matrix& mtx,                                        const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen = false);
+	UShort GetMeshNum      (void);
 
 private:
+	//========== [[[ 関数定義 ]]]
+	void NewCreateMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const short& matIdx, const Color& col, const bool& isOnScreen);
+
 	//========== [[[ 列挙型定義 ]]]
 	// メッシュクラス
 	class CMesh {
@@ -35,16 +41,16 @@ private:
 		CMesh();
 		~CMesh();
 		void Draw(Device& device);
-		bool SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col);
+		bool SetModel(const Matrix& mtx, const short& modelIdx, const Color& col, const short& matIdx, const short& matNum);
 
 		// [[[ 変数宣言 ]]]
 		short        m_texIdx;
 		short        m_clippingID;
 		bool         m_isOnScreen;
 		VertexBuffer m_vtxBuff;
-		UInt         m_vtxNum;
+		ULong        m_vtxNum;
 		IndexBuffer  m_idxBuff;
-		UInt         m_idxNum;
+		ULong        m_idxNum;
 	};
 
 	//========== [[[ 変数宣言 ]]]

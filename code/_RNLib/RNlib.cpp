@@ -353,7 +353,7 @@ namespace {
 	//========================================
 	void Draw(void) {
 
-		// •`‰æˆ—
+		// •`‰æŠJnˆ—
 		draw.m_drawMgr.StartDraw(mechanical.m_window.GetD3DDevice());
 	}
 

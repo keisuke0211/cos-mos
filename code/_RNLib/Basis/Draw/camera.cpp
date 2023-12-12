@@ -252,7 +252,7 @@ void CCamera::StartRendering(Device& device) {
 	device->SetViewport(&m_MTInfo.viewport);
 
 	// [[[ 画面をクリア ]]]
-	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), ColorToD3DXCOLOR(m_BGCol), 1.0f, 0);
+	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), m_BGCol.ConvD3DCOLOR(), 1.0f, 0);
 
 	// [[[ ビューマトリックスの作成 ]]]
 	Matrix mtxView = INITMATRIX; {

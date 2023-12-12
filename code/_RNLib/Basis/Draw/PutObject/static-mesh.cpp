@@ -118,29 +118,81 @@ void CStaticMesh::Delete(void) {
 }
 
 //========================================
-// メッシュ設定処理
+// モデル設定処理
 //========================================
-void CStaticMesh::SetMaterialMesh(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
-	SetMaterialMesh(priority, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, texIdx, col, isOnScreen);
+void CStaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+	SetModel(priority, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, col, isOnScreen);
 }
-void CStaticMesh::SetMaterialMesh(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
-	SetMaterialMesh(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, texIdx, col, isOnScreen);
+void CStaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+	SetModel(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, col, isOnScreen);
 }
-void CStaticMesh::SetMaterialMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+void CStaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+
+	if (modelIdx == NONEDATA)
+		return;
+
+	// モデルデータを取得
+	const CModel::CData& data = RNLib::Model().GetData(modelIdx);
+
+	for (int cntMat = 0; cntMat < data.m_matNum; cntMat++) {
+
+		bool isSet = false;
+		for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
+			CMesh& mesh = *m_meshes[priority][cntMesh];
+
+			if (mesh.m_texIdx == data.m_texIdxes[cntMat] && mesh.m_isOnScreen == isOnScreen)  {
+				if (mesh.SetModel(mtx, modelIdx, col, data.m_texIdxes[cntMat], cntMat)) 
+				{// メッシュの設定に成功した
+					isSet = true;
+					break;
+				}
+			}
+		}
+
+		if(!isSet){
+			// 同じメッシュが無かった時、メッシュを新規作成
+			NewCreateMesh(priority, mtx, modelIdx, data.m_texIdxes[cntMat], cntMat, col, isOnScreen);
+		}
+	}
+}
+
+//========================================
+// マテリアルモデル設定処理
+//========================================
+void CStaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	SetMaterialModel(priority, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, texIdx, col, isOnScreen);
+}
+void CStaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	SetMaterialModel(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, texIdx, col, isOnScreen);
+}
+void CStaticMesh::SetMaterialModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
 
 	for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
 		CMesh& mesh = *m_meshes[priority][cntMesh];
 
 		if (mesh.m_texIdx == texIdx && mesh.m_isOnScreen == isOnScreen) {
-			if (mesh.SetMesh(mtx, modelIdx, col)) 
+			if (mesh.SetModel(mtx, modelIdx, col, texIdx, NONEDATA)) 
 			{// メッシュの設定に成功した
 				return;
 			}
 		}
 	}
 
-	// ~~~ 同じメッシュが無かった ~~~
-	
+	// 同じメッシュが無かった時、メッシュを新規作成
+	NewCreateMesh(priority, mtx, modelIdx, texIdx, NONEDATA, col, isOnScreen);
+}
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| [非公開]スタティックメッシュクラス
+//----------|---------------------------------------------------------------------
+//================================================================================
+
+//========================================
+// メッシュを新規作成
+//========================================
+void CStaticMesh::NewCreateMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const short& matIdx, const Color& col, const bool& isOnScreen) {
+
 	// メッシュを再確保
 	const UShort oldNum = m_meshNums[priority];
 	CMemory::ReAllocDouble(&m_meshes[priority], oldNum, ++m_meshNums[priority]);
@@ -148,7 +200,7 @@ void CStaticMesh::SetMaterialMesh(const UShort& priority, const Matrix& mtx, con
 	// メッシュを設定
 	m_meshes[priority][oldNum]->m_texIdx = texIdx;
 	m_meshes[priority][oldNum]->m_isOnScreen = isOnScreen;
-	m_meshes[priority][oldNum]->SetMesh(mtx, modelIdx, col);
+	m_meshes[priority][oldNum]->SetModel(mtx, modelIdx, col, texIdx, matIdx);
 }
 
 //================================================================================
@@ -207,24 +259,28 @@ void CStaticMesh::CMesh::Draw(Device& device) {
 //========================================
 // メッシュ設定処理
 //========================================
-bool CStaticMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const Color& col) {
+bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, const Color& col, const short& texIdx, const short& matIdx) {
 
 	// デバイスを取得
 	Device& device = RNLib::Window().GetD3DDevice();
 
 	// 過去の数として保存
-	const UInt vtxNumOld = m_vtxNum;
-	const UInt idxNumOld = m_idxNum;
+	const ULong vtxNumOld = m_vtxNum;
+	const ULong idxNumOld = m_idxNum;
 
 	// モデルデータを取得
 	CModel::CData& modelData = RNLib::Model().GetData(modelIdx);
+	CModel::CData::MatData matData = {};
+	if (matIdx != NONEDATA) {
+		matData = modelData.m_matDatas[matIdx];
+	}
 
 	// 追加する頂点情報とインデックス情報を取得
 	CModel::Vertex3DInfo* addVtxes = NULL;
-	UInt addVtxNum = 0;
-	RNLib::Model().StoreVtxInfo(mtx, modelIdx, &addVtxNum, &addVtxes);
-	UShort*& addIdxes  = modelData.m_idxes;
-	UInt&    addIdxNum = modelData.m_idxNum;
+	ULong   addVtxNum = (matIdx == NONEDATA) ? modelData.m_vtxNum : modelData.m_matDatas[matIdx].vtxNum;
+	RNLib::Model().StoreVtxInfo(mtx, modelIdx, &addVtxes, matIdx);
+	ULong*& addIdxes  = (matIdx == NONEDATA) ? modelData.m_idxes : modelData.m_matDatas[matIdx].idxes;
+	ULong&  addIdxNum = (matIdx == NONEDATA) ? modelData.m_idxNum : modelData.m_matDatas[matIdx].idxNum;
 
 	// 頂点とインデックス数を加算
 	m_vtxNum += addVtxNum;
@@ -253,17 +309,18 @@ bool CStaticMesh::CMesh::SetMesh(const Matrix& mtx, const short& modelIdx, const
 			m_vtxBuff->Lock(0, 0, (void**)&vtxes, 0);
 		newVtxBuff->Lock(0, 0, (void**)&newVtxes, 0);
 
-		// 頂点情報を移し替え
-		if (m_vtxBuff != NULL)
+		// 元の頂点情報を移し替え
+		if (m_vtxBuff != NULL) {
 			for (UInt cntVtx = 0; cntVtx < vtxNumOld; newVtxes[cntVtx] = vtxes[cntVtx], cntVtx++);
+		}
 
-		{// 新しい頂点情報の設定
+		{// 追加する頂点情報を移し替え
 			UInt vtxCount = 0;
 			for (UInt cntVtx = vtxNumOld; cntVtx < m_vtxNum; cntVtx++) {
 				newVtxes[cntVtx].pos = addVtxes[vtxCount].worldPos;
 				newVtxes[cntVtx].nor = addVtxes[vtxCount].worldNor;
 				newVtxes[cntVtx].tex = addVtxes[vtxCount].texPos;
-				newVtxes[cntVtx].col = D3DCOLOR_RGBA(col.r, col.g, col.b, col.a);
+				newVtxes[cntVtx].col = (matIdx == NONEDATA) ? D3DCOLOR_RGBA(col.r, col.g, col.b, col.a) : matData.col.GetMixed(col).ConvD3DCOLOR();
 				vtxCount++;
 			}
 		}
