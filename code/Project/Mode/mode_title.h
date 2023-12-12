@@ -92,6 +92,11 @@ private:
 		TEXT_ALL,		// 全部
 		TEXT_MAX
 	};
+	enum STAGE {
+		NONE = 0,	// 何もない
+		POP,		// 出現
+		DESPAWN		// 消滅
+	};
 
 	//========== [[[ 構造体定義 ]]]
 	// ステージ種類情報
@@ -131,18 +136,23 @@ private:
 	D3DXVECTOR3 m_RocketRotOld;
 	D3DXVECTOR3 m_RocketRotRate;
 	float m_PlanetAngle;
+	float m_RocketAnimRate;
 	int m_TexIdx[TEX_MAX];
 	int m_nSelect;
+	int m_nSelectTemp;
 	int m_nOldSelect;
 	int m_nPlanetIdx;
 	int m_nOldnPlanet;
+	int m_nDrawPlanet;
 	int m_RocketIdx;
 	int m_SelIdx;
 	int m_StgBoardIdx;
 	int m_CoinBoardIdx;
 	int m_ArrowIdx;
 	int *m_AnimCnt;
+	int m_RocketAnimCnt;
 	int m_RotCnt;
+	int m_nCnt;
 	bool m_bMove[WORDS_MAX];
 	bool m_bBackMode;
 	bool m_bStageChange;
@@ -151,4 +161,5 @@ private:
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];
 	PlanetType *m_PlanetType;
+	STAGE m_StgFlag;
 };

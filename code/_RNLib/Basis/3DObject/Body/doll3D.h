@@ -113,6 +113,8 @@ public:
 	~CDoll3D                           ();
 	void        Update                 (void);
 	void        SetUp                  (const short& setUpIdx);
+	void        SetClippingCamera      (CCamera& camera) { m_clippingID = camera.GetID(); }
+	void        SetClippingCamera      (const short& ID) { m_clippingID = ID; }
 	void        SetMotion              (const short& motionIdx);
 	void        OverwriteMotion        (const short& motionIdx);
 	void        SetMotionStop          (const bool& isStop)                { m_motionInfo.isStop = isStop; }
@@ -142,13 +144,14 @@ private:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void   UpdateMotion    (void);
 	void   UpdateBone      (CSetUp3D::CData& setUp);
-	void   DrawModelVtxIdx (CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum);
-	void   DrawFace        (CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, UInt*& vtxNum);
+	void   DrawModelVtxIdx (CModel::Vertex3DInfo*& vtxInfo, ULong& vtxNum);
+	void   DrawFace        (CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, ULong*& vtxNum);
 	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, Matrix& selfMtx);
 	void   PrepareMotion   (void);
 
 	//========== [[[ ïœêîêÈåæ ]]]
 	UShort      m_priority;
+	short       m_clippingID;
 	Pos3D       m_pos;
 	bool        m_isSetPos;
 	Rot3D       m_rot;

@@ -27,6 +27,7 @@ CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 	RNLib::Doll3DMgr().AddList(this);
 
 	m_priority             = priority;
+	m_clippingID           = NONEDATA;
 	m_pos			       = INITPOS3D;
 	m_isSetPos             = false;
 	m_isShow               = true;
@@ -195,7 +196,7 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 
 	// 頂点情報
 	CModel::Vertex3DInfo** vtxInfo = NULL;
-	UInt* vtxNum = NULL;
+	ULong* vtxNum = NULL;
 	CMemory::Alloc(&vtxInfo, setUp.m_boneDataNum);
 	CMemory::Alloc(&vtxNum, setUp.m_boneDataNum);
 
@@ -213,9 +214,9 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 		const Matrix worldMtx = FindBoneWorldMtx(cntBone, m_boneStates, setUp.m_boneDatas, selfMtx);
 
 		// 頂点情報を取得
-		vtxNum[cntBone] = 0;
+		vtxNum[cntBone] = RNLib::Model().GetData(setUp.m_boneDatas[cntBone].modelIdx).m_vtxNum;
 		vtxInfo[cntBone] = NULL;
-		RNLib::Model().StoreVtxInfo(worldMtx, setUp.m_boneDatas[cntBone].modelIdx ,&vtxNum[cntBone], &vtxInfo[cntBone]);
+		RNLib::Model().StoreVtxInfo(worldMtx, setUp.m_boneDatas[cntBone].modelIdx, &vtxInfo[cntBone]);
 
 		// 表示フラグが真の時、
 		if (m_isShow) {
@@ -223,7 +224,8 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 			// モデルの設置処理
 			RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
 				->SetCol(m_col)
-				->SetBrightnessOfEmissive(m_brightnessOfEmission);
+				->SetBrightnessOfEmissive(m_brightnessOfEmission)
+				->SetClippingCamera(m_clippingID);
 
 			// 頂点番号の描画
 			if (RNLib::Doll3DMgr().GetEditDoll() == this &&
@@ -250,10 +252,10 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 //========================================
 // モデルの頂点番号を描画
 //========================================
-void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
+void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, ULong& vtxNum) {
 
 	// 頂点番号描画数
-	UInt drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+	ULong drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
 	if (drawVtxIdxNum > vtxNum)
 		drawVtxIdxNum = vtxNum;
 
@@ -261,19 +263,19 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
 	if (drawVtxIdxNum > 0) {
 
 		// 頂点番号リストとカメラまでの距離リストを作成
-		UShort* vtxIdxs = NULL;
+		ULong* vtxIdxs = NULL;
 		float* vtxDists = NULL;
 		CMemory::Alloc(&vtxIdxs, vtxNum);
 		CMemory::Alloc(&vtxDists, vtxNum);
 		const Pos3D& cameraPos = RNLib::Doll3DMgr().GetEditCamera()->GetPosV();
-		for (UShort cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
+		for (ULong cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
 			vtxIdxs[cntVtx] = cntVtx;
 			vtxDists[cntVtx] = CGeometry::FindDistance(cameraPos, vtxInfo[cntVtx].pos);
 		}
 
 		// バブルソートを使用して頂点番号リストをソート
-		for (UShort cntVtx = 0; cntVtx < vtxNum - 1; ++cntVtx) {
-			for (UShort cntVtx2 = 0; cntVtx2 < vtxNum - cntVtx - 1; ++cntVtx2) {
+		for (ULong cntVtx = 0; cntVtx < vtxNum - 1; ++cntVtx) {
+			for (ULong cntVtx2 = 0; cntVtx2 < vtxNum - cntVtx - 1; ++cntVtx2) {
 				if (vtxDists[cntVtx2] > vtxDists[cntVtx2 + 1]) {
 
 					// 距離を交換
@@ -291,7 +293,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
 
 		for (int cntVtx = drawVtxIdxNum - 1; cntVtx >= 0; cntVtx--) {
 			bool isOverwrite = false;
-			for (UInt cntVtx2 = vtxIdxs[cntVtx] + 1; cntVtx2 < vtxNum; cntVtx2++) {
+			for (ULong cntVtx2 = vtxIdxs[cntVtx] + 1; cntVtx2 < vtxNum; cntVtx2++) {
 				if (vtxInfo[vtxIdxs[cntVtx]].worldPos == vtxInfo[cntVtx2].worldPos) {
 					isOverwrite = true;
 					break;
@@ -321,7 +323,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
 
 		for (int cntVtx = drawVtxIdxNum - 1; cntVtx >= 0; cntVtx--) {
 			bool isOverwrite = false;
-			for (UInt cntVtx2 = cntVtx + 1; cntVtx2 < vtxNum; cntVtx2++) {
+			for (ULong cntVtx2 = cntVtx + 1; cntVtx2 < vtxNum; cntVtx2++) {
 				if (vtxInfo[cntVtx].worldPos == vtxInfo[cntVtx2].worldPos) {
 					isOverwrite = true;
 					break;
@@ -349,7 +351,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, UInt& vtxNum) {
 //========================================
 // フェイスを描画
 //========================================
-void CDoll3D::DrawFace(CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, UInt*& vtxNum) {
+void CDoll3D::DrawFace(CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, ULong*& vtxNum) {
 
 	for (int cntFace = 0; cntFace < setUp.m_faceDataNum; cntFace++) {
 		const CSetUp3D::FaceVtxData& vtx0 = setUp.m_faceDatas[cntFace].vtxs[0];
@@ -384,7 +386,8 @@ void CDoll3D::DrawFace(CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, 
 				vtx0.texPos,
 				vtx1.texPos,
 				vtx2.texPos,
-				vtx3.texPos);
+				vtx3.texPos)
+			->SetClippingCamera(m_clippingID);
 	}
 }
 

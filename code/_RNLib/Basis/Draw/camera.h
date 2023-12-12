@@ -8,6 +8,7 @@
 
 #include "../Mechanical/object.h"
 #include "../Mechanical/memory.h"
+#include "color.h"
 
 //****************************************
 // クラス定義
@@ -29,7 +30,7 @@ public:
 
 	//========== [[[ 関数宣言 ]]]
 	static void StartRenderingScreen(Device& device);
-	            CCamera             (const Scale2D& scale2D);
+	            CCamera             (const Size2D& scale2D);
 	            ~CCamera            ();
 	void        Update              (void);
 	void        StartRendering      (Device& device);
@@ -39,7 +40,7 @@ public:
 	Pos3D&      GetPosV             (void)                   { return m_posV; }
 	Pos3D&      GetPosR             (void)                   { return m_posR; }
 	Rot3D&      GetRot              (void)                   { return m_rot; }
-	Scale2D&    GetScale2D          (void)                   { return m_scale; }
+	Scale2D&    GetScale2D          (void)                   { return m_size; }
 	Vector3D    GetVec              (void)                   { return m_posR - m_posV; }
 	Vector3D    GetNor              (void)                   { Vector3D vec = GetVec(); return *D3DXVec3Normalize(&vec, &vec); }
 	Viewport    GetViewport         (void)                   { return m_MTInfo.viewport; }
@@ -114,7 +115,7 @@ private:
 	Pos3D           m_posVib;	// 振動位置
 	Rot3D           m_rot;
 	Vector3D        m_spin;
-	Scale2D         m_scale;
+	Size2D          m_size;
 	float           m_dist;
 	float           m_radian;
 	float           m_radianGoal;

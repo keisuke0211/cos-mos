@@ -17,6 +17,7 @@
 const int	CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
 const float CPlayer::GUIDE_WIDTH   = 10.0f; // ガイドの幅
 const float CPlayer::GUIDE_HEIGHT  = 14.0f; // ガイドの高さ
+const float CPlayer::MAX_GUIDE_SPEED = 0.2f;// ガイドアニメーションの最大速度
 
 int                CPlayer::s_nSwapInterval = 0; // 残りスワップインターバル
 bool               CPlayer::s_bSwapAnim = false; //スワップアニメーション中かどうか
@@ -969,16 +970,19 @@ void CPlayer::SwapGuide(Info& Player)
 	CFloat BottomPosV = Player.fGuideTexVPos + Player.fGuideTexVSize;
 
 	//ガイドサイズを設定
-	CInt YDiff = fabsf(Player.pos.y) * 200;
+	CInt YDiff = -Player.pos.y * 200;
 	CFloat fSize = (YDiff / (int)GUIDE_HEIGHT) / 100.0f;
 	Player.fGuideTexVSize = fabsf(fSize);
 
 	//ガイドのスピードを設定
 	Player.fGuideMoveSpeed = fSize / 100.0f;
+	FloatControl(&Player.fGuideMoveSpeed, MAX_GUIDE_SPEED, -MAX_GUIDE_SPEED);
 	Player.fGuideTexVPos += Player.fGuideMoveSpeed;
 
 	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
 		Player.fGuideTexVPos = 0.0f;
+
+	RNLib::Text2D().PutDebugLog(CreateText("ガイド  スピード:%.2f  サイズ:%.2f", Player.fGuideMoveSpeed, fSize));
 
 	//スワップガイドの描画
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)

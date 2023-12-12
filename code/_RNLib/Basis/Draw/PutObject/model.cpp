@@ -99,19 +99,38 @@ short CModel::Load(const char* loadPath, short idx) {
 		{// 読み込みに成功した時、
 			const DWORD fvf       = m_datas[idx]->m_mesh->GetFVF();
 			const DWORD dwSizeFVF = D3DXGetFVFVertexSize(fvf);
-			const ULong vtxNum    = m_datas[idx]->m_mesh->GetNumVertices();
-			const ULong faceNum   = m_datas[idx]->m_mesh->GetNumFaces();
+
+			// 頂点数を取得
+			m_datas[idx]->m_vtxNum = m_datas[idx]->m_mesh->GetNumVertices();
+
+			// 頂点データを作成
+			CMemory::Alloc(&m_datas[idx]->m_vtxDatas, m_datas[idx]->m_vtxNum);
+			for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; cntVtx++) {
+				m_datas[idx]->m_vtxDatas[cntVtx] = {};
+				CMemory::Alloc(&m_datas[idx]->m_vtxDatas[cntVtx].isMats, m_datas[idx]->m_matNum);
+				for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++)
+					m_datas[idx]->m_vtxDatas[cntVtx].isMats[cntMat] = false;
+			}
+
+			// マテリアルデータを生成
+			CMemory::Alloc(&m_datas[idx]->m_matDatas, m_datas[idx]->m_matNum);
+			for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++) {
+				m_datas[idx]->m_matDatas[cntMat] = {};
+			}
+
+			// 面の数を取得
+			m_datas[idx]->m_faceNum = m_datas[idx]->m_mesh->GetNumFaces();
 
 			// 頂点の縁取り情報構造体を定義
 			struct VertexOutLine {
-				Pos3D  totalVec = INITPOS3D;
-				UShort count = 0;
+				Pos3D totalVec = INITPOS3D;
+				ULong count = 0;
 			};
 
 			// 頂点の縁取り情報を生成
 			VertexOutLine* vertexOutLines = NULL;
-			CMemory::Alloc(&vertexOutLines, vtxNum);
-			for (ULong cntVtx = 0; cntVtx < vtxNum; vertexOutLines[cntVtx] = {}, cntVtx++);
+			CMemory::Alloc(&vertexOutLines, m_datas[idx]->m_vtxNum);
+			for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; vertexOutLines[cntVtx] = {}, cntVtx++);
 
 			{// 頂点の縁取り情報を算出
 				// 頂点バッファをロック
@@ -119,7 +138,7 @@ short CModel::Load(const char* loadPath, short idx) {
 				m_datas[idx]->m_mesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
 
 				// 法線方向に加算
-				for (ULong cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
+				for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; cntVtx++) {
 					Vector3D* pos = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
 					Vector3D* nor = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
@@ -131,7 +150,7 @@ short CModel::Load(const char* loadPath, short idx) {
 					}
 
 					// 重なっている頂点位置に輪郭の加算距離を加算
-					for (ULong cntVtx2 = 0; cntVtx2 < vtxNum; cntVtx2++) {
+					for (ULong cntVtx2 = 0; cntVtx2 < m_datas[idx]->m_vtxNum; cntVtx2++) {
 
 						// 今のカウントの頂点と同じなら、折り返す
 						if (cntVtx == cntVtx2)
@@ -159,24 +178,86 @@ short CModel::Load(const char* loadPath, short idx) {
 				WORD* idxBuff = NULL;
 				m_datas[idx]->m_mesh->LockIndexBuffer(D3DLOCK_READONLY, (void**)&idxBuff);
 
+				// アトリビュートバッファをロック
+				DWORD* attributeBuffer = NULL;
+				m_datas[idx]->m_mesh->LockAttributeBuffer(0, &attributeBuffer);
+
 				// インデックス数を取得
-				m_datas[idx]->m_idxNum = faceNum * 3;
+				m_datas[idx]->m_idxNum = m_datas[idx]->m_faceNum * 3;
 
 				// インデックス情報を生成
 				CMemory::Alloc(&m_datas[idx]->m_idxes, m_datas[idx]->m_idxNum);
 
-				{// インデックス情報を代入
-					UInt count = 0;
-					for (UInt cntIdx = 0; cntIdx < m_datas[idx]->m_idxNum; cntIdx++) {
-						m_datas[idx]->m_idxes[cntIdx] = idxBuff[cntIdx];
-						count++;
-						if (cntIdx % 4 != 0) {
+				// 面毎の番号を生成
+				CMemory::Alloc(&m_datas[idx]->m_faceMatIdxes, m_datas[idx]->m_faceNum);
+
+				for (ULong cntFace = 0; cntFace < m_datas[idx]->m_faceNum; cntFace++) {
+
+					{// インデックス情報を代入
+						const ULong startIdxIdx = cntFace * 3;
+						for (int cnt = 0; cnt < 3; cnt++) {
+							const ULong idxIdx = startIdxIdx + cnt;
+							m_datas[idx]->m_idxes[idxIdx] = idxBuff[idxIdx];
+
+							// その頂点のマテリアルに属しているかフラグ
+							m_datas[idx]->m_vtxDatas[idxBuff[idxIdx]].isMats[attributeBuffer[cntFace]] = true;
 						}
 					}
+
+					// マテリアルのインデックス数を加算
+					m_datas[idx]->m_matDatas[attributeBuffer[cntFace]].idxNum += 3;
+
+					// 面のマテリアル番号
+					m_datas[idx]->m_faceMatIdxes[cntFace] = attributeBuffer[cntFace];
+				}
+
+				for (UShort cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++) {
+
+					// マテリアルの頂点番号列
+					ULong* matVtxIdxes = NULL;
+					CMemory::Alloc(&matVtxIdxes, m_datas[idx]->m_vtxNum); {
+						ULong matVtxCount = 0;
+						for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; cntVtx++) {
+
+							if (m_datas[idx]->m_vtxDatas[cntVtx].isMats[cntMat]) 
+							{// マテリアルが該当する頂点である時、
+								// マテリアル毎の頂点数を加算
+								m_datas[idx]->m_matDatas[cntMat].vtxNum++;
+
+								// マテリアルの頂点番号列に値を代入
+								matVtxIdxes[cntVtx] = matVtxCount++;
+							}
+							else {
+								// マテリアルの頂点番号列に値を初期化
+								matVtxIdxes[cntVtx] = 0;
+							}
+						}
+					}
+
+					// マテリアル毎のインデックス情報を生成
+					CMemory::Alloc(&m_datas[idx]->m_matDatas[cntMat].idxes, m_datas[idx]->m_matDatas[cntMat].idxNum);
+
+					// マテリアル毎のインデックス情報を代入していく
+					ULong matFaceCount = 0;
+					for (ULong cntFace = 0; cntFace < m_datas[idx]->m_faceNum; cntFace++) {
+						if (cntMat == attributeBuffer[cntFace]) {
+							const ULong faceStartIdx    = cntFace      * 3;
+							const ULong matFaceStartIdx = matFaceCount * 3;
+							m_datas[idx]->m_matDatas[cntMat].idxes[matFaceStartIdx    ] = (ULong)matVtxIdxes[idxBuff[faceStartIdx    ]];
+							m_datas[idx]->m_matDatas[cntMat].idxes[matFaceStartIdx + 1] = (ULong)matVtxIdxes[idxBuff[faceStartIdx + 1]];
+							m_datas[idx]->m_matDatas[cntMat].idxes[matFaceStartIdx + 2] = (ULong)matVtxIdxes[idxBuff[faceStartIdx + 2]];
+							matFaceCount++;
+						}
+					}
+
+					CMemory::Release(&matVtxIdxes);
 				}
 
 				// インデックスバッファをアンロック
 				m_datas[idx]->m_mesh->UnlockIndexBuffer();
+
+				// アトリビュートバッファをアンロック
+				m_datas[idx]->m_mesh->UnlockAttributeBuffer();
 			}
 
 			// 輪郭メッシュを生成する
@@ -185,7 +266,7 @@ short CModel::Load(const char* loadPath, short idx) {
 			for (UShort cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
 
 				// メッシュを複製する
-				D3DXCreateMeshFVF(faceNum, vtxNum, D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &m_datas[idx]->m_outLineMeshs[cntOutLine]);
+				D3DXCreateMeshFVF(m_datas[idx]->m_faceNum, m_datas[idx]->m_vtxNum, D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &m_datas[idx]->m_outLineMeshs[cntOutLine]);
 				m_datas[idx]->m_mesh->CloneMeshFVF(D3DXMESH_MANAGED | D3DXMESH_WRITEONLY, fvf, device, &m_datas[idx]->m_outLineMeshs[cntOutLine]);
 
 				// 頂点バッファをロック
@@ -193,7 +274,7 @@ short CModel::Load(const char* loadPath, short idx) {
 				m_datas[idx]->m_outLineMeshs[cntOutLine]->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
 
 				// 頂点位置に加算位置を加算
-				for (UInt cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
+				for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; cntVtx++) {
 					Pos3D* pos = (Pos3D*)(vtxBuff + (dwSizeFVF * cntVtx));
 					D3DXVec3Normalize(&vertexOutLines[cntVtx].totalVec, &vertexOutLines[cntVtx].totalVec);
 					*pos += vertexOutLines[cntVtx].totalVec * RNSettings::GetInfo().modelOutLineAddDistanceInterval * (cntOutLine + 1);
@@ -215,6 +296,7 @@ short CModel::Load(const char* loadPath, short idx) {
 
 			// テクスチャの読み込み
 			for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++) {
+				m_datas[idx]->m_matDatas[cntMat].col.Set(mats[cntMat].MatD3D.Diffuse);
 				m_datas[idx]->m_texIdxes[cntMat] = (mats[cntMat].pTextureFilename != NULL) ? RNLib::Texture().Load(mats[cntMat].pTextureFilename)          : NONEDATA;
 				m_datas[idx]->m_texes   [cntMat] = m_datas[idx]->m_texIdxes[cntMat] >= 0   ? RNLib::Texture().GetTexture(m_datas[idx]->m_texIdxes[cntMat]) : NULL;
 			}
@@ -227,44 +309,41 @@ short CModel::Load(const char* loadPath, short idx) {
 //========================================
 // 頂点情報を格納
 //========================================
-void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, UInt* vtxNum, Vertex3DInfo** vtxInfos) {
+void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Vertex3DInfo** vtxInfos, const short& matIdx) {
 
 	if (modelIdx == NONEDATA) {
-		*vtxNum   = 0;
 		*vtxInfos = NULL;
 		return;
 	}
 
 	// 頂点フォーマットのサイズを取得
-	const DWORD dwSizeFVF(D3DXGetFVFVertexSize(m_datas[modelIdx]->m_mesh->GetFVF()));
+	const DWORD dwSizeFVF = D3DXGetFVFVertexSize(m_datas[modelIdx]->m_mesh->GetFVF());
 
 	// 頂点バッファをロック
 	BYTE* vtxBuff = NULL;
 	m_datas[modelIdx]->m_mesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
 
-	// 頂点数を取得
-	*vtxNum = m_datas[modelIdx]->m_mesh->GetNumVertices();
-
 	// 頂点情報を生成
-	CMemory::Alloc(vtxInfos, *vtxNum);
+	CMemory::Alloc(vtxInfos, matIdx == NONEDATA ? m_datas[modelIdx]->m_vtxNum : m_datas[modelIdx]->m_matDatas[matIdx].vtxNum);
 
 	// テクスチャ座標のオフセットを計算
 	const DWORD texCoordOffset = dwSizeFVF - sizeof(float) * 2;  // 2は2次元のテクスチャ座標の要素数
 
 	// 頂点情報を代入
-	for (UInt cntVtx = 0; cntVtx < *vtxNum; cntVtx++) {
-		Vertex3DInfo* vtx = &(*vtxInfos)[cntVtx];
-		vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
-		vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
-
-		// ワールドマトリックスを算出
-		Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
-
-		vtx->worldPos = CMatrix::ConvMtxToPos(worldMtx);
-		vtx->rot      = CGeometry::FindVecRot(vtx->nor);
-		vtx->worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
-		vtx->worldRot = CGeometry::FindVecRot(vtx->worldNor);
-		vtx->texPos   = *(Pos2D*)(vtxBuff + (dwSizeFVF * cntVtx) + texCoordOffset);
+	UInt vtxCount = 0;
+	if (matIdx == NONEDATA) {
+		for (ULong cntVtx = 0; cntVtx < m_datas[modelIdx]->m_vtxNum; cntVtx++) {
+			ExecutionStoreVtxInfo(&(*vtxInfos)[cntVtx], modelMtx, cntVtx, vtxBuff, dwSizeFVF, texCoordOffset);
+		}
+	}
+	else {
+		ULong matVtxCount = 0;
+		for (ULong cntVtx = 0; cntVtx < m_datas[modelIdx]->m_vtxNum; cntVtx++) {
+			if (m_datas[modelIdx]->m_vtxDatas[cntVtx].isMats[matIdx]) {
+				ExecutionStoreVtxInfo(&(*vtxInfos)[matVtxCount], modelMtx, cntVtx, vtxBuff, dwSizeFVF, texCoordOffset);
+				matVtxCount++;
+			}
+		}
 	}
 
 	// 頂点バッファをアンロック
@@ -302,6 +381,30 @@ CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, 
 
 //================================================================================
 //----------|---------------------------------------------------------------------
+//==========| [非公開]モデルクラス
+//----------|---------------------------------------------------------------------
+//================================================================================
+
+//========================================
+// 頂点情報の格納実行処理
+//========================================
+void CModel::ExecutionStoreVtxInfo(Vertex3DInfo* vtx, const Matrix& modelMtx, const ULong& cntVtx, BYTE*& vtxBuff, const DWORD& dwSizeFVF, const DWORD& texCoordOffset) {
+
+	vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
+	vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
+
+	// ワールドマトリックスを算出
+	Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
+
+	vtx->worldPos = CMatrix::ConvMtxToPos(worldMtx);
+	vtx->rot      = CGeometry::FindVecRot(vtx->nor);
+	vtx->worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
+	vtx->worldRot = CGeometry::FindVecRot(vtx->worldNor);
+	vtx->texPos   = *(Pos2D*)(vtxBuff + (dwSizeFVF * cntVtx) + texCoordOffset);
+}
+
+//================================================================================
+//----------|---------------------------------------------------------------------
 //==========| データクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
@@ -311,15 +414,20 @@ CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, 
 //========================================
 CModel::CData::CData() {
 
-	m_texIdxes     = NULL;
-	m_texes        = NULL;
-	m_idxes        = NULL;
-	m_idxNum       = 0;
-	m_mesh         = NULL;
+	m_texIdxes	   = NULL;
+	m_texes		   = NULL;
+	m_vtxDatas	   = NULL;
+	m_vtxNum	   = 0;
+	m_idxes		   = NULL;
+	m_idxNum	   = 0;
+	m_matBuff	   = NULL;
+	m_matDatas	   = NULL;
+	m_matNum	   = 0;
+	m_faceMatIdxes = NULL;
+	m_faceNum	   = 0;
+	m_mesh		   = 0;
 	m_outLineMeshs = NULL;
-	m_matBuff      = NULL;
-	m_matNum       = 0;
-	m_radiusMax    = 0.0f;
+	m_radiusMax	   = 0.0f;
 }
 
 //========================================
@@ -339,8 +447,23 @@ void CModel::CData::Release(void) {
 	CMemory::Release(&m_texIdxes);
 	CMemory::Release(&m_texes);
 
+	// 頂点データの破棄
+	for (ULong cnt = 0; cnt < m_vtxNum; cnt++) {
+		CMemory::Release(&m_vtxDatas[cnt].isMats);
+	}
+	CMemory::Release(&m_vtxDatas);
+
 	// インデックスの破棄
 	CMemory::Release(&m_idxes);
+
+	// マテリアルデータを生成
+	for (ULong cnt = 0; cnt < m_matNum; cnt++) {
+		CMemory::Release(&m_matDatas[cnt].idxes);
+	}
+	CMemory::Release(&m_matDatas);
+
+	// 面毎のマテリアル番号の破棄
+	CMemory::Release(&m_faceMatIdxes);
 
 	// メッシュの破棄
 	if (m_mesh != NULL) {
@@ -537,7 +660,6 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	{// もし拡大倍率に変更があった時、
 		const DWORD fvf       = modelData.m_mesh->GetFVF();
 		const DWORD dwSizeFVF = D3DXGetFVFVertexSize(fvf);
-		const ULong vtxNum    = modelData.m_mesh->GetNumVertices();
 		const ULong faceNum   = modelData.m_mesh->GetNumFaces();
 
 		// メッシュを複製する
@@ -554,7 +676,7 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 		drawInfo->m_mesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
 
 		// 法線方向に加算
-		for (ULong cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
+		for (ULong cntVtx = 0; cntVtx < modelData.m_vtxNum; cntVtx++) {
 			Vector3D* nor = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 			nor->x *= scale.x;

@@ -67,6 +67,8 @@ public:
 		CORAL_REEF_3                       = 47,	// サンゴ礁3
 		STONE_1                            = 48,	// 岩1
 		STONE_2                            = 49,	// 岩2
+		BUILDING_1                         = 50,	// 建物1
+		BUILDING_2                         = 51,	// 建物2
 		MAX,
 	};
 	enum class OTHER_TEXTURE {
@@ -76,7 +78,6 @@ public:
 	};
 	enum class OTHER_MODEL {
 		// その他モデル
-		LEAF_INSIDE,
 		SOIL_BLOCK_GRASSY,
 		MAX,
 	};
@@ -100,9 +101,14 @@ public:
 		LIGHT_B,
 		MAX,
 	};
+	enum class MODEL_TYPE {
+		// モデルタイプ
+		PUT,
+		MATERIAL_MESH,
+		MESH,
+	};
 	enum class SET_TYPE {
 		// 設定タイプ
-		NONE,
 		FORWARD,
 		BACKWARD,
 		FORWARD_AND_BACKWARD,
@@ -134,6 +140,7 @@ private:
 		const char* modelPath;
 		const char* pasteTexPath;
 		Color col;
+		MODEL_TYPE modelType;
 		SET_TYPE setType;
 		float height;
 		float depth;
