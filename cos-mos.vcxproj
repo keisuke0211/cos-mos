@@ -195,6 +195,7 @@
     <ClCompile Include="code\Project\Object\stage-object-manager.cpp" />
     <ClCompile Include="code\Project\Object\stage-object.cpp" />
     <ClCompile Include="code\Project\UI\coinUI.cpp" />
+    <ClCompile Include="code\Project\UI\MenuUi.cpp" />
     <ClCompile Include="code\Project\UI\miss.cpp" />
     <ClCompile Include="code\Project\UI\partsUI.cpp" />
     <ClCompile Include="code\Project\precompile.cpp">
@@ -304,6 +305,7 @@
     <ClInclude Include="code\Project\Object\stage-object-manager.h" />
     <ClInclude Include="code\Project\Object\stage-object.h" />
     <ClInclude Include="code\Project\UI\coinUI.h" />
+    <ClInclude Include="code\Project\UI\MenuUi.h" />
     <ClInclude Include="code\Project\UI\miss.h" />
     <ClInclude Include="code\Project\UI\partsUI.h" />
     <ClInclude Include="code\Project\precompile.h" />

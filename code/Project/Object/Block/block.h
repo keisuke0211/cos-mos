@@ -109,7 +109,6 @@ public:
 	};
 	enum class SET_TYPE {
 		// ê›íËÉ^ÉCÉv
-		NONE,
 		FORWARD,
 		BACKWARD,
 		FORWARD_AND_BACKWARD,
