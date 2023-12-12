@@ -27,6 +27,7 @@ CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 	RNLib::Doll3DMgr().AddList(this);
 
 	m_priority             = priority;
+	m_clippingID           = NONEDATA;
 	m_pos			       = INITPOS3D;
 	m_isSetPos             = false;
 	m_isShow               = true;
@@ -223,7 +224,8 @@ void CDoll3D::UpdateBone(CSetUp3D::CData& setUp) {
 			// ƒ‚ƒfƒ‹‚ÌÝ’uˆ—
 			RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
 				->SetCol(m_col)
-				->SetBrightnessOfEmissive(m_brightnessOfEmission);
+				->SetBrightnessOfEmissive(m_brightnessOfEmission)
+				->SetClippingCamera(m_clippingID);
 
 			// ’¸“_”Ô†‚Ì•`‰æ
 			if (RNLib::Doll3DMgr().GetEditDoll() == this &&
@@ -384,7 +386,8 @@ void CDoll3D::DrawFace(CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, 
 				vtx0.texPos,
 				vtx1.texPos,
 				vtx2.texPos,
-				vtx3.texPos);
+				vtx3.texPos)
+			->SetClippingCamera(m_clippingID);
 	}
 }
 

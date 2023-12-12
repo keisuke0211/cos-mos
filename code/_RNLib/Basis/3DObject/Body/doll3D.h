@@ -113,6 +113,8 @@ public:
 	~CDoll3D                           ();
 	void        Update                 (void);
 	void        SetUp                  (const short& setUpIdx);
+	void        SetClippingCamera      (CCamera& camera) { m_clippingID = camera.GetID(); }
+	void        SetClippingCamera      (const short& ID) { m_clippingID = ID; }
 	void        SetMotion              (const short& motionIdx);
 	void        OverwriteMotion        (const short& motionIdx);
 	void        SetMotionStop          (const bool& isStop)                { m_motionInfo.isStop = isStop; }
@@ -149,6 +151,7 @@ private:
 
 	//========== [[[ ïœêîêÈåæ ]]]
 	UShort      m_priority;
+	short       m_clippingID;
 	Pos3D       m_pos;
 	bool        m_isSetPos;
 	Rot3D       m_rot;

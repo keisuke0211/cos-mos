@@ -32,6 +32,8 @@ namespace {
 	CRocketPartsUI* rocketparts;
 	bool            isPause;
 	short           wallModelIdxes[2];
+	CCamera*        UICamera[2];
+	CDoll3D*        UIDoll[2];
 }
 
 //================================================================================
@@ -133,6 +135,32 @@ void Stage::StartStage(void) {
 
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
+
+	for (int cnt = 0; cnt < 2; cnt++) {
+		{// [[[ UI用カメラの生成 ]]]
+			UICamera[cnt] = new CCamera(Size2D(200.0f, RNLib::Window().GetHeight()));
+
+			// クリッピングをオン
+			UICamera[cnt]->SetIsClipping(true);
+
+			// 背景色設定
+			UICamera[cnt]->SetBGCol(Color(0, 0, 0, 100));
+		}
+
+		{// [[[ UI用ドールを生成 ]]]
+			UIDoll[cnt] = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(cnt == 0 ? "data\\SETUP\\Player_Mouth.txt" : "data\\SETUP\\Player_Eye.txt"));
+
+			// モーション設定
+			UIDoll[cnt]->SetMotion(RNLib::Motion3D().Load(cnt == 0 ? "data\\MOTION\\Player_Mouth\\Walk.txt" : "data\\MOTION\\Player_Eye\\Walk.txt"));
+
+			// 位置/向き設定
+			UIDoll[cnt]->SetPos(Pos3D(0.0f, -8.0f, 100.0f));
+			UIDoll[cnt]->SetRot(Rot3D(0.0f, D3DX_PI * 1.1f, 0.0f));
+
+			// クリッピング設定
+			UIDoll[cnt]->SetClippingCamera(UICamera[cnt]->GetID());
+		}
+	}
 }
 
 //========================================
@@ -143,21 +171,44 @@ void Stage::UpdateStage(void) {
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
 
+	// ウィンドウ情報を取得
+	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
+	const float windowWidth       = RNLib::Window().GetWidth();
+	const float windowHeight      = RNLib::Window().GetHeight();
+	const float windowHeightHalf  = windowHeight * 0.5f;
+	const float windowHeightHalf2 = windowHeightHalf * 0.5f;
+
 	if (CPlayer::GetZoomUpCounter() > 0) {
 		if (CheckStageNumber(0, 0)) {
-			// [[[ 上下カメラ描画 ]]]
-			const Pos2D windowCenterPos = RNLib::Window().GetCenterPos();
-			const float windowWidth = RNLib::Window().GetWidth();
-			const float windowHeight = RNLib::Window().GetHeight();
-			const float windowHeightHalf = windowHeight * 0.5f;
-			const float windowHeightHalf2 = windowHeightHalf * 0.5f;
-
-			// 下
+			// 下カメラ描画
 			RNLib::Polygon2D().Put(0, true)
 				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
 				->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 				->SetSize(windowWidth, windowHeightHalf);
 		}
+	}
+
+	{
+		static int counter = 0;
+		if (RNLib::Input().GetKeyPress(DIK_Z)) {
+			if (++counter > 30)
+				counter = 30;
+		}
+		else {
+			if (--counter < 0)
+				counter = 0;
+		}
+		const float rate = CEase::Easing(CEase::TYPE::OUT_SINE, counter, 30);
+
+		// UIカメラ描画
+		RNLib::Polygon2D().Put(0, true)
+			->SetPos(Pos2D(-100.0f, windowHeightHalf) + Pos2D(250.0f * rate, 0.0f))
+			->SetTexUV(UICamera[0], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
+			->SetSize(200.0f, windowHeight);
+		RNLib::Polygon2D().Put(0, true)
+			->SetPos(Pos2D(windowWidth + 100.0f, windowHeightHalf) + Pos2D(-250.0f * rate, 0.0f))
+			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
+			->SetSize(200.0f, windowHeight);
 	}
 
 	// 背景設置処理
@@ -217,6 +268,14 @@ void Stage::EndStage(void) {
 
 	// スタティックメッシュの削除
 	RNLib::MatMesh().Delete();
+
+	// UI用カメラの破棄
+	for (int cnt = 0; cnt < 2; cnt++) {
+		if (UICamera[cnt] != NULL) {
+			delete UICamera[cnt];
+			UICamera[cnt] = NULL;
+		}
+	}
 }
 
 namespace {
