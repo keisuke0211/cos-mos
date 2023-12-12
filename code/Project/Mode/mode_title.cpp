@@ -165,9 +165,6 @@ void CMode_Title::Init(void) {
 
 	// ó‘Ôİ’è
 	SetState((int)STATE::NONE);
-
-	// ”wŒiF•ÏX
-	SetBGColor(Color{ 200,0,0,255 });
 }
 
 //========================================
