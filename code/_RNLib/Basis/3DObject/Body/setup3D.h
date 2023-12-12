@@ -8,6 +8,7 @@
 
 #include "../../Mechanical/regist.h"
 #include "../../../RNmain.h"
+#include "../../Draw/color.h"
 
 //****************************************
 // ƒNƒ‰ƒX’è‹`

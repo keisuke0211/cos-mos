@@ -195,7 +195,7 @@ void CLight3D::SetLight(int nIdx) {
 	light3D.Type = D3DLIGHT_DIRECTIONAL;
 
 	// ŠgUŒõ‚Æ•ûŒü‚ğİ’è
-	light3D.Diffuse = ColorToD3DXCOLOR(BrightnessToColor(m_col, m_pAmbient[nIdx].fBrightness));
+	light3D.Diffuse = m_col.GetBrighten(m_pAmbient[nIdx].fBrightness).ConvD3DXCOLOR();
 	light3D.Direction = CGeometry::FindRotVec(m_pAmbient[nIdx].rot);
 
 	// Œõ‚Ìî•ñ‚ğİ’è‚µA—LŒø‚É‚·‚é

@@ -144,9 +144,6 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\camera_control.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\Draw\color.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-info.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>

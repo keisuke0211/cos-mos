@@ -67,6 +67,8 @@ public:
 		CORAL_REEF_3                       = 47,	// ÉTÉìÉSè 3
 		STONE_1                            = 48,	// ä‚1
 		STONE_2                            = 49,	// ä‚2
+		BUILDING_1                         = 50,	// åöï®1
+		BUILDING_2                         = 51,	// åöï®2
 		MAX,
 	};
 	enum class OTHER_TEXTURE {
