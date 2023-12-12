@@ -32,19 +32,19 @@ public:
 
 	// ê›íË
 	template <class R, class G, class B, class A>Color(const R& setR, const G& setG, const B& setB, const A& setA) {
-		if (!(typeid(R) == typeid(int) || typeid(R) == typeid(UInt) || typeid(R) == typeid(short) || typeid(R) == typeid(UShort) || typeid(R) == typeid(long) || typeid(R) == typeid(ULong))) { 
+		if (!(typeid(R) == typeid(int) || typeid(R) == typeid(UInt) || typeid(R) == typeid(short) || typeid(R) == typeid(UShort) || typeid(R) == typeid(long) || typeid(R) == typeid(ULong) || typeid(R) == typeid(float))) {
 			assert(false); 
 			return; 
 		}
-		if (!(typeid(G) == typeid(int) || typeid(G) == typeid(UInt) || typeid(G) == typeid(short) || typeid(G) == typeid(UShort) || typeid(G) == typeid(long) || typeid(G) == typeid(ULong))) {
+		if (!(typeid(G) == typeid(int) || typeid(G) == typeid(UInt) || typeid(G) == typeid(short) || typeid(G) == typeid(UShort) || typeid(G) == typeid(long) || typeid(G) == typeid(ULong) || typeid(G) == typeid(float))) {
 			assert(false);
 			return;
 		}
-		if (!(typeid(B) == typeid(int) || typeid(B) == typeid(UInt) || typeid(B) == typeid(short) || typeid(B) == typeid(UShort) || typeid(B) == typeid(long) || typeid(B) == typeid(ULong))) {
+		if (!(typeid(B) == typeid(int) || typeid(B) == typeid(UInt) || typeid(B) == typeid(short) || typeid(B) == typeid(UShort) || typeid(B) == typeid(long) || typeid(B) == typeid(ULong) || typeid(B) == typeid(float))) {
 			assert(false); 
 			return;
 		}
-		if (!(typeid(A) == typeid(int) || typeid(A) == typeid(UInt) || typeid(A) == typeid(short) || typeid(A) == typeid(UShort) || typeid(A) == typeid(long) || typeid(A) == typeid(ULong))) {
+		if (!(typeid(A) == typeid(int) || typeid(A) == typeid(UInt) || typeid(A) == typeid(short) || typeid(A) == typeid(UShort) || typeid(A) == typeid(long) || typeid(A) == typeid(ULong) || typeid(A) == typeid(float))) {
 			assert(false);
 			return;
 		}
