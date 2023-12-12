@@ -260,6 +260,7 @@ private:
 	static const int NORMAL_SWAP_ALPHA = 100;     // 通常時のスワップマークのα値
 	static const float GUIDE_WIDTH;      // ガイドの幅
 	static const float GUIDE_HEIGHT;     // ガイドの高さ
+	static const float MAX_GUIDE_SPEED;  // ガイドアニメーションの最大速度
 	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
 	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
 	static const int DEATH_TIME = 60;    // 死亡時間
