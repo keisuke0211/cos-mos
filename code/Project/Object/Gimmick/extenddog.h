@@ -53,12 +53,15 @@ public:
 	int   GetHipRot(void); //お尻の方向を取得
 
 private:
+	//頭・お尻用サイズ
+	static const float HEAD_HIP_SIZE;
+
 	//========== [[[ 列挙型定義 ]]]
 	enum class Parts
 	{
-		Body = 0, // 体
-		Head,     // 頭
-		Hip,      // お尻
+		Hip = 0, // お尻
+		Body,    // 体
+		Head,    // 頭
 		Max
 	};
 	//========== [[[ 関数宣言 ]]]
@@ -73,11 +76,14 @@ private:
 	bool  m_bElasticity; // 触って縮むか伸びるか
 	bool  m_bInversion;  // 反転
 	int   m_nCntShrink;  // 縮むカウント
-	float m_fcurrenty;   // 現在のy座標
+	//float m_fcurrenty;   // 現在のy座標
 	int   m_nHeight;     // 高さ
 
 	Pos3D m_HeadPos;     // 頭の位置
 	Pos3D m_BodyPos;     // 体の位置
-	Pos3D m_BodyPosOld;  // 頭の過去位置
+	Pos3D m_BodyPosOld;  // 体の過去位置
 	Pos3D m_HipPos;      // 尻の位置
+
+	Pos3D m_StartBodyPos;// 体の初期位置
+	float m_StartHeight; // 高さの初期位置
 };
