@@ -84,6 +84,12 @@ CMode_Title::~CMode_Title(void) {
 		m_PlanetType = NULL;
 	}
 
+	if (m_MenuUI != NULL)
+	{
+		delete m_MenuUI;
+		m_MenuUI = NULL;
+	}
+
 	// テキストの破棄
 	TextRelease(TEXT_ALL);
 }
@@ -190,50 +196,59 @@ void CMode_Title::Update(void) {
 			->SetOutLineIdx(true);
 	}
 
-	// 各モードの処理
-	if (Title == TITLE_TITLE)
-		TextAnime();
-	else if (Title == TITLE_MENU) {
-		m_MenuUI->Update();
-		MenuAnime();
-	}
-	else if (Title == TITLE_SELECT)
-		StageSelect();
-	else if (Title == TITLE_NEXT)
-		return;
+	// ゲーム終了
+	bool End = m_MenuUI->GetInfo().bGameEnd;
 
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+	if (End)
+		PostQuitMessage(0);
+	else
 	{
-		//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-		switch (Title)
-		{
-		case TITLE_OUTSET:
-		{
-			SwapMode(TITLE_MENU_ANIME);
+		// 各モードの処理
+		if (Title == TITLE_TITLE)
+			TextAnime();
+		else if (Title == TITLE_MENU) {
+			m_MenuUI->Update();
+			MenuAnime();
 		}
-		break;
-		case TITLE_MENU:
-		break;
-		case TITLE_SELECT:
+		else if (Title == TITLE_SELECT)
+			StageSelect();
+		else if (Title == TITLE_NEXT)
+			return;
+
+		if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
 		{
-			SwapMode(TITLE_NEXT);
-			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
-			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+			//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-			if (m_PlanetType != NULL)
+			switch (Title)
 			{
-				delete[] m_PlanetType;
-				m_PlanetType = NULL;
+			case TITLE_OUTSET:
+			{
+				SwapMode(TITLE_MENU_ANIME);
 			}
+			break;
+			case TITLE_MENU:
+				break;
+			case TITLE_SELECT:
+			{
+				SwapMode(TITLE_NEXT);
+				Stage::SetStageNumber(m_nPlanetIdx, m_nSelect);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
-			if (m_MenuUI != NULL)
-			{
-				delete m_MenuUI;
-				m_MenuUI = NULL;
+				if (m_PlanetType != NULL)
+				{
+					delete[] m_PlanetType;
+					m_PlanetType = NULL;
+				}
+
+				if (m_MenuUI != NULL)
+				{
+					delete m_MenuUI;
+					m_MenuUI = NULL;
+				}
 			}
-		}
-		break;
+			break;
+			}
 		}
 	}
 }

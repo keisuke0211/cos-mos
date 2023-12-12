@@ -93,6 +93,7 @@ public:
 		bool bMenu;				// 生成したかのフラグ
 		bool bBackMode;			// 前の画面に戻るかのフラグ
 		bool bClose;			// メニュー閉じるかのフラグ
+		bool bGameEnd;			// ゲーム終了
 
 
 		// サブメニュー

@@ -148,6 +148,11 @@ void CFontText::Update()
 			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
 			->SetCol(m_Info.TextBoxCol)
 			->SetTex(m_Info.nTexIdx);
+
+		/*RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
+			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
+			->SetCol(m_Info.TextBoxCol)
+			->SetTex(m_Info.nTexIdx, 0, 1, 2);*/
 	}
 
 	m_Info.TexMove = INITD3DXVECTOR2;

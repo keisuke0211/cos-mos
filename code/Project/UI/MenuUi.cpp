@@ -26,8 +26,26 @@ const char* CMenuUI::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 CMenuUI::CMenuUI(void) {
 
 	m_MenuEnd = false;
+	m_Menu.LeftPos = D3DXVECTOR3(-340.0f, 0.0f, 0.0f);
+	m_Menu.RightPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
+	m_Menu.LeftTargetPos = D3DXVECTOR3(280.0f, 0.0f, 0.0f);
+	m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
+	m_Menu.nCntLeftAnime = 0;
+	m_Menu.nCntRightAnime = 0;
+	m_Menu.nMaineSelect = 0;
+	m_Menu.nMaineOldSelect = 0;
+	m_Menu.nSubSelect = 1;
+	m_Menu.bSubMenuMove = false;
+	m_Menu.bSubMenuDisp = false;
+	m_Menu.nRightCoolDown = COOLDOWN;
+	m_Menu.SubMenuCD = false;
+	m_Menu.nRightTextType = 0;
+	m_Menu.bMenu = false;
+	m_Menu.bSubMenu = false;
+	m_Menu.bClose = false;
+	m_MenuEnd = false;
 	m_Menu.bBackMode = false;
-
+	m_Menu.bGameEnd = false;
 	m_Menu.pOperation = NULL;
 	m_Menu.pSetting = NULL;
 	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
@@ -134,7 +152,7 @@ void CMenuUI::Update(void)
 				break;
 			case MENU_END:
 				//ÉQÅ[ÉÄÇÃèIóπ
-				PostQuitMessage(0);
+				m_Menu.bGameEnd = true;
 				break;
 			}
 		}
@@ -209,6 +227,7 @@ void CMenuUI::MenuCreate(void)
 	m_Menu.bClose = false;
 	m_MenuEnd = false;
 	m_Menu.bBackMode = false;
+	m_Menu.bGameEnd = false;
 
 	m_Menu.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
 
