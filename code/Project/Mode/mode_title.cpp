@@ -198,9 +198,11 @@ void CMode_Title::Update(void) {
 	}
 
 	// ƒQ[ƒ€I—¹
-	bool End = m_MenuUI->GetInfo().bGameEnd;
+	bool isEnd = false;
+	if (m_MenuUI != NULL)
+		isEnd = m_MenuUI->GetInfo().bGameEnd;
 
-	if (End)
+	if (isEnd)
 		PostQuitMessage(0);
 	else
 	{
