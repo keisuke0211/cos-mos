@@ -967,11 +967,11 @@ void CMode_Title::StageSelect(void) {
 			if (m_RotCnt < ANIMCOUNT) m_RotCnt++;
 
 			//選択時	//ロケット
-			float RocketAnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT * 3);
+			m_RocketAnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT * 2);
 			if (m_bStageChange == false)
 			{
-				if (m_RocketAnimCnt < ANIMCOUNT * 3) m_RocketAnimCnt++;
-				if (m_RocketAnimCnt == ANIMCOUNT * 3) {
+				if (m_RocketAnimCnt < ANIMCOUNT * 2) m_RocketAnimCnt++;
+				if (m_RocketAnimCnt == ANIMCOUNT * 2) {
 					m_RocketPosOld = m_RocketPos; m_RocketposRate = INITD3DXVECTOR3;
 				}
 			}
@@ -1000,7 +1000,7 @@ void CMode_Title::StageSelect(void) {
 			}
 			
 			{//ロケット
-				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * RocketAnimRate), m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
+				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate), m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
 			}
 
 			 //選択時	//ブロック
@@ -1047,14 +1047,14 @@ void CMode_Title::StageSelect(void) {
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
 		m_nSelect--;
-		m_RocketPosOld = m_RocketPos;
+		m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate);
 		m_RotCnt = 0;
 		m_RocketAnimCnt = 0;
 		bInput = true;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
 		m_nSelect++;
-		m_RocketPosOld = m_RocketPos;
+		m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate);
 		m_RocketAnimCnt = 0;
 		m_RotCnt = 0;
 		bInput = true;
@@ -1111,7 +1111,7 @@ void CMode_Title::StageSelect(void) {
 
 		if (nStageMax != nStageMaxOld) {
 			CMemory::Alloc(&m_AnimCnt, nStageMax);
-			m_RocketPos = m_RocketPosOld = UNSELECTBOX - PosCor + NUMPOSROCKET;
+			m_RocketPos = UNSELECTBOX - PosCor + NUMPOSROCKET;
 			m_RocketposRate = INITD3DXVECTOR3;
 			for (int AnimInit = 0; AnimInit < nStageMax; AnimInit++)
 				m_AnimCnt[AnimInit] = 0;
