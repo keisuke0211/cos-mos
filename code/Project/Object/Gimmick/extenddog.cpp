@@ -21,9 +21,9 @@ const float CExtenddog::HEAD_HIP_SIZE = CStageObject::SIZE_OF_1_SQUARE * 0.25f;
 //モデルパス
 const char *CExtenddog::MODEL_PATH[(int)Parts::Max] = 
 {
-	"data\\MODEL\\WallDog\\WallDog_Hip_02.x",  // お尻
-	"data\\MODEL\\WallDog\\WallDog_Body.x",    // 体
-	"data\\MODEL\\WallDog\\WallDog_Head_02.x", // 頭
+	"data\\MODEL\\WallDog\\WallDog_Hip.x",  // お尻
+	"data\\MODEL\\WallDog\\WallDog_Body.x", // 体
+	"data\\MODEL\\WallDog\\WallDog_Head.x", // 頭
 };
 //========================================
 // コンストラクタ
