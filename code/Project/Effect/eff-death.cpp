@@ -8,9 +8,9 @@
 #include "../main.h"
 #include "../stage.h"
 
-const float CEffect_Death::CREATE_SPREAD_POWER = -8.0f; //生成時の拡散力
+const float CEffect_Death::CREATE_SPREAD_POWER = -4.0f; //生成時の拡散力
 const float CEffect_Death::PLAYER_COLLI_POWER = 1.0f;   //プレイヤーに当たったときの吹っ飛び力
-const float CEffect_Death::MOVE_X_CORRECT = 0.01f;      //Ⅹベクトルの移動補正係数
+const float CEffect_Death::MOVE_X_CORRECT = 0.05f;      //Ⅹベクトルの移動補正係数
 const float CEffect_Death::GRAVITY_POWER = 0.03f;       //重力加速度
 const float CEffect_Death::BOUND_POWER = -0.7f;         //バウンド係数
 const short CEffect_Death::BALL_ALPHA_DECREASE = 10;    //ボールのα値減少量（当たり判定でUnknownが出た際に使用
