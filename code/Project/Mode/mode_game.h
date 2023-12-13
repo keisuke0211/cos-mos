@@ -67,8 +67,11 @@ private:
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	oid MeasureTime(TimeType type);
+	void MeasureTime(TimeType type);
 	static void FormatGameTime(void);
+
+	//========== [[[ Ã“I•Ï”éŒ¾ ]]]
+	static CMenuUI *m_MenuUI;
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	static GameTime s_GameTime; //ƒvƒŒƒCŠÔ
