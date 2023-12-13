@@ -236,6 +236,9 @@ HRESULT CPlayer::Init(void)
 		}
 	}
 
+	//カットイン
+	Stage::SetIsCutIn(false);
+
 	// 初期化成功
 	return S_OK;
 }
@@ -1529,6 +1532,7 @@ void CPlayer::GoalDirector(void)
 			CInt planet = pEd->GetPlanetIdx();
 			CInt stage = pEd->GetType()[planet].nStageIdx;
 			pEd->SwapStage(stage + 1);
+			Stage::SetIsCutIn(false);
 		}
 	}
 	

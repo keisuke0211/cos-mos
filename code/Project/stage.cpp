@@ -35,6 +35,10 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+
+	// クジラ
+	int             whaleCounter;
+	CDoll3D*        whaleDoll;
 }
 
 //================================================================================
@@ -163,6 +167,14 @@ void Stage::StartStage(void) {
 			UIDoll[cnt]->SetClippingCamera(UICamera[cnt]->GetID());
 		}
 	}
+
+	if (Stage::CheckPlanetIdx(1)) {
+		whaleCounter = 0;
+		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
+		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
+		whaleDoll->SetPos(Pos3D(0.0f, 80.0f, 120.0f));
+		whaleDoll->SetScale(Scale3D(3.0f, 3.0f, 3.0f));
+	}
 }
 
 //========================================
@@ -278,6 +290,15 @@ void Stage::EndStage(void) {
 			UICamera[cnt] = NULL;
 		}
 	}
+
+	if (Stage::CheckPlanetIdx(1)) {
+		delete whaleDoll;
+	}
+
+	// UI用ドールを破棄
+	for (int cnt = 0; cnt < 2; cnt++) {
+		delete UIDoll[cnt];
+	}
 }
 
 namespace {
@@ -345,4 +366,20 @@ namespace {
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 	}
+}
+
+//========================================
+// 指定されたステージのベストタイムを返す
+//========================================
+float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
+{
+	return 0.0f;
+}
+
+//========================================
+// 
+//========================================
+void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
+{
+
 }

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../../_RNLib/RNlib.h"
+#include "../manager.h"
 
 //****************************************
 // 前方宣言
@@ -20,7 +21,9 @@ class CFontText;
 class CMenuUI {
 public:
 	//========== [[[ 定数定義 ]]]
-	static const char* TEXT_FILE;				// テキスト情報のファイルパス
+	static const char* TITLE_MENU_FILE;			// メインメニュー情報のファイルパス
+	static const char* PAUSE_MENU_FILE;			// メインメニュー情報のファイルパス
+	static const char* SUB_MENU_FILE;			// サブメニュー情報のファイルパス
 	static const int WORDS_MAX = 7;				// 文字の最大数
 	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
 	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
@@ -29,12 +32,21 @@ public:
 	static const int COOLDOWN = 20;				// クールダウン
 
 	//========== [[[ 列挙型定義 ]]]
-	enum MENU {
-		MENU_GAME = 0,	// ゲーム
-		MENU_CONTROLLER,// 操作方法
-		MENU_SETTING,	// 設定
-		MENU_END,		// 終了
-		MENU_MAX
+	enum TITLE_MENU {
+		TITLE_MENU_GAME = 0,	// ゲーム
+		TITLE_MENU_SETTING,		// 設定
+		TITLE_MENU_END,			// 終了
+		TITLE_MENU_MAX,
+	};
+
+	// メニュー
+	enum PAUSE_MENU {
+		PAUSE_MENU_RESUME = 0,	// 続ける
+		PAUSE_MENU_RESET,		// やり直す
+		PAUSE_MENU_SELECT,		// ステージ選択
+		PAUSE_MENU_CONTROLLER,	// 操作方法
+		PAUSE_MENU_SETTING,		// 設定
+		PAUSE_MENU_MAX
 	};
 
 	enum CONTROLLER {
@@ -110,14 +122,44 @@ public:
 		int nCntScrChg;		// スクリーン変更のカウント
 		bool bFullScreen;	// スクリーンモード
 
-							// サウンド
+		// サウンド
 		int nBGMVolume;
 		int nSEVolume;
 		int nBGMOldVolume;
 		int nSEOldVolume;
 
+		// ファイル
+		int MainMenuMax;
+		int SubMenuMax;
+
 		Operation *pOperation;
 		Setting *pSetting;
+	};
+
+
+	/* *** 読込関連  *** */
+
+	// テクスチャ情報
+	struct Texture {
+		char TexFile[0xff];		// ファイルパス
+		int PtnIdx;				// パターン	番号
+		int PtnX;				//			Xの分割数
+		int PtnY;				//			Yの分割数
+		bool bSet;				// 設定したか
+	};
+
+	// メインメニューの情報
+	struct MaineMenu {
+		char Text[0xff];		// テキスト
+		Texture Tex;
+
+		int nSubMenuID;			// サブメニューの番号
+	};
+
+	// サブメニューの情報
+	struct SubMenu {
+		char Text[0xff];		// テキスト
+		Texture Tex;
 	};
 
 	// *** 関数 ***
@@ -126,11 +168,7 @@ public:
 	void  Init(void);
 	void  Uninit(void);
 	void  Update(void);
-	static CMenuUI *Create(void);
-
-	// -- テキスト関連 -------------------------------------------------------------------
-	/* 読込			*/void TextLoad(void);
-	/* 各種類の解放	*/void TextRelease(TEXT type);
+	static CMenuUI *Create(CMode::TYPE type);
 
 	// -- メニュー関連 -------------------------------------------------------------------
 	/* アニメーション	*/void MenuAnime(void);
@@ -138,12 +176,26 @@ public:
 	/* サブの生成		*/void SubTextCreate(void);
 	/* メニュー選択		*/void MenuSelect(void);
 
-	// -- 取得 -------------------------------------------------------------------
+	// -- 入力関連 -----------------------------------------------------------------------
+	/* 決定	*/void DecisionInput(void);
+	/* 選択	*/void SelectInput(void);
+
+
+	// -- テキスト関連 -------------------------------------------------------------------
+	/* 各種類の解放	*/void TextRelease(TEXT type);
+
+	// -- ファイル関連 -------------------------------------------------------------------
+	/* メインメニュー	*/void MaineMenuLoad(CMode::TYPE type);
+	/* サブメニュー		*/void SubMenuLoad(void);
+
+	// -- 取得 ---------------------------------------------------------------------------
 	Menu GetInfo(void) { return m_Menu; }
 
 	// *** 変数 ***
 	bool m_MenuEnd;
-	CFontText *m_pMenu[MENU_MAX];
+	MaineMenu *m_MaineMenu;
+	SubMenu *m_SubMenu;
+	CFontText *m_pMenu[FONT_TEXT_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
 private:
 	

@@ -1,0 +1,51 @@
+#========================================
+#
+# タイトルメニュー情報
+# Author KEISUKE OOTONO
+#
+#========================================
+# メインメニューの設定
+#========================================
+Start
+	MenuSelectMax = 3	# 最大数
+
+-- １個目の設定 ------------------------------------------------------
+	SetSelect
+		Text = Ч
+		SubMenuID = -1
+		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\TextBox00.png
+			PtnIdx 		= 0
+			PtnX		= 1
+			PtnY		= 2
+		EndTexture
+	EndSelect
+	
+-- ２個目の設定 ------------------------------------------------------
+	SetSelect
+		Text = Ч
+		SubMenuID = 1
+		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\TextBox01.png
+			PtnIdx 		= 0
+			PtnX		= 1
+			PtnY		= 2
+		EndTexture
+	EndSelect
+
+-- ３個目の設定 ------------------------------------------------------
+	SetSelect
+		Text = Ч
+		SubMenuID = -1
+		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\TextBox02.png
+			PtnIdx 		= 0
+			PtnX		= 1
+			PtnY		= 2
+		EndTexture
+	EndSelect
+
+END
