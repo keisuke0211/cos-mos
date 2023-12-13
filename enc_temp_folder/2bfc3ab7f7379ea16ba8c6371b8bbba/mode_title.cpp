@@ -45,7 +45,6 @@ CMode_Title::CMode_Title(void) {
 	}
 
 	Title              = TITLE_TITLE;
-	NextTitle		   = TITLE_TITLE;
 	m_nSelect          = 0;
 	m_nOldSelect       = 0;
 	m_nPlanetIdx       = 0;
@@ -87,12 +86,6 @@ CMode_Title::~CMode_Title(void) {
 		m_PlanetType = NULL;
 	}
 
-	if (m_MenuUI != NULL)
-	{
-		delete m_MenuUI;
-		m_MenuUI = NULL;
-	}
-
 	// テキストの破棄
 	TextRelease(TEXT_ALL);
 }
@@ -104,7 +97,7 @@ void CMode_Title::Init(void) {
 	CMode::Init();
 
 	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 60);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
 
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
@@ -199,65 +192,51 @@ void CMode_Title::Update(void) {
 			->SetOutLineIdx(true);
 	}
 
-	// ゲーム終了
-	bool isEnd = false;
-	if (m_MenuUI != NULL)
-		isEnd = m_MenuUI->GetInfo().bGameEnd;
+	// 各モードの処理
+	if (Title == TITLE_TITLE)
+		TextAnime();
+	else if (Title == TITLE_MENU) {
+		m_MenuUI->Update();
+		MenuAnime();
+	}
+	else if (Title == TITLE_SELECT)
+		StageSelect();
+	else if (Title == TITLE_NEXT)
+		return;
 
-	if (isEnd)
-		PostQuitMessage(0);
-	else
+	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
 	{
+		//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-		// 各モードの処理
-		if (Title == TITLE_TITLE)
-			TextAnime();
-		else if (Title == TITLE_MENU) {
-			m_MenuUI->Update();
-			MenuAnime();
-		}
-		else if (Title == TITLE_SELECT)
-			StageSelect();
-		else if (Title == TITLE_NEXT)
-			return;
-
-		if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+		switch (Title)
 		{
-			//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
+		case TITLE_OUTSET:
+		{
+			SwapMode(TITLE_MENU_ANIME);
+		}
+		break;
+		case TITLE_MENU:
+		break;
+		case TITLE_SELECT:
+		{
+			SwapMode(TITLE_NEXT);
+			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
+			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
-			switch (Title)
+			if (m_PlanetType != NULL)
 			{
-			case TITLE_OUTSET:
-			{
-				SwapMode(TITLE_MENU_ANIME);
+				delete[] m_PlanetType;
+				m_PlanetType = NULL;
 			}
-			break;
-			case TITLE_MENU:
-				break;
-			case TITLE_SELECT:
+
+			if (m_MenuUI != NULL)
 			{
-				SwapMode(TITLE_NEXT);
-				Stage::SetStageNumber(m_nPlanetIdx, m_nSelect);
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
-
-				if (m_PlanetType != NULL)
-				{
-					delete[] m_PlanetType;
-					m_PlanetType = NULL;
-				}
-
-				if (m_MenuUI != NULL)
-				{
-					delete m_MenuUI;
-					m_MenuUI = NULL;
-				}
-			}
-			break;
+				delete m_MenuUI;
+				m_MenuUI = NULL;
 			}
 		}
-
-		if (Title != NextTitle)
-			SwapMode(NextTitle);
+		break;
+		}
 	}
 }
 
@@ -330,15 +309,14 @@ void CMode_Title::TextAnime(void)
 //========================================
 void CMode_Title::MenuAnime(void)
 {
-	bool MenuEnd = m_MenuUI->m_MenuEnd;
+	bool close = m_MenuUI->GetInfo().bClose;
 	bool backMode = m_MenuUI->GetInfo().bBackMode;
 
-	if (MenuEnd && backMode)
-		NextTitle = TITLE_TITLE;
-	else if (MenuEnd && !m_bBackMode) {
+	if (close && backMode)
+		SwapMode(TITLE_TITLE);
+	else if (close && !m_bBackMode) {
 		TextRelease(TEXT_ALL);
-		NextTitle = TITLE_SELECT;
-			return;
+		SwapMode(TITLE_SELECT);
 	}
 
 	// タイトル
@@ -671,7 +649,7 @@ void CMode_Title::StageSelect(void) {
 //========================================
 void CMode_Title::SwapMode(TITLE aTitle) {
 	Title = aTitle;
-	NextTitle = aTitle;
+
 	switch (aTitle)
 	{
 	case CMode_Title::TITLE_TITLE:
@@ -715,19 +693,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		// メニュー生成
 		m_MenuUI->MenuCreate();
 
-		NextTitle = TITLE_MENU;
+		Title = TITLE_MENU;
 	}
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
-
-		/*if (m_MenuUI != NULL)
-		{
-			delete m_MenuUI;
-			m_MenuUI = NULL;
-		}*/
-
 		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;

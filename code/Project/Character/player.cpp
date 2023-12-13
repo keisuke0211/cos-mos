@@ -12,6 +12,7 @@
 #include"../UI/miss.h"
 #include"../Object/Block/Ghost.h"
 #include "../resource.h"
+#include "../stage.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
@@ -368,13 +369,8 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		if (++s_nGoalInterval >= GOAL_INTERVAL)
-		{
-			CCoin::AddNumAll();
-			const int planet = Manager::StgEd()->GetPlanetIdx();
-			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-			Manager::StgEd()->SwapStage(stage + 1);
-		}
+		//ゴール演出
+		GoalDirector();
 	}
 
 	// 当たり判定まとめ
@@ -394,7 +390,8 @@ void CPlayer::UpdateInfo(void)
 	//----------------------------------------
 	bool isSwapGuide = false;
 	if (!s_bSwapAnim) {
-		if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) {
+		if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath &&
+			!m_aInfo[0].bGoal || !m_aInfo[1].bGoal) {
 			const int planet = Manager::StgEd()->GetPlanetIdx();
 
 			if (planet == 0) {
@@ -612,12 +609,11 @@ void CPlayer::ActionControl(void)
 	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
 	{// どちらも死んでいない
 		bool isZoomUp = false;
-		if (s_zoomUpCounter > 0) {
-			if (Manager::StgEd()->GetPlanetIdx() == 0) {
-				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-					isZoomUp = true;
-				}
-			}
+		if (s_zoomUpCounter > 0 &&
+			Manager::StgEd()->GetPlanetIdx() == 0 &&
+			Manager::StgEd()->GetType()[0].nStageIdx == 0)
+		{
+			isZoomUp = true;
 		}
 
 		Pos3D targetPosV = Manager::StgEd()->GetCameraPos();
@@ -636,9 +632,15 @@ void CPlayer::ActionControl(void)
 			if (s_zoomUpCounter < 60) {
 				rate = CEase::Easing(CEase::TYPE::IN_SINE, s_zoomUpCounter, 60);
 			}
-			float rateOpp = 1.0f - rate;
+			CFloat rateOpp = 1.0f - rate;
 			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVMain * rate, targetPosR * rateOpp + basePosRMain * rate);
 			Manager::GetSubCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVSub * rate, targetPosR * rateOpp + basePosRSub * rate);
+
+			//計測再開
+			if (s_zoomUpCounter == 0)
+			{
+				CMode_Game::RestartTime();
+			}
 			return;
 		}
 		else{
@@ -1305,7 +1307,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 	switch (type)
 	{
 		//ブロックのリアクションフラグ
-		case CStageObject::TYPE::BLOCK:
+		case OBJECT_TYPE::BLOCK:
 		{
 			typedef CCollision::ROT ColRot;		 //衝突方向の別名
 			Info *pInfo = &m_aInfo[0];			 //プレイヤー情報のポインタ
@@ -1325,7 +1327,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		}
 
 		// ヌイの状態設定
-		case CStageObject::TYPE::EXTEND_DOG:
+		case OBJECT_TYPE::EXTEND_DOG:
 		{
 			//ヌイに変換
 			CExtenddog *pDog = (CExtenddog *)pStageObj;
@@ -1337,7 +1339,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		}
 
 		//杭に乗っているプレイヤー
-		case CStageObject::TYPE::PILE:
+		case OBJECT_TYPE::PILE:
 		{
 			//杭の判定情報取得
 			CPile *pPile = (CPile *)pStageObj;
@@ -1360,6 +1362,28 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 				Player.bLandPile = false;
 			}
 			break;
+		}
+
+		//ゴールゲート
+		case OBJECT_TYPE::GOALGATE:
+		{
+			if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
+			{
+				//計測終了
+				CMode_Game::SetMeasureTime(false);
+				Stage::SetIsCutIn(true);
+			}
+		}
+
+		//ゴールゲート
+		case OBJECT_TYPE::ROCKET:
+		{
+			if (m_aInfo[0].bRide && m_aInfo[1].bRide)
+			{
+				//計測終了
+				CMode_Game::SetMeasureTime(false);
+				Stage::SetIsCutIn(true);
+			}
 		}
 	}
 }
@@ -1428,11 +1452,31 @@ bool CPlayer::IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONF
 }
 
 //----------------------------
+// どちらかのプレイヤーが指定されたキーコンフィグを使っているか
+//----------------------------
+bool CPlayer::IsKeyConfigTrigger(KEY_CONFIG KeyConfig)
+{
+	return 
+		RNLib::Input().GetTrigger(m_aInfo[0].Keyborad[(int)m_aInfo[0].side][(int)KeyConfig], m_aInfo[0].JoyPad[(int)KeyConfig], 0) ||
+		RNLib::Input().GetTrigger(m_aInfo[1].Keyborad[(int)m_aInfo[1].side][(int)KeyConfig], m_aInfo[1].JoyPad[(int)KeyConfig], 1);
+}
+
+//----------------------------
 // プレイヤーが指定されたキーコンフィグを使っているか
 //----------------------------
 bool CPlayer::IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
 {
 	return RNLib::Input().GetPress(m_aInfo[nIdx].Keyborad[(int)side][(int)KeyConfig], m_aInfo[nIdx].JoyPad[(int)KeyConfig], nIdx);
+}
+
+//----------------------------
+// どちらかのプレイヤーが指定されたキーコンフィグを使っているか
+//----------------------------
+bool CPlayer::IsKeyConfigPress(KEY_CONFIG KeyConfig)
+{
+	return
+		RNLib::Input().GetPress(m_aInfo[0].Keyborad[(int)m_aInfo[0].side][(int)KeyConfig], m_aInfo[0].JoyPad[(int)KeyConfig], 0) ||
+		RNLib::Input().GetPress(m_aInfo[1].Keyborad[(int)m_aInfo[1].side][(int)KeyConfig], m_aInfo[1].JoyPad[(int)KeyConfig], 1);
 }
 
 //----------------------------
@@ -1450,4 +1494,67 @@ void CPlayer::PlaySE(SE_LABEL label)
 		case CPlayer::SE_LABEL::SWAPING:s_SE.pSound->Play(s_SE.Swaping, CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::SWAPEND:s_SE.pSound->Play(s_SE.SwapEnd, CSound::CATEGORY::SE, 1.0f, false); break;
 	}
+}
+
+//----------------------------
+//ゴール後の演出
+//----------------------------
+void CPlayer::GoalDirector(void)
+{
+	const Pos2D Center = RNLib::Window().GetCenterPos();
+	const Pos2D Size = RNLib::Window().GetSize();
+
+	//画面を暗くする
+	RNLib::Polygon2D().Put(PRIORITY_UI)
+		->SetPos(Center)
+		->SetSize(Size.x, Size.y)
+		->SetCol(Color{ 0,0,0,150 });
+
+	//時間加算
+	s_nGoalInterval++;
+
+	if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
+	{
+		//次の演出時間に設定
+		if (s_nGoalInterval < POP_CLEARTIME)
+			s_nGoalInterval = POP_CLEARTIME;
+		else if (s_nGoalInterval < GOAL_INTERVAL)
+			s_nGoalInterval = GOAL_INTERVAL;
+
+		//次のステージへ
+		else
+		{
+			CCoin::AddNumAll();
+			CStageEditor *pEd = Manager::StgEd();
+			CInt planet = pEd->GetPlanetIdx();
+			CInt stage = pEd->GetType()[planet].nStageIdx;
+			pEd->SwapStage(stage + 1);
+		}
+	}
+	
+	//クリアタイム表示
+	if (s_nGoalInterval >= POP_CLEARTIME)
+	{
+		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
+
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
+			->SetSize(Size2D(50.0f, 50.0f));
+	}
+
+	// 次のステージへ
+	if (s_nGoalInterval >= GOAL_INTERVAL)
+	{
+		//ゴールインターバルからの超過時間
+		CInt DiffInterval = s_nGoalInterval - GOAL_INTERVAL;
+
+		//インターバル前半は表示
+		if (DiffInterval < GOAL_INTERVAL / 2)
+			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", CText::ALIGNMENT::CENTER, 0, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		if (s_nGoalInterval >= GOAL_INTERVAL * 2)
+			s_nGoalInterval = GOAL_INTERVAL;
+	}
+
+	RNLib::Text2D().PutDebugLog(CreateText("ゴールインターバル:%d", s_nGoalInterval));
 }

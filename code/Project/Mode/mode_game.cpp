@@ -28,6 +28,8 @@ const char* CMode_Game::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 static const int s_PlanetMaxSummon = 8;		// 出現する位置の最大数
 static const int s_StarMaxSummon = 10;		// 出現する位置の最大数
 
+CMode_Game::GameTime CMode_Game::s_GameTime = {};
+
 //========================================
 // コンストラクタ
 // Author:RIKU NISHIMURA
@@ -42,6 +44,9 @@ CMode_Game::CMode_Game(void) {
 	m_Pause.nSEVolume = SE * VOLUME_MSX;
 	m_Pause.nBGMOldVolume = BGM * VOLUME_MSX;
 	m_Pause.nSEOldVolume = SE * VOLUME_MSX;
+
+	//ゲーム時間初期化
+	FormatGameTime();
 }
 
 //========================================
@@ -90,6 +95,9 @@ void CMode_Game::Init(void) {
 
 	// テキスト読込
 	TextLoad();
+
+	//開始時間取得
+	RestartTime();
 }
 
 //========================================
@@ -101,6 +109,9 @@ void CMode_Game::Uninit(void) {
 
 	// ステージ終了処理
 	Stage::EndStage();
+
+	//ゲーム時間初期化
+	FormatGameTime();
 }
 
 //========================================
@@ -110,19 +121,29 @@ void CMode_Game::Uninit(void) {
 void CMode_Game::Update(void) {
 	CMode::Update();
 
+	//プレイ時間を計測
+	MeasureTime(TimeType::Play);
+
 	// ステージ更新処理
 	Stage::UpdateStage();
 
 	// [[[ 非ポーズ時の処理 ]]]
 	if (m_state != (int)STATE::PAUSE) {
 
-		// ポーズ
+		// ポーズ（時間も保存
 		if (!CPlayer::GetSwapAnim() && !CPlayer::GetDeath() && CPlayer::GetZoomUpCounter() == 0) {
 			if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START)) {
 				SetState((int)STATE::PAUSE);
+				s_GameTime.LastPause = timeGetTime();
 			}
 		}
 	}
+
+	//ポーズ時間を計測
+	else MeasureTime(TimeType::Pause);
+
+	RNLib::Text2D().PutDebugLog(CreateText("ゲーム時間:%d  ポーズ時間:%d", s_GameTime.Play, s_GameTime.Pause));
+	RNLib::Text2D().PutDebugLog(CreateText("プレイ時間:%.2f秒", GetPlayTime()));
 }
 
 //========================================
@@ -790,4 +811,70 @@ void CMode_Game::TextRelease(TEXT type)
 			}
 		}
 	}
+}
+
+//========================================
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
+//========================================
+void CMode_Game::RestartTime(void)
+{
+	//クリア
+	FormatGameTime();
+
+	//現在時刻を取得
+	s_GameTime.Start = timeGetTime();
+}
+
+//========================================
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
+//========================================
+void CMode_Game::MeasureTime(TimeType type)
+{
+	//計測しない
+	if (!s_GameTime.bMeasure) return;
+
+	//現在時刻取得
+	const DWORD CurrentTime = timeGetTime();
+
+	switch (type)
+	{
+		case CMode_Game::TimeType::Play:
+			//プレイ時間代入
+			s_GameTime.Play = CurrentTime - s_GameTime.Start; 
+			break;
+
+		case CMode_Game::TimeType::Pause:
+			//ポーズ時間を加算
+			s_GameTime.Pause += CurrentTime - s_GameTime.LastPause;
+
+			//ポーズ時間更新
+			s_GameTime.LastPause = CurrentTime;
+			break;
+	}
+}
+
+//========================================
+//プレイ時間を返す
+//Author:HIRASAWA SHION
+//========================================
+float CMode_Game::GetPlayTime(void)
+{
+	//ポーズ中の時間を引いて、秒数に直して返す
+	return (s_GameTime.Play - s_GameTime.Pause) / 1000.0f;
+}
+
+//========================================
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
+//========================================
+void CMode_Game::FormatGameTime(void)
+{
+	s_GameTime.Start = 0;
+	s_GameTime.Pause = 0;
+	s_GameTime.Play = 0;
+	s_GameTime.End = 0;
+	s_GameTime.LastPause = 0;
+	s_GameTime.bMeasure = true;
 }
