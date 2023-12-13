@@ -26,4 +26,7 @@ namespace Stage {
 	void     SetRocketPartsUI(CRocketPartsUI* parts);
 	void     SetIsCutIn      (const bool& isCutIn);
 	CPlayer* GetPlayer       (void);
+
+	float    GetBestTime(CInt& planetIdx, CInt& stageIdx);
+	void     RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime);
 };

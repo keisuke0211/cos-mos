@@ -346,3 +346,19 @@ namespace {
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 	}
 }
+
+//========================================
+// 指定されたステージのベストタイムを返す
+//========================================
+float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
+{
+	return 0.0f;
+}
+
+//========================================
+// 
+//========================================
+void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
+{
+
+}
