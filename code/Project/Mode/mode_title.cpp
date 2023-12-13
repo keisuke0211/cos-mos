@@ -61,6 +61,7 @@ CMode_Title::CMode_Title(void) {
 	m_AnimCnt = 0;
 	m_RotCnt = 0;
 	m_bStageChange = false;
+	m_bRocketMove = false;
 }
 
 //========================================
