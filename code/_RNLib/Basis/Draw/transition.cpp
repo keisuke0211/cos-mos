@@ -94,6 +94,11 @@ void CTransition::Update(void) {
 		}
 
 		float size = ((float)(m_stateCounter > 10 ? 10 : m_stateCounter) / 10) * 200.0f;
+		if (m_stateCounter >= BLACK_TIME - 5) {
+			int counter = m_stateCounter + 1;
+			size = 1.0f - ((counter - BLACK_TIME) / 5.0f) * 200.0f;
+		}
+
 		RNLib::Polygon2D().Put(2, true)
 			->SetTex(m_texIdxes[2])
 			->SetSize(size, size)
