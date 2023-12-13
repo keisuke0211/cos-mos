@@ -49,7 +49,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	m_posVib          = INITPOS3D;
 	m_rot             = INITROT3D;
 	m_spin            = INITVECTOR3D;
-	m_scale           = scale2D;
+	m_size           = scale2D;
 	m_dist            = 1.0f;
 	m_radian          = INIT_RADIAN;
 	m_radianGoal      = INIT_RADIAN;

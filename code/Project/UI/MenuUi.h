@@ -1,7 +1,7 @@
 //========================================
 // 
-// モード:ゲームの処理
-// Author:RIKU NISHIMURA
+// メニュー
+// Author:KEISUKE OTONO
 // 
 //========================================
 #pragma once
@@ -11,42 +11,32 @@
 //****************************************
 // 前方宣言
 //****************************************
-class CPlayer;
 class CFontText;
-class CRocketPartsUI;
-class CCoinUI;
 
 //****************************************
 // クラス定義
 //****************************************
-// モード(ゲーム)クラス
-class CMode_Game :public CMode {
+// モード(タイトル)クラス
+class CMenuUI {
 public:
 	//========== [[[ 定数定義 ]]]
 	static const char* TEXT_FILE;				// テキスト情報のファイルパス
-	static const int PAUSE_LEFT_ANIME  = 20;	// 画面左のアニメーション時間
-	static const int PAUSE_RIGHT_ANIME = 20;	// 画面右のアニメーション時間
-	static const int FONT_TEXT_MAX = 8;			// テキストの最大数
+	static const int WORDS_MAX = 7;				// 文字の最大数
+	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
+	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
+	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
 	static const int COOLDOWN = 20;				// クールダウン
 
 	//========== [[[ 列挙型定義 ]]]
-	enum class STATE {
-		NONE,
-		PAUSE,
-	};
-
-	// メニュー
 	enum MENU {
-		MENU_RESUME = 0,// 続ける
-		MENU_RESET,		// やり直す
-		MENU_SELECT,	// ステージ選択
+		MENU_GAME = 0,	// ゲーム
 		MENU_CONTROLLER,// 操作方法
 		MENU_SETTING,	// 設定
+		MENU_END,		// 終了
 		MENU_MAX
 	};
 
-	// 操作方法
 	enum CONTROLLER {
 		INPUT_TITLE = 0,// タイトル
 		INPUT_MOVE,		// 移動
@@ -56,8 +46,6 @@ public:
 		INPUT_BACK,		// 戻る
 		INPUT_MAX
 	};
-
-	// 設定
 	enum SETTING {
 		SETTING_SCREEN = 1,	// フルスクリーン
 		SETTING_BGM,		// BGM
@@ -67,10 +55,9 @@ public:
 		SETTING_SE_TEXT,
 		SETTING_MAX
 	};
-
-	// テキスト
 	enum TEXT {
-		TEXT_MENU = 0,	// メニュー
+		TEXT_TITLE = 0,	// タイトル
+		TEXT_MENU,		// メニュー
 		TEXT_RIGHT,		// 左画面
 		TEXT_ALL,		// 全部
 		TEXT_MAX
@@ -88,8 +75,8 @@ public:
 		char Text[TXT_MAX];		// テキスト
 	};
 
-	// ポーズ情報
-	struct Pause {
+	// メニュー情報
+	struct Menu {
 		D3DXVECTOR3 LeftPos;
 		D3DXVECTOR3 RightPos;
 		D3DXVECTOR3 LeftTargetPos;
@@ -101,12 +88,19 @@ public:
 		int nMaineOldSelect;
 		int nSubSelect;
 		int nRightTextType;
-		bool bMenu;
-		bool bRightMove;
-		bool bRightDisp;
-		bool bRightCoolDown;
-		bool bClose;
-		bool bSubMenu;
+
+		// メニュー
+		bool bMenu;				// 生成したかのフラグ
+		bool bBackMode;			// 前の画面に戻るかのフラグ
+		bool bClose;			// メニュー閉じるかのフラグ
+		bool bGameEnd;			// ゲーム終了
+
+
+		// サブメニュー
+		bool bSubMenu;			// 生成したかフラグ
+		bool bSubMenuMove;		// 移動方向の切替フラグ
+		bool bSubMenuDisp;		// 削除フラグ
+		bool SubMenuCD;			// 生成間隔のクールダウン
 
 		int BoxTex;
 		int OperationMax;
@@ -116,7 +110,7 @@ public:
 		int nCntScrChg;		// スクリーン変更のカウント
 		bool bFullScreen;	// スクリーンモード
 
-		// サウンド
+							// サウンド
 		int nBGMVolume;
 		int nSEVolume;
 		int nBGMOldVolume;
@@ -126,56 +120,33 @@ public:
 		Setting *pSetting;
 	};
 
-	// プレイタイム情報
-	struct GameTime {
-		DWORD Start; // ゲーム開始時間
-		DWORD Pause; // ポーズ中の時間
-		DWORD Play;  // プレイ時間を格納
-		DWORD End;   // ステージクリア時間
+	// *** 関数 ***
+	CMenuUI();
+	~CMenuUI();
+	void  Init(void);
+	void  Uninit(void);
+	void  Update(void);
+	static CMenuUI *Create(void);
 
-		DWORD LastPause;//最後にポーズだった時間
+	// -- テキスト関連 -------------------------------------------------------------------
+	/* 読込			*/void TextLoad(void);
+	/* 各種類の解放	*/void TextRelease(TEXT type);
 
-		bool bMeasure;// 計測するかどうか
-	};
+	// -- メニュー関連 -------------------------------------------------------------------
+	/* アニメーション	*/void MenuAnime(void);
+	/* メインの生成		*/void MenuCreate(void);
+	/* サブの生成		*/void SubTextCreate(void);
+	/* メニュー選択		*/void MenuSelect(void);
 
-	//========== [[[ 関数宣言 ]]]
-	CMode_Game();
-	~CMode_Game();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	void ProcessState(const PROCESS process);
+	// -- 取得 -------------------------------------------------------------------
+	Menu GetInfo(void) { return m_Menu; }
 
-	//プレイ時間を返す
-	static float GetPlayTime(void);
-
-	//計測ON/OFF true：ON  false：OFF
-	static void SetMeasureTime(const bool bMeasure) { s_GameTime.bMeasure = bMeasure; }
-
-	static void RestartTime(void);
-
-private:
-	//========== [[[ 列挙型定義 ]]]
-	enum class TimeType {
-		Play = 0, // プレイ時間
-		Pause,    // ポーズ時間
-		Max
-	};
-
-	//========== [[[ 関数宣言 ]]]
-	void PauseCreate(void);
-	void PauseSelect(void);
-	void PauseAnime(void);
-	void PauseMenu(void);
-	void SubTextCreate(void);
-	void TextLoad(void);
-	void TextRelease(TEXT type);
-	void MeasureTime(TimeType type);
-	static void FormatGameTime(void);
-
-	//========== [[[ 変数宣言 ]]]
+	// *** 変数 ***
+	bool m_MenuEnd;
 	CFontText *m_pMenu[MENU_MAX];
 	CFontText *m_pSubMenu[FONT_TEXT_MAX];
-	Pause m_Pause;
-	static GameTime s_GameTime; //プレイ時間
+private:
+	
+	// *** 変数 ***
+	Menu m_Menu;
 };

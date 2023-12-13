@@ -49,6 +49,7 @@ public:
 		CPlay(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
 		~CPlay();
 		void Update(void);
+		void                 SetVolume     (const float& volume) { m_volume = volume; }
 		short&               GetID         (void) { return m_ID; }
 		CATEGORY&            GetCategory   (void) { return m_category; }
 		IXAudio2SourceVoice& GetSourceVoice(void) { return *m_sourceVoice; }
