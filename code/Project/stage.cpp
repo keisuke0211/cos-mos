@@ -31,6 +31,7 @@ namespace {
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
 	bool            isPause;
+	bool            isCutIn;
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
@@ -45,9 +46,10 @@ namespace {
 //========================================
 // İ’èŒnŠÖ”
 //========================================
-void Stage::SetStageNumber(const int& setPlanetIdx, const int& setStageIdx) { planetIdx   = setPlanetIdx; stageIdx = setStageIdx; }
-void Stage::SetPause      (const bool& setIsPause)                          { isPause     = setIsPause; }
+void Stage::SetStageNumber  (const int& setPlanetIdx, const int& setStageIdx) { planetIdx   = setPlanetIdx; stageIdx = setStageIdx; }
+void Stage::SetPause        (const bool& setIsPause)                          { isPause     = setIsPause; }
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
+void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
 
 //========================================
 // æ“¾ŒnŠÖ”
@@ -190,7 +192,7 @@ void Stage::UpdateStage(void) {
 
 	{
 		static int counter = 0;
-		if (RNLib::Input().GetKeyPress(DIK_Z)) {
+		if (isCutIn) {
 			if (++counter > 30)
 				counter = 30;
 		}

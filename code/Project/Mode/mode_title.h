@@ -128,6 +128,7 @@ private:
 
 	// *** ïœêî ***
 	TITLE Title;
+	TITLE NextTitle;
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	D3DXVECTOR3 m_RocketPos;
 	D3DXVECTOR3 m_RocketposRate;
