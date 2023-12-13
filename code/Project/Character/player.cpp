@@ -389,7 +389,8 @@ void CPlayer::UpdateInfo(void)
 	//----------------------------------------
 	bool isSwapGuide = false;
 	if (!s_bSwapAnim) {
-		if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) {
+		if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath &&
+			!m_aInfo[0].bGoal || !m_aInfo[1].bGoal) {
 			const int planet = Manager::StgEd()->GetPlanetIdx();
 
 			if (planet == 0) {
@@ -607,12 +608,11 @@ void CPlayer::ActionControl(void)
 	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
 	{// どちらも死んでいない
 		bool isZoomUp = false;
-		if (s_zoomUpCounter > 0) {
-			if (Manager::StgEd()->GetPlanetIdx() == 0) {
-				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-					isZoomUp = true;
-				}
-			}
+		if (s_zoomUpCounter > 0 &&
+			Manager::StgEd()->GetPlanetIdx() == 0 &&
+			Manager::StgEd()->GetType()[0].nStageIdx == 0)
+		{
+			isZoomUp = true;
 		}
 
 		Pos3D targetPosV = Manager::StgEd()->GetCameraPos();
@@ -631,9 +631,15 @@ void CPlayer::ActionControl(void)
 			if (s_zoomUpCounter < 60) {
 				rate = CEase::Easing(CEase::TYPE::IN_SINE, s_zoomUpCounter, 60);
 			}
-			float rateOpp = 1.0f - rate;
+			CFloat rateOpp = 1.0f - rate;
 			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVMain * rate, targetPosR * rateOpp + basePosRMain * rate);
 			Manager::GetSubCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVSub * rate, targetPosR * rateOpp + basePosRSub * rate);
+
+			//計測再開
+			if (s_zoomUpCounter == 0)
+			{
+				CMode_Game::RestartTime();
+			}
 			return;
 		}
 		else{
@@ -1492,29 +1498,60 @@ void CPlayer::PlaySE(SE_LABEL label)
 //----------------------------
 void CPlayer::GoalDirector(void)
 {
+	const Pos2D Center = RNLib::Window().GetCenterPos();
+	const Pos2D Size = RNLib::Window().GetSize();
+
+	//画面を暗くする
+	RNLib::Polygon2D().Put(PRIORITY_UI)
+		->SetPos(Center)
+		->SetSize(Size.x, Size.y)
+		->SetCol(Color{ 0,0,0,150 });
+
 	//時間加算
 	s_nGoalInterval++;
+
+	if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
+	{
+		//次の演出時間に設定
+		if (s_nGoalInterval < POP_CLEARTIME)
+			s_nGoalInterval = POP_CLEARTIME;
+		else if (s_nGoalInterval < GOAL_INTERVAL)
+			s_nGoalInterval = GOAL_INTERVAL;
+
+		//次のステージへ
+		else
+		{
+			CCoin::AddNumAll();
+			CStageEditor *pEd = Manager::StgEd();
+			CInt planet = pEd->GetPlanetIdx();
+			CInt stage = pEd->GetType()[planet].nStageIdx;
+			pEd->SwapStage(stage + 1);
+		}
+	}
 	
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		const Pos2D PopPos = RNLib::Window().GetCenterPos() + Pos2D(0.0f, 30.0f);
+		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
 
 		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.2f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f));
+			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
+	// 次のステージへ
 	if (s_nGoalInterval >= GOAL_INTERVAL)
 	{
-		RNLib::Text2D().Put(PRIORITY_UI, "continue: A", CText::ALIGNMENT::CENTER, 0, Pos2D(RNLib::Window().GetCenterX() + 100.0f, 600.0f), 0.0f)
+		//ゴールインターバルからの超過時間
+		CInt DiffInterval = s_nGoalInterval - GOAL_INTERVAL;
+
+		//インターバル前半は表示
+		if (DiffInterval < GOAL_INTERVAL / 2)
+			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", CText::ALIGNMENT::CENTER, 0, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
-		if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
-		{
-			CCoin::AddNumAll();
-			CInt planet = Manager::StgEd()->GetPlanetIdx();
-			CInt stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-			Manager::StgEd()->SwapStage(stage + 1);
-		}
+		if (s_nGoalInterval >= GOAL_INTERVAL * 2)
+			s_nGoalInterval = GOAL_INTERVAL;
 	}
+
+	RNLib::Text2D().PutDebugLog(CreateText("ゴールインターバル:%d", s_nGoalInterval));
 }

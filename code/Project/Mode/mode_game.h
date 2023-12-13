@@ -152,6 +152,8 @@ public:
 	//計測ON/OFF true：ON  false：OFF
 	static void SetMeasureTime(const bool bMeasure) { s_GameTime.bMeasure = bMeasure; }
 
+	static void RestartTime(void);
+
 private:
 	//========== [[[ 列挙型定義 ]]]
 	enum class TimeType {
@@ -169,7 +171,7 @@ private:
 	void TextLoad(void);
 	void TextRelease(TEXT type);
 	void MeasureTime(TimeType type);
-	void FormatGameTime(void);
+	static void FormatGameTime(void);
 
 	//========== [[[ 変数宣言 ]]]
 	CFontText *m_pMenu[MENU_MAX];

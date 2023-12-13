@@ -97,7 +97,7 @@ void CMode_Game::Init(void) {
 	TextLoad();
 
 	//開始時間取得
-	s_GameTime.Start = timeGetTime();
+	RestartTime();
 }
 
 //========================================
@@ -811,6 +811,19 @@ void CMode_Game::TextRelease(TEXT type)
 			}
 		}
 	}
+}
+
+//========================================
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
+//========================================
+void CMode_Game::RestartTime(void)
+{
+	//クリア
+	FormatGameTime();
+
+	//現在時刻を取得
+	s_GameTime.Start = timeGetTime();
 }
 
 //========================================
