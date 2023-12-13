@@ -175,6 +175,9 @@ public:
 	// スワップインターバルを取得
 	static int GetSwapInterval(void) { return s_nSwapInterval; }
 
+	// スワップ待ちフラグを取得
+	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitBalloonCounter > 0 || m_aInfo[1].swapWaitBalloonCounter > 0; }
+
 	// 出現
 	static void Pop(void) {}
 
@@ -217,6 +220,7 @@ public:
 		short jump;
 		short fall;
 		short landing;
+		short dance;
 	};
 
 	//モーション情報取得

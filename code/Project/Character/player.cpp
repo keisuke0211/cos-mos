@@ -207,6 +207,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Jump.txt");
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
+			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Dance.txt");
 		}
 		else {
 			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
@@ -214,6 +215,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Jump.txt");
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
+			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Dance.txt");
 		}
 	}
 
@@ -580,10 +582,9 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 			{
 				rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
+				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, count == 0 ? Color{ 255, 155, 59,255 } : Color{ 65, 223, 210,255 }, CEffect_Death::TYPE::BALL);
 
-				const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
-				pEff->SetBallSize(Lv);
+				pEff->SetBallSize(CEffect_Death::BALL_SIZE_LV::SMALL);
 			}
 			info.deathCounter = DEATH_TIME;
 		}
@@ -731,7 +732,10 @@ void CPlayer::ActionControl(void)
 			isMove = true;
 		}
 
-		if (!Player.bGround) {
+		if (Player.swapWaitBalloonCounter > 0) {
+			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
+		}
+		else if (!Player.bGround) {
 			if ((Player.pos.y > 0.0f && Player.move.y < 0.0f) || (Player.pos.y < 0.0f && Player.move.y > 0.0f)) {
 				Player.doll->OverwriteMotion(s_motion[nIdxPlayer].fall);
 			}
@@ -763,8 +767,8 @@ void CPlayer::ActionControl(void)
 
 		{// ‚«o‚µ‚Ì•\Ž¦
 			Pos3D putPos = Player.pos;
-			putPos.y += GetPlusMinus(Player.pos.y) * 8.0f;
-			CPolygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f,0.0f, -0.1f + (CEase::Easing(CEase::TYPE::INOUT_SINE, GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
+			putPos.y += GetPlusMinus(Player.pos.y) * 12.0f;
+			CPolygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f, 0.0f, -0.1f + (CEase::Easing(CEase::TYPE::INOUT_SINE, GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_WAITBUBBLE], Player.pos.y < 0.0f, 2, 1)
 				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitBalloonCounter / SWAP_WAIT_BALLOON_TIME)))
 				->SetZTest(false);
