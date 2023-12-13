@@ -637,7 +637,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Project\\data\\TEXTURE\\Tree_bark.jpg";
+    "data\\TEXTURE\\Tree_bark.jpg";
    }
   }
   Material {
@@ -646,7 +646,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Project\\data\\TEXTURE\\Annual_ring.jpg";
+    "data\\TEXTURE\\Annual_ring.jpg";
    }
   }
   Material {
@@ -655,7 +655,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Project\\data\\TEXTURE\\Annual_ring.jpg";
+    "data\\TEXTURE\\Annual_ring.jpg";
    }
   }
  }
