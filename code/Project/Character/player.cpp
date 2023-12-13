@@ -207,6 +207,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Jump.txt");
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
+			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Dance.txt");
 		}
 		else {
 			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
@@ -214,6 +215,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Jump.txt");
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
+			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Dance.txt");
 		}
 	}
 
@@ -366,13 +368,8 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		if (++s_nGoalInterval >= GOAL_INTERVAL)
-		{
-			CCoin::AddNumAll();
-			const int planet = Manager::StgEd()->GetPlanetIdx();
-			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-			Manager::StgEd()->SwapStage(stage + 1);
-		}
+		//ゴール演出
+		GoalDirector();
 	}
 
 	// 当たり判定まとめ
@@ -585,10 +582,9 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 			{
 				rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, Color{ 255, 155, 59,255 }, CEffect_Death::TYPE::BALL);
+				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, count == 0 ? Color{ 255, 155, 59,255 } : Color{ 65, 223, 210,255 }, CEffect_Death::TYPE::BALL);
 
-				const CEffect_Death::BALL_SIZE_LV Lv = (CEffect_Death::BALL_SIZE_LV)(rand() % (int)(CEffect_Death::BALL_SIZE_LV::MAX));
-				pEff->SetBallSize(Lv);
+				pEff->SetBallSize(CEffect_Death::BALL_SIZE_LV::SMALL);
 			}
 			info.deathCounter = DEATH_TIME;
 		}
@@ -736,7 +732,10 @@ void CPlayer::ActionControl(void)
 			isMove = true;
 		}
 
-		if (!Player.bGround) {
+		if (Player.swapWaitBalloonCounter > 0) {
+			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
+		}
+		else if (!Player.bGround) {
 			if ((Player.pos.y > 0.0f && Player.move.y < 0.0f) || (Player.pos.y < 0.0f && Player.move.y > 0.0f)) {
 				Player.doll->OverwriteMotion(s_motion[nIdxPlayer].fall);
 			}
@@ -768,8 +767,8 @@ void CPlayer::ActionControl(void)
 
 		{// 吹き出しの表示
 			Pos3D putPos = Player.pos;
-			putPos.y += GetPlusMinus(Player.pos.y) * 8.0f;
-			CPolygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f,0.0f, -0.1f + (CEase::Easing(CEase::TYPE::INOUT_SINE, GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
+			putPos.y += GetPlusMinus(Player.pos.y) * 12.0f;
+			CPolygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f, 0.0f, -0.1f + (CEase::Easing(CEase::TYPE::INOUT_SINE, GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_WAITBUBBLE], Player.pos.y < 0.0f, 2, 1)
 				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitBalloonCounter / SWAP_WAIT_BALLOON_TIME)))
 				->SetZTest(false);
@@ -1301,7 +1300,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 	switch (type)
 	{
 		//ブロックのリアクションフラグ
-		case CStageObject::TYPE::BLOCK:
+		case OBJECT_TYPE::BLOCK:
 		{
 			typedef CCollision::ROT ColRot;		 //衝突方向の別名
 			Info *pInfo = &m_aInfo[0];			 //プレイヤー情報のポインタ
@@ -1321,7 +1320,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		}
 
 		// ヌイの状態設定
-		case CStageObject::TYPE::EXTEND_DOG:
+		case OBJECT_TYPE::EXTEND_DOG:
 		{
 			//ヌイに変換
 			CExtenddog *pDog = (CExtenddog *)pStageObj;
@@ -1333,7 +1332,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		}
 
 		//杭に乗っているプレイヤー
-		case CStageObject::TYPE::PILE:
+		case OBJECT_TYPE::PILE:
 		{
 			//杭の判定情報取得
 			CPile *pPile = (CPile *)pStageObj;
@@ -1356,6 +1355,26 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 				Player.bLandPile = false;
 			}
 			break;
+		}
+
+		//ゴールゲート
+		case OBJECT_TYPE::GOALGATE:
+		{
+			if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
+			{
+				//計測終了
+				CMode_Game::SetMeasureTime(false);
+			}
+		}
+
+		//ゴールゲート
+		case OBJECT_TYPE::ROCKET:
+		{
+			if (m_aInfo[0].bRide && m_aInfo[1].bRide)
+			{
+				//計測終了
+				CMode_Game::SetMeasureTime(false);
+			}
 		}
 	}
 }
@@ -1424,11 +1443,31 @@ bool CPlayer::IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONF
 }
 
 //----------------------------
+// どちらかのプレイヤーが指定されたキーコンフィグを使っているか
+//----------------------------
+bool CPlayer::IsKeyConfigTrigger(KEY_CONFIG KeyConfig)
+{
+	return 
+		RNLib::Input().GetTrigger(m_aInfo[0].Keyborad[(int)m_aInfo[0].side][(int)KeyConfig], m_aInfo[0].JoyPad[(int)KeyConfig], 0) ||
+		RNLib::Input().GetTrigger(m_aInfo[1].Keyborad[(int)m_aInfo[1].side][(int)KeyConfig], m_aInfo[1].JoyPad[(int)KeyConfig], 1);
+}
+
+//----------------------------
 // プレイヤーが指定されたキーコンフィグを使っているか
 //----------------------------
 bool CPlayer::IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
 {
 	return RNLib::Input().GetPress(m_aInfo[nIdx].Keyborad[(int)side][(int)KeyConfig], m_aInfo[nIdx].JoyPad[(int)KeyConfig], nIdx);
+}
+
+//----------------------------
+// どちらかのプレイヤーが指定されたキーコンフィグを使っているか
+//----------------------------
+bool CPlayer::IsKeyConfigPress(KEY_CONFIG KeyConfig)
+{
+	return
+		RNLib::Input().GetPress(m_aInfo[0].Keyborad[(int)m_aInfo[0].side][(int)KeyConfig], m_aInfo[0].JoyPad[(int)KeyConfig], 0) ||
+		RNLib::Input().GetPress(m_aInfo[1].Keyborad[(int)m_aInfo[1].side][(int)KeyConfig], m_aInfo[1].JoyPad[(int)KeyConfig], 1);
 }
 
 //----------------------------
@@ -1445,5 +1484,37 @@ void CPlayer::PlaySE(SE_LABEL label)
 		case CPlayer::SE_LABEL::DOG_03: s_SE.pSound->Play(s_SE.dog[3],  CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::SWAPING:s_SE.pSound->Play(s_SE.Swaping, CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::SWAPEND:s_SE.pSound->Play(s_SE.SwapEnd, CSound::CATEGORY::SE, 1.0f, false); break;
+	}
+}
+
+//----------------------------
+//ゴール後の演出
+//----------------------------
+void CPlayer::GoalDirector(void)
+{
+	//時間加算
+	s_nGoalInterval++;
+	
+	//クリアタイム表示
+	if (s_nGoalInterval >= POP_CLEARTIME)
+	{
+		const Pos2D PopPos = RNLib::Window().GetCenterPos() + Pos2D(0.0f, 30.0f);
+
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.2f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+	}
+
+	if (s_nGoalInterval >= GOAL_INTERVAL)
+	{
+		RNLib::Text2D().Put(PRIORITY_UI, "continue: A", CText::ALIGNMENT::CENTER, 0, Pos2D(RNLib::Window().GetCenterX() + 100.0f, 600.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
+		{
+			CCoin::AddNumAll();
+			CInt planet = Manager::StgEd()->GetPlanetIdx();
+			CInt stage = Manager::StgEd()->GetType()[planet].nStageIdx;
+			Manager::StgEd()->SwapStage(stage + 1);
+		}
 	}
 }
