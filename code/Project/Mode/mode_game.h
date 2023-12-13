@@ -67,7 +67,7 @@ private:
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	oid MeasureTime(TimeType type);
+	void MeasureTime(TimeType type);
 	static void FormatGameTime(void);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
