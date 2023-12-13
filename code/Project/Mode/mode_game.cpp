@@ -76,7 +76,7 @@ void CMode_Game::Init(void) {
 	Stage::StartStage();
 
 	// ‘JˆÚİ’è
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// ó‘Ôİ’è
 	SetState((int)STATE::NONE);

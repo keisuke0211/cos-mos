@@ -13,7 +13,7 @@
 class CTransition {
 public:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
-	enum class STATE { NONE, OPEN, OPEN_WAIT, CLOSE, };
+	enum class STATE { NONE, OPEN, OPEN_WAIT, BLACK, CLOSE, };
 	enum class TYPE  { NONE, FADE, };
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
@@ -37,5 +37,6 @@ private:
 	UShort m_time;
 	Color  m_col;
 	float  m_fMove;
-	int	   m_nTexIdx;
+	int	   m_texIdxes[3];
+	float  m_startGearAngle;
 };

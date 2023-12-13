@@ -103,7 +103,7 @@ void CMode_Title::Init(void) {
 	CMode::Init();
 
 	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
+	RNLib::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {

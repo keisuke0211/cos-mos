@@ -112,7 +112,6 @@ Pos2D CText2D::PutDebugLog(const char* string) {
 	if (!m_isShowDebugLog)
 		return INITPOS2D;
 
-	if (0) {
 		setlocale(LC_ALL, "");
 		size_t    length = strlen(string);
 		wchar_t* wstr = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
@@ -124,16 +123,15 @@ Pos2D CText2D::PutDebugLog(const char* string) {
 		const float right = strLen * 16.0f;
 		free(wstr);
 
-		RNLib::Polygon2D().Put(0, true)
+		RNLib::Polygon2D().Put(1, true)
 			->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
 			->SetVtxCol(Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100));
-	}
 
 	// 設置位置
 	Pos2D putPos = Pos2D(0.0f, 8.0f + m_debugLogLine * 16.0f);
 
 	// 左上から下にかけてテキスト2Dを設置する
-	Put(0, string, CText::ALIGNMENT::LEFT, 0, putPos, 0.0f, true)
+	Put(2, string, CText::ALIGNMENT::LEFT, 0, putPos, 0.0f, true)
 		->SetSize(Size2D(16.0f, 16.0f));
 
 	// デバッグログの行数加算

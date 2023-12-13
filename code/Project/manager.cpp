@@ -11,7 +11,7 @@
 #include "stage.h"
 
 //****************************************
-// –¼‘O‹óŠÔ
+// –³–¼‹óŠÔ
 //****************************************
 namespace {
 	//========== [[[ •Ï”éŒ¾ ]]]
@@ -175,5 +175,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// ‘JˆÚİ’è
-	RNLib::Transition().Close(transType, INITCOLOR, 30);
+	RNLib::Transition().Close(transType, INITCOLOR, 60);
 }
