@@ -258,19 +258,25 @@ private:
 	static const int SWAP_MIDDLE_INTERVAL   = 50; // 移動～目的地到着までの時間
 	static const int SWAP_EPILOGUE_INTERVAL = 10; // 目的地到着～終了までの時間
 	static const int NORMAL_SWAP_ALPHA = 100;     // 通常時のスワップマークのα値
+
 	static const float GUIDE_WIDTH;      // ガイドの幅
 	static const float GUIDE_HEIGHT;     // ガイドの高さ
 	static const float MAX_GUIDE_SPEED;  // ガイドアニメーションの最大速度
-	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
+
 	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
 	static const int DEATH_TIME = 60;    // 死亡時間
 	static const int DEATH_TIME2 = 120;  // 死亡時間2
+
 	static const int SWAP_WAIT_BALLOON_TIME = 5;  // スワップ待ち吹き出し時間
 	static SWAP_ANIM s_AnimState;        // アニメーション構成
 	static       int s_nSwapInterval;    // 残りスワップインターバル
 	static       bool s_bSwapAnim;       // スワップアニメーション中かどうか
+
 	static const int GOAL_INTERVAL = 120;// ゴール後の余韻
+	static const int POP_CLEARTIME = 60; // クリアタイム表示時間
 	static       int s_nGoalInterval;    // ゴール後の余韻カウンター
+
+	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
 	static       int s_zoomUpCounter;    // ズームアップカウンター
 
 	void Swap(void);
@@ -303,6 +309,9 @@ private:
 	void Move(VECTOL vec, int cntPlayer);
 	void Death(Info& Player, const OBJECT_TYPE type);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
+	//ゴール後の演出
+	void GoalDirector(void);
+
 	void CollisionToStageObject(void);
 	bool UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Info &Player, Pos3D *pPos, Pos3D *pPosOld, float *pWidth, float *pHeight);
 
@@ -310,7 +319,9 @@ private:
 	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
 
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);

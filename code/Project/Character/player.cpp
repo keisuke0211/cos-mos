@@ -366,13 +366,8 @@ void CPlayer::Update(void)
 	}
 	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
 	{
-		if (++s_nGoalInterval >= GOAL_INTERVAL)
-		{
-			CCoin::AddNumAll();
-			const int planet = Manager::StgEd()->GetPlanetIdx();
-			const int stage = Manager::StgEd()->GetType()[planet].nStageIdx;
-			Manager::StgEd()->SwapStage(stage + 1);
-		}
+		//ゴール演出
+		GoalDirector();
 	}
 
 	// 当たり判定まとめ
@@ -1301,7 +1296,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 	switch (type)
 	{
 		//ブロックのリアクションフラグ
-		case CStageObject::TYPE::BLOCK:
+		case OBJECT_TYPE::BLOCK:
 		{
 			typedef CCollision::ROT ColRot;		 //衝突方向の別名
 			Info *pInfo = &m_aInfo[0];			 //プレイヤー情報のポインタ
@@ -1321,7 +1316,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		}
 
 		// ヌイの状態設定
-		case CStageObject::TYPE::EXTEND_DOG:
+		case OBJECT_TYPE::EXTEND_DOG:
 		{
 			//ヌイに変換
 			CExtenddog *pDog = (CExtenddog *)pStageObj;
@@ -1333,7 +1328,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 		}
 
 		//杭に乗っているプレイヤー
-		case CStageObject::TYPE::PILE:
+		case OBJECT_TYPE::PILE:
 		{
 			//杭の判定情報取得
 			CPile *pPile = (CPile *)pStageObj;
@@ -1356,6 +1351,26 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 				Player.bLandPile = false;
 			}
 			break;
+		}
+
+		//ゴールゲート
+		case OBJECT_TYPE::GOALGATE:
+		{
+			if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
+			{
+				//計測終了
+				CMode_Game::SetMeasureTime(false);
+			}
+		}
+
+		//ゴールゲート
+		case OBJECT_TYPE::ROCKET:
+		{
+			if (m_aInfo[0].bRide && m_aInfo[1].bRide)
+			{
+				//計測終了
+				CMode_Game::SetMeasureTime(false);
+			}
 		}
 	}
 }
@@ -1424,11 +1439,31 @@ bool CPlayer::IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONF
 }
 
 //----------------------------
+// どちらかのプレイヤーが指定されたキーコンフィグを使っているか
+//----------------------------
+bool CPlayer::IsKeyConfigTrigger(KEY_CONFIG KeyConfig)
+{
+	return 
+		RNLib::Input().GetTrigger(m_aInfo[0].Keyborad[(int)m_aInfo[0].side][(int)KeyConfig], m_aInfo[0].JoyPad[(int)KeyConfig], 0) ||
+		RNLib::Input().GetTrigger(m_aInfo[1].Keyborad[(int)m_aInfo[1].side][(int)KeyConfig], m_aInfo[1].JoyPad[(int)KeyConfig], 1);
+}
+
+//----------------------------
 // プレイヤーが指定されたキーコンフィグを使っているか
 //----------------------------
 bool CPlayer::IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
 {
 	return RNLib::Input().GetPress(m_aInfo[nIdx].Keyborad[(int)side][(int)KeyConfig], m_aInfo[nIdx].JoyPad[(int)KeyConfig], nIdx);
+}
+
+//----------------------------
+// どちらかのプレイヤーが指定されたキーコンフィグを使っているか
+//----------------------------
+bool CPlayer::IsKeyConfigPress(KEY_CONFIG KeyConfig)
+{
+	return
+		RNLib::Input().GetPress(m_aInfo[0].Keyborad[(int)m_aInfo[0].side][(int)KeyConfig], m_aInfo[0].JoyPad[(int)KeyConfig], 0) ||
+		RNLib::Input().GetPress(m_aInfo[1].Keyborad[(int)m_aInfo[1].side][(int)KeyConfig], m_aInfo[1].JoyPad[(int)KeyConfig], 1);
 }
 
 //----------------------------
@@ -1445,5 +1480,37 @@ void CPlayer::PlaySE(SE_LABEL label)
 		case CPlayer::SE_LABEL::DOG_03: s_SE.pSound->Play(s_SE.dog[3],  CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::SWAPING:s_SE.pSound->Play(s_SE.Swaping, CSound::CATEGORY::SE, 1.0f, false); break;
 		case CPlayer::SE_LABEL::SWAPEND:s_SE.pSound->Play(s_SE.SwapEnd, CSound::CATEGORY::SE, 1.0f, false); break;
+	}
+}
+
+//----------------------------
+//ゴール後の演出
+//----------------------------
+void CPlayer::GoalDirector(void)
+{
+	//時間加算
+	s_nGoalInterval++;
+	
+	//クリアタイム表示
+	if (s_nGoalInterval >= POP_CLEARTIME)
+	{
+		const Pos2D PopPos = RNLib::Window().GetCenterPos() + Pos2D(0.0f, 30.0f);
+
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.2f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+	}
+
+	if (s_nGoalInterval >= GOAL_INTERVAL)
+	{
+		RNLib::Text2D().Put(PRIORITY_UI, "continue: A", CText::ALIGNMENT::CENTER, 0, Pos2D(RNLib::Window().GetCenterX() + 100.0f, 600.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
+		{
+			CCoin::AddNumAll();
+			CInt planet = Manager::StgEd()->GetPlanetIdx();
+			CInt stage = Manager::StgEd()->GetType()[planet].nStageIdx;
+			Manager::StgEd()->SwapStage(stage + 1);
+		}
 	}
 }
