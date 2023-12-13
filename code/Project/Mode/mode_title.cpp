@@ -45,6 +45,7 @@ CMode_Title::CMode_Title(void) {
 	}
 
 	Title              = TITLE_TITLE;
+	NextTitle		   = TITLE_TITLE;
 	m_nSelect          = 0;
 	m_nOldSelect       = 0;
 	m_nPlanetIdx       = 0;
@@ -253,6 +254,9 @@ void CMode_Title::Update(void) {
 			break;
 			}
 		}
+
+		if (Title != NextTitle)
+			SwapMode(NextTitle);
 	}
 }
 
@@ -325,14 +329,15 @@ void CMode_Title::TextAnime(void)
 //========================================
 void CMode_Title::MenuAnime(void)
 {
-	bool close = m_MenuUI->GetInfo().bClose;
+	bool MenuEnd = m_MenuUI->m_MenuEnd;
 	bool backMode = m_MenuUI->GetInfo().bBackMode;
 
-	if (close && backMode)
-		SwapMode(TITLE_TITLE);
-	else if (close && !m_bBackMode) {
+	if (MenuEnd && backMode)
+		NextTitle = TITLE_TITLE;
+	else if (MenuEnd && !m_bBackMode) {
 		TextRelease(TEXT_ALL);
-		SwapMode(TITLE_SELECT);
+		NextTitle = TITLE_SELECT;
+			return;
 	}
 
 	// タイトル
@@ -665,7 +670,7 @@ void CMode_Title::StageSelect(void) {
 //========================================
 void CMode_Title::SwapMode(TITLE aTitle) {
 	Title = aTitle;
-
+	NextTitle = aTitle;
 	switch (aTitle)
 	{
 	case CMode_Title::TITLE_TITLE:
@@ -709,11 +714,19 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		// メニュー生成
 		m_MenuUI->MenuCreate();
 
-		Title = TITLE_MENU;
+		NextTitle = TITLE_MENU;
 	}
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
+		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
+
+		/*if (m_MenuUI != NULL)
+		{
+			delete m_MenuUI;
+			m_MenuUI = NULL;
+		}*/
+
 		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;
