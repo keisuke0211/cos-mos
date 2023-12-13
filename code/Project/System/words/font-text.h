@@ -90,16 +90,18 @@ public:
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
 	// -- 設定 ------------------------------------------
-	/* 移動量			*/void SetMove(D3DXVECTOR3 move);
-	/* 空白表示			*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
-	/* ポーズ中の生成	*/void SetTetPause(bool bPause);
-	/* TextBoの表示		*/void SetTexBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
-	/* ボックスの色		*/void SetBoxColor(Color col);
-	/* ボックスの種類	*/void SetBoxType(Box type);
-	/* テキストの色		*/bool SetTextColor(D3DXCOLOR col);
-	/* 文字変更(単体)	*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
-	/* 文字変更(全体)	*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
-	/* テキストの再生	*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
+	/* 移動量				*/void SetMove(D3DXVECTOR3 move);
+	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
+	/* ポーズ中の生成		*/void SetTetPause(bool bPause);
+	/* TextBoxの表示		*/void SetTexBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
+	/* TextBoxのテクスチャ	*/void SetBoxTex(const char* Path = NULL, int PthIdx = -1, int PthX = 1, int PthY = 1);
+	/* TextBoxのパターン番号*/void SetBoxPthIdx(int PthIdx);
+	/* TextBoxの色			*/void SetBoxColor(Color col);
+	/* TextBoxの種類		*/void SetBoxType(Box type);
+	/* テキストの色			*/bool SetTextColor(D3DXCOLOR col);
+	/* 文字変更(単体)		*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
+	/* 文字変更(全体)		*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
+	/* テキストの再生		*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
 
 
 	// -- 取得 ------------------------------------------
@@ -110,6 +112,14 @@ public:
 private:
 
 	// ***** 構造体 *****
+
+	// テクスチャ情報
+	struct Texture {
+		int Idx;		// テクスチャ番号
+		int PtnIdx;		// パターン	番号
+		int PtnX;		//			Xの分割数
+		int PtnY;		//			Yの分割数
+	};
 
 	// 影
 	struct Shadow
@@ -132,7 +142,8 @@ private:
 		D3DXVECTOR2 TexPos;		// 位置
 		D3DXVECTOR2 TexMove;	// 移動量		
 		D3DXVECTOR2 TexSize;	// サイズ
-		int nTexIdx;			// テキストボックスのテクスチャ番号
+
+		Texture Tex;			// テクスチャ情報
 
 		float fTextSize;		// 文字のサイズ
 		int nTextLength;		// 文字の長さ

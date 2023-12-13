@@ -31,7 +31,6 @@ const int MAX_COUNT = 24;
 CInt ANIMCOUNT = MAX_COUNT;
 
 CMenuUI *CMode_Title::m_MenuUI = NULL;
-const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
 
 //========================================
@@ -116,7 +115,7 @@ void CMode_Title::Init(void) {
 	}
 
 	// メニュー生成
-	m_MenuUI = CMenuUI::Create();
+	m_MenuUI = CMenuUI::Create(CMode::TYPE::TITLE );
 
 	// ステージ読込
 	CreateStageSelectInfo();
@@ -243,12 +242,6 @@ void CMode_Title::Update(void) {
 				{
 					delete[] m_PlanetType;
 					m_PlanetType = NULL;
-				}
-
-				if (m_MenuUI != NULL)
-				{
-					delete m_MenuUI;
-					m_MenuUI = NULL;
 				}
 			}
 			break;
@@ -721,11 +714,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 
-		/*if (m_MenuUI != NULL)
+		if (m_MenuUI != NULL)
 		{
 			delete m_MenuUI;
 			m_MenuUI = NULL;
-		}*/
+		}
 
 		m_nSelect = 0;
 		m_nOldSelect = 0;
