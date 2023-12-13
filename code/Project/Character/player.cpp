@@ -12,6 +12,7 @@
 #include"../UI/miss.h"
 #include"../Object/Block/Ghost.h"
 #include "../resource.h"
+#include "../stage.h"
 
 // スワップインターバル
 const int	CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
@@ -1370,6 +1371,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			{
 				//計測終了
 				CMode_Game::SetMeasureTime(false);
+				Stage::SetIsCutIn(true);
 			}
 		}
 
@@ -1380,6 +1382,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			{
 				//計測終了
 				CMode_Game::SetMeasureTime(false);
+				Stage::SetIsCutIn(true);
 			}
 		}
 	}
@@ -1534,7 +1537,7 @@ void CPlayer::GoalDirector(void)
 	{
 		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
 
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.2f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
