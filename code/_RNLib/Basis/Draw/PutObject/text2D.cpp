@@ -98,7 +98,7 @@ void CText2D::Update(void) {
 //========================================
 CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
+	return RNLib::DrawMgr().PutText2D(priority, pos, angle, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)
 		->SetFontIdx(fontIdx);

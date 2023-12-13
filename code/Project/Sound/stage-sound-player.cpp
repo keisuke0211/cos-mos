@@ -23,15 +23,18 @@ struct AmbientSEInfo {
 // 定数定義
 //****************************************
 // BGM/環境音
+#define SWAP_BGM_PATH "data\\SOUND\\BGM\\SWAP.wav"
+// World1
 #define AMBIENT_SE_1_MAX (2)
 #define AMBIENT_SE_1_LOOP_PATH "NONEDATA"
 #define AMBIENT_SE_1_LOOP_VOLUME (0.5f)
 #define BGM_1_PATH "data\\SOUND\\BGM\\STAGE1.wav"
-#define BGM_1_VOLUME (1.0f)
+#define BGM_1_VOLUME (0.5f)
 static const AmbientSEInfo sc_ambientSE1Infos[AMBIENT_SE_1_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\bard.wav", 200, 500, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\shake.wav", 100, 300, 0.5f, 0.5f },
 };
+// World2
 #define AMBIENT_SE_2_MAX (2)
 #define AMBIENT_SE_2_LOOP_PATH "data\\SOUND\\SE\\AmbientSound\\bubble.wav"
 #define AMBIENT_SE_2_LOOP_VOLUME (0.5f)
@@ -93,6 +96,9 @@ static short ambientSE2Idxes[AMBIENT_SE_2_MAX];
 static short ambientSE2Counter[AMBIENT_SE_2_MAX];
 static short loopPlayID;
 static short BGMPlayID;
+static float BGMVolume;
+static float swapBGMVolume;
+static short swapBGMPlayID;
 static short blockLandingSEIdxes[(int)CBlock::LOOKS_TYPE::MAX];
 
 //========================================
@@ -126,6 +132,24 @@ void StageSoundPlayer::Uninit(void) {
 //========================================
 void StageSoundPlayer::Update(void) {
 
+	if (CPlayer::GetIsSwapWait()) {
+		swapBGMVolume += 0.02f;
+		if (swapBGMVolume > 1.0f)
+			swapBGMVolume = 1.0f;
+	}
+	else {
+		swapBGMVolume -= 0.02f;
+		if (swapBGMVolume < 0.0f)
+			swapBGMVolume = 0.0f;
+	}
+	RNLib::Sound().GetPlay(swapBGMPlayID).SetVolume(swapBGMVolume);
+	{
+		float setVolume = 0.2f + ((1.0f - swapBGMVolume));
+		if (setVolume > 1.0f)
+			setVolume = 1.0f;
+		RNLib::Sound().GetPlay(BGMPlayID).SetVolume(setVolume * BGMVolume);
+	}
+
 	const int planet = Manager::StgEd()->GetPlanetIdx();
 
 	if (planet == 0) {
@@ -151,13 +175,18 @@ void StageSoundPlayer::Update(void) {
 //========================================
 void StageSoundPlayer::Start(void) {
 
+	swapBGMVolume = 0.0f;
+	swapBGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(SWAP_BGM_PATH), CSound::CATEGORY::BGM, 0.0f, true);
+
 	const int planet = Manager::StgEd()->GetPlanetIdx();
 	if (planet == 0) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_1_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_1_LOOP_VOLUME, true);
+		BGMVolume = BGM_1_VOLUME;
 		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_1_PATH), CSound::CATEGORY::BGM, BGM_1_VOLUME, true);
 	}
 	else if (planet == 1) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_2_LOOP_PATH), CSound::CATEGORY::SE, AMBIENT_SE_2_LOOP_VOLUME, true);
+		BGMVolume = BGM_2_VOLUME;
 		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_2_PATH), CSound::CATEGORY::BGM, BGM_2_VOLUME, true);
 	}
 	else {
@@ -172,6 +201,7 @@ void StageSoundPlayer::Start(void) {
 void StageSoundPlayer::End(void) {
 
 	// 再生オブジェクトの破棄
+	RNLib::Sound().GetPlay(swapBGMPlayID).Delete();
 	RNLib::Sound().GetPlay(loopPlayID).Delete();
 	RNLib::Sound().GetPlay(BGMPlayID).Delete();
 }

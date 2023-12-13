@@ -286,7 +286,7 @@ bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, cons
 	m_vtxNum += addVtxNum;
 	m_idxNum += addIdxNum + (m_idxBuff != NULL) * 3;	// ¦k‘Þƒ|ƒŠƒSƒ“‚ÉŽg—p‚·‚é•ª‰ÁŽZ
 
-	if (m_vtxNum > USHRT_MAX || m_idxNum > USHRT_MAX) {
+	if (m_vtxNum > USHRT_MAX || m_idxNum > USHRT_MAX || m_vtxNum <= 0 || m_idxNum <= 0) {
 
 		// ’Ç‰Á‚·‚é’¸“_î•ñ‚ð‰ð•ú
 		CMemory::Release(&addVtxes);

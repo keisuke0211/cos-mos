@@ -45,6 +45,7 @@ CMode_Title::CMode_Title(void) {
 	}
 
 	Title              = TITLE_TITLE;
+	NextTitle		   = TITLE_TITLE;
 	m_nSelect          = 0;
 	m_nOldSelect       = 0;
 	m_nPlanetIdx       = 0;
@@ -84,6 +85,12 @@ CMode_Title::~CMode_Title(void) {
 	if (m_PlanetType != NULL) {
 		delete[] m_PlanetType;
 		m_PlanetType = NULL;
+	}
+
+	if (m_MenuUI != NULL)
+	{
+		delete m_MenuUI;
+		m_MenuUI = NULL;
 	}
 
 	// テキストの破棄
@@ -192,51 +199,65 @@ void CMode_Title::Update(void) {
 			->SetOutLineIdx(true);
 	}
 
-	// 各モードの処理
-	if (Title == TITLE_TITLE)
-		TextAnime();
-	else if (Title == TITLE_MENU) {
-		m_MenuUI->Update();
-		MenuAnime();
-	}
-	else if (Title == TITLE_SELECT)
-		StageSelect();
-	else if (Title == TITLE_NEXT)
-		return;
+	// ゲーム終了
+	bool isEnd = false;
+	if (m_MenuUI != NULL)
+		isEnd = m_MenuUI->GetInfo().bGameEnd;
 
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+	if (isEnd)
+		PostQuitMessage(0);
+	else
 	{
-		//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-		switch (Title)
-		{
-		case TITLE_OUTSET:
-		{
-			SwapMode(TITLE_MENU_ANIME);
+		// 各モードの処理
+		if (Title == TITLE_TITLE)
+			TextAnime();
+		else if (Title == TITLE_MENU) {
+			m_MenuUI->Update();
+			MenuAnime();
 		}
-		break;
-		case TITLE_MENU:
-		break;
-		case TITLE_SELECT:
-		{
-			SwapMode(TITLE_NEXT);
-			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
-			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+		else if (Title == TITLE_SELECT)
+			StageSelect();
+		else if (Title == TITLE_NEXT)
+			return;
 
-			if (m_PlanetType != NULL)
+		if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+		{
+			//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
+
+			switch (Title)
 			{
-				delete[] m_PlanetType;
-				m_PlanetType = NULL;
-			}
-
-			if (m_MenuUI != NULL)
+			case TITLE_OUTSET:
 			{
-				delete m_MenuUI;
-				m_MenuUI = NULL;
+				SwapMode(TITLE_MENU_ANIME);
+			}
+			break;
+			case TITLE_MENU:
+				break;
+			case TITLE_SELECT:
+			{
+				SwapMode(TITLE_NEXT);
+				Stage::SetStageNumber(m_nPlanetIdx, m_nSelect);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+
+				if (m_PlanetType != NULL)
+				{
+					delete[] m_PlanetType;
+					m_PlanetType = NULL;
+				}
+
+				if (m_MenuUI != NULL)
+				{
+					delete m_MenuUI;
+					m_MenuUI = NULL;
+				}
+			}
+			break;
 			}
 		}
-		break;
-		}
+
+		if (Title != NextTitle)
+			SwapMode(NextTitle);
 	}
 }
 
@@ -309,14 +330,15 @@ void CMode_Title::TextAnime(void)
 //========================================
 void CMode_Title::MenuAnime(void)
 {
-	bool close = m_MenuUI->GetInfo().bClose;
+	bool MenuEnd = m_MenuUI->m_MenuEnd;
 	bool backMode = m_MenuUI->GetInfo().bBackMode;
 
-	if (close && backMode)
-		SwapMode(TITLE_TITLE);
-	else if (close && !m_bBackMode) {
+	if (MenuEnd && backMode)
+		NextTitle = TITLE_TITLE;
+	else if (MenuEnd && !m_bBackMode) {
 		TextRelease(TEXT_ALL);
-		SwapMode(TITLE_SELECT);
+		NextTitle = TITLE_SELECT;
+			return;
 	}
 
 	// タイトル
@@ -649,7 +671,7 @@ void CMode_Title::StageSelect(void) {
 //========================================
 void CMode_Title::SwapMode(TITLE aTitle) {
 	Title = aTitle;
-
+	NextTitle = aTitle;
 	switch (aTitle)
 	{
 	case CMode_Title::TITLE_TITLE:
@@ -693,11 +715,19 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		// メニュー生成
 		m_MenuUI->MenuCreate();
 
-		Title = TITLE_MENU;
+		NextTitle = TITLE_MENU;
 	}
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
+		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
+
+		/*if (m_MenuUI != NULL)
+		{
+			delete m_MenuUI;
+			m_MenuUI = NULL;
+		}*/
+
 		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;
