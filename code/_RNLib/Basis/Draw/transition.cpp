@@ -9,7 +9,7 @@
 //****************************************
 // マクロ定義
 //****************************************
-#define BLACK_TIME     (10)
+#define BLACK_TIME     (40)
 #define HOLE_SCALE_MAX (6.0f)
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -28,7 +28,9 @@ CTransition::CTransition() {
 	m_stateCounter = 0;
 	m_time = 0;
 	m_col = INITCOLOR;
-	m_nTexIdx = 0;
+	m_texIdxes[0] = 0;
+	m_texIdxes[1] = 0;
+	m_startGearAngle = 0.0f;
 }
 
 //========================================
@@ -42,7 +44,9 @@ CTransition::~CTransition() {
 // 初期化処理
 //========================================
 void CTransition::Init(void) {
-	m_nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\Load.png");
+	m_texIdxes[0] = RNLib::Texture().Load("data\\TEXTURE\\Load.png");
+	m_texIdxes[1] = RNLib::Texture().Load("data\\TEXTURE\\LoadBody.png");
+	m_texIdxes[2] = RNLib::Texture().Load("data\\TEXTURE\\LoadingGear.png");
 }
 
 //========================================
@@ -78,6 +82,30 @@ void CTransition::Update(void) {
 	case STATE::OPEN_WAIT: {
 		rate = 1.0f;
 	}break;
+		// [[[ ブラック ]]]
+	case STATE::BLACK: {
+		rate = 1.0f;
+
+		// 状態をオープン待ちに
+		if (++m_stateCounter >= BLACK_TIME) {
+			m_stateCounter = 0;
+			m_state = STATE::OPEN_WAIT;
+			break;
+		}
+
+		float size = ((float)(m_stateCounter > 10 ? 10 : m_stateCounter) / 10) * 200.0f;
+		if (m_stateCounter >= BLACK_TIME - 5) {
+			int counter = m_stateCounter + 1;
+			size = 1.0f - ((counter - BLACK_TIME) / 5.0f) * 200.0f;
+		}
+
+		RNLib::Polygon2D().Put(2, true)
+			->SetTex(m_texIdxes[2])
+			->SetSize(size, size)
+			->SetPos(Pos2D(RNLib::Window().GetWidth() - 100.0f, RNLib::Window().GetHeight() - 100.0f))
+			->SetAngle((((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE) + m_startGearAngle);
+
+	}break;
 		// [[[ クローズ ]]]
 	case STATE::CLOSE: {
 		rate = ((float)m_stateCounter / m_time);
@@ -85,7 +113,7 @@ void CTransition::Update(void) {
 		// 状態をオープン待ちに
 		if (++m_stateCounter >= m_time) {
 			m_stateCounter = 0;
-			m_state = STATE::OPEN_WAIT;
+			m_state = STATE::BLACK;
 		}
 	}break;
 	}
@@ -110,6 +138,7 @@ bool CTransition::Open(const TYPE& type, const UShort& time) {
 	m_stateCounter = 0;
 	m_state = STATE::OPEN;
 	m_time = time;
+	m_startGearAngle = D3DX_PI * fRand();
 
 	return true;
 }
@@ -152,13 +181,15 @@ void CTransition::FillScreen(const float& rate) {
 
 		// 胴体
 		RNLib::Polygon2D().Put(1, true)
+			->SetTex(m_texIdxes[1], RNLib::Count().GetBlinkF2(), 1, 2)
 			->SetCol(m_col)
+			->SetTexMirrorX(true)
 			->SetVtxPos(Pos2D(0.0f, 0.0f), Pos2D(right2, 0.0f), Pos2D(0.0f, screenHeightHalf), Pos2D(right2, screenHeightHalf));
 
 		// 頭
 		RNLib::Polygon2D().Put(1, true)
 			->SetCol(m_col)
-			->SetTex(m_nTexIdx)
+			->SetTex(m_texIdxes[0], RNLib::Count().GetBlinkF2(), 1, 2)
 			->SetTexMirrorX(true)
 			->SetVtxPos(Pos2D(right2 - 0.1f, 0.0f), Pos2D(right1, 0.0f), Pos2D(right2 - 0.1f, screenHeightHalf), Pos2D(right1, screenHeightHalf));
 	}
@@ -170,12 +201,13 @@ void CTransition::FillScreen(const float& rate) {
 		// 胴体
 		RNLib::Polygon2D().Put(1, true)
 			->SetCol(m_col)
+			->SetTex(m_texIdxes[1], !RNLib::Count().GetBlinkF2(), 1, 2)
 			->SetVtxPos(Pos2D(left2, screenHeightHalf), Pos2D(screenWidth, screenHeightHalf), Pos2D(left2, screenHeight), Pos2D(screenWidth, screenHeight));
 
 		// 頭
 		RNLib::Polygon2D().Put(1, true)
 			->SetCol(m_col)
-			->SetTex(m_nTexIdx)
+			->SetTex(m_texIdxes[0], !RNLib::Count().GetBlinkF2(), 1, 2)
 			->SetVtxPos(Pos2D(left1, screenHeightHalf), Pos2D(left2 + 0.1f, screenHeightHalf), Pos2D(left1, screenHeight), Pos2D(left2 + 0.1f, screenHeight));
 	}
 }
