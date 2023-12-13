@@ -14,6 +14,7 @@
 class CMenuUI;
 class CFontText;
 class CWords;
+class CCoinUI;
 
 //****************************************
 // ƒNƒ‰ƒX’è‹`
@@ -151,6 +152,7 @@ private:
 	int m_ArrowIdx;
 	int *m_AnimCnt;
 	int m_RocketAnimCnt;
+	int m_ImageStgCnt;
 	int m_RotCnt;
 	int m_nCnt;
 	bool m_bMove[WORDS_MAX];
@@ -162,4 +164,5 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	PlanetType *m_PlanetType;
 	STAGE m_StgFlag;
+	CCoinUI *m_CoinUI;
 };

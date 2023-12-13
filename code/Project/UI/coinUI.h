@@ -17,11 +17,13 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CCoinUI();
 	virtual        ~CCoinUI();
-	virtual void   Init(void);
+	virtual void   Init(D3DXVECTOR3 pos);
 	virtual void   Uninit(void);
 	virtual void   Update(void);
 
-	static CCoinUI *Create(void);
+	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; }
+
+	static CCoinUI *Create(D3DXVECTOR3 pos);
 
 protected:
 
