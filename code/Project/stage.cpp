@@ -20,7 +20,11 @@
 namespace {
 	//========== [[[ 関数宣言 ]]]
 	void PutBackGround(void);
+	void ClearRecord(void);
+	void AllocRecord(void);
 	void LoadRecord(void);
+	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
+	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
 	//========== [[[ 変数宣言 ]]]
 	int             planetIdx;
@@ -41,13 +45,14 @@ namespace {
 	int             whaleCounter;
 	CDoll3D*        whaleDoll;
 
+	//ステージクリアタイムの保存場所
 	struct Record
 	{
-		int PlanetID;
-		int StageID;
-		float *pBestTime;
+		int MaxStage;     //ステージ数
+		float *pBestTime; //各ステージのベストタイム
 	};
-	Record *pRecord;
+	Record *pRecord; //惑星ごとのレコード
+	int MaxPlanet;   //最大惑星数
 }
 
 //================================================================================
@@ -92,38 +97,20 @@ void Stage::Init(void) {
 	// 環境音プレイヤーの初期化処理
 	StageSoundPlayer::Init();
 
-	if (pRecord != NULL)
-	{
-		if (pRecord->pBestTime != NULL)
-		{
-			delete[] pRecord->pBestTime;
-			pRecord->pBestTime = NULL;
-		}
-
-		delete[] pRecord;
-		pRecord = NULL;
-	}
+	MaxPlanet = 0;
+	ClearRecord();
 }
 
 //========================================
 // 終了処理
 //========================================
-void Stage::Uninit(void) {
-
+void Stage::Uninit(void)
+{
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::Uninit();
 
-	if (pRecord != NULL)
-	{
-		if (pRecord->pBestTime != NULL)
-		{
-			delete[] pRecord->pBestTime;
-			pRecord->pBestTime = NULL;
-		}
-
-		delete[] pRecord;
-		pRecord = NULL;
-	}
+	//メモリ開放
+	ClearRecord();
 }
 
 //========================================
@@ -402,22 +389,74 @@ namespace {
 }
 
 //========================================
+// レコードのメモリ開放
+// Author：HIRASAWA SHION
+//========================================
+namespace
+{
+	void ClearRecord(void)
+	{
+		if (pRecord != NULL)
+		{
+			for (int nCntRecord = 0; nCntRecord < MaxPlanet; nCntRecord++)
+			{
+				if (pRecord[nCntRecord].pBestTime != NULL)
+				{
+					delete[] pRecord[nCntRecord].pBestTime;
+					pRecord[nCntRecord].pBestTime = NULL;
+				}
+			}
+
+			delete[] pRecord;
+			pRecord = NULL;
+		}
+		MaxPlanet = 0;
+	}
+}
+
+//========================================
+// レコードのメモリ確保
+// Author：HIRASAWA SHION
+//========================================
+namespace
+{
+	void AllocRecord(void)
+	{
+		//ステージエディター取得
+		CStageEditor *pEd = Manager::StgEd();
+
+		//惑星の総数取得
+		MaxPlanet = pEd->GetPlanetMax();
+
+		//惑星の数だけメモリ確保
+		pRecord = new Record[MaxPlanet];
+
+		for (int nCntStage = 0; nCntStage < MaxPlanet; nCntStage++)
+		{
+			//指定された惑星のステージ数を取得
+			CInt MaxStage = pRecord[nCntStage].MaxStage = pEd->GetType()[nCntStage].nStageMax;
+
+			//ステージ数分のレコード場所確保
+			pRecord[nCntStage].pBestTime = new float[MaxStage];
+		}
+	}
+}
+
+//========================================
 // 指定されたステージのベストタイムを返す
 // Author：HIRASAWA SHION
 //========================================
 float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
 {
-	//ベストタイムを取得
-	float BestTime = 10000.0f;
+	//レコード読込
+	LoadRecord();
 
-	FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+	//読み込めたらベストタイムを返す
+	if (pRecord != NULL)
+		return pRecord[planetIdx].pBestTime[stageIdx];
 
-	if (pFile != NULL)
-	{
-
-	}
-
-	return BestTime;
+	//失敗なら大きい数字を返す
+	return 10000.0f;
 }
 
 //========================================
@@ -426,22 +465,75 @@ float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
 //========================================
 void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 {
-
+	LoadRecord();
 }
 
 //========================================
 // レコードファイル読み込み
 // Author：HIRASAWA SHION
 //========================================
-namespace {
+namespace 
+{
 	void LoadRecord(void)
 	{
+		if (pRecord != NULL) return;
+
 		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
 
 		if (pFile != NULL)
 		{
-			int MAX_PLANET, MAX_STAGE;
-			Manager::StgEd()->GetPlanetAndStageMax(planetIdx, MAX_PLANET, MAX_STAGE);
+			//メモリ確保
+			AllocRecord();
+
+			//文字添削
+			const char COMMENT = '#';       //コメント文字
+			const char CHR_END = '\0';      //終端文字
+			const char CHR_TAB = '\t';      //タブ文字
+			const char *CHR_PAUSE = " -=\:n"; //読み取らない文字たち
+			const char *SET_RECORD = "SET_RECORD";
+			const char *END_RECORD = "END_RECORD";
+			const char *CODE_RECORD = "RECORD";
+
+			char Text[TXT_MAX] = {}; // 一行分の文字
+			int planetID = 0;        // 読み取り中の惑星番号
+			bool bLoad = false;
+			while (true)
+			{
+				//1行読み取り
+				fgets(&Text[0], TXT_MAX, pFile);
+
+				//読み込んだ文字列の中にコメントがあるかチェック
+				char *pCharPos = strchr(&Text[0], COMMENT);
+
+				//コメントアウト用の文字があったらその文字以降を削除
+				if (pCharPos != nullptr)*pCharPos = '\0';
+
+				//タブ消去
+				while (Text[0] == '\t')
+				{
+					char aCodeBackup[TXT_MAX];
+					strcpy(&aCodeBackup[0], &Text[0]);//読み込んだ１行を保存する
+					strcpy(&Text[0], &aCodeBackup[1]);//頭のタブ文字を外した次からの文字で上書きする
+				}
+
+				//読み取り開始
+				if (strncmp(&Text[0], SET_RECORD, sizeof SET_RECORD - 1) == 0)bLoad = true;
+
+				//読み取り終了
+				else if (strncmp(&Text[0], END_RECORD, sizeof END_RECORD - 1) == 0 || Text[0] == EOF && feof(pFile)) break;
+
+				//ロードしない
+				else if (bLoad)
+				{
+					if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
+					{
+						char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
+						planetID     = LoadInt(NULL, CHR_PAUSE);  // 惑星番号取得
+						CInt StageID = LoadInt(NULL, CHR_PAUSE); // ステージ番号取得
+						pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);
+					}
+				}
+			}
 
 			fclose(pFile);
 		}
