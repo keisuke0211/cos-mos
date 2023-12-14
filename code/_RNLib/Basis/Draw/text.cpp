@@ -4,33 +4,27 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-// [[[ text.cpp ]]]
-//========================================
 #include "../../RNlib.h"
-
-//****************************************
-// マクロ定義
-//****************************************
-#define FONTDATA_PATH "RNData\\FontList.txt"
+#include "../../RNsettings.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| CTextクラス
+//==========| [公開]テキストクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
 //========================================
 // コンストラクタ
-// Author:RIKU NISHIMURA
 //========================================
 CText::CText() {
-	m_pFont    = NULL;	// フォント情報のポインタ
-	m_nFontNum = 0;		// フォント数
+
+	m_defaultFontData = {};
+	m_fontDatas       = NULL;
+	m_fontNum         = 0;
 }
 
 //========================================
 // デストラクタ
-// Author:RIKU NISHIMURA
 //========================================
 CText::~CText() {
 	
@@ -41,8 +35,14 @@ CText::~CText() {
 //========================================
 void CText::Init(void) {
 
-	// フォントを読み込む
-	LoadFont();
+	// デフォルトフォントデータを作成
+	m_defaultFontData.texIdx    = RNLib::Texture().Load("RNData\\Texture\\Font.png");
+	m_defaultFontData.startCode = 0;
+	m_defaultFontData.ptnX      = 128;
+	m_defaultFontData.ptnY      = 512;
+
+	// フォントリストを読み込む
+	RNLib::Text().LoadFont(RNSettings::GetInfo().fontListPath);
 }
 
 //========================================
@@ -51,7 +51,7 @@ void CText::Init(void) {
 void CText::Uninit(void) {
 
 	// フォント情報のポインタのメモリ解放
-	CMemory::Release(&m_pFont);
+	CMemory::Release(&m_fontDatas);
 }
 
 //========================================
@@ -63,41 +63,46 @@ void CText::Update(void) {
 
 //========================================
 // フォントの読み込み処理
-// Author:RIKU NISHIMURA
 //========================================
-void CText::LoadFont(void) {
-	if (!RNLib::File().OpenLoadFile(FONTDATA_PATH))
+void CText::LoadFont(const char* loadPath) {
+
+	if (!RNLib::File().OpenLoadFile(loadPath))
 		return;
 
 	// 読み込みループ
 	while (RNLib::File().SearchLoop("END")) {
-		if (false) {}
-		else if (RNLib::File().CheckIdentifier(/* フォント設定情報 */"FONTSET{")) {
-			while (RNLib::File().SearchLoop("}")) {
-				if (false) {}
-				else if (RNLib::File().CheckIdentifier(/* フォント情報 */"FONT{")) {
-					int nNumOld_and_idx = m_nFontNum;
-					m_nFontNum++;	// フォント数を加算
+		if (RNLib::File().CheckIdentifier("fontDatas{")) {
 
-					{// フォント情報のポインタのメモリ再確保
-						FontData* pNew = new FontData[m_nFontNum];
-						int nCopySize = m_nFontNum < nNumOld_and_idx ? m_nFontNum : nNumOld_and_idx;
-						if (nCopySize > 0) {
-							memcpy(pNew, m_pFont, sizeof(FontData) * nCopySize);
-							delete m_pFont;
-						}
-						m_pFont = pNew;
+			// フォント数を読み込み
+			RNLib::File().Scan(CFile::SCAN::USHORT, &m_fontNum);
+			CMemory::Alloc(&m_fontDatas, m_fontNum);
+
+			UShort fontCount = 0;
+			while (RNLib::File().SearchLoop("}")) {
+				if (RNLib::File().CheckIdentifier("fontData{")) {
+
+					// エラーメッセージ
+					if (fontCount >= m_fontNum) {
+						RNLib::Window().Message_ERROR(CreateText("フォントデータの数が指定数をオーバーしています。\n%s", loadPath));
+						break;
 					}
 
 					while (RNLib::File().SearchLoop("}")) {
-						if (false) {}
-						else if (RNLib::File().CheckIdentifier(/* テクスチャパス */"TEXTURE_PATH:")) { RNLib::File().Scan(CFile::SCAN::TEXIDX,&m_pFont[nNumOld_and_idx].nTexIdx); }
-						else if (RNLib::File().CheckIdentifier(/* 開始文字       */"START_CODE:"))   { RNLib::File().Scan(CFile::SCAN::INT, &m_pFont[nNumOld_and_idx].nStartCode); }
-						else if (RNLib::File().CheckIdentifier(/* パターン幅     */"PTN_WIDTH:"))    { RNLib::File().Scan(CFile::SCAN::INT, &m_pFont[nNumOld_and_idx].nPtnWidth); }
-						else if (RNLib::File().CheckIdentifier(/* パターン高さ   */"PTN_HEIGHT:"))   { RNLib::File().Scan(CFile::SCAN::INT, &m_pFont[nNumOld_and_idx].nPtnHeight); }
-						else if (RNLib::File().CheckIdentifier(/* 間隔比率       */"SPACE_RATE:"))   { RNLib::File().Scan(CFile::SCAN::FLOAT, &m_pFont[nNumOld_and_idx].fSpaceRate); }
+						RNLib::File().Scan(CFile::SCAN::TEXIDX,&m_fontDatas[fontCount].texIdx   , "texIdx");
+						RNLib::File().Scan(CFile::SCAN::USHORT,&m_fontDatas[fontCount].startCode, "startCode");
+						RNLib::File().Scan(CFile::SCAN::USHORT,&m_fontDatas[fontCount].ptnX     , "ptnX");
+						RNLib::File().Scan(CFile::SCAN::USHORT,&m_fontDatas[fontCount].ptnY     , "ptnY");
 					}
+
+					if (++fontCount > m_fontNum)
+						RNLib::Window().Message_ERROR("");
 				}
+			}
+
+			// エラーメッセージ
+			if (fontCount < m_fontNum) {
+				RNLib::Window().Message_ERROR(CreateText("フォントデータの数が指定数に対して不足しています。\n%s", loadPath));
+				break;
 			}
 		}
 	}
@@ -107,17 +112,13 @@ void CText::LoadFont(void) {
 }
 
 //========================================
-// フォントの幅取得
-// Author:RIKU NISHIMURA
+// フォントの幅/高さ取得
 //========================================
-float CText::GetFontWidth(int nFont) {
-	return RNLib::Texture().GetWidth(m_pFont[nFont].nTexIdx) / m_pFont[nFont].nPtnWidth;
+float CText::GetFontWidth(const short& fontIdx) {
+	
+	return RNLib::Texture().GetWidth(m_fontDatas[fontIdx].texIdx) / m_fontDatas[fontIdx].ptnX;
 }
+float CText::GetFontHeight(const short& fontIdx) {
 
-//========================================
-// フォントの高さ取得
-// Author:RIKU NISHIMURA
-//========================================
-float CText::GetFontHeight(int nFont) {
-	return RNLib::Texture().GetHeight(m_pFont[nFont].nTexIdx) / m_pFont[nFont].nPtnHeight;
+	return RNLib::Texture().GetHeight(m_fontDatas[fontIdx].texIdx) / m_fontDatas[fontIdx].ptnY;
 }

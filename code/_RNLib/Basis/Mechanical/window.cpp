@@ -203,6 +203,10 @@ void CWindow::Message(const char *pText, const char *pCaption) {
 //========================================
 void CWindow::Message_ERROR(const char* pText) {
 
+	// 実行モードの時は終了
+	if (RNSystem::GetMode() == RNSystem::MODE::EXECUTION)
+		return;
+
 	MessageBox(m_hWnd, pText, "ERROR", MB_ICONWARNING);
 	RNLib::Input().ClearInputInfo();
 }

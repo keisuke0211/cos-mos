@@ -410,14 +410,14 @@ void CPlayer::UpdateInfo(void)
 							if (ms_guideCounter == 1) {
 								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 							}
-							RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+							RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 								->SetZTest(false)
 								->SetBillboard(true);
 						}
 						else {
 							if (s_nSwapInterval == 0) {
-								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 									->SetSize(Size2D(24.0f * rate, 24.0f * rate))
 									->SetZTest(false)
 									->SetBillboard(true);
@@ -434,13 +434,13 @@ void CPlayer::UpdateInfo(void)
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 						}
-						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 							->SetZTest(false)
 							->SetBillboard(true);
 					}
 					else {
-						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
 							->SetZTest(false)
 							->SetBillboard(true);
@@ -1555,14 +1555,14 @@ void CPlayer::GoalDirector(void)
 		CFloat BestTime = Stage::GetBestTime(planet, stage);
 
 		if(ClearTime < BestTime)
-			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 160.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(0.0f, 200.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(0.0f, 200.0f), 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
@@ -1574,7 +1574,7 @@ void CPlayer::GoalDirector(void)
 
 		//インターバル前半は表示
 		if (DiffInterval < GOAL_INTERVAL / 2)
-			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", CText::ALIGNMENT::CENTER, 0, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
+			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", CText::ALIGNMENT::CENTER, NONEDATA, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		if (s_nGoalInterval >= GOAL_INTERVAL * 2)

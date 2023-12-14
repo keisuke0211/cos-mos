@@ -19,6 +19,7 @@ namespace RNSettings {
 		float windowHeight = 0.0f;
 		bool  isFullScreen = false;	
 		float resolution   = 0.0f;
+		char* fontListPath = NULL;
 		// OtherOptions
 		float modelOutLineAddDistanceInterval   = 0.0f;
 		UShort modelOutLineAddDistanceDelimiter = 0;

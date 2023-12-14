@@ -793,12 +793,9 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		}
 
 		m_bStageSelect = false;
-		m_nSelect = 0;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;
 		m_nOldnPlanet = 0;
-
-		s_bStageSelect = false;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}

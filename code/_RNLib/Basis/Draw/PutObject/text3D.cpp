@@ -114,12 +114,8 @@ void CText3D::CRegistInfo::ClearParameter(void) {
 //========================================
 void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOnScreen) {
 
-	// フォント指定なしの時、終了
-	if (m_fontIdx < 0)
-		return;
-
 	// フォントデータを取得
-	CText::FontData fontData = RNLib::Text().GetFont(m_fontIdx);
+	CText::FontData fontData = RNLib::Text().GetFontData(m_fontIdx);
 	
 	//----------------------------------------
 	// 幅/高さ/間隔を算出
@@ -127,8 +123,8 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 	float charWidth      = 0.0f;
 	float charHeightHalf = 0.0f;
 	if (m_isScale) {
-		charWidth      = (RNLib::Texture().GetWidth (fontData.nTexIdx) / fontData.nPtnWidth ) * m_scaleOrSize.x;
-		charHeightHalf = (RNLib::Texture().GetHeight(fontData.nTexIdx) / fontData.nPtnHeight) * m_scaleOrSize.y * 0.5f;
+		charWidth      = (RNLib::Texture().GetWidth (fontData.texIdx) / fontData.ptnX ) * m_scaleOrSize.x;
+		charHeightHalf = (RNLib::Texture().GetHeight(fontData.texIdx) / fontData.ptnY) * m_scaleOrSize.y * 0.5f;
 	}
 	else {
 		charWidth      = m_scaleOrSize.x;
@@ -183,7 +179,7 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 				Pos3D(setPos.x, bottomY, 0.0f),
 				Pos3D(rightX  , bottomY, 0.0f))
 			->SetCol(m_col)
-			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
+			->SetTex(fontData.texIdx, (int)wstr[cntChar] - (int)fontData.startCode, fontData.ptnX, fontData.ptnY)
 			->SetZTest(m_isZtest)
 			->SetLighting(m_isLighting)
 			->SetBillboard(m_isBillboard)
