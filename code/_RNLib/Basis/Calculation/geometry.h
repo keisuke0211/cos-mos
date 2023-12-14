@@ -28,8 +28,8 @@ public:
 	static Rot3D    FindVecRot         (const Vector3D& vec);
 	static Normal3D FindVecNor         (const Vector3D& vecA, const Vector3D& vecB);
 	static Normal3D GetRandomVec       (void);
-	CGeometry();
-	~CGeometry();
+	CGeometry  ();
+	~CGeometry ();
 	void Init  (void);
 	void Uninit(void);
 	void Update(void);

@@ -155,7 +155,7 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 	CFloat CorrHeight = m_fEvenTrunkCorrHeight * 2.0f;
 
 	//Y‚ª”²‚¯‚È‚¢‚æ‚¤‚É’²®
-	FloatControl(&fCaveInHeight, HalfSize - CorrHeight, -HalfSize - CorrHeight);
+	RNLib::Number().Clamp(&fCaveInHeight, HalfSize - CorrHeight, -HalfSize - CorrHeight);
 
 	//‘O‰ñî•ñ‚ğ•Û‘¶
 	SetOld(fCaveInHeight);

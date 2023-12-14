@@ -189,7 +189,7 @@ void CMode_Title::Update(void) {
 		else if (Title == TITLE_SELECT)
 			m_PlanetAngle += -0.002f;
 
-		FloatLoopControl(&m_PlanetAngle, D3DX_PI, -D3DX_PI);
+		RNLib::Number().LoopClamp(&m_PlanetAngle, D3DX_PI, -D3DX_PI);
 	}
 
 	if (Title <= TITLE_MENU)
@@ -718,7 +718,7 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 
 	m_nDrawPlanet = m_nPlanetIdx;
 
-	IntControl(&m_nStageSelect, nStage - 1, 0);
+	RNLib::Number().Clamp(&m_nStageSelect, nStage - 1, 0);
 
 	if (nStage != nStageMaxOld) {
 		CMemory::Alloc(&m_AnimCnt, nStage);

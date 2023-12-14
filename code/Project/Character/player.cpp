@@ -990,7 +990,7 @@ void CPlayer::SwapGuide(Info& Player)
 
 	//ガイドのスピードを設定
 	Player.fGuideMoveSpeed = fSize / 100.0f;
-	FloatControl(&Player.fGuideMoveSpeed, MAX_GUIDE_SPEED, -MAX_GUIDE_SPEED);
+	RNLib::Number().Clamp(&Player.fGuideMoveSpeed, MAX_GUIDE_SPEED, -MAX_GUIDE_SPEED);
 	Player.fGuideTexVPos += Player.fGuideMoveSpeed;
 
 	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
@@ -1065,9 +1065,9 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 
 		// Ⅹの移動量を修正
 		if(s_bAimPlayer && s_nAimNo == cntPlayer)
-			FloatControl(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
+			RNLib::Number().Clamp(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
 		else
-			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+			RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
 
 		// 位置更新
 		Player.pos.x += Player.move.x;

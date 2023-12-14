@@ -19,8 +19,8 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	static float Easing(const TYPE& ease, const int& base, const int& max);
 	static float Easing(const TYPE& ease, const float& base, const float& max);
-	CEase();
-	~CEase();
+	CEase      ();
+	~CEase     ();
 	void Init  (void);
 	void Uninit(void);
 	void Update(void);

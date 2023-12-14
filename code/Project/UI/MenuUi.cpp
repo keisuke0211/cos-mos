@@ -309,8 +309,8 @@ void CMenuUI::SelectInput(void)
 	}
 
 	// ループ制御
-	IntLoopControl(&m_Menu.nMaineSelect, m_Menu.MainMenuMax, 0);
-	IntLoopControl(&m_Menu.nSubSelect, m_Menu.SettingMax - 2, 1);
+	RNLib::Number().LoopClamp(&m_Menu.nMaineSelect, m_Menu.MainMenuMax, 0);
+	RNLib::Number().LoopClamp(&m_Menu.nSubSelect, m_Menu.SettingMax - 2, 1);
 
 	// アニメーション
 	if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID != -1 && !m_Menu.bSubMenuMove && !m_Menu.bSubMenuDisp) {
@@ -340,8 +340,8 @@ void CMenuUI::SelectInput(void)
 	}
 
 	// ループ制御
-	IntControl(&m_Menu.nBGMVolume, VOLUME_MSX, 0);
-	IntControl(&m_Menu.nSEVolume, VOLUME_MSX, 0);
+	RNLib::Number().Clamp(&m_Menu.nBGMVolume, VOLUME_MSX, 0);
+	RNLib::Number().Clamp(&m_Menu.nSEVolume, VOLUME_MSX, 0);
 }
 
 //========================================

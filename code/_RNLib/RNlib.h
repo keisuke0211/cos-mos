@@ -95,6 +95,7 @@ namespace RNLib {
 	CGeometry&         Geometry        (void);
 	CHitTest&          HitTest         (void);
 	CMatrix&           Matrix          (void);
+	CNumber&           Number          (void);
 	// Draw						       
 	CStaticMesh&       StaticMesh      (void);
 	CModel&            Model           (void);

@@ -23,8 +23,8 @@ public:
 	static Rot3D   ConvMtxToRot        (const Matrix& mtx);
 	static Scale3D ConvMtxToScale      (const Matrix& mtx);
 	static Matrix  MultiplyMtx         (const Matrix& mtxA, const Matrix& mtxB);
-	CMatrix();
-	~CMatrix();
+	CMatrix    ();
+	~CMatrix   ();
 	void Init  (void);
 	void Uninit(void);
 	void Update(void);

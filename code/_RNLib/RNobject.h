@@ -53,18 +53,21 @@ public:
 		m_geometry.Init();
 		m_hitTest .Init();
 		m_matrix  .Init();
+		m_number  .Init();
 	}
 	void Uninit(void) {
 		m_ease	  .Uninit();
 		m_geometry.Uninit();
 		m_hitTest .Uninit();
 		m_matrix  .Uninit();
+		m_number  .Uninit();
 	}
 	void Update(void) {
 		m_ease	  .Update();
 		m_geometry.Update();
 		m_hitTest .Update();
 		m_matrix  .Update();
+		m_number  .Update();
 	}
 
 	//========== [[[ •Ï”éŒ¾ ]]]
@@ -72,6 +75,7 @@ public:
 	CGeometry m_geometry;
 	CHitTest  m_hitTest;
 	CMatrix   m_matrix;
+	CNumber   m_number;
 };
 
 // •`‰æ

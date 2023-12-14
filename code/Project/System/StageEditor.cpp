@@ -298,7 +298,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 	bool bSet = true;
 	bool bEnd = false;
 
-	IntControl(&m_PlanetType[planet].nStageIdx, m_PlanetType[planet].nStageIdx, 0);
+	RNLib::Number().Clamp(&m_PlanetType[planet].nStageIdx, m_PlanetType[planet].nStageIdx, 0);
 
 	// “Ç‚Ýž‚Ý
 	pFile->FileLood(m_PlanetType[planet].StageType[stage].aFileName, false, false, ',');
