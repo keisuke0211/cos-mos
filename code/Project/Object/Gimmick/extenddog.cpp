@@ -67,15 +67,17 @@ CExtenddog::~CExtenddog(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Init(void) {
-	m_HeadPos.y = m_nHeight * SIZE_OF_1_SQUARE;
 
-	CFloat PosDiffY = m_HeadPos.y + m_HipPos.y;
+	float Height = m_nHeight * SIZE_OF_1_SQUARE;
+	//m_HeadPos.y = m_nHeight * SIZE_OF_1_SQUARE;
+
+	CFloat PosDiffY = Height + m_HipPos.y;
 	
 	//ëÃÇÃèâä˙à íuê›íË
 	m_StartBodyPos = m_BodyPos = Pos3D(m_HeadPos.x, PosDiffY * 0.5f, m_HeadPos.z);
 
 	//çÇÇ≥éZèo
-	m_StartHeight = m_height = fabsf(m_HeadPos.y - m_BodyPos.y) - HEAD_HIP_SIZE;
+	m_StartHeight = m_height = fabsf(Height - m_BodyPos.y) - HEAD_HIP_SIZE;
 
 	if (!m_bInversion) return;
 
