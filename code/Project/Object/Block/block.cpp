@@ -67,7 +67,7 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // åöï®2
 	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // ñÿÇÃçÚ
 	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // ïΩâÆ
-	{ "data\\MODEL\\Power_Pole_Line.x"                        , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // ìdíå
+	{ "data\\MODEL\\Power-Pole_LineL.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // ìdíå(ç∂Ç…ìdê¸)
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
