@@ -135,6 +135,7 @@ public:
 	/* 背景				*/char *GetBgFile(void) { return m_Info.aBgFile; }
 	/* サウンド			*/char *GetSoundFile(void) { return m_Info.aSoundFile; }
 	/* 位置				*/D3DXVECTOR3 GetPos(int nRow, int nLine);
+	/* ステージ総数取得 */void GetPlanetAndStageMax(CInt planet, int& NumPlanet, int& NumStage);
 
 	// -- 変換 ---------------------------------------------
 	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);

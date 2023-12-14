@@ -120,7 +120,6 @@ public:
 	static const int SWAP_INTERVAL;	// スワップインターバル
 	static const int NUM_PLAYER = 2;// プレイヤーの数
 
-
 	CPlayer();
 	~CPlayer();
 	HRESULT Init(void);
@@ -144,10 +143,7 @@ public:
 
 	// プレイヤー位置情報設定
 	// 指定したプレイヤーの位置情報を引数に渡してください。
-	void SetPos(const int nNum, D3DXVECTOR3 pos)
-	{
-		m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos;
-	}
+	void SetPos(const int nNum, D3DXVECTOR3 pos) { m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos; }
 
 	// プレイヤー色情報設定
 	// 指定したプレイヤーの色情報を引数に渡してください。

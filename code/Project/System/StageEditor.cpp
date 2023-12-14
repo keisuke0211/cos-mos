@@ -1242,3 +1242,13 @@ bool CStageEditor::ToData(double &val, CSVFILE *pFile, int nRow, int nLine)
 		return false;
 	}
 }
+
+//========================================
+// ステージ総数取得
+// Author:HIRASAAWA SHION
+//========================================
+void CStageEditor::GetPlanetAndStageMax(CInt planet, int& NumPlanet, int& NumStage)
+{
+	NumPlanet = m_Info.nPlanetMax;
+	NumStage = m_PlanetType[planet].nStageMax;
+}
