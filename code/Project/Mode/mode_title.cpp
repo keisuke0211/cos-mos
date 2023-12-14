@@ -34,7 +34,10 @@ const int MAX_COUNT = 24;
 CInt ANIMCOUNT = MAX_COUNT;
 
 CMenuUI *CMode_Title::m_MenuUI = NULL;
-bool CMode_Title::s_bStageSelect = false;
+bool CMode_Title::m_bStageSelect = false;
+
+int CMode_Title::m_nPlanetIdx = 0;
+int CMode_Title::m_nStageSelect = 0;
 
 //========================================
 // コンストラクタ
@@ -48,12 +51,9 @@ CMode_Title::CMode_Title(void) {
 
 	Title              = TITLE_TITLE;
 	NextTitle		   = TITLE_TITLE;
-	m_nSelect          = 0;
 	m_nOldSelect       = 0;
-	m_nPlanetIdx       = 0;
 	m_nOldnPlanet      = 0;
 	m_PlanetAngle      = 0.0f;
-	m_nSelect          = 0;
 	m_PlanetType       = NULL;
 	m_CoinUI           = NULL;
 	m_bBackMode        = false;
@@ -125,10 +125,10 @@ void CMode_Title::Init(void) {
 	// ステージ読込
 	CreateStageSelectInfo();
 
-	if (s_bStageSelect) 
+	if (m_bStageSelect) 
 	{// ステージ選択時、
 		SwapMode(TITLE_SELECT);
-		s_bStageSelect = false;
+		m_bStageSelect = false;
 	}
 	else
 	{// ステージ非選択時、
@@ -139,9 +139,6 @@ void CMode_Title::Init(void) {
 	// テクスチャ
 	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
 	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
-
-	// 選択番号
-	m_nSelect = 0;
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
@@ -244,7 +241,7 @@ void CMode_Title::Update(void) {
 			case TITLE_SELECT:
 			{
 				SwapMode(TITLE_NEXT);
-				Stage::SetStageNumber(m_nPlanetIdx, m_nSelect);
+				Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
 				if (m_PlanetType != NULL)
@@ -497,7 +494,7 @@ void CMode_Title::StageSelect(void) {
 	// 選択アイコンの処理
 	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
 
-		if (nCnt == m_nSelect) {
+		if (nCnt == m_nStageSelect) {
 			//アニメーション割合
 			AnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
 			if (m_AnimCnt[nCnt] < ANIMCOUNT) m_AnimCnt[nCnt]++;
@@ -514,9 +511,9 @@ void CMode_Title::StageSelect(void) {
 					m_RocketAnimCnt = 0;
 					m_bStageChange = false;
 					m_bRocketMove = true;
-					if (m_nSelect == 0)
+					if (m_nStageSelect == 0)
 						m_RocketPosOld = FADEROCKET;
-					else if (m_nSelect == nStageMax - 1)
+					else if (m_nStageSelect == nStageMax - 1)
 						m_RocketPosOld = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
 				}
 				else{
@@ -529,22 +526,22 @@ void CMode_Title::StageSelect(void) {
 				if (m_bStageChange == false)
 					m_RocketPos = UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
 				if (m_bStageChange == true) {
-					if (m_nSelect == 0)
+					if (m_nStageSelect == 0)
 						m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
-					else if (m_nSelect == nStageMax - 1)
+					else if (m_nStageSelect == nStageMax - 1)
 						m_RocketPos = FADEROCKET;
 				}
 			}
 			else{
 				if (m_RocketAnimCnt > 0) {
-					if (m_nSelect == 0)
+					if (m_nStageSelect == 0)
 						m_RocketPos = UNSELECTBOX - PosCor + 0.0f * NUMPOSSELBOX + NUMPOSROCKET;
-					else if (m_nSelect == nStageMax - 1)
+					else if (m_nStageSelect == nStageMax - 1)
 						m_RocketPos = UNSELECTBOX - PosCor + (nStageMax - 1) * NUMPOSSELBOX + NUMPOSROCKET;
 				}
 			}
 
-			if (m_nSelect != m_nOldSelect){
+			if (m_nStageSelect != m_nOldSelect){
 				m_RocketposRate = m_RocketPos - m_RocketPosOld;
 				m_RocketRotOld = m_RocketRot;
 
@@ -595,7 +592,7 @@ void CMode_Title::StageSelect(void) {
 	// ステージ選択処理
 	//----------------------------------------
 	if(m_bStageChange == false)
-	m_nOldSelect = m_nSelect;
+	m_nOldSelect = m_nStageSelect;
 	bool bInput = false;
 
 	if (m_bStageChange == false) {
@@ -607,11 +604,11 @@ void CMode_Title::StageSelect(void) {
 				return;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
-				m_nSelect--;
+				m_nStageSelect--;
 				bInput = true;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
-				m_nSelect++;
+				m_nStageSelect++;
 				bInput = true;
 			}
 
@@ -619,15 +616,15 @@ void CMode_Title::StageSelect(void) {
 				m_nOldnPlanet = m_nPlanetIdx;
 				m_nDrawPlanet = m_nOldnPlanet;
 
-				if (m_nSelect > -1 && m_nSelect < nStageMax) {
+				if (m_nStageSelect > -1 && m_nStageSelect < nStageMax) {
 					m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * RocketAnimRate);
 					m_RotCnt = 0;
 					m_RocketAnimCnt = 0;
 				}
 
-				if (m_nSelect < 0) {
-					m_nSelectTemp = m_nSelect;
-					m_nSelect = 0;
+				if (m_nStageSelect < 0) {
+					m_nSelectTemp = m_nStageSelect;
+					m_nStageSelect = 0;
 
 					if (m_nPlanetIdx != 0) {
 						m_RotCnt = 0;
@@ -637,9 +634,9 @@ void CMode_Title::StageSelect(void) {
 						m_StgFlag = STAGE::DESPAWN;
 					}
 				}
-				else if (m_nSelect >= nStageMax) {
-					m_nSelectTemp = m_nSelect;
-					m_nSelect = nStageMax - 1;
+				else if (m_nStageSelect >= nStageMax) {
+					m_nSelectTemp = m_nStageSelect;
+					m_nStageSelect = nStageMax - 1;
 
 					if (m_nPlanetIdx < nPlanetMax - 1) {
 						m_RotCnt = 0;
@@ -661,20 +658,20 @@ void CMode_Title::StageSelect(void) {
 
 			m_nPlanetIdx--;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-			m_nSelect = nStageMax - 1;
+			m_nStageSelect = nStageMax - 1;
 			m_nOldSelect = nStageMax;
 		}
 		else if (m_nSelectTemp >= nStageMax && m_nPlanetIdx != nPlanetMax - 1) {
 			
 			m_nPlanetIdx++;
-			m_nSelect = 0;
+			m_nStageSelect = 0;
 			m_nOldSelect = -1;
 			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 		}
 
 		m_nDrawPlanet = m_nPlanetIdx;
 
-		IntControl(&m_nSelect, nStageMax - 1, 0);
+		IntControl(&m_nStageSelect, nStageMax - 1, 0);
 
 		if (nStageMax != nStageMaxOld) {
 			CMemory::Alloc(&m_AnimCnt, nStageMax);
@@ -749,12 +746,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 			m_MenuUI = NULL;
 		}
 
-		m_nSelect = 0;
-		m_nOldSelect = 0;
-		m_nPlanetIdx = 0;
-		m_nOldnPlanet = 0;
-
-		s_bStageSelect = false;
+		m_bStageSelect = false;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
