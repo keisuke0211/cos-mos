@@ -967,6 +967,8 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 {
 	int nDog = 0;
+	int row = m_Info.nRowMax * 0.5f;
+	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
 
 	while (1)
 	{
@@ -1020,7 +1022,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 							m_DogInfo[nDog].HipPos.y = m_DogInfo[nDog].HipPos.y + AddPosY;
 						}
 
-						Manager::StageObjectMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, m_DogInfo[nDog].bElasticity, bReturn);
+						Manager::StageObjectMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].HeightMin, m_DogInfo[nDog].HeightMax, m_DogInfo[nDog].bElasticity, bReturn);
 					}
 
 					nDog++;
@@ -1032,6 +1034,11 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 
 					m_DogInfo[nDog].HeadPos = GetPos(Row, Line);
+
+					if (Row <= row)
+						m_DogInfo[nDog].HeadPos.y += fSizeY * 0.25f;
+					else if (Row >= row)
+						m_DogInfo[nDog].HeadPos.y += -fSizeY * 0.25f;
 				}
 				else if (!strcmp(aDataSearch, "HipPos")) {
 					int Row = 0; int Line = 0; nLine += 4;
@@ -1039,12 +1046,18 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 
 					m_DogInfo[nDog].HipPos = GetPos(Row, Line);
+
+					if (Row <= row)
+						m_DogInfo[nDog].HipPos.y += fSizeY * 0.25f;
+					else if (Row >= row)
+						m_DogInfo[nDog].HipPos.y += -fSizeY * 0.25f;
 				}
 				else if (!strcmp(aDataSearch, "Height")) {
 					nLine += 4;
-					ToData(m_DogInfo[nDog].Height, pFile, nRow, nLine); nLine++;
+					ToData(m_DogInfo[nDog].HeightMin, pFile, nRow, nLine); nLine++;
+					ToData(m_DogInfo[nDog].HeightMax, pFile, nRow, nLine); nLine++;
 				}
-				else if (!strcmp(aDataSearch, "Shrink")) {
+				else if (!strcmp(aDataSearch, "Elasticity")) {
 					nLine += 4; int nShrink = 0;
 					ToData(nShrink, pFile, nRow, nLine); nLine++;
 
