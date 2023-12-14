@@ -39,7 +39,8 @@ public:
 	void  SetElasticity(bool Elast) { m_bElasticity = Elast; }//Lkİ’è
 	void  SetHead(Pos3D pos)        { m_HeadPos = pos; }      //“ª‚ÌˆÊ’uİ’è
 	void  SetHip(Pos3D pos)         { m_HipPos = pos; }       //‚¨K‚ÌˆÊ’uİ’è
-	void  SetHeadHeight(int height) { m_nHeight = height; }   //“ª‚Ì‚‚³
+	void  SetHeadHeightMin(CInt heightMin) { m_nHeightMin = heightMin; } //“ª‚Ì‚‚³iÅ’á
+	void  SetHeadHeightMax(CInt heightMax) { m_nHeightMax = heightMax; } //“ª‚Ì‚‚³iÅ‚
 	void  SetReturn(bool bReturn)   { m_bInversion = bReturn; }//”½“]‚Ìİ’è
 
 	// -- æ“¾ ---------------------------------------------
@@ -76,8 +77,8 @@ private:
 	bool  m_bElasticity; // G‚Á‚Äk‚Ş‚©L‚Ñ‚é‚©
 	bool  m_bInversion;  // ”½“]
 	int   m_nCntShrink;  // k‚ŞƒJƒEƒ“ƒg
-	//float m_fcurrenty;   // Œ»İ‚ÌyÀ•W
-	int   m_nHeight;     // ‚‚³
+	int   m_nHeightMin;  // L‚Ñ‚é‚‚³iÅ’á
+	int   m_nHeightMax;  // L‚Ñ‚é‚‚³iÅ‚
 
 	Pos3D m_HeadPos;     // “ª‚ÌˆÊ’u
 	Pos3D m_BodyPos;     // ‘Ì‚ÌˆÊ’u
