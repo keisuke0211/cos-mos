@@ -20,6 +20,7 @@
 namespace {
 	//========== [[[ 関数宣言 ]]]
 	void PutBackGround(void);
+	void LoadRecord(void);
 
 	//========== [[[ 変数宣言 ]]]
 	int             planetIdx;
@@ -35,6 +36,14 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+
+	struct Record
+	{
+		int PlanetID;
+		int StageID;
+		float *pBestTime;
+	};
+	Record *pRecord;
 }
 
 //================================================================================
@@ -78,6 +87,18 @@ void Stage::Init(void) {
 
 	// 環境音プレイヤーの初期化処理
 	StageSoundPlayer::Init();
+
+	if (pRecord != NULL)
+	{
+		if (pRecord->pBestTime != NULL)
+		{
+			delete[] pRecord->pBestTime;
+			pRecord->pBestTime = NULL;
+		}
+
+		delete[] pRecord;
+		pRecord = NULL;
+	}
 }
 
 //========================================
@@ -87,6 +108,18 @@ void Stage::Uninit(void) {
 
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::Uninit();
+
+	if (pRecord != NULL)
+	{
+		if (pRecord->pBestTime != NULL)
+		{
+			delete[] pRecord->pBestTime;
+			pRecord->pBestTime = NULL;
+		}
+
+		delete[] pRecord;
+		pRecord = NULL;
+	}
 }
 
 //========================================
@@ -349,16 +382,47 @@ namespace {
 
 //========================================
 // 指定されたステージのベストタイムを返す
+// Author：HIRASAWA SHION
 //========================================
 float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
 {
-	return 0.0f;
+	//ベストタイムを取得
+	float BestTime = 10000.0f;
+
+	FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+
+	if (pFile != NULL)
+	{
+
+	}
+
+	return BestTime;
 }
 
 //========================================
-// 
+// タイム更新
+// Author：HIRASAWA SHION
 //========================================
 void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 {
 
+}
+
+//========================================
+// レコードファイル読み込み
+// Author：HIRASAWA SHION
+//========================================
+namespace {
+	void LoadRecord(void)
+	{
+		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+
+		if (pFile != NULL)
+		{
+			int MAX_PLANET, MAX_STAGE;
+			Manager::StgEd()->GetPlanetAndStageMax(planetIdx, MAX_PLANET, MAX_STAGE);
+
+			fclose(pFile);
+		}
+	}
 }
