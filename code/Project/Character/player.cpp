@@ -1514,6 +1514,9 @@ void CPlayer::GoalDirector(void)
 
 	//クリアタイム取得
 	CFloat ClearTime = CMode_Game::GetPlayTime();
+	CStageEditor *pEd = Manager::StgEd();
+	CInt planet = pEd->GetPlanetIdx();
+	CInt stage = pEd->GetType()[planet].nStageIdx;
 
 	if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
 	{
@@ -1527,9 +1530,6 @@ void CPlayer::GoalDirector(void)
 		else
 		{
 			CCoin::AddNumAll();
-			CStageEditor *pEd = Manager::StgEd();
-			CInt planet = pEd->GetPlanetIdx();
-			CInt stage = pEd->GetType()[planet].nStageIdx;
 			pEd->SwapStage(stage + 1);
 			Stage::RegistTime(planet, stage, ClearTime);
 			Stage::SetIsCutIn(false);
@@ -1552,9 +1552,17 @@ void CPlayer::GoalDirector(void)
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
+		CFloat BestTime = Stage::GetBestTime(planet, stage);
 
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
+		if(ClearTime < BestTime)
+			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 160.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(0.0f, 200.0f), 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 

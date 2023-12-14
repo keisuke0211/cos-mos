@@ -40,13 +40,16 @@ public:
 	};	
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	static void SetSelect(bool bSelect) { s_bStageSelect = bSelect; }
+	static void SetSelect(bool bSelect) { m_bStageSelect = bSelect; }
 	CMode_Title();
 	~CMode_Title();
 	void  Init(void);
 	void  Uninit(void);
 	void  Update(void);
 	void  ProcessState(const PROCESS process);
+
+	static int m_nPlanetIdx;
+	static int m_nStageSelect;
 
 private:
 	//========== [[[ óÒãìå^íËã` ]]]
@@ -86,12 +89,14 @@ private:
 	void TextAnime(void);
 	void CreateStageSelectInfo(void);
 	void StageSelect(void);
+	void StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor,float &RktAnimRt);
+	void StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor);
 	void TextRelease(TEXT type);
 	void SwapMode(TITLE aTitle);
 
 	// *** ê√ìIïœêî ***
 	static CMenuUI *m_MenuUI;
-	static bool s_bStageSelect;
+	static bool m_bStageSelect;
 
 	// *** ïœêî ***
 	TITLE Title;
@@ -105,10 +110,8 @@ private:
 	D3DXVECTOR3 m_RocketRotRate;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
-	int m_nSelect;
 	int m_nSelectTemp;
 	int m_nOldSelect;
-	int m_nPlanetIdx;
 	int m_nOldnPlanet;
 	int m_nDrawPlanet;
 	int m_RocketIdx;
@@ -118,6 +121,7 @@ private:
 	int m_ArrowIdx;
 	int *m_AnimCnt;
 	int m_RocketAnimCnt;
+	int m_NumAnimCnt;
 	int m_ImageStgCnt;
 	int m_RotCnt;
 	int m_nCnt;
@@ -125,6 +129,7 @@ private:
 	bool m_bBackMode;
 	bool m_bStageChange;
 	bool m_bRocketMove;
+	bool m_bRotDir;
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];

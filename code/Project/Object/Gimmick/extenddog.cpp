@@ -40,7 +40,7 @@ CExtenddog::CExtenddog(void) {
 	m_bElasticity = false;
 	m_bInversion = false;
 	m_nCntShrink = 0;
-	//m_fcurrenty = 0.0f;
+	m_nHeightMin = m_nHeightMax = 1;
 	m_HeadPos = INITD3DXVECTOR3;
 	m_BodyPos = INITD3DXVECTOR3;
 	m_BodyPosOld = INITD3DXVECTOR3;
@@ -67,15 +67,17 @@ CExtenddog::~CExtenddog(void) {
 // Author:KOMURO HIROMU
 //========================================
 void CExtenddog::Init(void) {
-	m_HeadPos.y = m_nHeight * SIZE_OF_1_SQUARE;
 
-	CFloat PosDiffY = m_HeadPos.y + m_HipPos.y;
+	CFloat Height = SIZE_OF_1_SQUARE * m_bElasticity ? 
+		m_nHeightMin : m_nHeightMax;
+
+	CFloat PosDiffY = Height + m_HipPos.y;
 	
 	//ëÃÇÃèâä˙à íuê›íË
 	m_StartBodyPos = m_BodyPos = Pos3D(m_HeadPos.x, PosDiffY * 0.5f, m_HeadPos.z);
 
 	//çÇÇ≥éZèo
-	m_StartHeight = m_height = fabsf(m_HeadPos.y - m_BodyPos.y) - HEAD_HIP_SIZE;
+	m_StartHeight = m_height = fabsf(Height - m_BodyPos.y) - HEAD_HIP_SIZE;
 
 	if (!m_bInversion) return;
 
@@ -117,7 +119,7 @@ void CExtenddog::Update(void) {
 	CFloat SizeRate = SIZE_OF_1_SQUARE * fCountRate;
 
 	//çÇÇ≥
-	m_height = m_StartHeight + SizeRate * (m_nHeight - 1);
+	m_height = m_StartHeight + SizeRate * (m_bElasticity ? m_nHeightMin : m_nHeightMax - 1);
 
 	//îºï™ÇÃçÇÇ≥
 	CFloat HalfHeight = m_height * 0.5f;
