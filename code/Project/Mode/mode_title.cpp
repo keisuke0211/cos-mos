@@ -15,6 +15,7 @@
 #include "../System/words/font-text.h"
 #include "../resource.h"
 #include "../stage.h"
+#include "../UI/coinUI.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -27,11 +28,12 @@ const D3DXVECTOR3 SELBOXRATE = SELECTBOX - UNSELECTBOX;
 const D3DXVECTOR3 NUMPOSSELBOX = D3DXVECTOR3(15.0f, 0.0f, 0.0f);
 const D3DXVECTOR3 NUMPOSROCKET = D3DXVECTOR3(0.0f, 15.0f, 0.0f);
 const D3DXVECTOR3 FADEROCKET = D3DXVECTOR3(70.0f, UNSELECTBOX.y, UNSELECTBOX.z) + NUMPOSROCKET;
+const D3DXVECTOR3 COINUIPOS = D3DXVECTOR3(25.0f, 16.7f, -136.0f);
+const D3DXVECTOR3 IMAGE_STG_POS = D3DXVECTOR3(-40.0f,10.0f, -110.0f);
 const int MAX_COUNT = 24;
 CInt ANIMCOUNT = MAX_COUNT;
 
 CMenuUI *CMode_Title::m_MenuUI = NULL;
-const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
 bool CMode_Title::s_bStageSelect = false;
 
 //========================================
@@ -53,6 +55,7 @@ CMode_Title::CMode_Title(void) {
 	m_PlanetAngle      = 0.0f;
 	m_nSelect          = 0;
 	m_PlanetType       = NULL;
+	m_CoinUI           = NULL;
 	m_bBackMode        = false;
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
@@ -117,7 +120,7 @@ void CMode_Title::Init(void) {
 	}
 
 	// メニュー生成
-	m_MenuUI = CMenuUI::Create();
+	m_MenuUI = CMenuUI::Create(CMode::TYPE::TITLE );
 
 	// ステージ読込
 	CreateStageSelectInfo();
@@ -151,6 +154,10 @@ void CMode_Title::Init(void) {
 
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+	if (m_CoinUI == NULL) {
+		m_CoinUI = CCoinUI::Create(COINUIPOS);
+	}
 
 	// 状態設定
 	SetState((int)STATE::NONE);
@@ -244,12 +251,6 @@ void CMode_Title::Update(void) {
 				{
 					delete[] m_PlanetType;
 					m_PlanetType = NULL;
-				}
-
-				if (m_MenuUI != NULL)
-				{
-					delete m_MenuUI;
-					m_MenuUI = NULL;
 				}
 			}
 			break;
@@ -398,6 +399,7 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	m_RotCnt = ANIMCOUNT;
 	m_nDrawPlanet = m_nPlanetIdx;
 	m_RocketAnimCnt = 0;
+	m_ImageStgCnt = ANIMCOUNT * 0.5;
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
@@ -412,6 +414,7 @@ void CMode_Title::StageSelect(void) {
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 	float CountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	float ImageCntRate = CEase::Easing(CEase::TYPE::IN_SINE, m_ImageStgCnt,ANIMCOUNT * 0.5);
 	float RocketAnimRate;
 	float AnimRate;
 	D3DXVECTOR3 numpos;
@@ -426,6 +429,29 @@ void CMode_Title::StageSelect(void) {
 		RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nDrawPlanet].nModel, D3DXVECTOR3(0.0f, 0.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f) * CountRate, false)
 			->SetOutLineIdx(5);
 
+		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(IMAGE_STG_POS), D3DXVECTOR3(0.0f, -0.58875f, 0.0f))
+			->SetSize(32.0f * ImageCntRate,18.0f * ImageCntRate)
+			->SetCol(INITCOLOR)
+			/*->SetTex(m_TexIdx[0])*/
+			->SetZTest(true);
+
+		if (m_bStageChange == false) {
+			if (m_bRocketMove == false) {
+				if (m_RocketAnimCnt < ANIMCOUNT * 0.5) {
+					if (m_ImageStgCnt > 0)
+						m_ImageStgCnt--;
+				}
+				else if (m_RocketAnimCnt >= ANIMCOUNT * 0.5) {
+					if (m_ImageStgCnt < ANIMCOUNT * 0.5)
+						m_ImageStgCnt++;
+				}
+			}
+		}
+		
+		if (m_bStageChange == true || m_bRocketMove == true) {
+
+		}
+		
 		if (m_nCnt < MAX_COUNT && m_bStageChange == false)
 			m_nCnt++;
 		else if (m_nCnt > 0 && m_bStageChange == true)
@@ -448,6 +474,10 @@ void CMode_Title::StageSelect(void) {
 		//コイン看板
 		RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
 			->SetOutLineIdx(5);
+
+		if (m_CoinUI != NULL) {
+			m_CoinUI->Update();
+		}
 	}
 
 	{// 矢印の描画
@@ -518,20 +548,11 @@ void CMode_Title::StageSelect(void) {
 				m_RocketposRate = m_RocketPos - m_RocketPosOld;
 				m_RocketRotOld = m_RocketRot;
 
-				if (m_bStageChange == false)
-				{
-					if (m_nSelect > m_nOldSelect)
-						m_RocketRot = D3DXVECTOR3(0.0f,D3DX_PI, D3DX_PI * 0.5f);
-					else if (m_nSelect < m_nOldSelect)
-						m_RocketRot = D3DXVECTOR3(D3DX_PI,0.0f,D3DX_PI * 0.5f);
-				}
+				if (m_RocketposRate.x > 0)
+					m_RocketRot = D3DXVECTOR3(0.0f,D3DX_PI, D3DX_PI * 0.5f);				
 				else
-				{
-					if (m_nSelect == nStageMax && m_nOldSelect == 0)
-						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
-					else if (m_nSelect == 0 && m_nOldSelect == nStageMax)
-						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
-				}
+					m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
+
 				m_RocketRotRate = m_RocketRot - m_RocketRotOld;
 			}
 			
@@ -722,11 +743,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 
-		/*if (m_MenuUI != NULL)
+		if (m_MenuUI != NULL)
 		{
 			delete m_MenuUI;
 			m_MenuUI = NULL;
-		}*/
+		}
 
 		m_nSelect = 0;
 		m_nOldSelect = 0;

@@ -29,7 +29,11 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.nLetterPopCount = 0;
 	m_Info.nLetterPopCountX = 0;
 	m_Info.nNiCount = 0;
-	m_Info.nTexIdx = 0;
+
+	m_Info.Tex.Idx = 0;
+	m_Info.Tex.PtnIdx = -1;
+	m_Info.Tex.PtnX = 1;
+	m_Info.Tex.PtnY = 1;
 
 	m_Info.nStandTime = 0;
 	m_Info.bStand = false;
@@ -144,15 +148,18 @@ void CFontText::Update()
 
 	if (m_Info.bTextBok)
 	{
-		RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
-			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
-			->SetCol(m_Info.TextBoxCol)
-			->SetTex(m_Info.nTexIdx);
-
-		/*RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
-			->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
-			->SetCol(m_Info.TextBoxCol)
-			->SetTex(m_Info.nTexIdx, 0, 1, 2);*/
+		if (m_Info.Tex.PtnIdx >= 0){
+			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
+				->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
+				->SetCol(m_Info.TextBoxCol)
+				->SetTex(m_Info.Tex.Idx, m_Info.Tex.PtnIdx, m_Info.Tex.PtnX, m_Info.Tex.PtnY);
+		}
+		else {
+			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
+				->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
+				->SetCol(m_Info.TextBoxCol)
+				->SetTex(m_Info.Tex.Idx);
+		}
 	}
 
 	m_Info.TexMove = INITD3DXVECTOR2;
@@ -193,15 +200,15 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 
 		// テクスチャ設定
 		if(type == BOX_NORMAL_GRAY)
-			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
+			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
 		else if (type == BOX_NORMAL_BLUE)
-			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
+			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox11.png");
 		else if (type == BOX_NORMAL_RED)
-			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
 		else if (type == BOX_NORMAL_GREEN)
-			pText->m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox03.png");
+			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox13.png");
 		else if(type == BOX_NONE || type == BOX_MAX)
-			pText->m_Info.nTexIdx = -1;
+			pText->m_Info.Tex.Idx = -1;
 
 		pText->m_Info.TexPos = Pos2D(pos.x, pos.y);
 		pText->m_Info.TexSize = size;
@@ -535,6 +542,35 @@ void CFontText::SetTetPause(bool bPause)
 }
 
 //========================================
+// テキストボックスのテクスチャ設定
+//========================================
+void CFontText::SetBoxTex(const char* Path, int PthIdx, int PthX, int PthY)
+{
+	if (Path != NULL)
+	{
+		m_Info.Tex.Idx = RNLib::Texture().Load(Path);
+
+		if (PthIdx >= 0)
+		{
+			m_Info.Tex.PtnIdx = PthIdx;
+			m_Info.Tex.PtnX = PthX;
+			m_Info.Tex.PtnY = PthY;
+		}
+	}
+}
+
+//========================================
+// テキストボックスのパターン設定
+//========================================
+void CFontText::SetBoxPthIdx(int PthIdx)
+{
+	if (PthIdx >= 0)
+	{
+		m_Info.Tex.PtnIdx = PthIdx;
+	}
+}
+
+//========================================
 // テキストボックスの色設定
 //========================================
 void CFontText::SetBoxColor(Color col)
@@ -551,15 +587,15 @@ void CFontText::SetBoxType(Box type)
 
 	// テクスチャ設定
 	if (type == BOX_NORMAL_GRAY)
-		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox00.png");
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
 	else if (type == BOX_NORMAL_BLUE)
-		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox01.png");
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox11.png");
 	else if (type == BOX_NORMAL_RED)
-		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox02.png");
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
 	else if (type == BOX_NORMAL_GREEN)
-		m_Info.nTexIdx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox03.png");
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox13.png");
 	else if (type == BOX_NONE || type == BOX_MAX)
-		m_Info.nTexIdx = -1;
+		m_Info.Tex.Idx = -1;
 }
 
 //========================================
