@@ -14,6 +14,7 @@
 class CMenuUI;
 class CFontText;
 class CWords;
+class CCoinUI;
 
 //****************************************
 // クラス定義
@@ -22,13 +23,7 @@ class CWords;
 class CMode_Title :public CMode{
 public:
 	//========== [[[ 定数定義 ]]]
-	static const char* TEXT_FILE;				// テキスト情報のファイルパス
-	static const int WORDS_MAX         = 7;		// 文字の最大数
-	static const int FONT_TEXT_MAX     = 10;	// テキストの最大数
-	static const int PAUSE_LEFT_ANIME  = 15;	// 画面左のアニメーション時間
-	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
-	static const int VOLUME_MSX        = 20;	// サウンドの最大値
-	static const int COOLDOWN          = 20;	// クールダウン
+	static const int WORDS_MAX = 7;		// 文字の最大数
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -68,24 +63,6 @@ private:
 		TEX_NUM,		// 数字
 		TEX_MAX
 	};
-	enum CONTROLLER {
-		INPUT_TITLE = 0,// タイトル
-		INPUT_MOVE,		// 移動
-		INPUT_JUMP,		// ジャンプ
-		INPUT_SWAP,		// スワップ
-		INPUT_DECISION,	// 決定
-		INPUT_BACK,		// 戻る
-		INPUT_MAX
-	};
-	enum SETTING {
-		SETTING_SCREEN = 1,	// フルスクリーン
-		SETTING_BGM ,		// BGM
-		SETTING_SE,			// SE
-		SETTING_BACK,
-		SETTING_BGM_TEXT,
-		SETTING_SE_TEXT,
-		SETTING_MAX
-	};
 	enum TEXT {
 		TEXT_TITLE = 0,	// タイトル
 		TEXT_MENU,		// メニュー
@@ -102,16 +79,6 @@ private:
 	// ステージ種類情報
 	struct PlanetType{
 		int nModel;				// モデル
-	};
-
-	// 操作方法のテキスト情報
-	struct Operation{
-		char Text[TXT_MAX];		// テキスト
-	};
-
-	// 設定情報
-	struct Setting{
-		char Text[TXT_MAX];		// テキスト
 	};
 
 	// *** 関数 ***
@@ -151,6 +118,7 @@ private:
 	int m_ArrowIdx;
 	int *m_AnimCnt;
 	int m_RocketAnimCnt;
+	int m_ImageStgCnt;
 	int m_RotCnt;
 	int m_nCnt;
 	bool m_bMove[WORDS_MAX];
@@ -162,4 +130,5 @@ private:
 	CFontText *m_pMenu[MENU_MAX];
 	PlanetType *m_PlanetType;
 	STAGE m_StgFlag;
+	CCoinUI *m_CoinUI;
 };

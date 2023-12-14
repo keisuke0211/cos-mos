@@ -20,7 +20,6 @@
 namespace {
 	//========== [[[ 関数宣言 ]]]
 	void PutBackGround(void);
-	void LoadRecord(void);
 
 	//========== [[[ 変数宣言 ]]]
 	int             planetIdx;
@@ -37,13 +36,9 @@ namespace {
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
 
-	struct Record
-	{
-		int PlanetID;
-		int StageID;
-		float *pBestTime;
-	};
-	Record *pRecord;
+	// クジラ
+	int             whaleCounter;
+	CDoll3D*        whaleDoll;
 }
 
 //================================================================================
@@ -87,18 +82,6 @@ void Stage::Init(void) {
 
 	// 環境音プレイヤーの初期化処理
 	StageSoundPlayer::Init();
-
-	if (pRecord != NULL)
-	{
-		if (pRecord->pBestTime != NULL)
-		{
-			delete[] pRecord->pBestTime;
-			pRecord->pBestTime = NULL;
-		}
-
-		delete[] pRecord;
-		pRecord = NULL;
-	}
 }
 
 //========================================
@@ -108,18 +91,6 @@ void Stage::Uninit(void) {
 
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::Uninit();
-
-	if (pRecord != NULL)
-	{
-		if (pRecord->pBestTime != NULL)
-		{
-			delete[] pRecord->pBestTime;
-			pRecord->pBestTime = NULL;
-		}
-
-		delete[] pRecord;
-		pRecord = NULL;
-	}
 }
 
 //========================================
@@ -156,7 +127,7 @@ void Stage::StartStage(void) {
 
 	// コインUIの生成
 	if (coinUI == NULL)
-		coinUI = CCoinUI::Create();
+		coinUI = CCoinUI::Create(D3DXVECTOR3(25.0f, 16.7f, -136.0f) * 2.0f);
 
 	{// [[[ カメラ ]]]
 		// カメラの視点/注視点を設定
@@ -195,6 +166,14 @@ void Stage::StartStage(void) {
 			// クリッピング設定
 			UIDoll[cnt]->SetClippingCamera(UICamera[cnt]->GetID());
 		}
+	}
+
+	if (Stage::CheckPlanetIdx(1)) {
+		whaleCounter = 0;
+		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
+		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
+		whaleDoll->SetPos(Pos3D(0.0f, 80.0f, 120.0f));
+		whaleDoll->SetScale(Scale3D(3.0f, 3.0f, 3.0f));
 	}
 }
 
@@ -311,6 +290,15 @@ void Stage::EndStage(void) {
 			UICamera[cnt] = NULL;
 		}
 	}
+
+	if (Stage::CheckPlanetIdx(1)) {
+		delete whaleDoll;
+	}
+
+	// UI用ドールを破棄
+	for (int cnt = 0; cnt < 2; cnt++) {
+		delete UIDoll[cnt];
+	}
 }
 
 namespace {
@@ -382,47 +370,16 @@ namespace {
 
 //========================================
 // 指定されたステージのベストタイムを返す
-// Author：HIRASAWA SHION
 //========================================
 float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
 {
-	//ベストタイムを取得
-	float BestTime = 10000.0f;
-
-	FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
-
-	if (pFile != NULL)
-	{
-
-	}
-
-	return BestTime;
+	return 0.0f;
 }
 
 //========================================
-// タイム更新
-// Author：HIRASAWA SHION
+// 
 //========================================
 void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 {
 
-}
-
-//========================================
-// レコードファイル読み込み
-// Author：HIRASAWA SHION
-//========================================
-namespace {
-	void LoadRecord(void)
-	{
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
-
-		if (pFile != NULL)
-		{
-			int MAX_PLANET, MAX_STAGE;
-			Manager::StgEd()->GetPlanetAndStageMax(planetIdx, MAX_PLANET, MAX_STAGE);
-
-			fclose(pFile);
-		}
-	}
 }

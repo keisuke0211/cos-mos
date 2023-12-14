@@ -1,0 +1,34 @@
+SetUp3DFile
+boneDataSum{ 4
+	boneData{
+		idx 0
+		modelIdx data\\Model\\Whale_Body.x
+		parentIdx -1
+		relativePos 0.00 10.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\Model\\Whale_Left.x
+		parentIdx 0
+		relativePos 0.00 0.00 -8.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 2
+		modelIdx data\\Model\\Whale_Right.x
+		parentIdx 0
+		relativePos 0.00 0.00 8.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 3
+		modelIdx data\\Model\\Whale_Back.x
+		parentIdx 0
+		relativePos 25.00 6.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+}
+faceDataSum{0
+}
+END

@@ -57,6 +57,6 @@ public:
 	//========== [[[ “Ç‚İ‚İ ]]]
 	static void Load(void) {
 		for (int cnt = 0; cnt < (int)TEXTURE::MAX; TEXTURE_IDXES[cnt] = RNLib::Texture().Load(TEXTURE_PATHS[cnt]), cnt++);
-		for (int cnt = 0; cnt < (int)SOUND::MAX; SOUND_IDXES[cnt] = RNLib::Sound().Load(SOUND_PATHS[cnt]), cnt++);
+		for (int cnt = 0; cnt < (int)SOUND  ::MAX; SOUND_IDXES  [cnt] = RNLib::Sound  ().Load(SOUND_PATHS  [cnt]), cnt++);
 	}
 };
