@@ -105,7 +105,8 @@ public:
 	{
 		D3DXVECTOR3 HeadPos;// 頭の位置
 		D3DXVECTOR3 HipPos;	// 尻の位置
-		int Height;			// 胴体の高さ
+		int HeightMin;		// 胴体の高さ 最低値
+		int HeightMax;		// 　　　　　 最大値
 		bool bElasticity;	// 伸縮フラグ
 	};
 
