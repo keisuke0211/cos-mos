@@ -161,7 +161,7 @@ CMenuUI *CMenuUI::Create(CMode::TYPE type)
 //========================================
 void CMenuUI::DecisionInput(void)
 {
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
 	{
 		CMode::TYPE Mode = Manager::GetMode();
 

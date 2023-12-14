@@ -8,6 +8,7 @@
 
 #include "../camera.h"
 #include "../draw-info.h"
+#include "../draw-state.h"
 #include "../regist-info.h"
 #include "../../Mechanical/regist.h"
 
@@ -73,17 +74,18 @@ public:
 		~CDrawInfo();
 
 		// [[[ ïœêîêÈåæ ]]]
-		static Material ms_outLineMat;
-		Matrix    m_mtx;
-		Material* m_mats;
-		Texture*  m_texes;
-		UShort    m_matNum;
-		Mesh      m_mesh;
-		Mesh      m_outLineMesh;
-		bool      m_isScaling;
-		bool      m_isZTest;
-		bool      m_isLighting;
-		float     m_radiusMax;
+		static Material                ms_outLineMat;
+		Matrix                         m_mtx;
+		Material*                      m_mats;
+		Texture*                       m_texes;
+		UShort                         m_matNum;
+		Mesh                           m_mesh;
+		Mesh                           m_outLineMesh;
+		bool                           m_isScaling;
+		bool                           m_isZTest;
+		bool                           m_isLighting;
+		CDrawState::INTERPOLATION_MODE m_interpolationMode;
+		float                          m_radiusMax;
 	};
 
 	// ìoò^èÓïÒÉNÉâÉX
@@ -104,17 +106,23 @@ public:
 		CRegistInfo* SetLighting            (const bool& isLighting);
 		CRegistInfo* SetOutLineIdx          (const UShort& outLineIdx);
 		CRegistInfo* SetBrightnessOfEmissive(const float& brightnessOfEmissive);
+		CRegistInfo* SetInterpolationMode   (const CDrawState::INTERPOLATION_MODE& interpolationMode);
 
 	private:
-		// [[[ ïœêîêÈåæ ]]]
-		Matrix m_mtx;
-		Color  m_col;
-		short  m_modelIdx;
-		short  m_texIdx;
-		bool   m_isZTest;
-		bool   m_isLighting;
-		short  m_outLineIdx;
-		float  m_brightnessOfEmissive;
+		// <<< äÓñ{èÓïÒ >>>
+		Matrix                         m_mtx;
+		short                          m_modelIdx;
+
+		// <<< å©ÇΩñ⁄èÓïÒ >>>
+		Color                          m_col;
+		short                          m_texIdx;
+		short                          m_outLineIdx;
+		float                          m_brightnessOfEmissive;
+
+		// <<< ï`âÊèÓïÒê›íË >>>
+		bool                           m_isZTest;
+		bool                           m_isLighting;
+		CDrawState::INTERPOLATION_MODE m_interpolationMode;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]

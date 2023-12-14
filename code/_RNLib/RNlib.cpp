@@ -63,7 +63,7 @@ CEase&             RNLib::Ease            (void) { return calculation.m_ease;   
 CGeometry&         RNLib::Geometry        (void) { return calculation.m_geometry;       }
 CHitTest&          RNLib::HitTest         (void) { return calculation.m_hitTest;        }
 CMatrix&           RNLib::Matrix          (void) { return calculation.m_matrix;         }
-CStaticMesh&       RNLib::MatMesh         (void) { return draw.m_matMesh;               }
+CStaticMesh&       RNLib::StaticMesh      (void) { return draw.m_staticMesh;            }
 CModel&            RNLib::Model           (void) { return draw.m_model;                 }
 CPolygon2D&        RNLib::Polygon2D       (void) { return draw.m_polygon2D;             }
 CPolygon3D&        RNLib::Polygon3D       (void) { return draw.m_polygon3D;             }
@@ -74,7 +74,6 @@ CDrawState&        RNLib::DrawStateMgr    (void) { return draw.m_drawState;     
 CLight3D&          RNLib::Light3D         (void) { return draw.m_light3D;               }
 CText&             RNLib::Text            (void) { return draw.m_text;                  }
 CTexture&          RNLib::Texture         (void) { return draw.m_texture;               }
-CTransition&       RNLib::Transition      (void) { return draw.m_transition;            }
 CCount&            RNLib::Count           (void) { return mechanical.m_count;           }
 CFile&             RNLib::File            (void) { return mechanical.m_file;            }
 CInput&            RNLib::Input           (void) { return mechanical.m_input;           }

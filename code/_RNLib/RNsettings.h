@@ -14,13 +14,13 @@ namespace RNSettings {
 	//========== [[[ ç\ë¢ëÃíËã` ]]]
 	struct Info {
 		// KeyOptions
-		char* projectName             = NULL;
-		float windowWidth             = 0.0f;
-		float windowHeight            = 0.0f;
-		bool  isFullScreen            = false;	
-		float resolution              = 0.0f;
+		char* projectName  = NULL;
+		float windowWidth  = 0.0f;
+		float windowHeight = 0.0f;
+		bool  isFullScreen = false;	
+		float resolution   = 0.0f;
 		// OtherOptions
-		float modelOutLineAddDistanceInterval = 0.0f;
+		float modelOutLineAddDistanceInterval   = 0.0f;
 		UShort modelOutLineAddDistanceDelimiter = 0;
 	};
 

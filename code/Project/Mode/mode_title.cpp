@@ -107,7 +107,7 @@ void CMode_Title::Init(void) {
 	CMode::Init();
 
 	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
@@ -228,7 +228,7 @@ void CMode_Title::Update(void) {
 		else if (Title == TITLE_NEXT)
 			return;
 
-		if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+		if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
 		{
 			//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
@@ -742,12 +742,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	case CMode_Title::TITLE_SELECT:
 	{
 		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
-
-		if (m_MenuUI != NULL)
-		{
-			delete m_MenuUI;
-			m_MenuUI = NULL;
-		}
 
 		m_nSelect = 0;
 		m_nOldSelect = 0;

@@ -43,7 +43,6 @@
 #include "Basis/Draw/regist-info.h"
 #include "Basis/Draw/text.h"
 #include "Basis/Draw/texture.h"
-#include "Basis/Draw/transition.h"
 //========== [[[ Mechanical ]]]
 #include "Basis/Mechanical/count.h"
 #include "Basis/Mechanical/file.h"
@@ -97,7 +96,7 @@ namespace RNLib {
 	CHitTest&          HitTest         (void);
 	CMatrix&           Matrix          (void);
 	// Draw						       
-	CStaticMesh&          MatMesh         (void);
+	CStaticMesh&          StaticMesh         (void);
 	CModel&            Model           (void);
 	CPolygon2D&        Polygon2D       (void);
 	CPolygon3D&        Polygon3D       (void);
@@ -108,7 +107,6 @@ namespace RNLib {
 	CLight3D&          Light3D         (void);
 	CText&             Text            (void);
 	CTexture&          Texture         (void);
-	CTransition&       Transition      (void);
 	// Mechanical
 	CCount&            Count           (void);
 	CFile&             File            (void);

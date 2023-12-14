@@ -97,15 +97,16 @@ CText3D::CRegistInfo::~CRegistInfo() {
 void CText3D::CRegistInfo::ClearParameter(void) {
 
 	CMemory::Release(&m_string);
-	m_alignment   = CText::ALIGNMENT::CENTER;
-	m_fontIdx     = NONEDATA;
-	m_mtx         = INITMATRIX;
-	m_scaleOrSize = INITVECTOR2D;
-	m_isScale     = false;
-	m_col         = INITCOLOR;
-	m_isZtest     = true;
-	m_isLighting  = false;
-	m_isBillboard = false;
+	m_alignment         = CText::ALIGNMENT::CENTER;
+	m_fontIdx           = NONEDATA;
+	m_mtx               = INITMATRIX;
+	m_scaleOrSize       = INITVECTOR2D;
+	m_isScale           = false;
+	m_col               = INITCOLOR;
+	m_isZtest           = true;
+	m_isLighting        = false;
+	m_isBillboard       = false;
+	m_interpolationMode = CDrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
@@ -185,7 +186,8 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
 			->SetZTest(m_isZtest)
 			->SetLighting(m_isLighting)
-			->SetBillboard(m_isBillboard);
+			->SetBillboard(m_isBillboard)
+			->SetInterpolationMode(m_interpolationMode);
 	}
 
 	// wchar_tŒ^•¶š—ñ‚Ì‰ğ•ú
@@ -320,6 +322,19 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetBillboard(const bool& isBillboard
 		return NULL;
 
 	m_isBillboard = isBillboard;
+
+	return this;
+}
+
+//========================================
+// •âŠÔƒ‚[ƒh‚ğİ’è
+//========================================
+CText3D::CRegistInfo* CText3D::CRegistInfo::SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

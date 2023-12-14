@@ -79,7 +79,7 @@ class CDraw {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init(Device& device, const UShort& priorityMax) {
-		m_matMesh   .Init(priorityMax);
+		m_staticMesh   .Init(priorityMax);
 		m_model		.Init();
 		m_polygon2D	.Init();
 		m_polygon3D	.Init();
@@ -90,10 +90,9 @@ public:
 		m_light3D	.Init();
 		m_text		.Init();
 		m_texture	.Init();
-		m_transition.Init();
 	}
 	void Uninit(void) {
-		m_matMesh   .Uninit();
+		m_staticMesh   .Uninit();
 		m_model		.Uninit();
 		m_polygon2D	.Uninit();
 		m_polygon3D	.Uninit();
@@ -104,10 +103,9 @@ public:
 		m_light3D	.Uninit();
 		m_text		.Uninit();
 		m_texture	.Uninit();
-		m_transition.Uninit();
 	}
 	void Update(void) {
-		m_matMesh   .Update();
+		m_staticMesh   .Update();
 		m_model		.Update();
 		m_polygon2D	.Update();
 		m_polygon3D	.Update();
@@ -118,11 +116,10 @@ public:
 		m_light3D	.Update();
 		m_text		.Update();
 		m_texture	.Update();
-		m_transition.Update();
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CStaticMesh    m_matMesh;
+	CStaticMesh m_staticMesh;
 	CModel      m_model;
 	CPolygon2D  m_polygon2D;
 	CPolygon3D  m_polygon3D;
@@ -134,7 +131,6 @@ public:
 	CLight3D    m_light3D;
 	CText       m_text;
 	CTexture    m_texture;
-	CTransition m_transition;
 };
 
 // ã@äB

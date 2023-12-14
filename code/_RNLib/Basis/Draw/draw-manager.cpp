@@ -44,16 +44,17 @@ void CDrawMgr::Init(const UShort& priorityMax) {
 	// 登録/描画情報のメモリ確保
 	CMemory::Alloc(&m_drawInfoSum		  , m_priorityMax);
 	CMemory::Alloc(&m_drawInfoSumOvr	  , m_priorityMax);
-	CMemory::Alloc(&m_drawInfoSumScreen   , m_priorityMax);
-	CMemory::Alloc(&m_drawInfoSumScreenOvr, m_priorityMax);
+	CMemory::Alloc(&m_drawInfoSumScreen   , SCREEN_PRIORITY_MAX);
+	CMemory::Alloc(&m_drawInfoSumScreenOvr, SCREEN_PRIORITY_MAX);
 	CMemory::Alloc(&m_resistInfoSum	      , m_priorityMax);
-	CMemory::Alloc(&m_resistInfoSumScreen , m_priorityMax);
+	CMemory::Alloc(&m_resistInfoSumScreen , SCREEN_PRIORITY_MAX);
 
 	// 登録情報の初期メモリ確保
-	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
-		m_resistInfoSum      [cntPriority].InitAlloc();
+	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++)
+		m_resistInfoSum[cntPriority].InitAlloc();
+
+	for (int cntPriority = 0; cntPriority < SCREEN_PRIORITY_MAX; cntPriority++)
 		m_resistInfoSumScreen[cntPriority].InitAlloc();
-	}
 
 	// 頂点バッファの初期生成
 	CPolygon2D::CDrawInfo::InitCreateVertexBuffer();
@@ -88,10 +89,17 @@ void CDrawMgr::StartDraw(Device& device) {
 
 		// 登録情報を元に設置する
 		PutBasedRegistInfo(m_resistInfoSum[cntPriority], cntPriority, false);
-		PutBasedRegistInfo(m_resistInfoSumScreen[cntPriority], cntPriority, true);
 
 		// 登録情報を描画情報に変換する
 		ConvRegistInfoToDrawInfo(m_resistInfoSum[cntPriority], m_drawInfoSumOvr[cntPriority], device);
+	}
+
+	for (int cntPriority = 0; cntPriority < SCREEN_PRIORITY_MAX; cntPriority++) {
+
+		// 登録情報を元に設置する
+		PutBasedRegistInfo(m_resistInfoSumScreen[cntPriority], cntPriority, true);
+
+		// 登録情報を描画情報に変換する
 		ConvRegistInfoToDrawInfo(m_resistInfoSumScreen[cntPriority], m_drawInfoSumScreenOvr[cntPriority], device);
 	}
 
@@ -102,10 +110,17 @@ void CDrawMgr::StartDraw(Device& device) {
 
 		// 描画情報を上書きする
 		m_drawInfoSum[cntPriority].Overwrite(&m_drawInfoSumOvr[cntPriority]);
-		m_drawInfoSumScreen[cntPriority].Overwrite(&m_drawInfoSumScreenOvr[cntPriority]);
 
 		// 不要メモリ破棄の為、再確保
 		m_resistInfoSum[cntPriority].ReAlloc();
+	}
+
+	for (int cntPriority = 0; cntPriority < SCREEN_PRIORITY_MAX; cntPriority++) {
+
+		// 描画情報を上書きする
+		m_drawInfoSumScreen[cntPriority].Overwrite(&m_drawInfoSumScreenOvr[cntPriority]);
+
+		// 不要メモリ破棄の為、再確保
 		m_resistInfoSumScreen[cntPriority].ReAlloc();
 	}
 
@@ -216,16 +231,24 @@ void CDrawMgr::Release(void) {
 	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
 
 		// 描画情報を解放
-		m_drawInfoSum         [cntPriority].Release();
-		m_drawInfoSumOvr      [cntPriority].Release();
+		m_drawInfoSum   [cntPriority].Release();
+		m_drawInfoSumOvr[cntPriority].Release();
+		CMemory::Release(&m_drawInfoSum   [cntPriority].m_model);
+		CMemory::Release(&m_drawInfoSum   [cntPriority].m_polygon3D);
+		CMemory::Release(&m_drawInfoSum   [cntPriority].m_polygon2D);
+		CMemory::Release(&m_drawInfoSumOvr[cntPriority].m_model);
+		CMemory::Release(&m_drawInfoSumOvr[cntPriority].m_polygon3D);
+		CMemory::Release(&m_drawInfoSumOvr[cntPriority].m_polygon2D);
+
+		// 登録情報を解放
+		m_resistInfoSum      [cntPriority].Release();
+	}
+
+	for (int cntPriority = 0; cntPriority < SCREEN_PRIORITY_MAX; cntPriority++) {
+
+		// 描画情報を解放
 		m_drawInfoSumScreen   [cntPriority].Release();
 		m_drawInfoSumScreenOvr[cntPriority].Release();
-		CMemory::Release(&m_drawInfoSum         [cntPriority].m_model);
-		CMemory::Release(&m_drawInfoSum         [cntPriority].m_polygon3D);
-		CMemory::Release(&m_drawInfoSum         [cntPriority].m_polygon2D);
-		CMemory::Release(&m_drawInfoSumOvr      [cntPriority].m_model);
-		CMemory::Release(&m_drawInfoSumOvr      [cntPriority].m_polygon3D);
-		CMemory::Release(&m_drawInfoSumOvr      [cntPriority].m_polygon2D);
 		CMemory::Release(&m_drawInfoSumScreen   [cntPriority].m_model);
 		CMemory::Release(&m_drawInfoSumScreen   [cntPriority].m_polygon3D);
 		CMemory::Release(&m_drawInfoSumScreen   [cntPriority].m_polygon2D);
@@ -234,7 +257,6 @@ void CDrawMgr::Release(void) {
 		CMemory::Release(&m_drawInfoSumScreenOvr[cntPriority].m_polygon2D);
 
 		// 登録情報を解放
-		m_resistInfoSum      [cntPriority].Release();
 		m_resistInfoSumScreen[cntPriority].Release();
 	}
 
@@ -255,6 +277,12 @@ void CDrawMgr::Release(void) {
 // 設置処理(ポリゴン2D)
 //========================================
 CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
+
+	// 優先度正常チェック
+	if (!CheckPriority(priority, isOnScreen)) {
+		assert(false);
+		return NULL;
+	}
 
 	// 番号カウントが最大数に達した時、頂点バッファを再生成する
 	if (CPolygon2D::CDrawInfo::ms_idxCount == CPolygon2D::CDrawInfo::ms_allocNum) {
@@ -280,6 +308,12 @@ CPolygon2D::CRegistInfo* CDrawMgr::PutPolygon2D(const UShort& priority, const bo
 //========================================
 CPolygon3D::CRegistInfo* CDrawMgr::PutPolygon3D(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
 	
+	// 優先度正常チェック
+	if (!CheckPriority(priority, isOnScreen)) {
+		assert(false);
+		return NULL;
+	}
+
 	// 番号カウントが最大数に達した時、頂点バッファを再生成する
 	if (CPolygon3D::CDrawInfo::ms_idxCount == CPolygon3D::CDrawInfo::ms_allocNum) {
 		CPolygon3D::CDrawInfo::ms_allocPower++;
@@ -305,6 +339,12 @@ CPolygon3D::CRegistInfo* CDrawMgr::PutPolygon3D(const UShort& priority, const Ma
 //========================================
 CText2D::CRegistInfo* CDrawMgr::PutText2D(const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen) {
 
+	// 優先度正常チェック
+	if (!CheckPriority(priority, isOnScreen)) {
+		assert(false);
+		return NULL;
+	}
+
 	// 登録情報
 	CText2D::CRegistInfo* registInfo = isOnScreen ?
 		RegistText2D(m_resistInfoSumScreen[priority]) :
@@ -322,6 +362,12 @@ CText2D::CRegistInfo* CDrawMgr::PutText2D(const UShort& priority, const Pos2D& p
 //========================================
 CText3D::CRegistInfo* CDrawMgr::PutText3D(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
 
+	// 優先度正常チェック
+	if (!CheckPriority(priority, isOnScreen)) {
+		assert(false);
+		return NULL;
+	}
+
 	// 登録情報
 	CText3D::CRegistInfo* registInfo = isOnScreen ?
 		RegistText3D(m_resistInfoSumScreen[priority]) :
@@ -337,6 +383,12 @@ CText3D::CRegistInfo* CDrawMgr::PutText3D(const UShort& priority, const Matrix& 
 // 設置処理(モデル)
 //========================================
 CModel::CRegistInfo* CDrawMgr::PutModel(const UShort& priority, const Matrix& mtx, const bool& isOnScreen) {
+
+	// 優先度正常チェック
+	if (!CheckPriority(priority, isOnScreen)) {
+		assert(false);
+		return NULL;
+	}
 
 	// 登録情報
 	CModel::CRegistInfo* registInfo = isOnScreen ?
@@ -389,12 +441,8 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 	cameraBillboardMtx._42 = 0.0f;
 	cameraBillboardMtx._43 = 0.0f;
 
-	for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
-
-		//----------------------------------------
-		// スタティックメッシュ描画
-		//----------------------------------------
-		RNLib::MatMesh().Draw(device, cntPriority, cameraID, isCameraClipping, isOnSreen);
+	const UShort priorityMax = isOnSreen ? SCREEN_PRIORITY_MAX : m_priorityMax;
+	for (int cntPriority = 0; cntPriority < priorityMax; cntPriority++) {
 
 		//----------------------------------------
 		// モデル描画
@@ -408,7 +456,7 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 			if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != NONEDATA || isCameraClipping)
 				if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != cameraID)
 					continue;
-			
+
 			/*if (!CHitTest::XYZ::InPointToCameraView(CMatrix::ConvMtxToPos(drawInfo[cntPriority].m_model[cntModel]->m_mtx), cameraPosV, cameraPosR, cameraScale.x, cameraScale.y, D3DXToRadian(45.0f)))
 				continue;*/
 
@@ -417,6 +465,9 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 
 			// [[[ Zテストの設定 ]]]
 			RNLib::DrawStateMgr().SetIsZTest(device, drawInfo[cntPriority].m_model[cntModel]->m_isZTest);
+
+			// [[[ 補間モードの設定 ]]]
+			RNLib::DrawStateMgr().SetInterpolationMode(device, drawInfo[cntPriority].m_model[cntModel]->m_interpolationMode);
 
 			// 描画
 			for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
@@ -453,12 +504,24 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 		RNLib::DrawStateMgr().ResetVariableSetting(device);
 
 		//----------------------------------------
+		// 頂点フォーマットの設定
+		//----------------------------------------
+		device->SetFVF(FVF_VERTEX_3D);
+
+		//----------------------------------------
+		// スタティックメッシュ描画
+		//----------------------------------------
+		{
+			// ワールドマトリックスの設定
+			device->SetTransform(D3DTS_WORLD, &INITMATRIX);
+
+			RNLib::StaticMesh().Draw(device, cntPriority, cameraID, isCameraClipping, isOnSreen);
+		}
+
+		//----------------------------------------
 		// ポリゴン3D
 		//----------------------------------------
 		if (CPolygon3D::CDrawInfo::ms_vtxBuff != NULL) {
-
-			// 頂点フォーマットの設定
-			device->SetFVF(FVF_VERTEX_3D);
 
 			// 頂点バッファをデータストリームに設定
 			device->SetStreamSource(0, CPolygon3D::CDrawInfo::ms_vtxBuff, 0, sizeof(Vertex3D));
@@ -484,6 +547,9 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 
 				// [[[ カリングの設定 ]]]
 				RNLib::DrawStateMgr().SetCullingMode(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_cullingMode);
+
+				// [[[ 補間モードの設定 ]]]
+				RNLib::DrawStateMgr().SetInterpolationMode(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_interpolationMode);
 
 				// [[[ ビルボードフラグに応じてマトリックスを設定 ]]]
 				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_isBillboard)
@@ -526,6 +592,9 @@ void CDrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& dra
 					if (drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_clippingID != cameraID)
 						continue;
 
+				// [[[ 補間モードの設定 ]]]
+				RNLib::DrawStateMgr().SetInterpolationMode(device, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_interpolationMode);
+
 				// [[[ テクスチャの設定 ]]]
 				Polygon2DAnd3D::SetTexture(device, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_tex, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_texType);
 
@@ -551,10 +620,11 @@ void CDrawMgr::AssignVertexInfo(void) {
 		Vertex2D* vtxs = NULL;
 		CPolygon2D::CDrawInfo::ms_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
-		for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
+		for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++)
 			ConvDrawInfoToVertex2DInfo(vtxs, m_drawInfoSum[cntPriority]);
+		
+		for (int cntPriority = 0; cntPriority < SCREEN_PRIORITY_MAX; cntPriority++)
 			ConvDrawInfoToVertex2DInfo(vtxs, m_drawInfoSumScreen[cntPriority]);
-		}
 
 		// 頂点バッファをアンロック
 		CPolygon2D::CDrawInfo::ms_vtxBuff->Unlock();
@@ -567,10 +637,11 @@ void CDrawMgr::AssignVertexInfo(void) {
 		Vertex3D* vtxs = NULL;
 		CPolygon3D::CDrawInfo::ms_vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
-		for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++) {
+		for (int cntPriority = 0; cntPriority < m_priorityMax; cntPriority++)
 			ConvDrawInfoToVertex3DInfo(vtxs, m_drawInfoSum[cntPriority]);
+
+		for (int cntPriority = 0; cntPriority < SCREEN_PRIORITY_MAX; cntPriority++)
 			ConvDrawInfoToVertex3DInfo(vtxs, m_drawInfoSumScreen[cntPriority]);
-		}
 
 		// 頂点バッファをアンロック
 		CPolygon3D::CDrawInfo::ms_vtxBuff->Unlock();
@@ -917,25 +988,23 @@ CDrawMgr::CRegistInfoSum::~CRegistInfoSum() {
 //========================================
 void CDrawMgr::CRegistInfoSum::InitAlloc(void) {
 
-	const UShort allocNum = pow(2, REGIST_ALLOC_BASE_POWER);
-
-	CMemory::AllocDouble(&m_polygon2DRegistInfos, allocNum);
-	CMemory::AllocDouble(&m_polygon3DRegistInfos, allocNum);
-	CMemory::AllocDouble(&m_text2DRegistInfos   , allocNum);
-	CMemory::AllocDouble(&m_text3DRegistInfos   , allocNum);
-	CMemory::AllocDouble(&m_modelRegistInfos    , allocNum);
+	m_polygon2DRegistInfos			= NULL;
+	m_polygon3DRegistInfos			= NULL;
+	m_text2DRegistInfos   			= NULL;
+	m_text3DRegistInfos   			= NULL;
+	m_modelRegistInfos    			= NULL;
 
 	m_polygon2DRegistInfoAllocNum   = 
 	m_polygon3DRegistInfoAllocNum   = 
 	m_text2DRegistInfoAllocNum      = 
 	m_text3DRegistInfoAllocNum      = 
-	m_modelRegistInfoAllocNum       = allocNum;
+	m_modelRegistInfoAllocNum       = 0;
 
 	m_polygon2DRegistInfoAllocPower = 
 	m_polygon3DRegistInfoAllocPower = 
 	m_text2DRegistInfoAllocPower    = 
 	m_text3DRegistInfoAllocPower    = 
-	m_modelRegistInfoAllocPower     = REGIST_ALLOC_BASE_POWER;
+	m_modelRegistInfoAllocPower     = 0;
 }
 
 //========================================
@@ -946,9 +1015,9 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 	//----------------------------------------
 	// ポリゴン2D
 	//----------------------------------------
-	if (m_polygon2DRegistInfoAllocPower > REGIST_ALLOC_BASE_POWER) {
+	if (m_polygon2DRegistInfoAllocPower > 0) {
 
-		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_polygon2DRegistInfoAllocPower; cntAlloc++) {
+		for (int cntAlloc = 0; cntAlloc < m_polygon2DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
 			if (m_polygon2DRegistInfoNum < allocLine)
@@ -968,9 +1037,9 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 	//----------------------------------------
 	// ポリゴン3D
 	//----------------------------------------
-	if (m_polygon3DRegistInfoAllocPower > REGIST_ALLOC_BASE_POWER) {
+	if (m_polygon3DRegistInfoAllocPower > 0) {
 
-		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_polygon3DRegistInfoAllocPower; cntAlloc++) {
+		for (int cntAlloc = 0; cntAlloc < m_polygon3DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
 			if (m_polygon3DRegistInfoNum < allocLine)
@@ -990,9 +1059,9 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 	//----------------------------------------
 	// テキスト2D
 	//----------------------------------------
-	if (m_text2DRegistInfoAllocPower > REGIST_ALLOC_BASE_POWER) {
+	if (m_text2DRegistInfoAllocPower > 0) {
 
-		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_text2DRegistInfoAllocPower; cntAlloc++) {
+		for (int cntAlloc = 0; cntAlloc < m_text2DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
 			if (m_text2DRegistInfoNum < allocLine)
@@ -1012,9 +1081,9 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 	//----------------------------------------
 	// テキスト3D
 	//----------------------------------------
-	if (m_text3DRegistInfoAllocPower > REGIST_ALLOC_BASE_POWER) {
+	if (m_text3DRegistInfoAllocPower > 0) {
 
-		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_text3DRegistInfoAllocPower; cntAlloc++) {
+		for (int cntAlloc = 0; cntAlloc < m_text3DRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
 			if (m_text3DRegistInfoNum < allocLine)
@@ -1034,9 +1103,9 @@ void CDrawMgr::CRegistInfoSum::ReAlloc(void) {
 	//----------------------------------------
 	// モデル
 	//----------------------------------------
-	if (m_modelRegistInfoAllocPower > REGIST_ALLOC_BASE_POWER) {
+	if (m_modelRegistInfoAllocPower > 0) {
 
-		for (int cntAlloc = REGIST_ALLOC_BASE_POWER; cntAlloc < m_modelRegistInfoAllocPower; cntAlloc++) {
+		for (int cntAlloc = 0; cntAlloc < m_modelRegistInfoAllocPower; cntAlloc++) {
 			const UShort allocLine = pow(2, cntAlloc);
 
 			if (m_modelRegistInfoNum < allocLine)

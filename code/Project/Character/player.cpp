@@ -578,11 +578,14 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
 			((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
 	}
+
 	// 膨らみカウンター＆演出
 	else if (info.expandCounter > 0) {
 		if (--info.expandCounter == 0) {
 			RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, 1.0f, false);
 			Manager::GetMainCamera()->SetVib(5.0f);
+			RNLib::Input().SetVibration(2.0f, count);
+			RNLib::Input().SetVibration(1.0f, !count);
 
 			const int NUM_PARTICLE = 8;
 			Pos3D rot = INITVECTOR3D;

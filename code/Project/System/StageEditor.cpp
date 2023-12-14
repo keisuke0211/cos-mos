@@ -566,7 +566,7 @@ void CStageEditor::SwapStage(int nStageIdx)
 
 		if (planet < m_Info.nPlanetMax)
 		{
-			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 				Stage::SetStageNumber(planet, NecstStage);

@@ -60,7 +60,7 @@ void CMode_Game::Init(void) {
 	Stage::StartStage();
 
 	// ‘JˆÚÝ’è
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// ó‘ÔÝ’è
 	SetState((int)STATE::NONE);
@@ -177,7 +177,7 @@ void CMode_Game::ProcessState(const PROCESS process) {
 				m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 				ProcessState(PROCESS::UNINIT);
 
-				if (RNLib::Transition().GetState() == CTransition::STATE::NONE) {
+				if (Manager::Transition().GetState() == CTransition::STATE::NONE) {
 					SetState((int)STATE::NONE);
 				}
 			}
