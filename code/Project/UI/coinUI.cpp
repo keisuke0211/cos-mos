@@ -9,8 +9,7 @@
 #include "../Object/Item/coin.h"
 
 #define FRAME_INTER (Scale2D(128.0f,30.0f))				//フレーム間隔
-#define SCALE		(24.0f)								//拡縮値
-#define INITPOS		(D3DXVECTOR3(-250.0f,150.0f, 0.0f))	//初期位置
+#define SCALE		(4.0f)								//拡縮値
 
 //静的メンバ変数
 
@@ -37,9 +36,9 @@ CCoinUI::~CCoinUI(void) {
 // 初期化処理
 // Author: RYUKI FUJIWARA
 //========================================
-void CCoinUI::Init(void) {
+void CCoinUI::Init(D3DXVECTOR3 pos) {
 
-	m_pos = INITPOS;
+	SetPos(pos);
 }
 
 //========================================
@@ -56,22 +55,17 @@ void CCoinUI::Uninit(void) {
 //========================================
 void CCoinUI::Update(void) {
 
-	//UIフレーム
-	RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x + 24.0f, m_pos.y,m_pos.z), INITROT3D)
-		->SetSize(FRAME_INTER.x, FRAME_INTER.y)
-		->SetTex(m_TexIdx[1])
+	//コイン
+	RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f))
+		->SetSize(m_scale.x, m_scale.y)
+		->SetTex(m_TexIdx[0])
 		->SetZTest(false);
 
 	//数
-	RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d",CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 30.0f, m_pos.y, 0.0f), INITROT3D)
-		->SetSize(Size2D(16.0f, 16.0f))
+	RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d",CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f))
+		->SetSize(Size2D(3.0f, 3.0f))
+		->SetFontIdx(1)
 		->SetCol(INITCOLOR)
-		->SetZTest(false);
-
-	//コイン
-	RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x, m_pos.y,m_pos.z), INITROT3D)
-		->SetSize(m_scale.x, m_scale.y)
-		->SetTex(m_TexIdx[0])
 		->SetZTest(false);
 }
 
@@ -79,7 +73,7 @@ void CCoinUI::Update(void) {
 // 生成処理
 // Author: RYUKI FUJIWARA
 //========================================
-CCoinUI *CCoinUI::Create(void)
+CCoinUI *CCoinUI::Create(D3DXVECTOR3 pos)
 {
 	CCoinUI *pObj = NULL;
 
@@ -87,7 +81,7 @@ CCoinUI *CCoinUI::Create(void)
 	pObj = new CCoinUI;
 
 	// 初期化処理
-	pObj->Init();
+	pObj->Init(pos);
 
 	return pObj;
 }
