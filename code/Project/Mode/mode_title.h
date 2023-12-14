@@ -89,6 +89,8 @@ private:
 	void TextAnime(void);
 	void CreateStageSelectInfo(void);
 	void StageSelect(void);
+	void StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor,float &RktAnimRt);
+	void StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor);
 	void TextRelease(TEXT type);
 	void SwapMode(TITLE aTitle);
 
@@ -119,6 +121,7 @@ private:
 	int m_ArrowIdx;
 	int *m_AnimCnt;
 	int m_RocketAnimCnt;
+	int m_NumAnimCnt;
 	int m_ImageStgCnt;
 	int m_RotCnt;
 	int m_nCnt;
@@ -126,6 +129,7 @@ private:
 	bool m_bBackMode;
 	bool m_bStageChange;
 	bool m_bRocketMove;
+	bool m_bRotDir;
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];
