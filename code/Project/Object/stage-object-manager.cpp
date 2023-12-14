@@ -411,7 +411,7 @@ CRoadTripLaser *CStageObjectMgr::RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTO
 //========================================
 //  “®‚­Œ¢
 //========================================
-CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int fHeadheight, bool bElasticity,bool bReturn)
+CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos, int HeightMin, int HeightMax, bool bElasticity, bool bReturn)
 {
 	CExtenddog *pObj = NULL;
 
@@ -423,10 +423,10 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 
 	pObj->SetElasticity(bElasticity);
 	pObj->SetHead(fHeadpos);
 	pObj->SetHip(fHippos);
-	pObj->SetHeadHeight(fHeadheight);
+	pObj->SetHeadHeightMin(HeightMin);
+	pObj->SetHeadHeightMax(HeightMax);
 	pObj->SetReturn(bReturn);
 	pObj->Init();
-
 
 	return pObj;
 }

@@ -178,17 +178,8 @@ void CRocket::UpdateState_Ride(void)
 //========================================
 void CRocket::UpdateState_Fly(void)
 {
-	int nCounter;
-
 	m_Info.nFlyAnimeCounter++;	// アニメーションの増加
-	nCounter = m_Info.nFlyAnimeCounter % s_RotAnimeMax;	// 割合の計算
-
-	// モードの切り替え	
-	if (m_Info.nFlyAnimeCounter >= s_FadeModeCountMax)
-	{
-		int stage = Manager::StgEd()->GetType()->nStageIdx;
-		Manager::StgEd()->SwapStage(stage + 1);
-	}
+	CInt nCounter = m_Info.nFlyAnimeCounter % s_RotAnimeMax;	// 割合の計算
 
 	// 向きを微動させる
 	if (nCounter >= s_RotAnimeMax * 0.5f)

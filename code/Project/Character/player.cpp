@@ -171,14 +171,14 @@ HRESULT CPlayer::Init(void)
 		delete m_aInfo[0].doll;
 	m_aInfo[0].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
-	m_aInfo[0].color = Color{255, 155, 59, (int)m_aInfo[0].nSwapAlpha };
+	m_aInfo[0].color = Color{255, 155, 59, 255 };
 
 	// ２Ｐ初期情報
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
 	m_aInfo[1].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
-	m_aInfo[1].color = Color{65, 233, 210, (int)m_aInfo[1].nSwapAlpha };
+	m_aInfo[1].color = Color{65, 233, 210, 255 };
 
 	// キーコンフィグ初期化
 	InitKeyConfig();
@@ -365,12 +365,14 @@ void CPlayer::Update(void)
 	ActionControl();
 
 	// 両者ともにゴールしてなかったら
-	if (!m_aInfo[0].bGoal && !m_aInfo[1].bGoal)
+	if ((!m_aInfo[0].bGoal || !m_aInfo[1].bGoal) &&
+		(!m_aInfo[0].bRide || !m_aInfo[1].bRide))
 	{
 		// スワップ
 		Swap();
 	}
-	else if (m_aInfo[0].bGoal && m_aInfo[1].bGoal)
+	else if ((m_aInfo[0].bGoal && m_aInfo[1].bGoal) ||
+		     (m_aInfo[0].bRide && m_aInfo[1].bRide))
 	{
 		//ゴール演出
 		GoalDirector();
@@ -587,7 +589,7 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 			{
 				rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, count == 0 ? Color{ 255, 155, 59,255 } : Color{ 65, 223, 210,255 }, CEffect_Death::TYPE::BALL);
+				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, info.color, CEffect_Death::TYPE::BALL);
 
 				pEff->SetBallSize(CEffect_Death::BALL_SIZE_LV::SMALL);
 			}
@@ -1374,7 +1376,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			{
 				//計測終了
 				CMode_Game::SetMeasureTime(false);
-				Stage::SetIsCutIn(true);
+				s_nGoalInterval = -GOAL_INTERVAL;
 			}
 		}
 
@@ -1385,7 +1387,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			{
 				//計測終了
 				CMode_Game::SetMeasureTime(false);
-				Stage::SetIsCutIn(true);
+				s_nGoalInterval = -GOAL_INTERVAL;
 			}
 		}
 	}
@@ -1504,17 +1506,14 @@ void CPlayer::PlaySE(SE_LABEL label)
 //----------------------------
 void CPlayer::GoalDirector(void)
 {
-	const Pos2D Center = RNLib::Window().GetCenterPos();
-	const Pos2D Size = RNLib::Window().GetSize();
-
-	//画面を暗くする
-	RNLib::Polygon2D().Put(PRIORITY_UI)
-		->SetPos(Center)
-		->SetSize(Size.x, Size.y)
-		->SetCol(Color{ 0,0,0,150 });
-
 	//時間加算
 	s_nGoalInterval++;
+
+	//クリアタイム取得
+	CFloat ClearTime = CMode_Game::GetPlayTime();
+	CStageEditor *pEd = Manager::StgEd();
+	CInt planet = pEd->GetPlanetIdx();
+	CInt stage = pEd->GetType()[planet].nStageIdx;
 
 	if (IsKeyConfigTrigger(KEY_CONFIG::DECIDE))
 	{
@@ -1528,20 +1527,39 @@ void CPlayer::GoalDirector(void)
 		else
 		{
 			CCoin::AddNumAll();
-			CStageEditor *pEd = Manager::StgEd();
-			CInt planet = pEd->GetPlanetIdx();
-			CInt stage = pEd->GetType()[planet].nStageIdx;
 			pEd->SwapStage(stage + 1);
+			Stage::RegistTime(planet, stage, ClearTime);
 			Stage::SetIsCutIn(false);
 		}
 	}
 	
+	if (s_nGoalInterval < 0) return;
+
+	Stage::SetIsCutIn(true);
+
+	const Pos2D Center = RNLib::Window().GetCenterPos();
+	const Pos2D Size = RNLib::Window().GetSize();
+
+	//画面を暗くする
+	RNLib::Polygon2D().Put(PRIORITY_UI)
+		->SetPos(Center)
+		->SetSize(Size.x, Size.y)
+		->SetCol(Color{ 0,0,0,150 });
+
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
+		CFloat BestTime = Stage::GetBestTime(planet, stage);
 
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", CMode_Game::GetPlayTime()), CText::ALIGNMENT::CENTER, 0, PopPos, 0.0f)
+		if(ClearTime < BestTime)
+			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 160.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f));
+
+		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(0.0f, 200.0f), 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
