@@ -67,7 +67,10 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 建物2
 	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 木の柵
 	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 平屋
-	{ "data\\MODEL\\Power-Pole_LineL.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
+	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(電線無し)
+	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
+	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(255, 255, 255, 255), MODEL_TYPE::MESH      , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(右に電線)
+	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(255, 255, 255, 255), MODEL_TYPE::MESH      , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(両方に電線)
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",

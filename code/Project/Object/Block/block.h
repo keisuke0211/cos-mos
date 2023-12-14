@@ -71,7 +71,10 @@ public:
 		BUILDING_2                         = 51,	// 建物2
 		WOOD_FENCE						   = 52,	// 木の柵
 		OLD_HOUSE						   = 53,	// 平屋
-		POWER_POLE						   = 54,	// 電柱
+		POWER_POLE						   = 54,	// 電柱(電線なし)
+		POWER_POLE_L					   = 55,	// 電柱(左側に電線)
+		POWER_POLE_R					   = 56,	// 電柱(右側に電線)
+		POWER_POLE_B					   = 57,	// 電柱(両方に電線)
 		MAX,
 	};
 	enum class OTHER_TEXTURE {
