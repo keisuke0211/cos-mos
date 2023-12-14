@@ -426,7 +426,7 @@ void CMode_Title::StageSelect(void) {
 	// ステージ選択処理
 	//----------------------------------------
 	if(m_bStageChange == false)
-	m_nOldSelect = m_nSelect;
+	m_nOldSelect = m_nStageSelect;
 	bool bInput = false;
 
 	if (m_bStageChange == false) {
@@ -438,11 +438,11 @@ void CMode_Title::StageSelect(void) {
 				return;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
-				m_nSelect--;
+				m_nStageSelect--;
 				bInput = true;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
-				m_nSelect++;
+				m_nStageSelect++;
 				bInput = true;
 			}
 
@@ -450,15 +450,15 @@ void CMode_Title::StageSelect(void) {
 				m_nOldnPlanet = m_nPlanetIdx;
 				m_nDrawPlanet = m_nOldnPlanet;
 
-				if (m_nSelect > -1 && m_nSelect < nStageMax) {
+				if (m_nStageSelect > -1 && m_nStageSelect < nStageMax) {
 					m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * RocketAnimRate);
 					m_RotCnt = 0;
 					m_RocketAnimCnt = 0;
 				}
 
-				if (m_nSelect < 0) {
-					m_nSelectTemp = m_nSelect;
-					m_nSelect = 0;
+				if (m_nStageSelect < 0) {
+					m_nSelectTemp = m_nStageSelect;
+					m_nStageSelect = 0;
 
 					if (m_nPlanetIdx != 0) {
 						m_RotCnt = 0;
@@ -468,9 +468,9 @@ void CMode_Title::StageSelect(void) {
 						m_StgFlag = STAGE::DESPAWN;
 					}
 				}
-				else if (m_nSelect >= nStageMax) {
-					m_nSelectTemp = m_nSelect;
-					m_nSelect = nStageMax - 1;
+				else if (m_nStageSelect >= nStageMax) {
+					m_nSelectTemp = m_nStageSelect;
+					m_nStageSelect = nStageMax - 1;
 
 					if (m_nPlanetIdx < nPlanetMax - 1) {
 						m_RotCnt = 0;
@@ -704,16 +704,16 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 	if (m_nSelectTemp < 0 && m_nPlanetIdx != 0) {
 
 			m_nPlanetIdx--;
-			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-			m_nStageSelect = nStageMax - 1;
-			m_nOldSelect = nStageMax;
+			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+			m_nStageSelect = nStage - 1;
+			m_nOldSelect = nStage;
 		}
-		else if (m_nSelectTemp >= nStageMax && m_nPlanetIdx != nPlanetMax - 1) {
+		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 			
 			m_nPlanetIdx++;
 			m_nStageSelect = 0;
 			m_nOldSelect = -1;
-			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 		}
 
 	m_nDrawPlanet = m_nPlanetIdx;
