@@ -148,7 +148,7 @@ void Stage::StartStage(void) {
 
 	// コインUIの生成
 	if (coinUI == NULL)
-		coinUI = CCoinUI::Create(D3DXVECTOR3(25.0f, 16.7f, -136.0f) * 2.0f);
+		coinUI = CCoinUI::Create(D3DXVECTOR3(100.0f, 25.0f, 0.0f) * 2.0f,Scale2D(40.0f,40.0f),true);
 
 	{// [[[ カメラ ]]]
 		// カメラの視点/注視点を設定

@@ -154,7 +154,7 @@ void CMode_Title::Init(void) {
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	if (m_CoinUI == NULL) {
-		m_CoinUI = CCoinUI::Create(COINUIPOS);
+		m_CoinUI = CCoinUI::Create(COINUIPOS,Scale2D(4.0f,4.0f),false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
 	}
 
 	// èÛë‘ê›íË
@@ -166,6 +166,11 @@ void CMode_Title::Init(void) {
 //========================================
 void CMode_Title::Uninit(void) {
 	CMode::Uninit();
+
+	if (m_CoinUI != NULL) {
+		delete m_CoinUI;
+		m_CoinUI = NULL;
+	}
 
 	CMemory::Release(&m_AnimCnt);
 }
