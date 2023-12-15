@@ -13,11 +13,11 @@
 //========================================
 CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 {
-	m_Info.TexPos = INITD3DXVECTOR2;
-	m_Info.TextBoxCol = INITCOLOR;
-	m_Info.TexMove = INITD3DXVECTOR2;
+	m_Info.TxtBoxPos = INITD3DXVECTOR2;
+	m_Info.TxtBoxCol = INITCOLOR;
+	m_Info.TxtBoxMove = INITD3DXVECTOR2;
 	m_Info.FontCol = INITD3DCOLOR;
-	m_Info.TextBoxColOld = INITD3DCOLOR;
+	m_Info.TxtBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;
 	m_Info.bCol = false;
 
@@ -71,9 +71,9 @@ CFontText::~CFontText()
 //========================================
 HRESULT CFontText::Init()
 {
-	m_Info.TextBoxCol = INITCOLOR;
+	m_Info.TxtBoxCol = INITCOLOR;
 	m_Info.FontCol = INITD3DCOLOR;
-	m_Info.TextBoxColOld = INITD3DCOLOR;
+	m_Info.TxtBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;
 	m_Info.bCol = false;
 	m_Info.fTextSize = 0.0f;
@@ -144,25 +144,25 @@ void CFontText::Uninit()
 //========================================
 void CFontText::Update()
 {
-	m_Info.TexPos += m_Info.TexMove;
+	m_Info.TxtBoxPos += m_Info.TxtBoxMove;
 
 	if (m_Info.bTextBok)
 	{
 		if (m_Info.Tex.PtnIdx >= 0){
-			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
-				->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
-				->SetCol(m_Info.TextBoxCol)
+			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TxtBoxPos, 0.0f, false)
+				->SetSize(m_Info.TxtBoxSize.x, m_Info.TxtBoxSize.y)
+				->SetCol(m_Info.TxtBoxCol)
 				->SetTex(m_Info.Tex.Idx, m_Info.Tex.PtnIdx, m_Info.Tex.PtnX, m_Info.Tex.PtnY);
 		}
 		else {
-			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TexPos, 0.0f, false)
-				->SetSize(m_Info.TexSize.x, m_Info.TexSize.y)
-				->SetCol(m_Info.TextBoxCol)
+			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TxtBoxPos, 0.0f, false)
+				->SetSize(m_Info.TxtBoxSize.x, m_Info.TxtBoxSize.y)
+				->SetCol(m_Info.TxtBoxCol)
 				->SetTex(m_Info.Tex.Idx);
 		}
 	}
 
-	m_Info.TexMove = INITD3DXVECTOR2;
+	m_Info.TxtBoxMove = INITD3DXVECTOR2;
 
 	// テキスト生成
 	if (!m_Info.bStand)
@@ -210,8 +210,8 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		else if(type == BOX_NONE || type == BOX_MAX)
 			pText->m_Info.Tex.Idx = -1;
 
-		pText->m_Info.TexPos = Pos2D(pos.x, pos.y);
-		pText->m_Info.TexSize = size;
+		pText->m_Info.TxtBoxPos = Pos2D(pos.x, pos.y);
+		pText->m_Info.TxtBoxSize = size;
 		pText->m_Info.bTextBok = bTextBox;
 
 		// -- テキスト -----------------------
@@ -237,7 +237,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 
 		if (bBoxSize)
 		{
-			pText->m_Info.TexSize.x = pText->m_Info.fTextSize * (pText->m_Info.nTextLength * 0.5f + 1);
+			pText->m_Info.TxtBoxSize.x = pText->m_Info.fTextSize * (pText->m_Info.nTextLength * 0.5f + 1);
 		}
 
 		if (Shadow == NULL)
@@ -290,9 +290,9 @@ void CFontText::LetterForm(void)
 
 			m_Info.sText += m_Info.sALLText[m_Info.nAddLetter];
 			string Text = m_Info.sText;
-			D3DXVECTOR3 pos = m_Info.TexPos * 2;
+			D3DXVECTOR3 pos = m_Info.TxtBoxPos * 2;
 
-			pos.x = pos.x - ((m_Info.TexSize.x * 2) / 2);
+			pos.x = pos.x - ((m_Info.TxtBoxSize.x * 2) / 2);
 
 			if (Text != "" && m_Info.nAddLetter < m_Info.nTextLength)
 			{// 空白じゃなかったら、 && テキストサイズを下回ってたら、
@@ -410,7 +410,7 @@ void CFontText::DisapTime(void)
 		}
 
 		// 色の推移
-		m_Info.TextBoxCol.a *= ((float)m_Info.nDisapTime / m_Info.nDisapTimeMax);
+		m_Info.TxtBoxCol.a *= ((float)m_Info.nDisapTime / m_Info.nDisapTimeMax);
 		m_Info.FontCol.a *= ((float)m_Info.nDisapTime / m_Info.nDisapTimeMax);
 
 		// 文字色の推移
@@ -448,7 +448,7 @@ void CFontText::DisapTime(void)
 //========================================
 void CFontText::SetMove(D3DXVECTOR3 move)
 {
-	m_Info.TexMove = Pos2D(move.x, move.y);
+	m_Info.TxtBoxMove = Pos2D(move.x, move.y);
 
 	for (int nWords = 0; nWords < m_Info.nLetterPopCount; nWords++)
 	{
@@ -536,7 +536,7 @@ bool CFontText::CheckLeadByte(int nLetter)
 //========================================
 // ポーズ中でもテキスト生成するか
 //========================================
-void CFontText::SetTetPause(bool bPause)
+void CFontText::SetTxtPause(bool bPause)
 {
 	m_Info.bPause = bPause;
 }
@@ -544,7 +544,7 @@ void CFontText::SetTetPause(bool bPause)
 //========================================
 // テキストボックスのテクスチャ設定
 //========================================
-void CFontText::SetBoxTex(const char* Path, int PthIdx, int PthX, int PthY)
+void CFontText::SetTxtBoxTex(const char* Path, int PthIdx, int PthX, int PthY)
 {
 	if (Path != NULL)
 	{
@@ -562,7 +562,7 @@ void CFontText::SetBoxTex(const char* Path, int PthIdx, int PthX, int PthY)
 //========================================
 // テキストボックスのパターン設定
 //========================================
-void CFontText::SetBoxPthIdx(int PthIdx)
+void CFontText::SetTxtBoxPthIdx(int PthIdx)
 {
 	if (PthIdx >= 0)
 	{
@@ -573,15 +573,15 @@ void CFontText::SetBoxPthIdx(int PthIdx)
 //========================================
 // テキストボックスの色設定
 //========================================
-void CFontText::SetBoxColor(Color col)
+void CFontText::SetTxtBoxColor(Color col)
 {
-	m_Info.TextBoxCol = col;
+	m_Info.TxtBoxCol = col;
 }
 
 //========================================
 // テキストボックスの種類設定
 //========================================
-void CFontText::SetBoxType(Box type)
+void CFontText::SetTxtBoxType(Box type)
 {
 	// -- メッセージボックス ----------------
 
@@ -601,7 +601,7 @@ void CFontText::SetBoxType(Box type)
 //========================================
 // テキストの色設定
 //========================================
-bool CFontText::SetTextColor(D3DXCOLOR col)
+bool CFontText::SetTxtColor(D3DXCOLOR col)
 {
 
 	for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++)

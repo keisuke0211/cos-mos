@@ -15,7 +15,7 @@ SET_RECORD
 	RECORD = 0 - 4 - 60.00
 
 #=====[ 2–Ê ]
-	RECORD = 1 - 0 - 60.00
+	RECORD = 1 - 0 - 15.96
 	RECORD = 1 - 1 - 60.00
 	RECORD = 1 - 2 - 60.00
 
