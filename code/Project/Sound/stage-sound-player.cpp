@@ -23,7 +23,7 @@ struct AmbientSEInfo {
 // 定数定義
 //****************************************
 // BGM/環境音
-#define SWAP_BGM_PATH "data\\SOUND\\BGM\\SWAP.wav"
+#define SWAP_BGM_PATH      "data\\SOUND\\BGM\\SWAP.wav"
 // World1
 #define AMBIENT_SE_1_MAX (2)
 #define AMBIENT_SE_1_LOOP_PATH "NONEDATA"
@@ -136,6 +136,33 @@ void StageSoundPlayer::Update(void) {
 		swapBGMVolume += 0.02f;
 		if (swapBGMVolume > 1.0f)
 			swapBGMVolume = 1.0f;
+
+		if (   RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 28  - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 55  - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 82  - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 109 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 137 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 163 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 190 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 218 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 246 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 273 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 299 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 327 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 355 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 381 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 409 - 4
+			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 435 - 4
+			) {
+			if (CPlayer::GetInfo(0)->swapWaitBalloonCounter == 5) {
+				RNLib::Input().SetVibration(0.5f, 1);
+				RNLib::Input().SetVibration(0.3f, 0);
+			}
+			else if (CPlayer::GetInfo(1)->swapWaitBalloonCounter == 5) {
+				RNLib::Input().SetVibration(0.5f, 0);
+				RNLib::Input().SetVibration(0.3f, 1);
+			}
+		}
 	}
 	else {
 		swapBGMVolume -= 0.02f;
@@ -143,6 +170,14 @@ void StageSoundPlayer::Update(void) {
 			swapBGMVolume = 0.0f;
 	}
 	RNLib::Sound().GetPlay(swapBGMPlayID).SetVolume(swapBGMVolume);
+
+	static int f = 0;
+	if (RNLib::Input().GetKeyTrigger(DIK_L)) {
+		f = RNLib::Sound().GetPlay(swapBGMPlayID).GetCount();
+	}
+
+	RNLib::Text2D().PutDebugLog(CreateText("最終フレーム%d", f));
+
 	{
 		float setVolume = 0.2f + ((1.0f - swapBGMVolume));
 		if (setVolume > 1.0f)

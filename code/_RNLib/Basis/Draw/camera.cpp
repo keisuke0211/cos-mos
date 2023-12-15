@@ -49,7 +49,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	m_posVib          = INITPOS3D;
 	m_rot             = INITROT3D;
 	m_spin            = INITVECTOR3D;
-	m_size           = scale2D;
+	m_size            = scale2D;
 	m_dist            = 1.0f;
 	m_radian          = INIT_RADIAN;
 	m_radianGoal      = INIT_RADIAN;
@@ -179,8 +179,8 @@ void CCamera::Update(void) {
 	m_spin += -m_spin * SPIN_DAMP;
 
 	// [[[ 向きを制御 ]]]
-	FloatControl(&m_rot.x, ROT_X_MAX, ROT_X_MIN);
-	FloatLoopControl(&m_rot.y, D3DX_PI, -D3DX_PI);
+	RNLib::Number().Clamp(&m_rot.x, ROT_X_MAX, ROT_X_MIN);
+	RNLib::Number().LoopClamp(&m_rot.y, D3DX_PI, -D3DX_PI);
 
 	// [[[ 視点/注視点位置を算出 ]]]
 	// 回転軸が視点   > 注視点位置を算出

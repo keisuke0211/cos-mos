@@ -14,6 +14,7 @@
 
 #define  MAX_COUNT		(2000)
 #define  MAX_CLOUD		(5)
+
 //****************************************
 // 無名空間
 //****************************************
@@ -23,6 +24,7 @@ namespace {
 	void ClearRecord(void);
 	void AllocRecord(void);
 	void LoadRecord(void);
+	void SaveRecord(void);
 	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
 	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
@@ -53,6 +55,15 @@ namespace {
 	};
 	Record *pRecord; //惑星ごとのレコード
 	int MaxPlanet;   //最大惑星数
+
+					 //文字添削
+	const char COMMENT = '#';       //コメント文字
+	const char CHR_END = '\0';      //終端文字
+	const char CHR_TAB = '\t';      //タブ文字
+	const char *CHR_PAUSE = " -=\n"; //読み取らない文字たち
+	const char *SET_RECORD = "SET_RECORD";
+	const char *END_RECORD = "END_RECORD";
+	const char *CODE_RECORD = "RECORD";
 }
 
 //================================================================================
@@ -109,6 +120,9 @@ void Stage::Uninit(void)
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::Uninit();
 
+	//レコード記録
+	SaveRecord();
+
 	//メモリ開放
 	ClearRecord();
 }
@@ -162,6 +176,7 @@ void Stage::StartStage(void) {
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
 
+
 	for (int cnt = 0; cnt < 2; cnt++) {
 		{// [[[ UI用カメラの生成 ]]]
 			UICamera[cnt] = new CCamera(Size2D(200.0f, RNLib::Window().GetHeight()));
@@ -192,8 +207,6 @@ void Stage::StartStage(void) {
 		whaleCounter = 0;
 		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
 		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
-		whaleDoll->SetPos(Pos3D(0.0f, 80.0f, 120.0f));
-		whaleDoll->SetScale(Scale3D(3.0f, 3.0f, 3.0f));
 	}
 }
 
@@ -218,7 +231,8 @@ void Stage::UpdateStage(void) {
 			RNLib::Polygon2D().Put(0, true)
 				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
 				->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-				->SetSize(windowWidth, windowHeightHalf);
+				->SetSize(windowWidth, windowHeightHalf)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 		}
 	}
 
@@ -238,11 +252,13 @@ void Stage::UpdateStage(void) {
 		RNLib::Polygon2D().Put(0, true)
 			->SetPos(Pos2D(-100.0f, windowHeightHalf) + Pos2D(250.0f * rate, 0.0f))
 			->SetTexUV(UICamera[0], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-			->SetSize(200.0f, windowHeight);
+			->SetSize(200.0f, windowHeight)
+			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 		RNLib::Polygon2D().Put(0, true)
 			->SetPos(Pos2D(windowWidth + 100.0f, windowHeightHalf) + Pos2D(-250.0f * rate, 0.0f))
 			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-			->SetSize(200.0f, windowHeight);
+			->SetSize(200.0f, windowHeight)
+			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
 	// 背景設置処理
@@ -301,7 +317,7 @@ void Stage::EndStage(void) {
 	StageSoundPlayer::End();
 
 	// スタティックメッシュの削除
-	RNLib::MatMesh().Delete();
+	RNLib::StaticMesh().Delete(false);
 
 	// UI用カメラの破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
@@ -334,11 +350,13 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
-				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
-				->SetBillboard(true);
+				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 			
 			// 雲
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
@@ -363,7 +381,8 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 
 		}
 		if (Stage::CheckPlanetIdx(1))
@@ -373,13 +392,25 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+
+			whaleCounter = (whaleCounter + 1) % 1800;
+			float whaleRate = whaleCounter / 1800.0f;
+			float whaleScale = (whaleRate > 0.5f ? 0.5f + (0.5f - whaleRate) : whaleRate) * 2.0f;
+			Matrix mtx = CMatrix::MultiplyMtx(CMatrix::ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), CMatrix::ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
+
+			whaleDoll->SetPos(CMatrix::ConvMtxToPos(mtx));
+			whaleDoll->SetRot(Rot3D(0.0f, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f));
+			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
+			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
 		}
 
 		// [[[ 壁モデル描画 ]]]
@@ -466,6 +497,10 @@ float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
 void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 {
 	LoadRecord();
+
+	//タイム更新
+	if (ClearTime < pRecord[planetIdx].pBestTime[stageIdx])
+		pRecord[planetIdx].pBestTime[stageIdx] = ClearTime;
 }
 
 //========================================
@@ -479,63 +514,89 @@ namespace
 		if (pRecord != NULL) return;
 
 		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+		if (pFile == NULL) return;
 
-		if (pFile != NULL)
+		//メモリ確保
+		AllocRecord();
+
+		char Text[TXT_MAX] = {}; // 一行分の文字
+		while (true)
 		{
-			//メモリ確保
-			AllocRecord();
+			//1行読み取り
+			fgets(&Text[0], TXT_MAX, pFile);
 
-			//文字添削
-			const char COMMENT = '#';       //コメント文字
-			const char CHR_END = '\0';      //終端文字
-			const char CHR_TAB = '\t';      //タブ文字
-			const char *CHR_PAUSE = " -=\:n"; //読み取らない文字たち
-			const char *SET_RECORD = "SET_RECORD";
-			const char *END_RECORD = "END_RECORD";
-			const char *CODE_RECORD = "RECORD";
+			//読み込んだ文字列の中にコメントがあるかチェック
+			char *pCharPos = strchr(&Text[0], COMMENT);
 
-			char Text[TXT_MAX] = {}; // 一行分の文字
-			int planetID = 0;        // 読み取り中の惑星番号
-			bool bLoad = false;
-			while (true)
+			//コメントアウト用の文字があったらその文字以降を削除
+			if (pCharPos != nullptr)*pCharPos = '\0';
+
+			//タブ消去
+			while (Text[0] == '\t')
 			{
-				//1行読み取り
-				fgets(&Text[0], TXT_MAX, pFile);
-
-				//読み込んだ文字列の中にコメントがあるかチェック
-				char *pCharPos = strchr(&Text[0], COMMENT);
-
-				//コメントアウト用の文字があったらその文字以降を削除
-				if (pCharPos != nullptr)*pCharPos = '\0';
-
-				//タブ消去
-				while (Text[0] == '\t')
-				{
-					char aCodeBackup[TXT_MAX];
-					strcpy(&aCodeBackup[0], &Text[0]);//読み込んだ１行を保存する
-					strcpy(&Text[0], &aCodeBackup[1]);//頭のタブ文字を外した次からの文字で上書きする
-				}
-
-				//読み取り開始
-				if (strncmp(&Text[0], SET_RECORD, sizeof SET_RECORD - 1) == 0)bLoad = true;
-
-				//読み取り終了
-				else if (strncmp(&Text[0], END_RECORD, sizeof END_RECORD - 1) == 0 || Text[0] == EOF && feof(pFile)) break;
-
-				//ロードしない
-				else if (bLoad)
-				{
-					if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
-					{
-						char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
-						planetID     = LoadInt(NULL, CHR_PAUSE);  // 惑星番号取得
-						CInt StageID = LoadInt(NULL, CHR_PAUSE); // ステージ番号取得
-						pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);
-					}
-				}
+				char aCodeBackup[TXT_MAX];
+				strcpy(&aCodeBackup[0], &Text[0]);//読み込んだ１行を保存する
+				strcpy(&Text[0], &aCodeBackup[1]);//頭のタブ文字を外した次からの文字で上書きする
 			}
 
-			fclose(pFile);
+			//読み取り終了
+			if (Text[0] == EOF || feof(pFile)) break;
+
+			//ロード
+			else if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
+			{
+				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
+				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
+				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
+				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
+			}
 		}
+
+		fclose(pFile);
+	}
+}
+
+//========================================
+// レコードファイル書き出し
+// Author：HIRASAWA SHION
+//========================================
+namespace 
+{
+	void SaveRecord(void)
+	{
+		if (pRecord == NULL) return;
+
+		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "w");
+		if (pFile == NULL) return;
+
+		const char *WORLD_COMMENT = "\n#=====[ %d面 ]\n";
+
+		//ファイルヘッダコメント書き出し
+		fprintf(pFile, "#=======================================\n");
+		fprintf(pFile, "#\n");
+		fprintf(pFile, "#各ステージのクリアタイム\n");
+		fprintf(pFile, "#Author:HIRASAWA SHION\n");
+		fprintf(pFile, "#\n");
+		fprintf(pFile, "#=======================================\n");
+		fprintf(pFile, "SET_RECORD\n\n");
+
+		//レコードの説明文
+		fprintf(pFile, "#ワールド - ステージ - ベストタイム");
+		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+		{
+			//ワールド名書き出し
+			fprintf(pFile, WORLD_COMMENT, nCntPlanet + 1);
+
+			for (int nCntStage = 0; nCntStage < pRecord[nCntPlanet].MaxStage; nCntStage++)
+			{
+				//レコード記述
+				fprintf(pFile, "	%s = %d - %d - %.2f\n", 
+						CODE_RECORD, nCntPlanet, nCntStage, pRecord[nCntPlanet].pBestTime[nCntStage]);
+			}
+		}
+
+		//終了
+		fprintf(pFile, "\n%s", END_RECORD);
+		fclose(pFile);
 	}
 }

@@ -410,14 +410,14 @@ void CPlayer::UpdateInfo(void)
 							if (ms_guideCounter == 1) {
 								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 							}
-							RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+							RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 								->SetZTest(false)
 								->SetBillboard(true);
 						}
 						else {
 							if (s_nSwapInterval == 0) {
-								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 									->SetSize(Size2D(24.0f * rate, 24.0f * rate))
 									->SetZTest(false)
 									->SetBillboard(true);
@@ -434,13 +434,13 @@ void CPlayer::UpdateInfo(void)
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], CSound::CATEGORY::SE, 1.0f, false);
 						}
-						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						RNLib::Text3D().Put(PRIORITY_UI, "OK!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 							->SetZTest(false)
 							->SetBillboard(true);
 					}
 					else {
-						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, 0, INITMATRIX)
+						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", CText::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
 							->SetZTest(false)
 							->SetBillboard(true);
@@ -578,11 +578,14 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			((Manager::GetMainCamera()->GetPosV() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posVTemp * (1.0f - rate2)),
 			((Manager::GetMainCamera()->GetPosR() + Vector3D(addVec.x * rate, addVec.y * rate, 0.0f)) * rate2) + (posRTemp * (1.0f - rate2)));
 	}
+
 	// 膨らみカウンター＆演出
 	else if (info.expandCounter > 0) {
 		if (--info.expandCounter == 0) {
 			RNLib::Sound().Play(s_SE.explosion, CSound::CATEGORY::SE, 1.0f, false);
 			Manager::GetMainCamera()->SetVib(5.0f);
+			RNLib::Input().SetVibration(2.0f, count);
+			RNLib::Input().SetVibration(1.0f, !count);
 
 			const int NUM_PARTICLE = 8;
 			Pos3D rot = INITVECTOR3D;
@@ -987,7 +990,7 @@ void CPlayer::SwapGuide(Info& Player)
 
 	//ガイドのスピードを設定
 	Player.fGuideMoveSpeed = fSize / 100.0f;
-	FloatControl(&Player.fGuideMoveSpeed, MAX_GUIDE_SPEED, -MAX_GUIDE_SPEED);
+	RNLib::Number().Clamp(&Player.fGuideMoveSpeed, MAX_GUIDE_SPEED, -MAX_GUIDE_SPEED);
 	Player.fGuideTexVPos += Player.fGuideMoveSpeed;
 
 	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
@@ -1040,7 +1043,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 //----------------------------
 void CPlayer::Move(VECTOL vec, int cntPlayer)
 {
-	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath) {
+	if (m_aInfo[cntPlayer].isDeath) {
 		return;
 	}
 
@@ -1062,9 +1065,9 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 
 		// Ⅹの移動量を修正
 		if(s_bAimPlayer && s_nAimNo == cntPlayer)
-			FloatControl(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
+			RNLib::Number().Clamp(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
 		else
-			FloatControl(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+			RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
 
 		// 位置更新
 		Player.pos.x += Player.move.x;
@@ -1202,8 +1205,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// 死亡判定ON
-				if (bDeath)
-				{
+				if (bDeath && !m_aInfo[!nCntPlayer].isDeath) {
 					Death(Player, type);
 					break;
 				}
@@ -1510,6 +1512,7 @@ void CPlayer::GoalDirector(void)
 	s_nGoalInterval++;
 
 	//クリアタイム取得
+	static float BestTime;
 	CFloat ClearTime = CMode_Game::GetPlayTime();
 	CStageEditor *pEd = Manager::StgEd();
 	CInt planet = pEd->GetPlanetIdx();
@@ -1519,7 +1522,10 @@ void CPlayer::GoalDirector(void)
 	{
 		//次の演出時間に設定
 		if (s_nGoalInterval < POP_CLEARTIME)
+		{
 			s_nGoalInterval = POP_CLEARTIME;
+			BestTime = Stage::GetBestTime(planet, stage);
+		}
 		else if (s_nGoalInterval < GOAL_INTERVAL)
 			s_nGoalInterval = GOAL_INTERVAL;
 
@@ -1546,20 +1552,23 @@ void CPlayer::GoalDirector(void)
 		->SetSize(Size.x, Size.y)
 		->SetCol(Color{ 0,0,0,150 });
 
+	//ベストタイム取得
+	if(s_nGoalInterval < POP_CLEARTIME) 
+		BestTime = Stage::GetBestTime(planet, stage);
+
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		CFloat BestTime = Stage::GetBestTime(planet, stage);
-
 		if(ClearTime < BestTime)
-			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 130.0f), 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f));
+			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!"), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f))
+			->SetCol(Color{ 255,255,0,255 });;
 
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 160.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(0.0f, 200.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(0.0f, 200.0f), 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
@@ -1571,7 +1580,7 @@ void CPlayer::GoalDirector(void)
 
 		//インターバル前半は表示
 		if (DiffInterval < GOAL_INTERVAL / 2)
-			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", CText::ALIGNMENT::CENTER, 0, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
+			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", CText::ALIGNMENT::CENTER, NONEDATA, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		if (s_nGoalInterval >= GOAL_INTERVAL * 2)

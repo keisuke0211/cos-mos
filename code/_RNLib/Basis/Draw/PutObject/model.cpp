@@ -519,6 +519,7 @@ CModel::CDrawInfo::CDrawInfo() {
 	m_outLineMesh          = NULL;
 	m_isScaling            = false;
 	m_isZTest              = true;
+	m_interpolationMode    = CDrawState::INTERPOLATION_MODE::NONE;
 	m_isLighting           = false;
 }
 
@@ -572,6 +573,7 @@ void CModel::CRegistInfo::ClearParameter(void) {
 	m_isLighting           = false;
 	m_outLineIdx           = NONEDATA;
 	m_brightnessOfEmissive = 1.0f;
+	m_interpolationMode    = CDrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
@@ -589,12 +591,13 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	const CModel::CData& modelData = RNLib::Model().GetData(m_modelIdx);
 
 	// 情報を代入
-	drawInfo->m_mtx        = m_mtx;
-	drawInfo->m_texes      = modelData.m_texes;
-	drawInfo->m_matNum     = modelData.m_matNum;
-	drawInfo->m_isZTest    = m_isZTest;
-	drawInfo->m_isLighting = m_isLighting;
-	drawInfo->m_radiusMax  = modelData.m_radiusMax;{
+	drawInfo->m_mtx               = m_mtx;
+	drawInfo->m_texes             = modelData.m_texes;
+	drawInfo->m_matNum            = modelData.m_matNum;
+	drawInfo->m_isZTest           = m_isZTest;
+	drawInfo->m_isLighting        = m_isLighting;
+	drawInfo->m_interpolationMode = m_interpolationMode;
+	drawInfo->m_radiusMax         = modelData.m_radiusMax;{
 
 		// 輪郭メッシュ情報を算出
 		if (m_outLineIdx == NONEDATA) {
@@ -825,6 +828,19 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetBrightnessOfEmissive(const float& b
 		return NULL;
 
 	m_brightnessOfEmissive = brightnessOfEmissive;
+
+	return this;
+}
+
+//========================================
+// 補間モードを設定
+//========================================
+CModel::CRegistInfo* CModel::CRegistInfo::SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

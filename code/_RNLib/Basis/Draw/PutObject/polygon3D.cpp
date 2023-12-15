@@ -119,16 +119,17 @@ void CPolygon3D::CDrawInfo::ReleaseVertexBuffer(void) {
 //========================================
 CPolygon3D::CDrawInfo::CDrawInfo() {
 
-	m_idx            = 0;
-	m_mtx            = INITMATRIX;
-	m_tex            = NULL;
-	m_texType        = Polygon2DAnd3D::TEX_TYPE::NONE;
-	m_isZTest        = true;
-	m_isLighting     = true;
-	m_isBillboard    = false;
-	m_cullingMode    = CDrawState::CULLING_MODE::FRONT_SIDE;
-	m_alphaBlendMode = CDrawState::ALPHA_BLEND_MODE::NORMAL;
-	m_distance       = 0.0f;
+	m_idx               = 0;
+	m_mtx               = INITMATRIX;
+	m_tex               = NULL;
+	m_texType           = Polygon2DAnd3D::TEX_TYPE::NONE;
+	m_isZTest           = true;
+	m_isLighting        = true;
+	m_isBillboard       = false;
+	m_cullingMode       = CDrawState::CULLING_MODE::FRONT_SIDE;
+	m_alphaBlendMode    = CDrawState::ALPHA_BLEND_MODE::NORMAL;
+	m_interpolationMode = CDrawState::INTERPOLATION_MODE::NONE;
+	m_distance          = 0.0f;
 	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}
@@ -182,6 +183,7 @@ void CPolygon3D::CRegistInfo::ClearParameter(void) {
 	m_isBillboard		= false;
 	m_cullingMode	    = CDrawState::CULLING_MODE::FRONT_SIDE;
 	m_alphaBlendMode	= CDrawState::ALPHA_BLEND_MODE::NORMAL;
+	m_interpolationMode = CDrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
@@ -200,13 +202,14 @@ CPolygon3D::CDrawInfo* CPolygon3D::CRegistInfo::ConvToDrawInfo(void) {
 	AssignToDrawInfo(*drawInfo);
 
 	// èÓïÒÇë„ì¸
-	drawInfo->m_idx            = m_idx;
-	drawInfo->m_mtx            = m_mtx;
-	drawInfo->m_isZTest        = m_isZtest;
-	drawInfo->m_isLighting     = m_isLighting;
-	drawInfo->m_isBillboard    = m_isBillboard;
-	drawInfo->m_cullingMode    = m_cullingMode;
-	drawInfo->m_alphaBlendMode = m_alphaBlendMode;
+	drawInfo->m_idx               = m_idx;
+	drawInfo->m_mtx               = m_mtx;
+	drawInfo->m_isZTest           = m_isZtest;
+	drawInfo->m_isLighting        = m_isLighting;
+	drawInfo->m_isBillboard       = m_isBillboard;
+	drawInfo->m_cullingMode       = m_cullingMode;
+	drawInfo->m_alphaBlendMode    = m_alphaBlendMode;
+	drawInfo->m_interpolationMode = m_interpolationMode;
 
 	//----------------------------------------
 	// í∏ì_èÓïÒÇÃê›íË
@@ -535,6 +538,19 @@ CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetAlphaBlendMode(const CDrawS
 		return NULL;
 
 	m_alphaBlendMode = alphaBlendMode;
+
+	return this;
+}
+
+//========================================
+// ï‚ä‘ÉÇÅ[ÉhÇê›íË
+//========================================
+CPolygon3D::CRegistInfo* CPolygon3D::CRegistInfo::SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }
