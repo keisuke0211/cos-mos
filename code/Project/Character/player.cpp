@@ -1512,6 +1512,7 @@ void CPlayer::GoalDirector(void)
 	s_nGoalInterval++;
 
 	//クリアタイム取得
+	static float BestTime;
 	CFloat ClearTime = CMode_Game::GetPlayTime();
 	CStageEditor *pEd = Manager::StgEd();
 	CInt planet = pEd->GetPlanetIdx();
@@ -1521,7 +1522,10 @@ void CPlayer::GoalDirector(void)
 	{
 		//次の演出時間に設定
 		if (s_nGoalInterval < POP_CLEARTIME)
+		{
 			s_nGoalInterval = POP_CLEARTIME;
+			BestTime = Stage::GetBestTime(planet, stage);
+		}
 		else if (s_nGoalInterval < GOAL_INTERVAL)
 			s_nGoalInterval = GOAL_INTERVAL;
 
@@ -1548,14 +1552,17 @@ void CPlayer::GoalDirector(void)
 		->SetSize(Size.x, Size.y)
 		->SetCol(Color{ 0,0,0,150 });
 
+	//ベストタイム取得
+	if(s_nGoalInterval < POP_CLEARTIME) 
+		BestTime = Stage::GetBestTime(planet, stage);
+
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		CFloat BestTime = Stage::GetBestTime(planet, stage);
-
 		if(ClearTime < BestTime)
-			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f));
+			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!"), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f))
+			->SetCol(Color{ 255,255,0,255 });;
 
 		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));

@@ -24,6 +24,7 @@ namespace {
 	void ClearRecord(void);
 	void AllocRecord(void);
 	void LoadRecord(void);
+	void SaveRecord(void);
 	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
 	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
@@ -54,6 +55,15 @@ namespace {
 	};
 	Record *pRecord; //惑星ごとのレコード
 	int MaxPlanet;   //最大惑星数
+
+					 //文字添削
+	const char COMMENT = '#';       //コメント文字
+	const char CHR_END = '\0';      //終端文字
+	const char CHR_TAB = '\t';      //タブ文字
+	const char *CHR_PAUSE = " -=\n"; //読み取らない文字たち
+	const char *SET_RECORD = "SET_RECORD";
+	const char *END_RECORD = "END_RECORD";
+	const char *CODE_RECORD = "RECORD";
 }
 
 //================================================================================
@@ -109,6 +119,9 @@ void Stage::Uninit(void)
 {
 	// 環境音プレイヤーの終了処理
 	StageSoundPlayer::Uninit();
+
+	//レコード記録
+	SaveRecord();
 
 	//メモリ開放
 	ClearRecord();
@@ -501,56 +514,89 @@ namespace
 		if (pRecord != NULL) return;
 
 		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+		if (pFile == NULL) return;
 
-		if (pFile != NULL)
+		//メモリ確保
+		AllocRecord();
+
+		char Text[TXT_MAX] = {}; // 一行分の文字
+		while (true)
 		{
-			//メモリ確保
-			AllocRecord();
+			//1行読み取り
+			fgets(&Text[0], TXT_MAX, pFile);
 
-			//文字添削
-			const char COMMENT = '#';       //コメント文字
-			const char CHR_END = '\0';      //終端文字
-			const char CHR_TAB = '\t';      //タブ文字
-			const char *CHR_PAUSE = " -=\:n"; //読み取らない文字たち
-			const char *SET_RECORD = "SET_RECORD";
-			const char *END_RECORD = "END_RECORD";
-			const char *CODE_RECORD = "RECORD";
+			//読み込んだ文字列の中にコメントがあるかチェック
+			char *pCharPos = strchr(&Text[0], COMMENT);
 
-			char Text[TXT_MAX] = {}; // 一行分の文字
-			int planetID = 0;        // 読み取り中の惑星番号
-			while (true)
+			//コメントアウト用の文字があったらその文字以降を削除
+			if (pCharPos != nullptr)*pCharPos = '\0';
+
+			//タブ消去
+			while (Text[0] == '\t')
 			{
-				//1行読み取り
-				fgets(&Text[0], TXT_MAX, pFile);
-
-				//読み込んだ文字列の中にコメントがあるかチェック
-				char *pCharPos = strchr(&Text[0], COMMENT);
-
-				//コメントアウト用の文字があったらその文字以降を削除
-				if (pCharPos != nullptr)*pCharPos = '\0';
-
-				//タブ消去
-				while (Text[0] == '\t')
-				{
-					char aCodeBackup[TXT_MAX];
-					strcpy(&aCodeBackup[0], &Text[0]);//読み込んだ１行を保存する
-					strcpy(&Text[0], &aCodeBackup[1]);//頭のタブ文字を外した次からの文字で上書きする
-				}
-
-				//読み取り終了
-				if (Text[0] == EOF || feof(pFile)) break;
-
-				//ロード
-				else if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
-				{
-					char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
-					planetID = LoadInt(NULL, CHR_PAUSE);  // 惑星番号取得
-					CInt StageID = LoadInt(NULL, CHR_PAUSE); // ステージ番号取得
-					pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);
-				}
+				char aCodeBackup[TXT_MAX];
+				strcpy(&aCodeBackup[0], &Text[0]);//読み込んだ１行を保存する
+				strcpy(&Text[0], &aCodeBackup[1]);//頭のタブ文字を外した次からの文字で上書きする
 			}
 
-			fclose(pFile);
+			//読み取り終了
+			if (Text[0] == EOF || feof(pFile)) break;
+
+			//ロード
+			else if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
+			{
+				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
+				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
+				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
+				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
+			}
 		}
+
+		fclose(pFile);
+	}
+}
+
+//========================================
+// レコードファイル書き出し
+// Author：HIRASAWA SHION
+//========================================
+namespace 
+{
+	void SaveRecord(void)
+	{
+		if (pRecord == NULL) return;
+
+		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "w");
+		if (pFile == NULL) return;
+
+		const char *WORLD_COMMENT = "\n#=====[ %d面 ]\n";
+
+		//ファイルヘッダコメント書き出し
+		fprintf(pFile, "#=======================================\n");
+		fprintf(pFile, "#\n");
+		fprintf(pFile, "#各ステージのクリアタイム\n");
+		fprintf(pFile, "#Author:HIRASAWA SHION\n");
+		fprintf(pFile, "#\n");
+		fprintf(pFile, "#=======================================\n");
+		fprintf(pFile, "SET_RECORD\n\n");
+
+		//レコードの説明文
+		fprintf(pFile, "#ワールド - ステージ - ベストタイム");
+		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+		{
+			//ワールド名書き出し
+			fprintf(pFile, WORLD_COMMENT, nCntPlanet + 1);
+
+			for (int nCntStage = 0; nCntStage < pRecord[nCntPlanet].MaxStage; nCntStage++)
+			{
+				//レコード記述
+				fprintf(pFile, "	%s = %d - %d - %.2f\n", 
+						CODE_RECORD, nCntPlanet, nCntStage, pRecord[nCntPlanet].pBestTime[nCntStage]);
+			}
+		}
+
+		//終了
+		fprintf(pFile, "\n%s", END_RECORD);
+		fclose(pFile);
 	}
 }
