@@ -24,6 +24,11 @@ public:
 		NORMAL,	// í èÌ
 		ADD,	// â¡éZ
 	};
+	// ï‚ä‘ÉÇÅ[Éh
+	enum class INTERPOLATION_MODE {
+		NONE,
+		LINEAR,
+	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CDrawState               ();
@@ -35,6 +40,7 @@ public:
 	void SetIsZTest          (Device& device, const bool& isZTest);
 	void SetCullingMode      (Device& device, const CULLING_MODE& mode);
 	void SetAlphaBlendMode   (Device& device, const ALPHA_BLEND_MODE& mode);
+	void SetInterpolationMode(Device& device, const INTERPOLATION_MODE& mode);
 	void SetIsTextureAlpha   (Device& device, const bool& isTextureAlpha);
 	void SetIsLighting       (Device& device, const bool& isLighting);
 	void SetIsFog            (Device& device, const bool& isFog);

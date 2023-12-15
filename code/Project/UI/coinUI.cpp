@@ -64,7 +64,6 @@ void CCoinUI::Update(void) {
 	//”
 	RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d",CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f))
 		->SetSize(Size2D(3.0f, 3.0f))
-		->SetFontIdx(1)
 		->SetCol(INITCOLOR)
 		->SetZTest(false);
 }

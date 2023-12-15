@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../text.h"
+#include "../draw-state.h"
 
 //****************************************
 // ÉNÉâÉXíËã`
@@ -23,26 +24,27 @@ public:
 		~CRegistInfo();
 		void ClearParameter(void);
 		void PutPolygon2D(const UShort& priority, const bool& isOnScreen);
-		CRegistInfo* SetPos      (const Pos2D& pos);
-		CRegistInfo* SetAngle    (const Angle& angle);
-		CRegistInfo* SetString   (const char* string);
-		CRegistInfo* SetAlignment(const CText::ALIGNMENT& alignment);
-		CRegistInfo* SetFontIdx  (const short& fontIdx);
-		CRegistInfo* SetCol      (const Color& col);
-		CRegistInfo* SetScale    (const Scale2D scale);
-		CRegistInfo* SetSize     (const Size2D size);
+		CRegistInfo* SetPos              (const Pos2D& pos);
+		CRegistInfo* SetAngle            (const Angle& angle);
+		CRegistInfo* SetString           (const char* string);
+		CRegistInfo* SetAlignment        (const CText::ALIGNMENT& alignment);
+		CRegistInfo* SetFontIdx          (const short& fontIdx);
+		CRegistInfo* SetCol              (const Color& col);
+		CRegistInfo* SetScale            (const Scale2D scale);
+		CRegistInfo* SetSize             (const Size2D size);
+		CRegistInfo* SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode);
 
 	private:
 		// [[[ ïœêîêÈåæ ]]]
-		char*            m_string;
-		CText::ALIGNMENT m_alignment;
-		short            m_fontIdx;
-		Pos2D            m_pos;
-		Angle            m_angle;
-		Vector2D         m_scaleOrSize;
-		bool             m_isScale;
-		Color            m_col;
-		bool             m_isZtest;
+		char*                          m_string;
+		CText::ALIGNMENT               m_alignment;
+		short                          m_fontIdx;
+		Pos2D                          m_pos;
+		Angle                          m_angle;
+		Vector2D                       m_scaleOrSize;
+		bool                           m_isScale;
+		Color                          m_col;
+		CDrawState::INTERPOLATION_MODE m_interpolationMode;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]

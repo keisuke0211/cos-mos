@@ -162,7 +162,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\Draw\transition.cpp">
+    <ClCompile Include="code\Project\UI\transition.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp">
@@ -491,7 +491,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\texture.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\Basis\Draw\transition.h">
+    <ClInclude Include="code\Project\UI\transition.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h">

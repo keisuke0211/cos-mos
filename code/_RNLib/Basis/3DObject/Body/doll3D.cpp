@@ -308,7 +308,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, ULong& vtxNum) {
 				->SetLighting(false)
 				->SetZTest(false)
 				->SetBillboard(true);
-			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", vtxIdxs[cntVtx]), CText::ALIGNMENT::CENTER, 1, vtxInfo[vtxIdxs[cntVtx]].worldPos, INITROT3D)
+			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", vtxIdxs[cntVtx]), CText::ALIGNMENT::CENTER, 0, vtxInfo[vtxIdxs[cntVtx]].worldPos, INITROT3D)
 				->SetSize(Size2D(0.5f, 0.5f))
 				->SetLighting(false)
 				->SetZTest(false)
@@ -338,7 +338,7 @@ void CDoll3D::DrawModelVtxIdx(CModel::Vertex3DInfo*& vtxInfo, ULong& vtxNum) {
 				->SetLighting(false)
 				->SetZTest(false)
 				->SetBillboard(true);
-			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", cntVtx), CText::ALIGNMENT::CENTER, 1, vtxInfo[cntVtx].worldPos, INITROT3D)
+			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", cntVtx), CText::ALIGNMENT::CENTER, 0, vtxInfo[cntVtx].worldPos, INITROT3D)
 				->SetSize(Size2D(0.5f, 0.5f))
 				->SetLighting(false)
 				->SetZTest(false)

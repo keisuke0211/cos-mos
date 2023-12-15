@@ -474,7 +474,7 @@ void CInput::CJoyPad::UpdateVibration(void) {
 void CInput::CJoyPad::SetVibration(const float& vibration) {
 
 	// 自身がジョイパッド0番でアクティブでない時、処理を終了
-	if (m_idx == 0)
+	if (RNLib::Input().GetJoyPadNum() == 0)
 		if (RNLib::Input().GetActiveDevice() != ACTIVE_DEVICE::JOYPAD)
 			return;
 

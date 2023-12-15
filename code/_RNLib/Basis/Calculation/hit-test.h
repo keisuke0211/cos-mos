@@ -15,15 +15,17 @@
 class CHitTest {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	CHitTest();
-	~CHitTest();
-	void Init(void);
+	CHitTest   ();
+	~CHitTest  ();
+	void Init  (void);
 	void Uninit(void);
 	void Update(void);
+	// [[[ XZ•½–Ê‚É‚¨‚¯‚é“–‚½‚è”»’è ]]]
 	class XZ {
 	public:
 		static bool OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targetPos, const Scale2D& targetScale);
 	};
+	// [[[ 3²‹óŠÔ‚É‚¨‚¯‚é“–‚½‚è”»’è ]]]
 	class XYZ {
 	public:
 		static bool InPointToCameraView(const D3DXVECTOR3& point, const D3DXVECTOR3& cameraPosition, const D3DXVECTOR3& cameraLookAt, float cameraWidth, float cameraHeight, float fov);

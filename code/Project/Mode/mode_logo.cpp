@@ -48,7 +48,7 @@ void CMode_Logo::Init(void) {
 	// ó‘ÔÝ’è
 	SetState((int)STATE::NONE);
 	// ‘JˆÚÝ’è
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// ƒJƒƒ‰‚ÌŽ‹“_/’Ž‹“_‚ðÝ’è
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -119,7 +119,7 @@ void CMode_Logo::Update(void) {
 	{
 		if (++m_nStateCtr >= TIME)
 		{
-			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
 				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NONE);
 				m_state = STATE::NONE;

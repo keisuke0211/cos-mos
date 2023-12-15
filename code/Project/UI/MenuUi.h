@@ -26,8 +26,8 @@ public:
 	static const char* SUB_MENU_FILE;			// サブメニュー情報のファイルパス
 	static const int WORDS_MAX = 7;				// 文字の最大数
 	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
-	static const int PAUSE_LEFT_ANIME = 15;		// 画面左のアニメーション時間
-	static const int PAUSE_RIGHT_ANIME = 15;	// 画面右のアニメーション時間
+	static const int PAUSE_LEFT_ANIME = 20;		// 画面左のアニメーション時間
+	static const int PAUSE_RIGHT_ANIME = 20;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;			// サウンドの最大値
 	static const int COOLDOWN = 20;				// クールダウン
 
@@ -91,8 +91,13 @@ public:
 	struct Menu {
 		D3DXVECTOR3 LeftPos;
 		D3DXVECTOR3 RightPos;
-		D3DXVECTOR3 LeftTargetPos;
-		D3DXVECTOR3 RightTargetPos;
+
+		float LeftScaleX;
+		float RightScaleX;
+
+		float LeftScaleMaxX;
+		float RightScaleMaxX;
+
 		int nCntLeftAnime;
 		int nCntRightAnime;
 		int nRightCoolDown;	//　左画面出現のクールダウン

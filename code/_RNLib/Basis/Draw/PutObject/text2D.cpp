@@ -112,26 +112,26 @@ Pos2D CText2D::PutDebugLog(const char* string) {
 	if (!m_isShowDebugLog)
 		return INITPOS2D;
 
-		setlocale(LC_ALL, "");
-		size_t    length = strlen(string);
-		wchar_t* wstr = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
-		mbstowcs(wstr, string, length + 1);
-		const int strLen = (int)wcslen(wstr);
+	setlocale(LC_ALL, "");
+	size_t    length = strlen(string);
+	wchar_t* wstr = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
+	mbstowcs(wstr, string, length + 1);
+	const int strLen = (int)wcslen(wstr);
 
-		const float top = m_debugLogLine * 16.0f;
-		const float bottom = (m_debugLogLine + 1) * 16.0f;
-		const float right = strLen * 16.0f;
-		free(wstr);
+	const float top = m_debugLogLine * 16.0f;
+	const float bottom = (m_debugLogLine + 1) * 16.0f;
+	const float right = strLen * 16.0f;
+	free(wstr);
 
-		RNLib::Polygon2D().Put(1, true)
-			->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
-			->SetVtxCol(Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100));
+	RNLib::Polygon2D().Put(CDrawMgr::SCREEN_PRIORITY_DEBUG_LOG, true)
+		->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
+		->SetVtxCol(Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100));
 
 	// 設置位置
 	Pos2D putPos = Pos2D(0.0f, 8.0f + m_debugLogLine * 16.0f);
 
 	// 左上から下にかけてテキスト2Dを設置する
-	Put(2, string, CText::ALIGNMENT::LEFT, 0, putPos, 0.0f, true)
+	Put(CDrawMgr::SCREEN_PRIORITY_DEBUG_LOG, string, CText::ALIGNMENT::LEFT, NONEDATA, putPos, 0.0f, true)
 		->SetSize(Size2D(16.0f, 16.0f));
 
 	// デバッグログの行数加算
@@ -170,14 +170,14 @@ CText2D::CRegistInfo::~CRegistInfo() {
 void CText2D::CRegistInfo::ClearParameter(void) {
 
 	CMemory::Release(&m_string);
-	m_alignment   = CText::ALIGNMENT::CENTER;
-	m_fontIdx     = NONEDATA;
-	m_pos         = INITPOS2D;
-	m_angle       = 0.0f;
-	m_scaleOrSize = INITVECTOR2D;
-	m_isScale     = false;
-	m_col         = INITCOLOR;
-	m_isZtest     = true;
+	m_alignment         = CText::ALIGNMENT::CENTER;
+	m_fontIdx           = NONEDATA;
+	m_pos               = INITPOS2D;
+	m_angle             = 0.0f;
+	m_scaleOrSize       = INITVECTOR2D;
+	m_isScale           = false;
+	m_col               = INITCOLOR;
+	m_interpolationMode = CDrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
@@ -186,7 +186,7 @@ void CText2D::CRegistInfo::ClearParameter(void) {
 void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
 
 	// フォントデータを取得
-	CText::FontData fontData = RNLib::Text().GetFont(m_fontIdx);
+	CText::FontData fontData = RNLib::Text().GetFontData(m_fontIdx);
 	
 	//----------------------------------------
 	// 幅/高さ/間隔を算出
@@ -194,8 +194,8 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 	float charWidth      = 0.0f;
 	float charHeightHalf = 0.0f;
 	if (m_isScale) {
-		charWidth      = (RNLib::Texture().GetWidth (fontData.nTexIdx) / fontData.nPtnWidth ) * m_scaleOrSize.x;
-		charHeightHalf = (RNLib::Texture().GetHeight(fontData.nTexIdx) / fontData.nPtnHeight) * m_scaleOrSize.y * 0.5f;
+		charWidth      = (RNLib::Texture().GetWidth (fontData.texIdx) / fontData.ptnX ) * m_scaleOrSize.x;
+		charHeightHalf = (RNLib::Texture().GetHeight(fontData.texIdx) / fontData.ptnY) * m_scaleOrSize.y * 0.5f;
 	}
 	else {
 		charWidth      = m_scaleOrSize.x;
@@ -265,8 +265,8 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 				Pos2D(XLeft  + XBottom, YBottom + YLeft ),
 				Pos2D(XRight + XBottom, YBottom + YRight))
 			->SetCol(m_col)
-			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
-			->SetZTest(m_isZtest);
+			->SetTex(fontData.texIdx, (int)wstr[cntChar] - (int)fontData.startCode, fontData.ptnX, fontData.ptnY)
+			->SetInterpolationMode(m_interpolationMode);
 	}
 
 	// wchar_t型文字列の解放
@@ -375,6 +375,19 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetSize(const Size2D size) {
 
 	m_scaleOrSize = size;
 	m_isScale     = false;
+
+	return this;
+}
+
+//========================================
+// 補間モードを設定
+//========================================
+CText2D::CRegistInfo* CText2D::CRegistInfo::SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

@@ -240,7 +240,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\regist-info.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\text.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\texture.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\Draw\transition.cpp" />
+    <ClCompile Include="code\Project\UI\transition.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\count.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\file.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\input.cpp" />
@@ -348,7 +348,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\regist-info.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\text.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\texture.h" />
-    <ClInclude Include="code\_RNLib\Basis\Draw\transition.h" />
+    <ClInclude Include="code\Project\UI\transition.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\count.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\file.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\input.h" />

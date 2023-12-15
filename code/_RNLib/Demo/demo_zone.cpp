@@ -364,7 +364,7 @@ void CDemoZone::UpdateActive(void) {
 			for (int cnt = 0; cnt < 5; cnt++) {
 				if (typeInfo->isMesh) {
 					if ((typeInfo->setNum / 25) % 2 == 0) {
-						RNLib::MatMesh().SetModel(
+						RNLib::StaticMesh().SetModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
 							pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f),
 							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
@@ -372,7 +372,7 @@ void CDemoZone::UpdateActive(void) {
 							false);
 					}
 					else {
-						RNLib::MatMesh().SetMaterialModel(
+						RNLib::StaticMesh().SetMaterialModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
 							CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
 							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
@@ -391,7 +391,7 @@ void CDemoZone::UpdateActive(void) {
 			if (typeInfo->isMesh) {
 				for (int cnt = 0; cnt < typeInfo->setNum; cnt++) {
 					if ((typeInfo->setNum / 25) % 2 == 0) {
-						RNLib::MatMesh().SetModel(
+						RNLib::StaticMesh().SetModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
 							pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f),
 							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
@@ -399,7 +399,7 @@ void CDemoZone::UpdateActive(void) {
 							false);
 					}
 					else {
-						RNLib::MatMesh().SetMaterialModel(
+						RNLib::StaticMesh().SetMaterialModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
 							CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
 							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
@@ -410,7 +410,7 @@ void CDemoZone::UpdateActive(void) {
 				}
 			}
 			else {
-				RNLib::MatMesh().Delete();
+				RNLib::StaticMesh().Delete(false);
 			}
 		}
 
@@ -422,7 +422,7 @@ void CDemoZone::UpdateActive(void) {
 
 		RNLib::Text2D().PutDebugLog(CreateText("SetModel[1]   :%d", typeInfo->setNum));
 		RNLib::Text2D().PutDebugLog(CreateText("IsMesh  [2]   :%s", typeInfo->isMesh ? "TRUE" : "FALSE"));
-		RNLib::Text2D().PutDebugLog(CreateText("MeshNum       :%d", RNLib::MatMesh().GetMeshNum()));
+		RNLib::Text2D().PutDebugLog(CreateText("MeshNum       :%d", RNLib::StaticMesh().GetMeshNum()));
 
 	}break;
 	}

@@ -14,6 +14,7 @@
 
 #define  MAX_COUNT		(2000)
 #define  MAX_CLOUD		(5)
+
 //****************************************
 // 無名空間
 //****************************************
@@ -162,6 +163,7 @@ void Stage::StartStage(void) {
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
 
+
 	for (int cnt = 0; cnt < 2; cnt++) {
 		{// [[[ UI用カメラの生成 ]]]
 			UICamera[cnt] = new CCamera(Size2D(200.0f, RNLib::Window().GetHeight()));
@@ -192,8 +194,6 @@ void Stage::StartStage(void) {
 		whaleCounter = 0;
 		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
 		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
-		whaleDoll->SetPos(Pos3D(0.0f, 80.0f, 120.0f));
-		whaleDoll->SetScale(Scale3D(3.0f, 3.0f, 3.0f));
 	}
 }
 
@@ -218,7 +218,8 @@ void Stage::UpdateStage(void) {
 			RNLib::Polygon2D().Put(0, true)
 				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
 				->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-				->SetSize(windowWidth, windowHeightHalf);
+				->SetSize(windowWidth, windowHeightHalf)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 		}
 	}
 
@@ -238,11 +239,13 @@ void Stage::UpdateStage(void) {
 		RNLib::Polygon2D().Put(0, true)
 			->SetPos(Pos2D(-100.0f, windowHeightHalf) + Pos2D(250.0f * rate, 0.0f))
 			->SetTexUV(UICamera[0], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-			->SetSize(200.0f, windowHeight);
+			->SetSize(200.0f, windowHeight)
+			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 		RNLib::Polygon2D().Put(0, true)
 			->SetPos(Pos2D(windowWidth + 100.0f, windowHeightHalf) + Pos2D(-250.0f * rate, 0.0f))
 			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
-			->SetSize(200.0f, windowHeight);
+			->SetSize(200.0f, windowHeight)
+			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
 	// 背景設置処理
@@ -301,7 +304,7 @@ void Stage::EndStage(void) {
 	StageSoundPlayer::End();
 
 	// スタティックメッシュの削除
-	RNLib::MatMesh().Delete();
+	RNLib::StaticMesh().Delete(false);
 
 	// UI用カメラの破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
@@ -334,11 +337,13 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
-				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f + 32.0f, 200.0f), Pos3D(400.0f, 0.0f + 32.0f, 200.0f))
-				->SetBillboard(true);
+				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 			
 			// 雲
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
@@ -363,7 +368,8 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 
 		}
 		if (Stage::CheckPlanetIdx(1))
@@ -373,13 +379,25 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true);
+				->SetBillboard(true)
+				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+
+			whaleCounter = (whaleCounter + 1) % 1800;
+			float whaleRate = whaleCounter / 1800.0f;
+			float whaleScale = (whaleRate > 0.5f ? 0.5f + (0.5f - whaleRate) : whaleRate) * 2.0f;
+			Matrix mtx = CMatrix::MultiplyMtx(CMatrix::ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), CMatrix::ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
+
+			whaleDoll->SetPos(CMatrix::ConvMtxToPos(mtx));
+			whaleDoll->SetRot(Rot3D(0.0f, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f));
+			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
+			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
 		}
 
 		// [[[ 壁モデル描画 ]]]
