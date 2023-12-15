@@ -808,12 +808,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 
-		if (m_MenuUI != NULL)
-		{
-			delete m_MenuUI;
-			m_MenuUI = NULL;
-		}
-
 		m_bStageSelect = false;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
