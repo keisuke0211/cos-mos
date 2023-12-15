@@ -351,8 +351,6 @@ void CPlayer::Uninit(void)
 //=====================================================================================================================
 void CPlayer::Update(void)
 {
-	RNLib::Text2D().PutDebugLog(CreateText("インターバル:%d", s_nSwapInterval));
-
 	//スワップアニメーション中
 	if (s_bSwapAnim)
 	{
@@ -499,7 +497,6 @@ void CPlayer::UpdateInfo(void)
 			case WORLD_SIDE::FACE:	 Player.fMaxHeight = Player.fMaxHeight < Player.pos.y ? Player.pos.y : Player.fMaxHeight; break;
 			case WORLD_SIDE::BEHIND: Player.fMaxHeight = Player.fMaxHeight > Player.pos.y ? Player.pos.y : Player.fMaxHeight; break;
 		}
-		RNLib::Text2D().PutDebugLog(CreateText("%dP最高Y座標：%f    Y:%f X:%f", nCntPlayer + 1, Player.fMaxHeight, Player.pos.y, Player.pos.x));
 	}
 }
 
@@ -995,8 +992,6 @@ void CPlayer::SwapGuide(Info& Player)
 
 	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
 		Player.fGuideTexVPos = 0.0f;
-
-	RNLib::Text2D().PutDebugLog(CreateText("ガイド  スピード:%.2f  サイズ:%.2f", Player.fGuideMoveSpeed, fSize));
 
 	//スワップガイドの描画
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)

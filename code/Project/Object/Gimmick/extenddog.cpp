@@ -117,15 +117,11 @@ void CExtenddog::Update(void) {
 
 	//ÉTÉCÉYäÑçá
 	CFloat SizeRate = SIZE_OF_1_SQUARE * fCountRate;
+	CFloat HeightRate = (m_nHeightMax - m_nHeightMin) * fCountRate;
 
 	//çÇÇ≥
-	m_height = m_StartHeight + SizeRate * m_nHeightMax - 1;// (m_bElasticity ? (m_nHeightMin - 1) : (m_nHeightMax - 1));
-
-	float HeifhtMin = m_StartHeight + SIZE_OF_1_SQUARE * m_nHeightMin - 1;
-
-	if (m_height <= HeifhtMin)
-		m_height = HeifhtMin;
-
+	m_height = SIZE_OF_1_SQUARE *((float)m_nHeightMin + HeightRate);
+	
 	//îºï™ÇÃçÇÇ≥
 	CFloat HalfHeight = m_height * 0.5f;
 
