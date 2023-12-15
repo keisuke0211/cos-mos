@@ -246,6 +246,26 @@ void Stage::UpdateStage(void) {
 			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 			->SetSize(200.0f, windowHeight)
 			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+
+		Matrix eyeMtx = CMatrix::ConvPosRotToMtx(Pos3D(0.0f, 6.0f, 6.85f), Rot3D(0.0f, D3DX_PI, 0.0f));
+
+		static int eyeCounter = 0;
+		static int eyeCounter2 = 0;
+		static int eyeTime = 0;
+
+		if (eyeCounter2 > 0) {
+			eyeCounter2--;
+		}
+		else if (++eyeCounter >= eyeTime) {
+			eyeCounter = 0;
+			eyeCounter2 = 4;
+			eyeTime = 5 + (rand() % 90);
+		}
+
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, CMatrix::MultiplyMtx(eyeMtx, UIDoll[1]->GetBoneState(0).GetWorldMtx()))
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
+			->SetSize(4.0f, 4.0f)
+			->SetClippingCamera(*UICamera[1]);
 	}
 
 	// ”wŒiİ’uˆ—

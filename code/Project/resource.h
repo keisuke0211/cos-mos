@@ -23,6 +23,7 @@ public:
 		BG_CITY,
 		BG_CLOUD,
 		UI_WAITBUBBLE,
+		CHR_BLACK_EYE,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];

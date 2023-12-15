@@ -463,6 +463,28 @@ void CPlayer::UpdateInfo(void)
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
 			Player.doll->SetIsShow(true);
+
+			// •–Ú‚Ì•`‰æ
+			if (nCntPlayer == 1) {
+				Matrix eyeMtx = CMatrix::ConvPosRotToMtx(Pos3D(0.0f, 6.0f, 6.85f), Rot3D(0.0f, D3DX_PI, 0.0f));
+
+				static int eyeCounter = 0;
+				static int eyeCounter2 = 0;
+				static int eyeTime = 0;
+
+				if (eyeCounter2 > 0) {
+					eyeCounter2--;
+				}
+				else if (++eyeCounter >= eyeTime) {
+					eyeCounter = 0;
+					eyeCounter2 = 4;
+					eyeTime = 5 + (rand() % 90);
+				}
+
+				RNLib::Polygon3D().Put(PRIORITY_OBJECT, CMatrix::MultiplyMtx(eyeMtx, Player.doll->GetBoneState(0).GetWorldMtx()))
+					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
+					->SetSize(4.0f, 4.0f);
+			}
 		}
 		else {
 			Player.doll->SetIsShow(false);
