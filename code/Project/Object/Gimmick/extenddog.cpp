@@ -40,7 +40,7 @@ CExtenddog::CExtenddog(void) {
 	m_bElasticity = false;
 	m_bInversion = false;
 	m_nCntShrink = 0;
-	//m_fcurrenty = 0.0f;
+	m_nHeightMin = m_nHeightMax = 1;
 	m_HeadPos = INITD3DXVECTOR3;
 	m_BodyPos = INITD3DXVECTOR3;
 	m_BodyPosOld = INITD3DXVECTOR3;
@@ -68,8 +68,8 @@ CExtenddog::~CExtenddog(void) {
 //========================================
 void CExtenddog::Init(void) {
 
-	float Height = m_nHeight * SIZE_OF_1_SQUARE;
-	//m_HeadPos.y = m_nHeight * SIZE_OF_1_SQUARE;
+	CFloat Height = SIZE_OF_1_SQUARE * m_bElasticity ? 
+		m_nHeightMin : m_nHeightMax;
 
 	CFloat PosDiffY = Height + m_HipPos.y;
 	
@@ -119,7 +119,7 @@ void CExtenddog::Update(void) {
 	CFloat SizeRate = SIZE_OF_1_SQUARE * fCountRate;
 
 	//çÇÇ≥
-	m_height = m_StartHeight + SizeRate * (m_nHeight - 1);
+	m_height = m_StartHeight + SizeRate * (m_bElasticity ? m_nHeightMin : m_nHeightMax - 1);
 
 	//îºï™ÇÃçÇÇ≥
 	CFloat HalfHeight = m_height * 0.5f;

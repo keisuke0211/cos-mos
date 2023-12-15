@@ -28,6 +28,7 @@ namespace {
 void RNSettings::Release(void) {
 
 	CMemory::Release(&info.projectName);
+	CMemory::Release(&info.fontListPath);
 }
 
 //========================================
@@ -44,6 +45,7 @@ bool RNSettings::LoadAndSave(const char* path) {
 			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowHeight                    , "windowHeight"                    );
 			RNLib::File().Scan(CFile::SCAN::BOOL          , &info.isFullScreen                    , "isFullScreen"                    );
 			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.resolution                      , "resolution"                      );
+			RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &info.fontListPath                    , "fontListPath"                    );
 			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.modelOutLineAddDistanceInterval , "modelOutLineAddDistanceInterval" );
 			RNLib::File().Scan(CFile::SCAN::USHORT        , &info.modelOutLineAddDistanceDelimiter, "modelOutLineAddDistanceDelimiter");
 		}

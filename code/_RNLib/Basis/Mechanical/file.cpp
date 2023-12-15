@@ -172,6 +172,14 @@ void CFile::ConvPathToDataStartPath(char** path) {
 //========================================
 bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 
+	// パスが存在しなければ終了
+	if (path == NULL) {
+		return false;
+	}
+	else if ((!strcmp(path, "")) || (!strcmp(path, "NONEDATA"))) {
+		return false;
+	}
+
 	// ファイルを再確保(増やす)
 	const int fileNumOld = m_fileNum++;
 	CMemory::ReAlloc(&m_files, fileNumOld, m_fileNum);

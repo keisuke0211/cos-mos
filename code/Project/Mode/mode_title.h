@@ -40,13 +40,16 @@ public:
 	};	
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	static void SetSelect(bool bSelect) { s_bStageSelect = bSelect; }
+	static void SetSelect(bool bSelect) { m_bStageSelect = bSelect; }
 	CMode_Title();
 	~CMode_Title();
 	void  Init(void);
 	void  Uninit(void);
 	void  Update(void);
 	void  ProcessState(const PROCESS process);
+
+	static int m_nPlanetIdx;
+	static int m_nStageSelect;
 
 private:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
@@ -93,7 +96,7 @@ private:
 
 	// *** Ã“I•Ï” ***
 	static CMenuUI *m_MenuUI;
-	static bool s_bStageSelect;
+	static bool m_bStageSelect;
 
 	// *** •Ï” ***
 	TITLE Title;
@@ -107,10 +110,8 @@ private:
 	D3DXVECTOR3 m_RocketRotRate;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
-	int m_nSelect;
 	int m_nSelectTemp;
 	int m_nOldSelect;
-	int m_nPlanetIdx;
 	int m_nOldnPlanet;
 	int m_nDrawPlanet;
 	int m_RocketIdx;

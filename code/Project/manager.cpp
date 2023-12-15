@@ -24,6 +24,7 @@ namespace {
 	CFont           m_Font;
 	CCamera*        m_camera;
 	CCamera*        m_subCamera;
+	CTransition     m_transition;
 }
 
 //================================================================================
@@ -38,6 +39,7 @@ CObjectMgr* Manager::BGMgr(void) { return &m_BGMgr; }
 CEffMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
 CFont* Manager::Font(void) { return &m_Font; }
+CTransition& Manager::Transition(void) { return m_transition; }
 
 //========================================
 // 初期化処理
@@ -63,6 +65,9 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// 標準エフェクトの優先度設定
 	RNLib::StandardEffect3D().SetPriority(PRIORITY_EFFECT);
+
+	// 遷移の初期化
+	m_transition.Init();
 }
 
 //========================================
@@ -86,6 +91,9 @@ void Manager::Uninit(void) {
 
 	// ステージ終了処理
 	Stage::Uninit();
+
+	// 遷移の終了処理
+	m_transition.Uninit();
 }
 
 //========================================
@@ -101,12 +109,13 @@ void Manager::Update(void) {
 
 		RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
 			->SetTexUV(m_camera)
-			->SetSize(windowWidth, windowHeight);
+			->SetSize(windowWidth, windowHeight)
+			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
 	// 予約されている時、遷移がモード設定待ちならモードを設定する
 	if (m_reserveModeType != CMode::TYPE::NONE) {
-		if (RNLib::Transition().GetState() == CTransition::STATE::OPEN_WAIT) {
+		if (m_transition.GetState() == CTransition::STATE::OPEN_WAIT) {
 			SetMode(m_reserveModeType);
 		}
 	}
@@ -121,6 +130,9 @@ void Manager::Update(void) {
 
 	// フォントオブジェクトの更新処理
 	CFontObject::UpdateAll();
+
+	// 遷移の更新処理
+	m_transition.Update();
 }
 
 //========================================
@@ -175,5 +187,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// 遷移設定
-	RNLib::Transition().Close(transType, INITCOLOR, 60);
+	m_transition.Close(transType, INITCOLOR, 60);
 }

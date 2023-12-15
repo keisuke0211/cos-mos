@@ -4,7 +4,8 @@
 // Author:RIKU NISHIMURA
 // 
 //========================================
-#include "../../RNLib.h"
+#include "../../_RNLib/RNlib.h"
+#include "transition.h"
 
 //****************************************
 // É}ÉNÉçíËã`

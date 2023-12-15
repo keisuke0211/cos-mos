@@ -42,8 +42,6 @@ void CDrawState::Init(Device& device) {
 	//----------------------------------------
 	// サンプラーステートの初期設定
 	//----------------------------------------
-	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
@@ -82,14 +80,19 @@ void CDrawState::ResetVariableSetting(Device& device) {
 	SetIsZTest(device, true);
 
 	//----------------------------------------
-	// カリングの初期設定
+	// カリングモードの初期設定
 	//----------------------------------------
 	SetCullingMode(device, CULLING_MODE::FRONT_SIDE);
 
 	//----------------------------------------
-	// アルファブレンドの初期設定
+	// アルファブレンドモードの初期設定
 	//----------------------------------------
 	SetAlphaBlendMode(device, ALPHA_BLEND_MODE::NORMAL);
+
+	//----------------------------------------
+	// 補間モードの初期設定
+	//----------------------------------------
+	SetInterpolationMode(device, INTERPOLATION_MODE::NONE);
 
 	//----------------------------------------
 	// ライティングの初期設定
@@ -104,7 +107,7 @@ void CDrawState::ResetVariableSetting(Device& device) {
 }
 
 //========================================
-// Zテストモードの設定
+// Zテストの設定
 //========================================
 void CDrawState::SetIsZTest(Device& device, const bool& isZTest) {
 
@@ -153,6 +156,25 @@ void CDrawState::SetAlphaBlendMode(Device& device, const ALPHA_BLEND_MODE& mode)
 		device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 		device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	}break;
+	}
+}
+
+//========================================
+// 補間モードの設定
+//========================================
+void CDrawState::SetInterpolationMode(Device& device, const INTERPOLATION_MODE& mode) {
+
+	switch (mode) {
+		// [[[ 無し(ポイント) ]]]
+	case INTERPOLATION_MODE::NONE: {
+		device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+		device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	}break;
+		// [[[ 線形 ]]]
+	case INTERPOLATION_MODE::LINEAR: {
+		device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	}break;
 	}
 }

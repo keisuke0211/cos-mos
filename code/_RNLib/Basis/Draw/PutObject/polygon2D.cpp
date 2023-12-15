@@ -256,10 +256,10 @@ void CPolygon2D::CDrawInfo::ReleaseVertexBuffer(void) {
 //========================================
 CPolygon2D::CDrawInfo::CDrawInfo() {
 
-	m_idx     = 0;
-	m_tex     = NULL;
-	m_texType = Polygon2DAnd3D::TEX_TYPE::NONE;
-	m_isZTest = true;
+	m_idx               = 0;
+	m_tex               = NULL;
+	m_texType           = Polygon2DAnd3D::TEX_TYPE::NONE;
+	m_interpolationMode = CDrawState::INTERPOLATION_MODE::NONE;
 	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}
@@ -306,9 +306,9 @@ void CPolygon2D::CRegistInfo::ClearParameter(void) {
 	CMemory::Release(&m_setVtxPosInfo);
 	m_pos               = INITPOS2D;
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
+	m_interpolationMode = CDrawState::INTERPOLATION_MODE::NONE;
 	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = INITCOLOR, cntVtx++);
 	m_setTexInfoSum.ClearParameter();
-	m_isZtest           = false;
 }
 
 //========================================
@@ -324,8 +324,8 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	AssignToDrawInfo(*drawInfo);
 
 	// 情報を代入
-	drawInfo->m_idx       = m_idx;
-	drawInfo->m_isZTest   = m_isZtest;
+	drawInfo->m_idx               = m_idx;
+	drawInfo->m_interpolationMode = m_interpolationMode;
 
 	//----------------------------------------
 	// 頂点情報の設定
@@ -551,14 +551,14 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexMirrorX(const bool& isMi
 }
 
 //========================================
-// Zテストを設定
+// 補間モードを設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetZTest(const bool& isZTest) {
+CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_isZtest = isZTest;
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

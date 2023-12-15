@@ -423,10 +423,10 @@ CExtenddog	 *CStageObjectMgr::ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 
 	pObj->SetElasticity(bElasticity);
 	pObj->SetHead(fHeadpos);
 	pObj->SetHip(fHippos);
-	pObj->SetHeadHeight(HeightMin);
+	pObj->SetHeadHeightMin(HeightMin);
+	pObj->SetHeadHeightMax(HeightMax);
 	pObj->SetReturn(bReturn);
 	pObj->Init();
-
 
 	return pObj;
 }

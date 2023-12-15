@@ -466,6 +466,7 @@ CSound::CPlay::CPlay(const short& soundIdx, const CATEGORY& category, const floa
 
 	m_soundIdx = soundIdx;
 	m_volume   = volume;
+	m_count    = 0;
 	m_category = category;
 	m_isLoop   = isLoop;
 	m_dist     = dist;
@@ -530,6 +531,9 @@ void CSound::CPlay::Update(void) {
 		return;
 	}
 
+	// カウントを加算
+	m_count++;
+
 	// 状態を取得
 	XAUDIO2_VOICE_STATE xa2state;
 	m_sourceVoice->GetState(&xa2state);
@@ -541,6 +545,7 @@ void CSound::CPlay::Update(void) {
 		{// ループフラグが真なら再び再生
 			m_sourceVoice->SubmitSourceBuffer(&RNLib::Sound().GetData(m_soundIdx).m_audioBuffer);	// オーディオバッファの登録
 			m_sourceVoice->Start(0);
+			m_count = 0;
 		}
 		else 
 		{// ループフラグが偽なら自身を削除

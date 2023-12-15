@@ -26,7 +26,16 @@ public:
 	//----------------------------------------
 	static const UShort POLYGON2D_ALLOC_BASE_POWER = 8;
 	static const UShort POLYGON3D_ALLOC_BASE_POWER = 8;
-	static const UShort REGIST_ALLOC_BASE_POWER    = 0;	// 2の何乗を基準とするか
+	static const UShort SCREEN_PRIORITY_MAX        = 8;
+	// 0 カメラポリゴン推奨
+	// 1 free
+	// 2 free
+	// 3 free
+	// 4 free
+	// 5 free
+	// 6 free
+	// 7 デバッグログ
+	static const UShort SCREEN_PRIORITY_DEBUG_LOG = 7;
 
 	//----------------------------------------
 	// クラス定義
@@ -115,6 +124,7 @@ private:
 	CText2D::CRegistInfo*    RegistText2D              (CRegistInfoSum& resistInfo);
 	CText3D::CRegistInfo*    RegistText3D              (CRegistInfoSum& resistInfo);
 	CModel::CRegistInfo*     RegistModel               (CRegistInfoSum& resistInfo);
+	bool                     CheckPriority             (const UShort& priority, const bool& isOnScreen) { return (priority >= 0 && priority < (isOnScreen ? SCREEN_PRIORITY_MAX : m_priorityMax)); }
 
 	//========== [[[ 変数宣言 ]]]
 	CRegistInfoSum* m_resistInfoSum;

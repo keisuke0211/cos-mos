@@ -158,11 +158,11 @@ public:
 
 	// プレイヤー情報取得
 	// 指定された番号のプレイヤー情報のアドレスを返します
-	Info* GetInfo(int nNum) { return &m_aInfo[nNum]; }
+	static Info* GetInfo(int nNum) { return &m_aInfo[nNum]; }
 
 	// プレイヤー情報取得
 	// 指定された世界にいるプレイヤーの情報を返します
-	Info* GetInfo(WORLD_SIDE side);
+	static Info* GetInfo(WORLD_SIDE side);
 
 	// スワップインターバルを設定
 	// 既にインターバルがあれば設定しない

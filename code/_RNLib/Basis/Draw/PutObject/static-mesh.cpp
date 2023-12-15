@@ -17,8 +17,10 @@
 //========================================
 CStaticMesh::CStaticMesh() {
 
-	m_meshes   = NULL;
-	m_meshNums = NULL;
+	m_meshes         = NULL;
+	m_meshNums       = 0;
+	m_meshesScreen   = NULL;
+	m_meshNumsScreen = 0;
 }
 
 //========================================
@@ -36,8 +38,14 @@ void CStaticMesh::Init(const UShort& priorityMax) {
 	CMemory::Alloc(&m_meshes, priorityMax);
 	CMemory::Alloc(&m_meshNums, priorityMax);
 	for (int cnt = 0; cnt < priorityMax; cnt++) {
-		m_meshes[cnt] = NULL;
+		m_meshes  [cnt] = NULL;
 		m_meshNums[cnt] = 0;
+	}
+	CMemory::Alloc(&m_meshesScreen, CDrawMgr::SCREEN_PRIORITY_MAX);
+	CMemory::Alloc(&m_meshNumsScreen, CDrawMgr::SCREEN_PRIORITY_MAX);
+	for (int cnt = 0; cnt < CDrawMgr::SCREEN_PRIORITY_MAX; cnt++) {
+		m_meshesScreen  [cnt] = NULL;
+		m_meshNumsScreen[cnt] = 0;
 	}
 }
 
@@ -62,29 +70,27 @@ void CStaticMesh::Update(void) {
 //========================================
 void CStaticMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
 
-	if (m_meshNums == NULL)
+	// スクリーンかに応じて変数を参照
+	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
+	UShort*&  meshNums = isOnScreen ? m_meshNumsScreen : m_meshNums;
+
+	if (meshes[priority] == NULL)
 		return;
 
-	// ワールドマトリックスの設定
-	device->SetTransform(D3DTS_WORLD, &INITMATRIX);
+	if (meshNums[priority] == NULL)
+		return;
 
-	// 頂点フォーマットの設定
-	device->SetFVF(FVF_VERTEX_3D);
+	for (int cntMesh = 0; cntMesh < meshNums[priority]; cntMesh++) {
 
-	for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
-
-		if (m_meshes[priority][cntMesh] == NULL)
-			continue;
-
-		if (m_meshes[priority][cntMesh]->m_isOnScreen != isOnScreen)
+		if (meshes[priority][cntMesh] == NULL)
 			continue;
 
 		// クリッピングIDが対象外であれば折り返す
-		if (m_meshes[priority][cntMesh]->m_clippingID != NONEDATA || isCameraClipping)
-			if (m_meshes[priority][cntMesh]->m_clippingID != cameraID)
+		if (meshes[priority][cntMesh]->m_clippingID != NONEDATA || isCameraClipping)
+			if (meshes[priority][cntMesh]->m_clippingID != cameraID)
 				continue;
 
-		m_meshes[priority][cntMesh]->Draw(device);
+		meshes[priority][cntMesh]->Draw(device);
 	}
 }
 
@@ -98,22 +104,30 @@ void CStaticMesh::Release(void) {
 		CMemory::ReleaseDouble(&m_meshes[cnt], m_meshNums[cnt]);
 	CMemory::Release(&m_meshes);
 	CMemory::Release(&m_meshNums);
+	for (int cnt = 0; cnt < CDrawMgr::SCREEN_PRIORITY_MAX; cnt++)
+		CMemory::ReleaseDouble(&m_meshesScreen[cnt], m_meshNumsScreen[cnt]);
+	CMemory::Release(&m_meshesScreen);
+	CMemory::Release(&m_meshNumsScreen);
 }
 
 //========================================
 // 削除処理
 //========================================
-void CStaticMesh::Delete(void) {
+void CStaticMesh::Delete(const bool& isOnScreen) {
 
-	if (m_meshNums == NULL)
+	// スクリーンかに応じて変数を参照
+	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
+	UShort*&  meshNums = isOnScreen ? m_meshNumsScreen : m_meshNums;
+
+	if (meshNums == NULL)
 		return;
 
-	const UShort& priorityMax = RNLib::DrawMgr().GetPriorityMax();
+	const UShort& priorityMax = isOnScreen ? CDrawMgr::SCREEN_PRIORITY_MAX : RNLib::DrawMgr().GetPriorityMax();
 	for (int cnt = 0; cnt < priorityMax; cnt++) {
-		for (int cntMesh = 0; cntMesh < m_meshNums[cnt]; cntMesh++) {
-			CMemory::Release(&m_meshes[cnt][cntMesh]);
+		for (int cntMesh = 0; cntMesh < meshNums[cnt]; cntMesh++) {
+			CMemory::Release(&meshes[cnt][cntMesh]);
 		}
-		m_meshNums[cnt] = 0;
+		meshNums[cnt] = 0;
 	}
 }
 
@@ -127,6 +141,10 @@ void CStaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D
 	SetModel(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, col, isOnScreen);
 }
 void CStaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+	
+	// スクリーンかに応じて変数を参照
+	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
+	UShort*&  meshNums = isOnScreen ? m_meshNumsScreen : m_meshNums;
 
 	if (modelIdx == NONEDATA)
 		return;
@@ -137,11 +155,11 @@ void CStaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const shor
 	for (int cntMat = 0; cntMat < data.m_matNum; cntMat++) {
 
 		bool isSet = false;
-		for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
-			CMesh& mesh = *m_meshes[priority][cntMesh];
+		for (int cntMesh = 0; cntMesh < meshNums[priority]; cntMesh++) {
+			CMesh& mesh = *meshes[priority][cntMesh];
 
-			if (mesh.m_texIdx == data.m_texIdxes[cntMat] && mesh.m_isOnScreen == isOnScreen)  {
-				if (mesh.SetModel(mtx, modelIdx, col, data.m_texIdxes[cntMat], cntMat)) 
+			if (mesh.m_texIdx == data.m_texIdxes[cntMat]) {
+				if (mesh.SetModel(mtx, modelIdx, col, data.m_texIdxes[cntMat], cntMat))
 				{// メッシュの設定に成功した
 					isSet = true;
 					break;
@@ -166,11 +184,15 @@ void CStaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, con
 	SetMaterialModel(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, texIdx, col, isOnScreen);
 }
 void CStaticMesh::SetMaterialModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	
+	// スクリーンかに応じて変数を参照
+	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
+	UShort*&  meshNums = isOnScreen ? m_meshNumsScreen : m_meshNums;
 
-	for (int cntMesh = 0; cntMesh < m_meshNums[priority]; cntMesh++) {
-		CMesh& mesh = *m_meshes[priority][cntMesh];
+	for (int cntMesh = 0; cntMesh < meshNums[priority]; cntMesh++) {
+		CMesh& mesh = *meshes[priority][cntMesh];
 
-		if (mesh.m_texIdx == texIdx && mesh.m_isOnScreen == isOnScreen) {
+		if (mesh.m_texIdx == texIdx) {
 			if (mesh.SetModel(mtx, modelIdx, col, texIdx, NONEDATA)) 
 			{// メッシュの設定に成功した
 				return;
@@ -193,14 +215,17 @@ void CStaticMesh::SetMaterialModel(const UShort& priority, const Matrix& mtx, co
 //========================================
 void CStaticMesh::NewCreateMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const short& matIdx, const Color& col, const bool& isOnScreen) {
 
+	// スクリーンかに応じて変数を参照
+	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
+	UShort*&  meshNums = isOnScreen ? m_meshNumsScreen : m_meshNums;
+
 	// メッシュを再確保
-	const UShort oldNum = m_meshNums[priority];
-	CMemory::ReAllocDouble(&m_meshes[priority], oldNum, ++m_meshNums[priority]);
+	const UShort oldNum = meshNums[priority];
+	CMemory::ReAllocDouble(&meshes[priority], oldNum, ++meshNums[priority]);
 
 	// メッシュを設定
-	m_meshes[priority][oldNum]->m_texIdx = texIdx;
-	m_meshes[priority][oldNum]->m_isOnScreen = isOnScreen;
-	m_meshes[priority][oldNum]->SetModel(mtx, modelIdx, col, texIdx, matIdx);
+	meshes[priority][oldNum]->m_texIdx = texIdx;
+	meshes[priority][oldNum]->SetModel(mtx, modelIdx, col, texIdx, matIdx);
 }
 
 //================================================================================
@@ -388,9 +413,10 @@ UShort CStaticMesh::GetMeshNum(void) {
 	const UShort priorityMax = RNLib::DrawMgr().GetPriorityMax();
 
 	UShort totalMeshNum = 0;
-	for (int cnt = 0; cnt < priorityMax; cnt++) {
+	for (int cnt = 0; cnt < priorityMax; cnt++)
 		totalMeshNum += m_meshNums[cnt];
-	}
+	for (int cnt = 0; cnt < CDrawMgr::SCREEN_PRIORITY_MAX; cnt++)
+		totalMeshNum += m_meshNumsScreen[cnt];
 
 	return totalMeshNum;
 }

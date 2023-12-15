@@ -52,6 +52,7 @@ public:
 		void                 SetVolume     (const float& volume) { m_volume = volume; }
 		short&               GetID         (void) { return m_ID; }
 		CATEGORY&            GetCategory   (void) { return m_category; }
+		UShort&              GetCount      (void) { return m_count; }
 		IXAudio2SourceVoice& GetSourceVoice(void) { return *m_sourceVoice; }
 
 	private:
@@ -61,6 +62,7 @@ public:
 		short                m_soundIdx;
 		CATEGORY             m_category;
 		float                m_volume;
+		UShort               m_count;
 		bool                 m_isLoop;
 		Pos2D*               m_pos2D;
 		Pos3D*               m_pos3D;

@@ -93,6 +93,7 @@ public:
 	WHEELSPIN     GetWheelSpin        (void)                                                        { return m_wheelSpin; }
 	void          SetWheelSpin        (WHEELSPIN wheelSpin)                                         { m_wheelSpin = wheelSpin; }
 	void          SetJoyPadNum        (const UShort& num);
+	UShort&       GetJoyPadNum        (void)                                                        { return m_joyPadNum; }
 	CJoyPad&      GetJoyPad           (const UShort& idx)                                                   { return m_joyPads[idx]; }
 	void          SetVibration        (const float& vibration,                       const UShort& idx = 0) { if    (CheckJoyPadConnected(idx))  m_joyPads[idx].SetVibration        (vibration);            }
 	bool          GetButtonPress      (const BUTTON& btn,                            const UShort& idx = 0) { return CheckJoyPadConnected(idx) ? m_joyPads[idx].GetButtonPress      (btn)          : false; }
