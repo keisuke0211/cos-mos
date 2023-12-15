@@ -29,6 +29,32 @@ boneDataSum{ 4
 		relativeRot 0.00 0.00 0.00
 	}
 }
-faceDataSum{0
+
+
+faceDataSum{1
+faceData{
+	texIdx NONEDATA
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 6
+		texPos 0.00 1.00
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 31
+		texPos 1.00 1.00
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 107
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 108
+		texPos 1.00 0.00
+	}
+}
 }
 END
