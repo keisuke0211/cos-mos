@@ -103,11 +103,11 @@ private:
 	TITLE NextTitle;
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	D3DXVECTOR3 m_RocketPos;
-	D3DXVECTOR3 m_RocketposRate;
+	D3DXVECTOR3 m_RocketposDiff;
 	D3DXVECTOR3 m_RocketPosOld;
 	D3DXVECTOR3 m_RocketRot;
 	D3DXVECTOR3 m_RocketRotOld;
-	D3DXVECTOR3 m_RocketRotRate;
+	D3DXVECTOR3 m_RocketRotDiff;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
 	int m_nSelectTemp;
@@ -129,6 +129,7 @@ private:
 	bool m_bBackMode;
 	bool m_bStageChange;
 	bool m_bRocketMove;
+	bool m_bRocketRot;
 	bool m_bRotDir;
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
