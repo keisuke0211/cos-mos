@@ -161,7 +161,7 @@ void Stage::StartStage(void) {
 
 	// コインUIの生成
 	if (coinUI == NULL)
-		coinUI = CCoinUI::Create(D3DXVECTOR3(25.0f, 16.7f, -136.0f) * 2.0f);
+		coinUI = CCoinUI::Create(D3DXVECTOR3(100.0f, 25.0f, 0.0f) * 2.0f,Scale2D(40.0f,40.0f),true);
 
 	{// [[[ カメラ ]]]
 		// カメラの視点/注視点を設定
@@ -259,6 +259,26 @@ void Stage::UpdateStage(void) {
 			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 			->SetSize(200.0f, windowHeight)
 			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+
+		Matrix eyeMtx = CMatrix::ConvPosRotToMtx(Pos3D(0.0f, 6.0f, 6.85f), Rot3D(0.0f, D3DX_PI, 0.0f));
+
+		static int eyeCounter = 0;
+		static int eyeCounter2 = 0;
+		static int eyeTime = 0;
+
+		if (eyeCounter2 > 0) {
+			eyeCounter2--;
+		}
+		else if (++eyeCounter >= eyeTime) {
+			eyeCounter = 0;
+			eyeCounter2 = 4;
+			eyeTime = 5 + (rand() % 90);
+		}
+
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, CMatrix::MultiplyMtx(eyeMtx, UIDoll[1]->GetBoneState(0).GetWorldMtx()))
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
+			->SetSize(4.0f, 4.0f)
+			->SetClippingCamera(*UICamera[1]);
 	}
 
 	// 背景設置処理
