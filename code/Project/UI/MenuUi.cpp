@@ -120,7 +120,7 @@ void CMenuUI::Uninit(void)
 //========================================
 void CMenuUI::Update(void)
 {
-	if (!m_Menu.bClose)
+	if (!m_Menu.bClose && m_Menu.bMenu)
 		MenuSelect();
 
 	MenuAnime();
@@ -183,7 +183,9 @@ void CMenuUI::DecisionInput(void)
 					break;
 				case TITLE_MENU_END:
 					//ÉQÅ[ÉÄÇÃèIóπ
-					m_Menu.bGameEnd = true;
+					if (!m_Menu.bClose) {
+						m_Menu.bClose = true;
+					}
 					break;
 				}
 			}
@@ -192,19 +194,9 @@ void CMenuUI::DecisionInput(void)
 				switch (m_Menu.nMaineSelect)
 				{
 				case PAUSE_MENU_RESUME:
-					m_Menu.bClose = true;
-					break;
 				case PAUSE_MENU_RESET:
-					TextRelease(CMenuUI::TEXT_ALL);
-					Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
-					m_Menu.bClose = true;
-					Manager::EffectMgr()->ReleaseAll();
-					break;
 				case PAUSE_MENU_SELECT:
-					TextRelease(CMenuUI::TEXT_ALL);
-					Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
-					CMode_Title::SetSelect(true);
-					Manager::EffectMgr()->ReleaseAll();
+					m_Menu.bClose = true;
 					break;
 				case PAUSE_MENU_CONTROLLER:
 					break;
@@ -485,18 +477,21 @@ void CMenuUI::MenuAnime(void)
 			m_Menu.nCntLeftAnime = 0;
 
 			{// TextÇÃçƒê∂ê¨
-				FormFont pFont = { D3DXCOLOR(0.5f,0.5f,05.5f,0.5f),35.0f,3,1,-1, };
+				D3DXCOLOR col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				if (Txt == m_Menu.nMaineSelect) {
+					col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				}
+
+				FormFont pFont = { col,35.0f,3,1,-1, };
 				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
 				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
-					m_pMenu[Txt]->SetTxtColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 				}
 				else{
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 155,155,155,255 });
-					m_pMenu[Txt]->SetTxtColor(D3DXCOLOR(0.5f, 0.5f, 0.5f, 0.5f));
 				}
 			}
 
@@ -511,6 +506,15 @@ void CMenuUI::MenuAnime(void)
 		// ñcÇÁÇﬁ ÅE èkÇﬁ
 		if (!m_Menu.bElasticity) {
 			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++) {
+
+				if (m_Menu.nCntLeftAnime == 0) {
+					FormFont pFont = { D3DXCOLOR(0.0f,0.0f,0.0f,0.0f),35.0f,3,1,-1, };
+					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
+
+					m_pMenu[Txt]->Regeneration("", CFont::FONT_ROND_B, &pFont, &pShadow);
+				}
+
+				// ñcèk
 				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
 				float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
@@ -654,6 +658,35 @@ void CMenuUI::MenuAnime(void)
 				}
 			}
 	}
+
+	// ÉÅÉjÉÖÅ[èIóπéûÅA
+	if (m_MenuEnd)
+	{
+		CMode::TYPE Mode = Manager::GetMode();
+		if (Mode == CMode::TYPE::TITLE) {
+			switch (m_Menu.nMaineSelect)
+			{
+			case TITLE_MENU_END:
+				m_Menu.bGameEnd = true;
+				break;
+			}
+		}
+		else if (Mode == CMode::TYPE::GAME)
+		{
+			switch (m_Menu.nMaineSelect)
+			{
+			case PAUSE_MENU_RESET:
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+				Manager::EffectMgr()->ReleaseAll();
+				break;
+			case PAUSE_MENU_SELECT:
+				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+				CMode_Title::SetSelect(true);
+				Manager::EffectMgr()->ReleaseAll();
+				break;
+			}
+		}
+	}
 }
 
 //========================================
@@ -678,23 +711,15 @@ void CMenuUI::MenuSelect(void)
 	{
 		if (!m_Menu.bSubMenu) {
 			if (m_pMenu[nCnt] != NULL) {
-				if (!m_MaineMenu[nCnt].Tex.bSet) {
-					if (nCnt == m_Menu.nMaineSelect)
-						m_pMenu[nCnt]->SetTxtBoxType(CFontText::BOX_NORMAL_BLUE);
-					else
-						m_pMenu[nCnt]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
+				if (nCnt == m_Menu.nMaineSelect)
+				{
+					m_pMenu[nCnt]->SetTxtBoxColor(Color{ 255,255,255,255 });
+					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 				}
-				else if (m_MaineMenu[nCnt].Tex.bSet) {
-					if (nCnt == m_Menu.nMaineSelect)
-					{
-						m_pMenu[nCnt]->SetTxtBoxColor(Color{ 255,255,255,255 });
-						m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-					}
-					else
-					{
-						m_pMenu[nCnt]->SetTxtBoxColor(Color{ 155,155,155,255 });
-						m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.5f, 0.5f, 0.5f, 0.5f));
-					}
+				else
+				{
+					m_pMenu[nCnt]->SetTxtBoxColor(Color{ 155,155,155,255 });
+					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
 				}
 			}
 		}
