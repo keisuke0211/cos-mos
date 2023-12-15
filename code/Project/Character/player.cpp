@@ -46,6 +46,7 @@ const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 	"data\\TEXTURE\\Effect\\swap_guide.png",    // スワップガイド
 	"data\\TEXTURE\\player.PNG",                // プレイヤーアイコン
 	"data\\TEXTURE\\Effect\\mark_Skull_000.png",// 死亡マーク
+	"data\\TEXTURE\\Effect\\ink001.png",        // 死亡インク
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",   // 死亡パーティクル
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",   // ゴール・ロケット乗車時のエフェクト
 };
@@ -94,6 +95,7 @@ CPlayer::CPlayer()
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
+		Player.DeathType = 0;
 		Player.doll = NULL;
 		Player.pos = INITD3DXVECTOR3;          // 位置
 		Player.posOld = INITD3DXVECTOR3;       // 前回位置
@@ -606,14 +608,27 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 			RNLib::Input().SetVibration(2.0f, count);
 			RNLib::Input().SetVibration(1.0f, !count);
 
-			const int NUM_PARTICLE = 8;
-			Pos3D rot = INITVECTOR3D;
-			for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
+			const CEffect_Death::TYPE type = (CEffect_Death::TYPE)info.DeathType;
+			switch (type)
 			{
-				rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
-				CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(NONEDATA, info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, info.color, CEffect_Death::TYPE::BALL);
+				case CEffect_Death::TYPE::INK:
+				{
+					CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(info.pos, INITVECTOR3D, INITVECTOR3D, INITVECTOR3D, CStageObject::SIZE_OF_1_SQUARE, info.color, type);
+				}
+					break;
 
-				pEff->SetBallSize(CEffect_Death::BALL_SIZE_LV::SMALL);
+				case CEffect_Death::TYPE::BALL:
+				{
+					const int NUM_PARTICLE = 8;
+					Pos3D rot = INITVECTOR3D;
+					for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
+					{
+						rot.z = -D3DX_PI + D3DX_PI_DOUBLE * fRand();
+						CEffect_Death* pEff = Manager::EffectMgr()->DeathParticleCreate(info.pos, INITVECTOR3D, rot, INITVECTOR3D, 0.0f, info.color, type);
+
+						pEff->SetBallSize(CEffect_Death::BALL_SIZE_LV::SMALL);
+					}
+				}break;
 			}
 			info.deathCounter = DEATH_TIME;
 		}
@@ -1035,6 +1050,8 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 	if (Player.isDeath)
 		return;
 
+	Player.DeathType = (int)CEffect_Death::TYPE::BALL;
+
 	switch (type)
 	{
 		case OBJECT_TYPE::BLOCK:
@@ -1047,6 +1064,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 		case OBJECT_TYPE::ROCKET:
 		case OBJECT_TYPE::PILE:
 			if (s_nSwapInterval == 0) return;
+			else Player.DeathType = (int)CEffect_Death::TYPE::INK;
 			break;
 	}
 

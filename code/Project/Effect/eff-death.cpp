@@ -58,33 +58,47 @@ CEffect_Death::~CEffect_Death()
 //=======================================
 // 設定処理
 //=======================================
-void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const float size, const Color color, const int nLife, const int nIdx, const TYPE type)
+void CEffect_Death::SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const float size, const Color color, const int nLife, const TYPE type)
 {
 	//基本情報設定
 	m_pos = pos;        m_posOld    = posOld; m_Info.move = move;
 	m_rot = rot;        m_Info.spin = spin;
 	m_Info.size = size; m_color     = color;
-	m_Info.nIdx = nIdx; m_Info.type = type;
+	m_Info.type = type;
 	m_Info.nLife = nLife;
 
 	//生成してすぐプレイヤーに当たらないようにカウンター代入
 	m_Info.ColliderInterval = CREATE_INTERVAL;
 	m_Info.bDeath = false;
 
-	if (type == TYPE::BALL)
-	{//ボールの場合、拡散力を設定
-		m_Info.move.x = sinf(rot.z) * CREATE_SPREAD_POWER;
-		m_Info.move.y = cosf(rot.z) * CREATE_SPREAD_POWER;
-		m_Info.nBallID = s_nNumAllBall++;
-		if (s_FusionSE == NONEDATA)
-			s_FusionSE = RNLib::Sound().Load("data\\SOUND\\SE\\fusion.wav");
-		
-		for (int nCntID = 0; nCntID < (int)BALL_SIZE_LV::MAX; nCntID++)
+	switch (type)
+	{
+		//ボールの場合、拡散力を設定
+		case TYPE::BALL:
 		{
-			if (s_BallModelID[nCntID] == NONEDATA)
-				s_BallModelID[nCntID] = RNLib::Model().Load(BALL_MODEL_PATH[nCntID]);
+			m_Info.move.x = sinf(rot.z) * CREATE_SPREAD_POWER;
+			m_Info.move.y = cosf(rot.z) * CREATE_SPREAD_POWER;
+			m_Info.nBallID = s_nNumAllBall++;
+			if (s_FusionSE == NONEDATA)
+				s_FusionSE = RNLib::Sound().Load("data\\SOUND\\SE\\fusion.wav");
+
+			for (int nCntID = 0; nCntID < (int)BALL_SIZE_LV::MAX; nCntID++)
+			{
+				if (s_BallModelID[nCntID] == NONEDATA)
+					s_BallModelID[nCntID] = RNLib::Model().Load(BALL_MODEL_PATH[nCntID]);
+			}
+		}break;
+
+		//インクの場合
+		case TYPE::INK:
+		{
+			m_Info.nLife = MAX_INK_LIFE;        // ライフ設定
+			m_Info.InkSize = Pos2D(size, size); // サイズ設定
+			if (m_Info.nIdx == NONEDATA)
+				m_Info.nIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\ink001.png");
 		}
 	}
+
 }
 
 //=======================================
@@ -146,15 +160,14 @@ void CEffect_Death::UpdateType_Ball(void)
 			//ゴールしている or 死んでいる
 			if (pInfo->bGoal || pInfo->bRide || pInfo->deathCounter != 0 || pInfo->deathCounter2 != 0)continue;
 
-			const Pos3D PlayerPos = pInfo->pos;
-			const Pos3D PosDiff = PlayerPos - m_pos;
-			const float fPosDiffLength = D3DXVec3Length(&PosDiff);
-			const float fSizeLength = D3DXVec2Length(&D3DXVECTOR2(m_Info.size + CPlayer::SIZE_WIDTH, m_Info.size + CPlayer::SIZE_HEIGHT));
+			const Pos3D PosDiff = pInfo->pos - m_pos;
+			CFloat fPosDiffLength = D3DXVec3Length(&PosDiff);
+			CFloat fSizeLength = D3DXVec2Length(&D3DXVECTOR2(m_Info.size + CPlayer::SIZE_WIDTH, m_Info.size + CPlayer::SIZE_HEIGHT));
 
 			if (fPosDiffLength < fSizeLength)
 			{
 				//プレイヤーまでの角度を取得
-				float fRot = atan2f(-PosDiff.x, -PosDiff.y);
+				CFloat fRot = atan2f(-PosDiff.x, -PosDiff.y);
 
 				m_Info.move.x = sinf(fRot) * PLAYER_COLLI_POWER + pInfo->move.x;
 				m_Info.move.y = cosf(fRot) * PLAYER_COLLI_POWER + pInfo->move.y * 0.7f;
@@ -222,7 +235,7 @@ void CEffect_Death::UpdateType_Ball(void)
 	BallFusion();
 
 	//移動ベクトルの角度を算出
-	const float fRot = atan2f(m_Info.move.x, -m_Info.move.y);
+	CFloat fRot = atan2f(m_Info.move.x, -m_Info.move.y);
 	m_rot.z = fRot;
 
 	//回転処理
@@ -234,7 +247,28 @@ void CEffect_Death::UpdateType_Ball(void)
 //=======================================
 void CEffect_Death::UpdateType_Ink(void)
 {
-	
+	CFloat Rate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nLife, MAX_INK_LIFE);
+	m_color.a = 255 * Rate;
+
+	//インクが垂れるようにサイズを拡大
+	m_Info.InkSize.y = m_Info.size + m_Info.size * 0.5f * (1.0f - Rate);
+
+	//重力方向に緩やかに移動
+	m_pos.y += m_pos.y >= 0.0f ?
+		-0.01f :
+		0.01f;
+
+	RNLib::Text2D().PutDebugLog(CreateText("ライフ:%d  透明度:%d  高さ:%.2f  割合:%.2f", m_Info.nLife, m_color.a, m_Info.InkSize.y, Rate));
+
+	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, INITROT3D)
+		->SetSize(m_Info.InkSize)
+		->SetCol(m_color)
+		->SetZTest(false)
+		->SetTex(m_Info.nIdx);
+
+
+	//透明度が０なら死亡
+	if (m_color.a <= 0) m_Info.bDeath = true;
 }
 
 //=======================================

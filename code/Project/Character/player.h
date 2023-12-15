@@ -98,6 +98,7 @@ public:
 		bool isDeath;       // 死亡フラグ
 		int  deathCounter;  // 死亡カウンター
 		int  deathCounter2; // 死亡カウンター2
+		int  DeathType;     // 死亡タイプ
 
 		//-------------------------------
 		//SWAP待ちの吹き出し用
@@ -202,6 +203,7 @@ public:
 		SWAP_GUIDE,     // スワップガイド
 		CHARACTER,      // キャラクター
 		DEATH_MARK,     // 死亡マーク
+		DEATH_INK,      // 死亡インク
 		DEATH_PARTI,    // 死亡パーティクル
 		GOAL_EFFECT,    // ゴール・ロケット乗車時のエフェクト
 		MAX

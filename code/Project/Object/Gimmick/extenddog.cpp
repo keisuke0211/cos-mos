@@ -116,7 +116,6 @@ void CExtenddog::Update(void) {
 	const Rot3D Rot = !m_bInversion ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI);
 
 	//ÉTÉCÉYäÑçá
-	CFloat SizeRate = SIZE_OF_1_SQUARE * fCountRate;
 	CFloat HeightRate = (m_nHeightMax - m_nHeightMin) * fCountRate;
 
 	//çÇÇ≥

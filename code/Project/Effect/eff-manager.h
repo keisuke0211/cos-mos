@@ -35,7 +35,7 @@ public:
 	//死亡パーティクル生成処理
 	//最初の引数には、テクスチャ番号 or モデル番号を代入する
 	//*****************************************
-	CEffect_Death *DeathParticleCreate(int nIdx, Vector3D pos, Vector3D move, Vector3D rot, Vector3D spin, float size, Color color, CEffect_Death::TYPE type);
+	CEffect_Death *DeathParticleCreate(Vector3D pos, Vector3D move, Vector3D rot, Vector3D spin, float size, Color color, CEffect_Death::TYPE type);
 	void DeathInk(D3DXVECTOR3 pos, int Tex);
 
 private:
