@@ -63,7 +63,7 @@ CMode_Title::CMode_Title(void) {
 	m_StgBoardIdx      = RNLib::Model().Load("data\\MODEL\\Stage_Board.x");
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
-	m_AnimCnt = 0;
+	m_AnimCnt = NULL;
 	m_RotCnt = 0;
 	m_bStageChange = false;
 	m_bRocketMove = false;
@@ -200,8 +200,10 @@ void CMode_Title::Update(void) {
 			->SetTex(m_TexIdx[TEX_PLANET]);
 
 		// ロケット
-		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-			->SetOutLineIdx(true);
+		Matrix baseMtx = CMatrix::ConvPosRotToMtx(D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f));
+		Matrix rocketMtx = CMatrix::ConvRotToMtx(D3DXVECTOR3(0.0f, ((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE, 0.0f));
+		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, CMatrix::MultiplyMtx(rocketMtx, baseMtx), false)
+			->SetOutLineIdx(5);
 	}
 
 	// ゲーム終了
@@ -793,9 +795,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		}
 
 		m_bStageSelect = false;
-		m_nOldSelect = 0;
-		m_nPlanetIdx = 0;
-		m_nOldnPlanet = 0;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
