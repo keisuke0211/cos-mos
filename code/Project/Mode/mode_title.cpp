@@ -67,6 +67,7 @@ CMode_Title::CMode_Title(void) {
 	m_RotCnt = 0;
 	m_bStageChange = false;
 	m_bRocketMove = false;
+	m_bRocketRot = false;
 }
 
 //========================================
@@ -402,9 +403,9 @@ void CMode_Title::CreateStageSelectInfo(void) {
 
 	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
 	m_RocketPos = m_RocketPosOld = UNSELECTBOX - PosCor + NUMPOSROCKET;
-	m_RocketposRate = INITD3DXVECTOR3;
+	m_RocketposDiff = INITD3DXVECTOR3;
 	m_RocketRot = m_RocketRotOld = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
-	m_RocketRotRate = INITD3DXVECTOR3;
+	m_RocketRotDiff = INITD3DXVECTOR3;
 	m_RotCnt = ANIMCOUNT;
 	m_nDrawPlanet = m_nPlanetIdx;
 	m_RocketAnimCnt = 0;
@@ -458,7 +459,7 @@ void CMode_Title::StageSelect(void) {
 				m_nDrawPlanet = m_nOldnPlanet;
 
 				if (m_nStageSelect > -1 && m_nStageSelect < nStageMax) {
-					m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * RocketAnimRate);
+					m_RocketPosOld = m_RocketPosOld + (m_RocketposDiff * RocketAnimRate);
 					m_RotCnt = 0;
 					m_RocketAnimCnt = 0;
 				}
@@ -596,8 +597,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			if (m_AnimCnt[nCnt] < ANIMCOUNT) m_AnimCnt[nCnt]++;
 
 			//傾き割合
-			float RotRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RotCnt, ANIMCOUNT);
-			if (m_RotCnt < ANIMCOUNT) m_RotCnt++;
+			float RotRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RotCnt, ANIMCOUNT * 0.5);
+			if (m_RotCnt < ANIMCOUNT * 0.5) m_RotCnt++;
 
 			RktAnimRt = CEase::Easing(CEase::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT);
 
@@ -608,6 +609,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					m_RocketAnimCnt = 0;
 					m_bStageChange = false;
 					m_bRocketMove = true;
+					m_bRocketRot = false;
 					if (m_nStageSelect == 0)
 						m_RocketPosOld = FADEROCKET;
 					else if (m_nStageSelect == nStage - 1)
@@ -615,7 +617,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				}
 				else {
 					m_bRocketMove = false;
-					m_RocketPosOld = m_RocketPos; m_RocketposRate = INITD3DXVECTOR3;
+					m_RocketPosOld = m_RocketPos; m_RocketposDiff = INITD3DXVECTOR3;
 				}
 			}
 
@@ -639,19 +641,25 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			}
 
 			if (m_nStageSelect != m_nOldSelect){
-				m_RocketposRate = m_RocketPos - m_RocketPosOld;
-				m_RocketRotOld = m_RocketRot;
+				m_RocketposDiff = m_RocketPos - m_RocketPosOld;
 
-				if (m_RocketposRate.x > 0)
-					m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
-				else
-					m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
+				if (!m_bRocketRot) {
+					m_RocketRotOld = m_RocketRot;
 
-				m_RocketRotRate = m_RocketRot - m_RocketRotOld;
+					if (m_RocketposDiff.x > 0)
+						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
+					else
+						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
+
+					m_RocketRotDiff = m_RocketRot - m_RocketRotOld;
+				}
+
+				if (m_bStageChange)
+					m_bRocketRot = true;
 			}
 
 			{//ロケット描画
-				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * RktAnimRt), m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
+				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f), false);
 			}
 
 			//数字ブロックアニメーション処理
@@ -737,7 +745,7 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 	if (nStage != nStageMaxOld) {
 		CMemory::Alloc(&m_AnimCnt, nStage);
 		m_RocketPos = UNSELECTBOX - poscor + NUMPOSROCKET;
-		m_RocketposRate = INITD3DXVECTOR3;
+		m_RocketposDiff = INITD3DXVECTOR3;
 		for (int AnimInit = 0; AnimInit < nStage; AnimInit++)
 			m_AnimCnt[AnimInit] = 0;
 	}
@@ -799,12 +807,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	case CMode_Title::TITLE_SELECT:
 	{
 		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
-
-		if (m_MenuUI != NULL)
-		{
-			delete m_MenuUI;
-			m_MenuUI = NULL;
-		}
 
 		m_bStageSelect = false;
 
