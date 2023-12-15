@@ -212,19 +212,6 @@ float MaxOfZero(float fData)
 }
 
 //========================================
-// 与えられた整数値をランダムに返す
-// Author:RIKU NISHIMURA
-//========================================
-int OR(std::initializer_list<int> args) {
-	int randomIndex = std::rand() % args.size();
-
-	auto it = args.begin();
-	std::advance(it, randomIndex);
-
-	return *it;
-}
-
-//========================================
 // ランダムリストを作成
 // Author:RIKU NISHIMURA
 //========================================

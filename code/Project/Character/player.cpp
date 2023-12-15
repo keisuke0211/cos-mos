@@ -1043,7 +1043,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 //----------------------------
 void CPlayer::Move(VECTOL vec, int cntPlayer)
 {
-	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath) {
+	if (m_aInfo[cntPlayer].isDeath) {
 		return;
 	}
 
@@ -1205,8 +1205,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// Ž€–S”»’èON
-				if (bDeath)
-				{
+				if (bDeath && !m_aInfo[!nCntPlayer].isDeath) {
 					Death(Player, type);
 					break;
 				}
