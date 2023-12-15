@@ -466,6 +466,10 @@ float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
 void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 {
 	LoadRecord();
+
+	//タイム更新
+	if (ClearTime < pRecord[planetIdx].pBestTime[stageIdx])
+		pRecord[planetIdx].pBestTime[stageIdx] = ClearTime;
 }
 
 //========================================
@@ -496,7 +500,6 @@ namespace
 
 			char Text[TXT_MAX] = {}; // 一行分の文字
 			int planetID = 0;        // 読み取り中の惑星番号
-			bool bLoad = false;
 			while (true)
 			{
 				//1行読み取り
@@ -516,22 +519,16 @@ namespace
 					strcpy(&Text[0], &aCodeBackup[1]);//頭のタブ文字を外した次からの文字で上書きする
 				}
 
-				//読み取り開始
-				if (strncmp(&Text[0], SET_RECORD, sizeof SET_RECORD - 1) == 0)bLoad = true;
-
 				//読み取り終了
-				else if (strncmp(&Text[0], END_RECORD, sizeof END_RECORD - 1) == 0 || Text[0] == EOF && feof(pFile)) break;
+				if (Text[0] == EOF || feof(pFile)) break;
 
-				//ロードしない
-				else if (bLoad)
+				//ロード
+				else if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
 				{
-					if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
-					{
-						char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
-						planetID     = LoadInt(NULL, CHR_PAUSE);  // 惑星番号取得
-						CInt StageID = LoadInt(NULL, CHR_PAUSE); // ステージ番号取得
-						pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);
-					}
+					char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
+					planetID = LoadInt(NULL, CHR_PAUSE);  // 惑星番号取得
+					CInt StageID = LoadInt(NULL, CHR_PAUSE); // ステージ番号取得
+					pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);
 				}
 			}
 

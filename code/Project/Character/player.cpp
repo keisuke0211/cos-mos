@@ -1553,7 +1553,8 @@ void CPlayer::GoalDirector(void)
 
 		if(ClearTime < BestTime)
 			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 130.0f), 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f));
+			->SetSize(Size2D(20.0f, 20.0f))
+			->SetCol(Color{ 255,255,0,255 });
 
 		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
