@@ -351,8 +351,6 @@ void CPlayer::Uninit(void)
 //=====================================================================================================================
 void CPlayer::Update(void)
 {
-	RNLib::Text2D().PutDebugLog(CreateText("インターバル:%d", s_nSwapInterval));
-
 	//スワップアニメーション中
 	if (s_bSwapAnim)
 	{
@@ -463,6 +461,28 @@ void CPlayer::UpdateInfo(void)
 			Player.doll->SetRot(Player.rot);
 			Player.doll->SetScale(Player.scale);
 			Player.doll->SetIsShow(true);
+
+			// 黒目の描画
+			if (nCntPlayer == 1) {
+				Matrix eyeMtx = CMatrix::ConvPosRotToMtx(Pos3D(0.0f, 6.0f, 6.85f), Rot3D(0.0f, D3DX_PI, 0.0f));
+
+				static int eyeCounter = 0;
+				static int eyeCounter2 = 0;
+				static int eyeTime = 0;
+
+				if (eyeCounter2 > 0) {
+					eyeCounter2--;
+				}
+				else if (++eyeCounter >= eyeTime) {
+					eyeCounter = 0;
+					eyeCounter2 = 4;
+					eyeTime = 5 + (rand() % 90);
+				}
+
+				RNLib::Polygon3D().Put(PRIORITY_OBJECT, CMatrix::MultiplyMtx(eyeMtx, Player.doll->GetBoneState(0).GetWorldMtx()))
+					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
+					->SetSize(4.0f, 4.0f);
+			}
 		}
 		else {
 			Player.doll->SetIsShow(false);
@@ -499,7 +519,6 @@ void CPlayer::UpdateInfo(void)
 			case WORLD_SIDE::FACE:	 Player.fMaxHeight = Player.fMaxHeight < Player.pos.y ? Player.pos.y : Player.fMaxHeight; break;
 			case WORLD_SIDE::BEHIND: Player.fMaxHeight = Player.fMaxHeight > Player.pos.y ? Player.pos.y : Player.fMaxHeight; break;
 		}
-		RNLib::Text2D().PutDebugLog(CreateText("%dP最高Y座標：%f    Y:%f X:%f", nCntPlayer + 1, Player.fMaxHeight, Player.pos.y, Player.pos.x));
 	}
 }
 
@@ -996,8 +1015,6 @@ void CPlayer::SwapGuide(Info& Player)
 	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
 		Player.fGuideTexVPos = 0.0f;
 
-	RNLib::Text2D().PutDebugLog(CreateText("ガイド  スピード:%.2f  サイズ:%.2f", Player.fGuideMoveSpeed, fSize));
-
 	//スワップガイドの描画
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
 		->SetSize(GUIDE_WIDTH, (fabsf(Player.pos.y) - SIZE_HEIGHT) * 2.0f)
@@ -1043,7 +1060,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 //----------------------------
 void CPlayer::Move(VECTOL vec, int cntPlayer)
 {
-	if (m_aInfo[0].isDeath || m_aInfo[1].isDeath) {
+	if (m_aInfo[cntPlayer].isDeath) {
 		return;
 	}
 
@@ -1205,8 +1222,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// 死亡判定ON
-				if (bDeath)
-				{
+				if (bDeath && !m_aInfo[!nCntPlayer].isDeath) {
 					Death(Player, type);
 					break;
 				}
@@ -1513,6 +1529,7 @@ void CPlayer::GoalDirector(void)
 	s_nGoalInterval++;
 
 	//クリアタイム取得
+	static float BestTime;
 	CFloat ClearTime = CMode_Game::GetPlayTime();
 	CStageEditor *pEd = Manager::StgEd();
 	CInt planet = pEd->GetPlanetIdx();
@@ -1522,7 +1539,10 @@ void CPlayer::GoalDirector(void)
 	{
 		//次の演出時間に設定
 		if (s_nGoalInterval < POP_CLEARTIME)
+		{
 			s_nGoalInterval = POP_CLEARTIME;
+			BestTime = Stage::GetBestTime(planet, stage);
+		}
 		else if (s_nGoalInterval < GOAL_INTERVAL)
 			s_nGoalInterval = GOAL_INTERVAL;
 
@@ -1549,14 +1569,17 @@ void CPlayer::GoalDirector(void)
 		->SetSize(Size.x, Size.y)
 		->SetCol(Color{ 0,0,0,150 });
 
+	//ベストタイム取得
+	if(s_nGoalInterval < POP_CLEARTIME) 
+		BestTime = Stage::GetBestTime(planet, stage);
+
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		CFloat BestTime = Stage::GetBestTime(planet, stage);
-
 		if(ClearTime < BestTime)
-			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f));
+			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!"), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f))
+			->SetCol(Color{ 255,255,0,255 });;
 
 		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), CText::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));

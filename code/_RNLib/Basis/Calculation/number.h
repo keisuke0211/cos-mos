@@ -46,6 +46,16 @@ public:
 		while (*num > max)
 			*num -= range;
 	}
+	// 渡された値をランダムに返す
+	template<class T>T OR(std::initializer_list<T> args) {
+		int randomIndex = std::rand() % args.size();
+
+		auto it = args.begin();
+		std::advance(it, randomIndex);
+
+		return *it;
+	}
+
 	// 型が数値か調べる
 	template<class T>bool FindIsNumber(const T& data) {
 		return (
@@ -63,14 +73,12 @@ public:
 //****************************************
 // プロトタイプ宣言
 //****************************************
-
 bool  Lottery(float fProb);
 float fRand(void);
 int   Rand(int nMin, int nMax);
 float Tick(float fData, float fSpace);
 int   Sign(float fData);
 float MaxOfZero(float fData);
-int   OR(std::initializer_list<int> args);
 int*  CreateRandList(int nNum);
 bool  EqualFloat(const float& numA, const float& numB, const float& allowableError);
 float GetPlusMinus(const float& num);
