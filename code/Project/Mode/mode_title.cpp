@@ -786,12 +786,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 
-		if (m_MenuUI != NULL)
-		{
-			delete m_MenuUI;
-			m_MenuUI = NULL;
-		}
-
 		m_bStageSelect = false;
 		m_nOldSelect = 0;
 		m_nPlanetIdx = 0;

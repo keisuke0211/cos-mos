@@ -16,7 +16,7 @@ Start
 		
 		SetTexture
 			FilePath 	= data\\TEXTURE\\TextBox\\TextBox00.png
-			PtnIdx 		= 0
+			PtnIdx 		= 1
 			PtnX		= 1
 			PtnY		= 2
 		EndTexture
@@ -29,7 +29,7 @@ Start
 		
 		SetTexture
 			FilePath 	= data\\TEXTURE\\TextBox\\TextBox01.png
-			PtnIdx 		= 0
+			PtnIdx 		= 1
 			PtnX		= 1
 			PtnY		= 2
 		EndTexture
@@ -42,7 +42,7 @@ Start
 		
 		SetTexture
 			FilePath 	= data\\TEXTURE\\TextBox\\TextBox02.png
-			PtnIdx 		= 0
+			PtnIdx 		= 1
 			PtnX		= 1
 			PtnY		= 2
 		EndTexture
