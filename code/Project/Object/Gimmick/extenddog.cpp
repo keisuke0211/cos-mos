@@ -74,7 +74,7 @@ void CExtenddog::Init(void) {
 	CFloat PosDiffY = Height + m_HipPos.y;
 	
 	//体の初期位置設定
-	m_StartBodyPos = m_BodyPos = Pos3D(m_HeadPos.x, PosDiffY * 0.5f, m_HeadPos.z);
+	m_StartBodyPos = m_BodyPos = Pos3D(m_HeadPos.x, PosDiffY, m_HeadPos.z);// * 0.5f
 
 	//高さ算出
 	m_StartHeight = m_height = fabsf(Height - m_BodyPos.y) - HEAD_HIP_SIZE;
@@ -117,10 +117,11 @@ void CExtenddog::Update(void) {
 
 	//サイズ割合
 	CFloat SizeRate = SIZE_OF_1_SQUARE * fCountRate;
+	CFloat HeightRate = (m_nHeightMax - m_nHeightMin) * fCountRate;
 
 	//高さ
-	m_height = m_StartHeight + SizeRate * (m_bElasticity ? m_nHeightMin : m_nHeightMax - 1);
-
+	m_height = SIZE_OF_1_SQUARE *((float)m_nHeightMin + HeightRate);
+	
 	//半分の高さ
 	CFloat HalfHeight = m_height * 0.5f;
 

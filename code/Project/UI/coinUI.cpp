@@ -19,10 +19,12 @@
 CCoinUI::CCoinUI(void) {
 
 	m_pos = INITD3DXVECTOR3;
+	m_rot = INITD3DXVECTOR3;
 	m_scale = Scale2D(SCALE, SCALE);
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\coin.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\parts_frame.png");
 	m_num = 0;
+	m_bFrame = true;
 }
 
 //========================================
@@ -36,9 +38,12 @@ CCoinUI::~CCoinUI(void) {
 // 初期化処理
 // Author: RYUKI FUJIWARA
 //========================================
-void CCoinUI::Init(D3DXVECTOR3 pos) {
+void CCoinUI::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot,Scale2D scale,bool bframe) {
 
 	SetPos(pos);
+	SetRot(rot);
+	SetScale(scale);
+	SetbFrame(bframe);
 }
 
 //========================================
@@ -55,24 +60,43 @@ void CCoinUI::Uninit(void) {
 //========================================
 void CCoinUI::Update(void) {
 
-	//コイン
-	RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f))
-		->SetSize(m_scale.x, m_scale.y)
-		->SetTex(m_TexIdx[0])
-		->SetZTest(false);
+	if (m_bFrame) {
+		//フレーム
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + m_scale.x, m_pos.y),0.0f)
+			->SetSize(m_scale.x * 5.0f, m_scale.y * 1.5f)
+			->SetTex(m_TexIdx[1]);
 
-	//数
-	RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d",CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f))
-		->SetSize(Size2D(3.0f, 3.0f))
-		->SetCol(INITCOLOR)
-		->SetZTest(false);
+		//コイン
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x, m_pos.y),0.0f)
+			->SetSize(m_scale.x, m_scale.y)
+			->SetTex(m_TexIdx[0]);
+
+		//数
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("%d", CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x, m_pos.y),0.0f)
+			->SetSize(Size2D(m_scale.x * 0.7f, m_scale.y* 0.7f))
+			->SetCol(INITCOLOR);
+	}
+	else if (!m_bFrame) {
+
+		//コイン
+		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z), m_rot)
+			->SetSize(m_scale.x, m_scale.y)
+			->SetTex(m_TexIdx[0])
+			->SetZTest(false);
+
+		//数
+		RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d", CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), m_rot)
+			->SetSize(Size2D(3.0f, 3.0f))
+			->SetCol(INITCOLOR)
+			->SetZTest(false);
+	}
 }
 
 //========================================
 // 生成処理
 // Author: RYUKI FUJIWARA
 //========================================
-CCoinUI *CCoinUI::Create(D3DXVECTOR3 pos)
+CCoinUI *CCoinUI::Create(D3DXVECTOR3 pos,Scale2D scale,bool bframe, D3DXVECTOR3 rot)
 {
 	CCoinUI *pObj = NULL;
 
@@ -80,7 +104,7 @@ CCoinUI *CCoinUI::Create(D3DXVECTOR3 pos)
 	pObj = new CCoinUI;
 
 	// 初期化処理
-	pObj->Init(pos);
+	pObj->Init(pos,rot, scale, bframe);
 
 	return pObj;
 }

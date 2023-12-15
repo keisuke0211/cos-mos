@@ -116,9 +116,6 @@ void CMode_Game::Update(void) {
 
 	//ポーズ時間を計測
 	else MeasureTime(TimeType::Pause);
-
-	RNLib::Text2D().PutDebugLog(CreateText("ゲーム時間:%d  ポーズ時間:%d", s_GameTime.Play, s_GameTime.Pause));
-	RNLib::Text2D().PutDebugLog(CreateText("プレイ時間:%.2f秒", GetPlayTime()));
 }
 
 //========================================
