@@ -9,6 +9,7 @@
 #include "RNobject.h"
 #include "Demo/demo.h"
 #include "SetUp3DEditor/setup3D-editor.h"
+#include "Light3DEditor/light3D-editor.h"
 
 //****************************************
 // プロトタイプ宣言
@@ -72,7 +73,6 @@ _RNC_Text2D&           RNLib::Text2D          (void) { return draw.m_text2D;    
 _RNC_Text3D&           RNLib::Text3D          (void) { return draw.m_text3D;                }
 _RNC_DrawMgr&          RNLib::DrawMgr         (void) { return draw.m_drawMgr;               }
 _RNC_DrawState&        RNLib::DrawStateMgr    (void) { return draw.m_drawState;             }
-_RNC_Light3D&          RNLib::Light3D         (void) { return draw.m_light3D;               }
 _RNC_Text&             RNLib::Text            (void) { return draw.m_text;                  }
 _RNC_Texture&          RNLib::Texture         (void) { return draw.m_texture;               }
 _RNC_Count&            RNLib::Count           (void) { return mechanical.m_count;           }
@@ -101,6 +101,7 @@ bool              RNSystem::GetSpace3DStop (void)               { return isSpace
 bool              RNSystem::GetSceneSwap   (void)               { return isSceneSwap; }
 _RNC_Effect3DMgr& RNSystem::GetEffet3DMgr  (void)               { return _3DObject.m_effect3DMgr; }
 _RNC_CameraMgr&   RNSystem::GetCameraMgr   (void)               { return draw.m_cameraMgr; }
+_RNC_Light3DMgr&  RNSystem::GetLight3DMgr  (void)               { return draw.m_light3DMgr; }
 
 //========================================
 // メインループ
@@ -274,8 +275,11 @@ namespace {
 		}break;
 		case RNSystem::MODE::SETUP3D_EDITOR: {
 			RNLib::Memory().Alloc((CSetUp3DEditor**)&modeObject);
-			CSetUp3DEditor* setup3DEditor = (CSetUp3DEditor*)modeObject;
-			setup3DEditor->Init();
+			((CSetUp3DEditor*)modeObject)->Init();
+		}break;
+		case RNSystem::MODE::LIGHT3D_EDITOR: {
+			RNLib::Memory().Alloc((CLight3DEditor**)&modeObject);
+			((CLight3DEditor*)modeObject)->Init();
 		}break;
 		}
 	}
@@ -294,19 +298,18 @@ namespace {
 
 		switch (nowMode) {
 		case RNSystem::MODE::DEMO: {
-			CDemo* demo = (CDemo*)modeObject;
-			demo->Uninit();
+			((CDemo*)modeObject)->Uninit();
 			RNLib::Memory().Release((CDemo**)&modeObject);
 		}break;
 		case RNSystem::MODE::SETUP3D_EDITOR: {
-			CSetUp3DEditor* setup3DEditor = (CSetUp3DEditor*)modeObject;
-			setup3DEditor->Uninit();
+			((CSetUp3DEditor*)modeObject)->Uninit();
 			RNLib::Memory().Release((CSetUp3DEditor**)&modeObject);
 		}break;
+		case RNSystem::MODE::LIGHT3D_EDITOR: {
+			((CLight3DEditor*)modeObject)->Uninit();
+			RNLib::Memory().Release((CLight3DEditor**)&modeObject);
+		}break;
 		}
-
-		// プリントの終了処理
-		UninitPrint();
 		
 		// 設定情報の解放処理
 		RNSettings::Release();
@@ -334,12 +337,13 @@ namespace {
 
 		switch (nowMode) {
 		case RNSystem::MODE::DEMO: {
-			CDemo* demo = (CDemo*)modeObject;
-			demo->Update();
+			((CDemo*)modeObject)->Update();
 		}break;
 		case RNSystem::MODE::SETUP3D_EDITOR: {
-			CSetUp3DEditor* setup3DEditor = (CSetUp3DEditor*)modeObject;
-			setup3DEditor->Update();
+			((CSetUp3DEditor*)modeObject)->Update();
+		}break;
+		case RNSystem::MODE::LIGHT3D_EDITOR: {
+			((CLight3DEditor*)modeObject)->Update();
 		}break;
 		}
 

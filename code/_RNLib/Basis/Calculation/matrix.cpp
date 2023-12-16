@@ -156,10 +156,13 @@ Pos3D _RNC_Matrix::ConvMtxToPos(const Matrix& mtx) {
 //========================================
 Rot3D _RNC_Matrix::ConvMtxToRot(const Matrix& mtx) {
 
-	return Rot3D(
-		atan2f(mtx._32, mtx._33),
-		atan2f(-mtx._31, sqrtf(mtx._32 * mtx._32 + mtx._33 * mtx._33)),
-		atan2f(mtx._21, mtx._11));
+	float x = -asinf(mtx._32);
+	float y = acosf(mtx._11);
+
+	if (mtx._22 < 0.0f) { x = ((D3DX_PI * (fabsf(x) / x)) - x); }
+	if (mtx._13 > 0.0f) { y = -y; }
+
+	return Rot3D(x, y, asinf(mtx._21));
 }
 
 //========================================

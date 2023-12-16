@@ -16,6 +16,7 @@ class _RNC_Memory {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	static std::mutex& GetMutex(void) { return ms_memoryMutex; }
+	static void AllocString(char** string, const char* source);
 
 	//========== [[[ ŠÖ”’è‹` ]]]
 	// ƒƒ‚ƒŠŠm•Ûˆ—

@@ -130,7 +130,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (fileHandle == INVALID_HANDLE_VALUE) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("サウンドデータファイルの生成に失敗しました。(1)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("サウンドデータファイルの生成に失敗しました。(1)\n%s", loadPath));
 			
 			return NONEDATA;
 		}
@@ -139,7 +139,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (SetFilePointer(fileHandle, 0, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("サウンドデータファイルの生成に失敗しました。(2)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("サウンドデータファイルの生成に失敗しました。(2)\n%s", loadPath));
 			
 			return NONEDATA;
 		}
@@ -148,7 +148,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (FAILED(CheckChunk(fileHandle, 'FFIR', &shunkSize, &chunkPos))) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("WAVEファイルのチェックに失敗しました。(1)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("WAVEファイルのチェックに失敗しました。(1)\n%s", loadPath));
 
 			return NONEDATA;
 		}
@@ -157,7 +157,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (FAILED(ReadChunkData(fileHandle, &fileCategory, sizeof(DWORD), chunkPos))) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("WAVEファイルのチェックに失敗しました。(2)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("WAVEファイルのチェックに失敗しました。(2)\n%s", loadPath));
 
 			return NONEDATA;
 		}
@@ -166,7 +166,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (fileCategory != 'EVAW') {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("WAVEファイルのチェックに失敗しました。(3)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("WAVEファイルのチェックに失敗しました。(3)\n%s", loadPath));
 
 			return NONEDATA;
 		}
@@ -175,7 +175,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (FAILED(CheckChunk(fileHandle, ' tmf', &shunkSize, &chunkPos))) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("フォーマットのチェックに失敗しました。(1)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("フォーマットのチェックに失敗しました。(1)\n%s", loadPath));
 
 			return NONEDATA;
 		}
@@ -184,7 +184,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (FAILED(ReadChunkData(fileHandle, &m_datas[idx]->m_wfx, shunkSize, chunkPos))) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("フォーマットのチェックに失敗しました。(2)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("フォーマットのチェックに失敗しました。(2)\n%s", loadPath));
 
 			return NONEDATA;
 		}
@@ -193,7 +193,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (FAILED(CheckChunk(fileHandle, 'atad', &m_datas[idx]->m_audioDataSize, &chunkPos))) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("オーディオデータ読み込みに失敗しました。(1)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("オーディオデータ読み込みに失敗しました。(1)\n%s", loadPath));
 			
 			return NONEDATA;
 		}
@@ -203,7 +203,7 @@ short _RNC_Sound::Load(const char* loadPath, short idx) {
 		if (FAILED(ReadChunkData(fileHandle, m_datas[idx]->m_audioData, m_datas[idx]->m_audioDataSize, chunkPos))) {
 			
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("オーディオデータ読み込みに失敗しました。(2)\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("オーディオデータ読み込みに失敗しました。(2)\n%s", loadPath));
 
 			return NONEDATA;
 		}

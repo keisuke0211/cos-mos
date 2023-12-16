@@ -48,4 +48,5 @@ namespace Manager {
 	CStageEditor*    StgEd         (void);
 	CFont*           Font          (void);
 	CTransition&     Transition    (void);
+	short&           GetLightIdx   (UShort lightIdx);
 };

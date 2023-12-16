@@ -13,37 +13,35 @@
 class _RNC_Window {
 public:
 	//========== [[[ 関数宣言 ]]]
-	_RNC_Window         ();
-	~_RNC_Window        ();
-	void Init           (void);
-	void Uninit         (void);
-	void Update         (void);
-	int  Create         (HINSTANCE& hInstance, WNDPROC lpfnWndProc);
-	void Delete         (void);
-	void ShowTaskBar    (const bool& isShow);
-	void SetIsFullScreen(const bool& isFullScreen);
-	bool FindFocused    (const HWND& windowHandle);
-	// メッセージ処理
-	void Message         (const char* pText, const char* pCaption);
-	void Message_ERROR   (const char* pText);
-	bool Message_OKCANCEL(const char* pText, const char* pCaption);
-	// 設定取得
-	Pos2D&  GetPos       (void) { return m_pos; }
-	float&  GetWidth     (void) { return m_width; }
-	float&  GetHeight    (void) { return m_height; }
-	Size2D  GetSize      (void) { return Pos2D(m_width, m_height); }
-	float   GetCenterX   (void) { return m_width * 0.5f; }
-	float   GetCenterY   (void) { return m_height * 0.5f; }
-	Pos2D   GetCenterPos (void) { return Pos2D(m_width * 0.5f, m_height * 0.5f); }
-	float&  GetAreaWidth (void) { return m_areaWidth; }
-	float&  GetAreaHeight(void) { return m_areaHeight; }
-	float&  GetResolution(void) { return m_resolution; }
-	Device& GetD3DDevice (void) { return m_D3D9Device; }
-	HWND&   GetHandle    (void) { return m_hWnd; }
+	_RNC_Window             ();
+	~_RNC_Window            ();
+	void    Init            (void);
+	void    Uninit          (void);
+	void    Update          (void);
+	int     Create          (HINSTANCE& hInstance, WNDPROC lpfnWndProc);
+	void    Delete          (void);
+	void    ShowTaskBar     (const bool& isShow);
+	void    SetIsFullScreen (const bool& isFullScreen);
+	bool    FindFocused     (const HWND& windowHandle);
+	void    Message         (const char* pText, const char* pCaption);
+	void    Message_ERROR   (const char* pText);
+	bool    Message_OKCANCEL(const char* pText, const char* pCaption);
+	Pos2D&  GetPos          (void) { return m_pos; }
+	float&  GetWidth        (void) { return m_width; }
+	float&  GetHeight       (void) { return m_height; }
+	Size2D  GetSize         (void) { return Pos2D(m_width, m_height); }
+	float   GetCenterX      (void) { return m_width * 0.5f; }
+	float   GetCenterY      (void) { return m_height * 0.5f; }
+	Pos2D   GetCenterPos    (void) { return Pos2D(m_width * 0.5f, m_height * 0.5f); }
+	float&  GetAreaWidth    (void) { return m_areaWidth; }
+	float&  GetAreaHeight   (void) { return m_areaHeight; }
+	float&  GetResolution   (void) { return m_resolution; }
+	Device& GetD3DDevice    (void) { return m_D3D9Device; }
+	HWND&   GetHandle       (void) { return m_hWnd; }
 
 private:
 	//========== [[[ 関数宣言 ]]]
-	int CreateD3DDevice(HINSTANCE& hInstance);
+	int CreateD3DDevice       (HINSTANCE& instanceHandle);
 	int GetTargetGPUAdapterIdx(void);
 
 	//========== [[[ 変数宣言 ]]]

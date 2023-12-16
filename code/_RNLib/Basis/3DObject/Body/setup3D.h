@@ -47,7 +47,7 @@ public:
 	};
 	struct FaceData {
 		FaceVtxData vtxs[4] = {};
-		Color       col     = INITCOLOR;
+		Color       col     = COLOR_WHITE;
 		short       texIdx  = NONEDATA;
 	};
 

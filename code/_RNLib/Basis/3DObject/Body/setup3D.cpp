@@ -117,7 +117,7 @@ bool _RNC_SetUp3D::LoadEditData(const char* loadPath) {
 void _RNC_SetUp3D::SaveEditData(const char* savePath) {
 
 	if (m_editData == NULL) {
-		RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータが存在しません。"));
+		RNLib::Window().Message_ERROR(String("セットアップ3Dデータが存在しません。"));
 		return;
 	}
 
@@ -180,7 +180,7 @@ void _RNC_SetUp3D::SaveEditData(const char* savePath) {
 	else
 	{// 書き出し失敗
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータファイルが見つかりませんでした。\n%s", savePath));
+		RNLib::Window().Message_ERROR(String("セットアップ3Dデータファイルが見つかりませんでした。\n%s", savePath));
 	}
 }
 
@@ -227,7 +227,7 @@ bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 						// エラーメッセージ
 						if (cntBoneData >= data.m_boneDataNum) {
-							RNLib::Window().Message_ERROR(CreateText("ボーンデータの数が指定数をオーバーしています。\n%s", loadPath));
+							RNLib::Window().Message_ERROR(String("ボーンデータの数が指定数をオーバーしています。\n%s", loadPath));
 
 							// ファイルを閉じる
 							RNLib::File().CloseFile();
@@ -275,7 +275,7 @@ bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 				// エラーメッセージ
 				if (cntBoneData < data.m_boneDataNum) {
-					RNLib::Window().Message_ERROR(CreateText("ボーンデータの数が指定数に対して不足しています。\n%s", loadPath));
+					RNLib::Window().Message_ERROR(String("ボーンデータの数が指定数に対して不足しています。\n%s", loadPath));
 
 					// ファイルを閉じる
 					RNLib::File().CloseFile();
@@ -325,7 +325,7 @@ bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 						// エラーメッセージ
 						if (cntFaceData >= data.m_faceDataNum) {
-							RNLib::Window().Message_ERROR(CreateText("フェイスデータの数が指定数をオーバーしています。\n%s", loadPath));
+							RNLib::Window().Message_ERROR(String("フェイスデータの数が指定数をオーバーしています。\n%s", loadPath));
 
 							// ファイルを閉じる
 							RNLib::File().CloseFile();
@@ -370,7 +370,7 @@ bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 				// エラーメッセージ
 				if (cntFaceData < data.m_faceDataNum) {
-					RNLib::Window().Message_ERROR(CreateText("フェイスデータの数が指定数に対して不足しています。\n%s", loadPath));
+					RNLib::Window().Message_ERROR(String("フェイスデータの数が指定数に対して不足しています。\n%s", loadPath));
 
 					// ファイルを閉じる
 					RNLib::File().CloseFile();
@@ -388,7 +388,7 @@ bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 	else 
 	{// 読み込み失敗
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータファイルが存在しません。\n%s", loadPath));
+		RNLib::Window().Message_ERROR(String("セットアップ3Dデータファイルが存在しません。\n%s", loadPath));
 	}
 
 	return false;

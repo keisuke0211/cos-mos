@@ -102,7 +102,7 @@ void _RNC_Text3D::CRegistInfo::ClearParameter(void) {
 	m_mtx               = INITMATRIX;
 	m_scaleOrSize       = INITVECTOR2D;
 	m_isScale           = false;
-	m_col               = INITCOLOR;
+	m_col               = COLOR_WHITE;
 	m_isZtest           = true;
 	m_isLighting        = false;
 	m_isBillboard       = false;
@@ -211,7 +211,7 @@ _RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetString(const char* string
 	if (this == NULL)
 		return NULL;
 
-	StrCpyDynamicMemory(&m_string, string);
+	RNLib::Memory().AllocString(&m_string, string);
 
 	return this;
 }

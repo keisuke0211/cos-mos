@@ -234,7 +234,7 @@ void CMenuUI::DecisionInput(void)
 				break;
 			case SETTING_BACK:
 				m_Menu.bSubMenu = false;
-				m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(INITCOLOR);
+				m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(COLOR_WHITE);
 				m_pSubMenu[m_Menu.nSubSelect]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
 				break;
 			}
@@ -259,7 +259,7 @@ void CMenuUI::SelectInput(void)
 		else if (m_Menu.bSubMenu) {
 			m_Menu.bSubMenu = false;
 			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxPthIdx(1);
-			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(INITCOLOR);
+			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(COLOR_WHITE);
 			m_pSubMenu[m_Menu.nSubSelect]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
 		}
 	}

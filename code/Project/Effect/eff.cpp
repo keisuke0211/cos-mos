@@ -24,7 +24,7 @@ CEff::CEff(void)
 	m_Info.scale = INITD3DXVECTOR3;
 	m_Info.scalemag = INITD3DXVECTOR3;
 	m_Info.rot =INITD3DXVECTOR3;
-	m_Info.col = INITCOLOR;
+	m_Info.col = COLOR_WHITE;
 	m_nNumAll++;
 }
 

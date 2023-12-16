@@ -82,7 +82,7 @@ bool _RNC_File::GetSelectOpenFileName(char** resultFileName, const char* initDir
 			return false;
 
 		// ファイル名を適用
-		StrCpyDynamicMemory(resultFileName, fileName);
+		RNLib::Memory().AllocString(resultFileName, fileName);
 
 		// 入力をクリア
 		RNLib::Input().ClearInputInfo();
@@ -129,10 +129,10 @@ bool _RNC_File::GetSelectSaveFileName(char** resultFileName, const char* initDir
 		if (len < extlen || strcmp(fileName + len - extlen, fileType) != 0) {
 
 			// ファイル名を適用
-			StrCpyDynamicMemory(resultFileName, CreateText("%s%s", fileName, fileType));
+			RNLib::Memory().AllocString(resultFileName, String("%s%s", fileName, fileType));
 		}
 		else {
-			StrCpyDynamicMemory(resultFileName, fileName);
+			RNLib::Memory().AllocString(resultFileName, fileName);
 		}
 
 		// 入力をクリア
@@ -164,7 +164,7 @@ void _RNC_File::ConvPathToDataStartPath(char** path) {
 	strncpy(dataStartPath, start, TXT_MAX);
 	dataStartPath[TXT_MAX - 1] = '\0'; // NULL終端を付加
 
-	StrCpyDynamicMemory(path, dataStartPath);
+	RNLib::Memory().AllocString(path, dataStartPath);
 }
 
 //========================================
@@ -189,7 +189,7 @@ bool _RNC_File::OpenLoadFile(const char* path, const char* typeName) {
 	if (m_files[fileNumOld] == NULL) {
 
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
+		RNLib::Window().Message_ERROR(String("ファイルを開けませんでした。\n%s", path));
 
 		// ファイルを閉じる
 		CloseFile();
@@ -208,7 +208,7 @@ bool _RNC_File::OpenLoadFile(const char* path, const char* typeName) {
 		if (strcmp(lineString, typeName)) {
 
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("ファイルの種類が異なります。\n%s", path));
+			RNLib::Window().Message_ERROR(String("ファイルの種類が異なります。\n%s", path));
 
 			// ファイルを閉じる
 			CloseFile();
@@ -239,7 +239,7 @@ bool _RNC_File::OpenSaveFile(const char* path) {
 		RNLib::Memory().ReAlloc<FILE*>(&m_files, m_fileNum, fileNumOld);
 
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
+		RNLib::Window().Message_ERROR(String("ファイルを開けませんでした。\n%s", path));
 
 		// ファイルを閉じる
 		CloseFile();

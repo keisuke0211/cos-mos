@@ -23,22 +23,22 @@ public:
 	class CDrawInfo : public CDrawInfoBase {
 	public:
 		// [[[ ä÷êîêÈåæ ]]]
-		CDrawInfo                         ();
-		~CDrawInfo                        ();
 		static void InitCreateVertexBuffer(void);
-		static void CreateVertexBuffer    (const UShort& num);
-		static void ReleaseVertexBuffer   (void);
+		static void CreateVertexBuffer(const UShort& num);
+		static void ReleaseVertexBuffer(void);
+		CDrawInfo ();
+		~CDrawInfo();
 
 		// [[[ ïœêîêÈåæ ]]]
-		static VertexBuffer            ms_vtxBuff;
-		static UShort                  ms_allocPower;
-		static UShort                  ms_allocNum;
-		static UShort                  ms_idxCount;
-		short                          m_idx;
-		void*                          m_tex;
-		Polygon2DAnd3D::TEX_TYPE       m_texType;
+		static VertexBuffer ms_vtxBuff;
+		static UShort       ms_allocPower;
+		static UShort       ms_allocNum;
+		static UShort       ms_idxCount;
+		short                              m_idx;
+		void*                              m_tex;
+		Polygon2DAnd3D::TEX_TYPE           m_texType;
 		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
-		Vertex2D                       m_vtxs[4];
+		Vertex2D                           m_vtxs[4];
 	};
 
 	// ìoò^èÓïÒ

@@ -68,25 +68,25 @@ void _RNC_Text2D::Update(void) {
 		// 各デバッグ表示オプション
 		RNLib::Text2D().PutDebugLog("----------StanderdInformation");
 		RNLib::Text2D().PutDebugLog("HideDebugLog      [F1]:TRUE");
-		RNLib::Text2D().PutDebugLog(CreateText("DefaultDebugOption[F2]:%s", m_isShowDebugLogOptions ? "TRUE" : "FALSE"));
+		RNLib::Text2D().PutDebugLog(String("DefaultDebugOption[F2]:%s", m_isShowDebugLogOptions ? "TRUE" : "FALSE"));
 		if (m_isShowDebugLogOptions) {
 			RNLib::Text2D().PutDebugLog("----------Performance");
-			RNLib::Text2D().PutDebugLog(CreateText("FPS    :%d", RNSystem::GetFPS()));
-			RNLib::Text2D().PutDebugLog(CreateText("RunTime:%02d:%02d.%02d", RNLib::Count().GetCount() / 3600, (RNLib::Count().GetCount() / 60) % 60, RNLib::Count().GetCount() % 60));
+			RNLib::Text2D().PutDebugLog(String("FPS    :%d", RNSystem::GetFPS()));
+			RNLib::Text2D().PutDebugLog(String("RunTime:%02d:%02d.%02d", RNLib::Count().GetCount() / 3600, (RNLib::Count().GetCount() / 60) % 60, RNLib::Count().GetCount() % 60));
 			
 			RNLib::Text2D().PutDebugLog("----------DrawState");
-			RNLib::Text2D().PutDebugLog(CreateText("Polygon2DNum:%d", RNLib::DrawMgr().GetPolygon2DNum()));
-			RNLib::Text2D().PutDebugLog(CreateText("Polygon3DNum:%d", RNLib::DrawMgr().GetPolygon3DNum()));
-			RNLib::Text2D().PutDebugLog(CreateText("ModelNum    :%d", RNLib::DrawMgr().GetModelNum()));
+			RNLib::Text2D().PutDebugLog(String("Polygon2DNum:%d", RNLib::DrawMgr().GetPolygon2DNum()));
+			RNLib::Text2D().PutDebugLog(String("Polygon3DNum:%d", RNLib::DrawMgr().GetPolygon3DNum()));
+			RNLib::Text2D().PutDebugLog(String("ModelNum    :%d", RNLib::DrawMgr().GetModelNum()));
 			
 			RNLib::Text2D().PutDebugLog("----------ObjectNumInObjectMgr");
 			CObjectMgr**& objectMgrs   = CObjectMgr::GetObjectMgrs  ();
 			UShort&       objectMgrNum = CObjectMgr::GetObjectMgrNum();
 			for (int cntObjectMgr = 0; cntObjectMgr < objectMgrNum; cntObjectMgr++)
-				PutDebugLog(CreateText("%d < %s", objectMgrs[cntObjectMgr]->GetNum(), objectMgrs[cntObjectMgr]->GetName()));
+				PutDebugLog(String("%d < %s", objectMgrs[cntObjectMgr]->GetNum(), objectMgrs[cntObjectMgr]->GetName()));
 
 			RNLib::Text2D().PutDebugLog("----------Other");
-			RNLib::Text2D().PutDebugLog(CreateText("DebugCount:%d", m_debugCount));
+			RNLib::Text2D().PutDebugLog(String("DebugCount:%d", m_debugCount));
 		}
 		RNLib::Text2D().PutDebugLog("----------");
 		RNLib::Text2D().PutDebugLog("");
@@ -176,7 +176,7 @@ void _RNC_Text2D::CRegistInfo::ClearParameter(void) {
 	m_angle             = 0.0f;
 	m_scaleOrSize       = INITVECTOR2D;
 	m_isScale           = false;
-	m_col               = INITCOLOR;
+	m_col               = COLOR_WHITE;
 	m_interpolationMode = _RNC_DrawState::INTERPOLATION_MODE::NONE;
 }
 
@@ -307,7 +307,7 @@ _RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetString(const char* string
 	if (this == NULL)
 		return NULL;
 
-	StrCpyDynamicMemory(&m_string, string);
+	RNLib::Memory().AllocString(&m_string, string);
 
 	return this;
 }

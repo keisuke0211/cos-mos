@@ -229,6 +229,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-info.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-state.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\light3D-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\light3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp" />
@@ -247,7 +248,6 @@
     <ClCompile Include="code\_RNLib\Basis\Mechanical\memory.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\Mechanical\print.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\sound.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\window.cpp" />
@@ -256,6 +256,7 @@
     <ClCompile Include="code\_RNLib\Demo\demo_object.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp" />
+    <ClCompile Include="code\_RNLib\Light3DEditor\light3D-editor.cpp" />
     <ClCompile Include="code\_RNLib\RNfunction.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
@@ -337,6 +338,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-info.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-state.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\light3D-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\light3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h" />
@@ -355,15 +357,16 @@
     <ClInclude Include="code\_RNLib\Basis\Mechanical\memory.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object.h" />
-    <ClInclude Include="code\_RNLib\Basis\Mechanical\print.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\sound.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\string.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\window.h" />
     <ClInclude Include="code\_RNLib\Basis\options.h" />
     <ClInclude Include="code\_RNLib\Demo\demo.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_object.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_player.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h" />
+    <ClInclude Include="code\_RNLib\Light3DEditor\light3D-editor.h" />
     <ClInclude Include="code\_RNLib\RNfunction.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />

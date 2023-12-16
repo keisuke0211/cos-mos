@@ -82,7 +82,7 @@ short _RNC_Model::Load(const char* loadPath, short idx) {
 		if (FAILED(D3DXLoadMeshFromX(loadPath, D3DXMESH_SYSTEMMEM, device, NULL, &m_datas[idx]->m_matBuff, NULL, (DWORD*)&m_datas[idx]->m_matNum, &m_datas[idx]->m_mesh))) 
 		{// 読み込み失敗
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("モデルの読み込みに失敗しました。\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("モデルの読み込みに失敗しました。\n%s", loadPath));
 
 			// データのメモリリセット
 			RNLib::Memory().ReAllocDouble(&m_datas, m_num, oldNum);
@@ -520,7 +520,7 @@ _RNC_Model::CDrawInfo::CDrawInfo() {
 	m_isScaling            = false;
 	m_isZTest              = true;
 	m_interpolationMode    = _RNC_DrawState::INTERPOLATION_MODE::NONE;
-	m_isLighting           = false;
+	m_isLighting           = true;
 }
 
 //========================================
@@ -566,11 +566,11 @@ void _RNC_Model::CRegistInfo::ClearParameter(void) {
 
 	CRegistInfoBase::ClearParameter();
 	m_mtx                  = INITMATRIX;
-	m_col                  = INITCOLOR;
+	m_col                  = COLOR_WHITE;
 	m_modelIdx             = NONEDATA;
 	m_texIdx               = NONEDATA;
 	m_isZTest              = true;
-	m_isLighting           = false;
+	m_isLighting           = true;
 	m_outLineIdx           = NONEDATA;
 	m_brightnessOfEmissive = 1.0f;
 	m_interpolationMode    = _RNC_DrawState::INTERPOLATION_MODE::NONE;

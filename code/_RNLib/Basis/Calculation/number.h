@@ -42,7 +42,7 @@ public:
 			return;
 		}
 
-		T range = max - min + 1;
+		T range = max - min + (FindIsInteger(num) * 1);
 
 		while (*num < min)
 			*num += range;

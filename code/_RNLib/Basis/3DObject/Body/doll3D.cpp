@@ -28,7 +28,7 @@ CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 	m_isShow               = true;
 	m_rot			       = INITROT3D;
 	m_scale                = INITSCALE3D;
-	m_col                  = INITCOLOR;
+	m_col                  = COLOR_WHITE;
 	m_boneStates           = NULL;
 	m_motionInfo           = {};
 	m_brightnessOfEmission = 1.0f;
@@ -303,7 +303,7 @@ void CDoll3D::DrawModelVtxIdx(_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum)
 				->SetLighting(false)
 				->SetZTest(false)
 				->SetBillboard(true);
-			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", vtxIdxs[cntVtx]), _RNC_Text::ALIGNMENT::CENTER, 0, vtxInfo[vtxIdxs[cntVtx]].worldPos, INITROT3D)
+			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, String("%d", vtxIdxs[cntVtx]), _RNC_Text::ALIGNMENT::CENTER, 0, vtxInfo[vtxIdxs[cntVtx]].worldPos, INITROT3D)
 				->SetSize(Size2D(0.5f, 0.5f))
 				->SetLighting(false)
 				->SetZTest(false)
@@ -333,7 +333,7 @@ void CDoll3D::DrawModelVtxIdx(_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum)
 				->SetLighting(false)
 				->SetZTest(false)
 				->SetBillboard(true);
-			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, CreateText("%d", cntVtx), _RNC_Text::ALIGNMENT::CENTER, 0, vtxInfo[cntVtx].worldPos, INITROT3D)
+			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, String("%d", cntVtx), _RNC_Text::ALIGNMENT::CENTER, 0, vtxInfo[cntVtx].worldPos, INITROT3D)
 				->SetSize(Size2D(0.5f, 0.5f))
 				->SetLighting(false)
 				->SetZTest(false)

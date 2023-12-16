@@ -176,7 +176,7 @@ void StageSoundPlayer::Update(void) {
 		f = RNLib::Sound().GetPlay(swapBGMPlayID).GetCount();
 	}
 
-	RNLib::Text2D().PutDebugLog(CreateText("最終フレーム%d", f));
+	RNLib::Text2D().PutDebugLog(String("最終フレーム%d", f));
 
 	{
 		float setVolume = 0.2f + ((1.0f - swapBGMVolume));

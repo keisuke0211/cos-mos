@@ -43,6 +43,8 @@ CSetUp3DEditor::CSetUp3DEditor() {
 //========================================
 CSetUp3DEditor::~CSetUp3DEditor() {
 
+	RNLib::Memory().Release(&m_camera);
+	RNLib::Memory().Release(&m_doll);
 	RNLib::Memory().Release(&m_editPath);
 }
 
@@ -230,22 +232,22 @@ void CSetUp3DEditor::Update(void) {
 	}
 
 	// [[[ ログ表示 ]]]
-	RNLib::Text2D().PutDebugLog(CreateText("-----Information-----"));
-	RNLib::Text2D().PutDebugLog(CreateText("EditPath:%s", m_editPath));
-	RNLib::Text2D().PutDebugLog(CreateText("-----Control-----"));
-	RNLib::Text2D().PutDebugLog(CreateText("SetUpCreateNew   [1]"));
-	RNLib::Text2D().PutDebugLog(CreateText("SetUpLoad        [2]"));
-	RNLib::Text2D().PutDebugLog(CreateText("SetUpReLoad      [3] %s", m_messageType == MESSAGE_TYPE::SETUP_RELOAD_SUCCEEDED ? "SUCCEEDED!" : m_messageType == MESSAGE_TYPE::SETUP_RELOAD_FAILED ? "FAILED!" : ""));
-	RNLib::Text2D().PutDebugLog(CreateText("MotionCreateNew  [4]"));
-	RNLib::Text2D().PutDebugLog(CreateText("MotionLoad       [5]"));
-	RNLib::Text2D().PutDebugLog(CreateText("MotionReLoad     [6] %s", m_messageType == MESSAGE_TYPE::MOTION_RELOAD_SUCCEEDED ? "SUCCEEDED!" : m_messageType == MESSAGE_TYPE::MOTION_RELOAD_FAILED ? "FAILED!" : ""));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdx       [7]   :%s", RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
-	RNLib::Text2D().PutDebugLog(CreateText("SlitherX         [Q][W]:%.1f", m_slither.x));
-	RNLib::Text2D().PutDebugLog(CreateText("SlitherY         [A][S]:%.1f", m_slither.y));
-	RNLib::Text2D().PutDebugLog(CreateText("SlitherZ         [Z][X]:%.1f", m_slither.z));
-	RNLib::Text2D().PutDebugLog(CreateText("FocusedBoneIdx   [E][R]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
-	RNLib::Text2D().PutDebugLog(CreateText("DrawVtxIdxNum    [D][F]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum()));
-	RNLib::Text2D().PutDebugLog(CreateText("-----Materials-----"));
+	RNLib::Text2D().PutDebugLog(String("-----Information"));
+	RNLib::Text2D().PutDebugLog(String("EditPath:%s", m_editPath));
+	RNLib::Text2D().PutDebugLog(String("-----Control"));
+	RNLib::Text2D().PutDebugLog(String("SetUpCreateNew   [1]"));
+	RNLib::Text2D().PutDebugLog(String("SetUpLoad        [2]"));
+	RNLib::Text2D().PutDebugLog(String("SetUpReLoad      [3]%s", m_messageType == MESSAGE_TYPE::SETUP_RELOAD_SUCCEEDED ? " SUCCEEDED!" : m_messageType == MESSAGE_TYPE::SETUP_RELOAD_FAILED ? " FAILED!" : ""));
+	RNLib::Text2D().PutDebugLog(String("MotionCreateNew  [4]"));
+	RNLib::Text2D().PutDebugLog(String("MotionLoad       [5]"));
+	RNLib::Text2D().PutDebugLog(String("MotionReLoad     [6]%s", m_messageType == MESSAGE_TYPE::MOTION_RELOAD_SUCCEEDED ? " SUCCEEDED!" : m_messageType == MESSAGE_TYPE::MOTION_RELOAD_FAILED ? " FAILED!" : ""));
+	RNLib::Text2D().PutDebugLog(String("IsDrawVtxIdx     [7]   :%s", RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
+	RNLib::Text2D().PutDebugLog(String("SlitherX         [Q][W]:%.1f", m_slither.x));
+	RNLib::Text2D().PutDebugLog(String("SlitherY         [A][S]:%.1f", m_slither.y));
+	RNLib::Text2D().PutDebugLog(String("SlitherZ         [Z][X]:%.1f", m_slither.z));
+	RNLib::Text2D().PutDebugLog(String("FocusedBoneIdx   [E][R]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
+	RNLib::Text2D().PutDebugLog(String("DrawVtxIdxNum    [D][F]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum()));
+	RNLib::Text2D().PutDebugLog(String("-----Materials"));
 
 	// マテリアル情報の表示
 	if (&RNLib::SetUp3D().GetData(EDITDATA) != NULL) {
@@ -265,26 +267,26 @@ void CSetUp3DEditor::Update(void) {
 						(UShort)(mats[cntMat].MatD3D.Diffuse.a * 255) 
 					};
 
-					RNLib::Text2D().PutDebugLog(CreateText("Mat_%d", cntMat));
+					RNLib::Text2D().PutDebugLog(String("Mat_%d", cntMat));
 					RNLib::Polygon2D().Put(0, true)
 						->SetSize(16.0f, 16.0f)
-						->SetPos(RNLib::Text2D().PutDebugLog(CreateText(" Color      :%d %d %d %d", col.r, col.g, col.b, col.a)) + Pos2D(8.0f, 0.0f))
+						->SetPos(RNLib::Text2D().PutDebugLog(String(" Color      :%d %d %d %d", col.r, col.g, col.b, col.a)) + Pos2D(8.0f, 0.0f))
 						->SetCol(col);
 					RNLib::Polygon2D().Put(0, true)
 						->SetSize(16.0f, 16.0f)
-						->SetPos(RNLib::Text2D().PutDebugLog(CreateText(" TexturePath:%s", RNLib::Texture().GetLoadPath(modelData.m_texIdxes[cntMat]))) + Pos2D(8.0f, 0.0f))
+						->SetPos(RNLib::Text2D().PutDebugLog(String(" TexturePath:%s", RNLib::Texture().GetLoadPath(modelData.m_texIdxes[cntMat]))) + Pos2D(8.0f, 0.0f))
 						->SetTex(modelData.m_texIdxes[cntMat]);
 				}
 			}
 			else {
-				RNLib::Text2D().PutDebugLog(CreateText("NONEDATA"));
+				RNLib::Text2D().PutDebugLog(String("NONEDATA"));
 			}
 		}
 		else {
-			RNLib::Text2D().PutDebugLog(CreateText("NONEDATA"));
+			RNLib::Text2D().PutDebugLog(String("NONEDATA"));
 		}
 	}
 	else {
-		RNLib::Text2D().PutDebugLog(CreateText("NONEDATA"));
+		RNLib::Text2D().PutDebugLog(String("NONEDATA"));
 	}
 }

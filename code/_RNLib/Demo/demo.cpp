@@ -77,9 +77,9 @@ void CDemo::Uninit(void) {
 //========================================
 void CDemo::Update(void) {
 
-	RNLib::Text2D().PutDebugLog(CreateText("----------Demo"));
-	RNLib::Text2D().PutDebugLog(CreateText("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
-	RNLib::Text2D().PutDebugLog(CreateText("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
+	RNLib::Text2D().PutDebugLog(String("----------Demo"));
+	RNLib::Text2D().PutDebugLog(String("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
+	RNLib::Text2D().PutDebugLog(String("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
 
 	{// [[[ ëÄçÏ ]]]
 		// ëÄçÏÉvÉåÉCÉÑÅ[êÿÇËë÷Ç¶

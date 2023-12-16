@@ -345,7 +345,7 @@ bool _RNC_StaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, 
 				newVtxes[cntVtx].pos = addVtxes[vtxCount].worldPos;
 				newVtxes[cntVtx].nor = addVtxes[vtxCount].worldNor;
 				newVtxes[cntVtx].tex = addVtxes[vtxCount].texPos;
-				newVtxes[cntVtx].col = (matIdx == NONEDATA) ? D3DCOLOR_RGBA(col.r, col.g, col.b, col.a) : matData.col.GetMixed(col).ConvD3DCOLOR();
+				newVtxes[cntVtx].col = (matIdx == NONEDATA) ? D3DCOLOR_RGBA(col.r, col.g, col.b, col.a) : matData.col.GetMixed(col);
 				vtxCount++;
 			}
 		}

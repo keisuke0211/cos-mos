@@ -258,7 +258,7 @@ void CEffect_Death::UpdateType_Ink(void)
 		-0.01f :
 		0.01f;
 
-	RNLib::Text2D().PutDebugLog(CreateText("ライフ:%d  透明度:%d  高さ:%.2f  割合:%.2f", m_Info.nLife, m_color.a, m_Info.InkSize.y, Rate));
+	RNLib::Text2D().PutDebugLog(String("ライフ:%d  透明度:%d  高さ:%.2f  割合:%.2f", m_Info.nLife, m_color.a, m_Info.InkSize.y, Rate));
 
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_pos, INITROT3D)
 		->SetSize(m_Info.InkSize)

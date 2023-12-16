@@ -9,16 +9,16 @@
 //****************************************
 // マクロ定義
 //****************************************
-#define VIB_DAMPING                    (0.75f)
-#define VIB_MIN	                       (0.01f)
-#define CONTROLLER_VIB_TIME_DIAMETER   (5)
-#define CONTROLLER_VIB_MAX    	       (4.0f)
-#define INIT_RANS_RATE                 (0.25f)
-#define INIT_RANS_RATE_OPP             (0.75f)
-#define SPIN_DAMP                      (0.15f)
-#define ROT_X_MAX                      (D3DX_PI * 0.499999f)
-#define ROT_X_MIN                      (D3DX_PI * -0.499999f)
-#define INIT_RADIAN                    (45.0f)
+#define VIB_DAMPING                  (0.75f)
+#define VIB_MIN	                     (0.01f)
+#define CONTROLLER_VIB_TIME_DIAMETER (5)
+#define CONTROLLER_VIB_MAX    	     (4.0f)
+#define INIT_RANS_RATE               (0.25f)
+#define INIT_RANS_RATE_OPP           (0.75f)
+#define SPIN_DAMP                    (0.15f)
+#define ROT_X_MAX                    (D3DX_PI * 0.499999f)
+#define ROT_X_MIN                    (D3DX_PI * -0.499999f)
+#define INIT_RADIAN                  (45.0f)
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -29,19 +29,19 @@
 //****************************************
 // 静的変数定義
 //****************************************
-UShort CCamera::ms_IDCount = 0;
+short CCamera::ms_IDCount = 0;
 
 //========================================
 // コンストラクタ
 //========================================
-CCamera::CCamera(const Scale2D& scale2D) {
+CCamera::CCamera(const Size2D& scale2D) {
 
 	// リストに追加
 	RNSystem::GetCameraMgr().AddList(this);
 
 	// IDを設定
 	m_ID       = ms_IDCount;
-	ms_IDCount = (ms_IDCount + 1) % USHRT_MAX;
+	ms_IDCount = (ms_IDCount + 1) % SHRT_MAX;
 
 	// 変数を初期化
 	m_posV            = INITPOS3D;
@@ -59,6 +59,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	m_state           = STATE::NONE;
 	m_stateInfo       = NULL;
 	m_isDraw          = false;
+	m_lightID         = NONEDATA;
 	m_BGCol           = Color{0,0,0,0};
 	m_isClipping      = false;
 	m_motionBlur      = {};
@@ -252,7 +253,7 @@ void CCamera::StartRendering(Device& device) {
 	device->SetViewport(&m_MTInfo.viewport);
 
 	// [[[ 画面をクリア ]]]
-	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), m_BGCol.ConvD3DCOLOR(), 1.0f, 0);
+	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), m_BGCol, 1.0f, 0);
 
 	// [[[ ビューマトリックスの作成 ]]]
 	Matrix mtxView = INITMATRIX; {

@@ -529,7 +529,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		//ステージのデモ画像
 		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(IMAGE_STG_POS), D3DXVECTOR3(0.0f, -0.58875f, 0.0f))
 			->SetSize(32.0f * ImageCntRate, 27.0f * ImageCntRate)
-			->SetCol(INITCOLOR)
+			->SetCol(COLOR_WHITE)
 			/*->SetTex(m_TexIdx[0])*/
 			->SetZTest(true);
 

@@ -15,11 +15,11 @@
 class CSetUp3DEditor {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	CSetUp3DEditor();
+	CSetUp3DEditor ();
 	~CSetUp3DEditor();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
+	void Init      (void);
+	void Uninit    (void);
+	void Update    (void);
 
 private:
 	//========== [[[ ’è”’è‹` ]]]

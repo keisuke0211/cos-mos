@@ -39,9 +39,9 @@ public:
 	class CPlay : public CObject {
 	public:
 		// [[[ ä÷êîêÈåæ ]]]
-		CPlay(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
-		~CPlay();
-		void Update(void);
+		CPlay                              (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
+		~CPlay                             ();
+		void                 Update        (void);
 		void                 SetVolume     (const float& volume) { m_volume = volume; }
 		short&               GetID         (void) { return m_ID; }
 		CATEGORY&            GetCategory   (void) { return m_category; }
@@ -64,11 +64,11 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	_RNC_Sound();
-	~_RNC_Sound();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
+	_RNC_Sound                         ();
+	~_RNC_Sound                        ();
+	void           Init                (void);
+	void           Uninit              (void);
+	void           Update              (void);
 	short          Load                (const char* loadPath, short idx = NONEDATA);
 	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop);
 	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist);

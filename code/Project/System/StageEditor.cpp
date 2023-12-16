@@ -34,11 +34,11 @@ CStageEditor::CStageEditor(void)
 	}
 
 	{
-		m_StageColor.Set = INITCOLOR;
-		m_StageColor.Player1 = INITCOLOR;
-		m_StageColor.Player2 = INITCOLOR;
-		m_StageColor.Block = INITCOLOR;
-		m_StageColor.FillBlock = INITCOLOR;
+		m_StageColor.Set = COLOR_WHITE;
+		m_StageColor.Player1 = COLOR_WHITE;
+		m_StageColor.Player2 = COLOR_WHITE;
+		m_StageColor.Block = COLOR_WHITE;
+		m_StageColor.FillBlock = COLOR_WHITE;
 	}
 
 	m_Info.nRow = 0;

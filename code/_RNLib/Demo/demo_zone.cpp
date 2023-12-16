@@ -242,7 +242,7 @@ void CDemoZone::UpdateActive(void) {
 	const Pos3D& pos = TYPE_DATAS[(int)m_type2].pos;
 
 	// ƒ][ƒ“–¼•\Ž¦
-	RNLib::Text2D().PutDebugLog(CreateText("----------%s", TYPE_DATAS[(int)m_type2].name));
+	RNLib::Text2D().PutDebugLog(String("----------%s", TYPE_DATAS[(int)m_type2].name));
 
 	// [[[ Ží—Þ–ˆ‚Ìˆ— ]]]
 	switch (m_type2) {
@@ -263,10 +263,10 @@ void CDemoZone::UpdateActive(void) {
 		}
 
 
-		RNLib::Text2D().PutDebugLog(CreateText("Polygon3DNumChange[R][T]"));
-		RNLib::Text2D().PutDebugLog(CreateText("Model    NumChange[F][G]"));
-		RNLib::Text2D().PutDebugLog(CreateText("----------PutObject"));
-		RNLib::Text2D().PutDebugLog(CreateText("Type     [1]:%s", PUTOBJECT_TYPE_NAME[(int)typeInfo->putObjType]));
+		RNLib::Text2D().PutDebugLog(String("Polygon3DNumChange[R][T]"));
+		RNLib::Text2D().PutDebugLog(String("Model    NumChange[F][G]"));
+		RNLib::Text2D().PutDebugLog(String("----------PutObject"));
+		RNLib::Text2D().PutDebugLog(String("Type     [1]:%s", PUTOBJECT_TYPE_NAME[(int)typeInfo->putObjType]));
 
 		switch (typeInfo->putObjType) {
 		case PUTOBJECT_TYPE::POLYGON3D: {
@@ -278,7 +278,7 @@ void CDemoZone::UpdateActive(void) {
 				typeInfo->text3DInfo.alignment = (_RNC_Text::ALIGNMENT)((alignmentCount + 1) % (int)_RNC_Text::ALIGNMENT::MAX);
 			}
 
-			RNLib::Text2D().PutDebugLog(CreateText("Alignment[2]:%s", ALIGNMENT_NAME[(int)typeInfo->text3DInfo.alignment]));
+			RNLib::Text2D().PutDebugLog(String("Alignment[2]:%s", ALIGNMENT_NAME[(int)typeInfo->text3DInfo.alignment]));
 		}break;
 		case PUTOBJECT_TYPE::MODEL: {
 
@@ -331,14 +331,14 @@ void CDemoZone::UpdateActive(void) {
 			bone1.AddAddRot(addRot);
 		}
 
-		RNLib::Text2D().PutDebugLog(CreateText("Bone0"));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinX[R][T]:%f", bone0.GetAddRot().x));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinY[F][G]:%f", bone0.GetAddRot().y));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[V][B]:%f", bone0.GetAddRot().z));
-		RNLib::Text2D().PutDebugLog(CreateText("Bone1"));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinX[Y][U]:%f", bone1.GetAddRot().x));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinY[H][J]:%f", bone1.GetAddRot().y));
-		RNLib::Text2D().PutDebugLog(CreateText("SpinZ[N][M]:%f", bone1.GetAddRot().z));
+		RNLib::Text2D().PutDebugLog(String("Bone0"));
+		RNLib::Text2D().PutDebugLog(String("SpinX[R][T]:%f", bone0.GetAddRot().x));
+		RNLib::Text2D().PutDebugLog(String("SpinY[F][G]:%f", bone0.GetAddRot().y));
+		RNLib::Text2D().PutDebugLog(String("SpinZ[V][B]:%f", bone0.GetAddRot().z));
+		RNLib::Text2D().PutDebugLog(String("Bone1"));
+		RNLib::Text2D().PutDebugLog(String("SpinX[Y][U]:%f", bone1.GetAddRot().x));
+		RNLib::Text2D().PutDebugLog(String("SpinY[H][J]:%f", bone1.GetAddRot().y));
+		RNLib::Text2D().PutDebugLog(String("SpinZ[N][M]:%f", bone1.GetAddRot().z));
 	}break;
 	case TYPE2::EFFECT_TEST: {
 
@@ -420,9 +420,9 @@ void CDemoZone::UpdateActive(void) {
 				RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD), pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f));
 		}
 
-		RNLib::Text2D().PutDebugLog(CreateText("SetModel[1]   :%d", typeInfo->setNum));
-		RNLib::Text2D().PutDebugLog(CreateText("IsMesh  [2]   :%s", typeInfo->isMesh ? "TRUE" : "FALSE"));
-		RNLib::Text2D().PutDebugLog(CreateText("MeshNum       :%d", RNLib::StaticMesh().GetMeshNum()));
+		RNLib::Text2D().PutDebugLog(String("SetModel[1]   :%d", typeInfo->setNum));
+		RNLib::Text2D().PutDebugLog(String("IsMesh  [2]   :%s", typeInfo->isMesh ? "TRUE" : "FALSE"));
+		RNLib::Text2D().PutDebugLog(String("MeshNum       :%d", RNLib::StaticMesh().GetMeshNum()));
 
 	}break;
 	}

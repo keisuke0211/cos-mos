@@ -45,12 +45,12 @@ private:
 	};
 	// 『プットオブジェクトテスト』の情報
 	struct TypeInfo_PutObjectTest_Text3DInfo {
-		int              drawNum   = 0;
+		int                  drawNum   = 0;
 		_RNC_Text::ALIGNMENT alignment = _RNC_Text::ALIGNMENT::CENTER;
 	};
 	struct TypeInfo_PutObjectTest_Model {
 		int   drawNum                = 0;
-		Color col                    = INITCOLOR;
+		Color col                    = COLOR_WHITE;
 		bool  isTex                  = false;
 		bool  isZTest                = true;
 		bool  isLighting             = true;

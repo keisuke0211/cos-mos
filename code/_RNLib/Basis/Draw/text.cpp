@@ -83,7 +83,7 @@ void _RNC_Text::LoadFont(const char* loadPath) {
 
 					// エラーメッセージ
 					if (fontCount >= m_fontNum) {
-						RNLib::Window().Message_ERROR(CreateText("フォントデータの数が指定数をオーバーしています。\n%s", loadPath));
+						RNLib::Window().Message_ERROR(String("フォントデータの数が指定数をオーバーしています。\n%s", loadPath));
 						break;
 					}
 
@@ -101,7 +101,7 @@ void _RNC_Text::LoadFont(const char* loadPath) {
 
 			// エラーメッセージ
 			if (fontCount < m_fontNum) {
-				RNLib::Window().Message_ERROR(CreateText("フォントデータの数が指定数に対して不足しています。\n%s", loadPath));
+				RNLib::Window().Message_ERROR(String("フォントデータの数が指定数に対して不足しています。\n%s", loadPath));
 				break;
 			}
 		}

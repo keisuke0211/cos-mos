@@ -38,7 +38,7 @@ public:
 			bool* isMats = NULL;
 		};
 		struct MatData {
-			Color  col    = INITCOLOR;
+			Color  col    = COLOR_WHITE;
 			ULong  vtxNum = 0;
 			ULong* idxes  = NULL;
 			ULong  idxNum = 0;

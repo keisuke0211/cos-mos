@@ -20,7 +20,7 @@ public:
 		float endRadius   = 0.0f;
 		float startDepth  = 0.0f;
 		float endDepth    = 0.0f;
-		Color col         = INITCOLOR;
+		Color col         = COLOR_WHITE;
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]

@@ -130,7 +130,7 @@ short _RNC_Texture::Load(const char* loadPath) {
 		if (FAILED(D3DXCreateTextureFromFile(device, loadPath, &m_texs[idx])))
 		{// 読み込み失敗
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("テクスチャの読み込みに失敗しました。\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("テクスチャの読み込みに失敗しました。\n%s", loadPath));
 
 			// テクスチャのメモリリセット
 			RNLib::Memory().ReAlloc(&m_texs, m_num, numOld);

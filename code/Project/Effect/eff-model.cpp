@@ -31,7 +31,7 @@ CEffect_Model::CEffect_Model(void)
 	m_move = INITD3DXVECTOR3;
 	m_scale = INITD3DXVECTOR3;
 	m_rot = INITD3DXVECTOR3;
-	m_col = INITCOLOR;
+	m_col = COLOR_WHITE;
 	m_nNumAll++;
 }
 

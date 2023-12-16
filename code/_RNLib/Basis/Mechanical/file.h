@@ -135,7 +135,7 @@ private:
 				ScanExecution(SCAN::STRING, scanString, isCSV, isEnd);
 
 				char*& castData = *(char**)data;
-				StrCpyDynamicMemory(&castData, scanString);
+				_RNC_Memory::AllocString(&castData, scanString);
 				return;
 			}
 		break;

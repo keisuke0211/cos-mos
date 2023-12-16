@@ -103,7 +103,7 @@ void _RNC_DrawState::ResetVariableSetting(Device& device) {
 	// ƒtƒHƒO‚Ì‰ŠúÝ’è
 	//----------------------------------------
 	SetIsFog(device, false);
-	SetFogParameter(device, INITCOLOR, 0.0f, 0.0f);
+	SetFogParameter(device, COLOR_WHITE, 0.0f, 0.0f);
 }
 
 //========================================
@@ -208,7 +208,7 @@ void _RNC_DrawState::SetIsFog(Device& device, const bool& isFog) {
 //========================================
 void _RNC_DrawState::SetFogParameter(Device& device, const Color& col, const float& startDist, const float& endDist) {
 
-	device->SetRenderState(D3DRS_FOGCOLOR, col.ConvD3DCOLOR());
+	device->SetRenderState(D3DRS_FOGCOLOR, D3DCOLOR_RGBA(col.r, col.g, col.b, col.a));
 	device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&startDist));
 	device->SetRenderState(D3DRS_FOGEND  , *(DWORD*)(&endDist));
 }

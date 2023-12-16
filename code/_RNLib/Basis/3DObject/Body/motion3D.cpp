@@ -117,7 +117,7 @@ bool _RNC_Motion3D::LoadEditData(const char* loadPath) {
 void _RNC_Motion3D::SaveEditData(const char* savePath) {
 
 	if (m_editData == NULL) {
-		RNLib::Window().Message_ERROR(CreateText("モーション3Dデータが存在しません。"));
+		RNLib::Window().Message_ERROR(String("モーション3Dデータが存在しません。"));
 		return;
 	}
 
@@ -157,7 +157,7 @@ void _RNC_Motion3D::SaveEditData(const char* savePath) {
 				}break;
 				default: {
 					// エラーメッセージ
-					RNLib::Window().Message_ERROR(CreateText("コマンドが指定されていません。\n%s", savePath));
+					RNLib::Window().Message_ERROR(String("コマンドが指定されていません。\n%s", savePath));
 				}break;
 				}
 			}
@@ -212,7 +212,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 						// エラーメッセージ
 						if (cntBone >= data.boneNum) {
-							RNLib::Window().Message_ERROR(CreateText("ボーンモーションデータの数がボーン数をオーバーしています。\n%s", loadPath));
+							RNLib::Window().Message_ERROR(String("ボーンモーションデータの数がボーン数をオーバーしています。\n%s", loadPath));
 							break;
 						}
 
@@ -236,7 +236,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 									// エラーメッセージ
 									if (cntCommand >= boneMotionData.commandDataNum) {
-										RNLib::Window().Message_ERROR(CreateText("コマンドデータの数が指定数をオーバーしています。\n%s", loadPath));
+										RNLib::Window().Message_ERROR(String("コマンドデータの数が指定数をオーバーしています。\n%s", loadPath));
 										
 										// ファイルを閉じる
 										RNLib::File().CloseFile();
@@ -302,7 +302,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 							// エラーメッセージ
 							if (cntCommand < boneMotionData.commandDataNum) {
-								RNLib::Window().Message_ERROR(CreateText("コマンドデータの数が指定数に対して不足しています。\n%s", loadPath));
+								RNLib::Window().Message_ERROR(String("コマンドデータの数が指定数に対して不足しています。\n%s", loadPath));
 
 								// ファイルを閉じる
 								RNLib::File().CloseFile();
@@ -331,7 +331,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 	else
 	{// 読み込み失敗
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("モーションデータファイルが存在しません。\n%s", loadPath));
+		RNLib::Window().Message_ERROR(String("モーションデータファイルが存在しません。\n%s", loadPath));
 	}
 
 	return false;

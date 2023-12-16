@@ -55,7 +55,7 @@ bool RNSettings::LoadAndSave(const char* path) {
 	}
 	else {
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("RNライブラリの設定ファイルを開けませんでした。\n以下のパスに設定ファイルを作成するので、情報を入力してください。\n%s", path));
+		RNLib::Window().Message_ERROR(String("RNライブラリの設定ファイルを開けませんでした。\n以下のパスに設定ファイルを作成するので、情報を入力してください。\n%s", path));
 	}
 
 	// 書き込むファイルとして開く

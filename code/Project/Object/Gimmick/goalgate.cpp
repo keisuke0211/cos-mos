@@ -389,7 +389,7 @@ void CGoalGate::SetEntry(bool bEntry)
 
 		for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 		{
-			Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, INITCOLOR);
+			Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, COLOR_WHITE);
 		}
 	}
 }

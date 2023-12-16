@@ -83,7 +83,7 @@ class CDraw {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init(Device& device, const UShort& priorityMax) {
-		m_staticMesh   .Init(priorityMax);
+		m_staticMesh.Init(priorityMax);
 		m_model		.Init();
 		m_polygon2D	.Init();
 		m_polygon3D	.Init();
@@ -91,12 +91,11 @@ public:
 		m_text3D	.Init();
 		m_drawMgr	.Init(priorityMax);
 		m_drawState	.Init(device);
-		m_light3D	.Init();
 		m_text		.Init();
 		m_texture	.Init();
 	}
 	void Uninit(void) {
-		m_staticMesh   .Uninit();
+		m_staticMesh.Uninit();
 		m_model		.Uninit();
 		m_polygon2D	.Uninit();
 		m_polygon3D	.Uninit();
@@ -104,12 +103,11 @@ public:
 		m_text3D	.Uninit();
 		m_drawMgr	.Uninit();
 		m_drawState	.Uninit();
-		m_light3D	.Uninit();
 		m_text		.Uninit();
 		m_texture	.Uninit();
 	}
 	void Update(void) {
-		m_staticMesh   .Update();
+		m_staticMesh.Update();
 		m_model		.Update();
 		m_polygon2D	.Update();
 		m_polygon3D	.Update();
@@ -117,7 +115,6 @@ public:
 		m_text3D	.Update();
 		m_drawMgr	.Update();
 		m_drawState	.Update();
-		m_light3D	.Update();
 		m_text		.Update();
 		m_texture	.Update();
 	}
@@ -132,7 +129,7 @@ public:
 	_RNC_CameraMgr  m_cameraMgr;
 	_RNC_DrawMgr    m_drawMgr;
 	_RNC_DrawState  m_drawState;
-	_RNC_Light3D    m_light3D;
+	_RNC_Light3DMgr m_light3DMgr;
 	_RNC_Text       m_text;
 	_RNC_Texture    m_texture;
 };

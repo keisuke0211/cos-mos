@@ -129,9 +129,6 @@
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object-manager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\Mechanical\print.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -333,6 +330,12 @@
     <ClCompile Include="code\Project\UI\MenuUi.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="code\_RNLib\Basis\Draw\light3D-manager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Light3DEditor\light3D-editor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\main.h">
@@ -456,9 +459,6 @@
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object-manager.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\_RNLib\Basis\Mechanical\print.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h">
@@ -660,6 +660,15 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\UI\MenuUi.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\string.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Basis\Draw\light3D-manager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Light3DEditor\light3D-editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

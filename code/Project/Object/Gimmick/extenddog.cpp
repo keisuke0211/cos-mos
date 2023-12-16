@@ -192,14 +192,14 @@ void CExtenddog::Update(void) {
 	{
 		CFloat IDealMax = m_HeadPos.y + SIZE_OF_1_SQUARE * 0.5f;
 		CFloat IDealMin = m_HipPos.y - SIZE_OF_1_SQUARE * 0.5f;
-		RNLib::Text2D().PutDebugLog(CreateText("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
+		RNLib::Text2D().PutDebugLog(String("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
 									IDealMax, IDealMin, IDealMax - IDealMin, m_height));
 	}
 	else
 	{
 		CFloat IDealMax = m_HipPos.y + SIZE_OF_1_SQUARE * 0.5f;
 		CFloat IDealMin = m_HeadPos.y - SIZE_OF_1_SQUARE * 0.5f;
-		RNLib::Text2D().PutDebugLog(CreateText("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
+		RNLib::Text2D().PutDebugLog(String("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
 									IDealMax, IDealMin, IDealMax - IDealMin, m_height));
 	}
 #endif

@@ -32,7 +32,7 @@ CParticle::CParticle(void)
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.rot = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
-	m_Info.col = INITCOLOR;
+	m_Info.col = COLOR_WHITE;
 
 	m_nNumAll++;
 }
@@ -78,7 +78,7 @@ HRESULT CParticle::Init(int nTex,int nCount)
 		m_Info.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 	
-	m_Info.col = INITCOLOR;
+	m_Info.col = COLOR_WHITE;
 	m_Info.nTex = nTex;
 	m_Info.nCount = m_Info.nCountMax = nCount;
 

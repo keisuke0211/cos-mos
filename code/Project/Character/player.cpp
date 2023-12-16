@@ -101,7 +101,7 @@ CPlayer::CPlayer()
 		Player.posOld = INITD3DXVECTOR3;       // 前回位置
 		Player.rot = INITD3DXVECTOR3;          // 向き
 		Player.move = INITD3DXVECTOR3;         // 移動量
-		Player.color = INITCOLOR;              // 色
+		Player.color = COLOR_WHITE;              // 色
 		Player.nSwapAlpha = NORMAL_SWAP_ALPHA; // スワップマークのα値
 		Player.fSwapPosY = 0.0f;               // スワップ先のＹ座標
 		Player.fSwapMoveY = 0.0f;              // スワップ移動時の速度
@@ -724,7 +724,7 @@ void CPlayer::ActionControl(void)
 					->SetCol(Color{ 255,100,100,255 })
 					->SetSize(SIZE_WIDTH * 1.0f, SIZE_HEIGHT * 1.0f);
 
-				RNLib::Text2D().PutDebugLog(CreateText("横の調整量:%f  縦の調整量:%f", s_fCorrWidth, s_fCorrHeight));
+				RNLib::Text2D().PutDebugLog(String("横の調整量:%f  縦の調整量:%f", s_fCorrWidth, s_fCorrHeight));
 			}
 
 			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
@@ -1595,15 +1595,15 @@ void CPlayer::GoalDirector(void)
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
 		if(ClearTime < BestTime)
-			RNLib::Text2D().Put(PRIORITY_UI, CreateText("New Record!!"), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
+			RNLib::Text2D().Put(PRIORITY_UI, String("New Record!!"), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f))
 			->SetCol(Color{ 255,255,0,255 });;
 
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("ベストタイム:%.1f秒", BestTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, String("ベストタイム:%.1f秒", BestTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("クリアタイム:%.1f秒", ClearTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(0.0f, 200.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, String("クリアタイム:%.1f秒", ClearTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(0.0f, 200.0f), 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
@@ -1622,5 +1622,5 @@ void CPlayer::GoalDirector(void)
 			s_nGoalInterval = GOAL_INTERVAL;
 	}
 
-	RNLib::Text2D().PutDebugLog(CreateText("ゴールインターバル:%d", s_nGoalInterval));
+	RNLib::Text2D().PutDebugLog(String("ゴールインターバル:%d", s_nGoalInterval));
 }

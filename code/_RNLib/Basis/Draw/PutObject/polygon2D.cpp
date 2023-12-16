@@ -308,7 +308,7 @@ void _RNC_Polygon2D::CRegistInfo::ClearParameter(void) {
 	m_pos               = INITPOS2D;
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
 	m_interpolationMode = _RNC_DrawState::INTERPOLATION_MODE::NONE;
-	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = INITCOLOR, cntVtx++);
+	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = COLOR_WHITE, cntVtx++);
 	m_setTexInfoSum.ClearParameter();
 }
 

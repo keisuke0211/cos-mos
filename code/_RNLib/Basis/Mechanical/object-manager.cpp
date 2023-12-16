@@ -83,7 +83,7 @@ CObjectMgr::CObjectMgr(const char* name) {
 	}
 
 	m_name = NULL;
-	StrCpyDynamicMemory(&m_name, name);
+	RNLib::Memory().AllocString(&m_name, name);
 	m_top  = NULL;
 	m_cur  = NULL;
 	m_num  = 0;

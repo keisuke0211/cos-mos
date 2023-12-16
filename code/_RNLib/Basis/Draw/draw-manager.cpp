@@ -42,11 +42,11 @@ void _RNC_DrawMgr::Init(const UShort& priorityMax) {
 	}
 
 	// 登録/描画情報のメモリ確保
-	RNLib::Memory().Alloc(&m_drawInfoSum		  , m_priorityMax);
-	RNLib::Memory().Alloc(&m_drawInfoSumOvr	  , m_priorityMax);
+	RNLib::Memory().Alloc(&m_drawInfoSum		 , m_priorityMax);
+	RNLib::Memory().Alloc(&m_drawInfoSumOvr	     , m_priorityMax);
 	RNLib::Memory().Alloc(&m_drawInfoSumScreen   , SCREEN_PRIORITY_MAX);
 	RNLib::Memory().Alloc(&m_drawInfoSumScreenOvr, SCREEN_PRIORITY_MAX);
-	RNLib::Memory().Alloc(&m_resistInfoSum	      , m_priorityMax);
+	RNLib::Memory().Alloc(&m_resistInfoSum	     , m_priorityMax);
 	RNLib::Memory().Alloc(&m_resistInfoSumScreen , SCREEN_PRIORITY_MAX);
 
 	// 登録情報の初期メモリ確保
@@ -202,12 +202,12 @@ void _RNC_DrawMgr::EndDraw(Device& device) {
 		CCamera* camera = NULL;
 		_RNC_CameraMgr& cameraMgr = RNSystem::GetCameraMgr();
 		while (cameraMgr.ListLoop((CObject**)&camera)) {
-			if (!camera->GetDraw())
+			if (!camera->GetIsDraw())
 				continue;
 			camera->StartRendering(device);
 			Draw(device, camera, false);
 			camera->EndRendering(device);
-			camera->SetDraw(false);
+			camera->SetIsDraw(false);
 		}
 
 		// レンダリングターゲット/Zバッファ/ビューポートを元に戻す
@@ -430,16 +430,42 @@ void _RNC_DrawMgr::Draw(Device& device, CCamera* camera, const bool& isOnScreen)
 //========================================
 void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx, const bool& isOnSreen) {
 
-	short   cameraID         = camera == NULL ? NONEDATA : camera->GetID();
-	bool    isCameraClipping = camera == NULL ? false    : camera->GetIsClipping();
-	Pos3D   cameraPosV       = camera == NULL ? Pos3D(0.0f, 0.0f, 0.0f) : camera->GetPosV();
-	Pos3D   cameraPosR       = camera == NULL ? Pos3D(0.0f, 0.0f, 1.0f) : camera->GetPosR();
-	Scale2D cameraScale      = camera == NULL ? RNLib::Window().GetSize() : camera->GetScale2D();
+	const short   cameraID         = camera == NULL ? NONEDATA : camera->GetID();
+	const bool    isCameraClipping = camera == NULL ? false    : camera->GetIsClipping();
+	const Pos3D   cameraPosV       = camera == NULL ? Pos3D(0.0f, 0.0f, 0.0f) : camera->GetPosV();
+	const Pos3D   cameraPosR       = camera == NULL ? Pos3D(0.0f, 0.0f, 1.0f) : camera->GetPosR();
+	const Scale2D cameraScale      = camera == NULL ? RNLib::Window().GetSize() : camera->GetScale2D();
 	Matrix  cameraBillboardMtx;
 	D3DXMatrixInverse(&cameraBillboardMtx, NULL, &viewMtx);
 	cameraBillboardMtx._41 = 0.0f;
 	cameraBillboardMtx._42 = 0.0f;
 	cameraBillboardMtx._43 = 0.0f;
+
+	// [[[ ライト3Dの設定 ]]]
+	if (camera == NULL) {
+
+	}
+	else {
+		const short lightID = camera->GetLightID();
+		if (lightID == NONEDATA) {
+			CLight3D::AllDisable(device);
+		}
+		else {
+			CLight3D* light = NULL;
+			bool      isSetting = false;
+			while (RNSystem::GetLight3DMgr().ListLoop((CObject**)&light)) {
+				if (light->GetID() == lightID) {
+					light->Setting(device);
+					isSetting = true;
+					break;
+				}
+			}
+
+			if (!isSetting) {
+				CLight3D::AllDisable(device);
+			}
+		}
+	}
 
 	const UShort priorityMax = isOnSreen ? SCREEN_PRIORITY_MAX : m_priorityMax;
 	for (int cntPriority = 0; cntPriority < priorityMax; cntPriority++) {
@@ -466,6 +492,9 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 			// [[[ Zテストの設定 ]]]
 			RNLib::DrawStateMgr().SetIsZTest(device, drawInfo[cntPriority].m_model[cntModel]->m_isZTest);
 
+			// [[[ ライティングを有効/無効にする ]]]
+			RNLib::DrawStateMgr().SetIsLighting(device, drawInfo[cntPriority].m_model[cntModel]->m_isLighting);
+
 			// [[[ 補間モードの設定 ]]]
 			RNLib::DrawStateMgr().SetInterpolationMode(device, drawInfo[cntPriority].m_model[cntModel]->m_interpolationMode);
 
@@ -480,6 +509,8 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 
 				// 描画
 				drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat);
+
+				
 			}
 
 			// 輪郭線の描画
@@ -502,6 +533,11 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 
 		// 可変設定のリセット
 		RNLib::DrawStateMgr().ResetVariableSetting(device);
+		
+		{// マテリアルの初期化
+			const Material initMat = INITMATERIAL;
+			device->SetMaterial(&initMat);
+		}
 
 		//----------------------------------------
 		// 頂点フォーマットの設定

@@ -33,7 +33,7 @@ CEffect_Meteor::CEffect_Meteor(void)
 		m_Info[nCnt].rot = INITD3DXVECTOR3;
 		m_Info[nCnt].move = INITD3DXVECTOR3;
 		m_Info[nCnt].scale = Scale3D(1.0f,1.0f,1.0f);
-		m_Info[nCnt].col = INITCOLOR;
+		m_Info[nCnt].col = COLOR_WHITE;
 	}
 	m_pos = INITD3DXVECTOR3;
 	m_nCount = MAX_DELTECNT;
@@ -68,7 +68,7 @@ HRESULT CEffect_Meteor::Init(void)
 		m_Info[nCnt].move.x = (rand() % 4 - 2) * 0.5f;
 		m_Info[nCnt].move.y = (rand() % 4 - 2) * 0.5f;
 		m_Info[nCnt].move.z = (rand() % 4 - 2) * 0.5f;
-		m_Info[nCnt].col = INITCOLOR;
+		m_Info[nCnt].col = COLOR_WHITE;
 
 	}
 	return S_OK;

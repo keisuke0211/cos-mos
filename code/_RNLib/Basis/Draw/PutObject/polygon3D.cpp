@@ -176,7 +176,7 @@ void _RNC_Polygon3D::CRegistInfo::ClearParameter(void) {
 	RNLib::Memory().Release(&m_setVtxPosInfo);
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
 	RNLib::Memory().Release(&m_setVtxNorInfo);
-	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = INITCOLOR, cntVtx++);
+	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = COLOR_WHITE, cntVtx++);
 	m_setTexInfoSum.ClearParameter();
 	m_isZtest			= true;
 	m_isLighting		= true;
@@ -238,9 +238,9 @@ _RNC_Polygon3D::CDrawInfo* _RNC_Polygon3D::CRegistInfo::ConvToDrawInfo(void) {
 
 	// [[[ –@ü ]]]
 	if (m_setVtxNorInfo == NULL) {
-		drawInfo->m_vtxs[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		drawInfo->m_vtxs[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		drawInfo->m_vtxs[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		drawInfo->m_vtxs[0].nor =
+		drawInfo->m_vtxs[1].nor =
+		drawInfo->m_vtxs[2].nor =
 		drawInfo->m_vtxs[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 	}
 	else {

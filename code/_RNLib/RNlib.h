@@ -40,6 +40,7 @@
 #include "Basis/Draw/draw-manager.h"
 #include "Basis/Draw/draw-state.h"
 #include "Basis/Draw/light3D.h"
+#include "Basis/Draw/light3D-manager.h"
 #include "Basis/Draw/regist-info.h"
 #include "Basis/Draw/text.h"
 #include "Basis/Draw/texture.h"
@@ -50,7 +51,7 @@
 #include "Basis/Mechanical/memory.h"
 #include "Basis/Mechanical/object.h"
 #include "Basis/Mechanical/object-manager.h"
-#include "Basis/Mechanical/print.h"
+#include "Basis/Mechanical/string.h"
 #include "Basis/Mechanical/regist.h"
 #include "Basis/Mechanical/sound.h"
 #include "Basis/Mechanical/window.h"
@@ -66,7 +67,7 @@ namespace RNSystem {
 
 	//========== [[[ óÒãìå^íËã` ]]]
 	enum class SIGNAL { NONE, INIT, UNINIT, END_UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, END_DRAW, END, };
-	enum class MODE   { EXECUTION, DEBUG, DEMO, SETUP3D_EDITOR };
+	enum class MODE   { EXECUTION, DEBUG, DEMO, SETUP3D_EDITOR, LIGHT3D_EDITOR };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	bool              MainLoop      (HINSTANCE& instanceHandle, const char* settingsPath, const char* optionsDataPath, const UShort& priorityMax, const MODE& mode);
@@ -79,6 +80,7 @@ namespace RNSystem {
 	bool              GetSceneSwap  (void);
 	_RNC_Effect3DMgr& GetEffet3DMgr (void);
 	_RNC_CameraMgr&   GetCameraMgr  (void);
+	_RNC_Light3DMgr&  GetLight3DMgr (void);
 }
 
 // RNÉâÉCÉuÉâÉä
@@ -105,7 +107,6 @@ namespace RNLib {
 	_RNC_Text3D&           Text3D          (void);
 	_RNC_DrawMgr&          DrawMgr         (void);
 	_RNC_DrawState&        DrawStateMgr    (void);
-	_RNC_Light3D&          Light3D         (void);
 	_RNC_Text&             Text            (void);
 	_RNC_Texture&          Texture         (void);
 	// Mechanical
