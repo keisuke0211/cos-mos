@@ -251,7 +251,7 @@
     <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\sound.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\window.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\setting.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\options.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_object.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
@@ -359,7 +359,7 @@
     <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\sound.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\window.h" />
-    <ClInclude Include="code\_RNLib\Basis\setting.h" />
+    <ClInclude Include="code\_RNLib\Basis\options.h" />
     <ClInclude Include="code\_RNLib\Demo\demo.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_object.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_player.h" />

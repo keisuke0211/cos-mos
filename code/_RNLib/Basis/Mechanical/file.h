@@ -12,14 +12,14 @@
 //****************************************
 // クラス定義
 //****************************************
-class CFile {
+class _RNC_File {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	enum class SCAN { INT, UINT, SHORT, USHORT, FLOAT, CAHR, STRING, STRING_DYNAMIC, BOOL, POS2D, VECTOR3D, POS3D, ROT3D, ROT3D_CORRECT, SCALE3D, COLOR, TEXIDX, MODELIDX, SETUP3DIDX, MOTION3DIDX, };
 
 	//========== [[[ 関数宣言 ]]]
-	CFile                        ();
-	~CFile                       ();
+	_RNC_File                    ();
+	~_RNC_File                   ();
 	void  Init                   (void);
 	void  Uninit                 (void);
 	void  Update                 (void);

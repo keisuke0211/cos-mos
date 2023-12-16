@@ -21,7 +21,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 namespace {
 
 	//========== [[[ 関数宣言 ]]]
-	void Init(HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const RNSystem::MODE& mode);
+	void Init(HINSTANCE& instanceHandle, const char*& settingsPath, const char*& optionsDataPath, const UShort& priorityMax, const RNSystem::MODE& mode);
 	void Uninit(void);
 	void EndUninit(void);
 	void Update(void);
@@ -54,34 +54,35 @@ namespace {
 //==========| RNライブラリ
 //----------|---------------------------------------------------------------------
 //================================================================================
-CDoll3DMgr&        RNLib::Doll3DMgr       (void) { return _3DObject.m_doll3DMgr;        }
-CMotion3D&         RNLib::Motion3D        (void) { return _3DObject.m_motion3D;         }
-CSetUp3D&          RNLib::SetUp3D         (void) { return _3DObject.m_setUp3D;          }
-CEffect3D&         RNLib::Effect3D        (void) { return _3DObject.m_effect3D;         }
-CStandardEffect3D& RNLib::StandardEffect3D(void) { return _3DObject.m_standardEffect3D; }
-CEase&             RNLib::Ease            (void) { return calculation.m_ease;           }
-CGeometry&         RNLib::Geometry        (void) { return calculation.m_geometry;       }
-CHitTest&          RNLib::HitTest         (void) { return calculation.m_hitTest;        }
-CMatrix&           RNLib::Matrix          (void) { return calculation.m_matrix;         }
-CNumber&           RNLib::Number          (void) { return calculation.m_number;         }
-CStaticMesh&       RNLib::StaticMesh      (void) { return draw.m_staticMesh;            }
-CModel&            RNLib::Model           (void) { return draw.m_model;                 }
-CPolygon2D&        RNLib::Polygon2D       (void) { return draw.m_polygon2D;             }
-CPolygon3D&        RNLib::Polygon3D       (void) { return draw.m_polygon3D;             }
-CText2D&           RNLib::Text2D          (void) { return draw.m_text2D;                }
-CText3D&           RNLib::Text3D          (void) { return draw.m_text3D;                }
-CDrawMgr&          RNLib::DrawMgr         (void) { return draw.m_drawMgr;               }
-CDrawState&        RNLib::DrawStateMgr    (void) { return draw.m_drawState;             }
-CLight3D&          RNLib::Light3D         (void) { return draw.m_light3D;               }
-CText&             RNLib::Text            (void) { return draw.m_text;                  }
-CTexture&          RNLib::Texture         (void) { return draw.m_texture;               }
-CCount&            RNLib::Count           (void) { return mechanical.m_count;           }
-CFile&             RNLib::File            (void) { return mechanical.m_file;            }
-CInput&            RNLib::Input           (void) { return mechanical.m_input;           }
-CMemory&           RNLib::Memory          (void) { return mechanical.m_memory;          }
-CSound&            RNLib::Sound           (void) { return mechanical.m_sound;           }
-CWindow&           RNLib::Window          (void) { return mechanical.m_window;          }
-CDefaultData&      RNLib::DefaultData     (void) { return other.m_defaultData;          }
+_RNC_Doll3DMgr&        RNLib::Doll3DMgr       (void) { return _3DObject.m_doll3DMgr;        }
+_RNC_Motion3D&         RNLib::Motion3D        (void) { return _3DObject.m_motion3D;         }
+_RNC_SetUp3D&          RNLib::SetUp3D         (void) { return _3DObject.m_setUp3D;          }
+_RNC_Effect3D&         RNLib::Effect3D        (void) { return _3DObject.m_effect3D;         }
+_RNC_StandardEffect3D& RNLib::StandardEffect3D(void) { return _3DObject.m_standardEffect3D; }
+_RNC_Ease&             RNLib::Ease            (void) { return calculation.m_ease;           }
+_RNC_Geometry&         RNLib::Geometry        (void) { return calculation.m_geometry;       }
+_RNC_HitTest&          RNLib::HitTest         (void) { return calculation.m_hitTest;        }
+_RNC_Matrix&           RNLib::Matrix          (void) { return calculation.m_matrix;         }
+_RNC_Number&           RNLib::Number          (void) { return calculation.m_number;         }
+_RNC_StaticMesh&       RNLib::StaticMesh      (void) { return draw.m_staticMesh;            }
+_RNC_Model&            RNLib::Model           (void) { return draw.m_model;                 }
+_RNC_Polygon2D&        RNLib::Polygon2D       (void) { return draw.m_polygon2D;             }
+_RNC_Polygon3D&        RNLib::Polygon3D       (void) { return draw.m_polygon3D;             }
+_RNC_Text2D&           RNLib::Text2D          (void) { return draw.m_text2D;                }
+_RNC_Text3D&           RNLib::Text3D          (void) { return draw.m_text3D;                }
+_RNC_DrawMgr&          RNLib::DrawMgr         (void) { return draw.m_drawMgr;               }
+_RNC_DrawState&        RNLib::DrawStateMgr    (void) { return draw.m_drawState;             }
+_RNC_Light3D&          RNLib::Light3D         (void) { return draw.m_light3D;               }
+_RNC_Text&             RNLib::Text            (void) { return draw.m_text;                  }
+_RNC_Texture&          RNLib::Texture         (void) { return draw.m_texture;               }
+_RNC_Count&            RNLib::Count           (void) { return mechanical.m_count;           }
+_RNC_File&             RNLib::File            (void) { return mechanical.m_file;            }
+_RNC_Input&            RNLib::Input           (void) { return mechanical.m_input;           }
+_RNC_Memory            RNLib::Memory          (void) { return _RNC_Memory();                }
+_RNC_Sound&            RNLib::Sound           (void) { return mechanical.m_sound;           }
+_RNC_Window&           RNLib::Window          (void) { return mechanical.m_window;          }
+_RNC_DefaultData&      RNLib::DefaultData     (void) { return other.m_defaultData;          }
+_RNC_Options&          RNLib::Options         (void) { return other.m_options;              }
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -92,19 +93,19 @@ CDefaultData&      RNLib::DefaultData     (void) { return other.m_defaultData;  
 //========================================
 // 設定/取得系関数
 //========================================
-RNSystem::SIGNAL RNSystem::GetSignal      (void)               { return (nowMode == RNSystem::MODE::EXECUTION || nowMode == RNSystem::MODE::DEBUG) ? signal : SIGNAL::NONE; }
-RNSystem::MODE   RNSystem::GetMode        (void)               { return nowMode; }
-int              RNSystem::GetFPS         (void)               { return FPS; }
-void             RNSystem::SetSpace3DStop (const bool& isStop) { isSpace3DStopReserve = isStop; }
-bool             RNSystem::GetSpace3DStop (void)               { return isSpace3DStop; }
-bool             RNSystem::GetSceneSwap   (void)               { return isSceneSwap; }
-CEffect3DMgr&    RNSystem::GetEffet3DMgr  (void)               { return _3DObject.m_effect3DMgr; }
-CCameraMgr&      RNSystem::GetCameraMgr   (void)               { return draw.m_cameraMgr; }
+RNSystem::SIGNAL  RNSystem::GetSignal      (void)               { return (nowMode == RNSystem::MODE::EXECUTION || nowMode == RNSystem::MODE::DEBUG) ? signal : SIGNAL::NONE; }
+RNSystem::MODE    RNSystem::GetMode        (void)               { return nowMode; }
+int               RNSystem::GetFPS         (void)               { return FPS; }
+void              RNSystem::SetSpace3DStop (const bool& isStop) { isSpace3DStopReserve = isStop; }
+bool              RNSystem::GetSpace3DStop (void)               { return isSpace3DStop; }
+bool              RNSystem::GetSceneSwap   (void)               { return isSceneSwap; }
+_RNC_Effect3DMgr& RNSystem::GetEffet3DMgr  (void)               { return _3DObject.m_effect3DMgr; }
+_RNC_CameraMgr&   RNSystem::GetCameraMgr   (void)               { return draw.m_cameraMgr; }
 
 //========================================
 // メインループ
 //========================================
-bool RNSystem::MainLoop(HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const MODE& mode) {
+bool RNSystem::MainLoop(HINSTANCE& instanceHandle, const char* settingsPath, const char* optionsDataPath, const UShort& priorityMax, const MODE& mode) {
 
 	static bool isMessageLoop = false;
 	static MSG  msg;
@@ -162,7 +163,7 @@ bool RNSystem::MainLoop(HINSTANCE& instanceHandle, const char* settingsPath, con
 	// [[[ 信号に応じた処理 ]]]
 	switch (signal) {
 	case RNSystem::SIGNAL::INIT: {
-		Init(instanceHandle, settingsPath, (mode == MODE::EXECUTION || mode == MODE::DEBUG) ? priorityMax : (UShort)RNMode::PRIORITY::MAX, mode);
+		Init(instanceHandle, settingsPath, optionsDataPath, (mode == MODE::EXECUTION || mode == MODE::DEBUG) ? priorityMax : (UShort)RNMode::PRIORITY::MAX, mode);
 	}break;
 	case RNSystem::SIGNAL::UNINIT: {
 		Uninit();
@@ -216,7 +217,7 @@ namespace {
 	//========================================
 	// 初期処理
 	//========================================
-	void Init(HINSTANCE& instanceHandle, const char* settingsPath, const UShort& priorityMax, const RNSystem::MODE& mode) {
+	void Init(HINSTANCE& instanceHandle, const char*& settingsPath, const char*& optionsDataPath, const UShort& priorityMax, const RNSystem::MODE& mode) {
 
 		// モードを保存
 		nowMode = mode;
@@ -239,14 +240,22 @@ namespace {
 		isSceneSwap          = false;
 		isBeginScene         = false;
 
+		// オプションのパスを設定し、読み込み処理
+		other.m_options.SetOptionsDataPath(optionsDataPath);
+		other.m_options.Load();
+		
 		// 設定ファイルを読み込み&書き出し
 		if (RNSettings::LoadAndSave(settingsPath))
 		{// 成功した時、設定情報を元にウィンドウを生成
-			mechanical.m_window.Create(instanceHandle, WindowProc);
+			if (FAILED(mechanical.m_window.Create(instanceHandle, WindowProc))) {
+				signal = RNSystem::SIGNAL::UNINIT;
+				return;
+			}
 		}
 		else
 		{// 失敗した時、シグナルを終了にする
 			signal = RNSystem::SIGNAL::UNINIT;
+			return;
 		}
 
 		// RNオブジェクトの初期化
@@ -259,12 +268,12 @@ namespace {
 		modeObject = NULL;
 		switch (mode) {
 		case RNSystem::MODE::DEMO: {
-			CMemory::Alloc((CDemo**)&modeObject);
+			RNLib::Memory().Alloc((CDemo**)&modeObject);
 			CDemo* demo = (CDemo*)modeObject;
 			demo->Init();
 		}break;
 		case RNSystem::MODE::SETUP3D_EDITOR: {
-			CMemory::Alloc((CSetUp3DEditor**)&modeObject);
+			RNLib::Memory().Alloc((CSetUp3DEditor**)&modeObject);
 			CSetUp3DEditor* setup3DEditor = (CSetUp3DEditor*)modeObject;
 			setup3DEditor->Init();
 		}break;
@@ -287,12 +296,12 @@ namespace {
 		case RNSystem::MODE::DEMO: {
 			CDemo* demo = (CDemo*)modeObject;
 			demo->Uninit();
-			CMemory::Release((CDemo**)&modeObject);
+			RNLib::Memory().Release((CDemo**)&modeObject);
 		}break;
 		case RNSystem::MODE::SETUP3D_EDITOR: {
 			CSetUp3DEditor* setup3DEditor = (CSetUp3DEditor*)modeObject;
 			setup3DEditor->Uninit();
-			CMemory::Release((CSetUp3DEditor**)&modeObject);
+			RNLib::Memory().Release((CSetUp3DEditor**)&modeObject);
 		}break;
 		}
 
@@ -343,9 +352,6 @@ namespace {
 		draw       .Update();
 		other	   .Update();
 		mechanical .Update();
-
-		// 設定の更新処理
-		UpdateSetting();
 	}
 
 	//========================================
@@ -411,7 +417,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 	case WM_MOUSEWHEEL: {
 
 		// マウスホイールの前回転/後回転 状態設定
-		mechanical.m_input.SetWheelSpin(HIWORD(wParam) == WHEEL_DELTA ? CInput::WHEELSPIN::FRONT : CInput::WHEELSPIN::BACK);
+		mechanical.m_input.SetWheelSpin(HIWORD(wParam) == WHEEL_DELTA ? _RNC_Input::WHEELSPIN::FRONT : _RNC_Input::WHEELSPIN::BACK);
 
 	}break;
 		// [[[ マウス左ボタン押下 ]]]

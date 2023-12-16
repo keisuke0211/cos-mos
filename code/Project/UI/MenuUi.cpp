@@ -62,8 +62,8 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.SubMenuMax = 0;
 
 	{// 音量設定の初期化
-		float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
-		float SE = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
+		float BGM = RNLib::Options().GetCategoryVolume(_RNC_Sound::CATEGORY::BGM);
+		float SE = RNLib::Options().GetCategoryVolume(_RNC_Sound::CATEGORY::SE);
 		m_Menu.nBGMVolume = BGM * VOLUME_MSX;
 		m_Menu.nSEVolume = SE * VOLUME_MSX;
 		m_Menu.nBGMOldVolume = BGM * VOLUME_MSX;
@@ -161,7 +161,7 @@ CMenuUI *CMenuUI::Create(CMode::TYPE type)
 //========================================
 void CMenuUI::DecisionInput(void)
 {
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
+	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
 	{
 		CMode::TYPE Mode = Manager::GetMode();
 
@@ -248,7 +248,7 @@ void CMenuUI::DecisionInput(void)
 //========================================
 void CMenuUI::SelectInput(void)
 {
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
+	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK))
 	{
 		if (!m_Menu.bSubMenu) {
 			m_Menu.bBackMode = true;
@@ -263,21 +263,21 @@ void CMenuUI::SelectInput(void)
 			m_pSubMenu[m_Menu.nSubSelect]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
 		}
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::UP))
+	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::UP))
 	{
 		if (!m_Menu.bSubMenu)
 			m_Menu.nMaineSelect--;
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect--;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::DOWN))
+	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::DOWN))
 	{
 		if (!m_Menu.bSubMenu)
 			m_Menu.nMaineSelect++;
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect++;
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
+	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT))
 	{
 		if (m_Menu.nSubSelect == SETTING_BGM) {
 			m_Menu.nBGMVolume--;
@@ -286,7 +286,7 @@ void CMenuUI::SelectInput(void)
 			m_Menu.nSEVolume--;
 		}
 	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
+	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT))
 	{
 		if (m_Menu.nSubSelect == SETTING_BGM) {
 			m_Menu.nBGMVolume++;
@@ -467,7 +467,7 @@ void CMenuUI::MenuAnime(void)
 	{
 		int Txt = m_Menu.nNumLeftMenu;
 		float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
-		float ScaleRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+		float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 		float SizeX = TgtSizeX * ScaleRate;
 		float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
@@ -521,7 +521,7 @@ void CMenuUI::MenuAnime(void)
 				if (Txt == m_Menu.nMaineSelect&& !m_Menu.bBackMode)
 					TgtSizeX = 80.0f;
 
-				float ScaleRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+				float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 				float SizeX = 0;
 
 				if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
@@ -553,7 +553,7 @@ void CMenuUI::MenuAnime(void)
 			int Txt = m_Menu.nMaineSelect;
 			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + 80.0f;
 			float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
-			float ScaleRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 			float SizeX = TgtSizeX - (TgtSizeX * ScaleRate);
 
 			m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
@@ -583,7 +583,7 @@ void CMenuUI::MenuAnime(void)
 	{
 		D3DXVECTOR3 move = INITD3DXVECTOR3;
 
-			float ScaleRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Menu.nCntRightAnime, PAUSE_RIGHT_ANIME);
+			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntRightAnime, PAUSE_RIGHT_ANIME);
 			m_Menu.RightScaleX = m_Menu.RightScaleMaxX * ScaleRate;
 
 			int nAnime = 0;
@@ -702,7 +702,7 @@ void CMenuUI::MenuSelect(void)
 		if (m_Menu.nCntScrChg == 0)
 		{// 画面モード切り替えカウンターが0の時、
 		 // ウインドウのモードを切り替える
-			RNSettings::SetFulScreen(m_Menu.bFullScreen);
+			RNLib::Window().SetIsFullScreen(m_Menu.bFullScreen);
 		}
 	}
 
@@ -786,7 +786,7 @@ void CMenuUI::MenuSelect(void)
 			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
-		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::BGM, volume);
+		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::BGM, volume);
 	}
 	if (m_Menu.nSEVolume != m_Menu.nSEOldVolume) {
 		m_Menu.nSEOldVolume = m_Menu.nSEVolume;
@@ -798,7 +798,7 @@ void CMenuUI::MenuSelect(void)
 			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
-		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::SE, volume);
+		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);
 	}
 
 }

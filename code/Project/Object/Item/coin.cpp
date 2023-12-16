@@ -46,7 +46,7 @@ void CCoin::Update(void) {
 	
 	for (int nCnt = 0; nCnt < 2; nCnt++)
 	{
-		if (CGeometry::FindDistance(m_pos, pInfo[nCnt]->pos) <= 16)
+		if (RNLib::Geometry().FindDistance(m_pos, pInfo[nCnt]->pos) <= 16)
 		{
 			Delete();
 			s_Num++;

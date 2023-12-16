@@ -111,7 +111,7 @@ void CExtenddog::Update(void) {
 	}
 
 	// äÑçáåvéZ 
-	CFloat fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
+	CFloat fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
 
 	const Rot3D Rot = !m_bInversion ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI);
 

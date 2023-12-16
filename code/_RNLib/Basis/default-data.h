@@ -10,7 +10,7 @@
 // クラス定義
 //****************************************
 // デフォルトデータクラス
-class CDefaultData {
+class _RNC_DefaultData {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	enum class SOUND    { TEST_BGM, TEST_SE, MAX, };
@@ -20,8 +20,8 @@ public:
 	enum class MOTION3D { CAPSULE_STRETCH, MAX };
 
 	//========== [[[ 関数宣言 ]]]
-	CDefaultData();
-	~CDefaultData();
+	_RNC_DefaultData();
+	~_RNC_DefaultData();
 	void Init  (void);
 	void Uninit(void);
 	void Update(void);

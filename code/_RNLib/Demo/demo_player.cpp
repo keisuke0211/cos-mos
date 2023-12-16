@@ -43,7 +43,7 @@ CDemoPlayer::CDemoPlayer(const Pos3D& pos, const Rot3D& rot, const Color& col, c
 CDemoPlayer::~CDemoPlayer() {
 
 	// カメラを破棄
-	CMemory::Release(&m_camera);
+	RNLib::Memory().Release(&m_camera);
 }
 
 //========================================
@@ -101,13 +101,13 @@ void CDemoPlayer::Update(void) {
 	if (m_camera != NULL)
 	{// カメラの設定
 		Pos3D posV = m_pos + Pos3D(0.0f, 10.0f, 0.0f);
-		Pos3D posR = posV + CGeometry::FindRotVec(m_rot);
+		Pos3D posR = posV + RNLib::Geometry().FindRotVec(m_rot);
 		m_camera->SetPosVAndPosR(posV, posR);
 		m_camera->SetIsClipping(ms_isCameraClipping);
 	}
 
 	// モデル配置
-	RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::OBSERVER), m_pos, m_rot)
+	RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::OBSERVER), m_pos, m_rot)
 		->SetCol(m_col)
 		->SetOutLineIdx(true)
 		->SetClippingCamera(m_clippingCameraID);
@@ -136,7 +136,7 @@ void CDemoPlayer::HitTest(void) {
 
 			CDemoZone* demoZone = (CDemoZone*)object;
 
-			if (CHitTest::XZ::OverlapPointToSquare(m_pos, demoZone->GetPos(), demoZone->GetScale())) {
+			if (RNLib::HitTest().XZ_OverlapPointToSquare(m_pos, demoZone->GetPos(), demoZone->GetScale())) {
 				CDemoZone::SetActive(demoZone);
 			}
 

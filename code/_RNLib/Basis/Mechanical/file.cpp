@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CFile::CFile() {
+_RNC_File::_RNC_File() {
 
 	m_files   = NULL;
 	m_fileNum = 0;
@@ -25,35 +25,35 @@ CFile::CFile() {
 //========================================
 // デストラクタ
 //========================================
-CFile::~CFile() {
+_RNC_File::~_RNC_File() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CFile::Init(void) {
+void _RNC_File::Init(void) {
 
 }
 
 //========================================
 // 終了処理
 //========================================
-void CFile::Uninit(void) {
+void _RNC_File::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CFile::Update(void) {
+void _RNC_File::Update(void) {
 
 }
 
 //========================================
 // 選択した開くファイル名取得
 //========================================
-bool CFile::GetSelectOpenFileName(char** resultFileName, const char* initDir, const char* fileType) {
+bool _RNC_File::GetSelectOpenFileName(char** resultFileName, const char* initDir, const char* fileType) {
 
 	TCHAR        fileName[MAX_PATH];
 	OPENFILENAME ofn;
@@ -100,7 +100,7 @@ bool CFile::GetSelectOpenFileName(char** resultFileName, const char* initDir, co
 //========================================
 // 選択した保存するファイル名取得
 //========================================
-bool CFile::GetSelectSaveFileName(char** resultFileName, const char* initDir, const char* fileType) {
+bool _RNC_File::GetSelectSaveFileName(char** resultFileName, const char* initDir, const char* fileType) {
 
 	TCHAR        fileName[MAX_PATH];
 	OPENFILENAME ofn;
@@ -151,7 +151,7 @@ bool CFile::GetSelectSaveFileName(char** resultFileName, const char* initDir, co
 //========================================
 // "data"を起点としたパス文字列を生成する
 //========================================
-void CFile::ConvPathToDataStartPath(char** path) {
+void _RNC_File::ConvPathToDataStartPath(char** path) {
 
 	// パスがdataディレクトリを含まない場合はエラー
 	if (strstr(*path, "\\Data\\") == NULL) {
@@ -170,7 +170,7 @@ void CFile::ConvPathToDataStartPath(char** path) {
 //========================================
 // データファイルを開く(読み込み)
 //========================================
-bool CFile::OpenLoadFile(const char* path, const char* typeName) {
+bool _RNC_File::OpenLoadFile(const char* path, const char* typeName) {
 
 	// パスが存在しなければ終了
 	if (path == NULL) {
@@ -182,7 +182,7 @@ bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 
 	// ファイルを再確保(増やす)
 	const int fileNumOld = m_fileNum++;
-	CMemory::ReAlloc(&m_files, fileNumOld, m_fileNum);
+	RNLib::Memory().ReAlloc(&m_files, fileNumOld, m_fileNum);
 
 	// ファイルを開く
 	m_files[fileNumOld] = fopen(path, "r");
@@ -202,7 +202,7 @@ bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 
 		// 1行読み込み
 		char* lineString = NULL;
-		RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &lineString);
+		RNLib::File().Scan(_RNC_File::SCAN::STRING_DYNAMIC, &lineString);
 
 		// 種類名と一致していない時、
 		if (strcmp(lineString, typeName)) {
@@ -214,13 +214,13 @@ bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 			CloseFile();
 
 			// 読み込んだ文字列を解放
-			CMemory::Release(&lineString);
+			RNLib::Memory().Release(&lineString);
 
 			return false;
 		}
 
 		// 読み込んだ文字列を解放
-		CMemory::Release(&lineString);
+		RNLib::Memory().Release(&lineString);
 	}
 
 
@@ -230,13 +230,13 @@ bool CFile::OpenLoadFile(const char* path, const char* typeName) {
 //========================================
 // データファイルを開く(書き出し)
 //========================================
-bool CFile::OpenSaveFile(const char* path) {
+bool _RNC_File::OpenSaveFile(const char* path) {
 
 	int fileNumOld = m_fileNum++;
-	CMemory::ReAlloc<FILE*>(&m_files, fileNumOld, m_fileNum);
+	RNLib::Memory().ReAlloc<FILE*>(&m_files, fileNumOld, m_fileNum);
 	m_files[fileNumOld] = fopen(path, "w");
 	if (m_files[fileNumOld] == NULL) {
-		CMemory::ReAlloc<FILE*>(&m_files, m_fileNum, fileNumOld);
+		RNLib::Memory().ReAlloc<FILE*>(&m_files, m_fileNum, fileNumOld);
 
 		// エラーメッセージ
 		RNLib::Window().Message_ERROR(CreateText("ファイルを開けませんでした。\n%s", path));
@@ -253,7 +253,7 @@ bool CFile::OpenSaveFile(const char* path) {
 //========================================
 // データファイルを閉じる
 //========================================
-void CFile::CloseFile(void) {
+void _RNC_File::CloseFile(void) {
 
 	if (m_fileNum <= 0)
 		return;
@@ -261,14 +261,14 @@ void CFile::CloseFile(void) {
 	if (m_files[m_fileNum-1] != NULL) {
 		fclose(m_files[m_fileNum-1]);
 		m_fileNum--;
-		CMemory::ReAlloc(&m_files, m_fileNum + 1, m_fileNum);
+		RNLib::Memory().ReAlloc(&m_files, m_fileNum + 1, m_fileNum);
 	}
 }
 
 //========================================
 // 検索ループ
 //========================================
-bool CFile::SearchLoop(const char* endIdentifier) {
+bool _RNC_File::SearchLoop(const char* endIdentifier) {
 
 	if (m_files == NULL)
 		return false;

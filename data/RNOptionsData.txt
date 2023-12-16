@@ -1,0 +1,4 @@
+OptionsData
+isFullScreen 0
+categoryVolumes 1.000000 1.000000 1.000000
+END

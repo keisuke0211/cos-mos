@@ -24,9 +24,9 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CEffect3D_Cylinder(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const CEase::TYPE& easeType, const CDrawState::ALPHA_BLEND_MODE& alphaBlendType);
-	~CEffect3D_Cylinder();
-	void Update(void);
+	CEffect3D_Cylinder                     (const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType);
+	~CEffect3D_Cylinder                    ();
+	void                Update             (void);
 	CEffect3D_Cylinder* SetFadeOutStartRate(const float& fadeOutStartRate)    { m_fadeOutStartRate = fadeOutStartRate; return this; }
 	CEffect3D_Cylinder* SetSpinZ           (const float& spinZ)               { m_spinZ			   = spinZ			 ; return this; }
 	CEffect3D_Cylinder* SetDivisionNum     (const UShort& divisionNum)        { m_divisionNum	   = divisionNum	 ; return this; }

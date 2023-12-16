@@ -19,7 +19,7 @@
 // クラス定義
 //****************************************
 // 描画クラス
-class CDrawMgr {
+class _RNC_DrawMgr {
 public:
 	//----------------------------------------
 	// 定数宣言
@@ -50,11 +50,11 @@ public:
 		void Overwrite(CDrawInfoSum* pOvr);
 
 		// [[[ 変数宣言 ]]]
-		CModel::CDrawInfo**     m_model;
+		_RNC_Model::CDrawInfo**     m_model;
 		UShort                  m_modelNum;
-		CPolygon3D::CDrawInfo** m_polygon3D;
+		_RNC_Polygon3D::CDrawInfo** m_polygon3D;
 		UShort                  m_polygon3DNum;
-		CPolygon2D::CDrawInfo** m_polygon2D;
+		_RNC_Polygon2D::CDrawInfo** m_polygon2D;
 		UShort                  m_polygon2DNum;
 	};
 
@@ -69,62 +69,62 @@ public:
 		void Release   (void);
 
 		// [[[ 変数宣言 ]]]
-		CPolygon2D::CRegistInfo** m_polygon2DRegistInfos;
-		UShort                    m_polygon2DRegistInfoNum;
-		UShort                    m_polygon2DRegistInfoAllocPower;
-		UShort                    m_polygon2DRegistInfoAllocNum;
-		CPolygon3D::CRegistInfo** m_polygon3DRegistInfos;
-		UShort                    m_polygon3DRegistInfoNum;
-		UShort                    m_polygon3DRegistInfoAllocPower;
-		UShort                    m_polygon3DRegistInfoAllocNum;
-		CText2D::CRegistInfo**    m_text2DRegistInfos;
-		UShort                    m_text2DRegistInfoNum;
-		UShort                    m_text2DRegistInfoAllocPower;
-		UShort                    m_text2DRegistInfoAllocNum;
-		CText3D::CRegistInfo**    m_text3DRegistInfos;
-		UShort                    m_text3DRegistInfoNum;
-		UShort                    m_text3DRegistInfoAllocPower;
-		UShort                    m_text3DRegistInfoAllocNum;
-		CModel::CRegistInfo**     m_modelRegistInfos;
-		UShort                    m_modelRegistInfoNum;
-		UShort                    m_modelRegistInfoAllocPower;
-		UShort                    m_modelRegistInfoAllocNum;
+		_RNC_Polygon2D::CRegistInfo** m_polygon2DRegistInfos;
+		UShort                        m_polygon2DRegistInfoNum;
+		UShort                        m_polygon2DRegistInfoAllocPower;
+		UShort                        m_polygon2DRegistInfoAllocNum;
+		_RNC_Polygon3D::CRegistInfo** m_polygon3DRegistInfos;
+		UShort                        m_polygon3DRegistInfoNum;
+		UShort                        m_polygon3DRegistInfoAllocPower;
+		UShort                        m_polygon3DRegistInfoAllocNum;
+		_RNC_Text2D::CRegistInfo**    m_text2DRegistInfos;
+		UShort                        m_text2DRegistInfoNum;
+		UShort                        m_text2DRegistInfoAllocPower;
+		UShort                        m_text2DRegistInfoAllocNum;
+		_RNC_Text3D::CRegistInfo**    m_text3DRegistInfos;
+		UShort                        m_text3DRegistInfoNum;
+		UShort                        m_text3DRegistInfoAllocPower;
+		UShort                        m_text3DRegistInfoAllocNum;
+		_RNC_Model::CRegistInfo**     m_modelRegistInfos;
+		UShort                        m_modelRegistInfoNum;
+		UShort                        m_modelRegistInfoAllocPower;
+		UShort                        m_modelRegistInfoAllocNum;
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CDrawMgr                                ();
-	~CDrawMgr                               ();
-	void                     Init           (const UShort& priorityMax);
-	void                     Uninit         (void);
-	void                     Update         (void);
-	void                     StartDraw      (Device& device);
-	void                     EndDraw        (Device& device);
-	void                     Release        (void);
-	CPolygon2D::CRegistInfo* PutPolygon2D   (const UShort& priority, const bool& isOnScreen);
-	CPolygon3D::CRegistInfo* PutPolygon3D   (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	CText2D::CRegistInfo*    PutText2D      (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
-	CText3D::CRegistInfo*    PutText3D      (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	CModel::CRegistInfo*     PutModel       (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	const UShort&            GetPriorityMax (void) { return m_priorityMax; }
-	UShort                   GetPolygon2DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
-	UShort                   GetPolygon3DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
-	UShort                   GetModelNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
+	_RNC_DrawMgr                                ();
+	~_RNC_DrawMgr                               ();
+	void                         Init           (const UShort& priorityMax);
+	void                         Uninit         (void);
+	void                         Update         (void);
+	void                         StartDraw      (Device& device);
+	void                         EndDraw        (Device& device);
+	void                         Release        (void);
+	_RNC_Polygon2D::CRegistInfo* PutPolygon2D   (const UShort& priority, const bool& isOnScreen);
+	_RNC_Polygon3D::CRegistInfo* PutPolygon3D   (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	_RNC_Text2D::CRegistInfo*    PutText2D      (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
+	_RNC_Text3D::CRegistInfo*    PutText3D      (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	_RNC_Model::CRegistInfo*     PutModel       (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	const UShort&                GetPriorityMax (void) { return m_priorityMax; }
+	UShort                       GetPolygon2DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
+	UShort                       GetPolygon3DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
+	UShort                       GetModelNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
 
 private:
 	//========== [[[ 関数宣言 ]]]
-	void                     Draw                      (Device& device, CCamera* camera, const bool& isOnScreen);
-	void                     PutBasedRegistInfo        (CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
-	void                     ExecutionDraw             (Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx, const bool& isOnSreen);
-	void                     AssignVertexInfo          (void);
-	void                     ConvRegistInfoToDrawInfo  (CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
-	void                     ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
-	void                     ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
-	CPolygon2D::CRegistInfo* RegistPolygon2D           (CRegistInfoSum& resistInfo);
-	CPolygon3D::CRegistInfo* RegistPolygon3D           (CRegistInfoSum& resistInfo);
-	CText2D::CRegistInfo*    RegistText2D              (CRegistInfoSum& resistInfo);
-	CText3D::CRegistInfo*    RegistText3D              (CRegistInfoSum& resistInfo);
-	CModel::CRegistInfo*     RegistModel               (CRegistInfoSum& resistInfo);
-	bool                     CheckPriority             (const UShort& priority, const bool& isOnScreen) { return (priority >= 0 && priority < (isOnScreen ? SCREEN_PRIORITY_MAX : m_priorityMax)); }
+	void                         Draw                      (Device& device, CCamera* camera, const bool& isOnScreen);
+	void                         PutBasedRegistInfo        (CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen);
+	void                         ExecutionDraw             (Device& device, CCamera* camera, CDrawInfoSum*& drawInfo, Matrix& viewMtx, const bool& isOnSreen);
+	void                         AssignVertexInfo          (void);
+	void                         ConvRegistInfoToDrawInfo  (CRegistInfoSum& resistInfoSum, CDrawInfoSum& drawInfoSum, Device& device);
+	void                         ConvDrawInfoToVertex2DInfo(Vertex2D*& vtxs, CDrawInfoSum& drawInfoSum);
+	void                         ConvDrawInfoToVertex3DInfo(Vertex3D*& vtxs, CDrawInfoSum& drawInfoSum);
+	_RNC_Polygon2D::CRegistInfo* RegistPolygon2D           (CRegistInfoSum& resistInfo);
+	_RNC_Polygon3D::CRegistInfo* RegistPolygon3D           (CRegistInfoSum& resistInfo);
+	_RNC_Text2D::CRegistInfo*    RegistText2D              (CRegistInfoSum& resistInfo);
+	_RNC_Text3D::CRegistInfo*    RegistText3D              (CRegistInfoSum& resistInfo);
+	_RNC_Model::CRegistInfo*     RegistModel               (CRegistInfoSum& resistInfo);
+	bool                         CheckPriority             (const UShort& priority, const bool& isOnScreen) { return (priority >= 0 && priority < (isOnScreen ? SCREEN_PRIORITY_MAX : m_priorityMax)); }
 
 	//========== [[[ 変数宣言 ]]]
 	CRegistInfoSum* m_resistInfoSum;

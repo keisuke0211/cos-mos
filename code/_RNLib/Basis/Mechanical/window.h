@@ -10,11 +10,11 @@
 // クラス定義
 //****************************************
 // ウィンドウクラス
-class CWindow {
+class _RNC_Window {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CWindow             ();
-	~CWindow            ();
+	_RNC_Window         ();
+	~_RNC_Window        ();
 	void Init           (void);
 	void Uninit         (void);
 	void Update         (void);
@@ -43,7 +43,7 @@ public:
 
 private:
 	//========== [[[ 関数宣言 ]]]
-	int CreateD3DDevice(HINSTANCE hInstance);
+	int CreateD3DDevice(HINSTANCE& hInstance);
 	int GetTargetGPUAdapterIdx(void);
 
 	//========== [[[ 変数宣言 ]]]

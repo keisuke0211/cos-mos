@@ -127,7 +127,7 @@ void CGoalGate::Update(void)
 						Pos3D putPos = m_pos;
 						putPos.y += (m_pos.y / fabsf(m_pos.y)) * 20.0f;
 
-						RNLib::Text3D().Put(PRIORITY_UI, "GOAL", CText::ALIGNMENT::CENTER, 0, CMatrix::ConvPosToMtx(putPos))
+						RNLib::Text3D().Put(PRIORITY_UI, "GOAL", _RNC_Text::ALIGNMENT::CENTER, 0, RNLib::Matrix().ConvPosToMtx(putPos))
 							->SetSize(Size2D(8.0f, 8.0f))
 							->SetZTest(false)
 							->SetBillboard(true)
@@ -165,8 +165,8 @@ void CGoalGate::StateUpdate(void)
 	{
 		m_state = STATE::MAX;
 
-		float CountRateRot = MAX_ROT_SPEED * CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-		float CntEffRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		float CountRateRot = MAX_ROT_SPEED * RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		float CntEffRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
 		if (m_pos.y > 0)
 			m_rot.z += 0.6f - CountRateRot;
@@ -288,8 +288,8 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRate
 	if (m_bEntry == true && m_bStartGate == false)
 	{
 		//äÑçáåvéZ
-		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
-		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
+		*CountRateX = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
+		*CountRateY = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
 
 		if (m_bScale == false)
 		{
@@ -322,11 +322,11 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRate
 	else
 	{
 		//äÑçáåvéZ
-		*CountRateX = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-		*CountRateY = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		*CountRateX = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		*CountRateY = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 	}
 
-	*CountRateZ = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	*CountRateZ = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 }
 
 //========================================

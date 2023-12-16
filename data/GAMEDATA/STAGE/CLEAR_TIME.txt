@@ -8,8 +8,8 @@ SET_RECORD
 
 #ワールド - ステージ - ベストタイム
 #=====[ 1面 ]
-	RECORD = 0 - 0 - 19.05
-	RECORD = 0 - 1 - 60.00
+	RECORD = 0 - 0 - 5.81
+	RECORD = 0 - 1 - 19.23
 	RECORD = 0 - 2 - 60.00
 	RECORD = 0 - 3 - 60.00
 	RECORD = 0 - 4 - 60.00

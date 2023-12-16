@@ -69,7 +69,7 @@ void CGhost::Update(void) {
 		m_nMagCnt = MAX_MAG_COLOR;
 	}
 	// äÑçáåvéZ 
-	float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_nMagCnt, MAX_MAG_COLOR);
+	float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_nMagCnt, MAX_MAG_COLOR);
 
 	m_color.a = 255 * fCountRate;
 

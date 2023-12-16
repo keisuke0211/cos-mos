@@ -157,7 +157,7 @@ void CCamera::Update(void) {
 	// [[[ 振動 ]]]
 	if (m_vibForce >= VIB_MIN) {
 		if (RNLib::Count().GetBlinkF2()) {
-			float fAngle = -D3DX_PI + fRand() * D3DX_PI_DOUBLE;
+			float fAngle = -D3DX_PI + RNLib::Number().GetRandomFloat(1.0f) * D3DX_PI_DOUBLE;
 			m_posVib.x = sinf(fAngle) * m_vibForce;
 			m_posVib.y = cosf(fAngle) * m_vibForce;
 			m_vibForce *= VIB_DAMPING;
@@ -186,8 +186,8 @@ void CCamera::Update(void) {
 	// 回転軸が視点   > 注視点位置を算出
 	// 回転軸が注視点 > 視点位置  を算出
 	m_isPivotToPosV ?
-		m_posR = m_posV + CGeometry::FindRotVec(m_rot) * m_dist :
-		m_posV = m_posR - CGeometry::FindRotVec(m_rot) * m_dist;
+		m_posR = m_posV + RNLib::Geometry().FindRotVec(m_rot) * m_dist :
+		m_posV = m_posR - RNLib::Geometry().FindRotVec(m_rot) * m_dist;
 
 	// [[[ ラジアン推移 ]]]
 	m_radian = (m_radian * INIT_RANS_RATE_OPP) + (m_radianGoal * INIT_RANS_RATE);
@@ -261,7 +261,7 @@ void CCamera::StartRendering(Device& device) {
 
 		// 振動位置に変動がある時、
 		if (m_posVib != INITD3DXVECTOR3) {
-			float angle = CGeometry::FindAngleXZ(m_posV, m_posR) - D3DX_PI_HALF;
+			float angle = RNLib::Geometry().FindAngleXZ(m_posV, m_posR) - D3DX_PI_HALF;
 			Pos3D addPos;
 			addPos.x = sinf(angle) * m_posVib.x;
 			addPos.z = cosf(angle) * m_posVib.x;
@@ -318,8 +318,8 @@ void CCamera::SetPosVAndPosR(const Pos3D& posV, const Pos3D& posR) {
 
 	m_posV = posV;
 	m_posR = posR;
-	m_dist = CGeometry::FindDistance(m_posV, m_posR);
-	m_rot  = m_isPivotToPosV ? CGeometry::FindRot(m_posV, m_posR) : CGeometry::FindRot(m_posR, m_posV);
+	m_dist = RNLib::Geometry().FindDistance(m_posV, m_posR);
+	m_rot  = m_isPivotToPosV ? RNLib::Geometry().FindRot(m_posV, m_posR) : RNLib::Geometry().FindRot(m_posR, m_posV);
 }
 
 //========================================

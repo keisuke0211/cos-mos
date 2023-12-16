@@ -6,6 +6,8 @@
 //========================================
 #pragma once
 
+#include "../Calculation/number.h"
+
 //****************************************
 // É}ÉNÉçíËã`
 //****************************************
@@ -32,26 +34,15 @@ public:
 
 	// ê›íË
 	template <class R, class G, class B, class A>Color(const R& setR, const G& setG, const B& setB, const A& setA) {
-		if (!(typeid(R) == typeid(int) || typeid(R) == typeid(UInt) || typeid(R) == typeid(short) || typeid(R) == typeid(UShort) || typeid(R) == typeid(long) || typeid(R) == typeid(ULong) || typeid(R) == typeid(float))) {
-			assert(false); 
-			return; 
-		}
-		if (!(typeid(G) == typeid(int) || typeid(G) == typeid(UInt) || typeid(G) == typeid(short) || typeid(G) == typeid(UShort) || typeid(G) == typeid(long) || typeid(G) == typeid(ULong) || typeid(G) == typeid(float))) {
-			assert(false);
-			return;
-		}
-		if (!(typeid(B) == typeid(int) || typeid(B) == typeid(UInt) || typeid(B) == typeid(short) || typeid(B) == typeid(UShort) || typeid(B) == typeid(long) || typeid(B) == typeid(ULong) || typeid(B) == typeid(float))) {
-			assert(false); 
-			return;
-		}
-		if (!(typeid(A) == typeid(int) || typeid(A) == typeid(UInt) || typeid(A) == typeid(short) || typeid(A) == typeid(UShort) || typeid(A) == typeid(long) || typeid(A) == typeid(ULong) || typeid(A) == typeid(float))) {
-			assert(false);
-			return;
-		}
-		UShort convR = (UShort)setR;
-		UShort convG = (UShort)setG;
-		UShort convB = (UShort)setB;
-		UShort convA = (UShort)setA;
+		
+		if (!_RNC_Number::FindIsNumber(setR)) { assert(false); return; }
+		if (!_RNC_Number::FindIsNumber(setG)) { assert(false); return; }
+		if (!_RNC_Number::FindIsNumber(setB)) { assert(false); return; }
+		if (!_RNC_Number::FindIsNumber(setA)) { assert(false); return; }
+		ULong convR = (ULong)setR;
+		ULong convG = (ULong)setG;
+		ULong convB = (ULong)setB;
+		ULong convA = (ULong)setA;
 		convR = convR > 255 ? 255 : convR;
 		convG = convG > 255 ? 255 : convG;
 		convB = convB > 255 ? 255 : convB;

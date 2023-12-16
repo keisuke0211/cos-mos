@@ -13,15 +13,15 @@
 // クラス定義
 //****************************************
 // 光3Dクラス
-class CLight3D {
+class _RNC_Light3D {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CLight3D();
-	~CLight3D();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	void SetCol(Color col);
+	_RNC_Light3D();
+	~_RNC_Light3D();
+	void  Init(void);
+	void  Uninit(void);
+	void  Update(void);
+	void  SetCol(Color col);
 	Color GetCol(void) { return m_col; }
 	// 環境光調整
 	void         SetNum          (int nNum);

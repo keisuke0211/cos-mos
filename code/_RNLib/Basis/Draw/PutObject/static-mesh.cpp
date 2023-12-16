@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CStaticMesh::CStaticMesh() {
+_RNC_StaticMesh::_RNC_StaticMesh() {
 
 	m_meshes         = NULL;
 	m_meshNums       = 0;
@@ -26,24 +26,24 @@ CStaticMesh::CStaticMesh() {
 //========================================
 // デストラクタ
 //========================================
-CStaticMesh::~CStaticMesh() {
+_RNC_StaticMesh::~_RNC_StaticMesh() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CStaticMesh::Init(const UShort& priorityMax) {
+void _RNC_StaticMesh::Init(const UShort& priorityMax) {
 
-	CMemory::Alloc(&m_meshes, priorityMax);
-	CMemory::Alloc(&m_meshNums, priorityMax);
+	RNLib::Memory().Alloc(&m_meshes, priorityMax);
+	RNLib::Memory().Alloc(&m_meshNums, priorityMax);
 	for (int cnt = 0; cnt < priorityMax; cnt++) {
 		m_meshes  [cnt] = NULL;
 		m_meshNums[cnt] = 0;
 	}
-	CMemory::Alloc(&m_meshesScreen, CDrawMgr::SCREEN_PRIORITY_MAX);
-	CMemory::Alloc(&m_meshNumsScreen, CDrawMgr::SCREEN_PRIORITY_MAX);
-	for (int cnt = 0; cnt < CDrawMgr::SCREEN_PRIORITY_MAX; cnt++) {
+	RNLib::Memory().Alloc(&m_meshesScreen, _RNC_DrawMgr::SCREEN_PRIORITY_MAX);
+	RNLib::Memory().Alloc(&m_meshNumsScreen, _RNC_DrawMgr::SCREEN_PRIORITY_MAX);
+	for (int cnt = 0; cnt < _RNC_DrawMgr::SCREEN_PRIORITY_MAX; cnt++) {
 		m_meshesScreen  [cnt] = NULL;
 		m_meshNumsScreen[cnt] = 0;
 	}
@@ -52,7 +52,7 @@ void CStaticMesh::Init(const UShort& priorityMax) {
 //========================================
 // 終了処理
 //========================================
-void CStaticMesh::Uninit(void) {
+void _RNC_StaticMesh::Uninit(void) {
 
 	// 解放処理
 	Release();
@@ -61,14 +61,14 @@ void CStaticMesh::Uninit(void) {
 //========================================
 // 更新処理
 //========================================
-void CStaticMesh::Update(void) {
+void _RNC_StaticMesh::Update(void) {
 
 }
 
 //========================================
 // 描画処理
 //========================================
-void CStaticMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
+void _RNC_StaticMesh::Draw(Device& device, const UShort& priority, const short& cameraID, const bool& isCameraClipping, const bool& isOnScreen) {
 
 	// スクリーンかに応じて変数を参照
 	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
@@ -97,23 +97,23 @@ void CStaticMesh::Draw(Device& device, const UShort& priority, const short& came
 //========================================
 // 解放処理
 //========================================
-void CStaticMesh::Release(void) {
+void _RNC_StaticMesh::Release(void) {
 
 	const UShort& priorityMax = RNLib::DrawMgr().GetPriorityMax();
 	for (int cnt = 0; cnt < priorityMax; cnt++)
-		CMemory::ReleaseDouble(&m_meshes[cnt], m_meshNums[cnt]);
-	CMemory::Release(&m_meshes);
-	CMemory::Release(&m_meshNums);
-	for (int cnt = 0; cnt < CDrawMgr::SCREEN_PRIORITY_MAX; cnt++)
-		CMemory::ReleaseDouble(&m_meshesScreen[cnt], m_meshNumsScreen[cnt]);
-	CMemory::Release(&m_meshesScreen);
-	CMemory::Release(&m_meshNumsScreen);
+		RNLib::Memory().ReleaseDouble(&m_meshes[cnt], m_meshNums[cnt]);
+	RNLib::Memory().Release(&m_meshes);
+	RNLib::Memory().Release(&m_meshNums);
+	for (int cnt = 0; cnt < _RNC_DrawMgr::SCREEN_PRIORITY_MAX; cnt++)
+		RNLib::Memory().ReleaseDouble(&m_meshesScreen[cnt], m_meshNumsScreen[cnt]);
+	RNLib::Memory().Release(&m_meshesScreen);
+	RNLib::Memory().Release(&m_meshNumsScreen);
 }
 
 //========================================
 // 削除処理
 //========================================
-void CStaticMesh::Delete(const bool& isOnScreen) {
+void _RNC_StaticMesh::Delete(const bool& isOnScreen) {
 
 	// スクリーンかに応じて変数を参照
 	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
@@ -122,10 +122,10 @@ void CStaticMesh::Delete(const bool& isOnScreen) {
 	if (meshNums == NULL)
 		return;
 
-	const UShort& priorityMax = isOnScreen ? CDrawMgr::SCREEN_PRIORITY_MAX : RNLib::DrawMgr().GetPriorityMax();
+	const UShort& priorityMax = isOnScreen ? _RNC_DrawMgr::SCREEN_PRIORITY_MAX : RNLib::DrawMgr().GetPriorityMax();
 	for (int cnt = 0; cnt < priorityMax; cnt++) {
 		for (int cntMesh = 0; cntMesh < meshNums[cnt]; cntMesh++) {
-			CMemory::Release(&meshes[cnt][cntMesh]);
+			RNLib::Memory().Release(&meshes[cnt][cntMesh]);
 		}
 		meshNums[cnt] = 0;
 	}
@@ -134,13 +134,13 @@ void CStaticMesh::Delete(const bool& isOnScreen) {
 //========================================
 // モデル設定処理
 //========================================
-void CStaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const Color& col, const bool& isOnScreen) {
-	SetModel(priority, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, col, isOnScreen);
+void _RNC_StaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+	SetModel(priority, RNLib::Matrix().ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, col, isOnScreen);
 }
-void CStaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const Color& col, const bool& isOnScreen) {
-	SetModel(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, col, isOnScreen);
+void _RNC_StaticMesh::SetModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+	SetModel(priority, RNLib::Matrix().ConvPosRotToMtx(pos, rot), modelIdx, col, isOnScreen);
 }
-void CStaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const Color& col, const bool& isOnScreen) {
+void _RNC_StaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const Color& col, const bool& isOnScreen) {
 	
 	// スクリーンかに応じて変数を参照
 	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
@@ -150,7 +150,7 @@ void CStaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const shor
 		return;
 
 	// モデルデータを取得
-	const CModel::CData& data = RNLib::Model().GetData(modelIdx);
+	const _RNC_Model::CData& data = RNLib::Model().GetData(modelIdx);
 
 	for (int cntMat = 0; cntMat < data.m_matNum; cntMat++) {
 
@@ -177,13 +177,13 @@ void CStaticMesh::SetModel(const UShort& priority, const Matrix& mtx, const shor
 //========================================
 // マテリアルモデル設定処理
 //========================================
-void CStaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
-	SetMaterialModel(priority, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, texIdx, col, isOnScreen);
+void _RNC_StaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	SetMaterialModel(priority, RNLib::Matrix().ConvPosRotScaleToMtx(pos, rot, scale), modelIdx, texIdx, col, isOnScreen);
 }
-void CStaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
-	SetMaterialModel(priority, CMatrix::ConvPosRotToMtx(pos, rot), modelIdx, texIdx, col, isOnScreen);
+void _RNC_StaticMesh::SetMaterialModel(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+	SetMaterialModel(priority, RNLib::Matrix().ConvPosRotToMtx(pos, rot), modelIdx, texIdx, col, isOnScreen);
 }
-void CStaticMesh::SetMaterialModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
+void _RNC_StaticMesh::SetMaterialModel(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const Color& col, const bool& isOnScreen) {
 	
 	// スクリーンかに応じて変数を参照
 	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
@@ -213,7 +213,7 @@ void CStaticMesh::SetMaterialModel(const UShort& priority, const Matrix& mtx, co
 //========================================
 // メッシュを新規作成
 //========================================
-void CStaticMesh::NewCreateMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const short& matIdx, const Color& col, const bool& isOnScreen) {
+void _RNC_StaticMesh::NewCreateMesh(const UShort& priority, const Matrix& mtx, const short& modelIdx, const short& texIdx, const short& matIdx, const Color& col, const bool& isOnScreen) {
 
 	// スクリーンかに応じて変数を参照
 	CMesh***& meshes   = isOnScreen ? m_meshesScreen : m_meshes;
@@ -221,7 +221,7 @@ void CStaticMesh::NewCreateMesh(const UShort& priority, const Matrix& mtx, const
 
 	// メッシュを再確保
 	const UShort oldNum = meshNums[priority];
-	CMemory::ReAllocDouble(&meshes[priority], oldNum, ++meshNums[priority]);
+	RNLib::Memory().ReAllocDouble(&meshes[priority], oldNum, ++meshNums[priority]);
 
 	// メッシュを設定
 	meshes[priority][oldNum]->m_texIdx = texIdx;
@@ -237,7 +237,7 @@ void CStaticMesh::NewCreateMesh(const UShort& priority, const Matrix& mtx, const
 //========================================
 // コンストラクタ
 //========================================
-CStaticMesh::CMesh::CMesh() {
+_RNC_StaticMesh::CMesh::CMesh() {
 
 	m_texIdx     = NONEDATA;
 	m_clippingID = NONEDATA;
@@ -250,7 +250,7 @@ CStaticMesh::CMesh::CMesh() {
 //========================================
 // デストラクタ
 //========================================
-CStaticMesh::CMesh::~CMesh() {
+_RNC_StaticMesh::CMesh::~CMesh() {
 
 	if (m_vtxBuff != NULL) {
 		m_vtxBuff->Release();
@@ -266,7 +266,7 @@ CStaticMesh::CMesh::~CMesh() {
 //========================================
 // 描画処理
 //========================================
-void CStaticMesh::CMesh::Draw(Device& device) {
+void _RNC_StaticMesh::CMesh::Draw(Device& device) {
 
 	// 頂点バッファをデータストリームに設定
 	device->SetStreamSource(0, m_vtxBuff, 0, sizeof(Vertex3D));
@@ -284,7 +284,7 @@ void CStaticMesh::CMesh::Draw(Device& device) {
 //========================================
 // メッシュ設定処理
 //========================================
-bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, const Color& col, const short& texIdx, const short& matIdx) {
+bool _RNC_StaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, const Color& col, const short& texIdx, const short& matIdx) {
 
 	// デバイスを取得
 	Device& device = RNLib::Window().GetD3DDevice();
@@ -294,14 +294,14 @@ bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, cons
 	const ULong idxNumOld = m_idxNum;
 
 	// モデルデータを取得
-	CModel::CData& modelData = RNLib::Model().GetData(modelIdx);
-	CModel::CData::MatData matData = {};
+	_RNC_Model::CData& modelData = RNLib::Model().GetData(modelIdx);
+	_RNC_Model::CData::MatData matData = {};
 	if (matIdx != NONEDATA) {
 		matData = modelData.m_matDatas[matIdx];
 	}
 
 	// 追加する頂点情報とインデックス情報を取得
-	CModel::Vertex3DInfo* addVtxes = NULL;
+	_RNC_Model::Vertex3DInfo* addVtxes = NULL;
 	ULong   addVtxNum = (matIdx == NONEDATA) ? modelData.m_vtxNum : modelData.m_matDatas[matIdx].vtxNum;
 	RNLib::Model().StoreVtxInfo(mtx, modelIdx, &addVtxes, matIdx);
 	ULong*& addIdxes  = (matIdx == NONEDATA) ? modelData.m_idxes : modelData.m_matDatas[matIdx].idxes;
@@ -314,7 +314,7 @@ bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, cons
 	if (m_vtxNum > USHRT_MAX || m_idxNum > USHRT_MAX || m_vtxNum <= 0 || m_idxNum <= 0) {
 
 		// 追加する頂点情報を解放
-		CMemory::Release(&addVtxes);
+		RNLib::Memory().Release(&addVtxes);
 
 		return false;
 	}
@@ -351,7 +351,7 @@ bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, cons
 		}
 
 		// 追加する頂点情報を解放
-		CMemory::Release(&addVtxes);
+		RNLib::Memory().Release(&addVtxes);
 
 		// 頂点バッファをアンロック
 		if (m_vtxBuff != NULL)
@@ -408,14 +408,14 @@ bool CStaticMesh::CMesh::SetModel(const Matrix& mtx, const short& modelIdx, cons
 //========================================
 // メッシュ取得処理
 //========================================
-UShort CStaticMesh::GetMeshNum(void) {
+UShort _RNC_StaticMesh::GetMeshNum(void) {
 
 	const UShort priorityMax = RNLib::DrawMgr().GetPriorityMax();
 
 	UShort totalMeshNum = 0;
 	for (int cnt = 0; cnt < priorityMax; cnt++)
 		totalMeshNum += m_meshNums[cnt];
-	for (int cnt = 0; cnt < CDrawMgr::SCREEN_PRIORITY_MAX; cnt++)
+	for (int cnt = 0; cnt < _RNC_DrawMgr::SCREEN_PRIORITY_MAX; cnt++)
 		totalMeshNum += m_meshNumsScreen[cnt];
 
 	return totalMeshNum;

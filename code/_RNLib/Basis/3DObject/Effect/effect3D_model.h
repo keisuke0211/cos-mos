@@ -15,9 +15,9 @@
 class CEffect3D_Model : CEffect3D_Base {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	CEffect3D_Model(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const CEase::TYPE& easeType, const CDrawState::ALPHA_BLEND_MODE& alphaBlendType);
+	CEffect3D_Model (const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType);
 	~CEffect3D_Model();
-	void Update(void);
+	void Update     (void);
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]

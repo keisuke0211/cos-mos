@@ -16,7 +16,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CText::CText() {
+_RNC_Text::_RNC_Text() {
 
 	m_defaultFontData = {};
 	m_fontDatas       = NULL;
@@ -26,14 +26,14 @@ CText::CText() {
 //========================================
 // デストラクタ
 //========================================
-CText::~CText() {
+_RNC_Text::~_RNC_Text() {
 	
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CText::Init(void) {
+void _RNC_Text::Init(void) {
 
 	// デフォルトフォントデータを作成
 	m_defaultFontData.texIdx    = RNLib::Texture().Load("RNData\\Texture\\Font.png");
@@ -48,23 +48,23 @@ void CText::Init(void) {
 //========================================
 // 終了処理
 //========================================
-void CText::Uninit(void) {
+void _RNC_Text::Uninit(void) {
 
 	// フォント情報のポインタのメモリ解放
-	CMemory::Release(&m_fontDatas);
+	RNLib::Memory().Release(&m_fontDatas);
 }
 
 //========================================
 // 更新処理
 //========================================
-void CText::Update(void) {
+void _RNC_Text::Update(void) {
 
 }
 
 //========================================
 // フォントの読み込み処理
 //========================================
-void CText::LoadFont(const char* loadPath) {
+void _RNC_Text::LoadFont(const char* loadPath) {
 
 	if (!RNLib::File().OpenLoadFile(loadPath))
 		return;
@@ -74,8 +74,8 @@ void CText::LoadFont(const char* loadPath) {
 		if (RNLib::File().CheckIdentifier("fontDatas{")) {
 
 			// フォント数を読み込み
-			RNLib::File().Scan(CFile::SCAN::USHORT, &m_fontNum);
-			CMemory::Alloc(&m_fontDatas, m_fontNum);
+			RNLib::File().Scan(_RNC_File::SCAN::USHORT, &m_fontNum);
+			RNLib::Memory().Alloc(&m_fontDatas, m_fontNum);
 
 			UShort fontCount = 0;
 			while (RNLib::File().SearchLoop("}")) {
@@ -88,10 +88,10 @@ void CText::LoadFont(const char* loadPath) {
 					}
 
 					while (RNLib::File().SearchLoop("}")) {
-						RNLib::File().Scan(CFile::SCAN::TEXIDX,&m_fontDatas[fontCount].texIdx   , "texIdx");
-						RNLib::File().Scan(CFile::SCAN::USHORT,&m_fontDatas[fontCount].startCode, "startCode");
-						RNLib::File().Scan(CFile::SCAN::USHORT,&m_fontDatas[fontCount].ptnX     , "ptnX");
-						RNLib::File().Scan(CFile::SCAN::USHORT,&m_fontDatas[fontCount].ptnY     , "ptnY");
+						RNLib::File().Scan(_RNC_File::SCAN::TEXIDX,&m_fontDatas[fontCount].texIdx   , "texIdx");
+						RNLib::File().Scan(_RNC_File::SCAN::USHORT,&m_fontDatas[fontCount].startCode, "startCode");
+						RNLib::File().Scan(_RNC_File::SCAN::USHORT,&m_fontDatas[fontCount].ptnX     , "ptnX");
+						RNLib::File().Scan(_RNC_File::SCAN::USHORT,&m_fontDatas[fontCount].ptnY     , "ptnY");
 					}
 
 					if (++fontCount > m_fontNum)
@@ -114,11 +114,11 @@ void CText::LoadFont(const char* loadPath) {
 //========================================
 // フォントの幅/高さ取得
 //========================================
-float CText::GetFontWidth(const short& fontIdx) {
+float _RNC_Text::GetFontWidth(const short& fontIdx) {
 	
 	return RNLib::Texture().GetWidth(m_fontDatas[fontIdx].texIdx) / m_fontDatas[fontIdx].ptnX;
 }
-float CText::GetFontHeight(const short& fontIdx) {
+float _RNC_Text::GetFontHeight(const short& fontIdx) {
 
 	return RNLib::Texture().GetHeight(m_fontDatas[fontIdx].texIdx) / m_fontDatas[fontIdx].ptnY;
 }

@@ -115,13 +115,16 @@ struct Vertex3D {
 // ç\ë¢ëÃïœä∑
 //****************************************
 // Num
+typedef unsigned char           UChar;
 typedef unsigned short          UShort;
 typedef unsigned int            UInt;
 typedef unsigned long           ULong;
+typedef const char              CChar;
 typedef const short             CShort;
 typedef const int               CInt;
 typedef const long              CLong;
 typedef const float             CFloat;
+typedef const unsigned char     CUChar;
 typedef const unsigned short    CUShort;
 typedef const unsigned int      CUInt;
 typedef const unsigned long     CULong;

@@ -139,7 +139,7 @@ bool CTransition::Open(const TYPE& type, const UShort& time) {
 	m_stateCounter = 0;
 	m_state = STATE::OPEN;
 	m_time = time;
-	m_startGearAngle = D3DX_PI * fRand();
+	m_startGearAngle = D3DX_PI * RNLib::Number().GetRandomFloat(1.0f);
 
 	return true;
 }

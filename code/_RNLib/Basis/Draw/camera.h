@@ -104,8 +104,8 @@ private:
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	static void SetUpProjectionMatrix(Device& device, const Scale2D& scale, const float& radian);
-	void ProcessState(const PROCESS process);
-	void SetState(const STATE state);
+	void        ProcessState         (const PROCESS process);
+	void        SetState             (const STATE state);
 
 	//========== [[[ •Ï”‚ÌéŒ¾ ]]]
 	static UShort   ms_IDCount;

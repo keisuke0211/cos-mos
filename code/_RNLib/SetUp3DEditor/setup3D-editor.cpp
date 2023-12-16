@@ -43,7 +43,7 @@ CSetUp3DEditor::CSetUp3DEditor() {
 //========================================
 CSetUp3DEditor::~CSetUp3DEditor() {
 
-	CMemory::Release(&m_editPath);
+	RNLib::Memory().Release(&m_editPath);
 }
 
 //========================================
@@ -74,7 +74,7 @@ void CSetUp3DEditor::Update(void) {
 	RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, INITPOS3D, Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
 		->SetSize(Size2D(90.0f, 90.0f))
 		->SetTexUV(
-			RNLib::DefaultData().GetTextureIdx(CDefaultData::TEXTURE::GRID),
+			RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::GRID),
 			Pos2D(0.0f, 0.0f),
 			Pos2D(9.0f, 0.0f),
 			Pos2D(0.0f, 9.0f),
@@ -86,7 +86,7 @@ void CSetUp3DEditor::Update(void) {
 	{// [[[ 操作 ]]]
 		// 新規作成
 		if (RNLib::Input().GetKeyTrigger(DIK_1)) {
-			CMemory::Release(&m_editPath);
+			RNLib::Memory().Release(&m_editPath);
 			if (RNLib::File().GetSelectSaveFileName(&m_editPath, "", ".txt")) {
 				RNLib::SetUp3D().LoadEditData("RNData\\SetUp3D\\Capsule.txt");
 				RNLib::SetUp3D().SaveEditData(m_editPath);
@@ -95,7 +95,7 @@ void CSetUp3DEditor::Update(void) {
 
 		// 読み込み
 		if (RNLib::Input().GetKeyTrigger(DIK_2)) {
-			CMemory::Release(&m_editPath);
+			RNLib::Memory().Release(&m_editPath);
 			if (RNLib::File().GetSelectOpenFileName(&m_editPath, "", ".txt")) {
 				RNLib::SetUp3D().LoadEditData(m_editPath);
 			}
@@ -116,7 +116,7 @@ void CSetUp3DEditor::Update(void) {
 
 		// 新規作成
 		if (RNLib::Input().GetKeyTrigger(DIK_4)) {
-			CMemory::Release(&m_motionPath);
+			RNLib::Memory().Release(&m_motionPath);
 			if (RNLib::File().GetSelectSaveFileName(&m_motionPath, "", ".txt")) {
 				RNLib::Motion3D().LoadEditData("RNData\\Motion3D\\CapsuleStretch.txt");
 				RNLib::Motion3D().SaveEditData(m_motionPath);
@@ -125,7 +125,7 @@ void CSetUp3DEditor::Update(void) {
 
 		// 読み込み
 		if (RNLib::Input().GetKeyTrigger(DIK_5)) {
-			CMemory::Release(&m_motionPath);
+			RNLib::Memory().Release(&m_motionPath);
 			if (RNLib::File().GetSelectOpenFileName(&m_motionPath, "", ".txt")) {
 				RNLib::Motion3D().LoadEditData(m_motionPath);
 			}
@@ -212,9 +212,9 @@ void CSetUp3DEditor::Update(void) {
 			countResult = m_slitherCounter;
 		}
 
-		Rot3D rot = -m_slither + (m_slither * 2.0f * CEase::Easing(CEase::TYPE::INOUT_SINE, countResult, slitherTimeHalf));
+		Rot3D rot = -m_slither + (m_slither * 2.0f * RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, countResult, slitherTimeHalf));
 
-		const CSetUp3D::CData& setUp = RNLib::SetUp3D().GetData(EDITDATA);
+		const _RNC_SetUp3D::CData& setUp = RNLib::SetUp3D().GetData(EDITDATA);
 		if (&setUp != NULL) {
 			for (short cntBone = 0; cntBone < setUp.m_boneDataNum; cntBone++) {
 				m_doll->GetBoneState(cntBone).SetAddRot(rot);
@@ -253,7 +253,7 @@ void CSetUp3DEditor::Update(void) {
 			if (RNLib::SetUp3D().GetData(EDITDATA).m_boneDatas[boneIdx].modelIdx != NONEDATA) {
 
 				// モデルデータを取得
-				const CModel::CData& modelData = RNLib::Model().GetData(RNLib::SetUp3D().GetData(EDITDATA).m_boneDatas[boneIdx].modelIdx);
+				const _RNC_Model::CData& modelData = RNLib::Model().GetData(RNLib::SetUp3D().GetData(EDITDATA).m_boneDatas[boneIdx].modelIdx);
 
 				// マテリアル情報に対するポインタを取得
 				const D3DXMATERIAL* mats = (D3DXMATERIAL*)modelData.m_matBuff->GetBufferPointer();

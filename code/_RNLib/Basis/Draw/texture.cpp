@@ -49,7 +49,7 @@ LPDIRECT3DTEXTURE9 CloneTexture(LPDIRECT3DTEXTURE9 sourceTexture, LPDIRECT3DDEVI
 //========================================
 // [静的]テクスチャのデータをコピー
 //========================================
-void CTexture::CopyTextureData(LPDIRECT3DTEXTURE9& srcTexture, LPDIRECT3DTEXTURE9& destTexture) {
+void _RNC_Texture::CopyTextureData(LPDIRECT3DTEXTURE9& srcTexture, LPDIRECT3DTEXTURE9& destTexture) {
 
 	// コピー先テクスチャを解放
 	if (srcTexture != NULL) {
@@ -67,7 +67,7 @@ void CTexture::CopyTextureData(LPDIRECT3DTEXTURE9& srcTexture, LPDIRECT3DTEXTURE
 //========================================
 // コンストラクタ
 //========================================
-CTexture::CTexture() {
+_RNC_Texture::_RNC_Texture() {
 
 	m_texs = NULL;	// テクスチャへのポインタ
 }
@@ -75,21 +75,21 @@ CTexture::CTexture() {
 //========================================
 // デストラクタ
 //========================================
-CTexture::~CTexture() {
+_RNC_Texture::~_RNC_Texture() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CTexture::Init(void) {
+void _RNC_Texture::Init(void) {
 	
 }
 
 //========================================
 // 終了処理
 //========================================
-void CTexture::Uninit(void) {
+void _RNC_Texture::Uninit(void) {
 
 	// テクスチャ解放
 	if (m_texs != NULL) {
@@ -107,14 +107,14 @@ void CTexture::Uninit(void) {
 //========================================
 // 更新処理
 //========================================
-void CTexture::Update(void) {
+void _RNC_Texture::Update(void) {
 
 }
 
 //========================================
 // 読み込み処理
 //========================================
-short CTexture::Load(const char* loadPath) {
+short _RNC_Texture::Load(const char* loadPath) {
 
 	UShort numOld = m_num;
 	short idx = NONEDATA;
@@ -122,7 +122,7 @@ short CTexture::Load(const char* loadPath) {
 	if (CRegist::Load(loadPath, idx))
 	{// 読み込み成功
 		// テクスチャのメモリ再確保
-		CMemory::ReAlloc(&m_texs, numOld, m_num);
+		RNLib::Memory().ReAlloc(&m_texs, numOld, m_num);
 		m_texs[idx] = NULL;
 
 		// テクスチャの読み込み
@@ -133,7 +133,7 @@ short CTexture::Load(const char* loadPath) {
 			RNLib::Window().Message_ERROR(CreateText("テクスチャの読み込みに失敗しました。\n%s", loadPath));
 
 			// テクスチャのメモリリセット
-			CMemory::ReAlloc(&m_texs, m_num, numOld);
+			RNLib::Memory().ReAlloc(&m_texs, m_num, numOld);
 
 			// 読み込み済パスのメモリリセット
 			ReAllocLoadPath(numOld);
@@ -152,7 +152,7 @@ short CTexture::Load(const char* loadPath) {
 // 設定処理
 // Author:RIKU NISHIMURA
 //========================================
-void CTexture::Set(Device pDevice, int nTex) {
+void _RNC_Texture::Set(Device pDevice, int nTex) {
 	if (nTex < 0 || nTex >= m_num)
 	{// テクスチャ番号が範囲外の時、
 		// テクスチャの設定
@@ -168,6 +168,6 @@ void CTexture::Set(Device pDevice, int nTex) {
 // 今のパターン番号を取得
 // Author:RIKU NISHIMURA
 //========================================
-int CTexture::GetCrntPtn(int nPtnX, int nPtnY, int nSpan) {
+int _RNC_Texture::GetCrntPtn(int nPtnX, int nPtnY, int nSpan) {
 	return (RNLib::Count().GetCount() % ((nPtnX * nPtnY) * nSpan)) / nSpan;
 }

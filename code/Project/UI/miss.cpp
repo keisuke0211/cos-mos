@@ -55,7 +55,7 @@ void CMiss::Update(void) {
 	m_nMagCnt++;	// カウントを増加
 
 	// 割合計算 
-	float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_nMagCnt, MAX_MAG_CNT);
+	float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_nMagCnt, MAX_MAG_CNT);
 
 	RNLib::Polygon3D().Put(PRIORITY_UI, Manager::GetMainCamera()->GetPosR(), INITROT3D)
 		->SetSize(MAX_SCALE.x * fCountRate, MAX_SCALE.y * fCountRate)

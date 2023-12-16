@@ -110,7 +110,7 @@ void Manager::Update(void) {
 		RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
 			->SetTexUV(m_camera)
 			->SetSize(windowWidth, windowHeight)
-			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
 	// 予約されている時、遷移がモード設定待ちならモードを設定する

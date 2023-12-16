@@ -72,7 +72,7 @@ void CCoinUI::Update(void) {
 			->SetTex(m_TexIdx[0]);
 
 		//”
-		RNLib::Text2D().Put(PRIORITY_UI, CreateText("%d", CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x, m_pos.y),0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, CreateText("%d", CCoin::GetNumAll() + CCoin::GetNum()), _RNC_Text::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x, m_pos.y),0.0f)
 			->SetSize(Size2D(m_scale.x * 0.7f, m_scale.y* 0.7f))
 			->SetCol(INITCOLOR);
 	}
@@ -85,7 +85,7 @@ void CCoinUI::Update(void) {
 			->SetZTest(false);
 
 		//”
-		RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d", CCoin::GetNumAll() + CCoin::GetNum()), CText::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), m_rot)
+		RNLib::Text3D().Put(PRIORITY_UI, CreateText("%d", CCoin::GetNumAll() + CCoin::GetNum()), _RNC_Text::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), m_rot)
 			->SetSize(Size2D(3.0f, 3.0f))
 			->SetCol(INITCOLOR)
 			->SetZTest(false);

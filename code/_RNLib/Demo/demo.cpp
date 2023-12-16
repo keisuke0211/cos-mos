@@ -69,7 +69,7 @@ void CDemo::Init(void) {
 void CDemo::Uninit(void) {
 
 	for (int cntPlayer = 0; cntPlayer < (int)PLAYER::MAX; cntPlayer++)
-		CMemory::Release(&m_players[cntPlayer]);
+		RNLib::Memory().Release(&m_players[cntPlayer]);
 }
 
 //========================================

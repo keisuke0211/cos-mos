@@ -1,6 +1,6 @@
 #pragma once
 
-#if 1
+#if 0
 
 // ../_RNLib/
 #include "../_RNLib/RNmain.h"
@@ -39,6 +39,6 @@
 #include "../_RNLib/Basis/Mechanical/sound.h"
 #include "../_RNLib/Basis/Mechanical/window.h"
 #include "../_RNLib/Basis/default-data.h"
-#include "../_RNLib/Basis/setting.h"
+//#include "../_RNLib/Basis/options.h"
 
 #endif

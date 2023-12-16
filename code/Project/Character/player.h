@@ -112,7 +112,7 @@ public:
 		//キーコンフィグ
 		//-------------------------------
 		int Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
-		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
+		_RNC_Input::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
 
 	static const float SIZE_WIDTH;	// 横幅
@@ -339,7 +339,7 @@ private:
 		short expand;    // 膨らみ
 		short explosion; // 破裂
 
-		CSound *pSound;	// サウンドクラス保管用
+		_RNC_Sound *pSound;	// サウンドクラス保管用
 	};
 	static SE s_SE;		//サウンド用構造体
 

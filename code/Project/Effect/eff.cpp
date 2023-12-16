@@ -69,14 +69,14 @@ void CEff::Update(void)
 		->SetBillboard(m_Info.Billboard)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x, m_Info.scale.y)
-		->SetAlphaBlendMode(CDrawState::ALPHA_BLEND_MODE::ADD)
+		->SetAlphaBlendMode(_RNC_DrawState::ALPHA_BLEND_MODE::ADD)
 		->SetZTest(false);
 
 	if (m_Info.nCount != -44) {
 		m_Info.nCount--;
 
 		//äÑçáåvéZ
-		float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
+		float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
 
 		m_Info.col.a = m_Info.col.a * fCountRate;
 

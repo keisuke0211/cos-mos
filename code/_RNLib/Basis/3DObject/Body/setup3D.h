@@ -14,7 +14,7 @@
 // クラス定義
 //****************************************
 // セットアップ3Dクラス
-class CSetUp3D : public CRegist {
+class _RNC_SetUp3D : public CRegist {
 public:
 	//========== [[[ 構造体定義 ]]]
 	// ボーンデータ構造体
@@ -67,11 +67,11 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CSetUp3D();
-	~CSetUp3D();
-	void   Init(void);
-	void   Uninit(void);
-	void   Update(void);
+	_RNC_SetUp3D       ();
+	~_RNC_SetUp3D      ();
+	void   Init        (void);
+	void   Uninit      (void);
+	void   Update      (void);
 	short  Load        (const char* loadPath, short idx = NONEDATA);
 	bool   LoadEditData(const char* loadPath);
 	void   SaveEditData(const char* savePath);

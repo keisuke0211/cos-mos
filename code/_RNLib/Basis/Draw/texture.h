@@ -13,17 +13,17 @@
 // クラス定義
 //****************************************
 // テクスチャクラス
-class CTexture : public CRegist {
+class _RNC_Texture : public CRegist {
 public:
 	//========== [[[ 関数宣言 ]]]
 	static void CopyTextureData(LPDIRECT3DTEXTURE9& srcTexture, LPDIRECT3DTEXTURE9& destTexture);
-	CTexture();
-	~CTexture();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	short Load(const char *loadPath);
-	void Set(Device pDevice, int nTex);
+	_RNC_Texture ();
+	~_RNC_Texture();
+	void  Init   (void);
+	void  Uninit (void);
+	void  Update (void);
+	short Load   (const char *loadPath);
+	void  Set    (Device pDevice, int nTex);
 
 	// 設定取得
 	Texture& GetTexture(int nTex) { return m_texs[nTex]; }

@@ -15,18 +15,18 @@
 //****************************************
 // 定数定義
 //****************************************
-const char* CDefaultData::SOUND_PATHS[(int)SOUND::MAX] = {
+const char* _RNC_DefaultData::SOUND_PATHS[(int)SOUND::MAX] = {
 	"RNData\\Sound\\TestBGM.wav",
 	"RNData\\Sound\\TestSE.wav",
 };
-const char* CDefaultData::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
+const char* _RNC_DefaultData::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"RNData\\Texture\\Tile.PNG",
 	"RNData\\Texture\\Grid.PNG",
 	"RNData\\Texture\\Stripe.PNG",
 	"RNData\\Texture\\Border.PNG",
 	"RNData\\Texture\\Smoke.PNG",
 };
-const char* CDefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
+const char* _RNC_DefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
 	"RNData\\Model\\Cube.x",
 	"RNData\\Model\\Sphere.x",
 	"RNData\\Model\\Dome_Up.x",
@@ -40,17 +40,17 @@ const char* CDefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
 	"RNData\\Model\\Prufen\\Limb_Left.x",
 	"RNData\\Model\\Prufen\\Limb_Right.x",
 };
-const char* CDefaultData::SETUP3D_PATHS[(int)SETUP3D::MAX] = {
+const char* _RNC_DefaultData::SETUP3D_PATHS[(int)SETUP3D::MAX] = {
 	"RNData\\SetUp3D\\Capsule.txt",
 };
-const char* CDefaultData::MOTION3D_PATHS[(int)MOTION3D::MAX] = {
+const char* _RNC_DefaultData::MOTION3D_PATHS[(int)MOTION3D::MAX] = {
 	"RNData\\Motion3D\\CapsuleStretch.txt",
 };
 
 //========================================
 // コンストラクタ
 //========================================
-CDefaultData::CDefaultData(void) {
+_RNC_DefaultData::_RNC_DefaultData(void) {
 
 	for (int cntSound    = 0; cntSound    < (int)SOUND   ::MAX; m_soundIdxes   [cntSound   ] = NONEDATA, cntSound++  );
 	for (int cntTexture  = 0; cntTexture  < (int)TEXTURE ::MAX; m_textureIdxes [cntTexture ] = NONEDATA, cntTexture++);
@@ -62,14 +62,14 @@ CDefaultData::CDefaultData(void) {
 //========================================
 // デストラクタ
 //========================================
-CDefaultData::~CDefaultData(void) {
+_RNC_DefaultData::~_RNC_DefaultData(void) {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CDefaultData::Init(void) {
+void _RNC_DefaultData::Init(void) {
 
 	// サウンド読み込み
 	for (int cntSound = 0; cntSound < (int)SOUND::MAX; cntSound++)
@@ -95,13 +95,13 @@ void CDefaultData::Init(void) {
 //========================================
 // 終了処理
 //========================================
-void CDefaultData::Uninit(void) {
+void _RNC_DefaultData::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CDefaultData::Update(void) {
+void _RNC_DefaultData::Update(void) {
 
 }

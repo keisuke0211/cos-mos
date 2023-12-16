@@ -39,22 +39,22 @@ CDemoZone::CDemoZone(const TYPE2& type2) : CDemoObject(TYPE::ZONE) {
 	m_typeInfo = NULL;
 	switch (m_type2) {
 	case TYPE2::DRAW_TEST: {
-		CMemory::Alloc((TypeInfo_DrawTest**)&m_typeInfo);
+		RNLib::Memory().Alloc((TypeInfo_DrawTest**)&m_typeInfo);
 		*(TypeInfo_DrawTest*)m_typeInfo = {};
 	}break;
 	case TYPE2::CAMERA_TEST: {
 
 	}break;
 	case TYPE2::DOLL_TEST: {
-		CMemory::Alloc((TypeInfo_DollTest**)&m_typeInfo);
+		RNLib::Memory().Alloc((TypeInfo_DollTest**)&m_typeInfo);
 		TypeInfo_DollTest* typeInfo = (TypeInfo_DollTest*)m_typeInfo;
-		typeInfo->doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetSetUp3DIdx(CDefaultData::SETUP3D::CAPSULE));
+		typeInfo->doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetSetUp3DIdx(_RNC_DefaultData::SETUP3D::CAPSULE));
 	}break;
 	case TYPE2::EFFECT_TEST: {
 
 	}break;
 	case TYPE2::STATICMESH_TEST: {
-		CMemory::Alloc((TypeInfo_MatMeshTest**)&m_typeInfo);
+		RNLib::Memory().Alloc((TypeInfo_MatMeshTest**)&m_typeInfo);
 		*(TypeInfo_MatMeshTest*)m_typeInfo = {};
 	}break;
 	}
@@ -74,7 +74,7 @@ CDemoZone::~CDemoZone() {
 	}break;
 	case TYPE2::DOLL_TEST: {
 		TypeInfo_DollTest* typeInfo = (TypeInfo_DollTest*)m_typeInfo;
-		CMemory::Release(&typeInfo->doll);
+		RNLib::Memory().Release(&typeInfo->doll);
 	}break;
 	case TYPE2::EFFECT_TEST: {
 
@@ -84,7 +84,7 @@ CDemoZone::~CDemoZone() {
 	}break;
 	}
 
-	CMemory::Release(&m_typeInfo);
+	RNLib::Memory().Release(&m_typeInfo);
 }
 
 //========================================
@@ -114,7 +114,7 @@ void CDemoZone::Update(void) {
 			->SetSize(TYPE_DATAS[(int)m_type2].size)
 			->SetCol(Color{ colorRGB, colorRGB, colorRGB, (UShort)255 })
 			->SetTexUV(
-				RNLib::DefaultData().GetTextureIdx(CDefaultData::TEXTURE::TILE),
+				RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::TILE),
 				Pos2D(0.0f, 0.0f),
 				Pos2D(uvRight, 0.0f),
 				Pos2D(0.0f, uvBottom),
@@ -139,9 +139,9 @@ void CDemoZone::Update(void) {
 		}break;
 		case PUTOBJECT_TYPE::MODEL: {
 
-			RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), pos + Pos3D(0.0f, 5.0f, -50.0f), INITROT3D)
+			RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD), pos + Pos3D(0.0f, 5.0f, -50.0f), INITROT3D)
 				->SetCol(typeInfo->modelInfo.col)
-				->SetTex(typeInfo->modelInfo.isTex ? RNLib::DefaultData().GetTextureIdx(CDefaultData::TEXTURE::GRID) : NONEDATA)
+				->SetTex(typeInfo->modelInfo.isTex ? RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::GRID) : NONEDATA)
 				->SetZTest(typeInfo->modelInfo.isZTest)
 				->SetLighting(typeInfo->modelInfo.isLighting)
 				->SetOutLineIdx(typeInfo->modelInfo.m_outLineIdx)
@@ -165,9 +165,9 @@ void CDemoZone::Update(void) {
 		const Pos3D basePos = pos + Pos3D(-20.0f, 5.0f, 70.0f);
 		for (int cntModel = 0; cntModel < typeInfo->modelInfo.drawNum; cntModel++, putNum++) {
 
-			RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), basePos + LocalFunc::FindPos(putNum), Rot3D(0.0f,D3DX_PI,0.0f))
+			RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD), basePos + LocalFunc::FindPos(putNum), Rot3D(0.0f,D3DX_PI,0.0f))
 				->SetCol(typeInfo->modelInfo.col)
-				->SetTex(typeInfo->modelInfo.isTex ? RNLib::DefaultData().GetTextureIdx(CDefaultData::TEXTURE::GRID) : NONEDATA)
+				->SetTex(typeInfo->modelInfo.isTex ? RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::GRID) : NONEDATA)
 				->SetZTest(typeInfo->modelInfo.isZTest)
 				->SetLighting(typeInfo->modelInfo.isLighting)
 				->SetOutLineIdx(typeInfo->modelInfo.m_outLineIdx)
@@ -178,18 +178,18 @@ void CDemoZone::Update(void) {
 	case TYPE2::CAMERA_TEST: {
 
 		// 赤スフィア
-		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(10.0f, 5.0f, 0.0f), INITROT3D)
+		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::SPHERE), pos + Pos3D(10.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 255, 0, 0, 255 })
 			->SetOutLineIdx(true)
 			->SetClippingCamera(RNDemo::Get().GetPlayer(CDemo::PLAYER::BLUE).GetCamera());	// ※青プレイヤーのカメラにのみ描画
 
 		// 白スフィア
-		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(0.0f, 5.0f, 0.0f), INITROT3D)
+		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::SPHERE), pos + Pos3D(0.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 255, 255, 255, 255 })
 			->SetOutLineIdx(true);
 
 		// 青スフィア
-		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(-10.0f, 5.0f, 0.0f), INITROT3D)
+		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::SPHERE), pos + Pos3D(-10.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 0, 0, 255, 255 })
 			->SetOutLineIdx(true)
 			->SetClippingCamera(RNDemo::Get().GetPlayer(CDemo::PLAYER::RED).GetCamera());	// ※赤プレイヤーのカメラにのみ描画
@@ -199,7 +199,7 @@ void CDemoZone::Update(void) {
 		TypeInfo_DollTest* typeInfo = (TypeInfo_DollTest*)m_typeInfo;
 
 		// 白いボール
-		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::SPHERE), pos + Pos3D(-20.0f, 5.0f, 0.0f), INITROT3D)
+		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::SPHERE), pos + Pos3D(-20.0f, 5.0f, 0.0f), INITROT3D)
 			->SetCol(Color{ 255, 255, 255, 255 });
 
 		// ドール3D
@@ -228,7 +228,7 @@ const char* CDemoZone::PUTOBJECT_TYPE_NAME[(int)PUTOBJECT_TYPE::MAX] = {
 	"Text3D",
 	"Model",
 };
-const char* CDemoZone::ALIGNMENT_NAME[(int)CText::ALIGNMENT::MAX] = {
+const char* CDemoZone::ALIGNMENT_NAME[(int)_RNC_Text::ALIGNMENT::MAX] = {
 	"Center",
 	"Left",
 	"Right",
@@ -275,7 +275,7 @@ void CDemoZone::UpdateActive(void) {
 		case PUTOBJECT_TYPE::TEXT3D: {
 			if (RNLib::Input().GetKeyTrigger(DIK_2)) {
 				UShort alignmentCount = (UShort)typeInfo->text3DInfo.alignment;
-				typeInfo->text3DInfo.alignment = (CText::ALIGNMENT)((alignmentCount + 1) % (int)CText::ALIGNMENT::MAX);
+				typeInfo->text3DInfo.alignment = (_RNC_Text::ALIGNMENT)((alignmentCount + 1) % (int)_RNC_Text::ALIGNMENT::MAX);
 			}
 
 			RNLib::Text2D().PutDebugLog(CreateText("Alignment[2]:%s", ALIGNMENT_NAME[(int)typeInfo->text3DInfo.alignment]));
@@ -367,16 +367,16 @@ void CDemoZone::UpdateActive(void) {
 						RNLib::StaticMesh().SetModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
 							pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f),
-							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+							RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD),
 							Color{ 255,255,255,255 },
 							false);
 					}
 					else {
 						RNLib::StaticMesh().SetMaterialModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
-							CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
-							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
-							RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)),
+							RNLib::Matrix().ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(typeInfo->setNum), Rot3D(0.0f, D3DX_PI, 0.0f)),
+							RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD),
+							RNLib::DefaultData().GetTextureIdx((_RNC_DefaultData::TEXTURE)(rand() % (int)_RNC_DefaultData::TEXTURE::MAX)),
 							Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
 							false);
 					}
@@ -394,16 +394,16 @@ void CDemoZone::UpdateActive(void) {
 						RNLib::StaticMesh().SetModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
 							pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f),
-							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
+							RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD),
 							Color{ 255,255,255,255 },
 							false);
 					}
 					else {
 						RNLib::StaticMesh().SetMaterialModel(
 							(UShort)RNMode::PRIORITY::OBJECT3D,
-							CMatrix::ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
-							RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD),
-							RNLib::DefaultData().GetTextureIdx((CDefaultData::TEXTURE)(rand() % (int)CDefaultData::TEXTURE::MAX)),
+							RNLib::Matrix().ConvPosRotToMtx(pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f)),
+							RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD),
+							RNLib::DefaultData().GetTextureIdx((_RNC_DefaultData::TEXTURE)(rand() % (int)_RNC_DefaultData::TEXTURE::MAX)),
 							Color{ rand() % 255 ,rand() % 255,rand() % 255,255 },
 							false);
 					}
@@ -417,7 +417,7 @@ void CDemoZone::UpdateActive(void) {
 		// モデルを設置
 		if (!typeInfo->isMesh) {
 			for (int cnt = 0; cnt < typeInfo->setNum; cnt++)
-				RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(CDefaultData::MODEL::PRUFEN_HEAD), pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f));
+				RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PRUFEN_HEAD), pos + basePos + LocalFunc::FindPos(cnt), Rot3D(0.0f, D3DX_PI, 0.0f));
 		}
 
 		RNLib::Text2D().PutDebugLog(CreateText("SetModel[1]   :%d", typeInfo->setNum));

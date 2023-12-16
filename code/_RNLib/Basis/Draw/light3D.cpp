@@ -23,7 +23,7 @@
 // コンストラクタ
 // Author:RIKU NISHIMURA
 //========================================
-CLight3D::CLight3D() {
+_RNC_Light3D::_RNC_Light3D() {
 	m_pAmbient = NULL;
 	m_col      = INITCOLOR;
 	m_nSetNum  = 0;
@@ -33,14 +33,14 @@ CLight3D::CLight3D() {
 // デストラクタ
 // Author:RIKU NISHIMURA
 //========================================
-CLight3D::~CLight3D() {
+_RNC_Light3D::~_RNC_Light3D() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CLight3D::Init(void) {
+void _RNC_Light3D::Init(void) {
 
 	if (!RNLib::File().OpenLoadFile(AMBIENTLIGHTDATA_PATH))
 	{// 環境光データファイルが開けなかった場合、処理を終了する
@@ -53,7 +53,7 @@ void CLight3D::Init(void) {
 		if (false) {}
 		else if (RNLib::File().CheckIdentifier("LIGHTSET{")) {
 			// 設定数を読み込み、その分環境光設定情報のメモリを確保する
-			RNLib::File().Scan(CFile::SCAN::INT, &m_nSetNum);
+			RNLib::File().Scan(_RNC_File::SCAN::INT, &m_nSetNum);
 			m_pAmbient = new AmbientLight[m_nSetNum];
 
 			// 光情報のカウント
@@ -66,8 +66,8 @@ void CLight3D::Init(void) {
 
 					while (RNLib::File().SearchLoop("}")) {
 						if (false) {}
-						else if (RNLib::File().CheckIdentifier("ROT:")) { RNLib::File().Scan(CFile::SCAN::POS3D, &m_pAmbient[cntLight].rot); }
-						else if (RNLib::File().CheckIdentifier("BRIGHTNESS:")) { RNLib::File().Scan(CFile::SCAN::FLOAT, &m_pAmbient[cntLight].fBrightness); }
+						else if (RNLib::File().CheckIdentifier("ROT:")) { RNLib::File().Scan(_RNC_File::SCAN::POS3D, &m_pAmbient[cntLight].rot); }
+						else if (RNLib::File().CheckIdentifier("BRIGHTNESS:")) { RNLib::File().Scan(_RNC_File::SCAN::FLOAT, &m_pAmbient[cntLight].fBrightness); }
 					}
 
 					// カウントの光を設定する
@@ -86,7 +86,7 @@ void CLight3D::Init(void) {
 //========================================
 // 終了処理
 //========================================
-void CLight3D::Uninit(void) {
+void _RNC_Light3D::Uninit(void) {
 
 	// 環境光設定情報の破棄
 	delete[] m_pAmbient;
@@ -96,7 +96,7 @@ void CLight3D::Uninit(void) {
 //========================================
 // 更新処理
 //========================================
-void CLight3D::Update(void) {
+void _RNC_Light3D::Update(void) {
 
 }
 
@@ -104,7 +104,7 @@ void CLight3D::Update(void) {
 // 環境光設定情報を保存
 // Author:RIKU NISHIMURA
 //========================================
-void CLight3D::SaveAmbientLight(void) {
+void _RNC_Light3D::SaveAmbientLight(void) {
 	
 	if (!RNLib::File().OpenSaveFile(AMBIENTLIGHTDATA_PATH))
 	{// 環境光データファイルが開けなかった場合、処理を終了する
@@ -140,7 +140,7 @@ void CLight3D::SaveAmbientLight(void) {
 // 色設定処理
 // Author:RIKU NISHIMURA
 //========================================
-void CLight3D::SetCol(Color col) {
+void _RNC_Light3D::SetCol(Color col) {
 	m_col = col;
 
 	for (int cntLight = 0; cntLight < m_nSetNum; cntLight++) {
@@ -152,7 +152,7 @@ void CLight3D::SetCol(Color col) {
 // 数設定
 // Author:RIKU NISHIMURA
 //========================================
-void CLight3D::SetNum(int nNum) {
+void _RNC_Light3D::SetNum(int nNum) {
 	if (m_nSetNum == nNum)
 		return;
 
@@ -185,7 +185,7 @@ void CLight3D::SetNum(int nNum) {
 // 光を設定する
 // Author:RIKU NISHIMURA
 //========================================
-void CLight3D::SetLight(int nIdx) {
+void _RNC_Light3D::SetLight(int nIdx) {
 	// デバイス取得
 	Device pDevice = RNLib::Window().GetD3DDevice();
 
@@ -196,7 +196,7 @@ void CLight3D::SetLight(int nIdx) {
 
 	// 拡散光と方向を設定
 	light3D.Diffuse = m_col.GetBrighten(m_pAmbient[nIdx].fBrightness).ConvD3DXCOLOR();
-	light3D.Direction = CGeometry::FindRotVec(m_pAmbient[nIdx].rot);
+	light3D.Direction = RNLib::Geometry().FindRotVec(m_pAmbient[nIdx].rot);
 
 	// 光の情報を設定し、有効にする
 	pDevice->SetLight(nIdx, &light3D);
