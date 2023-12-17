@@ -23,6 +23,7 @@ CSetUp3DEditor::CSetUp3DEditor() {
 	m_camera->SetBGCol(Color{ 128,128,128,255 });
 	m_camera->SetGrabAirMouse(1.0f, 1.0f, 1.0f);
 	m_camera->SetPosVAndPosR(Pos3D(0.0f, 100.0f, -100.0f), INITPOS3D);
+	m_camera->SetLightID((new CLight3D("RNData\\StandardLight.txt"))->GetID());
 
 	m_doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, EDITDATA);
 	m_doll->SetPos(Pos3D(0.0f, 0.0f, 0.0f));

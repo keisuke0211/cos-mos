@@ -40,10 +40,9 @@ CLight3D::CLight3D(const String& loadPath) {
 	m_ID       = ms_IDCount;
 	ms_IDCount = (ms_IDCount + 1) % SHRT_MAX;
 
-	m_linearLights   = NULL;
-	m_linearLightNum = 0;
-	m_rot            = INITROT3D;
-	m_col            = COLOR_WHITE;
+	// クリア処理
+	m_linearLights = NULL;
+	Clear();
 
 	// 読み込み処理
 	if (loadPath != NULL)
@@ -55,11 +54,23 @@ CLight3D::CLight3D(const String& loadPath) {
 //========================================
 CLight3D::~CLight3D() {
 
-	// リニアライトを解放
-	RNLib::Memory().Release(&m_linearLights);
+	// クリア処理
+	Clear();
 
 	// リストから削除
 	RNSystem::GetLight3DMgr().SubList(this);
+}
+
+//========================================
+// クリア処理
+//========================================
+void CLight3D::Clear(void) {
+
+	// リニアライトを解放
+	RNLib::Memory().Release(&m_linearLights);
+	m_linearLightNum = 0;
+	m_rot            = INITROT3D;
+	m_col            = COLOR_WHITE;
 }
 
 //========================================
@@ -97,6 +108,30 @@ void CLight3D::Load(const String& loadPath) {
 }
 
 //========================================
+// 書き込み処理
+//========================================
+void CLight3D::Save(const String& savePath) {
+
+	// ファイルを開く
+	if (RNLib::File().OpenSaveFile(savePath)) {
+		fprintf(RNLib::File().GetFile(), "Light3DFile\n");
+		fprintf(RNLib::File().GetFile(), "linearLights{ %d\n", m_linearLightNum);
+		for (int cntLinearLight = 0; cntLinearLight < m_linearLightNum; cntLinearLight++) {
+			fprintf(RNLib::File().GetFile(), "	linearLight{\n");
+			const Rot3D rot = RNLib::Matrix().ConvMtxToRot(m_linearLights[cntLinearLight].rotMtx);
+			fprintf(RNLib::File().GetFile(), "		rot %f %f %f\n", rot.x, rot.y, rot.z);
+			fprintf(RNLib::File().GetFile(), "		col %d %d %d %d\n", m_linearLights[cntLinearLight].col.r, m_linearLights[cntLinearLight].col.g, m_linearLights[cntLinearLight].col.b, m_linearLights[cntLinearLight].col.a);
+			fprintf(RNLib::File().GetFile(), "	}\n");
+		}
+		fprintf(RNLib::File().GetFile(), "}\n");
+		fprintf(RNLib::File().GetFile(), "END");
+
+		// ファイルを閉じる
+		RNLib::File().CloseFile();
+	}
+}
+
+//========================================
 // セッティング処理
 //========================================
 void CLight3D::Setting(Device& device) {
@@ -117,7 +152,7 @@ void CLight3D::Setting(Device& device) {
 
 			// 拡散光と方向を設定
 			light3D.Diffuse   = m_linearLights[cntLinearLight].col.GetMixed(m_col);
-			light3D.Direction = RNLib::Geometry().FindRotVec(RNLib::Matrix().ConvMtxToRot(RNLib::Matrix().MultiplyMtx(m_linearLights[cntLinearLight].rotMtx, rotMtx)));
+			light3D.Direction = RNLib::Matrix().ConvMtxToRotVec(RNLib::Matrix().MultiplyMtx(m_linearLights[cntLinearLight].rotMtx, rotMtx));
 
 			// 光の情報を設定し、有効にする
 			device->SetLight(cntLinearLight, &light3D);
@@ -138,4 +173,19 @@ void CLight3D::AddLinearLight(void) {
 	RNLib::Memory().ReAlloc(&m_linearLights, oldNum, m_linearLightNum);
 	m_linearLights[oldNum] = {};
 	m_linearLights[oldNum].rotMtx = RNLib::Matrix().ConvRotToMtx(INITROT3D);
+}
+
+//========================================
+// リニアライトを減算
+//========================================
+void CLight3D::SubLinearLight(const UShort& idx) {
+
+	if (idx < 0 || idx >= m_linearLightNum)
+		return;
+
+	for (UShort cntLinearLight = idx; cntLinearLight < m_linearLightNum - 1; cntLinearLight++) {
+		m_linearLights[cntLinearLight] = m_linearLights[cntLinearLight + 1];
+	}
+	const UShort oldNum = m_linearLightNum--;
+	RNLib::Memory().ReAlloc(&m_linearLights, oldNum, m_linearLightNum);
 }

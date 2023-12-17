@@ -17,8 +17,4 @@ linearLights{ 4
 		col 180 180 180 255
 	}
 }
-FOGSET{
-	DIST_START: 500
-	DIST_END: 750
-}
 END

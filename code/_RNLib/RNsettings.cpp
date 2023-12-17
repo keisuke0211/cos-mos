@@ -37,7 +37,14 @@ void RNSettings::Release(void) {
 bool RNSettings::LoadAndSave(const char* path) {
 
 	// 読み込むファイルとして開けた時、
-	bool isLoad = RNLib::File().OpenLoadFile(path);
+	bool isLoad = false;
+	String loadPath("");
+	switch (RNSystem::GetMode()) {
+	case RNSystem::MODE::SETUP3D_EDITOR:loadPath = "RNData\\SetUp3DEditorSettings.txt"; break;
+	case RNSystem::MODE::LIGHT3D_EDITOR:loadPath = "RNData\\Light3DEditorSettings.txt"; break;
+	default:loadPath = path; break;
+	}
+	isLoad = RNLib::File().OpenLoadFile(loadPath);
 	if (isLoad) {
 		while (RNLib::File().SearchLoop("END")) {
 			RNLib::File().Scan(_RNC_File::SCAN::STRING_DYNAMIC, &info.projectName                     , "projectName"                     );
@@ -55,7 +62,7 @@ bool RNSettings::LoadAndSave(const char* path) {
 	}
 	else {
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(String("RNライブラリの設定ファイルを開けませんでした。\n以下のパスに設定ファイルを作成するので、情報を入力してください。\n%s", path));
+		RNLib::Window().Message_ERROR(String("RNライブラリの設定ファイルを開けませんでした。\n"));
 	}
 
 	// 書き込むファイルとして開く

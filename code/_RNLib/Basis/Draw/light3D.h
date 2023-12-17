@@ -26,12 +26,15 @@ public:
 	static void AllDisable(Device& device);
 	CLight3D                      (const String& loadPath);
 	~CLight3D                     ();
+	void         Clear            (void);
 	void         Update           (void) {}
 	void         Load             (const String& loadPath);
+	void         Save             (const String& savePath);
 	void         Setting          (Device& device);
 	short&       GetID            (void) { return m_ID; }
 	LinearLight& GetLinearLight   (const UShort idx) { return m_linearLights[idx]; }
 	void         AddLinearLight   (void);
+	void         SubLinearLight   (const UShort& idx);
 	UShort&      GetLinearLightNum(void) { return m_linearLightNum; }
 	Rot3D&       GetRot           (void) { return m_rot; }
 	void         SetRot           (const Rot3D& rot) { m_rot = rot; }

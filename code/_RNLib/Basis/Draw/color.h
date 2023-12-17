@@ -149,6 +149,13 @@ public:
 		col.a = col.a > 255 ? 255 : col.a;
 		return col;
 	}
+	// “§–¾‚É‚µ‚½F‚ğæ“¾
+	Color GetAlphaApplied(const float& alpha) {
+		Color col = *this;
+		col.a *= alpha;
+		col.a = col.a > 255 ? 255 : col.a;
+		return col;
+	}
 	
 	//========== [[[ •Ï”éŒ¾ ]]]
 	UShort r;	// Ô

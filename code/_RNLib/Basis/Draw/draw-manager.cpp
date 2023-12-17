@@ -840,7 +840,7 @@ _RNC_Model::CRegistInfo* _RNC_DrawMgr::RegistModel(CRegistInfoSum& resistInfo) {
 // [静的]登録情報を元に設置する
 //========================================
 void _RNC_DrawMgr::PutBasedRegistInfo(CRegistInfoSum& resistInfoSum, const UShort& priority, const bool& isOnScreen) {
-
+	
 	//----------------------------------------
 	// テキスト3Dからポリゴン3Dを設置
 	//----------------------------------------

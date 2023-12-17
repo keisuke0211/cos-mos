@@ -67,14 +67,11 @@ Matrix _RNC_Matrix::ConvPosToMtx(const Pos3D& pos) {
 //========================================
 Matrix _RNC_Matrix::ConvRotToMtx(const Rot3D& rot) {
 
-	Matrix rotMtx = INITMATRIX;
-	Matrix mtx    = INITMATRIX;
-
 	// 向きを反映
+	Matrix rotMtx = INITMATRIX;
 	D3DXMatrixRotationYawPitchRoll(&rotMtx, rot.y, rot.x, rot.z);
-	D3DXMatrixMultiply(&mtx, &mtx, &rotMtx);
 
-	return mtx;
+	return rotMtx;
 }
 
 //========================================
@@ -162,7 +159,14 @@ Rot3D _RNC_Matrix::ConvMtxToRot(const Matrix& mtx) {
 	if (mtx._22 < 0.0f) { x = ((D3DX_PI * (fabsf(x) / x)) - x); }
 	if (mtx._13 > 0.0f) { y = -y; }
 
-	return Rot3D(x, y, asinf(mtx._21));
+	return Rot3D(x, y, 0.0f);
+}
+
+//========================================
+// マトリックスを向きベクトルに変換
+//========================================
+Vector3D _RNC_Matrix::ConvMtxToRotVec(const Matrix& mtx) {
+	return Vector3D(mtx._31, mtx._32, mtx._33);
 }
 
 //========================================

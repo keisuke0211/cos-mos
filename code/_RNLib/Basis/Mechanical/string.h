@@ -34,7 +34,7 @@ public:
 		size = vsnprintf(NULL, 0, format, args);
 
 		// 可変長引数の処理を終了する
-		va_end(args); 
+		va_end(args);
 
 		// 文字列のサイズに合わせたメモリを動的に確保する
 		m_string = (char*)malloc(size + 1);
@@ -54,6 +54,8 @@ public:
 		if (m_string != NULL)
 			free(m_string);
 	}
+	// char型ポインタを取得
+	char*& GetCharPointer(void) { return m_string; }
 	// 変換
 	operator char* () const {
 		return m_string;

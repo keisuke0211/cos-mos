@@ -26,8 +26,8 @@ public:
 
 	//========== [[[ ŠÖ”’è‹` ]]]
 	// ”ÍˆÍ“à§Œä
-	template<class T>void Clamp(T* num, const T& max, const T& min) {
-		if (!FindIsNumber(*num)) { assert(false); return; }
+	template<class T, class T2, class T3>void Clamp(T* num, const T2& max, const T3& min) {
+		if (!FindIsNumber(*num) || !FindIsNumber(max) || !FindIsNumber(min)) { assert(false); return; }
 
 		if (*num < min)
 			*num = min;
@@ -35,14 +35,14 @@ public:
 			*num = max;
 	}
 	// ”ÍˆÍ“àƒ‹[ƒv§Œä
-	template<class T>void LoopClamp(T* num, const T& max, const T& min) {
-		if (!FindIsNumber(*num)) { assert(false); return; }
-		else if (min >= max) {
+	template<class T, class T2, class T3>void LoopClamp(T* num, const T2& max, const T3& min) {
+		if (!FindIsNumber(*num) || !FindIsNumber(max) || !FindIsNumber(min)) { assert(false); return; }
+		else if (min > max) {
 			assert(false);
 			return;
 		}
 
-		T range = max - min + (FindIsInteger(num) * 1);
+		T range = (max + FindIsInteger(*num)) - min;
 
 		while (*num < min)
 			*num += range;

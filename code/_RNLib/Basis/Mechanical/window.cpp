@@ -221,10 +221,14 @@ void _RNC_Window::Message_ERROR(const char* pText) {
 bool _RNC_Window::Message_OKCANCEL(const char* pText, const char* pCaption) {
 
 	switch (MessageBox(m_hWnd, pText, pCaption, MB_OKCANCEL)) {
-	case IDOK    :return true;
-	case IDCANCEL:return false;
+	case IDOK:
+		RNLib::Input().ClearInputInfo();
+		return true;
+	case IDCANCEL:
+		RNLib::Input().ClearInputInfo();
+		return false;
 	}
-
+	RNLib::Input().ClearInputInfo();
 	return false;
 }
 
@@ -288,7 +292,7 @@ int _RNC_Window::CreateD3DDevice(HINSTANCE& instanceHandle) {
 	d3dpp.SwapEffect                 = D3DSWAPEFFECT_DISCARD;		// ダブルバッファの切り替え
 	d3dpp.EnableAutoDepthStencil     = TRUE;						// デプスバッファとステンシルバッファを作成
 	d3dpp.AutoDepthStencilFormat     = D3DFMT_D16;					// デプスバッファとして16bitを使う
-	d3dpp.Windowed                   = !settingsInfo.isFullScreen ? RNLib::Options().GetIsFullScreen() : settingsInfo.isFullScreen;		// ウインドウモード
+	d3dpp.Windowed                   = !(settingsInfo.isFullScreen ? RNLib::Options().GetIsFullScreen() : false);		// ウインドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;		// リフレッシュレート
 	d3dpp.PresentationInterval       = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
 

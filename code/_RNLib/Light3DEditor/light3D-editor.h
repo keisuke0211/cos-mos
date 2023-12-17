@@ -25,6 +25,7 @@ private:
 	//========== [[[ •Ï”éŒ¾ ]]]
 	CCamera*  m_camera;
 	CLight3D* m_light;
-	bool      m_isLockSubLinearLight;
-	UShort    m_selectLinearLightIdx;
+	short     m_selectLinearLightIdx;
+	String    m_editPath;
+	bool      m_isSaved;
 };
