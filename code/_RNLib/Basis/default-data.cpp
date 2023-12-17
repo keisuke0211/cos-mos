@@ -31,6 +31,7 @@ const char* _RNC_DefaultData::MODEL_PATHS[(int)MODEL::MAX] = {
 	"RNData\\Model\\Sphere.x",
 	"RNData\\Model\\Dome_Up.x",
 	"RNData\\Model\\Dome_Down.x",
+	"RNData\\Model\\PyramidAllow.x",
 	"RNData\\Model\\LinearLight.x",
 	"RNData\\Model\\Observer.x",
 	"RNData\\Model\\Monitor.x",

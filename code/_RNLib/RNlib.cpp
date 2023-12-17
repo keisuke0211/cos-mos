@@ -8,8 +8,9 @@
 #include "RNmode.h"
 #include "RNobject.h"
 #include "Demo/demo.h"
-#include "SetUp3DEditor/setup3D-editor.h"
-#include "Light3DEditor/light3D-editor.h"
+#include "Editor/setup3D-editor.h"
+#include "Editor/light3D-editor.h"
+#include "Editor/rail3D-editor.h"
 
 //****************************************
 // プロトタイプ宣言
@@ -281,6 +282,10 @@ namespace {
 			RNLib::Memory().Alloc((CLight3DEditor**)&modeObject);
 			((CLight3DEditor*)modeObject)->Init();
 		}break;
+		case RNSystem::MODE::RAIL3D_EDITOR: {
+			RNLib::Memory().Alloc((CRail3DEditor**)&modeObject);
+			((CRail3DEditor*)modeObject)->Init();
+		}break;
 		}
 	}
 	
@@ -308,6 +313,10 @@ namespace {
 		case RNSystem::MODE::LIGHT3D_EDITOR: {
 			((CLight3DEditor*)modeObject)->Uninit();
 			RNLib::Memory().Release((CLight3DEditor**)&modeObject);
+		}break;
+		case RNSystem::MODE::RAIL3D_EDITOR: {
+			((CRail3DEditor*)modeObject)->Uninit();
+			RNLib::Memory().Release((CRail3DEditor**)&modeObject);
 		}break;
 		}
 		
@@ -344,6 +353,9 @@ namespace {
 		}break;
 		case RNSystem::MODE::LIGHT3D_EDITOR: {
 			((CLight3DEditor*)modeObject)->Update();
+		}break;
+		case RNSystem::MODE::RAIL3D_EDITOR: {
+			((CRail3DEditor*)modeObject)->Update();
 		}break;
 		}
 

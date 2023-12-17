@@ -21,6 +21,7 @@
 #include "Basis/3DObject/Effect/effect3D-base.h"
 #include "Basis/3DObject/Effect/effect3D-manager.h"
 #include "Basis/3DObject/Effect/standard-effect3D.h"
+#include "Basis/3DObject/rail3D.h"
 //========== [[[ Calculation ]]]
 #include "Basis/Calculation/ease.h"
 #include "Basis/Calculation/geometry.h"
@@ -67,7 +68,7 @@ namespace RNSystem {
 
 	//========== [[[ óÒãìå^íËã` ]]]
 	enum class SIGNAL { NONE, INIT, UNINIT, END_UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, END_DRAW, END, };
-	enum class MODE   { EXECUTION, DEBUG, DEMO, SETUP3D_EDITOR, LIGHT3D_EDITOR };
+	enum class MODE   { EXECUTION, DEBUG, DEMO, SETUP3D_EDITOR, LIGHT3D_EDITOR, RAIL3D_EDITOR, };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	bool              MainLoop      (HINSTANCE& instanceHandle, const char* settingsPath, const char* optionsDataPath, const UShort& priorityMax, const MODE& mode);

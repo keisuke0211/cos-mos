@@ -217,6 +217,7 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D_model.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\standard-effect3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\rail3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\ease.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\geometry.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\hit-test.cpp" />
@@ -256,11 +257,12 @@
     <ClCompile Include="code\_RNLib\Demo\demo_object.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp" />
-    <ClCompile Include="code\_RNLib\Light3DEditor\light3D-editor.cpp" />
+    <ClCompile Include="code\_RNLib\Editor\light3D-editor.cpp" />
+    <ClCompile Include="code\_RNLib\Editor\rail3D-editor.cpp" />
     <ClCompile Include="code\_RNLib\RNfunction.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
-    <ClCompile Include="code\_RNLib\SetUp3DEditor\setup3D-editor.cpp" />
+    <ClCompile Include="code\_RNLib\Editor\setup3D-editor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
@@ -326,6 +328,7 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_model.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\standard-effect3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\rail3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\ease.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\geometry.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\hit-test.h" />
@@ -366,14 +369,15 @@
     <ClInclude Include="code\_RNLib\Demo\demo_object.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_player.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h" />
-    <ClInclude Include="code\_RNLib\Light3DEditor\light3D-editor.h" />
+    <ClInclude Include="code\_RNLib\Editor\light3D-editor.h" />
+    <ClInclude Include="code\_RNLib\Editor\rail3D-editor.h" />
     <ClInclude Include="code\_RNLib\RNfunction.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />
     <ClInclude Include="code\_RNLib\RNmode.h" />
     <ClInclude Include="code\_RNLib\RNobject.h" />
     <ClInclude Include="code\_RNLib\RNsettings.h" />
-    <ClInclude Include="code\_RNLib\SetUp3DEditor\setup3D-editor.h" />
+    <ClInclude Include="code\_RNLib\Editor\setup3D-editor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

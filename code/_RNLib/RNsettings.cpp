@@ -42,6 +42,7 @@ bool RNSettings::LoadAndSave(const char* path) {
 	switch (RNSystem::GetMode()) {
 	case RNSystem::MODE::SETUP3D_EDITOR:loadPath = "RNData\\SetUp3DEditorSettings.txt"; break;
 	case RNSystem::MODE::LIGHT3D_EDITOR:loadPath = "RNData\\Light3DEditorSettings.txt"; break;
+	case RNSystem::MODE::RAIL3D_EDITOR :loadPath = "RNData\\Rail3DEditorSettings.txt" ; break;
 	default:loadPath = path; break;
 	}
 	isLoad = RNLib::File().OpenLoadFile(loadPath);

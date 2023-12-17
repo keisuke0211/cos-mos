@@ -264,7 +264,7 @@
     <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\SetUp3DEditor\setup3D-editor.cpp">
+    <ClCompile Include="code\_RNLib\Editor\setup3D-editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D.cpp">
@@ -333,7 +333,13 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\light3D-manager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Light3DEditor\light3D-editor.cpp">
+    <ClCompile Include="code\_RNLib\Editor\light3D-editor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Basis\3DObject\rail3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Editor\rail3D-editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -596,7 +602,7 @@
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\SetUp3DEditor\setup3D-editor.h">
+    <ClInclude Include="code\_RNLib\Editor\setup3D-editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\RNmode.h">
@@ -668,7 +674,13 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\light3D-manager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\Light3DEditor\light3D-editor.h">
+    <ClInclude Include="code\_RNLib\Editor\light3D-editor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Basis\3DObject\rail3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Editor\rail3D-editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
