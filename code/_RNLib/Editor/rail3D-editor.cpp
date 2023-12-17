@@ -168,6 +168,31 @@ void CRail3DEditor::Update(void) {
 	RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PYRAMID_ALLOW), m_rail3D.GetMtx((float)m_counter / m_time))
 		->SetCol(Color(255, 0, 0, 255));
 
+	if (m_rail3D.GetPointNum() >= 2)
+	{// ラインの描画
+		Matrix mtx      = m_rail3D.GetMtx(0.0f);
+		Pos3D  oldPos   = RNLib::Matrix().ConvMtxToPos(mtx);
+		float  oldAngle = RNLib::Matrix().ConvMtxToRot(mtx).y;
+
+		const UShort divNum = (m_rail3D.GetPointNum() - 1) * 5;
+		for (int cntDiv = 1; cntDiv <= divNum; cntDiv++) {
+			mtx = m_rail3D.GetMtx((float)cntDiv / divNum);
+			Pos3D pos = RNLib::Matrix().ConvMtxToPos(mtx);
+			float angle = RNLib::Matrix().ConvMtxToRot(mtx).y;
+			RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, INITMATRIX)
+				->SetVtxPos(
+					Pos3D(pos.x + sinf(angle - D3DX_PI_HALF), pos.y, pos.z + cosf(angle - D3DX_PI_HALF)),
+					Pos3D(pos.x + sinf(angle + D3DX_PI_HALF), pos.y, pos.z + cosf(angle + D3DX_PI_HALF)),
+					Pos3D(oldPos.x + sinf(oldAngle - D3DX_PI_HALF), oldPos.y, oldPos.z + cosf(oldAngle - D3DX_PI_HALF)),
+					Pos3D(oldPos.x + sinf(oldAngle + D3DX_PI_HALF), oldPos.y, oldPos.z + cosf(oldAngle + D3DX_PI_HALF)))
+				->SetCol(Color(255, 0, 0, 100))
+				->SetCullingMode(_RNC_DrawState::CULLING_MODE::BOTH_SIDES);
+
+			oldPos = pos;
+			oldAngle = angle;
+		}
+	}
+
 	// ポイントの描画
 	for (UShort cntPoint = 0; cntPoint < m_rail3D.GetPointNum(); cntPoint++) {
 		RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, String("%d", cntPoint), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, RNLib::Matrix().ConvPosToMtx(m_rail3D.GetPoint(cntPoint)))

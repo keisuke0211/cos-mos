@@ -1,5 +1,5 @@
 #KeyOption
-projectName							SetUp3DEditor
+projectName							Rail3DEditor
 windowWidth							1280.00
 windowHeight						720.00
 isFullScreen						0
