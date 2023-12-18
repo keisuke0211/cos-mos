@@ -10,6 +10,7 @@
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
+#include "../Sound/title-sound.h"
 #include "../UI/MenuUi.h"
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
@@ -112,6 +113,9 @@ void CMode_Title::Init(void) {
 	// 遷移設定
 	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
+	//BGM開始処理
+	titleSound::Start();
+
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
 		m_bMove[nCnt] = false; 
@@ -158,6 +162,9 @@ void CMode_Title::Init(void) {
 	if (m_CoinUI == NULL) {
 		m_CoinUI = CCoinUI::Create(COINUIPOS,Scale2D(4.0f,4.0f),false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
 	}
+
+	// カメラのライト設定
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(0));
 
 	// 状態設定
 	SetState((int)STATE::NONE);

@@ -2,7 +2,7 @@ Light3DFile
 linearLights{ 4
 	linearLight{
 		rot -0.785398 0.000000 0.000000
-		col 255 255 255 255
+		col 100 255 255 255
 	}
 	linearLight{
 		rot 0.785398 0.000000 0.000000
