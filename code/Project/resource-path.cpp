@@ -6,8 +6,11 @@ const char* CResources::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"data\\TEXTURE\\BackGround\\Wilderness.png",
 	"data\\TEXTURE\\BackGround\\Forest.png",
 	"data\\TEXTURE\\BackGround\\Cave.png",
-	"data\\TEXTURE\\BackGround\\Cloud.png",
+	"data\\TEXTURE\\BackGround\\CloudA.png",
+	"data\\TEXTURE\\BackGround\\CloudB.png",
+	"data\\TEXTURE\\BackGround\\CloudC.png",
 	"data\\TEXTURE\\WaitBalloon.PNG",
+	"data\\TEXTURE\\BackGround\\fish.png",
 };
 
 short CResources::SOUND_IDXES[(int)SOUND::MAX] = {};

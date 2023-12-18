@@ -19,8 +19,11 @@ public:
 		BG_WILDERNESS,
 		BG_FOREST,
 		BG_CAVE,
-		BG_CLOUD,
+		BG_CLOUD_A,
+		BG_CLOUD_B,
+		BG_CLOUD_C,
 		UI_WAITBUBBLE,
+		BG_FISH,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
