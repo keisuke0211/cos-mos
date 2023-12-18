@@ -69,9 +69,11 @@ HRESULT CParticle::Init(int nTex,int nCount)
 	}
 	else if (m_type == TYPE::TYPE_FLOATUP)
 	{
+		float rate = 0.01f + RNLib::Number().GetRandomFloat(0.01f);
+
 		m_Info.move = D3DXVECTOR3(
-			(m_move.x + (float)(rand() % (int)m_move.x * 0.5)) / MAGNI * sinf(m_Info.rot.z),
-			(m_move.y + (float)(rand() % (int)m_move.y * 0.5)) / MAGNI * cosf(m_Info.rot.z),
+			m_move.x * sinf(m_Info.rot.z) * rate,
+			m_move.y * cosf(m_Info.rot.z) * rate,
 			0.0f);
 
 		m_Info.rot.x = 0.0f;
@@ -136,7 +138,6 @@ void CParticle::Update(void)
 	m_Info.nCount--;
 
 	if (m_Info.nCount <= 0)
-
 		CObject::Delete();
 }
 
