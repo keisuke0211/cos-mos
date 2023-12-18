@@ -677,11 +677,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			{//ロケット描画
 				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f), false);
 
-				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
-				D3DXVECTOR3 m_TexPos = m_RocketPosOld + (m_RocketposDiff * RktAnimRt);
-				m_TexPos.y = m_RocketPosOld.y + (float)(rand() % (int)3 - 1) * 0.5f;
+				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
+				D3DXVECTOR3 TexPos = m_RocketPosOld + (m_RocketposDiff * RktAnimRt);
+				TexPos.x = TexPos.x + (6.0f * sinf(m_rotEff.z));
+				TexPos.y = TexPos.y + (float)(rand() % (int)3 - 1) * 0.5f;
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex, m_TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60,m_rotEff,D3DXVECTOR3(80.0f,80.0f,0.0f));
+				Manager::EffectMgr()->ParticleCreate(m_EffTex, TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60,m_rotEff,D3DXVECTOR3(10.0f,10.0f,0.0f));
 			}
 
 			//数字ブロックアニメーション処理

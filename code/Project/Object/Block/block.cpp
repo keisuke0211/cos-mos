@@ -413,8 +413,6 @@ void CBlock::Update(void) {
 
 		}
 
-
-
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color)
 			;
