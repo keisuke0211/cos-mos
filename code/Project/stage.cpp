@@ -187,17 +187,20 @@ void Stage::StartStage(void) {
 
 			// 背景色設定
 			UICamera[cnt]->SetBGCol(Color(0, 0, 0, 100));
+
+			// ライトを設定
+			UICamera[cnt]->SetLightID(Manager::GetLightIdx(0));
 		}
 
 		{// [[[ UI用ドールを生成 ]]]
 			UIDoll[cnt] = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(cnt == 0 ? "data\\SETUP\\Player_Mouth.txt" : "data\\SETUP\\Player_Eye.txt"));
 
 			// モーション設定
-			UIDoll[cnt]->SetMotion(RNLib::Motion3D().Load(cnt == 0 ? "data\\MOTION\\Player_Mouth\\Walk.txt" : "data\\MOTION\\Player_Eye\\Walk.txt"));
+			UIDoll[cnt]->SetMotion(RNLib::Motion3D().Load(cnt == 0 ? "data\\MOTION\\Player_Mouth\\Happy.txt" : "data\\MOTION\\Player_Eye\\Walk.txt"));
 
 			// 位置/向き設定
 			UIDoll[cnt]->SetPos(Pos3D(0.0f, -8.0f, 100.0f));
-			UIDoll[cnt]->SetRot(Rot3D(0.0f, D3DX_PI * 1.1f, 0.0f));
+			UIDoll[cnt]->SetRot(Rot3D(0.0f, D3DX_PI * (cnt == 0 ? 0.9f : 1.1f), 0.0f));
 
 			// クリッピング設定
 			UIDoll[cnt]->SetClippingCamera(UICamera[cnt]->GetID());
@@ -212,6 +215,7 @@ void Stage::StartStage(void) {
 
 	// カメラのライト
 	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
+	Manager::GetSubCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 }
 
 //========================================
