@@ -54,7 +54,6 @@ int CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 
 CPlayer::SE     CPlayer::s_SE = {};	//サウンド用構造体
 CPlayer::Motion CPlayer::s_motion[2] = {};	//モーション用構造体
-CCollision     *CPlayer::s_pColli = NULL;
 bool            CPlayer::ms_bSwapEnd = false;
 UShort          CPlayer::ms_guideCounter = 0;
 
@@ -62,7 +61,7 @@ bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
-float CPlayer::s_fAimWorkSpeed = 0.1f;
+float CPlayer::s_fAimWorkSpeed = 1.0f;
 CPlayer::Info CPlayer::m_aInfo[CPlayer::NUM_PLAYER];	// 各プレイヤーの情報
 
 //=======================================
@@ -125,8 +124,6 @@ CPlayer::CPlayer()
 		Player.side = WORLD_SIDE::FACE;        // どちらの世界に存在するか
 		cntPlayer++;
 	}
-
-	s_pColli = NULL;	// 当たり判定クラス
 }
 
 //=======================================
@@ -136,13 +133,6 @@ CPlayer::~CPlayer()
 {
 	delete m_aInfo[0].doll;
 	delete m_aInfo[1].doll;
-
-	if (s_pColli != NULL)
-	{
-		s_pColli->OthColliDelete();
-		delete s_pColli;
-	}
-	s_pColli = NULL;
 }
 
 //=======================================
@@ -227,9 +217,6 @@ HRESULT CPlayer::Init(void)
 	// 初期値設定
 	// ※ 来れないとステージ入る前に一瞬着地SEがなる
 	m_aInfo[0].bJump = m_aInfo[1].bJump = false;
-
-	if(s_pColli == NULL)
-	s_pColli = new CCollision;
 
 	s_zoomUpCounter = 0;
 	if (Manager::StgEd()->GetPlanetIdx() == 0) {
@@ -1207,7 +1194,7 @@ void CPlayer::CollisionToStageObject(void)
 				if (!UniqueColliOpption(pObj, type, Player, &colliInfo.pos, &colliInfo.posOld, &colliInfo.fWidth, &colliInfo.fHeight)) continue;
 
 				// 当たった方向を格納
-				colliInfo.Rot = s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
+				colliInfo.Rot = CCollision::IsBoxToBoxCollider(Self, colliInfo, vec);
 				CInt nColliRot = (int)colliInfo.Rot;
 
 				// 当たっていない
@@ -1225,18 +1212,18 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
-				//case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::BLOCK:	 CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::METEOR:	 CCollision::Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
+				//case OBJECT_TYPE::LASER:	 CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::GOALGATE:	 CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::PARTS:	 CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::ROCKET:	 CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::PILE:		 CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &bDeath); break;
 				}
 
 				// 死亡判定ON

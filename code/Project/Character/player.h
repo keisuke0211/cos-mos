@@ -345,8 +345,6 @@ private:
 
 	static Motion s_motion[2];
 
-	static CCollision *s_pColli;
-
 	static bool s_bAimPlayer;
 	static int s_nAimNo;
 	static float s_fCorrWidth;

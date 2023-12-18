@@ -47,14 +47,16 @@ namespace {
 	int             whaleCounter;
 	CDoll3D*        whaleDoll;
 
-	//ステージクリアタイムの保存場所
+	//ステージ情報の保存場所
 	struct Record
 	{
-		int MaxStage;     //ステージ数
-		float *pBestTime; //各ステージのベストタイム
+		int MaxStage = 0;        //ステージ数
+		float *pBestTime = NULL; //各ステージのベストタイム
+		int  nNumCoin = 0;       //各ステージのコイン数
+		bool *bGet = NULL;       //各コインごとに取得しているかどうか
 	};
-	Record *pRecord; //惑星ごとのレコード
-	int MaxPlanet;   //最大惑星数
+	Record *pRecord = NULL; //惑星ごとのレコード
+	int MaxPlanet = 0;      //最大惑星数
 
 					 //文字添削
 	const char COMMENT = '#';       //コメント文字
@@ -110,6 +112,7 @@ void Stage::Init(void) {
 
 	MaxPlanet = 0;
 	ClearRecord();
+	LoadRecord();
 }
 
 //========================================
@@ -451,11 +454,19 @@ namespace
 		{
 			for (int nCntRecord = 0; nCntRecord < MaxPlanet; nCntRecord++)
 			{
+				//ベストタイムの破棄
 				if (pRecord[nCntRecord].pBestTime != NULL)
 				{
 					delete[] pRecord[nCntRecord].pBestTime;
-					pRecord[nCntRecord].pBestTime = NULL;
 				}
+				pRecord[nCntRecord].pBestTime = NULL;
+
+				//コイン取得情報の破棄
+				if (pRecord[nCntRecord].bGet != NULL)
+				{
+					delete[] pRecord[nCntRecord].bGet;
+				}
+				pRecord[nCntRecord].bGet = NULL;
 			}
 
 			delete[] pRecord;
@@ -489,6 +500,10 @@ namespace
 
 			//ステージ数分のレコード場所確保
 			pRecord[nCntStage].pBestTime = new float[MaxStage];
+
+			//コイン取得状況はクリア
+			pRecord[nCntStage].nNumCoin = 0;
+			pRecord[nCntStage].bGet = NULL;
 		}
 	}
 }
@@ -565,10 +580,20 @@ namespace
 			//ロード
 			else if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
 			{
+				char temp[TXT_MAX] = {};
+				strcpy(&temp[0], &Text[0]);
 				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
 				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
 				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
-				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
+
+				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);    //レコード代入
+				CInt NUM_COIN = pRecord[planetID].nNumCoin = LoadInt(NULL, CHR_PAUSE);//コイン数取得
+				pRecord[planetID].bGet = new bool[NUM_COIN];                          //コイン取得状況場所を確保
+
+				for (int nCntCoin = 0; nCntCoin < NUM_COIN; nCntCoin++)
+				{
+					pRecord[planetID].bGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
+				}
 			}
 		}
 
@@ -604,14 +629,25 @@ namespace
 		fprintf(pFile, "#ワールド - ステージ - ベストタイム");
 		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
+			//各ワールドのレコードを参照
+			Record& rRecord = pRecord[nCntPlanet];
+
 			//ワールド名書き出し
 			fprintf(pFile, WORLD_COMMENT, nCntPlanet + 1);
 
-			for (int nCntStage = 0; nCntStage < pRecord[nCntPlanet].MaxStage; nCntStage++)
+			for (int nCntStage = 0; nCntStage < rRecord.MaxStage; nCntStage++)
 			{
 				//レコード記述
-				fprintf(pFile, "	%s = %d - %d - %.2f\n", 
-						CODE_RECORD, nCntPlanet, nCntStage, pRecord[nCntPlanet].pBestTime[nCntStage]);
+				fprintf(pFile, "	%s = %d - %d - %.2f = %d", 
+						CODE_RECORD, nCntPlanet, nCntStage, rRecord.pBestTime[nCntStage], rRecord.nNumCoin);
+
+				//コインの取得状況取得
+				for (int nCntCoin = 0; nCntCoin < rRecord.nNumCoin; nCntCoin++)
+				{
+					fprintf(pFile, " - %d", rRecord.bGet[nCntCoin] ? 1 : 0);
+				}
+
+				fprintf(pFile, "\n");
 			}
 		}
 
