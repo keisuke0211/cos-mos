@@ -160,7 +160,7 @@ CBlock::CBlock(void) {
 	m_isCollision = true;
 	m_doll = NULL;
 	m_type = TYPE::BLOCK;
-	m_width = SIZE_OF_1_SQUARE;
+	m_width = SIZE_OF_1_SQUARE * 0.5f;
 	m_height = SIZE_OF_1_SQUARE;
 	m_targetAddPos = INITPOS3D;
 	m_oldAddPos = INITPOS3D;
