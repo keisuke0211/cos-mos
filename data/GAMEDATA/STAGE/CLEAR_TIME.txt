@@ -10,7 +10,7 @@ SET_RECORD
 #=====[ 1–Ê ]
 	RECORD = 0 - 0 - 2.62
 	RECORD = 0 - 1 - 19.23
-	RECORD = 0 - 2 - 53.04
+	RECORD = 0 - 2 - 21.09
 	RECORD = 0 - 3 - 60.00
 	RECORD = 0 - 4 - 60.00
 

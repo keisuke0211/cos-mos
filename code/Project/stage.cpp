@@ -15,7 +15,7 @@
 #define  MAX_COUNT		(2000)
 #define  MAX_CLOUD		(5)
 #define  MAX_BUBBLE		(7)
-#define  MAX_BUBBLECNT	(360)
+#define  MAX_BUBBLECNT	(640)
 //****************************************
 // ñ≥ñºãÛä‘
 //****************************************
@@ -102,7 +102,7 @@ void Stage::Init(void) {
 
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,200.0f,200.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,100.0f,0.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
 	}
@@ -371,7 +371,7 @@ namespace {
 
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ îwåiï`âÊ ]]]
-			
+
 			// è„
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
@@ -383,7 +383,7 @@ namespace {
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-			
+
 			// â_
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 			{
@@ -401,7 +401,7 @@ namespace {
 					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 200 - 200, 200.0f, 200.0f + rand() % 200 - 100);
 				}
 			}
-		
+
 
 			// â∫
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
@@ -427,10 +427,8 @@ namespace {
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-		}
-		else if (Stage::CheckPlanetIdx(1))
-		{// [[[ îwåiï`âÊ ]]]
-		 // ãõ
+
+			// ãõ
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
 				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
@@ -438,35 +436,39 @@ namespace {
 
 			bubbleCnt++;
 
-			// äÑçáåvéZ 
-			CFloat fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, bubbleCnt, MAX_BUBBLECNT);
 
-			for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+			if (bubbleCnt % 20 == 0)
 			{
-				// ñA
-				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_BUBBLE])
-					->SetVtxPos(Pos3D(-20.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 20.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(00.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 20.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(-20.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(0.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f))
-					->SetCol(Color(255,255,255,255 * (1.0f - fCountRate)))
-					->SetBillboard(true);
+				Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 00.0f, 200.0f);
+				float scale = rand() % 50 + 20;
 
-			}
-
-			if (bubbleCnt > MAX_BUBBLECNT)
-			{
-				Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 200.0f, 200.0f);
-
-				for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+				for (int nCnt = 0; nCnt < 10; nCnt++)
 				{
-					bubblepos[nCnt] = pos;
+					D3DXVECTOR3 move;
+					if (nCnt % 2 == 0)
+					{
+						move = D3DXVECTOR3(-rand() %800 + 400, rand() % 800 + 400, 0);
+					}
+					else
+					{
+						move = D3DXVECTOR3(rand() %800 + 400, rand() % 800 + 400, 0);
+					}
+					Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\BackGround\\bubble.png"),
+						pos,
+						Scale3D(scale, scale, 0.0f),
+						Color(255, 255, 255, 255),
+						CParticle::TYPE::TYPE_FLOATUP,
+						MAX_BUBBLECNT,
+						D3DXVECTOR3(0.0f, 0.0f, 1.0f),
+						move);
+				
 				}
-				bubbleCnt = 0;
 			}
+
+			// [[[ ï«ÉÇÉfÉãï`âÊ ]]]
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		}
-		
-		// [[[ ï«ÉÇÉfÉãï`âÊ ]]]
-		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 	}
 }
 
