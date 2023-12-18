@@ -292,7 +292,7 @@ int _RNC_Window::CreateD3DDevice(HINSTANCE& instanceHandle) {
 	d3dpp.SwapEffect                 = D3DSWAPEFFECT_DISCARD;		// ダブルバッファの切り替え
 	d3dpp.EnableAutoDepthStencil     = TRUE;						// デプスバッファとステンシルバッファを作成
 	d3dpp.AutoDepthStencilFormat     = D3DFMT_D16;					// デプスバッファとして16bitを使う
-	d3dpp.Windowed                   = !(settingsInfo.isFullScreen ? RNLib::Options().GetIsFullScreen() : false);		// ウインドウモード
+	d3dpp.Windowed                   = TRUE;		// ウインドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;		// リフレッシュレート
 	d3dpp.PresentationInterval       = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
 
