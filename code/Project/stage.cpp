@@ -14,7 +14,8 @@
 
 #define  MAX_COUNT		(2000)
 #define  MAX_CLOUD		(5)
-
+#define  MAX_BUBBLE		(7)
+#define  MAX_BUBBLECNT	(360)
 //****************************************
 // ñ≥ñºãÛä‘
 //****************************************
@@ -32,9 +33,12 @@ namespace {
 	int             planetIdx;
 	int             stageIdx;
 	Pos3D			cloudpos[MAX_CLOUD];
+	Pos3D			bubblepos[MAX_BUBBLE];
 	Pos3D			fishpos;
 	float			cloudmove[MAX_CLOUD];
+	Pos3D			bubblemove[MAX_BUBBLE];
 	int				cloudtex[MAX_CLOUD];
+	int				bubbleCnt;
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -89,6 +93,7 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
+	bubbleCnt = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
@@ -99,6 +104,11 @@ void Stage::Init(void) {
 		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,200.0f,200.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
+	}
+	for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+	{
+		bubblepos[nCnt] = Pos3D(100.0f, 200.0f, 200.0f);
+		bubblemove[nCnt] = Pos3D((rand() % 20 + 10), 50.0f, 0.0f);
 	}
 	// ÉuÉçÉbÉNÇÃì«Ç›çûÇ›èàóù
 	CBlock::Load();
@@ -423,7 +433,28 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
 				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(00.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
 				->SetBillboard(true);
+
+			bubbleCnt++;
+
+			// äÑçáåvéZ 
+			CFloat fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, bubbleCnt, MAX_BUBBLECNT);
+
+			for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+			{
+				// ñA
+				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_BUBBLE])
+					->SetVtxPos(Pos3D(-50.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 100.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(00.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 100.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(-50.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(0.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f))
+					->SetBillboard(true);
+
+			}
+
+			if (bubbleCnt > MAX_BUBBLECNT)
+			{
+				bubbleCnt = 0;
+			}
 		}
+		
 		// [[[ ï«ÉÇÉfÉãï`âÊ ]]]
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
