@@ -63,10 +63,10 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // サンゴ礁3
 	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 岩1
 	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // 岩2
-	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 建物1
-	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 建物2
+	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物1
+	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物2
 	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 木の柵
-	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 平屋
+	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 平屋
 	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(電線無し)
 	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
 	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(右に電線)
@@ -438,7 +438,7 @@ void CBlock::Update(void) {
 		// 炎のエフェクト
 		float m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + 1.0f);
 
-		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y > 0.0f ? m_pos.y + 15.0f : m_pos.y - 15.0f, m_pos.z);
+		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y > 0.0f ? m_pos.y + 5.0f : m_pos.y - 5.0f, m_pos.z);
 
 		Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png"), m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,50,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 200, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI));
 
