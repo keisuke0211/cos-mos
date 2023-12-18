@@ -47,7 +47,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.nRightCoolDown = COOLDOWN;
 	m_Menu.SubMenuCD = false;
 	m_Menu.nRightTextType = 0;
-	m_Menu.bElasticity = false;
+	m_Menu.bAllElasticity = false;
 	m_Menu.bMenu = false;
 	m_Menu.bSubMenu = false;
 	m_Menu.bClose = false;
@@ -122,6 +122,8 @@ void CMenuUI::Update(void)
 {
 	if (!m_Menu.bClose && m_Menu.bMenu)
 		MenuSelect();
+
+	PartElasticity();
 
 	MenuAnime();
 
@@ -352,7 +354,8 @@ void CMenuUI::MenuCreate(void)
 	m_Menu.SubMenuCD = false;
 	m_Menu.nRightTextType = 0;
 	m_Menu.nNumLeftMenu = 0;
-	m_Menu.bElasticity = false;
+	m_Menu.bPartElasticity = true;
+	m_Menu.bAllElasticity = false;
 	m_Menu.bMenu = false;
 	m_Menu.bSubMenu = false;
 	m_Menu.bClose = false;
@@ -504,7 +507,7 @@ void CMenuUI::MenuAnime(void)
 	if (m_Menu.bMenu && m_Menu.bClose) {
 
 		// ñcÇÁÇﬁ ÅE èkÇﬁ
-		if (!m_Menu.bElasticity) {
+		if (!m_Menu.bAllElasticity) {
 			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++) {
 
 				if (m_Menu.nCntLeftAnime == 0) {
@@ -540,7 +543,7 @@ void CMenuUI::MenuAnime(void)
 				m_Menu.nCntLeftAnime = 0;
 
 				if (!m_Menu.bBackMode)
-					m_Menu.bElasticity = true;
+					m_Menu.bAllElasticity = true;
 				else if (m_Menu.bBackMode)
 				{
 					m_MenuEnd = true;
@@ -548,7 +551,7 @@ void CMenuUI::MenuAnime(void)
 				}
 			}
 		}
-		else if (m_Menu.bElasticity)
+		else if (m_Menu.bAllElasticity && !m_MenuEnd)
 		{
 			int Txt = m_Menu.nMaineSelect;
 			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + 80.0f;
@@ -690,6 +693,40 @@ void CMenuUI::MenuAnime(void)
 }
 
 //========================================
+// àÍïîÇÃêLèkèàóù
+//========================================
+void CMenuUI::PartElasticity(void)
+{
+	if (m_Menu.bPartElasticity)
+	{
+		for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++) 
+		{
+			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
+			float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+
+			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float SizeX = 0;
+
+			/*if (Txt == m_Menu.nMaineSelect)
+				SizeX = (TgtSizeX * 0.8f) + ((TgtSizeX * 0.2f) * ScaleRate);
+			else if (Txt != m_Menu.nMaineSelect)
+				SizeX = TgtSizeX - ((TgtSizeX * 0.2f) * ScaleRate);*/
+
+			m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
+
+			if (m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && Txt != m_Menu.nMaineSelect) {
+				/*if (Txt == m_Menu.nMaineSelect)
+					m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
+				else if (Txt != m_Menu.nMaineSelect)
+					m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX * 0.8f, SizeY);*/
+
+				m_Menu.bPartElasticity = false;
+			}
+		}
+	}
+}
+
+//========================================
 // ÉÅÉjÉÖÅ[
 //========================================
 void CMenuUI::MenuSelect(void)
@@ -737,7 +774,7 @@ void CMenuUI::MenuSelect(void)
 	}
 
 	// ñÓàÛÇÃï\é¶
-	if (m_Menu.nSubSelect == SETTING_BGM || m_Menu.nSubSelect == SETTING_SE) {
+	if (m_Menu.bSubMenu && (m_Menu.nSubSelect == SETTING_BGM || m_Menu.nSubSelect == SETTING_SE)) {
 
 		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
 		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
