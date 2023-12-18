@@ -400,6 +400,13 @@ void CMenuUI::MenuCreate(void)
 			D3DXVECTOR3(pos.x, pos.y + (100.0f * nText), pos.z), size,
 			"", CFont::FONT_ROND_B, &pFont);
 
+		if (nText == m_Menu.nMaineSelect) {
+			m_pMenu[nText]->SetTxtBoxColor(Color{ 255,255,255,255 });
+		}
+		else {
+			m_pMenu[nText]->SetTxtBoxColor(Color{ 155,155,155,255 });
+		}
+
 		m_pMenu[nText]->SetTxtBoxTgtSize(TargetSize.x, TargetSize.y);
 
 		if (m_MaineMenu[nText].Tex.bSet)
