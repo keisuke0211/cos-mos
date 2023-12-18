@@ -267,7 +267,7 @@ void CMode_Title::Update(void) {
 
 						bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect);
 
-						if (!bStgRel)
+						if (!bStgRel || RNSystem::GetMode() == RNSystem::MODE::DEBUG)
 						{
 							SwapMode(TITLE_NEXT);
 							Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
