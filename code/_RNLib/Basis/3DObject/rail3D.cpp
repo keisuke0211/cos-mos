@@ -39,6 +39,7 @@ CRail3D::~CRail3D() {
 //========================================
 void CRail3D::Clear(void) {
 
+    m_isLoop = false;
     RNLib::Memory().Release(&m_points);
     m_pointNum = 0;
 }
@@ -51,13 +52,20 @@ void CRail3D::Load(const String& loadPath) {
 	// ファイルを開く
 	if (RNLib::File().OpenLoadFile(loadPath, "Rail3DFile")) {
         while (RNLib::File().SearchLoop("END")) {
+            RNLib::File().Scan(_RNC_File::SCAN::BOOL, &m_isLoop, "isLoop");
+
             if (RNLib::File().CheckIdentifier("points{")) {
                 RNLib::File().Scan(_RNC_File::SCAN::USHORT, &m_pointNum);
+                m_pointNum += m_isLoop;
                 RNLib::Memory().Alloc(&m_points, m_pointNum);
 
                 for (UShort cntPoint = 0; cntPoint < m_pointNum; cntPoint++) {
                     RNLib::File().Scan(_RNC_File::SCAN::POS3D, &m_points[cntPoint]);
                 }
+
+                // ループ時、始点と終点を一致させる
+                if (m_isLoop && m_pointNum > 0)
+                    m_points[m_pointNum - 1] = m_points[0];
             }
         }
 
@@ -74,6 +82,7 @@ void CRail3D::Save(const String& savePath) {
     // ファイルを開く
     if (RNLib::File().OpenSaveFile(savePath)) {
         fprintf(RNLib::File().GetFile(), "Rail3DFile\n");
+        fprintf(RNLib::File().GetFile(), "isLoop %d\n", m_isLoop);
         fprintf(RNLib::File().GetFile(), "points{ %d\n", m_pointNum);
         for (UShort cntPoint = 0; cntPoint < m_pointNum; cntPoint++) {
             fprintf(RNLib::File().GetFile(), "  %f %f %f\n", m_points[cntPoint].x, m_points[cntPoint].y, m_points[cntPoint].z);

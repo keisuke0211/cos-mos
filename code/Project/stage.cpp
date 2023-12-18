@@ -48,10 +48,6 @@ namespace {
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
 
-	// クジラ
-	int             whaleCounter;
-	CDoll3D*        whaleDoll;
-
 	//ステージクリアタイムの保存場所
 	struct Record
 	{
@@ -219,12 +215,6 @@ void Stage::StartStage(void) {
 		}
 	}
 
-	if (Stage::CheckPlanetIdx(1)) {
-		whaleCounter = 0;
-		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
-		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
-	}
-
 	// カメラのライト
 	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 	Manager::GetSubCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
@@ -367,10 +357,6 @@ void Stage::EndStage(void) {
 		}
 	}
 
-	if (Stage::CheckPlanetIdx(1)) {
-		delete whaleDoll;
-	}
-
 	// UI用ドールを破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
 		delete UIDoll[cnt];
@@ -441,18 +427,10 @@ namespace {
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-
-			whaleCounter = (whaleCounter + 1) % 1800;
-			float whaleRate = whaleCounter / 1800.0f;
-			float whaleScale = (whaleRate > 0.5f ? 0.5f + (0.5f - whaleRate) : whaleRate) * 2.0f;
-			Matrix mtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), RNLib::Matrix().ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
-
-			whaleDoll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
-			whaleDoll->SetRot(Rot3D(0.0f, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f));
-			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
-			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
-		
-			// 魚
+		}
+		else if (Stage::CheckPlanetIdx(1))
+		{// [[[ 背景描画 ]]]
+		 // 魚
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
 				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
