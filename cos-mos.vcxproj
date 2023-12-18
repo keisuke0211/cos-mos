@@ -195,6 +195,7 @@
     <ClCompile Include="code\Project\Object\stage-object-manager.cpp" />
     <ClCompile Include="code\Project\Object\stage-object.cpp" />
     <ClCompile Include="code\Project\UI\coinUI.cpp" />
+    <ClCompile Include="code\Project\UI\MenuUi.cpp" />
     <ClCompile Include="code\Project\UI\miss.cpp" />
     <ClCompile Include="code\Project\UI\partsUI.cpp" />
     <ClCompile Include="code\Project\precompile.cpp">
@@ -216,6 +217,7 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D_model.cpp" />
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\standard-effect3D.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\3DObject\rail3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\ease.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\geometry.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Calculation\hit-test.cpp" />
@@ -228,6 +230,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-info.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\draw-state.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\Draw\light3D-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\light3D.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp" />
@@ -239,26 +242,27 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\regist-info.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\text.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Draw\texture.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\Draw\transition.cpp" />
+    <ClCompile Include="code\Project\UI\transition.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\count.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\file.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\input.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\memory.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object-manager.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\Mechanical\print.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\sound.cpp" />
     <ClCompile Include="code\_RNLib\Basis\Mechanical\window.cpp" />
-    <ClCompile Include="code\_RNLib\Basis\setting.cpp" />
+    <ClCompile Include="code\_RNLib\Basis\options.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_object.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp" />
     <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp" />
+    <ClCompile Include="code\_RNLib\Editor\light3D-editor.cpp" />
+    <ClCompile Include="code\_RNLib\Editor\rail3D-editor.cpp" />
     <ClCompile Include="code\_RNLib\RNfunction.cpp" />
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
-    <ClCompile Include="code\_RNLib\SetUp3DEditor\setup3D-editor.cpp" />
+    <ClCompile Include="code\_RNLib\Editor\setup3D-editor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\Character\player.h" />
@@ -304,6 +308,7 @@
     <ClInclude Include="code\Project\Object\stage-object-manager.h" />
     <ClInclude Include="code\Project\Object\stage-object.h" />
     <ClInclude Include="code\Project\UI\coinUI.h" />
+    <ClInclude Include="code\Project\UI\MenuUi.h" />
     <ClInclude Include="code\Project\UI\miss.h" />
     <ClInclude Include="code\Project\UI\partsUI.h" />
     <ClInclude Include="code\Project\precompile.h" />
@@ -323,6 +328,7 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_cylinder.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_model.h" />
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\standard-effect3D.h" />
+    <ClInclude Include="code\_RNLib\Basis\3DObject\rail3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\ease.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\geometry.h" />
     <ClInclude Include="code\_RNLib\Basis\Calculation\hit-test.h" />
@@ -335,6 +341,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-info.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\draw-state.h" />
+    <ClInclude Include="code\_RNLib\Basis\Draw\light3D-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\light3D.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h" />
@@ -346,29 +353,31 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\regist-info.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\text.h" />
     <ClInclude Include="code\_RNLib\Basis\Draw\texture.h" />
-    <ClInclude Include="code\_RNLib\Basis\Draw\transition.h" />
+    <ClInclude Include="code\Project\UI\transition.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\count.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\file.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\input.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\memory.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object-manager.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object.h" />
-    <ClInclude Include="code\_RNLib\Basis\Mechanical\print.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\sound.h" />
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\string.h" />
     <ClInclude Include="code\_RNLib\Basis\Mechanical\window.h" />
-    <ClInclude Include="code\_RNLib\Basis\setting.h" />
+    <ClInclude Include="code\_RNLib\Basis\options.h" />
     <ClInclude Include="code\_RNLib\Demo\demo.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_object.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_player.h" />
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h" />
+    <ClInclude Include="code\_RNLib\Editor\light3D-editor.h" />
+    <ClInclude Include="code\_RNLib\Editor\rail3D-editor.h" />
     <ClInclude Include="code\_RNLib\RNfunction.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />
     <ClInclude Include="code\_RNLib\RNmode.h" />
     <ClInclude Include="code\_RNLib\RNobject.h" />
     <ClInclude Include="code\_RNLib\RNsettings.h" />
-    <ClInclude Include="code\_RNLib\SetUp3DEditor\setup3D-editor.h" />
+    <ClInclude Include="code\_RNLib\Editor\setup3D-editor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

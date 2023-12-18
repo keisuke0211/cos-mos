@@ -15,20 +15,20 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffect3DMgr::CEffect3DMgr() : CObjectMgr("RN_Effect3DMgr") {
+_RNC_Effect3DMgr::_RNC_Effect3DMgr() : CObjectMgr("RN_Effect3DMgr") {
 
 }
 
 //========================================
 // デストラクタ
 //========================================
-CEffect3DMgr::~CEffect3DMgr() {
+_RNC_Effect3DMgr::~_RNC_Effect3DMgr() {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CEffect3DMgr::Update(void) {
+void _RNC_Effect3DMgr::Update(void) {
 
 }

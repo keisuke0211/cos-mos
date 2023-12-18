@@ -13,13 +13,75 @@
 //================================================================================
 
 //========================================
-// [静的]頂点2Dの座標設定
+// コンストラクタ
 //========================================
-void CPolygon2D::SetVtxPos(Vertex2D* vtxs, const Pos2D& pos, const Angle& angle, const float& width, const float& height) {
+_RNC_Polygon2D::_RNC_Polygon2D() {
+
+}
+
+//========================================
+// デストラクタ
+//========================================
+_RNC_Polygon2D::~_RNC_Polygon2D() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void _RNC_Polygon2D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void _RNC_Polygon2D::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void _RNC_Polygon2D::Update(void) {
+
+}
+
+//========================================
+// 設置処理
+//========================================
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
+
+	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen)
+		->SetPos(pos)
+		->SetAngle(angle);
+}
+
+//========================================
+// 設置処理
+//========================================
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
+
+	return Put(priority, Pos2D(pos.x, pos.y), angle, isOnScreen);
+}
+
+//========================================
+// 設置処理
+//========================================
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::Put(const UShort& priority, const bool& isOnScreen) {
+
+	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen);
+}
+
+
+//========================================
+// 頂点2Dの座標設定
+//========================================
+void _RNC_Polygon2D::SetVtxPos(Vertex2D* vtxs, const Pos2D& pos, const Angle& angle, const float& width, const float& height) {
 
 	// 対角線の長さと向き
-	const float length          = sqrtf((width * width) + (height * height)) * 0.5f;
-	const float vtxAngle        = atan2f(width, height);
+	const float length = sqrtf((width * width) + (height * height)) * 0.5f;
+	const float vtxAngle = atan2f(width, height);
 	const float inverseVtxAngle = D3DX_PI - vtxAngle;
 
 	// 頂点座標を設定
@@ -47,10 +109,10 @@ void CPolygon2D::SetVtxPos(Vertex2D* vtxs, const Pos2D& pos, const Angle& angle,
 }
 
 //========================================
-// [静的]頂点2Dの座標設定
+// 頂点2Dの座標設定
 //========================================
-void CPolygon2D::SetVtxPos(Vertex2D* vtxs, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
-	
+void _RNC_Polygon2D::SetVtxPos(Vertex2D* vtxs, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+
 	vtxs[0].pos = Pos3D(pos0.x, pos0.y, 0.0f);
 	vtxs[1].pos = Pos3D(pos1.x, pos1.y, 0.0f);
 	vtxs[2].pos = Pos3D(pos2.x, pos2.y, 0.0f);
@@ -61,13 +123,13 @@ void CPolygon2D::SetVtxPos(Vertex2D* vtxs, const Pos2D& pos0, const Pos2D& pos1,
 }
 
 //========================================
-// [静的]頂点2Dの座標設定
+// 頂点2Dの座標設定
 //========================================
-void CPolygon2D::SetVtxPos_TopLeft(Vertex2D* vtxs, const Pos2D& pos, const float& width, const float& height) {
+void _RNC_Polygon2D::SetVtxPos_TopLeft(Vertex2D* vtxs, const Pos2D& pos, const float& width, const float& height) {
 
-	vtxs[0].pos = Pos3D(pos.x        , pos.y         , 0.0f);
-	vtxs[1].pos = Pos3D(pos.x + width, pos.y         , 0.0f);
-	vtxs[2].pos = Pos3D(pos.x        , pos.y + height, 0.0f);
+	vtxs[0].pos = Pos3D(pos.x, pos.y, 0.0f);
+	vtxs[1].pos = Pos3D(pos.x + width, pos.y, 0.0f);
+	vtxs[2].pos = Pos3D(pos.x, pos.y + height, 0.0f);
 	vtxs[3].pos = Pos3D(pos.x + width, pos.y + height, 0.0f);
 
 	// 解像度を適用
@@ -75,9 +137,9 @@ void CPolygon2D::SetVtxPos_TopLeft(Vertex2D* vtxs, const Pos2D& pos, const float
 }
 
 //========================================
-// [静的]頂点2Dに解像度を適用
+// 頂点2Dに解像度を適用
 //========================================
-void CPolygon2D::ApplyResolution(Vertex2D* vtxs) {
+void _RNC_Polygon2D::ApplyResolution(Vertex2D* vtxs) {
 
 	float resolution = RNLib::Window().GetResolution();
 	vtxs[0].pos *= resolution;
@@ -87,9 +149,9 @@ void CPolygon2D::ApplyResolution(Vertex2D* vtxs) {
 }
 
 //========================================
-// [静的]頂点2Dの座標変換用係数設定
+// 頂点2Dの座標変換用係数設定
 //========================================
-void CPolygon2D::SetVtxRHW(Vertex2D *pVtx) {
+void _RNC_Polygon2D::SetVtxRHW(Vertex2D* pVtx) {
 
 	pVtx[0].rhw = 1.0f;
 	pVtx[1].rhw = 1.0f;
@@ -98,28 +160,28 @@ void CPolygon2D::SetVtxRHW(Vertex2D *pVtx) {
 }
 
 //========================================
-// [静的]頂点2Dの色設定
+// 頂点2Dの色設定
 //========================================
-void CPolygon2D::SetVtxCol(Vertex2D *pVtx, const Color& col) {
+void _RNC_Polygon2D::SetVtxCol(Vertex2D* pVtx, const Color& col) {
 
 	pVtx[0].col =
-	pVtx[1].col =
-	pVtx[2].col =
-	pVtx[3].col = D3DCOLOR_RGBA(col.r, col.g, col.b, col.a);
+		pVtx[1].col =
+		pVtx[2].col =
+		pVtx[3].col = D3DCOLOR_RGBA(col.r, col.g, col.b, col.a);
 }
 
 //========================================
-// [静的]頂点2Dのテクスチャ座標設定
+// 頂点2Dのテクスチャ座標設定
 //========================================
-void CPolygon2D::SetVtxTex_Cut(Vertex2D* vtxs, const Pos2D& cutPos, const float& size) {
+void _RNC_Polygon2D::SetVtxTex_Cut(Vertex2D* vtxs, const Pos2D& cutPos, const float& size) {
 
 	SetVtxTex_Cut(vtxs, cutPos, size, size);
 }
 
 //========================================
-// [静的]頂点2Dのテクスチャ座標設定
+// 頂点2Dのテクスチャ座標設定
 //========================================
-void CPolygon2D::SetVtxTex(Vertex2D* vtxs) {
+void _RNC_Polygon2D::SetVtxTex(Vertex2D* vtxs) {
 
 	vtxs[0].tex = Pos2D(0.0f, 0.0f);
 	vtxs[1].tex = Pos2D(1.0f, 0.0f);
@@ -128,82 +190,21 @@ void CPolygon2D::SetVtxTex(Vertex2D* vtxs) {
 }
 
 //========================================
-// [静的]頂点2Dのテクスチャ座標設定
+// 頂点2Dのテクスチャ座標設定
 //========================================
-void CPolygon2D::SetVtxTex_Cut(Vertex2D* vtxs, const Pos2D& cutPos, const float& width, const float& height) {
+void _RNC_Polygon2D::SetVtxTex_Cut(Vertex2D* vtxs, const Pos2D& cutPos, const float& width, const float& height) {
 
-	const float widthHalf  = width  * 0.5f;
+	const float widthHalf = width * 0.5f;
 	const float heightHalf = height * 0.5f;
-	const float left       = cutPos.x - widthHalf;
-	const float right      = cutPos.x + widthHalf;
-	const float top        = cutPos.y - heightHalf;
-	const float bottom     = cutPos.y + heightHalf;
+	const float left = cutPos.x - widthHalf;
+	const float right = cutPos.x + widthHalf;
+	const float top = cutPos.y - heightHalf;
+	const float bottom = cutPos.y + heightHalf;
 
-	vtxs[0].tex = Pos2D(left , top   );
-	vtxs[1].tex = Pos2D(right, top   );
-	vtxs[2].tex = Pos2D(left , bottom);
+	vtxs[0].tex = Pos2D(left, top);
+	vtxs[1].tex = Pos2D(right, top);
+	vtxs[2].tex = Pos2D(left, bottom);
 	vtxs[3].tex = Pos2D(right, bottom);
-}
-
-//========================================
-// コンストラクタ
-//========================================
-CPolygon2D::CPolygon2D() {
-
-}
-
-//========================================
-// デストラクタ
-//========================================
-CPolygon2D::~CPolygon2D() {
-
-}
-
-//========================================
-// 初期化処理
-//========================================
-void CPolygon2D::Init(void) {
-
-}
-
-//========================================
-// 終了処理
-//========================================
-void CPolygon2D::Uninit(void) {
-
-}
-
-//========================================
-// 更新処理
-//========================================
-void CPolygon2D::Update(void) {
-
-}
-
-//========================================
-// 設置処理
-//========================================
-CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
-
-	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen)
-		->SetPos(pos)
-		->SetAngle(angle);
-}
-
-//========================================
-// 設置処理
-//========================================
-CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen) {
-
-	return Put(priority, Pos2D(pos.x, pos.y), angle, isOnScreen);
-}
-
-//========================================
-// 設置処理
-//========================================
-CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const bool& isOnScreen) {
-
-	return RNLib::DrawMgr().PutPolygon2D(priority, isOnScreen);
 }
 
 //================================================================================
@@ -215,34 +216,34 @@ CPolygon2D::CRegistInfo* CPolygon2D::Put(const UShort& priority, const bool& isO
 //****************************************
 // 静的変数定義
 //****************************************
-VertexBuffer CPolygon2D::CDrawInfo::ms_vtxBuff = NULL;
-UShort CPolygon2D::CDrawInfo::ms_allocPower = 0;
-UShort CPolygon2D::CDrawInfo::ms_allocNum   = 0;
-UShort CPolygon2D::CDrawInfo::ms_idxCount   = 0;
+VertexBuffer _RNC_Polygon2D::CDrawInfo::ms_vtxBuff = NULL;
+UShort _RNC_Polygon2D::CDrawInfo::ms_allocPower = 0;
+UShort _RNC_Polygon2D::CDrawInfo::ms_allocNum   = 0;
+UShort _RNC_Polygon2D::CDrawInfo::ms_idxCount   = 0;
 
 //========================================
-// [静的] 頂点バッファ初期生成処理
+//  頂点バッファ初期生成処理
 //========================================
-void CPolygon2D::CDrawInfo::InitCreateVertexBuffer(void) {
+void _RNC_Polygon2D::CDrawInfo::InitCreateVertexBuffer(void) {
 
-	ms_allocPower = CDrawMgr::POLYGON2D_ALLOC_BASE_POWER;
+	ms_allocPower = _RNC_DrawMgr::POLYGON2D_ALLOC_BASE_POWER;
 	ms_allocNum   = pow(2, ms_allocPower);
 	CreateVertexBuffer(ms_allocNum);
 }
 
 //========================================
-// [静的]頂点バッファ生成処理
+// 頂点バッファ生成処理
 //========================================
-void CPolygon2D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
+void _RNC_Polygon2D::CDrawInfo::CreateVertexBuffer(const UShort& num) {
 
 	// 頂点バッファの生成
 	RNLib::Window().GetD3DDevice()->CreateVertexBuffer(sizeof(Vertex2D) * 4 * num, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &ms_vtxBuff, NULL);
 }
 
 //========================================
-// [静的]頂点バッファ解放処理
+// 頂点バッファ解放処理
 //========================================
-void CPolygon2D::CDrawInfo::ReleaseVertexBuffer(void) {
+void _RNC_Polygon2D::CDrawInfo::ReleaseVertexBuffer(void) {
 
 	// 頂点バッファの破棄
 	if (ms_vtxBuff != NULL) {
@@ -254,12 +255,12 @@ void CPolygon2D::CDrawInfo::ReleaseVertexBuffer(void) {
 //========================================
 // コンストラクタ
 //========================================
-CPolygon2D::CDrawInfo::CDrawInfo() {
+_RNC_Polygon2D::CDrawInfo::CDrawInfo() {
 
-	m_idx     = 0;
-	m_tex     = NULL;
-	m_texType = Polygon2DAnd3D::TEX_TYPE::NONE;
-	m_isZTest = true;
+	m_idx               = 0;
+	m_tex               = NULL;
+	m_texType           = Polygon2DAnd3D::TEX_TYPE::NONE;
+	m_interpolationMode = _RNC_DrawState::INTERPOLATION_MODE::NONE;
 	for (int cntVtx = 0; cntVtx < 4; cntVtx++) {
 		m_vtxs[cntVtx] = {};
 	}
@@ -268,9 +269,9 @@ CPolygon2D::CDrawInfo::CDrawInfo() {
 //========================================
 // デストラクタ
 //========================================
-CPolygon2D::CDrawInfo::~CDrawInfo() {
+_RNC_Polygon2D::CDrawInfo::~CDrawInfo() {
 
-	CMemory::Release(&m_tex);
+	RNLib::Memory().Release(&m_tex);
 }
 
 //================================================================================
@@ -282,7 +283,7 @@ CPolygon2D::CDrawInfo::~CDrawInfo() {
 //========================================
 // コンストラクタ
 //========================================
-CPolygon2D::CRegistInfo::CRegistInfo() {
+_RNC_Polygon2D::CRegistInfo::CRegistInfo() {
 
 	m_setVtxPosInfo = NULL;
 	ClearParameter();
@@ -291,7 +292,7 @@ CPolygon2D::CRegistInfo::CRegistInfo() {
 //========================================
 // デストラクタ
 //========================================
-CPolygon2D::CRegistInfo::~CRegistInfo() {
+_RNC_Polygon2D::CRegistInfo::~CRegistInfo() {
 
 	ClearParameter();
 }
@@ -299,33 +300,33 @@ CPolygon2D::CRegistInfo::~CRegistInfo() {
 //========================================
 // パラメーターのクリア処理
 //========================================
-void CPolygon2D::CRegistInfo::ClearParameter(void) {
+void _RNC_Polygon2D::CRegistInfo::ClearParameter(void) {
 
 	CRegistInfoBase::ClearParameter();
 	m_idx               = 0;
-	CMemory::Release(&m_setVtxPosInfo);
+	RNLib::Memory().Release(&m_setVtxPosInfo);
 	m_pos               = INITPOS2D;
 	m_setVtxPosInfoType = SET_VTX_POS_INFO_TYPE::NONE;
-	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = INITCOLOR, cntVtx++);
+	m_interpolationMode = _RNC_DrawState::INTERPOLATION_MODE::NONE;
+	for (int cntVtx = 0; cntVtx < 4; m_vtxCols[cntVtx] = COLOR_WHITE, cntVtx++);
 	m_setTexInfoSum.ClearParameter();
-	m_isZtest           = false;
 }
 
 //========================================
 // 描画情報に変換
 //========================================
-CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
+_RNC_Polygon2D::CDrawInfo* _RNC_Polygon2D::CRegistInfo::ConvToDrawInfo(void) {
 
 	// 描画情報のメモリ確保
 	CDrawInfo* drawInfo = NULL;
-	CMemory::Alloc(&drawInfo);
+	RNLib::Memory().Alloc(&drawInfo);
 
 	// 基底情報を代入
 	AssignToDrawInfo(*drawInfo);
 
 	// 情報を代入
-	drawInfo->m_idx       = m_idx;
-	drawInfo->m_isZTest   = m_isZtest;
+	drawInfo->m_idx               = m_idx;
+	drawInfo->m_interpolationMode = m_interpolationMode;
 
 	//----------------------------------------
 	// 頂点情報の設定
@@ -334,7 +335,7 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	switch (m_setVtxPosInfoType) {
 	case SET_VTX_POS_INFO_TYPE::NORMAL: {
 		SetVtxPosInfo* setVtxPosInfo = (SetVtxPosInfo*)m_setVtxPosInfo;
-		CPolygon2D::SetVtxPos(drawInfo->m_vtxs, 
+		RNLib::Polygon2D().SetVtxPos(drawInfo->m_vtxs, 
 			setVtxPosInfo->vtxPoses[0],
 			setVtxPosInfo->vtxPoses[1],
 			setVtxPosInfo->vtxPoses[2],
@@ -342,7 +343,7 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 	}break;
 	case SET_VTX_POS_INFO_TYPE::SIZE: {
 		SetSizeInfo* setSizeInfo = (SetSizeInfo*)m_setVtxPosInfo;
-		CPolygon2D::SetVtxPos(drawInfo->m_vtxs, Pos2D(m_pos.x, m_pos.y), setSizeInfo->angle, setSizeInfo->width, setSizeInfo->height);
+		RNLib::Polygon2D().SetVtxPos(drawInfo->m_vtxs, Pos2D(m_pos.x, m_pos.y), setSizeInfo->angle, setSizeInfo->width, setSizeInfo->height);
 	}break;
 	}
 
@@ -370,7 +371,7 @@ CPolygon2D::CDrawInfo* CPolygon2D::CRegistInfo::ConvToDrawInfo(void) {
 //========================================
 // 番号を設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetIdx(const short& idx) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetIdx(const short& idx) {
 
 	m_idx = idx;
 
@@ -380,7 +381,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetIdx(const short& idx) {
 //========================================
 // 位置を設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetPos(const Pos2D& pos) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetPos(const Pos2D& pos) {
 
 	m_pos = pos;
 
@@ -390,14 +391,14 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetPos(const Pos2D& pos) {
 //========================================
 // 角度を設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetAngle(const Angle& angle) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetAngle(const Angle& angle) {
 
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::SIZE) {
 		SetSizeInfo* setSizeInfo = (SetSizeInfo*)m_setVtxPosInfo;
 		setSizeInfo->angle = angle;
 	}
 	else if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::NONE) {
-		CMemory::Alloc((SetSizeInfo**)&m_setVtxPosInfo);
+		RNLib::Memory().Alloc((SetSizeInfo**)&m_setVtxPosInfo);
 		SetSizeInfo* setSizeInfo = (SetSizeInfo*)m_setVtxPosInfo;
 		setSizeInfo->width  = 0.0f;
 		setSizeInfo->height = 0.0f;
@@ -414,10 +415,10 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetAngle(const Angle& angle) {
 //========================================
 // 頂点位置を設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxPos(const Pos2D pos0, const Pos2D pos1, const Pos2D pos2, const Pos2D pos3) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetVtxPos(const Pos2D pos0, const Pos2D pos1, const Pos2D pos2, const Pos2D pos3) {
 
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::NONE) {
-		CMemory::Alloc((SetVtxPosInfo**)&m_setVtxPosInfo);
+		RNLib::Memory().Alloc((SetVtxPosInfo**)&m_setVtxPosInfo);
 		SetVtxPosInfo* setTexInfo = (SetVtxPosInfo*)m_setVtxPosInfo;
 		setTexInfo->vtxPoses[0] = pos0;
 		setTexInfo->vtxPoses[1] = pos1;
@@ -435,7 +436,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxPos(const Pos2D pos0, co
 //========================================
 // 大きさを設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetSize(const float& width, const float& height) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetSize(const float& width, const float& height) {
 
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::SIZE) {
 		SetSizeInfo* setTexInfo = (SetSizeInfo*)m_setVtxPosInfo;
@@ -443,7 +444,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetSize(const float& width, co
 		setTexInfo->height = height;
 	}
 	else if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::NONE) {
-		CMemory::Alloc((SetSizeInfo**)&m_setVtxPosInfo);
+		RNLib::Memory().Alloc((SetSizeInfo**)&m_setVtxPosInfo);
 		SetSizeInfo* setSizeInfo = (SetSizeInfo*)m_setVtxPosInfo;
 		setSizeInfo->width  = width;
 		setSizeInfo->height = height;
@@ -460,7 +461,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetSize(const float& width, co
 //========================================
 // 色を設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetCol(const Color& col) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetCol(const Color& col) {
 
 	if (this == NULL)
 		return NULL;
@@ -472,7 +473,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetCol(const Color& col) {
 
 	return this;
 }
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxCol(const Color col0, const Color col1, const Color col2, const Color col3) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetVtxCol(const Color col0, const Color col1, const Color col2, const Color col3) {
 
 	if (this == NULL)
 		return NULL;
@@ -488,7 +489,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetVtxCol(const Color col0, co
 //========================================
 // テクスチャを設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
 		return NULL;
@@ -501,7 +502,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTex(const short& texIdx, co
 //========================================
 // テクスチャを設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTex(CCamera* camera, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(CCamera* camera, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
 		return NULL;
@@ -514,7 +515,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTex(CCamera* camera, const 
 //========================================
 // テクスチャを設定(UV)
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexUV(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexUV(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
@@ -527,7 +528,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexUV(const short& texIdx, 
 //========================================
 // テクスチャを設定(UV)
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexUV(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexUV(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
@@ -540,7 +541,7 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexUV(CCamera* camera, cons
 //========================================
 // テクスチャのX反転設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexMirrorX(const bool& isMirror) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexMirrorX(const bool& isMirror) {
 
 	if (this == NULL)
 		return NULL;
@@ -551,14 +552,14 @@ CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetTexMirrorX(const bool& isMi
 }
 
 //========================================
-// Zテストを設定
+// 補間モードを設定
 //========================================
-CPolygon2D::CRegistInfo* CPolygon2D::CRegistInfo::SetZTest(const bool& isZTest) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_isZtest = isZTest;
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

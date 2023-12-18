@@ -10,10 +10,12 @@
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
+#include "../UI/MenuUi.h"
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
 #include "../resource.h"
 #include "../stage.h"
+#include "../UI/coinUI.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -25,11 +27,18 @@ const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(7.5f, -20.0f, -120.0f);
 const D3DXVECTOR3 SELBOXRATE = SELECTBOX - UNSELECTBOX;
 const D3DXVECTOR3 NUMPOSSELBOX = D3DXVECTOR3(15.0f, 0.0f, 0.0f);
 const D3DXVECTOR3 NUMPOSROCKET = D3DXVECTOR3(0.0f, 15.0f, 0.0f);
-const int MAX_COUNT = 12;
-CInt ANIMCOUNT = 10;
+const D3DXVECTOR3 FADEROCKET = D3DXVECTOR3(70.0f, UNSELECTBOX.y, UNSELECTBOX.z) + NUMPOSROCKET;
+const D3DXVECTOR3 COINUIPOS = D3DXVECTOR3(25.0f, 16.7f, -136.0f);
+const D3DXVECTOR3 IMAGE_STG_POS = D3DXVECTOR3(-40.0f, 8.0f, -110.0f);
+const float NUM_ROT = 0.3925f;
+const int MAX_COUNT = 24;
+CInt ANIMCOUNT = MAX_COUNT;
 
-const char* CMode_Title::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
-bool CMode_Title::s_bStageSelect = false;
+CMenuUI *CMode_Title::m_MenuUI = NULL;
+bool CMode_Title::m_bStageSelect = false;
+
+int CMode_Title::m_nPlanetIdx = 0;
+int CMode_Title::m_nStageSelect = 0;
 
 //========================================
 // コンストラクタ
@@ -42,34 +51,23 @@ CMode_Title::CMode_Title(void) {
 	}
 
 	Title              = TITLE_TITLE;
-	m_nSelect          = 0;
+	NextTitle		   = TITLE_TITLE;
 	m_nOldSelect       = 0;
-	m_nPlanetIdx       = 0;
 	m_nOldnPlanet      = 0;
 	m_PlanetAngle      = 0.0f;
-	m_nSelect          = 0;
 	m_PlanetType       = NULL;
+	m_CoinUI           = NULL;
 	m_bBackMode        = false;
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
 	m_StgBoardIdx      = RNLib::Model().Load("data\\MODEL\\Stage_Board.x");
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
-	m_Menu.pOperation  = NULL;
-	m_Menu.pSetting    = NULL;
-	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
-	m_AnimCnt = 0;
+	m_AnimCnt = NULL;
 	m_RotCnt = 0;
 	m_bStageChange = false;
-
-	{// 音量設定の初期化
-		float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
-		float SE  = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
-		m_Menu.nBGMVolume    = BGM * VOLUME_MSX;
-		m_Menu.nSEVolume     = SE * VOLUME_MSX;
-		m_Menu.nBGMOldVolume = BGM * VOLUME_MSX;
-		m_Menu.nSEOldVolume  = SE * VOLUME_MSX;
-	}
+	m_bRocketMove = false;
+	m_bRocketRot = false;
 }
 
 //========================================
@@ -94,18 +92,14 @@ CMode_Title::~CMode_Title(void) {
 		m_PlanetType = NULL;
 	}
 
+	if (m_MenuUI != NULL)
+	{
+		delete m_MenuUI;
+		m_MenuUI = NULL;
+	}
+
 	// テキストの破棄
 	TextRelease(TEXT_ALL);
-
-	if (m_Menu.pOperation != NULL) {
-		delete[] m_Menu.pOperation;
-		m_Menu.pOperation = NULL;
-	}
-
-	if (m_Menu.pSetting != NULL) {
-		delete[] m_Menu.pSetting;
-		m_Menu.pSetting = NULL;
-	}
 }
 
 //========================================
@@ -115,28 +109,28 @@ void CMode_Title::Init(void) {
 	CMode::Init();
 
 	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
+	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// テキストの初期化
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-		m_pMenu[nCnt] = NULL;
-	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++) 
-		m_pSubMenu[nCnt] = NULL;
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
 		m_bMove[nCnt] = false; 
 		m_TITLE[nCnt] = m_TitleShadow[nCnt] = NULL;
 	}
 
-	// テキスト読込
-	TextLoad();
+	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
+		m_pMenu[nCnt] = NULL;
+	}
+
+	// メニュー生成
+	m_MenuUI = CMenuUI::Create(CMode::TYPE::TITLE );
 
 	// ステージ読込
 	CreateStageSelectInfo();
 
-	if (s_bStageSelect) 
+	if (m_bStageSelect) 
 	{// ステージ選択時、
 		SwapMode(TITLE_SELECT);
-		s_bStageSelect = false;
+		m_bStageSelect = false;
 	}
 	else
 	{// ステージ非選択時、
@@ -147,9 +141,6 @@ void CMode_Title::Init(void) {
 	// テクスチャ
 	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
 	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
-
-	// 選択番号
-	m_nSelect = 0;
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
@@ -163,6 +154,10 @@ void CMode_Title::Init(void) {
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
+	if (m_CoinUI == NULL) {
+		m_CoinUI = CCoinUI::Create(COINUIPOS,Scale2D(4.0f,4.0f),false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
+	}
+
 	// 状態設定
 	SetState((int)STATE::NONE);
 }
@@ -173,7 +168,12 @@ void CMode_Title::Init(void) {
 void CMode_Title::Uninit(void) {
 	CMode::Uninit();
 
-	CMemory::Release(&m_AnimCnt);
+	if (m_CoinUI != NULL) {
+		delete m_CoinUI;
+		m_CoinUI = NULL;
+	}
+
+	RNLib::Memory().Release(&m_AnimCnt);
 }
 
 //========================================
@@ -195,7 +195,7 @@ void CMode_Title::Update(void) {
 		else if (Title == TITLE_SELECT)
 			m_PlanetAngle += -0.002f;
 
-		FloatLoopControl(&m_PlanetAngle, D3DX_PI, -D3DX_PI);
+		RNLib::Number().LoopClamp(&m_PlanetAngle, D3DX_PI, -D3DX_PI);
 	}
 
 	if (Title <= TITLE_MENU)
@@ -206,126 +206,69 @@ void CMode_Title::Update(void) {
 			->SetTex(m_TexIdx[TEX_PLANET]);
 
 		// ロケット
-		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), false)
-			->SetOutLineIdx(true);
+		Matrix baseMtx = RNLib::Matrix().ConvPosRotToMtx(D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f));
+		Matrix rocketMtx = RNLib::Matrix().ConvRotToMtx(D3DXVECTOR3(0.0f, ((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE, 0.0f));
+		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, RNLib::Matrix().MultiplyMtx(rocketMtx, baseMtx), false)
+			->SetOutLineIdx(5);
 	}
 
-	// メニューの背景
-	if (Title == TITLE_MENU) {
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(m_Menu.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-			->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
-			->SetCol(Color{ 150,150,150,150 });
+	// ゲーム終了
+	bool isEnd = false;
+	if (m_MenuUI != NULL)
+		isEnd = m_MenuUI->GetInfo().bGameEnd;
 
-		if (m_Menu.RightPos.x < 1800)
-		{
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-				->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
-				->SetCol(Color{ 150,150,150,150 });
-
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x + 10, 400.0f, 100.0f), 0.0f, false)
-				->SetSize(560.0f, 600.0f)
-				->SetTex(m_Menu.BoxTex);
-		}
-	}
-
-	// 各モードの処理
-	if (Title == TITLE_TITLE)
-		TextAnime();
-	else if (Title == TITLE_MENU) {
-		if (!m_Menu.bClose)MenuSelect();
-		MenuAnime();
-	}
-	else if (Title == TITLE_SELECT)
-		StageSelect();
-	else if (Title == TITLE_NEXT)
-		return;
-
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && RNLib::Transition().GetState() == CTransition::STATE::NONE)
+	if (isEnd)
+		PostQuitMessage(0);
+	else
 	{
-		//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-		switch (Title)
-		{
-		case TITLE_OUTSET:
-		{
-			SwapMode(TITLE_MENU_ANIME);
+		// 各モードの処理
+		if (Title == TITLE_TITLE)
+			TextAnime();
+		else if (Title == TITLE_MENU) {
+			m_MenuUI->Update();
+			MenuAnime();
 		}
-		break;
-		case TITLE_MENU:
-		{
-			if (!m_Menu.bSubMenu) {
-				switch (m_Menu.nMaineSelect)
+		else if (Title == TITLE_SELECT)
+			StageSelect();
+		else if (Title == TITLE_NEXT)
+			return;
+
+		if (m_bStageChange == false) {
+			if (m_bRocketMove == false) {
+				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
 				{
-				case MENU_GAME:
-					if (!m_Menu.bClose) {
-						m_Menu.bClose = true;
-						m_Menu.LeftTargetPos *= -1;
-						m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-						m_Menu.nCntLeftAnime = 0;
-					}
-					break;
-				case MENU_CONTROLLER:
-					break;
-				case MENU_SETTING:
-					if (!m_Menu.bSubMenu) {
-						m_Menu.bSubMenu = true;
-						m_pMenu[m_Menu.nMaineSelect]->SetBoxColor(Color{ 155,155,155,255 });
-					}
-					break;
-				case MENU_END:
-					//ゲームの終了
-					PostQuitMessage(0);
-					break;
-				}
-			}
-			else if (m_Menu.bSubMenu) {
-				switch (m_Menu.nSubSelect)
-				{
-				case SETTING_SCREEN:
-					if (m_Menu.nCntScrChg <= 0) {
-						int nText = m_Menu.nSubSelect;
-						m_Menu.bFullScreen = !m_Menu.bFullScreen;
+					//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-						char data[TXT_MAX] = {};
-						if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
-						else if (m_Menu.bFullScreen)	sprintf(data, "%s ：ON", m_Menu.pSetting[nText].Text);
-
-						FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-						FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-
-						m_Menu.nCntScrChg = 20;
-					}
-					
-					break;
-				case SETTING_BGM:
-					break;
-				case SETTING_SE:
-					break;
-				case SETTING_BACK:
-					m_Menu.bSubMenu = false;
-					m_pMenu[m_Menu.nMaineSelect]->SetBoxColor(INITCOLOR);
-					m_pSubMenu[m_Menu.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-					break;
-				}
-
-			}
-		}
-		break;
-		case TITLE_SELECT:
-		{
-			SwapMode(TITLE_NEXT);
-			Stage::SetStageNumber(m_nPlanetIdx,m_nSelect);
-			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
-
-			if (m_PlanetType != NULL)
+			switch (Title)
 			{
-				delete[] m_PlanetType;
-				m_PlanetType = NULL;
+			case TITLE_OUTSET:
+			{
+				SwapMode(TITLE_MENU_ANIME);
+			}
+			break;
+			case TITLE_MENU:
+				break;
+			case TITLE_SELECT:
+			{
+				SwapMode(TITLE_NEXT);
+				Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+
+						if (m_PlanetType != NULL)
+						{
+							delete[] m_PlanetType;
+							m_PlanetType = NULL;
+						}
+					}
+					break;
+					}
+				}
 			}
 		}
-		break;
-		}
+
+		if (Title != NextTitle)
+			SwapMode(NextTitle);
 	}
 }
 
@@ -394,241 +337,19 @@ void CMode_Title::TextAnime(void)
 }
 
 //========================================
-// メニュー生成
-//========================================
-void CMode_Title::MenuCreate(void)
-{
-	m_Menu.LeftPos = D3DXVECTOR3(-340.0f, 0.0f, 0.0f);
-	m_Menu.RightPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-	m_Menu.LeftTargetPos = D3DXVECTOR3(280.0f, 0.0f, 0.0f);
-	m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-	m_Menu.nCntLeftAnime = 0;
-	m_Menu.nCntRightAnime = 0;
-	m_Menu.nMaineSelect = 0;
-	m_Menu.nMaineOldSelect = 0;
-	m_Menu.nSubSelect = 1;
-	m_Menu.bRightMove = false;
-	m_Menu.bRightDisp = false;
-	m_Menu.nRightCoolDown = COOLDOWN;
-	m_Menu.bRightCoolDown = false;
-	m_Menu.nRightTextType = 0;
-	m_Menu.bMenu = false;
-	m_Menu.bSubMenu = false;
-	m_Menu.bClose = false;
-
-	m_Menu.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
-
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
-	FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-	for (int nText = MENU_GAME; nText < MENU_MAX; nText++) {
-		m_pMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Menu.LeftPos.x - 20, 150.0f + (100.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont, false, true, &pShadow);
-	}
-}
-
-//========================================
-// サブテキストの生成
-//========================================
-void CMode_Title::SubTextCreate(void)
-{
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
-
-	if (m_pSubMenu != NULL)
-		TextRelease(TEXT_RIGHT);
-
-	if (m_Menu.nMaineSelect == MENU_CONTROLLER) {
-		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
-			"", CFont::FONT_ROND_B, &pFont);
-
-		for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-				D3DXVECTOR3(m_Menu.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-				"", CFont::FONT_ROND_B, &pFont, false, false);
-		}
-	}
-	else if (m_Menu.nMaineSelect == MENU_SETTING) {
-		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-		CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x-210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),//-210
-		"", CFont::FONT_ROND_B, &pFont);
-
-		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),30.0f,1,1,-1, };
-
-		for (int nText = 1; nText < m_Menu.SettingMax; nText++) {
-
-			D3DXVECTOR3 pos = INITD3DXVECTOR3;
-			D3DXVECTOR2 size = INITD3DXVECTOR2;
-			if (nText <= SETTING_BGM)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
-			else if (nText == SETTING_SE)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
-			else if (nText == SETTING_BACK)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 190.0f, 650.0f, 0.0f);//190
-			else if (nText == SETTING_BGM_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);//150
-			else if (nText == SETTING_SE_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);//150
-
-
-
-			if (nText > SETTING_BACK)
-				size = D3DXVECTOR2(180.0f, 80.0f);
-			else if (nText == SETTING_BACK)
-				size = D3DXVECTOR2(100.0f, 80.0f);
-			else
-				size = D3DXVECTOR2(480.0f, 60.0f);
-
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-				pos, size,
-				"", CFont::FONT_ROND_B, &pFont, false, true);
-		}
-	}
-
-	m_Menu.nRightTextType = m_Menu.nMaineSelect;
-}
-
-//========================================
 // メニュー演出
 //========================================
 void CMode_Title::MenuAnime(void)
 {
-	// 左画面のアニメーション
-	if (!m_Menu.bMenu || m_Menu.bClose)
-	{
-		D3DXVECTOR3 move = INITD3DXVECTOR3;
-		move.x = (m_Menu.LeftTargetPos.x - m_Menu.LeftPos.x) * 0.3f;
+	bool MenuEnd = m_MenuUI->m_MenuEnd;
+	bool backMode = m_MenuUI->GetInfo().bBackMode;
 
-		m_Menu.LeftPos.x += move.x;
-		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)		{
-			if (m_pMenu[nCnt] != NULL)
-				m_pMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
-		}
-
-		if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
-			m_Menu.LeftPos = m_Menu.LeftTargetPos;
-			m_Menu.nCntLeftAnime = 0;
-
-			if (!m_Menu.bClose) {
-				m_Menu.bMenu = true;
-
-				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-				m_pMenu[0]->Regeneration("ゲーム", CFont::FONT_ROND_B, &pFont, &pShadow);
-				m_pMenu[1]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont, &pShadow);
-				m_pMenu[2]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
-				m_pMenu[3]->Regeneration("やめる", CFont::FONT_ROND_B, &pFont, &pShadow);
-			}
-			else if (m_Menu.bClose) {
-
-				if (m_bBackMode)
-					SwapMode(TITLE_TITLE);
-				else if (!m_bBackMode){
-					TextRelease(TEXT_ALL);
-					SwapMode(TITLE_SELECT);
-				}
-			}
-		}
-	}
-
-	// 右画面のアニメーション
-	if (m_Menu.bRightMove && m_Menu.bRightCoolDown) {
-		if (--m_Menu.nRightCoolDown <= 0) {
-
-			m_Menu.bRightCoolDown = false;
-			m_Menu.nRightCoolDown = COOLDOWN;
-			if (!m_Menu.bRightDisp){
-				SubTextCreate();
-			}
-			else if (m_Menu.bRightDisp && !m_Menu.bClose) {
-				TextRelease(TEXT_RIGHT);
-			}
-		}
-	}
-	else if (m_Menu.bRightMove && !m_Menu.bRightCoolDown || (m_Menu.bClose && m_Menu.bRightDisp))
-	{
-		D3DXVECTOR3 move = INITD3DXVECTOR3;
-		if (m_Menu.nMaineSelect != MENU_CONTROLLER && m_Menu.nMaineSelect != MENU_SETTING && !m_Menu.bRightDisp) {
-			TextRelease(TEXT_RIGHT);
-			m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-			move.x = (m_Menu.RightTargetPos.x - m_Menu.RightPos.x) * 0.3f;
-			m_Menu.RightPos.x += move.x;
-
-			if (++m_Menu.nCntRightAnime == PAUSE_RIGHT_ANIME) {
-				m_Menu.RightPos = m_Menu.RightTargetPos;
-				m_Menu.bRightMove = false;
-				m_Menu.nCntRightAnime = 0;
-				m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-			}
-		}
-		else {
-			move.x = (m_Menu.RightTargetPos.x - m_Menu.RightPos.x) * 0.3f;
-
-			m_Menu.RightPos.x += move.x;
-
-			int nTextMax = -1;
-			if (m_Menu.nMaineSelect == MENU_CONTROLLER) nTextMax = m_Menu.OperationMax;
-			else if (m_Menu.nMaineSelect == MENU_SETTING) nTextMax = m_Menu.SettingMax;
-
-			for (int nCnt = 0; nCnt < nTextMax; nCnt++) {
-				if (m_pSubMenu[nCnt] != NULL) {
-					m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
-				}
-			}
-
-			if (++m_Menu.nCntRightAnime == PAUSE_RIGHT_ANIME) {
-				m_Menu.RightPos = m_Menu.RightTargetPos;
-				m_Menu.bRightMove = false;
-				m_Menu.nCntRightAnime = 0;
-
-				if (!m_Menu.bRightDisp)
-				{
-					m_Menu.bRightDisp = true;
-					m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-					// テキストの再生成
-					if (m_Menu.nRightTextType == MENU_CONTROLLER) {
-						for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
-							if (m_pSubMenu[nText] != NULL)
-								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
-						}
-					}
-					if (m_Menu.nRightTextType == MENU_SETTING) {
-						for (int nText = 0; nText < m_Menu.SettingMax; nText++) {
-							if (m_pSubMenu[nText] != NULL) {
-
-								char data[TXT_MAX];
-								if (nText == SETTING_SCREEN) {
-									if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
-									else if (m_Menu.bFullScreen)	sprintf(data, "%s ：ON", m_Menu.pSetting[nText].Text);
-								}
-								else if (nText == SETTING_BGM_TEXT) {
-									int nData = m_Menu.nBGMVolume * 5;
-									sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
-								}
-								else if (nText == SETTING_SE_TEXT) {
-									int nData = m_Menu.nSEVolume * 5;
-									sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
-								}
-								else
-									sprintf(data, "%s", m_Menu.pSetting[nText].Text);
-
-								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-							}
-						}
-					}
-				}
-				else if (m_Menu.bRightDisp && !m_Menu.bClose) {
-					m_Menu.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-					m_Menu.bRightDisp = false;
-					TextRelease(TEXT_RIGHT);
-				}
-			}
-		}
+	if (MenuEnd && backMode)
+		NextTitle = TITLE_TITLE;
+	else if (MenuEnd && !m_bBackMode) {
+		TextRelease(TEXT_ALL);
+		NextTitle = TITLE_SELECT;
+			return;
 	}
 
 	// タイトル
@@ -657,207 +378,6 @@ void CMode_Title::MenuAnime(void)
 }
 
 //========================================
-// メニュー
-//========================================
-void CMode_Title::MenuSelect(void)
-{
-	if (m_Menu.nCntScrChg >= 0)
-	{// 画面モード切り替えカウンターが0以上の時、
-	 // 画面モード切り替えカウンターを減算
-		m_Menu.nCntScrChg--;
-
-		if (m_Menu.nCntScrChg == 0)
-		{// 画面モード切り替えカウンターが0の時、
-		 // ウインドウのモードを切り替える
-			RNSettings::SetFulScreen(m_Menu.bFullScreen);
-		}
-	}
-
-	// 選択・非選択
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		if (!m_Menu.bSubMenu) {
-			if (m_pMenu[nCnt] != NULL) {
-				if (nCnt == m_Menu.nMaineSelect)
-					m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
-				else
-					m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-			}
-		}
-	}
-	for (int nCnt = 1; nCnt < m_Menu.SettingMax; nCnt++)
-	{
-		if (m_Menu.bSubMenu) {
-			if (m_pSubMenu[nCnt] != NULL) {
-				if (nCnt == m_Menu.nSubSelect)
-					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
-				else
-					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-			}
-		}
-	}
-
-	// 矢印の表示
-
-	if (m_Menu.nSubSelect == SETTING_BGM || m_Menu.nSubSelect == SETTING_SE) {
-
-		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
-		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
-
-		D3DXVECTOR2 pos = INITD3DXVECTOR2;	D3DXVECTOR2 TexSize = INITD3DXVECTOR2;	float TxtSize;	int Volume = 0;
-		if (m_Menu.nSubSelect == SETTING_BGM) {
-			pos = m_pSubMenu[SETTING_BGM_TEXT]->GetTexPos();
-			TexSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTexSize();
-			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
-			Volume = m_Menu.nBGMVolume;
-		}
-		else if (m_Menu.nSubSelect == SETTING_SE) {
-			pos = m_pSubMenu[SETTING_SE_TEXT]->GetTexPos();
-			TexSize = m_pSubMenu[SETTING_SE_TEXT]->GetTexSize();
-			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
-			Volume = m_Menu.nSEVolume;
-		}
-
-
-
-		if (Volume != 0)
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(pos.x - (TexSize.x - TxtSize), pos.y, 0.0), 0.0f, false)
-			->SetSize(80.0f, 100.0f)
-			->SetCol(Color{ 50,255,0,255 })
-			->SetTex(nPrevTex);
-
-		if (Volume != VOLUME_MSX)
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(pos.x + (TexSize.x - TxtSize), pos.y, 0.0), 0.0f, false)
-			->SetSize(80.0f, 100.0f)
-			->SetCol(Color{ 50,255,0,255 })
-			->SetTex(nNextTex);
-	}
-
-	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
-	{
-		if (!m_Menu.bSubMenu) {
-			m_bBackMode = true;
-			m_Menu.bRightMove = true;
-			m_Menu.bClose = true;
-			m_Menu.LeftTargetPos *= -1;
-			m_Menu.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-			m_Menu.nCntLeftAnime = 0;
-			TextRelease(TEXT_ALL);
-			return;
-		}
-		else if (m_Menu.bSubMenu) {
-			m_Menu.bSubMenu = false;
-			m_pMenu[m_Menu.nMaineSelect]->SetBoxColor(INITCOLOR);
-			m_pSubMenu[m_Menu.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-		}
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::UP))
-	{
-		if (!m_Menu.bSubMenu)
-			m_Menu.nMaineSelect--;
-		else if (m_Menu.bSubMenu)
-			m_Menu.nSubSelect--;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::DOWN))
-	{
-		if (!m_Menu.bSubMenu)
-			m_Menu.nMaineSelect++;
-		else if (m_Menu.bSubMenu)
-			m_Menu.nSubSelect++;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
-	{
-		if (m_Menu.nSubSelect == SETTING_BGM) {
-			m_Menu.nBGMVolume--;
-		}
-		else if (m_Menu.nSubSelect == SETTING_SE) {
-			m_Menu.nSEVolume--;
-		}
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
-	{
-		if (m_Menu.nSubSelect == SETTING_BGM) {
-			m_Menu.nBGMVolume++;
-		}
-		else if (m_Menu.nSubSelect == SETTING_SE) {
-			m_Menu.nSEVolume++;
-		}
-	}
-
-	// アニメーション
-	if ((m_Menu.nMaineSelect == MENU_CONTROLLER || m_Menu.nMaineSelect == MENU_SETTING ) && !m_Menu.bRightMove && !m_Menu.bRightDisp) {
-
-		m_Menu.bRightMove = true;
-		m_Menu.bRightCoolDown = true;
-	}
-	else if (m_Menu.nMaineSelect != m_Menu.nRightTextType && !m_Menu.bRightMove && m_Menu.bRightDisp && !m_Menu.bRightCoolDown) {
-
-		m_Menu.bRightMove = true;
-		m_Menu.bRightCoolDown = true;
-	}
-	else if (m_Menu.bRightMove && m_Menu.bRightDisp && m_Menu.bRightCoolDown) {
-		if (m_Menu.nMaineSelect != m_Menu.nMaineOldSelect) {
-			if (m_Menu.nMaineSelect == MENU_CONTROLLER || m_Menu.nMaineSelect == MENU_SETTING)
-				m_Menu.nRightCoolDown = COOLDOWN;
-		}
-		else if (m_Menu.nMaineSelect == m_Menu.nRightTextType) {
-			m_Menu.bRightMove = false;
-			m_Menu.bRightCoolDown = false;
-			m_Menu.nRightCoolDown = COOLDOWN;
-		}
-	}
-
-	if (m_Menu.nMaineSelect != m_Menu.nMaineOldSelect) {
-		m_Menu.nMaineOldSelect = m_Menu.nMaineSelect;
-	}
-
-	// ループ制御
-	IntLoopControl(&m_Menu.nMaineSelect, MENU_MAX, 0);
-	IntLoopControl(&m_Menu.nSubSelect, m_Menu.SettingMax-2, 1);
-	IntControl(&m_Menu.nBGMVolume, VOLUME_MSX, 0);
-	IntControl(&m_Menu.nSEVolume, VOLUME_MSX, 0);
-
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-	FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-	// サウンド
-	if (m_Menu.nBGMVolume != m_Menu.nBGMOldVolume) {
-		m_Menu.nBGMOldVolume = m_Menu.nBGMVolume;
-
-		char data[TXT_MAX];		int nData = m_Menu.nBGMVolume * 5;
-		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
-
-		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
-		m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-
-		float volume = (float)nData / (float)100.0f;
-		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::BGM, volume);
-	}
-	if (m_Menu.nSEVolume != m_Menu.nSEOldVolume) {
-		m_Menu.nSEOldVolume = m_Menu.nSEVolume;
-
-		char data[TXT_MAX];		int nData = m_Menu.nSEVolume * 5;
-		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
-
-		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
-		m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-
-		float volume = (float)nData / (float)100.0f;
-		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::SE, volume);
-	}
-
-}
-
-//========================================
-// 設定処理
-//========================================
-void CMode_Title::SettingMenu(void)
-{
-
-}
-
-//========================================
 // ステージ選択情報の生成
 //========================================
 void CMode_Title::CreateStageSelectInfo(void) {
@@ -879,16 +399,18 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	}
 
 	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-	CMemory::Alloc(&m_AnimCnt,nStageMax);
+	RNLib::Memory().Alloc(&m_AnimCnt,nStageMax);
 
 	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
 	m_RocketPos = m_RocketPosOld = UNSELECTBOX - PosCor + NUMPOSROCKET;
-	m_RocketposRate = INITD3DXVECTOR3;
+	m_RocketposDiff = INITD3DXVECTOR3;
 	m_RocketRot = m_RocketRotOld = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
-	m_RocketRotRate = INITD3DXVECTOR3;
+	m_RocketRotDiff = INITD3DXVECTOR3;
 	m_RotCnt = ANIMCOUNT;
 	m_nDrawPlanet = m_nPlanetIdx;
 	m_RocketAnimCnt = 0;
+	m_ImageStgCnt = 0;
+	m_NumAnimCnt = ANIMCOUNT * 0.5f;
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
@@ -902,128 +424,290 @@ void CMode_Title::StageSelect(void) {
 
 	int nPlanetMax = Manager::StgEd()->GetPlanetMax();
 	int nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-	float CountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-
-	//位置補正
 	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
+	float RocketAnimRate;
+
+	//描画処理
+	StageDraw(nPlanetMax, nStageMax, PosCor,RocketAnimRate);
 
 	//----------------------------------------
-	// 描画処理
+	// ステージ選択処理
 	//----------------------------------------
+	if(m_bStageChange == false)
+	m_nOldSelect = m_nStageSelect;
+	bool bInput = false;
+
+	if (m_bStageChange == false) {
+		if (m_bRocketMove == false) {
+
+			if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) {
+				TextRelease(TEXT_MENU);
+				SwapMode(TITLE_MENU_ANIME);
+				return;
+			}
+			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT)) {
+				m_nStageSelect--;
+				bInput = true;
+			}
+			else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT)) {
+				m_nStageSelect++;
+				bInput = true;
+			}
+
+			if (bInput) {
+				m_nOldnPlanet = m_nPlanetIdx;
+				m_nDrawPlanet = m_nOldnPlanet;
+
+				if (m_nStageSelect > -1 && m_nStageSelect < nStageMax) {
+					m_RocketPosOld = m_RocketPosOld + (m_RocketposDiff * RocketAnimRate);
+					m_RotCnt = 0;
+					m_RocketAnimCnt = 0;
+				}
+
+				if (m_nStageSelect < 0) {
+					m_nSelectTemp = m_nStageSelect;
+					m_nStageSelect = 0;
+
+					if (m_nPlanetIdx != 0) {
+						m_RotCnt = 0;
+						m_RocketAnimCnt = 0;
+						m_nOldSelect = -1;
+						m_bStageChange = true;
+						m_StgFlag = STAGE::DESPAWN;
+					}
+				}
+				else if (m_nStageSelect >= nStageMax) {
+					m_nSelectTemp = m_nStageSelect;
+					m_nStageSelect = nStageMax - 1;
+
+					if (m_nPlanetIdx < nPlanetMax - 1) {
+						m_RotCnt = 0;
+						m_RocketAnimCnt = 0;
+						m_nOldSelect = 5;
+						m_bStageChange = true;
+						m_StgFlag = STAGE::DESPAWN;
+					}
+				}
+			}
+		}
+	}
+
+	//出現処理
+	if (m_StgFlag == STAGE::POP)
+		StagePop(nPlanetMax,nStageMax,PosCor);
+}
+//========================================
+// ステージ描画処理
+//========================================
+void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &RktAnimRt) {
+
+	float CountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	float ImageCntRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_ImageStgCnt, ANIMCOUNT * 0.5);
+	float AnimRate;
+	D3DXVECTOR3 numpos;
+
 	{// 惑星の描画
+
+		//惑星
 		RNLib::Model().Put(PRIORITY_OBJECT, m_PlanetType[m_nDrawPlanet].nModel, D3DXVECTOR3(0.0f, 0.0f, 50.0f), D3DXVECTOR3(0.0f, m_PlanetAngle, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f) * CountRate, false)
 			->SetOutLineIdx(5);
 
+		//ワールド遷移の処理
 		if (m_nCnt < MAX_COUNT && m_bStageChange == false)
 			m_nCnt++;
 		else if (m_nCnt > 0 && m_bStageChange == true)
 			m_nCnt--;
 
-		if (m_nCnt == 0 && m_bStageChange == true){
-			m_bStageChange = false;
-			if (m_nOldSelect == nStageMax)
+		if (m_nCnt == 0 && m_bStageChange == true) {
+			if (m_nOldSelect == nStage)
 				m_nOldSelect = 0;
 			else if (m_nOldSelect == -1)
-				m_nOldSelect = nStageMax;
+				m_nOldSelect = nStage;
 			m_StgFlag = STAGE::POP;
+		}
+
+		//ステージのデモ画像
+		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(IMAGE_STG_POS), D3DXVECTOR3(0.0f, -0.58875f, 0.0f))
+			->SetSize(32.0f * ImageCntRate, 27.0f * ImageCntRate)
+			->SetCol(COLOR_WHITE)
+			/*->SetTex(m_TexIdx[0])*/
+			->SetZTest(true);
+
+		//デモ画像のアニメーション処理
+		if (m_bStageChange == false) {
+			if (m_bRocketMove == false) {
+				if (m_RocketAnimCnt < ANIMCOUNT * 0.5) {
+					if (m_ImageStgCnt > 0)
+						m_ImageStgCnt--;
+				}
+				else if (m_RocketAnimCnt >= ANIMCOUNT * 0.5) {
+					if (m_ImageStgCnt < ANIMCOUNT * 0.5)
+						m_ImageStgCnt++;
+				}
+			}
+		}
+
+		if (m_bStageChange == true || m_bRocketMove == true) {
+
+			if (m_RocketAnimCnt < ANIMCOUNT) {
+				if (m_ImageStgCnt > 0)
+					m_ImageStgCnt--;
+			}
+			else if (m_RocketAnimCnt >= ANIMCOUNT) {
+				if (m_ImageStgCnt < ANIMCOUNT)
+					m_ImageStgCnt++;
+			}
 		}
 	}
 
-	{
+	{//看板
 		//ステージ看板
-		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f,16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
 			->SetOutLineIdx(5);
 
 		//コイン看板
 		RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
 			->SetOutLineIdx(5);
+
+		if (m_CoinUI != NULL) {
+			m_CoinUI->Update();
+		}
 	}
 
 	{// 矢印の描画
 		if (m_nPlanetIdx > 0) {
 			// 矢印の描画(左)
-			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - PosCor.x - NUMPOSSELBOX.x * 0.7f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D)
+			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - poscor.x - NUMPOSSELBOX.x * 0.7f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D)
 				->SetCol(Color{ 0,168,112,255 });
 		}
 
-		if (m_nPlanetIdx < nPlanetMax - 1) {
+		if (m_nPlanetIdx < nPlanet - 1) {
 			// 矢印の描画(右)
-			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + PosCor.x - NUMPOSSELBOX.x * 0.3f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D)
+			RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + poscor.x - NUMPOSSELBOX.x * 0.3f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D)
 				->SetCol(Color{ 0,168,112,255 });
 		}
-	}	
+	}
 
 	// 選択アイコンの処理
-	for (int nCnt = 0; nCnt < nStageMax; nCnt++) {
+	for (int nCnt = 0; nCnt < nStage; nCnt++) {
 
-		if (nCnt == m_nSelect) {
+		if (nCnt == m_nStageSelect) {
 			//アニメーション割合
-			float AnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
+			AnimRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
 			if (m_AnimCnt[nCnt] < ANIMCOUNT) m_AnimCnt[nCnt]++;
-			float RotRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RotCnt,ANIMCOUNT);
-			if (m_RotCnt < ANIMCOUNT) m_RotCnt++;
 
-			//選択時	//ロケット
-			m_RocketAnimRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT * 2);
-			if (m_bStageChange == false)
-			{
-				if (m_RocketAnimCnt < ANIMCOUNT * 2) m_RocketAnimCnt++;
-				if (m_RocketAnimCnt == ANIMCOUNT * 2) {
-					m_RocketPosOld = m_RocketPos; m_RocketposRate = INITD3DXVECTOR3;
+			//傾き割合
+			float RotRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_RotCnt, ANIMCOUNT * 0.5);
+			if (m_RotCnt < ANIMCOUNT * 0.5) m_RotCnt++;
+
+			RktAnimRt = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT);
+
+			//ロケットのアニメーション処理
+			if (m_RocketAnimCnt < ANIMCOUNT) m_RocketAnimCnt++;
+			if (m_RocketAnimCnt == ANIMCOUNT) {
+				if (m_bStageChange == true) {
+					m_RocketAnimCnt = 0;
+					m_bStageChange = false;
+					m_bRocketMove = true;
+					m_bRocketRot = false;
+					if (m_nStageSelect == 0)
+						m_RocketPosOld = FADEROCKET;
+					else if (m_nStageSelect == nStage - 1)
+						m_RocketPosOld = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+				}
+				else {
+					m_bRocketMove = false;
+					m_RocketPosOld = m_RocketPos; m_RocketposDiff = INITD3DXVECTOR3;
 				}
 			}
-		
-			m_RocketPos = UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
-			if (m_nSelect != m_nOldSelect)
-			{
-				m_RocketposRate = m_RocketPos - m_RocketPosOld;
-				m_RocketRotOld = m_RocketRot;
 
+			if (m_bRocketMove == false) {
 				if (m_bStageChange == false)
-				{
-					if (m_nSelect > m_nOldSelect)
-						m_RocketRot = D3DXVECTOR3(0.0f,D3DX_PI, D3DX_PI * 0.5f);
-					else if (m_nSelect < m_nOldSelect)
-						m_RocketRot = D3DXVECTOR3(D3DX_PI,0.0f,D3DX_PI * 0.5f);
+					m_RocketPos = UNSELECTBOX - poscor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
+				if (m_bStageChange == true) {
+					if (m_nStageSelect == 0)
+						m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+					else if (m_nStageSelect == nStage - 1)
+						m_RocketPos = FADEROCKET;
 				}
-				else
-				{
-					if (m_nSelect == nStageMax && m_nOldSelect == 0)
-						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
-					else if (m_nSelect == 0 && m_nOldSelect == nStageMax)
-						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
-				}
-				m_RocketRotRate = m_RocketRot - m_RocketRotOld;
 			}
-			
-			{//ロケット
-				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate), m_RocketRotOld + (RotRate * m_RocketRotRate), Scale3D(0.15f, 0.15f, 0.15f), false);
+			else {
+				if (m_RocketAnimCnt > 0) {
+					if (m_nStageSelect == 0)
+						m_RocketPos = UNSELECTBOX - poscor + 0.0f * NUMPOSSELBOX + NUMPOSROCKET;
+					else if (m_nStageSelect == nStage - 1)
+						m_RocketPos = UNSELECTBOX - poscor + (nStage - 1) * NUMPOSSELBOX + NUMPOSROCKET;
+				}
 			}
 
-			 //選択時	//ブロック
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, UNSELECTBOX - PosCor + nCnt * NUMPOSSELBOX + (SELBOXRATE * AnimRate), INITD3DXVECTOR3, INITSCALE3D * CountRate, false)
+			if (m_nStageSelect != m_nOldSelect){
+				m_RocketposDiff = m_RocketPos - m_RocketPosOld;
+
+				if (!m_bRocketRot) {
+					m_RocketRotOld = m_RocketRot;
+
+					if (m_RocketposDiff.x > 0)
+						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
+					else
+						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
+
+					m_RocketRotDiff = m_RocketRot - m_RocketRotOld;
+				}
+
+				if (m_bStageChange)
+					m_bRocketRot = true;
+			}
+
+			{//ロケット描画
+				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f), false);
+			}
+
+			//数字ブロックアニメーション処理
+			float NumRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::LINEAR, m_NumAnimCnt, ANIMCOUNT * 2);
+			if (m_bRotDir) {
+				if (m_NumAnimCnt < ANIMCOUNT * 2)
+					m_NumAnimCnt++;
+				else
+					m_bRotDir = false;
+			}
+			else{
+				if (m_NumAnimCnt > 0)
+					m_NumAnimCnt--;
+				else
+					m_bRotDir = true;
+			}
+
+			//相対位置を求める
+			const D3DXVECTOR3 rot = D3DXVECTOR3(INITROT3D.x, INITROT3D.y + (NUM_ROT - ((NUM_ROT * 2.0f) * NumRate)), INITROT3D.z);
+			numpos = D3DXVECTOR3(0.0f,0.0f,-5.0f);
+			Matrix mtxBlock = RNLib::Matrix().ConvPosRotScaleToMtx(UNSELECTBOX - poscor + nCnt * NUMPOSSELBOX + (SELBOXRATE * AnimRate), rot, INITSCALE3D * CountRate);
+			Matrix mtxNum = RNLib::Matrix().MultiplyMtx(
+				RNLib::Matrix().ConvPosToMtx(numpos), 
+				mtxBlock);
+
+			//ブロック描画
+			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
 				->SetCol(Color{ 243,191,63,255 });
 
-			//数字テクスチャ
+			//数字テクスチャ描画
 			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
-				const D3DXVECTOR3 numpos = D3DXVECTOR3(UNSELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), UNSELECTBOX.y, UNSELECTBOX.z - 5.0f);
-				RNLib::Polygon3D().Put(PRIORITY_UI, numpos + (SELBOXRATE * AnimRate), INITROT3D)
+				RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 					->SetSize(5.0f, 5.0f)
 					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
 			}
 		}
 		else {
-			//アニメーション割合
-			float AnimRate = 1.0f - CEase::Easing(CEase::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
+			//数字ブロックアニメーション処理
+			AnimRate = 1.0f - RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_AnimCnt[nCnt], ANIMCOUNT);
 			if (m_AnimCnt[nCnt] > 0) m_AnimCnt[nCnt]--;
 
-			// 非選択時	//ブロック
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - PosCor + nCnt * NUMPOSSELBOX - (SELBOXRATE * AnimRate), INITD3DXVECTOR3, INITSCALE3D * CountRate, false)
+			// 非選択時	//ブロック描画
+			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - poscor + nCnt * NUMPOSSELBOX - (SELBOXRATE * AnimRate), INITD3DXVECTOR3, INITSCALE3D * CountRate, false)
 				->SetCol(Color{ 81,63,21,255 });
 
-			//数字
+			//数字テクスチャ描画
 			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
-				const D3DXVECTOR3 numpos = D3DXVECTOR3(SELECTBOX.x - PosCor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
+				numpos = D3DXVECTOR3(SELECTBOX.x - poscor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
 				RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
@@ -1031,90 +715,41 @@ void CMode_Title::StageSelect(void) {
 			}
 		}
 	}
-	//----------------------------------------
-	// ステージ選択処理
-	//----------------------------------------
-	if(m_bStageChange == false)
-	m_nOldSelect = m_nSelect;
-	bool bInput = false;
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK)) {
-		TextRelease(TEXT_MENU);
-		SwapMode(TITLE_MENU_ANIME);
-		return;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT)) {
-		m_nSelect--;
-		m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate);
-		m_RotCnt = 0;
-		m_RocketAnimCnt = 0;
-		bInput = true;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT)) {
-		m_nSelect++;
-		m_RocketPosOld = m_RocketPosOld + (m_RocketposRate * m_RocketAnimRate);
-		m_RocketAnimCnt = 0;
-		m_RotCnt = 0;
-		bInput = true;
-	}
+}
+//========================================
+// ステージ切り替え処理
+//========================================
+void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 
-	if (bInput) {
-		m_nOldnPlanet = m_nPlanetIdx;
-		m_nDrawPlanet = m_nOldnPlanet;
+	int nStageMaxOld = nStage;
 
-		if (m_nSelect < 0) {
-			m_nSelectTemp = m_nSelect;
-			m_nSelect = 0;
-
-			if (m_nPlanetIdx != 0) {
-				m_nOldSelect = -1;
-				m_bStageChange = true;
-				m_StgFlag = STAGE::DESPAWN;
-			}
-		}
-		else if (m_nSelect >= nStageMax) {
-			m_nSelectTemp = m_nSelect;
-			m_nSelect = nStageMax -1;
-
-			if (m_nPlanetIdx < nPlanetMax - 1) {
-				m_nOldSelect = 5;
-				m_bStageChange = true;
-				m_StgFlag = STAGE::DESPAWN;
-			}
-		}
-	}
-
-	if (m_StgFlag == STAGE::POP){
-
-		int nStageMaxOld = nStageMax;
-
-		if (m_nSelectTemp < 0 && m_nPlanetIdx != 0) {
+	if (m_nSelectTemp < 0 && m_nPlanetIdx != 0) {
 
 			m_nPlanetIdx--;
-			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-			m_nSelect = nStageMax - 1;
-			m_nOldSelect = nStageMax;
+			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+			m_nStageSelect = nStage - 1;
+			m_nOldSelect = nStage;
 		}
-		else if (m_nSelectTemp >= nStageMax && m_nPlanetIdx != nPlanetMax - 1) {
+		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 			
 			m_nPlanetIdx++;
-			m_nSelect = 0;
+			m_nStageSelect = 0;
 			m_nOldSelect = -1;
-			nStageMax = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 		}
 
-		m_nDrawPlanet = m_nPlanetIdx;
+	m_nDrawPlanet = m_nPlanetIdx;
 
-		IntControl(&m_nSelect, nStageMax - 1, 0);
+	RNLib::Number().Clamp(&m_nStageSelect, nStage - 1, 0);
 
-		if (nStageMax != nStageMaxOld) {
-			CMemory::Alloc(&m_AnimCnt, nStageMax);
-			m_RocketPos = UNSELECTBOX - PosCor + NUMPOSROCKET;
-			m_RocketposRate = INITD3DXVECTOR3;
-			for (int AnimInit = 0; AnimInit < nStageMax; AnimInit++)
-				m_AnimCnt[AnimInit] = 0;
-		}
-		m_StgFlag = STAGE::NONE;
+	if (nStage != nStageMaxOld) {
+		RNLib::Memory().Alloc(&m_AnimCnt, nStage);
+		m_RocketPos = UNSELECTBOX - poscor + NUMPOSROCKET;
+		m_RocketposDiff = INITD3DXVECTOR3;
+		for (int AnimInit = 0; AnimInit < nStage; AnimInit++)
+			m_AnimCnt[AnimInit] = 0;
 	}
+	m_StgFlag = STAGE::NONE;
 }
 
 //========================================
@@ -1122,7 +757,7 @@ void CMode_Title::StageSelect(void) {
 //========================================
 void CMode_Title::SwapMode(TITLE aTitle) {
 	Title = aTitle;
-
+	NextTitle = aTitle;
 	switch (aTitle)
 	{
 	case CMode_Title::TITLE_TITLE:
@@ -1152,9 +787,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		break;
 	case CMode_Title::TITLE_OUTSET:
 	{
-		TextRelease(TEXT_MENU);
-		TextRelease(TEXT_RIGHT);
-
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
 		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
@@ -1167,20 +799,16 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		TextRelease(TEXT_MENU);
 
 		// メニュー生成
-		MenuCreate();
-		MenuAnime();
+		m_MenuUI->MenuCreate();
 
-		Title = TITLE_MENU;
+		NextTitle = TITLE_MENU;
 	}
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		m_nSelect = 0;
-		m_nOldSelect = 0;
-		m_nPlanetIdx = 0;
-		m_nOldnPlanet = 0;
+		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 
-		s_bStageSelect = false;
+		m_bStageSelect = false;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
@@ -1188,99 +816,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	case CMode_Title::TITLE_NEXT:
 		TextRelease(TEXT_ALL);
 		break;
-	}
-}
-
-//========================================
-// テキスト読込
-//========================================
-void CMode_Title::TextLoad(void) {
-	int nCntPlanet = 0;
-	char aDataSearch[TXT_MAX];	// データ検索用
-
-	// ファイルの読み込み
-	FILE *pFile = fopen(TEXT_FILE, "r");
-
-	if (pFile == NULL)
-	{// 種類毎の情報のデータファイルが開けなかった場合、
-	 //処理を終了する
-		return;
-	}
-
-	// ENDが見つかるまで読み込みを繰り返す
-	while (1)
-	{
-		fscanf(pFile, "%s", aDataSearch);	// 検索
-
-		if (!strcmp(aDataSearch, "END"))
-		{// 読み込みを終了
-			fclose(pFile);
-
-			break;
-		}
-		if (aDataSearch[0] == '#')
-		{// 折り返す
-			continue;
-		}
-
-		if (!strcmp(aDataSearch, "SetOperation"))
-		{
-			int nText = 0;
-			while (1)
-			{
-				fscanf(pFile, "%s", aDataSearch);	// 検索
-				if (!strcmp(aDataSearch, "EndOperation")){
-					break;
-				}
-				if (!strcmp(aDataSearch, "TextMax")){
-					int nMax = -1;
-
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%d", &nMax);
-
-					if (nMax <= 0)
-						nMax = 0;
-
-					m_Menu.OperationMax = nMax;
-					m_Menu.pOperation = new Operation[nMax];
-					assert(m_Menu.pOperation != NULL);
-				}
-				if (!strcmp(aDataSearch, "Text")){
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%s", &m_Menu.pOperation[nText].Text);
-					nText++;
-				}
-			}
-		}
-		else if (!strcmp(aDataSearch, "SetSetting"))
-		{
-			int nText = 0;
-			while (1)
-			{
-				fscanf(pFile, "%s", aDataSearch);	// 検索
-				if (!strcmp(aDataSearch, "EndSetting")) {
-					break;
-				}
-				if (!strcmp(aDataSearch, "TextMax")) {
-					int nMax = -1;
-
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%d", &nMax);
-
-					if (nMax <= 0)
-						nMax = 0;
-
-					m_Menu.SettingMax = nMax;
-					m_Menu.pSetting = new Setting[nMax];
-					assert(m_Menu.pSetting != NULL);
-				}
-				if (!strcmp(aDataSearch, "Text")) {
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%s", &m_Menu.pSetting[nText].Text);
-					nText++;
-				}
-			}
-		}
 	}
 }
 
@@ -1309,16 +844,6 @@ void CMode_Title::TextRelease(TEXT type) {
 			if (m_pMenu[nCnt] != NULL) {
 				m_pMenu[nCnt]->Uninit();
 				m_pMenu[nCnt] = NULL;
-			}
-		}
-	}
-
-	// 操作方法と設定
-	if (type == TEXT_RIGHT || type == TEXT_ALL) {
-		for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++) {
-			if (m_pSubMenu[nCnt] != NULL) {
-				m_pSubMenu[nCnt]->Uninit();
-				m_pSubMenu[nCnt] = NULL;
 			}
 		}
 	}

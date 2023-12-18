@@ -38,10 +38,10 @@ private:
 	void ReleaseDeleteObj(void);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
+	static CObjectMgr** ms_objectMgrs;
+	static UShort       ms_objectMgrNum;
 	char*    m_name;
 	CObject* m_top;	// æ“ª
 	CObject* m_cur;	// ÅŒã”ö
 	int      m_num;
-	static CObjectMgr** ms_objectMgrs;
-	static UShort       ms_objectMgrNum;
 };

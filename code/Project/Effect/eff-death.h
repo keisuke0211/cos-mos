@@ -41,6 +41,9 @@ public:
 		BALL_SIZE_LV *pLv = NULL; // サイズレベル
 		int nBallID = NONEDATA;   // ボール番号
 
+		//インク用
+		Pos2D InkSize = INITPOS2D;// インクサイズ
+
 		//設定処理を通れば、皆共通で代入される項目
 		int  ColliderInterval; // 特定の当たり判定を働かせないインターバル（全ての当たり判定に対してではない
 		bool bDeath;           // 死亡フラグ
@@ -55,7 +58,7 @@ public:
 	//******************************
 	//設定処理（自己情報を一括設定）
 	//******************************
-	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const float size, const Color color, const int nLife, const int nIdx, const TYPE type);
+	void SetInfo(const Vector3D pos, const Vector3D posOld, const Vector3D move, const Vector3D rot, const Vector3D spin, const float size, const Color color, const int nLife, const TYPE type);
 
 	//******************************
 	//設定処理（自己情報を個別設定）
@@ -75,6 +78,8 @@ public:
 private:
 	static const int CREATE_INTERVAL = 30;  //生成インターバル
 	static const int FUSION_INTERVAL = 120; //融合インターバル
+
+	static const int MAX_INK_LIFE = 600;    //インクの寿命
 
 	static const float CREATE_SPREAD_POWER; //生成時の拡散力
 	static const float PLAYER_COLLI_POWER;  //プレイヤーに当たったときの吹っ飛び力

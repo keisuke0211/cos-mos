@@ -16,42 +16,42 @@
 //========================================
 // コンストラクタ
 //========================================
-CText3D::CText3D() {
+_RNC_Text3D::_RNC_Text3D() {
 
 }
 
 //========================================
 // デストラクタ
 //========================================
-CText3D::~CText3D() {
+_RNC_Text3D::~_RNC_Text3D() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CText3D::Init(void) {
+void _RNC_Text3D::Init(void) {
 
 }
 
 //========================================
 // 終了処理
 //========================================
-void CText3D::Uninit(void) {
+void _RNC_Text3D::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CText3D::Update(void) {
+void _RNC_Text3D::Update(void) {
 
 }
 
 //========================================
 // 設置処理
 //========================================
-CText3D::CRegistInfo* CText3D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Matrix& mtx, const bool& isOnScreen) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::Put(const UShort& priority, const char* string, const _RNC_Text::ALIGNMENT alignment, const short& fontIdx, const Matrix& mtx, const bool& isOnScreen) {
 
 	return RNLib::DrawMgr().PutText3D(priority, mtx, isOnScreen)
 		->SetString(string)
@@ -62,9 +62,9 @@ CText3D::CRegistInfo* CText3D::Put(const UShort& priority, const char* string, c
 //========================================
 // 設置処理(位置と向き指定)
 //========================================
-CText3D::CRegistInfo* CText3D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const bool& isOnScreen) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::Put(const UShort& priority, const char* string, const _RNC_Text::ALIGNMENT alignment, const short& fontIdx, const D3DXVECTOR3& pos, const D3DXVECTOR3& rot, const bool& isOnScreen) {
 
-	return Put(priority, string, alignment, fontIdx, CMatrix::ConvPosRotToMtx(pos, rot), isOnScreen);
+	return Put(priority, string, alignment, fontIdx, RNLib::Matrix().ConvPosRotToMtx(pos, rot), isOnScreen);
 }
 
 //================================================================================
@@ -76,7 +76,7 @@ CText3D::CRegistInfo* CText3D::Put(const UShort& priority, const char* string, c
 //========================================
 // コンストラクタ
 //========================================
-CText3D::CRegistInfo::CRegistInfo() {
+_RNC_Text3D::CRegistInfo::CRegistInfo() {
 
 	m_string = NULL;
 	ClearParameter();
@@ -85,40 +85,37 @@ CText3D::CRegistInfo::CRegistInfo() {
 //========================================
 // デストラクタ
 //========================================
-CText3D::CRegistInfo::~CRegistInfo() {
+_RNC_Text3D::CRegistInfo::~CRegistInfo() {
 
 	// 文字列のメモリ解放
-	CMemory::Release(&m_string);
+	RNLib::Memory().Release(&m_string);
 }
 
 //========================================
 // パラメーターのクリア処理
 //========================================
-void CText3D::CRegistInfo::ClearParameter(void) {
+void _RNC_Text3D::CRegistInfo::ClearParameter(void) {
 
-	CMemory::Release(&m_string);
-	m_alignment   = CText::ALIGNMENT::CENTER;
-	m_fontIdx     = NONEDATA;
-	m_mtx         = INITMATRIX;
-	m_scaleOrSize = INITVECTOR2D;
-	m_isScale     = false;
-	m_col         = INITCOLOR;
-	m_isZtest     = true;
-	m_isLighting  = false;
-	m_isBillboard = false;
+	RNLib::Memory().Release(&m_string);
+	m_alignment         = _RNC_Text::ALIGNMENT::CENTER;
+	m_fontIdx           = NONEDATA;
+	m_mtx               = INITMATRIX;
+	m_scaleOrSize       = INITVECTOR2D;
+	m_isScale           = false;
+	m_col               = COLOR_WHITE;
+	m_isZtest           = true;
+	m_isLighting        = false;
+	m_isBillboard       = false;
+	m_interpolationMode = _RNC_DrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
 // 設置処理(ポリゴン3D)
 //========================================
-void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOnScreen) {
-
-	// フォント指定なしの時、終了
-	if (m_fontIdx < 0)
-		return;
+void _RNC_Text3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOnScreen) {
 
 	// フォントデータを取得
-	CText::FontData fontData = RNLib::Text().GetFont(m_fontIdx);
+	_RNC_Text::FontData fontData = RNLib::Text().GetFontData(m_fontIdx);
 	
 	//----------------------------------------
 	// 幅/高さ/間隔を算出
@@ -126,8 +123,8 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 	float charWidth      = 0.0f;
 	float charHeightHalf = 0.0f;
 	if (m_isScale) {
-		charWidth      = (RNLib::Texture().GetWidth (fontData.nTexIdx) / fontData.nPtnWidth ) * m_scaleOrSize.x;
-		charHeightHalf = (RNLib::Texture().GetHeight(fontData.nTexIdx) / fontData.nPtnHeight) * m_scaleOrSize.y * 0.5f;
+		charWidth      = (RNLib::Texture().GetWidth (fontData.texIdx) / fontData.ptnX ) * m_scaleOrSize.x;
+		charHeightHalf = (RNLib::Texture().GetHeight(fontData.texIdx) / fontData.ptnY) * m_scaleOrSize.y * 0.5f;
 	}
 	else {
 		charWidth      = m_scaleOrSize.x;
@@ -162,13 +159,13 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 		// [[[ 表示形式に応じた設定位置の設定 ]]]
 		Pos2D setPos = INITPOS2D;
 		switch (m_alignment) {
-		case CText::ALIGNMENT::CENTER: {
+		case _RNC_Text::ALIGNMENT::CENTER: {
 			setPos.x += (leftShift + cntChar) * charWidth;
 		}break;
-		case CText::ALIGNMENT::LEFT: {
+		case _RNC_Text::ALIGNMENT::LEFT: {
 			setPos.x += cntChar * charWidth;
 		}break;
-		case CText::ALIGNMENT::RIGHT: {
+		case _RNC_Text::ALIGNMENT::RIGHT: {
 			setPos.x += (-strLen + cntChar) * charWidth;
 		}break;
 		}
@@ -182,10 +179,11 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 				Pos3D(setPos.x, bottomY, 0.0f),
 				Pos3D(rightX  , bottomY, 0.0f))
 			->SetCol(m_col)
-			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
+			->SetTex(fontData.texIdx, (int)wstr[cntChar] - (int)fontData.startCode, fontData.ptnX, fontData.ptnY)
 			->SetZTest(m_isZtest)
 			->SetLighting(m_isLighting)
-			->SetBillboard(m_isBillboard);
+			->SetBillboard(m_isBillboard)
+			->SetInterpolationMode(m_interpolationMode);
 	}
 
 	// wchar_t型文字列の解放
@@ -195,7 +193,7 @@ void CText3D::CRegistInfo::PutPolygon3D(const UShort& priority, const bool& isOn
 //========================================
 // マトリックスを設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetMtx(const Matrix& mtx) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetMtx(const Matrix& mtx) {
 
 	if (this == NULL)
 		return NULL;
@@ -208,12 +206,12 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetMtx(const Matrix& mtx) {
 //========================================
 // 文字列を設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetString(const char* string) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetString(const char* string) {
 
 	if (this == NULL)
 		return NULL;
 
-	StrCpyDynamicMemory(&m_string, string);
+	RNLib::Memory().AllocString(&m_string, string);
 
 	return this;
 }
@@ -221,7 +219,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetString(const char* string) {
 //========================================
 // 配置を設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetAlignment(const CText::ALIGNMENT& alignment) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetAlignment(const _RNC_Text::ALIGNMENT& alignment) {
 
 	if (this == NULL)
 		return NULL;
@@ -234,7 +232,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetAlignment(const CText::ALIGNMENT&
 //========================================
 // フォント番号を設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetFontIdx(const short& fontIdx) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetFontIdx(const short& fontIdx) {
 
 	if (this == NULL)
 		return NULL;
@@ -247,7 +245,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetFontIdx(const short& fontIdx) {
 //========================================
 // 色を設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetCol(const Color& col) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetCol(const Color& col) {
 
 	if (this == NULL)
 		return NULL;
@@ -260,7 +258,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetCol(const Color& col) {
 //========================================
 // 拡大倍率を設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetScale(const Scale2D scale) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetScale(const Scale2D scale) {
 
 	if (this == NULL)
 		return NULL;
@@ -274,7 +272,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetScale(const Scale2D scale) {
 //========================================
 // 大きさを設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetSize(const Size2D size) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetSize(const Size2D size) {
 
 	if (this == NULL)
 		return NULL;
@@ -288,7 +286,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetSize(const Size2D size) {
 //========================================
 // Zテストを設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetZTest(const bool& isZTest) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetZTest(const bool& isZTest) {
 
 	if (this == NULL)
 		return NULL;
@@ -301,7 +299,7 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetZTest(const bool& isZTest) {
 //========================================
 // ライティングを設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetLighting(const bool& isLighting) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetLighting(const bool& isLighting) {
 
 	if (this == NULL)
 		return NULL;
@@ -314,12 +312,25 @@ CText3D::CRegistInfo* CText3D::CRegistInfo::SetLighting(const bool& isLighting) 
 //========================================
 // ビルボードを設定
 //========================================
-CText3D::CRegistInfo* CText3D::CRegistInfo::SetBillboard(const bool& isBillboard) {
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetBillboard(const bool& isBillboard) {
 
 	if (this == NULL)
 		return NULL;
 
 	m_isBillboard = isBillboard;
+
+	return this;
+}
+
+//========================================
+// 補間モードを設定
+//========================================
+_RNC_Text3D::CRegistInfo* _RNC_Text3D::CRegistInfo::SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

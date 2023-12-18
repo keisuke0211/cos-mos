@@ -30,17 +30,17 @@ public:
 
 	//========== [[[ 関数宣言 ]]]
 	static void StartRenderingScreen(Device& device);
-	            CCamera             (const Scale2D& scale2D);
+	            CCamera             (const Size2D& scale2D);
 	            ~CCamera            ();
 	void        Update              (void);
 	void        StartRendering      (Device& device);
 	void        EndRendering        (Device& device);
-	UShort&     GetID               (void)                   { return m_ID; }
+	short&      GetID               (void)                   { return m_ID; }
 	void        SetPosVAndPosR      (const Pos3D& posV, const Pos3D& posR);
 	Pos3D&      GetPosV             (void)                   { return m_posV; }
 	Pos3D&      GetPosR             (void)                   { return m_posR; }
 	Rot3D&      GetRot              (void)                   { return m_rot; }
-	Scale2D&    GetScale2D          (void)                   { return m_scale; }
+	Scale2D&    GetScale2D          (void)                   { return m_size; }
 	Vector3D    GetVec              (void)                   { return m_posR - m_posV; }
 	Vector3D    GetNor              (void)                   { Vector3D vec = GetVec(); return *D3DXVec3Normalize(&vec, &vec); }
 	Viewport    GetViewport         (void)                   { return m_MTInfo.viewport; }
@@ -49,9 +49,11 @@ public:
 	void        SetVib              (const float& vibPower);
 	void        PivotToPosV         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = true; }
 	void        PivotToPosR         (void)                   { if (m_state == STATE::NONE) m_isPivotToPosV = false; }
-	void        SetFixed            (const bool& isFixid)    { m_isFixed = isFixid; }
-	void        SetDraw             (const bool& isDraw)     { m_isDraw = isDraw; }
-	bool&       GetDraw             (void)                   { return m_isDraw; }
+	void        SetIsFixed          (const bool& isFixid)    { m_isFixed = isFixid; }
+	void        SetIsDraw           (const bool& isDraw)     { m_isDraw = isDraw; }
+	bool&       GetIsDraw           (void)                   { return m_isDraw; }
+	void        SetLightID          (const short& ID)        { m_lightID = ID; }
+	short&      GetLightID          (void)                   { return m_lightID; }
 	void        SetBGCol            (const Color& col)       { m_BGCol = col; }
 	void        SetIsClipping       (const bool& isClipping) { m_isClipping = isClipping; }
 	bool&       GetIsClipping       (void)                   { return m_isClipping; }
@@ -79,7 +81,7 @@ private:
 		float power = 0.0f;
 		float scale = 1.0f;
 		Angle angle = 0.0f;
-		Color col   = INITCOLOR;
+		Color col   = COLOR_WHITE;
 	};
 	// マルチターゲットレンダリング情報
 	struct MTRenderingInfo {
@@ -104,18 +106,18 @@ private:
 
 	//========== [[[ 関数宣言 ]]]
 	static void SetUpProjectionMatrix(Device& device, const Scale2D& scale, const float& radian);
-	void ProcessState(const PROCESS process);
-	void SetState(const STATE state);
+	void        ProcessState         (const PROCESS process);
+	void        SetState             (const STATE state);
 
 	//========== [[[ 変数の宣言 ]]]
-	static UShort   ms_IDCount;
-	UShort          m_ID;
+	static short    ms_IDCount;
+	short           m_ID;
 	Pos3D           m_posV;		// 視点
 	Pos3D           m_posR;		// 注視点
 	Pos3D           m_posVib;	// 振動位置
 	Rot3D           m_rot;
 	Vector3D        m_spin;
-	Scale2D         m_scale;
+	Size2D          m_size;
 	float           m_dist;
 	float           m_radian;
 	float           m_radianGoal;
@@ -127,6 +129,7 @@ private:
 	void*           m_stateInfo;
 	// 描画関連
 	bool            m_isDraw;
+	short           m_lightID;
 	Color           m_BGCol;
 	bool            m_isClipping;
 	MTRenderingInfo m_MTInfo;

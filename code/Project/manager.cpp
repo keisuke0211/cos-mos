@@ -11,7 +11,12 @@
 #include "stage.h"
 
 //****************************************
-// 名前空間
+// マクロ定義
+//****************************************
+#define LIGHT3D_MAX (1)
+
+//****************************************
+// 無名空間
 //****************************************
 namespace {
 	//========== [[[ 変数宣言 ]]]
@@ -24,6 +29,8 @@ namespace {
 	CFont           m_Font;
 	CCamera*        m_camera;
 	CCamera*        m_subCamera;
+	CTransition     m_transition;
+	CLight3D*       m_light3D[LIGHT3D_MAX];
 }
 
 //================================================================================
@@ -38,6 +45,8 @@ CObjectMgr* Manager::BGMgr(void) { return &m_BGMgr; }
 CEffMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
 CFont* Manager::Font(void) { return &m_Font; }
+CTransition& Manager::Transition(void) { return m_transition; }
+short& Manager::GetLightIdx(UShort lightIdx) { return m_light3D[lightIdx]->GetID(); }
 
 //========================================
 // 初期化処理
@@ -48,9 +57,23 @@ void Manager::Init(CMode::TYPE mode) {
 	// リソースの読み込み
 	CResources::Load();
 
+	// ライト3Dの生成
+	String test = "data\\LIGHT3D\\AmbientLight.txt";
+	for (int cnt = 0; cnt < LIGHT3D_MAX; cnt++) {
+		switch (cnt) {
+		case 0:m_light3D[cnt] = new CLight3D(test); break;
+		default:
+			m_light3D[cnt] = NULL;
+			assert(false);
+			break;
+		}
+	}
+
 	// カメラの生成
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
+	m_camera->SetLightID(m_light3D[0]->GetID());
 	m_subCamera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
+	m_subCamera->SetLightID(m_light3D[0]->GetID());
 
 	// モード設定
 	SetMode(mode);
@@ -63,6 +86,9 @@ void Manager::Init(CMode::TYPE mode) {
 
 	// 標準エフェクトの優先度設定
 	RNLib::StandardEffect3D().SetPriority(PRIORITY_EFFECT);
+
+	// 遷移の初期化
+	m_transition.Init();
 }
 
 //========================================
@@ -86,6 +112,9 @@ void Manager::Uninit(void) {
 
 	// ステージ終了処理
 	Stage::Uninit();
+
+	// 遷移の終了処理
+	m_transition.Uninit();
 }
 
 //========================================
@@ -101,12 +130,13 @@ void Manager::Update(void) {
 
 		RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
 			->SetTexUV(m_camera)
-			->SetSize(windowWidth, windowHeight);
+			->SetSize(windowWidth, windowHeight)
+			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
 	// 予約されている時、遷移がモード設定待ちならモードを設定する
 	if (m_reserveModeType != CMode::TYPE::NONE) {
-		if (RNLib::Transition().GetState() == CTransition::STATE::OPEN_WAIT) {
+		if (m_transition.GetState() == CTransition::STATE::OPEN_WAIT) {
 			SetMode(m_reserveModeType);
 		}
 	}
@@ -121,6 +151,9 @@ void Manager::Update(void) {
 
 	// フォントオブジェクトの更新処理
 	CFontObject::UpdateAll();
+
+	// 遷移の更新処理
+	m_transition.Update();
 }
 
 //========================================
@@ -175,5 +208,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// 遷移設定
-	RNLib::Transition().Close(transType, INITCOLOR, 30);
+	m_transition.Close(transType, COLOR_WHITE, 60);
 }

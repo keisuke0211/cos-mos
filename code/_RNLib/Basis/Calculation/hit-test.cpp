@@ -15,35 +15,35 @@
 //========================================
 // コンストラクタ
 //========================================
-CHitTest::CHitTest() {
+_RNC_HitTest::_RNC_HitTest() {
 
 }
 
 //========================================
 // デストラクタ
 //========================================
-CHitTest::~CHitTest() {
+_RNC_HitTest::~_RNC_HitTest() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CHitTest::Init(void) {
+void _RNC_HitTest::Init(void) {
 
 }
 
 //========================================
 // 終了処理
 //========================================
-void CHitTest::Uninit(void) {
+void _RNC_HitTest::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CHitTest::Update(void) {
+void _RNC_HitTest::Update(void) {
 
 }
 
@@ -54,9 +54,9 @@ void CHitTest::Update(void) {
 //================================================================================
 
 //========================================
-// [静的]点から矩形の重なり判定
+// 点から矩形の重なり判定
 //========================================
-bool CHitTest::XZ::OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targetPos, const Scale2D& targetScale) {
+bool _RNC_HitTest::XZ_OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targetPos, const Scale2D& targetScale) {
 
 	const float targetWidthHalf = targetScale.x * 0.5f;
 	const float targetDepthHalf = targetScale.y * 0.5f;
@@ -71,36 +71,4 @@ bool CHitTest::XZ::OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targe
 	}
 
 	return false;
-}
-
-//================================================================================
-//----------|---------------------------------------------------------------------
-//==========| [公開]当たり判定クラス(三次元空間)
-//----------|---------------------------------------------------------------------
-//================================================================================
-
-//========================================
-// [静的]球がカメラの描画範囲内にあるかどうか判定
-//========================================
-bool CHitTest::XYZ::InPointToCameraView(const D3DXVECTOR3& point, const D3DXVECTOR3& cameraPosition, const D3DXVECTOR3& cameraLookAt, float cameraWidth, float cameraHeight, float fov)
-{
-    // Calculate the view matrix
-    D3DXMATRIX viewMatrix;
-    D3DXMatrixLookAtLH(&viewMatrix, &cameraPosition, &cameraLookAt, &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
-
-    // Calculate the projection matrix
-    D3DXMATRIX projectionMatrix;
-    D3DXMatrixPerspectiveFovLH(&projectionMatrix, fov, cameraWidth / cameraHeight, 0.1f, 1000.0f);
-
-    // Combine view and projection matrices
-    D3DXMATRIX viewProjectionMatrix = viewMatrix * projectionMatrix;
-
-    // Transform the point to clip space
-    D3DXVECTOR4 clipSpace;
-    D3DXVec3Transform(&clipSpace, &point, &viewProjectionMatrix);
-
-    // Check if the point is within the clip space boundaries
-    return (clipSpace.x >= -1.0f && clipSpace.x <= 1.0f &&
-        clipSpace.y >= -1.0f && clipSpace.y <= 1.0f &&
-        clipSpace.z >= 0.0f && clipSpace.z <= 1.0f);
 }

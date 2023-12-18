@@ -1,50 +1,51 @@
 //========================================
 // 
-// 光3Dのヘッダファイル
+// ライト3Dの処理
 // Author:RIKU NISHIMURA
 // 
 //========================================
-// [[[ light3D.h ]]]
-//========================================
-#ifndef _LIGHT3D_H_
-#define _LIGHT3D_H_
+#pragma once
+
+#include "../Mechanical/string.h"
+#include "../Mechanical/object.h"
 
 //****************************************
 // クラス定義
 //****************************************
-// 光3Dクラス
-class CLight3D {
+// ライト3Dクラス
+class CLight3D : CObject {
 public:
-	//========== [[[ 関数宣言 ]]]
-	CLight3D();
-	~CLight3D();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	void SetCol(Color col);
-	Color GetCol(void) { return m_col; }
-	// 環境光調整
-	void         SetNum          (int nNum);
-	int          GetNum          (void)                        { return m_nSetNum; }
-	void         SetVec          (int nIdx, D3DXVECTOR3 rot)   { m_pAmbient[nIdx].rot = rot; SetLight(nIdx); }
-	D3DXVECTOR3& GetVec          (int nIdx)                    { return m_pAmbient[nIdx].rot; }
-	void         SetBrightness   (int nIdx, float fBrightness) { m_pAmbient[nIdx].fBrightness = fBrightness; SetLight(nIdx); }
-	float&       GetBrightness   (int nIdx)                    { return m_pAmbient[nIdx].fBrightness; }
-	void         SaveAmbientLight(void);
-	void         SetLight        (int nIdx);
-
-private:
 	//========== [[[ 構造体定義 ]]]
 	// 環境光情報構造体
-	typedef struct AmbientLight_ {
-		D3DXVECTOR3 rot         = INITD3DXVECTOR3;
-		float       fBrightness = 1.0f;
-	}AmbientLight;
+	struct LinearLight {
+		Matrix rotMtx = INITMATRIX;
+		Color  col    = COLOR_WHITE;
+	};
 
+	//========== [[[ 関数宣言 ]]]
+	static void AllDisable(Device& device);
+	CLight3D                      (const String& loadPath);
+	~CLight3D                     ();
+	void         Clear            (void);
+	void         Update           (void) {}
+	void         Load             (const String& loadPath);
+	void         Save             (const String& savePath);
+	void         Setting          (Device& device);
+	short&       GetID            (void) { return m_ID; }
+	LinearLight& GetLinearLight   (const UShort idx) { return m_linearLights[idx]; }
+	void         AddLinearLight   (void);
+	void         SubLinearLight   (const UShort& idx);
+	UShort&      GetLinearLightNum(void) { return m_linearLightNum; }
+	Rot3D&       GetRot           (void) { return m_rot; }
+	void         SetRot           (const Rot3D& rot) { m_rot = rot; }
+
+private:
 	//========== [[[ 変数宣言 ]]]
-	AmbientLight* m_pAmbient;
+	static short  ms_IDCount;
+	static UShort ms_linearLightNumOld;
+	short         m_ID;
+	LinearLight*  m_linearLights;
+	UShort        m_linearLightNum;
+	Rot3D         m_rot;
 	Color         m_col;
-	int           m_nSetNum;
 };
-
-#endif

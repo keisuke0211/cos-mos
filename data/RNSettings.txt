@@ -1,10 +1,11 @@
 #KeyOption
-projectName							Test
+projectName							CosMos
 windowWidth							1280.00
 windowHeight						720.00
-isFullScreen						0
+isFullScreen						1
 resolution							2.00
+fontListPath						data\\FontList.txt
 #OtherOption
-modelOutLineAddDistanceInterval		0.10
+modelOutLineAddDistanceInterval		0.1
 modelOutLineAddDistanceDelimiter	20
 END

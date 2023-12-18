@@ -117,7 +117,7 @@
     <ClCompile Include="code\_RNLib\Basis\default-data.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\setting.cpp">
+    <ClCompile Include="code\_RNLib\Basis\options.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Mechanical\file.cpp">
@@ -127,9 +127,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Mechanical\object-manager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\Mechanical\print.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Mechanical\regist.cpp">
@@ -162,7 +159,7 @@
     <ClCompile Include="code\_RNLib\Basis\Draw\texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\Basis\Draw\transition.cpp">
+    <ClCompile Include="code\Project\UI\transition.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\model.cpp">
@@ -267,7 +264,7 @@
     <ClCompile Include="code\_RNLib\Demo\demo_zone.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\_RNLib\SetUp3DEditor\setup3D-editor.cpp">
+    <ClCompile Include="code\_RNLib\Editor\setup3D-editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\3DObject\Effect\effect3D.cpp">
@@ -328,6 +325,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\UI\MenuUi.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Basis\Draw\light3D-manager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Editor\light3D-editor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Basis\3DObject\rail3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\_RNLib\Editor\rail3D-editor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -440,7 +452,7 @@
     <ClInclude Include="code\_RNLib\Basis\default-data.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\Basis\setting.h">
+    <ClInclude Include="code\_RNLib\Basis\options.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Mechanical\file.h">
@@ -453,9 +465,6 @@
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Mechanical\object-manager.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\_RNLib\Basis\Mechanical\print.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Mechanical\regist.h">
@@ -488,7 +497,7 @@
     <ClInclude Include="code\_RNLib\Basis\Draw\texture.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\Basis\Draw\transition.h">
+    <ClInclude Include="code\Project\UI\transition.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\model.h">
@@ -593,7 +602,7 @@
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\_RNLib\SetUp3DEditor\setup3D-editor.h">
+    <ClInclude Include="code\_RNLib\Editor\setup3D-editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\RNmode.h">
@@ -654,6 +663,24 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Draw\PutObject\static-mesh.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\UI\MenuUi.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Basis\Mechanical\string.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Basis\Draw\light3D-manager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Editor\light3D-editor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Basis\3DObject\rail3D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\_RNLib\Editor\rail3D-editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

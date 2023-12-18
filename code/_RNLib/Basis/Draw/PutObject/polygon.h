@@ -35,8 +35,8 @@ namespace Polygon2DAnd3D {
 	class CSetTexInfoSum {
 	public:
 		// [[[ ä÷êîêÈåæ ]]]
-		CSetTexInfoSum();
-		~CSetTexInfoSum();
+		CSetTexInfoSum     ();
+		~CSetTexInfoSum    ();
 		void ClearParameter(void);
 		void AssignTexInfo (void*& tex, TEX_TYPE& texType, Pos2D& pos0, Pos2D& pos1, Pos2D& pos2, Pos2D& pos3);
 		void SetTex        (const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos);

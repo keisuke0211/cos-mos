@@ -25,19 +25,19 @@ void CCamera::ProcessState(const PROCESS process) {
 		switch (process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
-			CMemory::Alloc<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
+			RNLib::Memory().Alloc<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
 			m_isPivotToPosV = true;
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
-			CMemory::Release<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
+			RNLib::Memory().Release<GrabAirMouseInfo>((GrabAirMouseInfo**)&m_stateInfo);
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
 			GrabAirMouseInfo* info = (GrabAirMouseInfo*)m_stateInfo;
 
 			// [[[ カーソルの移動量に応じて回転させる ]]]
-			if (RNLib::Input().GetMousePress(CInput::MOUSEBUTTON::RIGHT)) {
+			if (RNLib::Input().GetMousePress(_RNC_Input::MOUSEBUTTON::RIGHT)) {
 				D3DXVECTOR2 cursorMove = RNLib::Input().GetCursorMove();
 				m_spin.x += cursorMove.y * 0.0002f * info->spinForce;
 				m_spin.y += cursorMove.x * 0.0002f * info->spinForce;
@@ -48,7 +48,7 @@ void CCamera::ProcessState(const PROCESS process) {
 				float rotXRate = m_rot.x / D3DX_PI_HALF;
 
 				// [[[ カーソルの移動量に応じて移動させる ]]]
-				if (RNLib::Input().GetMousePress(CInput::MOUSEBUTTON::LEFT)) {
+				if (RNLib::Input().GetMousePress(_RNC_Input::MOUSEBUTTON::LEFT)) {
 					const Vector2D cursorMove = RNLib::Input().GetCursorMove();
 					const float    moveAngleX = m_rot.y - D3DX_PI_HALF;
 					Vector3D       move       = INITVECTOR3D;
@@ -66,11 +66,11 @@ void CCamera::ProcessState(const PROCESS process) {
 				}
 
 				// [[[ ホイールの回転に応じてズームイン/アウト ]]]
-				if (RNLib::Input().GetWheelSpin() == CInput::WHEELSPIN::FRONT) {
-					m_posV += CGeometry::FindRotVec(m_rot) * info->zoomForce * 4.0f;
+				if (RNLib::Input().GetWheelSpin() == _RNC_Input::WHEELSPIN::FRONT) {
+					m_posV += RNLib::Geometry().FindRotVec(m_rot) * info->zoomForce * 4.0f;
 				}
-				else if (RNLib::Input().GetWheelSpin() == CInput::WHEELSPIN::BACK) {
-					m_posV -= CGeometry::FindRotVec(m_rot) * info->zoomForce * 4.0f;
+				else if (RNLib::Input().GetWheelSpin() == _RNC_Input::WHEELSPIN::BACK) {
+					m_posV -= RNLib::Geometry().FindRotVec(m_rot) * info->zoomForce * 4.0f;
 				}
 			}
 		}break;
@@ -83,11 +83,11 @@ void CCamera::ProcessState(const PROCESS process) {
 		switch (process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
-			CMemory::Alloc<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
+			RNLib::Memory().Alloc<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
-			CMemory::Release<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
+			RNLib::Memory().Release<ReciprocateSpinInfo>((ReciprocateSpinInfo**)&m_stateInfo);
 		}break;
 			// [[[ 更新処理 ]]]
 		case PROCESS::UPDATE: {
@@ -100,7 +100,7 @@ void CCamera::ProcessState(const PROCESS process) {
 				count = info->time - (count - info->time);
 
 			// 割合
-			float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, count, info->time);
+			float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, count, info->time);
 
 			// 実際の向きを算出
 			m_rot = (info->rotA * (1.0f - rate)) + (info->rotB * rate);

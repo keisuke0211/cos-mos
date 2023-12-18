@@ -105,7 +105,8 @@ public:
 	{
 		D3DXVECTOR3 HeadPos;// 頭の位置
 		D3DXVECTOR3 HipPos;	// 尻の位置
-		int Height;			// 胴体の高さ
+		int HeightMin;		// 胴体の高さ 最低値
+		int HeightMax;		// 　　　　　 最大値
 		bool bElasticity;	// 伸縮フラグ
 	};
 
@@ -135,6 +136,7 @@ public:
 	/* 背景				*/char *GetBgFile(void) { return m_Info.aBgFile; }
 	/* サウンド			*/char *GetSoundFile(void) { return m_Info.aSoundFile; }
 	/* 位置				*/D3DXVECTOR3 GetPos(int nRow, int nLine);
+	/* ステージ総数取得 */void GetPlanetAndStageMax(CInt planet, int& NumPlanet, int& NumStage);
 
 	// -- 変換 ---------------------------------------------
 	/* int		*/bool ToData(int &val, CSVFILE *pFile, int nRow, int nLine);

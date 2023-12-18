@@ -39,7 +39,8 @@ public:
 	void  SetElasticity(bool Elast) { m_bElasticity = Elast; }//伸縮設定
 	void  SetHead(Pos3D pos)        { m_HeadPos = pos; }      //頭の位置設定
 	void  SetHip(Pos3D pos)         { m_HipPos = pos; }       //お尻の位置設定
-	void  SetHeadHeight(int height) { m_nHeight = height; }   //頭の高さ
+	void  SetHeadHeightMin(CInt heightMin) { m_nHeightMin = heightMin; } //頭の高さ（最低
+	void  SetHeadHeightMax(CInt heightMax) { m_nHeightMax = heightMax; } //頭の高さ（最高
 	void  SetReturn(bool bReturn)   { m_bInversion = bReturn; }//反転の設定
 
 	// -- 取得 ---------------------------------------------
@@ -53,12 +54,15 @@ public:
 	int   GetHipRot(void); //お尻の方向を取得
 
 private:
+	//頭・お尻用サイズ
+	static const float HEAD_HIP_SIZE;
+
 	//========== [[[ 列挙型定義 ]]]
 	enum class Parts
 	{
-		Body = 0, // 体
-		Head,     // 頭
-		Hip,      // お尻
+		Hip = 0, // お尻
+		Body,    // 体
+		Head,    // 頭
 		Max
 	};
 	//========== [[[ 関数宣言 ]]]
@@ -73,11 +77,14 @@ private:
 	bool  m_bElasticity; // 触って縮むか伸びるか
 	bool  m_bInversion;  // 反転
 	int   m_nCntShrink;  // 縮むカウント
-	float m_fcurrenty;   // 現在のy座標
-	int   m_nHeight;     // 高さ
+	int   m_nHeightMin;  // 伸びる高さ（最低
+	int   m_nHeightMax;  // 伸びる高さ（最高
 
 	Pos3D m_HeadPos;     // 頭の位置
 	Pos3D m_BodyPos;     // 体の位置
-	Pos3D m_BodyPosOld;  // 頭の過去位置
+	Pos3D m_BodyPosOld;  // 体の過去位置
 	Pos3D m_HipPos;      // 尻の位置
+
+	Pos3D m_StartBodyPos;// 体の初期位置
+	float m_StartHeight; // 高さの初期位置
 };

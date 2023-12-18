@@ -39,7 +39,7 @@ public:
 	CStageObjectMgr();
 	virtual~CStageObjectMgr();
 	virtual void Update(void);	void Load(void);
-	CBlock*     BlockCreate(D3DXVECTOR3 pos, CBlock::LOOKS_TYPE type, Color color = INITCOLOR, bool isCollision = true);
+	CBlock*     BlockCreate(D3DXVECTOR3 pos, CBlock::LOOKS_TYPE type, Color color = COLOR_WHITE, bool isCollision = true);
 	CMagmaBlock *MagmaBlockCreate(D3DXVECTOR3 pos,Color color);
 	CFillBlock  *FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::BLOCKTYPE type, Color color);
 	CSpike      *SpikeCreate	 (D3DXVECTOR3 pos, int nType);
@@ -54,7 +54,7 @@ public:
 	CPlanet		*PlanetCreate	 (D3DXVECTOR3 pos, D3DXVECTOR3 rot,CPlanet::STAR_TYPE type,Color col);
 	CStar		*StarCreate		 (D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 	CRoadTripLaser*RoadTripLaserCreate(D3DXVECTOR3 posV, D3DXVECTOR3 posL,D3DXVECTOR3 move,bool bxRetrurn = false);
-	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int Headheight, bool bElasticity,bool bReturn);
+	CExtenddog	  *ExtenddogCreate(D3DXVECTOR3 fHeadpos, D3DXVECTOR3 fHippos,int HeightMin, int HeightMax, bool bElasticity,bool bReturn);
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 	CBat * BatCreate(D3DXVECTOR3 pos);
 private:

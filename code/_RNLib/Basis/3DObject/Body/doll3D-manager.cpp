@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CDoll3DMgr::CDoll3DMgr() : CObjectMgr("RN_DollMgr") {
+_RNC_Doll3DMgr::_RNC_Doll3DMgr() : CObjectMgr("RN_DollMgr") {
 
 	m_editInfo = {};
 }
@@ -23,13 +23,13 @@ CDoll3DMgr::CDoll3DMgr() : CObjectMgr("RN_DollMgr") {
 //========================================
 // デストラクタ
 //========================================
-CDoll3DMgr::~CDoll3DMgr() {
+_RNC_Doll3DMgr::~_RNC_Doll3DMgr() {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CDoll3DMgr::Update(void) {
+void _RNC_Doll3DMgr::Update(void) {
 
 }

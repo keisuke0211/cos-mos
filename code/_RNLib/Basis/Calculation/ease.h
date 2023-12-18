@@ -1,6 +1,6 @@
 //========================================
 // 
-// 補間関連の処理
+// 補間処理
 // Author:RIKU NISHIMURA
 // 
 //========================================
@@ -10,18 +10,18 @@
 // クラス定義
 //****************************************
 // 補間クラス
-class CEase {
+class _RNC_Ease {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	// 種類
 	enum class TYPE { LINEAR, IN_SINE, OUT_SINE, INOUT_SINE, MAX, };
 
 	//========== [[[ 関数宣言 ]]]
-	static float Easing(const TYPE& ease, const int& base, const int& max);
-	static float Easing(const TYPE& ease, const float& base, const float& max);
-	CEase();
-	~CEase();
-	void Init  (void);
-	void Uninit(void);
-	void Update(void);
+	_RNC_Ease   ();
+	~_RNC_Ease  ();
+	void  Init  (void);
+	void  Uninit(void);
+	void  Update(void);
+	float Easing(const TYPE& ease, const int& base, const int& max);
+	float Easing(const TYPE& ease, const float& base, const float& max);
 };

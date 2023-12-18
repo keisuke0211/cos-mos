@@ -10,21 +10,21 @@
 // クラス定義
 //****************************************
 // デフォルトデータクラス
-class CDefaultData {
+class _RNC_DefaultData {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	enum class SOUND    { TEST_BGM, TEST_SE, MAX, };
 	enum class TEXTURE  { TILE, GRID, STRIPE, BORDER, SMOKE, MAX };
-	enum class MODEL    { CUBE, SPHERE, DOME_UP, DOME_DOWN, OBSERVER, MONITOR, PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
+	enum class MODEL    { CUBE, SPHERE, DOME_UP, DOME_DOWN, PYRAMID_ALLOW, LINEAR_LIGHT, OBSERVER, MONITOR, PRUFEN_HEAD, PRUFEN_BODY, PRUFEN_LIMB_UP, PRUFEN_LIMB_DOWN, PRUFEN_LIMB_LEFT, PRUFEN_LIMB_RIGHT, MAX, };
 	enum class SETUP3D  { CAPSULE, MAX };
 	enum class MOTION3D { CAPSULE_STRETCH, MAX };
 
 	//========== [[[ 関数宣言 ]]]
-	CDefaultData();
-	~CDefaultData();
-	void Init  (void);
-	void Uninit(void);
-	void Update(void);
+	_RNC_DefaultData     ();
+	~_RNC_DefaultData    ();
+	void   Init          (void);
+	void   Uninit        (void);
+	void   Update        (void);
 	short& GetSoundIdx   (const SOUND&    sound   ) { return m_soundIdxes   [(int)sound   ]; }
 	short& GetTextureIdx (const TEXTURE&  texture ) { return m_textureIdxes [(int)texture ]; }
 	short& GetModelIdx   (const MODEL&    model   ) { return m_modelIdxes   [(int)model   ]; }

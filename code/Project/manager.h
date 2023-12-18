@@ -12,6 +12,7 @@
 #include "Effect/eff-manager.h"
 #include "System\StageEditor.h"
 #include "System\words\font.h"
+#include "UI/transition.h"
 
 //****************************************
 // —ñ‹“Œ^’è‹`
@@ -46,4 +47,6 @@ namespace Manager {
 	CEffMgr*         EffectMgr     (void);
 	CStageEditor*    StgEd         (void);
 	CFont*           Font          (void);
+	CTransition&     Transition    (void);
+	short&           GetLightIdx   (UShort lightIdx);
 };

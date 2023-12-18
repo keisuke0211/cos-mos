@@ -16,7 +16,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CText2D::CText2D() {
+_RNC_Text2D::_RNC_Text2D() {
 
 	m_isShowDebugLog        = true;
 	m_isShowDebugLogOptions = false;
@@ -27,14 +27,14 @@ CText2D::CText2D() {
 //========================================
 // デストラクタ
 //========================================
-CText2D::~CText2D() {
+_RNC_Text2D::~_RNC_Text2D() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CText2D::Init(void) {
+void _RNC_Text2D::Init(void) {
 
 	// 実行モードであればデバッグ表示を行わない
 	m_isShowDebugLog = (RNSystem::GetMode() != RNSystem::MODE::EXECUTION);
@@ -43,14 +43,14 @@ void CText2D::Init(void) {
 //========================================
 // 終了処理
 //========================================
-void CText2D::Uninit(void) {
+void _RNC_Text2D::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CText2D::Update(void) {
+void _RNC_Text2D::Update(void) {
 
 	m_debugLogLine = 0;
 
@@ -68,25 +68,25 @@ void CText2D::Update(void) {
 		// 各デバッグ表示オプション
 		RNLib::Text2D().PutDebugLog("----------StanderdInformation");
 		RNLib::Text2D().PutDebugLog("HideDebugLog      [F1]:TRUE");
-		RNLib::Text2D().PutDebugLog(CreateText("DefaultDebugOption[F2]:%s", m_isShowDebugLogOptions ? "TRUE" : "FALSE"));
+		RNLib::Text2D().PutDebugLog(String("DefaultDebugOption[F2]:%s", m_isShowDebugLogOptions ? "TRUE" : "FALSE"));
 		if (m_isShowDebugLogOptions) {
 			RNLib::Text2D().PutDebugLog("----------Performance");
-			RNLib::Text2D().PutDebugLog(CreateText("FPS    :%d", RNSystem::GetFPS()));
-			RNLib::Text2D().PutDebugLog(CreateText("RunTime:%02d:%02d.%02d", RNLib::Count().GetCount() / 3600, (RNLib::Count().GetCount() / 60) % 60, RNLib::Count().GetCount() % 60));
+			RNLib::Text2D().PutDebugLog(String("FPS    :%d", RNSystem::GetFPS()));
+			RNLib::Text2D().PutDebugLog(String("RunTime:%02d:%02d.%02d", RNLib::Count().GetCount() / 3600, (RNLib::Count().GetCount() / 60) % 60, RNLib::Count().GetCount() % 60));
 			
 			RNLib::Text2D().PutDebugLog("----------DrawState");
-			RNLib::Text2D().PutDebugLog(CreateText("Polygon2DNum:%d", RNLib::DrawMgr().GetPolygon2DNum()));
-			RNLib::Text2D().PutDebugLog(CreateText("Polygon3DNum:%d", RNLib::DrawMgr().GetPolygon3DNum()));
-			RNLib::Text2D().PutDebugLog(CreateText("ModelNum    :%d", RNLib::DrawMgr().GetModelNum()));
+			RNLib::Text2D().PutDebugLog(String("Polygon2DNum:%d", RNLib::DrawMgr().GetPolygon2DNum()));
+			RNLib::Text2D().PutDebugLog(String("Polygon3DNum:%d", RNLib::DrawMgr().GetPolygon3DNum()));
+			RNLib::Text2D().PutDebugLog(String("ModelNum    :%d", RNLib::DrawMgr().GetModelNum()));
 			
 			RNLib::Text2D().PutDebugLog("----------ObjectNumInObjectMgr");
 			CObjectMgr**& objectMgrs   = CObjectMgr::GetObjectMgrs  ();
 			UShort&       objectMgrNum = CObjectMgr::GetObjectMgrNum();
 			for (int cntObjectMgr = 0; cntObjectMgr < objectMgrNum; cntObjectMgr++)
-				PutDebugLog(CreateText("%d < %s", objectMgrs[cntObjectMgr]->GetNum(), objectMgrs[cntObjectMgr]->GetName()));
+				PutDebugLog(String("%d < %s", objectMgrs[cntObjectMgr]->GetNum(), objectMgrs[cntObjectMgr]->GetName()));
 
 			RNLib::Text2D().PutDebugLog("----------Other");
-			RNLib::Text2D().PutDebugLog(CreateText("DebugCount:%d", m_debugCount));
+			RNLib::Text2D().PutDebugLog(String("DebugCount:%d", m_debugCount));
 		}
 		RNLib::Text2D().PutDebugLog("----------");
 		RNLib::Text2D().PutDebugLog("");
@@ -96,9 +96,9 @@ void CText2D::Update(void) {
 //========================================
 // 設置処理
 //========================================
-CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, const CText::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::Put(const UShort& priority, const char* string, const _RNC_Text::ALIGNMENT alignment, const short& fontIdx, const Pos2D& pos, const Angle& angle, const bool& isOnScreen) {
 
-	return RNLib::DrawMgr().PutText2D(0, pos, angle, isOnScreen)
+	return RNLib::DrawMgr().PutText2D(priority, pos, angle, isOnScreen)
 		->SetString(string)
 		->SetAlignment(alignment)
 		->SetFontIdx(fontIdx);
@@ -107,33 +107,31 @@ CText2D::CRegistInfo* CText2D::Put(const UShort& priority, const char* string, c
 //========================================
 // デバッグログ設置処理
 //========================================
-Pos2D CText2D::PutDebugLog(const char* string) {
+Pos2D _RNC_Text2D::PutDebugLog(const char* string) {
 
 	if (!m_isShowDebugLog)
 		return INITPOS2D;
 
-	if (0) {
-		setlocale(LC_ALL, "");
-		size_t    length = strlen(string);
-		wchar_t* wstr = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
-		mbstowcs(wstr, string, length + 1);
-		const int strLen = (int)wcslen(wstr);
+	setlocale(LC_ALL, "");
+	size_t    length = strlen(string);
+	wchar_t* wstr = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
+	mbstowcs(wstr, string, length + 1);
+	const int strLen = (int)wcslen(wstr);
 
-		const float top = m_debugLogLine * 16.0f;
-		const float bottom = (m_debugLogLine + 1) * 16.0f;
-		const float right = strLen * 16.0f;
-		free(wstr);
+	const float top = m_debugLogLine * 16.0f;
+	const float bottom = (m_debugLogLine + 1) * 16.0f;
+	const float right = strLen * 16.0f;
+	free(wstr);
 
-		RNLib::Polygon2D().Put(0, true)
-			->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
-			->SetVtxCol(Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100));
-	}
+	RNLib::Polygon2D().Put(_RNC_DrawMgr::SCREEN_PRIORITY_DEBUG_LOG, true)
+		->SetVtxPos(Pos2D(0.0f, top), Pos2D(right, top), Pos2D(0.0f, bottom), Pos2D(right, bottom))
+		->SetVtxCol(Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100), Color(0, 0, 0, 100));
 
 	// 設置位置
 	Pos2D putPos = Pos2D(0.0f, 8.0f + m_debugLogLine * 16.0f);
 
 	// 左上から下にかけてテキスト2Dを設置する
-	Put(0, string, CText::ALIGNMENT::LEFT, 0, putPos, 0.0f, true)
+	Put(_RNC_DrawMgr::SCREEN_PRIORITY_DEBUG_LOG, string, _RNC_Text::ALIGNMENT::LEFT, NONEDATA, putPos, 0.0f, true)
 		->SetSize(Size2D(16.0f, 16.0f));
 
 	// デバッグログの行数加算
@@ -151,7 +149,7 @@ Pos2D CText2D::PutDebugLog(const char* string) {
 //========================================
 // コンストラクタ
 //========================================
-CText2D::CRegistInfo::CRegistInfo() {
+_RNC_Text2D::CRegistInfo::CRegistInfo() {
 
 	m_string = NULL;
 	ClearParameter();
@@ -160,35 +158,35 @@ CText2D::CRegistInfo::CRegistInfo() {
 //========================================
 // デストラクタ
 //========================================
-CText2D::CRegistInfo::~CRegistInfo() {
+_RNC_Text2D::CRegistInfo::~CRegistInfo() {
 
 	// 文字列のメモリ解放
-	CMemory::Release(&m_string);
+	RNLib::Memory().Release(&m_string);
 }
 
 //========================================
 // パラメーターのクリア処理
 //========================================
-void CText2D::CRegistInfo::ClearParameter(void) {
+void _RNC_Text2D::CRegistInfo::ClearParameter(void) {
 
-	CMemory::Release(&m_string);
-	m_alignment   = CText::ALIGNMENT::CENTER;
-	m_fontIdx     = NONEDATA;
-	m_pos         = INITPOS2D;
-	m_angle       = 0.0f;
-	m_scaleOrSize = INITVECTOR2D;
-	m_isScale     = false;
-	m_col         = INITCOLOR;
-	m_isZtest     = true;
+	RNLib::Memory().Release(&m_string);
+	m_alignment         = _RNC_Text::ALIGNMENT::CENTER;
+	m_fontIdx           = NONEDATA;
+	m_pos               = INITPOS2D;
+	m_angle             = 0.0f;
+	m_scaleOrSize       = INITVECTOR2D;
+	m_isScale           = false;
+	m_col               = COLOR_WHITE;
+	m_interpolationMode = _RNC_DrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
 // 設置処理(ポリゴン2D)
 //========================================
-void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
+void _RNC_Text2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOnScreen) {
 
 	// フォントデータを取得
-	CText::FontData fontData = RNLib::Text().GetFont(m_fontIdx);
+	_RNC_Text::FontData fontData = RNLib::Text().GetFontData(m_fontIdx);
 	
 	//----------------------------------------
 	// 幅/高さ/間隔を算出
@@ -196,8 +194,8 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 	float charWidth      = 0.0f;
 	float charHeightHalf = 0.0f;
 	if (m_isScale) {
-		charWidth      = (RNLib::Texture().GetWidth (fontData.nTexIdx) / fontData.nPtnWidth ) * m_scaleOrSize.x;
-		charHeightHalf = (RNLib::Texture().GetHeight(fontData.nTexIdx) / fontData.nPtnHeight) * m_scaleOrSize.y * 0.5f;
+		charWidth      = (RNLib::Texture().GetWidth (fontData.texIdx) / fontData.ptnX ) * m_scaleOrSize.x;
+		charHeightHalf = (RNLib::Texture().GetHeight(fontData.texIdx) / fontData.ptnY) * m_scaleOrSize.y * 0.5f;
 	}
 	else {
 		charWidth      = m_scaleOrSize.x;
@@ -238,13 +236,13 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 		// [[[ 表示形式に応じた設定位置の設定 ]]]
 		Pos2D setPos = INITPOS2D;
 		switch (m_alignment) {
-		case CText::ALIGNMENT::CENTER: {
+		case _RNC_Text::ALIGNMENT::CENTER: {
 			setPos.x += (leftShift + cntChar) * charWidth;
 		}break;
-		case CText::ALIGNMENT::LEFT: {
+		case _RNC_Text::ALIGNMENT::LEFT: {
 			setPos.x += cntChar * charWidth;
 		}break;
-		case CText::ALIGNMENT::RIGHT: {
+		case _RNC_Text::ALIGNMENT::RIGHT: {
 			setPos.x += (-strLen + cntChar) * charWidth;
 		}break;
 		}
@@ -267,8 +265,8 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 				Pos2D(XLeft  + XBottom, YBottom + YLeft ),
 				Pos2D(XRight + XBottom, YBottom + YRight))
 			->SetCol(m_col)
-			->SetTex(fontData.nTexIdx, (int)wstr[cntChar] - (int)fontData.nStartCode, fontData.nPtnWidth, fontData.nPtnHeight)
-			->SetZTest(m_isZtest);
+			->SetTex(fontData.texIdx, (int)wstr[cntChar] - (int)fontData.startCode, fontData.ptnX, fontData.ptnY)
+			->SetInterpolationMode(m_interpolationMode);
 	}
 
 	// wchar_t型文字列の解放
@@ -278,7 +276,7 @@ void CText2D::CRegistInfo::PutPolygon2D(const UShort& priority, const bool& isOn
 //========================================
 // 位置を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetPos(const Pos2D& pos) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetPos(const Pos2D& pos) {
 
 	if (this == NULL)
 		return NULL;
@@ -291,7 +289,7 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetPos(const Pos2D& pos) {
 //========================================
 // 角度を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetAngle(const float& angle) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetAngle(const float& angle) {
 
 	if (this == NULL)
 		return NULL;
@@ -304,12 +302,12 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetAngle(const float& angle) {
 //========================================
 // 文字列を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetString(const char* string) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetString(const char* string) {
 
 	if (this == NULL)
 		return NULL;
 
-	StrCpyDynamicMemory(&m_string, string);
+	RNLib::Memory().AllocString(&m_string, string);
 
 	return this;
 }
@@ -317,7 +315,7 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetString(const char* string) {
 //========================================
 // 配置を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetAlignment(const CText::ALIGNMENT& alignment) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetAlignment(const _RNC_Text::ALIGNMENT& alignment) {
 
 	if (this == NULL)
 		return NULL;
@@ -330,7 +328,7 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetAlignment(const CText::ALIGNMENT&
 //========================================
 // フォント番号を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetFontIdx(const short& fontIdx) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetFontIdx(const short& fontIdx) {
 
 	if (this == NULL)
 		return NULL;
@@ -343,7 +341,7 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetFontIdx(const short& fontIdx) {
 //========================================
 // 色を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetCol(const Color& col) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetCol(const Color& col) {
 
 	if (this == NULL)
 		return NULL;
@@ -356,7 +354,7 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetCol(const Color& col) {
 //========================================
 // 拡大倍率を設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetScale(const Scale2D scale) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetScale(const Scale2D scale) {
 
 	if (this == NULL)
 		return NULL;
@@ -370,13 +368,26 @@ CText2D::CRegistInfo* CText2D::CRegistInfo::SetScale(const Scale2D scale) {
 //========================================
 // 大きさを設定
 //========================================
-CText2D::CRegistInfo* CText2D::CRegistInfo::SetSize(const Size2D size) {
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetSize(const Size2D size) {
 
 	if (this == NULL)
 		return NULL;
 
 	m_scaleOrSize = size;
 	m_isScale     = false;
+
+	return this;
+}
+
+//========================================
+// 補間モードを設定
+//========================================
+_RNC_Text2D::CRegistInfo* _RNC_Text2D::CRegistInfo::SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_interpolationMode = interpolationMode;
 
 	return this;
 }

@@ -32,25 +32,25 @@ void CBGEditor::Load(const char* loadPath) {
 		static CBGEditor::INFO LoadBGInfo(void) {
 			CBGEditor::INFO info = {};
 			while (RNLib::File().SearchLoop("}")) {
-				RNLib::File().Scan(CFile::SCAN::POS3D, &info.pos, "POS");
-				RNLib::File().Scan(CFile::SCAN::POS3D, &info.posAdd, "POSADD");
-				RNLib::File().Scan(CFile::SCAN::POS3D, &info.move, "MOVE");
-				RNLib::File().Scan(CFile::SCAN::ROT3D, &info.rot, "ROT");
-				RNLib::File().Scan(CFile::SCAN::ROT3D, &info.spin, "SPIN");
-				RNLib::File().Scan(CFile::SCAN::ROT3D, &info.spinAdd, "SPINADD");
-				RNLib::File().Scan(CFile::SCAN::SHORT, &info.life, "LIFE");
-				RNLib::File().Scan(CFile::SCAN::COLOR, &info.col, "COLOR");
-				RNLib::File().Scan(CFile::SCAN::MODELIDX, &info.modelIdx, "PATH");
+				RNLib::File().Scan(_RNC_File::SCAN::POS3D, &info.pos, "POS");
+				RNLib::File().Scan(_RNC_File::SCAN::POS3D, &info.posAdd, "POSADD");
+				RNLib::File().Scan(_RNC_File::SCAN::POS3D, &info.move, "MOVE");
+				RNLib::File().Scan(_RNC_File::SCAN::ROT3D, &info.rot, "ROT");
+				RNLib::File().Scan(_RNC_File::SCAN::ROT3D, &info.spin, "SPIN");
+				RNLib::File().Scan(_RNC_File::SCAN::ROT3D, &info.spinAdd, "SPINADD");
+				RNLib::File().Scan(_RNC_File::SCAN::SHORT, &info.life, "LIFE");
+				RNLib::File().Scan(_RNC_File::SCAN::COLOR, &info.col, "COLOR");
+				RNLib::File().Scan(_RNC_File::SCAN::MODELIDX, &info.modelIdx, "PATH");
 				if (RNLib::File().CheckIdentifier("MOVE_AB{")) {
-					CMemory::Alloc((MOVE_AB**)&info.moveInfo);
+					RNLib::Memory().Alloc((MOVE_AB**)&info.moveInfo);
 					info.moveType = MOVE_TYPE::AB;
 					MOVE_AB* moveInfo = (MOVE_AB*)info.moveInfo;
 					moveInfo->counter = 0;
 					moveInfo->isReturn = false;
 
 					while (RNLib::File().SearchLoop("}")) {
-						RNLib::File().Scan(CFile::SCAN::POS3D, &moveInfo->posB, "POSB");
-						RNLib::File().Scan(CFile::SCAN::INT, &moveInfo->time, "TIME");
+						RNLib::File().Scan(_RNC_File::SCAN::POS3D, &moveInfo->posB, "POSB");
+						RNLib::File().Scan(_RNC_File::SCAN::INT, &moveInfo->time, "TIME");
 					}
 				}
 			}
@@ -60,7 +60,7 @@ void CBGEditor::Load(const char* loadPath) {
 
 	if (RNLib::File().OpenLoadFile(loadPath)) {
 		char headString[TXT_MAX];
-		RNLib::File().Scan(CFile::SCAN::STRING, headString);
+		RNLib::File().Scan(_RNC_File::SCAN::STRING, headString);
 		if (strcmp(headString, "BG_FILE"))
 			return;
 
@@ -83,7 +83,7 @@ void CBGEditor::Load(const char* loadPath) {
 								info = LocalFunc::LoadBGInfo();
 								info.side = CBGEditor::WORLD_SIDE::UP;
 							}
-							RNLib::File().Scan(CFile::SCAN::INT, &time, "CREATE_TIME");
+							RNLib::File().Scan(_RNC_File::SCAN::INT, &time, "CREATE_TIME");
 						}
 
 						info.createTime = time;
@@ -110,7 +110,7 @@ void CBGEditor::Load(const char* loadPath) {
 								info = LocalFunc::LoadBGInfo();
 								info.side = CBGEditor::WORLD_SIDE::DOWN;
 							}
-							RNLib::File().Scan(CFile::SCAN::INT, &time, "CREATE_TIME");
+							RNLib::File().Scan(_RNC_File::SCAN::INT, &time, "CREATE_TIME");
 						}
 
 						info.createTime = time;

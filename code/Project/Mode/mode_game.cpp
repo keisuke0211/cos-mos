@@ -5,8 +5,6 @@
 // 
 //========================================
 #include "../../_RNLib/RNlib.h"
-#include "../../_RNLib/RNsettings.h"
-#include "../../_RNLib/Basis/Mechanical/sound.h"
 #include "../main.h"
 #include "../Character/player.h"
 #include "../System/StageEditor.h"
@@ -18,30 +16,26 @@
 #include "../Sound/stage-sound-player.h"
 #include "../resource.h"
 #include "../stage.h"
+#include "../UI/MenuUi.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CMode_Gameクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
-const char* CMode_Game::TEXT_FILE = "data\\GAMEDATA\\TITLE\\MenuFile.txt";
+CMenuUI *CMode_Game::m_MenuUI = NULL;
 static const int s_PlanetMaxSummon = 8;		// 出現する位置の最大数
 static const int s_StarMaxSummon = 10;		// 出現する位置の最大数
+
+CMode_Game::GameTime CMode_Game::s_GameTime = {};
 
 //========================================
 // コンストラクタ
 // Author:RIKU NISHIMURA
 //========================================
 CMode_Game::CMode_Game(void) {
-
-	m_Pause.bFullScreen = RNSettings::GetInfo().isFullScreen;
-
-	float BGM = RNLib::Sound().GetCategoryState(CSound::CATEGORY::BGM).settingVolume;
-	float SE = RNLib::Sound().GetCategoryState(CSound::CATEGORY::SE).settingVolume;
-	m_Pause.nBGMVolume = BGM * VOLUME_MSX;
-	m_Pause.nSEVolume = SE * VOLUME_MSX;
-	m_Pause.nBGMOldVolume = BGM * VOLUME_MSX;
-	m_Pause.nSEOldVolume = SE * VOLUME_MSX;
+	//ゲーム時間初期化
+	FormatGameTime();
 }
 
 //========================================
@@ -49,19 +43,9 @@ CMode_Game::CMode_Game(void) {
 // Author:RIKU NISHIMURA
 //========================================
 CMode_Game::~CMode_Game(void) {
-
-	// テキストの解放
-	TextRelease(TEXT_ALL);
-
-	// テキスト関連
-	if (m_Pause.pOperation != NULL) {
-		delete[] m_Pause.pOperation;
-		m_Pause.pOperation = NULL;
-	}
-
-	if (m_Pause.pSetting != NULL) {
-		delete[] m_Pause.pSetting;
-		m_Pause.pSetting = NULL;
+	if (m_MenuUI != NULL){
+		delete m_MenuUI;
+		m_MenuUI = NULL;
 	}
 }
 
@@ -76,20 +60,19 @@ void CMode_Game::Init(void) {
 	Stage::StartStage();
 
 	// 遷移設定
-	RNLib::Transition().Open(CTransition::TYPE::FADE, 30);
+	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
 	// 状態設定
 	SetState((int)STATE::NONE);
 
 	// ステージオブジェクトの読み込み
 	Manager::StageObjectMgr()->Load();
-	
-	// テキストの初期化
-	for (int nCnt = 0; nCnt < MENU_MAX; m_pMenu[nCnt] = NULL, nCnt++);
-	for (int nCnt = 0; nCnt < FONT_TEXT_MAX; m_pSubMenu[nCnt] = NULL, nCnt++);
 
-	// テキスト読込
-	TextLoad();
+	// メニュー生成
+	m_MenuUI = CMenuUI::Create(CMode::TYPE::GAME);
+
+	//開始時間取得
+	RestartTime();
 }
 
 //========================================
@@ -101,6 +84,9 @@ void CMode_Game::Uninit(void) {
 
 	// ステージ終了処理
 	Stage::EndStage();
+
+	//ゲーム時間初期化
+	FormatGameTime();
 }
 
 //========================================
@@ -110,19 +96,26 @@ void CMode_Game::Uninit(void) {
 void CMode_Game::Update(void) {
 	CMode::Update();
 
+	//プレイ時間を計測
+	MeasureTime(TimeType::Play);
+
 	// ステージ更新処理
 	Stage::UpdateStage();
 
 	// [[[ 非ポーズ時の処理 ]]]
 	if (m_state != (int)STATE::PAUSE) {
 
-		// ポーズ
+		// ポーズ（時間も保存
 		if (!CPlayer::GetSwapAnim() && !CPlayer::GetDeath() && CPlayer::GetZoomUpCounter() == 0) {
-			if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START)) {
+			if (RNLib::Input().GetTrigger(DIK_P, _RNC_Input::BUTTON::START)) {
 				SetState((int)STATE::PAUSE);
+				s_GameTime.LastPause = timeGetTime();
 			}
 		}
 	}
+
+	//ポーズ時間を計測
+	else MeasureTime(TimeType::Pause);
 }
 
 //========================================
@@ -154,16 +147,14 @@ void CMode_Game::ProcessState(const PROCESS process) {
 		switch (process) {
 			// [[[ 初期処理 ]]]
 		case PROCESS::INIT: {
-			PauseCreate();
 
-			m_Pause.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
+			m_MenuUI->MenuCreate();
 
 			// ステージをポーズ状態に
 			Stage::SetPause(true);
 		}break;
 			// [[[ 終了処理 ]]]
 		case PROCESS::UNINIT: {
-			TextRelease(TEXT_ALL);
 
 			// ステージを非ポーズ状態に
 			Stage::SetPause(false);
@@ -175,27 +166,18 @@ void CMode_Game::ProcessState(const PROCESS process) {
 				->SetSize(RNLib::Window().GetCenterX() * 2, RNLib::Window().GetCenterY() * 2)
 				->SetCol(Color{ 0,0,0,120 });
 
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Pause.LeftPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-				->SetSize(450.0f, RNLib::Window().GetCenterY() * 2)
-				->SetCol(Color{ 150,150,150,150 });
+			m_MenuUI->Update();
 
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Pause.RightPos.x, RNLib::Window().GetCenterPos().y, 100.0f), 0.0f, false)
-				->SetSize(630.0f, RNLib::Window().GetCenterY() * 2)
-				->SetCol(Color{ 150,150,150,150 });
+			bool MenuEnd = m_MenuUI->m_MenuEnd;
 
-			if (m_Pause.RightPos.x < 1800.0f)
-			{
-				RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Pause.RightPos.x, 400.0f, 100.0f), 0.0f, false)
-					->SetSize(560.0f, 600.0f)
-					->SetTex(m_Pause.BoxTex);
+			if (MenuEnd) {
+				m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
+				ProcessState(PROCESS::UNINIT);
+
+				if (Manager::Transition().GetState() == CTransition::STATE::NONE) {
+					SetState((int)STATE::NONE);
+				}
 			}
-
-			if (m_Pause.bMenu && !m_Pause.bClose) {
-				PauseMenu();
-				PauseSelect();
-			}
-			PauseAnime();
-
 		}break;
 		}
 	}break;
@@ -203,591 +185,67 @@ void CMode_Game::ProcessState(const PROCESS process) {
 }
 
 //========================================
-// ポーズ生成の処理
-// Author:KEISUKE OTONO
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
 //========================================
-void CMode_Game::PauseCreate(void)
+void CMode_Game::RestartTime(void)
 {
-	m_Pause.LeftPos = D3DXVECTOR3(-340.0f, 0.0f, 0.0f);
-	m_Pause.RightPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-	m_Pause.LeftTargetPos = D3DXVECTOR3(280.0f, 0.0f, 0.0f);
-	m_Pause.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-	m_Pause.nCntLeftAnime = 0;
-	m_Pause.nCntRightAnime = 0;
-	m_Pause.nMaineSelect = 0;
-	m_Pause.nMaineOldSelect = 0;
-	m_Pause.nSubSelect = 1;
-	m_Pause.bRightMove = false;
-	m_Pause.bRightDisp = false;
-	m_Pause.nRightCoolDown = COOLDOWN;
-	m_Pause.bRightCoolDown = false;
-	m_Pause.nRightTextType = 0;
-	m_Pause.bMenu = false;
-	m_Pause.bSubMenu = false;
-	m_Pause.bClose = false;
+	//クリア
+	FormatGameTime();
 
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
+	//現在時刻を取得
+	s_GameTime.Start = timeGetTime();
+}
 
-	for (int nText = MENU_RESUME; nText < MENU_MAX; nText++) {
-		m_pMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-			D3DXVECTOR3(m_Pause.LeftPos.x - 20, 150.0f + (100.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-			"", CFont::FONT_ROND_B, &pFont);
+//========================================
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
+//========================================
+void CMode_Game::MeasureTime(TimeType type)
+{
+	//計測しない
+	if (!s_GameTime.bMeasure) return;
+
+	//現在時刻取得
+	const DWORD CurrentTime = timeGetTime();
+
+	switch (type)
+	{
+	case CMode_Game::TimeType::Play:
+		//プレイ時間代入
+		s_GameTime.Play = CurrentTime - s_GameTime.Start;
+		break;
+
+	case CMode_Game::TimeType::Pause:
+		//ポーズ時間を加算
+		s_GameTime.Pause += CurrentTime - s_GameTime.LastPause;
+
+		//ポーズ時間更新
+		s_GameTime.LastPause = CurrentTime;
+		break;
 	}
 }
 
 //========================================
-// サブテキスト生成
-// Author:KEISUKE OTONO
+//プレイ時間を返す
+//Author:HIRASAWA SHION
 //========================================
-void CMode_Game::SubTextCreate(void)
+float CMode_Game::GetPlayTime(void)
 {
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
-
-	if (m_pSubMenu != NULL)
-		TextRelease(TEXT_RIGHT);
-
-	if (m_Pause.nMaineSelect == MENU_CONTROLLER) {
-		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Pause.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
-			"", CFont::FONT_ROND_B, &pFont);
-
-		for (int nText = 1; nText < m_Pause.OperationMax; nText++) {
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-				D3DXVECTOR3(m_Pause.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-				"", CFont::FONT_ROND_B, &pFont, false, false);
-		}
-	}
-	else if (m_Pause.nMaineSelect == MENU_SETTING) {
-		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Pause.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
-			"", CFont::FONT_ROND_B, &pFont);
-
-		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),30.0f,1,1,-1, };
-
-		for (int nText = 1; nText < m_Pause.SettingMax; nText++) {
-
-			D3DXVECTOR3 pos = INITD3DXVECTOR3;
-			D3DXVECTOR2 size = INITD3DXVECTOR2;
-
-			// 位置
-			if (nText <= SETTING_BGM)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
-			else if (nText == SETTING_SE)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
-			else if (nText == SETTING_BACK)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x + 190.0f, 650.0f, 0.0f);
-			else if (nText == SETTING_BGM_TEXT)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);
-			else if (nText == SETTING_SE_TEXT)
-				pos = D3DXVECTOR3(m_Pause.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
-
-			// サイズ
-			if (nText > SETTING_BACK)
-				size = D3DXVECTOR2(180.0f, 80.0f);
-			else if (nText == SETTING_BACK)
-				size = D3DXVECTOR2(100.0f, 80.0f);
-			else
-				size = D3DXVECTOR2(480.0f, 60.0f);
-
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
-				pos, size,
-				"", CFont::FONT_ROND_B, &pFont, false, true);
-		}
-	}
-
-	m_Pause.nRightTextType = m_Pause.nMaineSelect;
+	//ポーズ中の時間を引いて、秒数に直して返す
+	return (s_GameTime.Play - s_GameTime.Pause) / 1000.0f;
 }
 
 //========================================
-// ポーズメニューの処理
-// Author:KEISUKE OTONO
+//ゲーム時間を計測
+//Author:HIRASAWA SHION
 //========================================
-void CMode_Game::PauseMenu(void)
+void CMode_Game::FormatGameTime(void)
 {
-	// 選択・非選択
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-	{
-		if (!m_Pause.bSubMenu) {
-			if (m_pMenu[nCnt] != NULL) {
-				if (nCnt == m_Pause.nMaineSelect)
-					m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
-				else
-					m_pMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-			}
-		}
-	}
-
-	for (int nCnt = 1; nCnt < m_Pause.SettingMax; nCnt++)
-	{
-		if (m_Pause.bSubMenu) {
-			if (m_pSubMenu[nCnt] != NULL) {
-				if (nCnt == m_Pause.nSubSelect)
-					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_BLUE);
-				else
-					m_pSubMenu[nCnt]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-			}
-		}
-	}
-
-	// -- メニュー選択 ---------------------------
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, CInput::BUTTON::B) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::BACK))
-	{
-		if (m_Pause.bSubMenu) {
-			m_Pause.bSubMenu = false;
-			m_pMenu[m_Pause.nMaineSelect]->SetBoxColor(INITCOLOR);
-			m_pSubMenu[m_Pause.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-		}
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::UP))
-	{
-		if (!m_Pause.bSubMenu)
-			m_Pause.nMaineSelect--;
-		else if (m_Pause.bSubMenu)
-			m_Pause.nSubSelect--;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::DOWN))
-	{
-		if (!m_Pause.bSubMenu)
-			m_Pause.nMaineSelect++;
-		else if (m_Pause.bSubMenu)
-			m_Pause.nSubSelect++;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::LEFT))
-	{
-		if (m_Pause.nSubSelect == SETTING_BGM) {
-			m_Pause.nBGMVolume--;
-		}
-		else if (m_Pause.nSubSelect == SETTING_SE) {
-			m_Pause.nSEVolume--;
-		}
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(CInput::STICK::LEFT, CInput::INPUT_ANGLE::RIGHT))
-	{
-		if (m_Pause.nSubSelect == SETTING_BGM) {
-			m_Pause.nBGMVolume++;
-		}
-		else if (m_Pause.nSubSelect == SETTING_SE) {
-			m_Pause.nSEVolume++;
-		}
-	}
-
-	// アニメーション
-	if ((m_Pause.nMaineSelect == MENU_CONTROLLER || m_Pause.nMaineSelect == MENU_SETTING) && !m_Pause.bRightMove && !m_Pause.bRightDisp) {
-
-		m_Pause.bRightMove = true;
-		m_Pause.bRightCoolDown = true;
-	}
-	else if (m_Pause.nMaineSelect != m_Pause.nRightTextType && !m_Pause.bRightMove && m_Pause.bRightDisp && !m_Pause.bRightCoolDown) {
-
-		m_Pause.bRightMove = true;
-		m_Pause.bRightCoolDown = true;
-
-	}
-	else if (m_Pause.bRightMove && m_Pause.bRightDisp && m_Pause.bRightCoolDown) {
-		if (m_Pause.nMaineSelect != m_Pause.nMaineOldSelect) {
-			if (m_Pause.nMaineSelect == MENU_CONTROLLER || m_Pause.nMaineSelect == MENU_SETTING)
-				m_Pause.nRightCoolDown = COOLDOWN;
-		}
-		else if (m_Pause.nMaineSelect == m_Pause.nRightTextType) {
-			m_Pause.bRightMove = false;
-			m_Pause.bRightCoolDown = false;
-			m_Pause.nRightCoolDown = COOLDOWN;
-		}
-	}
-
-	if (m_Pause.nMaineSelect != m_Pause.nMaineOldSelect) {
-		m_Pause.nMaineOldSelect = m_Pause.nMaineSelect;
-	}
-
-	// ループ制御
-	IntLoopControl(&m_Pause.nMaineSelect, MENU_MAX, 0);
-	IntLoopControl(&m_Pause.nSubSelect, m_Pause.SettingMax-2, 1);
-	IntControl(&m_Pause.nBGMVolume, VOLUME_MSX, 0);
-	IntControl(&m_Pause.nSEVolume, VOLUME_MSX, 0);
-
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-	FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-	// サウンド
-	if (m_Pause.nBGMVolume != m_Pause.nBGMOldVolume) {
-		m_Pause.nBGMOldVolume = m_Pause.nBGMVolume;
-
-		char data[TXT_MAX];		int nData = m_Pause.nBGMVolume * 5;
-		sprintf(data, "%d%s", nData, m_Pause.pSetting[SETTING_BGM_TEXT].Text);
-
-		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
-			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-
-		float volume = (float)nData / (float)100.0f;
-		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::BGM, volume);
-	}
-	if (m_Pause.nSEVolume != m_Pause.nSEOldVolume) {
-		m_Pause.nSEOldVolume = m_Pause.nSEVolume;
-
-		char data[TXT_MAX];		int nData = m_Pause.nSEVolume * 5;
-		sprintf(data, "%d%s", nData, m_Pause.pSetting[SETTING_SE_TEXT].Text);
-
-		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
-			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-
-		float volume = (float)nData / (float)100.0f;
-		RNLib::Sound().ChangeSetVolume(CSound::CATEGORY::SE, volume);
-	}
-}
-
-//========================================
-// ポーズアニメーションの処理
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Game::PauseAnime(void)
-{
-	// 左画面のアニメーション
-	if (!m_Pause.bMenu || m_Pause.bClose)
-	{
-		D3DXVECTOR3 move = INITD3DXVECTOR3;
-		move.x = (m_Pause.LeftTargetPos.x - m_Pause.LeftPos.x) * 0.3f;
-
-		m_Pause.LeftPos.x += move.x;
-		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++)
-		{
-			if (m_pMenu[nCnt] != NULL)
-			{
-				m_pMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
-			}
-		}
-
-		if (++m_Pause.nCntLeftAnime == PAUSE_LEFT_ANIME) {
-			m_Pause.LeftPos = m_Pause.LeftTargetPos;
-			m_Pause.nCntLeftAnime = 0;
-			if (!m_Pause.bClose){
-				m_Pause.bMenu = true;
-
-				FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-				m_pMenu[0]->Regeneration("続ける", CFont::FONT_ROND_B, &pFont,&pShadow);
-				m_pMenu[1]->Regeneration("やり直す", CFont::FONT_ROND_B, &pFont, &pShadow);
-				m_pMenu[2]->Regeneration("選択画面", CFont::FONT_ROND_B, &pFont, &pShadow);
-				m_pMenu[3]->Regeneration("操作方法", CFont::FONT_ROND_B, &pFont, &pShadow);
-				m_pMenu[4]->Regeneration("設定", CFont::FONT_ROND_B, &pFont, &pShadow);
-			}
-			else if (m_Pause.bClose){
-				if (RNLib::Transition().GetState() == CTransition::STATE::NONE){
-					SetState((int)STATE::NONE);
-					TextRelease(TEXT_ALL);
-				}
-			}
-		}
-	}
-
-	// 右画面のアニメーション
-	if (m_Pause.bRightMove && m_Pause.bRightCoolDown) {
-		if (--m_Pause.nRightCoolDown <= 0) {
-
-			m_Pause.bRightCoolDown = false;
-			m_Pause.nRightCoolDown = COOLDOWN;
-			if (!m_Pause.bRightDisp) {
-				SubTextCreate();
-			}
-			else if (m_Pause.bRightDisp && !m_Pause.bClose) {
-				TextRelease(TEXT_RIGHT);
-			}
-		}
-	}
-	else if (m_Pause.bRightMove && !m_Pause.bRightCoolDown || (m_Pause.bClose && m_Pause.bRightDisp))
-	{
-		D3DXVECTOR3 move = INITD3DXVECTOR3;
-		if (m_Pause.nMaineSelect != MENU_CONTROLLER && m_Pause.nMaineSelect != MENU_SETTING && !m_Pause.bRightDisp) {
-			TextRelease(TEXT_RIGHT);
-			m_Pause.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-			move.x = (m_Pause.RightTargetPos.x - m_Pause.RightPos.x) * 0.3f;
-			m_Pause.RightPos.x += move.x;
-
-			if (++m_Pause.nCntRightAnime == PAUSE_RIGHT_ANIME) {
-				m_Pause.RightPos = m_Pause.RightTargetPos;
-				m_Pause.bRightMove = false;
-				m_Pause.nCntRightAnime = 0;
-				m_Pause.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-			}
-		}
-		else {
-			move.x = (m_Pause.RightTargetPos.x - m_Pause.RightPos.x) * 0.3f;
-
-			m_Pause.RightPos.x += move.x;
-
-			int nTextMax = -1;
-			if (m_Pause.nMaineSelect == MENU_CONTROLLER) nTextMax = m_Pause.OperationMax;
-			else if (m_Pause.nMaineSelect == MENU_SETTING) nTextMax = m_Pause.SettingMax;
-
-			for (int nCnt = 0; nCnt < nTextMax; nCnt++) {
-				if (m_pSubMenu[nCnt] != NULL) {
-					m_pSubMenu[nCnt]->SetMove(D3DXVECTOR3(move.x, 0.0f, 0.0f));
-				}
-			}
-
-			if (++m_Pause.nCntRightAnime == PAUSE_RIGHT_ANIME) {
-				m_Pause.RightPos = m_Pause.RightTargetPos;
-				m_Pause.bRightMove = false;
-				m_Pause.nCntRightAnime = 0;
-
-				if (!m_Pause.bRightDisp)
-				{
-					m_Pause.bRightDisp = true;
-					m_Pause.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-
-					// テキストの再生成
-					if (m_Pause.nRightTextType == MENU_CONTROLLER) {
-						for (int nText = 0; nText < m_Pause.OperationMax; nText++) {
-							if (m_pSubMenu[nText] != NULL)
-								m_pSubMenu[nText]->Regeneration(m_Pause.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
-						}
-					}
-					if (m_Pause.nRightTextType == MENU_SETTING) {
-						for (int nText = 0; nText < m_Pause.SettingMax; nText++) {
-							if (m_pSubMenu[nText] != NULL) {
-
-								char data[TXT_MAX];
-								if (nText == SETTING_SCREEN) {
-									if (!m_Pause.bFullScreen)	sprintf(data, "%s ：OFF", m_Pause.pSetting[nText].Text);
-									else if (m_Pause.bFullScreen)	sprintf(data, "%s ：ON", m_Pause.pSetting[nText].Text);
-								}
-								else if (nText == SETTING_BGM_TEXT) {
-									int nData = m_Pause.nBGMVolume * 5;
-									sprintf(data, "%d%s", nData, m_Pause.pSetting[nText].Text);
-								}
-								else if (nText == SETTING_SE_TEXT) {
-									int nData = m_Pause.nSEVolume * 5;
-									sprintf(data, "%d%s", nData, m_Pause.pSetting[nText].Text);
-								}
-								else
-									sprintf(data, "%s", m_Pause.pSetting[nText].Text);
-
-								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-							}
-						}
-					}
-				}
-				else if (m_Pause.bRightDisp && !m_Pause.bClose) {
-					m_Pause.RightTargetPos = D3DXVECTOR3(900.0f, 0.0f, 0.0f);
-					m_Pause.bRightDisp = false;
-					TextRelease(TEXT_RIGHT);
-				}
-			}
-		}
-	}
-}
-
-//========================================
-// ポーズ選択の処理
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Game::PauseSelect(void)
-{
-	if (m_Pause.nCntScrChg >= 0)
-	{// 画面モード切り替えカウンターが0以上の時、
-	 // 画面モード切り替えカウンターを減算
-		m_Pause.nCntScrChg--;
-
-		if (m_Pause.nCntScrChg == 0)
-		{// 画面モード切り替えカウンターが0の時、
-		 // ウインドウのモードを切り替える
-			RNSettings::SetFulScreen(m_Pause.bFullScreen);
-		}
-	}
-
-	if (RNLib::Input().GetTrigger(DIK_P, CInput::BUTTON::START) && !m_Pause.bClose)
-	{
-		m_Pause.bClose = true;
-	}
-
-	if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(CInput::BUTTON::A)) && !m_Pause.bClose)
-	{
-		if (!m_Pause.bSubMenu) {
-			switch (m_Pause.nMaineSelect)
-			{
-			case MENU_RESUME:
-				m_Pause.bClose = true;
-				break;
-			case MENU_RESET:
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
-				m_Pause.bClose = true;
-				Manager::EffectMgr()->ReleaseAll();
-				break;
-			case MENU_SELECT:
-				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
-				CMode_Title::SetSelect(true);
-				Manager::EffectMgr()->ReleaseAll();
-				break;
-			case MENU_CONTROLLER:
-				break;
-			case MENU_SETTING:
-				m_Pause.bSubMenu = true;
-				m_pMenu[m_Pause.nMaineSelect]->SetBoxColor(Color{ 155,155,155,255 });
-				break;
-			}
-		}
-		else if (m_Pause.bSubMenu) {
-			switch (m_Pause.nSubSelect)
-			{
-			case SETTING_SCREEN:
-				if (m_Pause.nCntScrChg <= 0) {
-					int nText = m_Pause.nSubSelect;
-					m_Pause.bFullScreen = !m_Pause.bFullScreen;
-
-					char data[TXT_MAX] = {};
-					if (!m_Pause.bFullScreen)	sprintf(data, "%s ：OFF", m_Pause.pSetting[nText].Text);
-					else if (m_Pause.bFullScreen)	sprintf(data, "%s ：ON", m_Pause.pSetting[nText].Text);
-
-					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
-
-					m_Pause.nCntScrChg = 20;
-				}
-
-				break;
-			case SETTING_BGM:
-				break;
-			case SETTING_SE:
-				break;
-			case SETTING_BACK:
-				m_Pause.bSubMenu = false;
-				m_pMenu[m_Pause.nMaineSelect]->SetBoxColor(INITCOLOR);
-				m_pSubMenu[m_Pause.nSubSelect]->SetBoxType(CFontText::BOX_NORMAL_GRAY);
-				break;
-			}
-		}
-	}
-
-	if(m_Pause.bClose){ 
-		m_Pause.LeftTargetPos *= -1;
-		m_Pause.RightTargetPos = D3DXVECTOR3(1800.0f, 0.0f, 0.0f);
-		m_Pause.nCntLeftAnime = 0;
-
-		ProcessState(PROCESS::UNINIT);
-	}
-}
-
-//========================================
-// テキスト読込
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Game::TextLoad(void)
-{
-	int nCntPlanet = 0;
-	char aDataSearch[TXT_MAX];	// データ検索用
-
-								// ファイルの読み込み
-	FILE *pFile = fopen(TEXT_FILE, "r");
-
-	if (pFile == NULL)
-	{// 種類毎の情報のデータファイルが開けなかった場合、
-	 //処理を終了する
-		return;
-	}
-
-	// ENDが見つかるまで読み込みを繰り返す
-	while (1)
-	{
-		fscanf(pFile, "%s", aDataSearch);	// 検索
-
-		if (!strcmp(aDataSearch, "END"))
-		{// 読み込みを終了
-			fclose(pFile);
-
-			break;
-		}
-		if (aDataSearch[0] == '#')
-		{// 折り返す
-			continue;
-		}
-
-		if (!strcmp(aDataSearch, "SetOperation"))
-		{
-			int nText = 0;
-			while (1)
-			{
-				fscanf(pFile, "%s", aDataSearch);	// 検索
-				if (!strcmp(aDataSearch, "EndOperation")) {
-					break;
-				}
-				if (!strcmp(aDataSearch, "TextMax")) {
-					int nMax = -1;
-
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%d", &nMax);
-
-					if (nMax <= 0)
-						nMax = 0;
-
-					m_Pause.OperationMax = nMax;
-					m_Pause.pOperation = new Operation[nMax];
-					assert(m_Pause.pOperation != NULL);
-				}
-				if (!strcmp(aDataSearch, "Text")) {
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%s", &m_Pause.pOperation[nText].Text);
-					nText++;
-				}
-			}
-		}
-		else if (!strcmp(aDataSearch, "SetSetting"))
-		{
-			int nText = 0;
-			while (1)
-			{
-				fscanf(pFile, "%s", aDataSearch);	// 検索
-				if (!strcmp(aDataSearch, "EndSetting")) {
-					break;
-				}
-				if (!strcmp(aDataSearch, "TextMax")) {
-					int nMax = -1;
-
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%d", &nMax);
-
-					if (nMax <= 0)
-						nMax = 0;
-
-					m_Pause.SettingMax = nMax;
-					m_Pause.pSetting = new Setting[nMax];
-					assert(m_Pause.pSetting != NULL);
-				}
-				if (!strcmp(aDataSearch, "Text")) {
-					fscanf(pFile, "%s", &aDataSearch[0]);
-					fscanf(pFile, "%s", &m_Pause.pSetting[nText].Text);
-					nText++;
-				}
-			}
-		}
-	}
-}
-
-//========================================
-// テキストの開放
-// Author:KEISUKE OTONO
-//========================================
-void CMode_Game::TextRelease(TEXT type)
-{
-	// メニュー
-	if (type == TEXT_MENU || type == TEXT_ALL) {
-		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
-			if (m_pMenu[nCnt] != NULL) {
-				m_pMenu[nCnt]->Uninit();
-				m_pMenu[nCnt] = NULL;
-			}
-		}
-	}
-
-	// 操作方法と設定
-	if (type == TEXT_RIGHT || type == TEXT_ALL) {
-		for (int nCnt = 0; nCnt < FONT_TEXT_MAX; nCnt++) {
-			if (m_pSubMenu[nCnt] != NULL) {
-				m_pSubMenu[nCnt]->Uninit();
-				m_pSubMenu[nCnt] = NULL;
-			}
-		}
-	}
+	s_GameTime.Start = 0;
+	s_GameTime.Pause = 0;
+	s_GameTime.Play = 0;
+	s_GameTime.End = 0;
+	s_GameTime.LastPause = 0;
+	s_GameTime.bMeasure = true;
 }

@@ -67,7 +67,7 @@ void CObjectMgr::SubMgr(CObjectMgr* mgr) {
 	// 排除出来た時、総数を減らしメモリを再確保
 	if (isSub) {
 		ms_objectMgrNum--;
-		CMemory::ReAlloc<CObjectMgr*>(&ms_objectMgrs, ms_objectMgrNum + 1, ms_objectMgrNum);
+		RNLib::Memory().ReAlloc(&ms_objectMgrs, ms_objectMgrNum + 1, ms_objectMgrNum);
 	}
 }
 
@@ -78,12 +78,12 @@ CObjectMgr::CObjectMgr(const char* name) {
 
 	{// オブジェクトマネージャー列に追加する
 		int numOld = ms_objectMgrNum++;
-		CMemory::ReAlloc<CObjectMgr*>(&ms_objectMgrs, numOld, ms_objectMgrNum, false);
+		RNLib::Memory().ReAlloc<CObjectMgr*>(&ms_objectMgrs, numOld, ms_objectMgrNum, false);
 		ms_objectMgrs[numOld] = this;
 	}
 
 	m_name = NULL;
-	StrCpyDynamicMemory(&m_name, name);
+	RNLib::Memory().AllocString(&m_name, name);
 	m_top  = NULL;
 	m_cur  = NULL;
 	m_num  = 0;
@@ -101,7 +101,7 @@ CObjectMgr::~CObjectMgr(void) {
 	SubMgr(this);
 
 	// 名前の解放
-	CMemory::Release(&m_name);
+	RNLib::Memory().Release(&m_name);
 }
 
 //========================================
@@ -183,7 +183,7 @@ void CObjectMgr::Release(CObject* obj) {
 	SubList(obj);
 
 	// 解放
-	CMemory::Release(&obj);
+	RNLib::Memory().Release(&obj);
 }
 
 //========================================

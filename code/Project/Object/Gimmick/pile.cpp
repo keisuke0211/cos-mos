@@ -155,7 +155,7 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 	CFloat CorrHeight = m_fEvenTrunkCorrHeight * 2.0f;
 
 	//Y‚ª”²‚¯‚È‚¢‚æ‚¤‚É’²®
-	FloatControl(&fCaveInHeight, HalfSize - CorrHeight, -HalfSize - CorrHeight);
+	RNLib::Number().Clamp(&fCaveInHeight, HalfSize - CorrHeight, -HalfSize - CorrHeight);
 
 	//‘O‰ñî•ñ‚ð•Û‘¶
 	SetOld(fCaveInHeight);
@@ -184,8 +184,8 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 		if (rand() % 2 != 0) rot = D3DXVECTOR3(0.0f, 0.0f, world - side);
 		
 		CFloat ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + INIT_EFFECT_SCALE.x * 0.6f);
-		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,CDrawState::ALPHA_BLEND_MODE::NORMAL);
-		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(TexPos.x, TexPos.y + 1.0f * cosf(world), TexPos.z), rot, INITSCALE3D * 0.1f,INITCOLOR);
+		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300, rot,16,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
+		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(TexPos.x, TexPos.y + 1.0f * cosf(world), TexPos.z), rot, INITSCALE3D * 0.1f,COLOR_WHITE);
 	}
 }
 

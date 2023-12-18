@@ -10,11 +10,11 @@
 // クラス定義
 //****************************************
 // カウントクラス
-class CCount {
+class _RNC_Count {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CCount           ();
-	~CCount          ();
+	_RNC_Count       ();
+	~_RNC_Count      ();
 	void   Init      (void);
 	void   Uninit    (void);
 	void   Update    (void);

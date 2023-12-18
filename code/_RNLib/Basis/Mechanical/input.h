@@ -10,7 +10,7 @@
 // クラス定義
 //****************************************
 // 入力クラス
-class CInput {
+class _RNC_Input {
 public:
 	//========== [[[ 定数定義 ]]]
 	static const int NUM_KEY_MAX = 256;
@@ -70,11 +70,11 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CInput();
-	~CInput();
-	void Init(HINSTANCE& instanceHandle);
-	void Uninit(void);
-	void Update(void);
+	_RNC_Input                        ();
+	~_RNC_Input                       ();
+	void          Init                (HINSTANCE& instanceHandle);
+	void          Uninit              (void);
+	void          Update              (void);
 	void          ClearInputInfo      (void);
 	void          SetActiveDevice     (const ACTIVE_DEVICE& device)                                 { m_activeDevice = device; }
 	ACTIVE_DEVICE GetActiveDevice     (void)                                                        { return m_activeDevice; }
@@ -93,6 +93,7 @@ public:
 	WHEELSPIN     GetWheelSpin        (void)                                                        { return m_wheelSpin; }
 	void          SetWheelSpin        (WHEELSPIN wheelSpin)                                         { m_wheelSpin = wheelSpin; }
 	void          SetJoyPadNum        (const UShort& num);
+	UShort&       GetJoyPadNum        (void)                                                        { return m_joyPadNum; }
 	CJoyPad&      GetJoyPad           (const UShort& idx)                                                   { return m_joyPads[idx]; }
 	void          SetVibration        (const float& vibration,                       const UShort& idx = 0) { if    (CheckJoyPadConnected(idx))  m_joyPads[idx].SetVibration        (vibration);            }
 	bool          GetButtonPress      (const BUTTON& btn,                            const UShort& idx = 0) { return CheckJoyPadConnected(idx) ? m_joyPads[idx].GetButtonPress      (btn)          : false; }
@@ -121,10 +122,10 @@ private:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	void UpdateKeyboard(void);
-	void UpdateMouseButton(void);
-	void UpdateCursor(void);
-	void UpdateJoyPad(void);
+	void UpdateKeyboard      (void);
+	void UpdateMouseButton   (void);
+	void UpdateCursor        (void);
+	void UpdateJoyPad        (void);
 	bool CheckJoyPadConnected(const UShort& idx) { return (idx < m_joyPadNum); }
 
 	//========== [[[ 変数宣言 ]]]

@@ -12,10 +12,10 @@
 // クラス定義
 //****************************************
 // カメラマネージャークラス
-class CCameraMgr : public CObjectMgr {
+class _RNC_CameraMgr : public CObjectMgr {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CCameraMgr();
-	~CCameraMgr();
-	void Update(void);
+	_RNC_CameraMgr ();
+	~_RNC_CameraMgr();
+	void Update    (void);
 };

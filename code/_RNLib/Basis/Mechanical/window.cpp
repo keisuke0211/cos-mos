@@ -16,7 +16,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CWindow::CWindow(void) {
+_RNC_Window::_RNC_Window(void) {
 
 	m_pos        = INITPOS2D;
 	m_className  = NULL;
@@ -25,28 +25,28 @@ CWindow::CWindow(void) {
 	m_areaWidth  = 0.0f;
 	m_areaHeight = 0.0f;
 	m_resolution = 0.0f;
-	m_D3D9  = NULL;
-	m_D3D9Device     = NULL;
+	m_D3D9       = NULL;
+	m_D3D9Device = NULL;
 }
 
 //========================================
 // デストラクタ
 //========================================
-CWindow::~CWindow(void) {
+_RNC_Window::~_RNC_Window(void) {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CWindow::Init(void) {
+void _RNC_Window::Init(void) {
 
 }
 
 //========================================
 // 終了処理
 //========================================
-void CWindow::Uninit(void) {
+void _RNC_Window::Uninit(void) {
 
 	// Direct3Dデバイスの破棄
 	if (m_D3D9Device != NULL) {
@@ -70,7 +70,7 @@ void CWindow::Uninit(void) {
 //========================================
 // 更新処理
 //========================================
-void CWindow::Update(void) {
+void _RNC_Window::Update(void) {
 
 	// ウィンドウ位置を取得
 	RECT rec;
@@ -81,7 +81,7 @@ void CWindow::Update(void) {
 //========================================
 // 生成処理
 //========================================
-int CWindow::Create(HINSTANCE& hInstance, WNDPROC lpfnWndProc) {
+int _RNC_Window::Create(HINSTANCE& instanceHandle, WNDPROC lpfnWndProc) {
 
 	// セッティング情報を取得
 	const RNSettings::Info& settingsInfo = RNSettings::GetInfo();
@@ -93,7 +93,7 @@ int CWindow::Create(HINSTANCE& hInstance, WNDPROC lpfnWndProc) {
 		lpfnWndProc,					// ウインドウプロシージャ
 		0,								// 0にする
 		0,								// 0にする
-		hInstance,						// インスタンスハンドル
+		instanceHandle,					// インスタンスハンドル
 		LoadIcon(NULL,IDI_APPLICATION),	// タスクバーのアイコン
 		LoadCursor(NULL,IDC_ARROW),		// マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 1),		// クライアント領域の背景色
@@ -117,15 +117,16 @@ int CWindow::Create(HINSTANCE& hInstance, WNDPROC lpfnWndProc) {
 		settingsInfo.windowHeight,		// ウインドウの高さ
 		NULL,							// 親ウインドウのハンドル
 		NULL,							// メニューハンドルまたは
-		hInstance,						// インスタンスハンドル
+		instanceHandle,						// インスタンスハンドル
 		NULL);							// ウインドウ作成データ
 
 	// Direct3Dデバイスの生成
-	if (CreateD3DDevice(hInstance) == -1)
+	if (FAILED(CreateD3DDevice(instanceHandle))) {
 		return -1;
+	}
 
-	// ウィンドウのモードを設定する
-	SetIsFullScreen(settingsInfo.isFullScreen);
+	// フルスクリーンモードを設定
+	SetIsFullScreen(RNLib::Options().GetIsFullScreen());
 
 	return 0;
 }
@@ -133,7 +134,7 @@ int CWindow::Create(HINSTANCE& hInstance, WNDPROC lpfnWndProc) {
 //========================================
 // 削除処理
 //========================================
-void CWindow::Delete(void) {
+void _RNC_Window::Delete(void) {
 
 	// ウィンドウを破壊する
 	DestroyWindow(m_hWnd);
@@ -142,7 +143,7 @@ void CWindow::Delete(void) {
 //========================================
 // タスクバーの表示/非表示を切り替え
 //========================================
-void CWindow::ShowTaskBar(const bool& isShow) {
+void _RNC_Window::ShowTaskBar(const bool& isShow) {
 
 	// タスクバーのハンドルを取得
 	HWND taskBarHandle;
@@ -160,7 +161,10 @@ void CWindow::ShowTaskBar(const bool& isShow) {
 //========================================
 // フルスクリーン設定
 //========================================
-void CWindow::SetIsFullScreen(const bool& isFullScreen) {
+void _RNC_Window::SetIsFullScreen(const bool& isFullScreen) {
+
+	if (!RNSettings::GetInfo().isFullScreen && isFullScreen)
+		return;
 
 	// デスクトップの情報を取得
 	HDC desctopHandle = GetDC(GetDesktopWindow());
@@ -192,7 +196,7 @@ void CWindow::SetIsFullScreen(const bool& isFullScreen) {
 //========================================
 // メッセージ処理
 //========================================
-void CWindow::Message(const char *pText, const char *pCaption) {
+void _RNC_Window::Message(const char *pText, const char *pCaption) {
 
 	MessageBox(m_hWnd, pText, pCaption, MB_OK);
 	RNLib::Input().ClearInputInfo();
@@ -201,7 +205,11 @@ void CWindow::Message(const char *pText, const char *pCaption) {
 //========================================
 // メッセージ処理(エラー)
 //========================================
-void CWindow::Message_ERROR(const char* pText) {
+void _RNC_Window::Message_ERROR(const char* pText) {
+
+	// 実行モードの時は終了
+	if (RNSystem::GetMode() == RNSystem::MODE::EXECUTION)
+		return;
 
 	MessageBox(m_hWnd, pText, "ERROR", MB_ICONWARNING);
 	RNLib::Input().ClearInputInfo();
@@ -210,20 +218,24 @@ void CWindow::Message_ERROR(const char* pText) {
 //========================================
 // メッセージ処理(OK or CANCEL)
 //========================================
-bool CWindow::Message_OKCANCEL(const char* pText, const char* pCaption) {
+bool _RNC_Window::Message_OKCANCEL(const char* pText, const char* pCaption) {
 
 	switch (MessageBox(m_hWnd, pText, pCaption, MB_OKCANCEL)) {
-	case IDOK    :return true;
-	case IDCANCEL:return false;
+	case IDOK:
+		RNLib::Input().ClearInputInfo();
+		return true;
+	case IDCANCEL:
+		RNLib::Input().ClearInputInfo();
+		return false;
 	}
-
+	RNLib::Input().ClearInputInfo();
 	return false;
 }
 
 //========================================
 // フォーカスが当たっているか調べる
 //========================================
-bool CWindow::FindFocused(const HWND& windowHandle) {
+bool _RNC_Window::FindFocused(const HWND& windowHandle) {
 
 	// デバイスが失われている場合はフォーカスが当たっていないとみなす
 	HRESULT hr = m_D3D9Device->TestCooperativeLevel();
@@ -242,13 +254,13 @@ bool CWindow::FindFocused(const HWND& windowHandle) {
 //========================================
 // Direct3Dデバイスの生成
 //========================================
-int CWindow::CreateD3DDevice(HINSTANCE hInstance) {
+int _RNC_Window::CreateD3DDevice(HINSTANCE& instanceHandle) {
 
 	// セッティング情報を取得
 	const RNSettings::Info& settingsInfo = RNSettings::GetInfo();
 
 	// ウィンドウの情報を設定
-	m_instanceHandle = hInstance;
+	m_instanceHandle = instanceHandle;
 	m_className      = settingsInfo.projectName;
 	m_width          = settingsInfo.windowWidth;
 	m_height         = settingsInfo.windowHeight;
@@ -272,6 +284,7 @@ int CWindow::CreateD3DDevice(HINSTANCE hInstance) {
 	// デバイスのプレゼンテーションパラメータをゼロクリア
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
+
 	d3dpp.BackBufferWidth            = m_areaWidth;
 	d3dpp.BackBufferHeight           = m_areaHeight;
 	d3dpp.BackBufferFormat           = d3ddm.Format;				// バックバッファの形式
@@ -279,7 +292,7 @@ int CWindow::CreateD3DDevice(HINSTANCE hInstance) {
 	d3dpp.SwapEffect                 = D3DSWAPEFFECT_DISCARD;		// ダブルバッファの切り替え
 	d3dpp.EnableAutoDepthStencil     = TRUE;						// デプスバッファとステンシルバッファを作成
 	d3dpp.AutoDepthStencilFormat     = D3DFMT_D16;					// デプスバッファとして16bitを使う
-	d3dpp.Windowed                   = !settingsInfo.isFullScreen;	// ウインドウモード
+	d3dpp.Windowed                   = !(settingsInfo.isFullScreen ? RNLib::Options().GetIsFullScreen() : false);		// ウインドウモード
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;		// リフレッシュレート
 	d3dpp.PresentationInterval       = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
 
@@ -315,7 +328,7 @@ int CWindow::CreateD3DDevice(HINSTANCE hInstance) {
 //========================================
 // 目的のGPUのアダプター番号を返す
 //========================================
-int CWindow::GetTargetGPUAdapterIdx(void) {
+int _RNC_Window::GetTargetGPUAdapterIdx(void) {
 
 	// アダプタカウントを取得
 	const int adapterCount = m_D3D9->GetAdapterCount();

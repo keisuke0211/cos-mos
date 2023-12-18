@@ -24,7 +24,7 @@ CStageObject::CStageObject() {
 	m_pos    = INITD3DXVECTOR3;
 	m_posOld = INITD3DXVECTOR3;
 	m_rot    = INITD3DXVECTOR3;
-	m_color  = INITCOLOR;
+	m_color  = COLOR_WHITE;
 	m_width  = 0.0f;
 	m_height = 0.0f;
 }

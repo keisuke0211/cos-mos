@@ -19,10 +19,14 @@ public:
 		BG_WILDERNESS,
 		BG_FOREST,
 		BG_CAVE,
+		BG_OCEAN,
+		BG_CITY,
+		BG_CLOUD,
 		BG_CLOUD_A,
 		BG_CLOUD_B,
 		BG_CLOUD_C,
 		UI_WAITBUBBLE,
+		CHR_BLACK_EYE,
 		BG_FISH,
 		MAX,
 	};
@@ -58,6 +62,6 @@ public:
 	//========== [[[ ì«Ç›çûÇ› ]]]
 	static void Load(void) {
 		for (int cnt = 0; cnt < (int)TEXTURE::MAX; TEXTURE_IDXES[cnt] = RNLib::Texture().Load(TEXTURE_PATHS[cnt]), cnt++);
-		for (int cnt = 0; cnt < (int)SOUND::MAX; SOUND_IDXES[cnt] = RNLib::Sound().Load(SOUND_PATHS[cnt]), cnt++);
+		for (int cnt = 0; cnt < (int)SOUND  ::MAX; SOUND_IDXES  [cnt] = RNLib::Sound  ().Load(SOUND_PATHS  [cnt]), cnt++);
 	}
 };

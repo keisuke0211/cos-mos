@@ -34,11 +34,11 @@ CStageEditor::CStageEditor(void)
 	}
 
 	{
-		m_StageColor.Set = INITCOLOR;
-		m_StageColor.Player1 = INITCOLOR;
-		m_StageColor.Player2 = INITCOLOR;
-		m_StageColor.Block = INITCOLOR;
-		m_StageColor.FillBlock = INITCOLOR;
+		m_StageColor.Set = COLOR_WHITE;
+		m_StageColor.Player1 = COLOR_WHITE;
+		m_StageColor.Player2 = COLOR_WHITE;
+		m_StageColor.Block = COLOR_WHITE;
+		m_StageColor.FillBlock = COLOR_WHITE;
 	}
 
 	m_Info.nRow = 0;
@@ -298,7 +298,7 @@ void CStageEditor::StageLoad(int planet, int stage)
 	bool bSet = true;
 	bool bEnd = false;
 
-	IntControl(&m_PlanetType[planet].nStageIdx, m_PlanetType[planet].nStageIdx, 0);
+	RNLib::Number().Clamp(&m_PlanetType[planet].nStageIdx, m_PlanetType[planet].nStageIdx, 0);
 
 	// 読み込み
 	pFile->FileLood(m_PlanetType[planet].StageType[stage].aFileName, false, false, ',');
@@ -518,10 +518,10 @@ void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
 void CStageEditor::SetColor(CSVFILE *pFile, int nRow, int nLine)
 {
 	nLine += 4;
-	ToData(m_StageColor.Set.r, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.g, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.r, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.g, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
 }
 
 //========================================
@@ -539,7 +539,7 @@ void CStageEditor::SetStage(int nType)
 		pos.x += ((m_Info.nLineMax * -0.5f) + m_Info.nLine + 0.5f) * fSizeX;
 		pos.y -= ((m_Info.nRowMax * -0.5f) + m_Info.nRow + 0.5f) * fSizeY;
 
-		pos.z = 0.0f/* + fRand() * 4.0f*/;
+		pos.z = 0.0f/* + RNLib::Number().GetRandomFloat(1.0f) * 4.0f*/;
 
 		// 配置
 		ObjPlace(fSizeX,fSizeY,pos,nType);
@@ -566,7 +566,7 @@ void CStageEditor::SwapStage(int nStageIdx)
 
 		if (planet < m_Info.nPlanetMax)
 		{
-			if (RNLib::Transition().GetState() == CTransition::STATE::NONE)
+			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 				Stage::SetStageNumber(planet, NecstStage);
@@ -967,6 +967,8 @@ void CStageEditor::SetLaserInfo(CSVFILE *pFile, int nRow, int nLine)
 void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 {
 	int nDog = 0;
+	int row = m_Info.nRowMax * 0.5f;
+	float fSizeY = CStageObject::SIZE_OF_1_SQUARE;
 
 	while (1)
 	{
@@ -1020,7 +1022,7 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 							m_DogInfo[nDog].HipPos.y = m_DogInfo[nDog].HipPos.y + AddPosY;
 						}
 
-						Manager::StageObjectMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].Height, m_DogInfo[nDog].bElasticity, bReturn);
+						Manager::StageObjectMgr()->ExtenddogCreate(m_DogInfo[nDog].HeadPos, m_DogInfo[nDog].HipPos, m_DogInfo[nDog].HeightMin, m_DogInfo[nDog].HeightMax, m_DogInfo[nDog].bElasticity, bReturn);
 					}
 
 					nDog++;
@@ -1032,6 +1034,11 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 
 					m_DogInfo[nDog].HeadPos = GetPos(Row, Line);
+
+					if (Row <= row)
+						m_DogInfo[nDog].HeadPos.y += fSizeY * 0.25f;
+					else if (Row >= row)
+						m_DogInfo[nDog].HeadPos.y += -fSizeY * 0.25f;
 				}
 				else if (!strcmp(aDataSearch, "HipPos")) {
 					int Row = 0; int Line = 0; nLine += 4;
@@ -1039,12 +1046,18 @@ void CStageEditor::SetDogInfo(CSVFILE *pFile, int nRow, int nLine)
 					ToData(Row, pFile, nRow, nLine); nLine++;
 
 					m_DogInfo[nDog].HipPos = GetPos(Row, Line);
+
+					if (Row <= row)
+						m_DogInfo[nDog].HipPos.y += fSizeY * 0.25f;
+					else if (Row >= row)
+						m_DogInfo[nDog].HipPos.y += -fSizeY * 0.25f;
 				}
 				else if (!strcmp(aDataSearch, "Height")) {
 					nLine += 4;
-					ToData(m_DogInfo[nDog].Height, pFile, nRow, nLine); nLine++;
+					ToData(m_DogInfo[nDog].HeightMin, pFile, nRow, nLine); nLine++;
+					ToData(m_DogInfo[nDog].HeightMax, pFile, nRow, nLine); nLine++;
 				}
-				else if (!strcmp(aDataSearch, "Shrink")) {
+				else if (!strcmp(aDataSearch, "Elasticity")) {
 					nLine += 4; int nShrink = 0;
 					ToData(nShrink, pFile, nRow, nLine); nLine++;
 
@@ -1241,4 +1254,14 @@ bool CStageEditor::ToData(double &val, CSVFILE *pFile, int nRow, int nLine)
 	{
 		return false;
 	}
+}
+
+//========================================
+// ステージ総数取得
+// Author:HIRASAAWA SHION
+//========================================
+void CStageEditor::GetPlanetAndStageMax(CInt planet, int& NumPlanet, int& NumStage)
+{
+	NumPlanet = m_Info.nPlanetMax;
+	NumStage = m_PlanetType[planet].nStageMax;
 }

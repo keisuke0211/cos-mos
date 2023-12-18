@@ -98,6 +98,7 @@ public:
 		bool isDeath;       // 死亡フラグ
 		int  deathCounter;  // 死亡カウンター
 		int  deathCounter2; // 死亡カウンター2
+		int  DeathType;     // 死亡タイプ
 
 		//-------------------------------
 		//SWAP待ちの吹き出し用
@@ -111,7 +112,7 @@ public:
 		//キーコンフィグ
 		//-------------------------------
 		int Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
-		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
+		_RNC_Input::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
 
 	static const float SIZE_WIDTH;	// 横幅
@@ -119,7 +120,6 @@ public:
 
 	static const int SWAP_INTERVAL;	// スワップインターバル
 	static const int NUM_PLAYER = 2;// プレイヤーの数
-
 
 	CPlayer();
 	~CPlayer();
@@ -144,10 +144,7 @@ public:
 
 	// プレイヤー位置情報設定
 	// 指定したプレイヤーの位置情報を引数に渡してください。
-	void SetPos(const int nNum, D3DXVECTOR3 pos)
-	{
-		m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos;
-	}
+	void SetPos(const int nNum, D3DXVECTOR3 pos) { m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos; }
 
 	// プレイヤー色情報設定
 	// 指定したプレイヤーの色情報を引数に渡してください。
@@ -162,11 +159,11 @@ public:
 
 	// プレイヤー情報取得
 	// 指定された番号のプレイヤー情報のアドレスを返します
-	Info* GetInfo(int nNum) { return &m_aInfo[nNum]; }
+	static Info* GetInfo(int nNum) { return &m_aInfo[nNum]; }
 
 	// プレイヤー情報取得
 	// 指定された世界にいるプレイヤーの情報を返します
-	Info* GetInfo(WORLD_SIDE side);
+	static Info* GetInfo(WORLD_SIDE side);
 
 	// スワップインターバルを設定
 	// 既にインターバルがあれば設定しない
@@ -174,6 +171,9 @@ public:
 
 	// スワップインターバルを取得
 	static int GetSwapInterval(void) { return s_nSwapInterval; }
+
+	// スワップ待ちフラグを取得
+	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitBalloonCounter > 0 || m_aInfo[1].swapWaitBalloonCounter > 0; }
 
 	// 出現
 	static void Pop(void) {}
@@ -203,6 +203,7 @@ public:
 		SWAP_GUIDE,     // スワップガイド
 		CHARACTER,      // キャラクター
 		DEATH_MARK,     // 死亡マーク
+		DEATH_INK,      // 死亡インク
 		DEATH_PARTI,    // 死亡パーティクル
 		GOAL_EFFECT,    // ゴール・ロケット乗車時のエフェクト
 		MAX
@@ -217,6 +218,7 @@ public:
 		short jump;
 		short fall;
 		short landing;
+		short dance;
 	};
 
 	//モーション情報取得
@@ -258,18 +260,25 @@ private:
 	static const int SWAP_MIDDLE_INTERVAL   = 50; // 移動～目的地到着までの時間
 	static const int SWAP_EPILOGUE_INTERVAL = 10; // 目的地到着～終了までの時間
 	static const int NORMAL_SWAP_ALPHA = 100;     // 通常時のスワップマークのα値
+
 	static const float GUIDE_WIDTH;      // ガイドの幅
 	static const float GUIDE_HEIGHT;     // ガイドの高さ
-	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
+	static const float MAX_GUIDE_SPEED;  // ガイドアニメーションの最大速度
+
 	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
 	static const int DEATH_TIME = 60;    // 死亡時間
 	static const int DEATH_TIME2 = 120;  // 死亡時間2
+
 	static const int SWAP_WAIT_BALLOON_TIME = 5;  // スワップ待ち吹き出し時間
 	static SWAP_ANIM s_AnimState;        // アニメーション構成
 	static       int s_nSwapInterval;    // 残りスワップインターバル
 	static       bool s_bSwapAnim;       // スワップアニメーション中かどうか
+
 	static const int GOAL_INTERVAL = 120;// ゴール後の余韻
+	static const int POP_CLEARTIME = 60; // クリアタイム表示時間
 	static       int s_nGoalInterval;    // ゴール後の余韻カウンター
+
+	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
 	static       int s_zoomUpCounter;    // ズームアップカウンター
 
 	void Swap(void);
@@ -302,6 +311,9 @@ private:
 	void Move(VECTOL vec, int cntPlayer);
 	void Death(Info& Player, const OBJECT_TYPE type);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
+	//ゴール後の演出
+	void GoalDirector(void);
+
 	void CollisionToStageObject(void);
 	bool UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Info &Player, Pos3D *pPos, Pos3D *pPosOld, float *pWidth, float *pHeight);
 
@@ -309,7 +321,9 @@ private:
 	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot);
 
 	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
 	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
 
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
@@ -325,7 +339,7 @@ private:
 		short expand;    // 膨らみ
 		short explosion; // 破裂
 
-		CSound *pSound;	// サウンドクラス保管用
+		_RNC_Sound *pSound;	// サウンドクラス保管用
 	};
 	static SE s_SE;		//サウンド用構造体
 

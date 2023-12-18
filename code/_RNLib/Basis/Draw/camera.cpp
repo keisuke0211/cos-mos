@@ -9,16 +9,16 @@
 //****************************************
 // マクロ定義
 //****************************************
-#define VIB_DAMPING                    (0.75f)
-#define VIB_MIN	                       (0.01f)
-#define CONTROLLER_VIB_TIME_DIAMETER   (5)
-#define CONTROLLER_VIB_MAX    	       (4.0f)
-#define INIT_RANS_RATE                 (0.25f)
-#define INIT_RANS_RATE_OPP             (0.75f)
-#define SPIN_DAMP                      (0.15f)
-#define ROT_X_MAX                      (D3DX_PI * 0.499999f)
-#define ROT_X_MIN                      (D3DX_PI * -0.499999f)
-#define INIT_RADIAN                    (45.0f)
+#define VIB_DAMPING                  (0.75f)
+#define VIB_MIN	                     (0.01f)
+#define CONTROLLER_VIB_TIME_DIAMETER (5)
+#define CONTROLLER_VIB_MAX    	     (4.0f)
+#define INIT_RANS_RATE               (0.25f)
+#define INIT_RANS_RATE_OPP           (0.75f)
+#define SPIN_DAMP                    (0.15f)
+#define ROT_X_MAX                    (D3DX_PI * 0.499999f)
+#define ROT_X_MIN                    (D3DX_PI * -0.499999f)
+#define INIT_RADIAN                  (45.0f)
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -29,19 +29,19 @@
 //****************************************
 // 静的変数定義
 //****************************************
-UShort CCamera::ms_IDCount = 0;
+short CCamera::ms_IDCount = 0;
 
 //========================================
 // コンストラクタ
 //========================================
-CCamera::CCamera(const Scale2D& scale2D) {
+CCamera::CCamera(const Size2D& scale2D) {
 
 	// リストに追加
 	RNSystem::GetCameraMgr().AddList(this);
 
 	// IDを設定
 	m_ID       = ms_IDCount;
-	ms_IDCount = (ms_IDCount + 1) % USHRT_MAX;
+	ms_IDCount = (ms_IDCount + 1) % SHRT_MAX;
 
 	// 変数を初期化
 	m_posV            = INITPOS3D;
@@ -49,7 +49,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	m_posVib          = INITPOS3D;
 	m_rot             = INITROT3D;
 	m_spin            = INITVECTOR3D;
-	m_scale           = scale2D;
+	m_size            = scale2D;
 	m_dist            = 1.0f;
 	m_radian          = INIT_RADIAN;
 	m_radianGoal      = INIT_RADIAN;
@@ -59,6 +59,7 @@ CCamera::CCamera(const Scale2D& scale2D) {
 	m_state           = STATE::NONE;
 	m_stateInfo       = NULL;
 	m_isDraw          = false;
+	m_lightID         = NONEDATA;
 	m_BGCol           = Color{0,0,0,0};
 	m_isClipping      = false;
 	m_motionBlur      = {};
@@ -157,7 +158,7 @@ void CCamera::Update(void) {
 	// [[[ 振動 ]]]
 	if (m_vibForce >= VIB_MIN) {
 		if (RNLib::Count().GetBlinkF2()) {
-			float fAngle = -D3DX_PI + fRand() * D3DX_PI_DOUBLE;
+			float fAngle = -D3DX_PI + RNLib::Number().GetRandomFloat(1.0f) * D3DX_PI_DOUBLE;
 			m_posVib.x = sinf(fAngle) * m_vibForce;
 			m_posVib.y = cosf(fAngle) * m_vibForce;
 			m_vibForce *= VIB_DAMPING;
@@ -179,15 +180,15 @@ void CCamera::Update(void) {
 	m_spin += -m_spin * SPIN_DAMP;
 
 	// [[[ 向きを制御 ]]]
-	FloatControl(&m_rot.x, ROT_X_MAX, ROT_X_MIN);
-	FloatLoopControl(&m_rot.y, D3DX_PI, -D3DX_PI);
+	RNLib::Number().Clamp(&m_rot.x, ROT_X_MAX, ROT_X_MIN);
+	RNLib::Number().LoopClamp(&m_rot.y, D3DX_PI, -D3DX_PI);
 
 	// [[[ 視点/注視点位置を算出 ]]]
 	// 回転軸が視点   > 注視点位置を算出
 	// 回転軸が注視点 > 視点位置  を算出
 	m_isPivotToPosV ?
-		m_posR = m_posV + CGeometry::FindRotVec(m_rot) * m_dist :
-		m_posV = m_posR - CGeometry::FindRotVec(m_rot) * m_dist;
+		m_posR = m_posV + RNLib::Geometry().FindRotVec(m_rot) * m_dist :
+		m_posV = m_posR - RNLib::Geometry().FindRotVec(m_rot) * m_dist;
 
 	// [[[ ラジアン推移 ]]]
 	m_radian = (m_radian * INIT_RANS_RATE_OPP) + (m_radianGoal * INIT_RANS_RATE);
@@ -252,7 +253,7 @@ void CCamera::StartRendering(Device& device) {
 	device->SetViewport(&m_MTInfo.viewport);
 
 	// [[[ 画面をクリア ]]]
-	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), m_BGCol.ConvD3DCOLOR(), 1.0f, 0);
+	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), m_BGCol, 1.0f, 0);
 
 	// [[[ ビューマトリックスの作成 ]]]
 	Matrix mtxView = INITMATRIX; {
@@ -261,7 +262,7 @@ void CCamera::StartRendering(Device& device) {
 
 		// 振動位置に変動がある時、
 		if (m_posVib != INITD3DXVECTOR3) {
-			float angle = CGeometry::FindAngleXZ(m_posV, m_posR) - D3DX_PI_HALF;
+			float angle = RNLib::Geometry().FindAngleXZ(m_posV, m_posR) - D3DX_PI_HALF;
 			Pos3D addPos;
 			addPos.x = sinf(angle) * m_posVib.x;
 			addPos.z = cosf(angle) * m_posVib.x;
@@ -318,8 +319,8 @@ void CCamera::SetPosVAndPosR(const Pos3D& posV, const Pos3D& posR) {
 
 	m_posV = posV;
 	m_posR = posR;
-	m_dist = CGeometry::FindDistance(m_posV, m_posR);
-	m_rot  = m_isPivotToPosV ? CGeometry::FindRot(m_posV, m_posR) : CGeometry::FindRot(m_posR, m_posV);
+	m_dist = RNLib::Geometry().FindDistance(m_posV, m_posR);
+	m_rot  = m_isPivotToPosV ? RNLib::Geometry().FindRot(m_posV, m_posR) : RNLib::Geometry().FindRot(m_posR, m_posV);
 }
 
 //========================================

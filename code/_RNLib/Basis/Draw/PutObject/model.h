@@ -8,6 +8,7 @@
 
 #include "../camera.h"
 #include "../draw-info.h"
+#include "../draw-state.h"
 #include "../regist-info.h"
 #include "../../Mechanical/regist.h"
 
@@ -15,7 +16,7 @@
 // クラス定義
 //****************************************
 // モデルクラス
-class CModel : public CRegist {
+class _RNC_Model : public CRegist {
 public:
 	//========== [[[ 構造体定義 ]]]
 	struct Vertex3DInfo {
@@ -37,7 +38,7 @@ public:
 			bool* isMats = NULL;
 		};
 		struct MatData {
-			Color  col    = INITCOLOR;
+			Color  col    = COLOR_WHITE;
 			ULong  vtxNum = 0;
 			ULong* idxes  = NULL;
 			ULong  idxNum = 0;
@@ -73,17 +74,18 @@ public:
 		~CDrawInfo();
 
 		// [[[ 変数宣言 ]]]
-		static Material ms_outLineMat;
-		Matrix    m_mtx;
-		Material* m_mats;
-		Texture*  m_texes;
-		UShort    m_matNum;
-		Mesh      m_mesh;
-		Mesh      m_outLineMesh;
-		bool      m_isScaling;
-		bool      m_isZTest;
-		bool      m_isLighting;
-		float     m_radiusMax;
+		static Material                ms_outLineMat;
+		Matrix                         m_mtx;
+		Material*                      m_mats;
+		Texture*                       m_texes;
+		UShort                         m_matNum;
+		Mesh                           m_mesh;
+		Mesh                           m_outLineMesh;
+		bool                           m_isScaling;
+		bool                           m_isZTest;
+		bool                           m_isLighting;
+		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
+		float                          m_radiusMax;
 	};
 
 	// 登録情報クラス
@@ -104,22 +106,28 @@ public:
 		CRegistInfo* SetLighting            (const bool& isLighting);
 		CRegistInfo* SetOutLineIdx          (const UShort& outLineIdx);
 		CRegistInfo* SetBrightnessOfEmissive(const float& brightnessOfEmissive);
+		CRegistInfo* SetInterpolationMode   (const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode);
 
 	private:
-		// [[[ 変数宣言 ]]]
-		Matrix m_mtx;
-		Color  m_col;
-		short  m_modelIdx;
-		short  m_texIdx;
-		bool   m_isZTest;
-		bool   m_isLighting;
-		short  m_outLineIdx;
-		float  m_brightnessOfEmissive;
+		// <<< 基本情報 >>>
+		Matrix                         m_mtx;
+		short                          m_modelIdx;
+
+		// <<< 見た目情報 >>>
+		Color                          m_col;
+		short                          m_texIdx;
+		short                          m_outLineIdx;
+		float                          m_brightnessOfEmissive;
+
+		// <<< 描画情報設定 >>>
+		bool                           m_isZTest;
+		bool                           m_isLighting;
+		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CModel();
-	~CModel();
+	_RNC_Model               ();
+	~_RNC_Model              ();
 	void         Init        (void);
 	void         Uninit      (void);
 	void         Update      (void);

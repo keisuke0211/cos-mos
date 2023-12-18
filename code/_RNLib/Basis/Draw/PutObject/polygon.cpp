@@ -32,7 +32,6 @@ void Polygon2DAnd3D::SetTexture(Device& device, void* tex, const TEX_TYPE& texTy
 				device->SetTexture(0, NULL);
 			else
 				device->SetTexture(0, (*camera)->GetTexture());
-
 			RNLib::DrawStateMgr().SetIsTextureAlpha(device, false);
 		}break;
 		}
@@ -71,8 +70,8 @@ Polygon2DAnd3D::CSetTexInfoSum::~CSetTexInfoSum() {
 //========================================
 void Polygon2DAnd3D::CSetTexInfoSum::ClearParameter(void) {
 
-	CMemory::Release(&m_setTex);
-	CMemory::Release(&m_setTexInfo);
+	RNLib::Memory().Release(&m_setTex);
+	RNLib::Memory().Release(&m_setTexInfo);
 	m_setTexInfoType = TEX_INFO_TYPE::NONE;
 	m_isTexMirrorX   = false;
 }
@@ -85,11 +84,11 @@ void Polygon2DAnd3D::CSetTexInfoSum::AssignTexInfo(void*& tex, TEX_TYPE& texType
 	// テクスチャを代入
 	texType = m_setTexType;
 	if (texType == TEX_TYPE::IDX) {
-		CMemory::Alloc((int**)&tex);
+		RNLib::Memory().Alloc((int**)&tex);
 		*(int*)tex = m_setTex == NULL ? NONEDATA : *(int*)m_setTex;
 	}
 	else if (texType == TEX_TYPE::CAMERA) {
-		CMemory::Alloc((CCamera***)&tex);
+		RNLib::Memory().Alloc((CCamera***)&tex);
 		*(CCamera**)tex = *(CCamera**)m_setTex;
 	}
 
@@ -199,7 +198,7 @@ void Polygon2DAnd3D::CSetTexInfoSum::SetTexMirrorX(const bool& isMirror) {
 //========================================
 void Polygon2DAnd3D::CSetTexInfoSum::SetTex_Ptn(const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
-	CMemory::Alloc((Polygon2DAnd3D::SetTexInfo**)&m_setTexInfo);
+	RNLib::Memory().Alloc((Polygon2DAnd3D::SetTexInfo**)&m_setTexInfo);
 	Polygon2DAnd3D::SetTexInfo* setTexInfo = (Polygon2DAnd3D::SetTexInfo*)m_setTexInfo;
 	setTexInfo->ptn    = ptn;
 	setTexInfo->ptnX   = ptnX;
@@ -213,7 +212,7 @@ void Polygon2DAnd3D::CSetTexInfoSum::SetTex_Ptn(const UShort& ptn, const UShort&
 //========================================
 void Polygon2DAnd3D::CSetTexInfoSum::SetTexUV_Pos(const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
-	CMemory::Alloc((Polygon2DAnd3D::SetTexUVInfo**)&m_setTexInfo);
+	RNLib::Memory().Alloc((Polygon2DAnd3D::SetTexUVInfo**)&m_setTexInfo);
 	Polygon2DAnd3D::SetTexUVInfo* setTexInfo = (Polygon2DAnd3D::SetTexUVInfo*)m_setTexInfo;
 	setTexInfo->poses[0] = pos0;
 	setTexInfo->poses[1] = pos1;
@@ -227,7 +226,7 @@ void Polygon2DAnd3D::CSetTexInfoSum::SetTexUV_Pos(const Pos2D& pos0, const Pos2D
 //========================================
 void Polygon2DAnd3D::CSetTexInfoSum::AllocTex(const short& texIdx) {
 
-	CMemory::Alloc((short**)&m_setTex);
+	RNLib::Memory().Alloc((short**)&m_setTex);
 	*(short*)m_setTex = texIdx;
 	m_setTexType = TEX_TYPE::IDX;
 }
@@ -237,9 +236,9 @@ void Polygon2DAnd3D::CSetTexInfoSum::AllocTex(const short& texIdx) {
 //========================================
 void Polygon2DAnd3D::CSetTexInfoSum::AllocTex(CCamera*& camera) {
 
-	CMemory::Alloc((CCamera***)&m_setTex);
+	RNLib::Memory().Alloc((CCamera***)&m_setTex);
 	*(CCamera**)m_setTex = camera;
 	m_setTexType = TEX_TYPE::CAMERA;
 
-	(*(CCamera**)m_setTex)->SetDraw(true);
+	(*(CCamera**)m_setTex)->SetIsDraw(true);
 }

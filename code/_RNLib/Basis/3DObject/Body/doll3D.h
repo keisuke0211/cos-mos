@@ -28,7 +28,7 @@ public:
 		// [[[ 構造体宣言 ]]]
 		// 移動アニメ状態
 		struct MoveAnimState {
-			CEase::TYPE posEase   = CEase::TYPE::LINEAR;
+			_RNC_Ease::TYPE posEase   = _RNC_Ease::TYPE::LINEAR;
 			Pos3D       oldPos    = INITPOS3D;
 			Pos3D       targetPos = INITPOS3D;
 			short       counter   = 0;
@@ -37,7 +37,7 @@ public:
 
 		// 回転アニメ状態
 		struct SpinAnimState {
-			CEase::TYPE rotEase   = CEase::TYPE::LINEAR;
+			_RNC_Ease::TYPE rotEase   = _RNC_Ease::TYPE::LINEAR;
 			Rot3D       oldRot    = INITROT3D;
 			Rot3D       targetRot = INITROT3D;
 			short       counter   = 0;
@@ -46,7 +46,7 @@ public:
 
 		// 拡縮アニメ状態
 		struct ScalingAnimState {
-			CEase::TYPE scaleEase   = CEase::TYPE::LINEAR;
+			_RNC_Ease::TYPE scaleEase   = _RNC_Ease::TYPE::LINEAR;
 			Scale3D     oldScale    = INITSCALE3D;
 			Scale3D     targetScale = INITSCALE3D;
 			short       counter     = 0;
@@ -72,8 +72,8 @@ public:
 		// [[[ 関数宣言 ]]]
 		CBoneState();
 		~CBoneState();
-		void           Update            (const short& motionCounter, const CSetUp3D::BoneData& boneData);
-		void           PrepareMotion     (const CMotion3D::BoneMotionData& boneMotionData);
+		void           Update            (const short& motionCounter, const _RNC_SetUp3D::BoneData& boneData);
+		void           PrepareMotion     (const _RNC_Motion3D::BoneMotionData& boneMotionData);
 		Pos3D&         GetAnimPos        (void)                                        { return m_animPos; }
 		void           SetAddPos         (const Pos3D& pos)                            { m_addPos = pos; }
 		Pos3D&         GetAddPos         (void)                                        { return m_addPos; }
@@ -88,8 +88,8 @@ public:
 		void           SetWorldMtx       (const Matrix& worldMtx)                      { m_worldMtx = worldMtx; }
 		Matrix&        GetWorldMtx       (void)                                        { return m_worldMtx; }
 		SwayingState*& GetSwayingState   (void)                                        { return m_swayingState; }
-		void           CreateSwayingState(void)                                        { CMemory::Alloc(&m_swayingState); *m_swayingState = {}; }
-		void           SetMotionData     (const CMotion3D::BoneMotionData* motionData) { m_motionData = motionData; }
+		void           CreateSwayingState(void)                                        { _RNC_Memory::Alloc(&m_swayingState); *m_swayingState = {}; }
+		void           SetMotionData     (const _RNC_Motion3D::BoneMotionData* motionData) { m_motionData = motionData; }
 		void           SetParentBoneState(CBoneState* parentBoneState)                 { m_parentBoneState = parentBoneState; }
 		CBoneState*&   GetParentBoneState(void)                                        { return m_parentBoneState; }
 
@@ -104,7 +104,7 @@ public:
 		Matrix                           m_worldMtx;
 		AnimStateSum                     m_animeStateSum;
 		SwayingState*                    m_swayingState;
-		const CMotion3D::BoneMotionData* m_motionData;
+		const _RNC_Motion3D::BoneMotionData* m_motionData;
 		CBoneState*                      m_parentBoneState;
 	};
 
@@ -113,6 +113,8 @@ public:
 	~CDoll3D                           ();
 	void        Update                 (void);
 	void        SetUp                  (const short& setUpIdx);
+	void        SetClippingCamera      (CCamera& camera) { m_clippingID = camera.GetID(); }
+	void        SetClippingCamera      (const short& ID) { m_clippingID = ID; }
 	void        SetMotion              (const short& motionIdx);
 	void        OverwriteMotion        (const short& motionIdx);
 	void        SetMotionStop          (const bool& isStop)                { m_motionInfo.isStop = isStop; }
@@ -141,14 +143,18 @@ private:
 
 	//========== [[[ 関数宣言 ]]]
 	void   UpdateMotion    (void);
-	void   UpdateBone      (CSetUp3D::CData& setUp);
-	void   DrawModelVtxIdx (CModel::Vertex3DInfo*& vtxInfo, ULong& vtxNum);
-	void   DrawFace        (CSetUp3D::CData& setUp, CModel::Vertex3DInfo**& vtxInfo, ULong*& vtxNum);
-	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, CSetUp3D::BoneData*& boneData, Matrix& selfMtx);
+	void   UpdateBone      (_RNC_SetUp3D::CData& setUp);
+	void   DrawModelVtxIdx (_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum);
+	void   DrawFace        (_RNC_SetUp3D::CData& setUp, _RNC_Model::Vertex3DInfo**& vtxInfo, ULong*& vtxNum);
+	Matrix FindBoneWorldMtx(const short& idx, CBoneState*& boneState, _RNC_SetUp3D::BoneData*& boneData, Matrix& selfMtx);
 	void   PrepareMotion   (void);
+
+	//========== [[[ 定数定義 ]]]
+	static const int PAUSE_RESET_TIME = 10;
 
 	//========== [[[ 変数宣言 ]]]
 	UShort      m_priority;
+	short       m_clippingID;
 	Pos3D       m_pos;
 	bool        m_isSetPos;
 	Rot3D       m_rot;

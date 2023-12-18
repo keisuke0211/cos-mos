@@ -14,17 +14,10 @@
 // クラス定義
 //****************************************
 // サウンドクラス
-class CSound :public CRegist {
+class _RNC_Sound :public CRegist {
 public:
 	//========== [[[ 列挙型定義 ]]]
-	enum class CATEGORY { BGM, SE, MAX, };
-
-	//========== [[[ 構造体定義 ]]]
-	// 分類毎の状態構造体
-	struct CategoryState {
-		float volume        = 1.0f;
-		float settingVolume = 1.0f;
-	};
+	enum class CATEGORY { BGM, SE, VOICE, MAX, };
 
 	//========== [[[ クラス定義 ]]]
 	// データクラス
@@ -46,11 +39,13 @@ public:
 	class CPlay : public CObject {
 	public:
 		// [[[ 関数宣言 ]]]
-		CPlay(const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
-		~CPlay();
-		void Update(void);
+		CPlay                              (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D* pos2D, const Pos3D* pos3D, const float& dist);
+		~CPlay                             ();
+		void                 Update        (void);
+		void                 SetVolume     (const float& volume) { m_volume = volume; }
 		short&               GetID         (void) { return m_ID; }
 		CATEGORY&            GetCategory   (void) { return m_category; }
+		UShort&              GetCount      (void) { return m_count; }
 		IXAudio2SourceVoice& GetSourceVoice(void) { return *m_sourceVoice; }
 
 	private:
@@ -60,6 +55,7 @@ public:
 		short                m_soundIdx;
 		CATEGORY             m_category;
 		float                m_volume;
+		UShort               m_count;
 		bool                 m_isLoop;
 		Pos2D*               m_pos2D;
 		Pos3D*               m_pos3D;
@@ -68,11 +64,11 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CSound();
-	~CSound();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
+	_RNC_Sound                         ();
+	~_RNC_Sound                        ();
+	void           Init                (void);
+	void           Uninit              (void);
+	void           Update              (void);
 	short          Load                (const char* loadPath, short idx = NONEDATA);
 	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop);
 	short          Play                (const short& soundIdx, const CATEGORY& category, const float& volume, const bool& isLoop, const Pos2D& pos, const float& dist);
@@ -80,12 +76,11 @@ public:
 	void           StopCategory        (const CATEGORY& category);
 	void           StopAll             (void);
 	void           ChangeCategoryVolume(const CATEGORY& category, float& volume);
-	void           ChangeSetVolume	   (const CATEGORY& category, float& volume);
 	void           SetMic3DPos         (const Pos3D& pos) { m_mic3DPos = pos; }
 	CData&         GetData             (const short& idx) { return *m_datas[idx]; }
 	CPlay&         GetPlay             (const short& ID);
 	CObjectMgr&    GetPlayMgr          (void) { return m_playMgr; }
-	CategoryState& GetCategoryState    (const CATEGORY& category) { return m_categoryStates[(int)category]; }
+	float&         GetCategoryVolume   (const CATEGORY& category) { return m_categoryVolumes[(int)category]; }
 	Pos3D&         GetMic3DPos         (void) { return m_mic3DPos; }
 	IXAudio2&      GetXAudio2          (void) { return *m_XAudio2; }
 
@@ -97,7 +92,7 @@ private:
 	//========== [[[ 変数宣言 ]]]
 	CData**                 m_datas;
 	CObjectMgr              m_playMgr;
-	CategoryState           m_categoryStates[(int)CATEGORY::MAX];
+	float                   m_categoryVolumes[(int)CATEGORY::MAX];
 	Pos3D                   m_mic3DPos;
 	IXAudio2*               m_XAudio2;
 	IXAudio2MasteringVoice* m_masteringVoice;

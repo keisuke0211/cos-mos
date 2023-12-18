@@ -143,7 +143,7 @@ void CRocket::Update(void)
 	RNLib::Model().Put(PRIORITY_OBJECT, m_Info.nModelIdx, m_pos, m_rot + Rot3D(0.0f, D3DX_PI, 0.0f), m_Info.scale * m_Info.fScaleMag, false)
 		->SetOutLineIdx(true);
 
-	RNLib::Text2D().PutDebugLog(CreateText("プレイヤーカウンター：%d", s_nCountPlayer));
+	RNLib::Text2D().PutDebugLog(String("プレイヤーカウンター：%d", s_nCountPlayer));
 }
 //========================================
 // 乗る状態更新
@@ -178,17 +178,8 @@ void CRocket::UpdateState_Ride(void)
 //========================================
 void CRocket::UpdateState_Fly(void)
 {
-	int nCounter;
-
 	m_Info.nFlyAnimeCounter++;	// アニメーションの増加
-	nCounter = m_Info.nFlyAnimeCounter % s_RotAnimeMax;	// 割合の計算
-
-	// モードの切り替え	
-	if (m_Info.nFlyAnimeCounter >= s_FadeModeCountMax)
-	{
-		int stage = Manager::StgEd()->GetType()->nStageIdx;
-		Manager::StgEd()->SwapStage(stage + 1);
-	}
+	CInt nCounter = m_Info.nFlyAnimeCounter % s_RotAnimeMax;	// 割合の計算
 
 	// 向きを微動させる
 	if (nCounter >= s_RotAnimeMax * 0.5f)
