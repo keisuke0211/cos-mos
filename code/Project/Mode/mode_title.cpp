@@ -182,6 +182,9 @@ void CMode_Title::Uninit(void) {
 	}
 
 	RNLib::Memory().Release(&m_AnimCnt);
+
+	//BGMI—¹ˆ—
+	titleSound::End();
 }
 
 //========================================
