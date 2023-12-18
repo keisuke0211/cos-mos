@@ -31,7 +31,7 @@ boneDataSum{ 4
 }
 
 
-faceDataSum{1
+faceDataSum{ 1
 faceData{
 	texIdx NONEDATA
 	col 204 204 204 255

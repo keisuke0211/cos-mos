@@ -26,6 +26,7 @@ CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメ
 
 int CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
 int CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
+int CPlayer::s_zoomUpFixedCounter = 0;// ズームアップカウンター
 
 const float CPlayer::SIZE_WIDTH = 7.0f; // 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
@@ -211,6 +212,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
 			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Dance.txt");
+			s_motion[cnt].getup   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\GetUp.txt");
 		}
 		else {
 			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
@@ -219,6 +221,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
 			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Dance.txt");
+			s_motion[cnt].getup   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\GetUp.txt");
 		}
 	}
 
@@ -232,9 +235,11 @@ HRESULT CPlayer::Init(void)
 	s_pColli = new CCollision;
 
 	s_zoomUpCounter = 0;
+	s_zoomUpFixedCounter = 0;
 	if (Manager::StgEd()->GetPlanetIdx() == 0) {
 		if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
 			s_zoomUpCounter = ZOOM_UP_TIME;
+			s_zoomUpFixedCounter = ZOOM_UP_FIXED_TIME;
 		}
 	}
 
@@ -334,7 +339,7 @@ void CPlayer::InitInfo(void) {
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
-		Player.swapWaitBalloonCounter = 0;
+		Player.swapWaitCounter = 0;
 	}
 
 	CGoalGate::ResetEtr();
@@ -647,24 +652,41 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
+	bool isZoomUp = false;
+	if (s_zoomUpCounter > 0 &&
+		Manager::StgEd()->GetPlanetIdx() == 0 &&
+		Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+		isZoomUp = true;
+	}
+
 	// [[[ カメラ制御 ]]]
 	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
 	{// どちらも死んでいない
-		bool isZoomUp = false;
-		if (s_zoomUpCounter > 0 &&
-			Manager::StgEd()->GetPlanetIdx() == 0 &&
-			Manager::StgEd()->GetType()[0].nStageIdx == 0)
-		{
-			isZoomUp = true;
-		}
-
 		Pos3D targetPosV = Manager::StgEd()->GetCameraPos();
 		Pos3D targetPosR = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
 		targetPosR.x *= 0.25f;
 		targetPosR.y = 0.0f;
 
 		if (isZoomUp) {
-			s_zoomUpCounter--;
+			if (s_zoomUpFixedCounter > 0) {
+				s_zoomUpFixedCounter--;
+				if (s_zoomUpFixedCounter <= ZOOM_UP_FIXED_TIME - 60) {
+					if (s_zoomUpFixedCounter == ZOOM_UP_FIXED_TIME - 60) {
+						m_aInfo[0].doll->OverwriteMotion(s_motion[0].jump);
+						m_aInfo[1].doll->OverwriteMotion(s_motion[1].jump);
+						m_aInfo[0].move.y += 2.5f;
+						m_aInfo[1].move.y -= 2.5f;
+					}
+				}
+				else {
+					m_aInfo[0].doll->OverwriteMotion(s_motion[0].getup);
+					m_aInfo[1].doll->OverwriteMotion(s_motion[1].getup);
+				}
+			}
+			else {
+				s_zoomUpCounter--;
+			}
+			
 
 			Pos3D basePosRMain = m_aInfo[0].pos + Pos3D(0.0f, -16.0f, 0.0f);
 			Pos3D basePosRSub  = m_aInfo[1].pos + Pos3D(0.0f, 16.0f, 0.0f);
@@ -751,8 +773,8 @@ void CPlayer::ActionControl(void)
 			Player.move.x *= -2.0f;
 		}
 
-		// ロケットに乗ってたら　or ゴールしていたらスキップ
-		if (Player.bRide || Player.bGoal) continue;
+		// ロケットに乗っている　or ゴールしている or ズームアップ の時スキップ
+		if (Player.bRide || Player.bGoal || isZoomUp) continue;
 
 		// ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
@@ -764,7 +786,6 @@ void CPlayer::ActionControl(void)
 		}
 
 		bool isMove = false;
-
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
 			RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT, nIdxPlayer))
 		{// 右に移動
@@ -781,7 +802,8 @@ void CPlayer::ActionControl(void)
 			isMove = true;
 		}
 
-		if (Player.swapWaitBalloonCounter > 0) {
+		
+		if (Player.swapWaitCounter > 0) {
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
 		}
 		else if (!Player.bGround) {
@@ -804,14 +826,14 @@ void CPlayer::ActionControl(void)
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
 			Player.nSwapAlpha = 255;
-			if (++Player.swapWaitBalloonCounter > SWAP_WAIT_BALLOON_TIME)
-				Player.swapWaitBalloonCounter = SWAP_WAIT_BALLOON_TIME;
+			if (++Player.swapWaitCounter > SWAP_WAIT_BALLOON_TIME)
+				Player.swapWaitCounter = SWAP_WAIT_BALLOON_TIME;
 		}
 		//スワップ非入力
 		else {
 			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
-			if (--Player.swapWaitBalloonCounter < 0)
-				Player.swapWaitBalloonCounter = 0;
+			if (--Player.swapWaitCounter < 0)
+				Player.swapWaitCounter = 0;
 		}
 
 		{// 吹き出しの表示
@@ -819,10 +841,10 @@ void CPlayer::ActionControl(void)
 			putPos.y += RNLib::Number().GetPlusMinus(Player.pos.y) * 12.0f;
 			_RNC_Polygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f, 0.0f, -0.1f + (RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, RNLib::Number().GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_WAITBUBBLE], Player.pos.y < 0.0f, 2, 1)
-				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitBalloonCounter / SWAP_WAIT_BALLOON_TIME)))
+				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitCounter / SWAP_WAIT_BALLOON_TIME)))
 				->SetZTest(false);
 			
-			Size2D size = Size2D(16.0f, 32.0f * ((float)Player.swapWaitBalloonCounter / SWAP_WAIT_BALLOON_TIME));
+			Size2D size = Size2D(16.0f, 32.0f * ((float)Player.swapWaitCounter / SWAP_WAIT_BALLOON_TIME));
 			if (Player.pos.y > 0.0f) {
 				polygon3D->SetVtxPos(
 					Pos3D(-size.x, size.y, 0.0f),
@@ -857,9 +879,9 @@ void CPlayer::Swap(void)
 		return;
 	}
 
-	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
-	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
-		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
+	// 両者ともにスワップボタンを押している
+	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) && m_aInfo[0].swapWaitCounter > 0) &&
+		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) && m_aInfo[1].swapWaitCounter > 0))
 	{
 		//ロケットに乗っていないときにサウンド再生
 		if (CRocket::GetCounter() != NUM_PLAYER)
@@ -886,7 +908,7 @@ void CPlayer::Swap(void)
 			Player.bGroundOld = Player.bGround;
 
 			// 吹き出しカウンター初期化
-			Player.swapWaitBalloonCounter = 0;
+			Player.swapWaitCounter = 0;
 		}
 	}
 }
