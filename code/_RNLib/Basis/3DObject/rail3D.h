@@ -22,16 +22,19 @@ public:
 	void    Load       (const String& loadPath);
 	void    Save       (const String& loadPath);
 	Matrix  GetMtx     (float rate);
-	Pos3D&  GetPoint   (const UShort& idx) { return m_points[idx]; }
+	bool&   GetIsLoop  (void)               { return m_isLoop; }
+	void    SetIsLoop  (const bool& isLoop) { m_isLoop = isLoop; }
+	Pos3D&  GetPoint   (const UShort& idx)  { return m_points[idx]; }
 	void    AddPoint   (void);
 	void    SubPoint   (const UShort& idx);
-	UShort& GetPointNum(void)              { return m_pointNum; }
+	UShort& GetPointNum(void)               { return m_pointNum; }
 
 private:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	void CalculateCatmullRomSpline(float rate, Pos3D& pos, Vector3D& tangent);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
+	bool   m_isLoop;
 	Pos3D* m_points;
 	UShort m_pointNum;
 };

@@ -110,6 +110,7 @@ private:
 	D3DXVECTOR3 m_RocketRot;
 	D3DXVECTOR3 m_RocketRotOld;
 	D3DXVECTOR3 m_RocketRotDiff;
+	D3DXVECTOR3 m_rotEff;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
 	int m_EffTex;
