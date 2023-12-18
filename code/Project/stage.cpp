@@ -110,9 +110,6 @@ void Stage::Init(void) {
 	// 環境音プレイヤーの初期化処理
 	StageSoundPlayer::Init();
 
-	// カメラのライト
-	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
-
 	MaxPlanet = 0;
 	ClearRecord();
 }
@@ -181,7 +178,6 @@ void Stage::StartStage(void) {
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
 
-
 	for (int cnt = 0; cnt < 2; cnt++) {
 		{// [[[ UI用カメラの生成 ]]]
 			UICamera[cnt] = new CCamera(Size2D(200.0f, RNLib::Window().GetHeight()));
@@ -213,6 +209,9 @@ void Stage::StartStage(void) {
 		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
 		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
 	}
+
+	// カメラのライト
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 }
 
 //========================================
