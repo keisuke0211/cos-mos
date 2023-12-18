@@ -48,7 +48,7 @@ void _RNC_Count::Uninit(void) {
 //========================================
 void _RNC_Count::Update(void) {
 
-	m_count     = (m_count + 1) % USHRT_MAX;
+	m_count     = (m_count + 1) % ULONG_MAX;
 	m_isBlinkF2 = (m_count % 4 < 2);
 	m_isBlinkF4 = (m_count % 8 < 4);
 }
