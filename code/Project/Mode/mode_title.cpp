@@ -10,6 +10,7 @@
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
+#include "../Sound/title-sound.h"
 #include "../UI/MenuUi.h"
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
@@ -111,6 +112,9 @@ void CMode_Title::Init(void) {
 
 	// 遷移設定
 	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
+
+	//BGM開始処理
+	titleSound::Start();
 
 	// テキストの初期化
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
