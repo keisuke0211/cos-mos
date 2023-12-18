@@ -11,6 +11,7 @@
 #include "mode_title.h"
 #include "mode_game.h"
 #include "../Sound/title-sound.h"
+#include "../Object/Item/coin.h"
 #include "../UI/MenuUi.h"
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
@@ -111,7 +112,7 @@ void CMode_Title::Init(void) {
 	CMode::Init();
 
 	// 遷移設定
-	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::NUI, 60);
 
 	//BGM開始処理
 	titleSound::Start();
@@ -155,6 +156,7 @@ void CMode_Title::Init(void) {
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Planet.png");
 	m_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Number.png");
+	m_TexIdx[3] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Lock.png");
 
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -262,14 +264,20 @@ void CMode_Title::Update(void) {
 						break;
 					case TITLE_SELECT:
 					{
-						SwapMode(TITLE_NEXT);
-						Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
-						Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
-						if (m_PlanetType != NULL)
+						bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect);
+
+						if (!bStgRel || RNSystem::GetMode() == RNSystem::MODE::DEBUG)
 						{
-							delete[] m_PlanetType;
-							m_PlanetType = NULL;
+							SwapMode(TITLE_NEXT);
+							Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
+							Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
+
+							if (m_PlanetType != NULL)
+							{
+								delete[] m_PlanetType;
+								m_PlanetType = NULL;
+							}
 						}
 					}
 					break;
@@ -439,6 +447,8 @@ void CMode_Title::StageSelect(void) {
 	const Pos3D PosCor = Pos3D(nStageMax * (NUMPOSSELBOX.x * 0.5f), 0.0f, 0.0f);
 	float RocketAnimRate;
 
+	StageRel(m_nPlanetIdx, nStageMax);
+
 	//描画処理
 	StageDraw(nPlanetMax, nStageMax, PosCor,RocketAnimRate);
 
@@ -508,6 +518,7 @@ void CMode_Title::StageSelect(void) {
 	if (m_StgFlag == STAGE::POP)
 		StagePop(nPlanetMax,nStageMax,PosCor);
 }
+
 //========================================
 // ステージ描画処理
 //========================================
@@ -602,6 +613,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 	// 選択アイコンの処理
 	for (int nCnt = 0; nCnt < nStage; nCnt++) {
+		bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, nCnt);
 
 		if (nCnt == m_nStageSelect) {
 			//アニメーション割合
@@ -677,11 +689,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			{//ロケット描画
 				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f), false);
 
-				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
-				D3DXVECTOR3 m_TexPos = m_RocketPosOld + (m_RocketposDiff * RktAnimRt);
-				m_TexPos.y = m_RocketPosOld.y + (float)(rand() % (int)3 - 1) * 0.5f;
+				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
+				D3DXVECTOR3 TexPos = m_RocketPosOld + (m_RocketposDiff * RktAnimRt);
+				TexPos.x = TexPos.x + (6.0f * sinf(m_rotEff.z));
+				TexPos.y = TexPos.y + (float)(rand() % (int)3 - 1) * 0.5f;
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex, m_TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60, m_rotEff);
+				Manager::EffectMgr()->ParticleCreate(m_EffTex, TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60,m_rotEff,D3DXVECTOR3(10.0f,10.0f,0.0f));
 			}
 
 			//数字ブロックアニメーション処理
@@ -713,9 +726,26 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 			//数字テクスチャ描画
 			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
-				RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
+				if (!bStgRel)
+					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 					->SetSize(5.0f, 5.0f)
 					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
+				else
+				{
+					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
+						->SetSize(5.0f, 5.0f)
+						->SetTex(m_TexIdx[3]);
+
+					int nStgCoin = Manager::StgEd()->GetStageCoin(m_nPlanetIdx, nCnt);
+					Matrix mtxNum = RNLib::Matrix().MultiplyMtx(
+						RNLib::Matrix().ConvPosToMtx(D3DXVECTOR3(numpos.x, numpos.y - 7.5f, numpos.z)),
+						mtxBlock);
+
+					RNLib::Text3D().Put(PRIORITY_UI, String("%d枚ひつよう", nStgCoin), _RNC_Text::ALIGNMENT::CENTER, -1, mtxNum)
+						->SetSize(Size2D(1.5f, 1.5f))
+						->SetCol(COLOR_WHITE)
+						->SetZTest(false);
+				}
 			}
 		}
 		else {
@@ -730,10 +760,17 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			//数字テクスチャ描画
 			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
 				numpos = D3DXVECTOR3(SELECTBOX.x - poscor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
-				RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
+
+				if (!bStgRel)
+					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
 					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
+				else
+					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
+					->SetSize(5.0f, 5.0f)
+					->SetCol(Color{ 85,85,85,255 })
+					->SetTex(m_TexIdx[3]);
 			}
 		}
 	}
@@ -838,6 +875,27 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	case CMode_Title::TITLE_NEXT:
 		TextRelease(TEXT_ALL);
 		break;
+	}
+}
+
+//========================================
+// ステージ解放処理
+//========================================
+void CMode_Title::StageRel(int nPlanet, int nStgMax)
+{
+
+	for (int nCnt = 0; nCnt < nStgMax; nCnt++) {
+		bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, nCnt);
+
+		if (bStgRel)
+		{
+			int nStgCoin = Manager::StgEd()->GetStageCoin(nPlanet, nCnt);
+
+			if (CCoin::GetNumAll() >= nStgCoin)
+			{
+				Manager::StgEd()->SetStageRel(nPlanet, nCnt, false);
+			}
+		}
 	}
 }
 

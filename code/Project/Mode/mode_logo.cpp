@@ -17,6 +17,7 @@
 // 静的変数
 //========================================
 int CMode_Logo::m_TexLogo = 0;
+int CMode_Logo::m_TexBg = 0;
 
 //========================================
 // コンストラクタ
@@ -24,6 +25,7 @@ int CMode_Logo::m_TexLogo = 0;
 //========================================
 CMode_Logo::CMode_Logo(void) {
 	m_TexLogo = 0;
+	m_TexBg = 0;
 	m_nStateCtr = TIME;
 	m_state = STATE::NONE;
 }
@@ -80,7 +82,7 @@ void CMode_Logo::Update(void) {
 		static void FillScreen(const float& fRate) {
 			RNLib::Polygon2D().Put(PRIORITY_UI, RNLib::Window().GetCenterPos(), 0.0f)
 				->SetCol(Color{ 255,255,255,(int)(255 * fRate) })
-				->SetSize(480, 480)
+				->SetSize(960, 240)
 				->SetTex(m_TexLogo);
 		}
 	};
@@ -121,7 +123,7 @@ void CMode_Logo::Update(void) {
 		{
 			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
-				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NONE);
+				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
 				m_state = STATE::NONE;
 			}
 		}
