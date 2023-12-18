@@ -31,9 +31,10 @@ namespace {
 	//========== [[[ 変数宣言 ]]]
 	int             planetIdx;
 	int             stageIdx;
-	int				Count;
 	Pos3D			cloudpos[MAX_CLOUD];
+	Pos3D			fishpos;
 	float			cloudmove[MAX_CLOUD];
+	int				cloudtex[MAX_CLOUD];
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -92,21 +93,25 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
-	Count = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
+	fishpos = Pos3D(100.0f,300.0f,0.0f);
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 200,200.0f,200.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,200.0f,200.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
+		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
 	}
 	// ブロックの読み込み処理
 	CBlock::Load();
 
 	// 環境音プレイヤーの初期化処理
 	StageSoundPlayer::Init();
+
+	// カメラのライト
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 
 	MaxPlanet = 0;
 	ClearRecord();
@@ -382,7 +387,7 @@ namespace {
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 			{
 				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+					->SetTex(CResources::TEXTURE_IDXES[cloudtex[nCnt]])
 					->SetVtxPos(Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z))
 					->SetBillboard(true)
 					->SetZTest(false)
@@ -392,7 +397,7 @@ namespace {
 
 				if (cloudpos[nCnt].x >= 550.0f)
 				{
-					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 100 - 100, 200.0f, 200.0f + rand() % 200 - 100);
+					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 200 - 200, 200.0f, 200.0f + rand() % 200 - 100);
 				}
 			}
 		
@@ -432,7 +437,14 @@ namespace {
 			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
 			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
 		}
-
+		else if (Stage::CheckPlanetIdx(1))
+		{// [[[ 背景描画 ]]]
+		 // 魚
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
+				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(00.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
+				->SetBillboard(true);
+		}
 		// [[[ 壁モデル描画 ]]]
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);

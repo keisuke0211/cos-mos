@@ -22,8 +22,12 @@ public:
 		BG_OCEAN,
 		BG_CITY,
 		BG_CLOUD,
+		BG_CLOUD_A,
+		BG_CLOUD_B,
+		BG_CLOUD_C,
 		UI_WAITBUBBLE,
 		CHR_BLACK_EYE,
+		BG_FISH,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
