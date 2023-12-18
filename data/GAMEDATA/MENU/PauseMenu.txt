@@ -11,35 +11,35 @@ Start
 
 -- １個目の設定 ------------------------------------------------------
 	SetSelect
-		Text = 続ける
+		Text = つづける
 		SubMenuID = -1
 		
 	EndSelect
 	
 -- ２個目の設定 ------------------------------------------------------
 	SetSelect
-		Text = やり直す
+		Text = やりなおす
 		SubMenuID = -1
 		
 	EndSelect
 
 -- ３個目の設定 ------------------------------------------------------
 	SetSelect
-		Text = ステージ選択
+		Text = ステージせんたく
 		SubMenuID = -1
 
 	EndSelect
 
 -- ４個目の設定 ------------------------------------------------------
 	SetSelect
-		Text = 操作方法
+		Text = そうさほうほう
 		SubMenuID = 0
 		
 	EndSelect
 
 -- ５個目の設定 ------------------------------------------------------
 	SetSelect
-		Text = 設定
+		Text = せってい
 		SubMenuID = 1
 
 	EndSelect
