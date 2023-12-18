@@ -439,30 +439,22 @@ namespace {
 
 			if (bubbleCnt % 20 == 0)
 			{
-				Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 00.0f, 200.0f);
-				float scale = rand() % 50 + 20;
+				Pos3D pos = Pos3D(100.0f + (rand() % 700 - 350), (rand() % 200 + 100), 200.0f);
+				float scale = rand() % 10 + 10;
 
-				for (int nCnt = 0; nCnt < 10; nCnt++)
-				{
-					D3DXVECTOR3 move;
-					if (nCnt % 2 == 0)
-					{
-						move = D3DXVECTOR3(-rand() %800 + 400, rand() % 800 + 400, 0);
-					}
-					else
-					{
-						move = D3DXVECTOR3(rand() %800 + 400, rand() % 800 + 400, 0);
-					}
-					Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\BackGround\\bubble.png"),
-						pos,
-						Scale3D(scale, scale, 0.0f),
-						Color(255, 255, 255, 255),
-						CParticle::TYPE::TYPE_FLOATUP,
-						MAX_BUBBLECNT,
-						D3DXVECTOR3(0.0f, 0.0f, 1.0f),
-						move);
-				
-				}
+
+
+				D3DXVECTOR3 move = D3DXVECTOR3(rand() % 800 - 400, rand() % 100 + 50, 0);
+
+				Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\BackGround\\bubble.png"),
+					pos,
+					Scale3D(scale, scale, 0.0f),
+					Color(255, 255, 255, 255),
+					CParticle::TYPE::TYPE_FLOATUP,
+					MAX_BUBBLECNT,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					move);
+
 			}
 
 			// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
