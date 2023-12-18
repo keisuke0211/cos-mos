@@ -189,24 +189,26 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	m_pos.z += LOOKS_DATAS[(int)m_looksType].depth;
 	m_pos.y += LOOKS_DATAS[(int)m_looksType].height * RNLib::Number().GetPlusMinus(m_pos.y);
 
+	UShort priority = m_isCollision ? PRIORITY_OBJECT : PRIORITY_BACKGROUND;
+
 	// ドールの生成
 	switch (m_looksType) {
 	case LOOKS_TYPE::BAOBAB_TREE: {
-		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE]);
+		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE]);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::CHEST: {
-		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
+		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
 		m_doll->SetPos(m_pos);
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::PALMTREE: {
-		m_doll = new CDoll3D(PRIORITY_OBJECT, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
+		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
 		m_doll->SetPos(m_pos);
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
@@ -236,9 +238,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
-				RNLib::StaticMesh().SetMaterialModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+				RNLib::StaticMesh().SetMaterialModel(priority, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 			else 
-				RNLib::StaticMesh().SetModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+				RNLib::StaticMesh().SetModel(priority, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 		}
 
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::BACKWARD ||
@@ -248,9 +250,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 			setCol.g *= 0.7f;
 			setCol.b *= 0.7f;
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
-				RNLib::StaticMesh().SetMaterialModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
+				RNLib::StaticMesh().SetMaterialModel(priority, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
 			else
-				RNLib::StaticMesh().SetModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], setCol, false);
+				RNLib::StaticMesh().SetModel(priority, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], setCol, false);
 		}
 
 		if (!m_isCollision)
@@ -436,7 +438,7 @@ void CBlock::Update(void) {
 		// 炎のエフェクト
 		float m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + 1.0f);
 
-		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y > 0.0f ? m_pos.y + 15.0f : m_pos.y - 15.0f, m_pos.z);
+		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y > 0.0f ? m_pos.y + 5.0f : m_pos.y - 5.0f, m_pos.z);
 
 		Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png"), m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,50,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 200, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI));
 

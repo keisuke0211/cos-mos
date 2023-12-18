@@ -19,16 +19,9 @@ struct AmbientSEInfo {
 	float volumeAdd;	// 音量の加算値
 };
 
-// World2
-//#define AMBIENT_SE_2_MAX (2)
-//#define AMBIENT_SE_2_LOOP_PATH "data\\SOUND\\SE\\AmbientSound\\bubble.wav"
-//#define AMBIENT_SE_2_LOOP_VOLUME (0.5f)
+// タイトル
 #define BGM_PATH "data\\SOUND\\BGM\\SELECT.wav"
 #define BGM_VOLUME (0.5f)
-//static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
-//	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 900, 0.5f, 0.5f },
-//	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 600, 0.25f, 0.25f },
-//};
 
 //****************************************
 // 変数定義
@@ -57,5 +50,5 @@ void titleSound::Start(void)
 
 void titleSound::End(void)
 {
-
+	RNLib::Sound().GetPlay(BGMPlayID).Delete();
 }

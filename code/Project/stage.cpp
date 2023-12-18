@@ -99,16 +99,18 @@ void Stage::Init(void) {
 	rocketparts = NULL;
 	isPause = false;
 	fishpos = Pos3D(100.0f,300.0f,0.0f);
+
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
 		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,200.0f,200.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
 	}
+	Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 200.0f, 200.0f);
 	for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
 	{
-		bubblepos[nCnt] = Pos3D(100.0f, 200.0f, 200.0f);
-		bubblemove[nCnt] = Pos3D((rand() % 20 + 10), 50.0f, 0.0f);
+		bubblepos[nCnt] = pos;
+		bubblemove[nCnt] = Pos3D((rand() % 40 + 20), 100.0f, 0.0f);
 	}
 	// ƒuƒƒbƒN‚Ì“Ç‚Ýž‚Ýˆ—
 	CBlock::Load();
@@ -431,7 +433,7 @@ namespace {
 		 // ‹›
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
-				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(00.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
+				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
 				->SetBillboard(true);
 
 			bubbleCnt++;
@@ -444,13 +446,20 @@ namespace {
 				// –A
 				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_BUBBLE])
-					->SetVtxPos(Pos3D(-50.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 100.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(00.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 100.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(-50.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(0.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f))
+					->SetVtxPos(Pos3D(-20.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 20.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(00.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 20.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(-20.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(0.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f))
+					->SetCol(Color(255,255,255,255 * (1.0f - fCountRate)))
 					->SetBillboard(true);
 
 			}
 
 			if (bubbleCnt > MAX_BUBBLECNT)
 			{
+				Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 200.0f, 200.0f);
+
+				for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+				{
+					bubblepos[nCnt] = pos;
+				}
 				bubbleCnt = 0;
 			}
 		}
