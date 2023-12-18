@@ -704,7 +704,7 @@ void CMenuUI::PartElasticity(void)
 			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
 			float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
-			float ScaleRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 			float SizeX = 0;
 
 			/*if (Txt == m_Menu.nMaineSelect)
