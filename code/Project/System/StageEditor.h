@@ -30,6 +30,9 @@ public:
 		int		nIdx;				// ステージ番号
 		char	aFileName[0xff];	// ファイルパス
 		char	aName[0xff];		// ステージ名
+
+		int		nNumCoin;			// 解放に必要なコイン数
+		bool	bRelease;			// ステージが解放されたか
 	};
 
 	// 惑星種類情報
@@ -113,9 +116,9 @@ public:
 	// 杭の情報
 	struct PileInfo
 	{
-		D3DXVECTOR3 pos;		// 位置
-		int nNumPile;			// 杭の数
-		float fCaveIn;	// 減りこみ量
+		D3DXVECTOR3 pos;	// 位置
+		int nNumPile;		// 杭の数
+		float fCaveIn;		// 減りこみ量
 	};
 
 
@@ -127,6 +130,12 @@ public:
 	/* ステージ切り替え	*/void SwapStage(int nStageIdx);
 
 	// -- 取得 ---------------------------------------------
+	/* ステージ解放		*/void SetStageRel(int planet, int stage,bool bRel);
+
+
+	// -- 取得 ---------------------------------------------
+	/* 解放のコイン数	*/int GetStageCoin(int planet, int stage);
+	/* ステージ解放		*/bool GetStageRel(int planet, int stage);
 	/* 行数の最大値		*/int GetRowMax(void) { return m_Info.nRowMax; }
 	/* 列数の最大値		*/int GetLineMax(void) { return m_Info.nLineMax; }
 	/* 最大値			*/int GetPlanetMax(void) { return m_Info.nPlanetMax; }
