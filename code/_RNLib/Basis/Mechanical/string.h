@@ -16,6 +16,10 @@ class String {
 public:
 	//========== [[[ 関数定義 ]]]
 	// コンストラクタ
+	String() {
+
+		m_string = NULL;
+	}
 	String(const char* format, ...) {
 
 		if (format == NULL) {

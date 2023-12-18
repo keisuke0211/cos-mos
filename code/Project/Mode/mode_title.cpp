@@ -65,9 +65,9 @@ CMode_Title::CMode_Title(void) {
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
 	m_EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
-	m_bStageChange = false;
 	m_AnimCnt = NULL;
 	m_RotCnt = 0;
+	m_bStageChange = false;
 	m_bRocketMove = false;
 	m_bRocketRot = false;
 }
@@ -422,6 +422,7 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	m_RocketAnimCnt = 0;
 	m_ImageStgCnt = 0;
 	m_NumAnimCnt = ANIMCOUNT * 0.5f;
+	m_rotEff = D3DXVECTOR3(0.0f,0.0f,-1.57f);
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
@@ -661,8 +662,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 						m_RocketRot = D3DXVECTOR3(0.0f, D3DX_PI, D3DX_PI * 0.5f);
 					else
 						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
-
+						
 					m_RocketRotDiff = m_RocketRot - m_RocketRotOld;
+					m_rotEff = m_RocketRotOld + (RotRate * m_RocketRotDiff);
+
+					if (m_RocketposDiff.x > 0 && m_rotEff.z != -1.57f)
+						m_rotEff *= -1;
 				}
 
 				if (m_bStageChange)
@@ -672,12 +677,11 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			{//ÉçÉPÉbÉgï`âÊ
 				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f), false);
 
-				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
-				D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_RocketPosOld.x + (m_RocketposDiff.x * RktAnimRt) + (float)(rand() % (int)8 - 8 * 0.5),
-					m_RocketPosOld.y + (m_RocketposDiff.y * RktAnimRt),
-					m_RocketPosOld.z + (m_RocketposDiff.z * RktAnimRt));
+				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
+				D3DXVECTOR3 m_TexPos = m_RocketPosOld + (m_RocketposDiff * RktAnimRt);
+				m_TexPos.y = m_RocketPosOld.y + (float)(rand() % (int)3 - 1) * 0.5f;
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex, m_TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,0,255,255 }, CParticle::TYPE::TYPE_FLOATUP,60,INITROT3D);
+				Manager::EffectMgr()->ParticleCreate(m_EffTex, m_TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60, m_rotEff);
 			}
 
 			//êîéöÉuÉçÉbÉNÉAÉjÉÅÅ[ÉVÉáÉìèàóù
@@ -782,22 +786,22 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		TextRelease(TEXT_TITLE);
 		{
-			m_TitleShadow[0] = CWords::Create("Çb", D3DXVECTOR3(786.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[1] = CWords::Create("Çn", D3DXVECTOR3(946.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[0] = CWords::Create("Çb", D3DXVECTOR3(586.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[1] = CWords::Create("Çn", D3DXVECTOR3(846.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 			m_TitleShadow[2] = CWords::Create("Çr", D3DXVECTOR3(1096.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 			m_TitleShadow[3] = CWords::Create("Å^", D3DXVECTOR3(1246.0f, -54.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TitleShadow[4] = CWords::Create("Çl", D3DXVECTOR3(1406.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[5] = CWords::Create("Çn", D3DXVECTOR3(1566.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[6] = CWords::Create("Çr", D3DXVECTOR3(1706.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[4] = CWords::Create("Çl", D3DXVECTOR3(1506.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[5] = CWords::Create("Çn", D3DXVECTOR3(1766.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[6] = CWords::Create("Çr", D3DXVECTOR3(2056.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 		}
 		{
-			m_TITLE[0] = CWords::Create("Çb", D3DXVECTOR3(780.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[1] = CWords::Create("Çn", D3DXVECTOR3(940.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[0] = CWords::Create("Çb", D3DXVECTOR3(580.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[1] = CWords::Create("Çn", D3DXVECTOR3(840.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
 			m_TITLE[2] = CWords::Create("Çr", D3DXVECTOR3(1090.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
 			m_TITLE[3] = CWords::Create("Å^", D3DXVECTOR3(1234.0f, -66.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[4] = CWords::Create("Çl", D3DXVECTOR3(1400.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TITLE[5] = CWords::Create("Çn", D3DXVECTOR3(1560.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TITLE[6] = CWords::Create("Çr", D3DXVECTOR3(1700.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[4] = CWords::Create("Çl", D3DXVECTOR3(1500.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[5] = CWords::Create("Çn", D3DXVECTOR3(1760.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[6] = CWords::Create("Çr", D3DXVECTOR3(2050.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
 		}
 		m_bMove[0] = true;
 		m_bBackMode = false;
@@ -809,7 +813,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
 		m_pMenu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-			"É{É^ÉìÇâüÇµÇƒÇÀÑD", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+			"É{É^ÉìÇÇ®ÇµÇƒÇÀÑD", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 	}
 		break;
 	case CMode_Title::TITLE_MENU_ANIME:

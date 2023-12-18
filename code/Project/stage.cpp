@@ -14,7 +14,8 @@
 
 #define  MAX_COUNT		(2000)
 #define  MAX_CLOUD		(5)
-
+#define  MAX_BUBBLE		(7)
+#define  MAX_BUBBLECNT	(360)
 //****************************************
 // 無名空間
 //****************************************
@@ -32,9 +33,12 @@ namespace {
 	int             planetIdx;
 	int             stageIdx;
 	Pos3D			cloudpos[MAX_CLOUD];
+	Pos3D			bubblepos[MAX_BUBBLE];
 	Pos3D			fishpos;
 	float			cloudmove[MAX_CLOUD];
+	Pos3D			bubblemove[MAX_BUBBLE];
 	int				cloudtex[MAX_CLOUD];
+	int				bubbleCnt;
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -43,10 +47,6 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
-
-	// クジラ
-	int             whaleCounter;
-	CDoll3D*        whaleDoll;
 
 	//ステージクリアタイムの保存場所
 	struct Record
@@ -93,16 +93,24 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
+	bubbleCnt = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
 	fishpos = Pos3D(100.0f,300.0f,0.0f);
+
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
 		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,200.0f,200.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
+	}
+	Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 200.0f, 200.0f);
+	for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+	{
+		bubblepos[nCnt] = pos;
+		bubblemove[nCnt] = Pos3D((rand() % 40 + 20), 100.0f, 0.0f);
 	}
 	// ブロックの読み込み処理
 	CBlock::Load();
@@ -205,12 +213,6 @@ void Stage::StartStage(void) {
 			// クリッピング設定
 			UIDoll[cnt]->SetClippingCamera(UICamera[cnt]->GetID());
 		}
-	}
-
-	if (Stage::CheckPlanetIdx(1)) {
-		whaleCounter = 0;
-		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
-		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
 	}
 
 	// カメラのライト
@@ -355,10 +357,6 @@ void Stage::EndStage(void) {
 		}
 	}
 
-	if (Stage::CheckPlanetIdx(1)) {
-		delete whaleDoll;
-	}
-
 	// UI用ドールを破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
 		delete UIDoll[cnt];
@@ -429,25 +427,43 @@ namespace {
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-
-			whaleCounter = (whaleCounter + 1) % 1800;
-			float whaleRate = whaleCounter / 1800.0f;
-			float whaleScale = (whaleRate > 0.5f ? 0.5f + (0.5f - whaleRate) : whaleRate) * 2.0f;
-			Matrix mtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), RNLib::Matrix().ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
-
-			whaleDoll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
-			whaleDoll->SetRot(Rot3D(0.0f, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f));
-			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
-			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
 		}
 		else if (Stage::CheckPlanetIdx(1))
 		{// [[[ 背景描画 ]]]
 		 // 魚
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
-				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(00.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
+				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
 				->SetBillboard(true);
+
+			bubbleCnt++;
+
+			// 割合計算 
+			CFloat fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, bubbleCnt, MAX_BUBBLECNT);
+
+			for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+			{
+				// 泡
+				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_BUBBLE])
+					->SetVtxPos(Pos3D(-20.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 20.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(00.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 20.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(-20.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f), Pos3D(0.0f + bubblepos[nCnt].x + bubblemove[nCnt].x * fCountRate, 0.0f + bubblepos[nCnt].y + bubblemove[nCnt].y * fCountRate, 500.0f))
+					->SetCol(Color(255,255,255,255 * (1.0f - fCountRate)))
+					->SetBillboard(true);
+
+			}
+
+			if (bubbleCnt > MAX_BUBBLECNT)
+			{
+				Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 200.0f, 200.0f);
+
+				for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+				{
+					bubblepos[nCnt] = pos;
+				}
+				bubbleCnt = 0;
+			}
 		}
+		
 		// [[[ 壁モデル描画 ]]]
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
