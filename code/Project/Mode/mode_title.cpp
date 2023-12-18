@@ -64,7 +64,7 @@ CMode_Title::CMode_Title(void) {
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
 	m_EffTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
-
+	m_bStageChange = false;
 	m_AnimCnt = NULL;
 	m_RotCnt = 0;
 	m_bRocketMove = false;
@@ -241,20 +241,20 @@ void CMode_Title::Update(void) {
 				{
 					//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
-			switch (Title)
-			{
-			case TITLE_OUTSET:
-			{
-				SwapMode(TITLE_MENU_ANIME);
-			}
-			break;
-			case TITLE_MENU:
-				break;
-			case TITLE_SELECT:
-			{
-				SwapMode(TITLE_NEXT);
-				Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+					switch (Title)
+					{
+					case TITLE_OUTSET:
+					{
+						SwapMode(TITLE_MENU_ANIME);
+					}
+					break;
+					case TITLE_MENU:
+						break;
+					case TITLE_SELECT:
+					{
+						SwapMode(TITLE_NEXT);
+						Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
+						Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
 						if (m_PlanetType != NULL)
 						{
