@@ -33,6 +33,7 @@ CParticle::CParticle(void)
 	m_Info.rot = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
 	m_Info.col = COLOR_WHITE;
+	m_move = INITVECTOR3D;
 
 	m_nNumAll++;
 }
@@ -62,15 +63,15 @@ HRESULT CParticle::Init(int nTex,int nCount)
 	else if (m_type == TYPE::TYPE_SPIN)
 	{
 		m_Info.move = D3DXVECTOR3(
-			10.0f * sinf(m_Info.rot.z),
-			10.0f * cosf(m_Info.rot.z),
+			m_move.x * sinf(m_Info.rot.z),
+			m_move.y * cosf(m_Info.rot.z),
 			0.0f);
 	}
 	else if (m_type == TYPE::TYPE_FLOATUP)
 	{
 		m_Info.move = D3DXVECTOR3(
-			(80.0f - (float)(rand() % 40)) / MAGNI * sinf(m_Info.rot.z),
-			(80.0f - (float)(rand() % 40)) / MAGNI * cosf(m_Info.rot.z),
+			(m_move.x + (float)(rand() % (int)m_move.x * 0.5)) / MAGNI * sinf(m_Info.rot.z),
+			(m_move.y + (float)(rand() % (int)m_move.y * 0.5)) / MAGNI * cosf(m_Info.rot.z),
 			0.0f);
 
 		m_Info.rot.x = 0.0f;

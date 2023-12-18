@@ -678,7 +678,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				D3DXVECTOR3 m_TexPos = m_RocketPosOld + (m_RocketposDiff * RktAnimRt);
 				m_TexPos.y = m_RocketPosOld.y + (float)(rand() % (int)3 - 1) * 0.5f;
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex, m_TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60, m_rotEff);
+				Manager::EffectMgr()->ParticleCreate(m_EffTex, m_TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60,m_rotEff,D3DXVECTOR3(80.0f,80.0f,0.0f));
 			}
 
 			//数字ブロックアニメーション処理
