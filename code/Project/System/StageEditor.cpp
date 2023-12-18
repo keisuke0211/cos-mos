@@ -274,7 +274,14 @@ void CStageEditor::FileLoad(void)
 			if (pCntStage[nPlanet] < m_PlanetType[nPlanet].nStageMax)
 			{
 				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aFileName[0]);	// ファイル名
-				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aName[0]);		// ステージ名
+				fscanf(pFile, "%d", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].nNumCoin);		// コイン数
+				//fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aName[0]);		// ステージ名
+
+
+				if (nPlanet == 0 && pCntStage[nPlanet] == 0)
+					m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].bRelease = false;
+				else
+					m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].bRelease = true;
 
 				pCntStage[nPlanet]++;
 			}
@@ -568,13 +575,13 @@ void CStageEditor::SwapStage(int nStageIdx)
 		{
 			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
 				Stage::SetStageNumber(planet, NecstStage);
 			}
 		}
 		else
 		{
-			Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+			Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
 			CMode_Title::SetSelect(true);
 		}
 	}
@@ -1189,6 +1196,58 @@ D3DXVECTOR3 CStageEditor::GetPos(int nRow, int nLine)
 	pos.z = 0.0f;
 
 	return pos;
+}
+
+//========================================
+// ステージ解放に必要なコインの取得
+// Author:KEISUKE OTONO
+//========================================
+int CStageEditor::GetStageCoin(int planet, int stage)
+{
+	int Coin = m_PlanetType[planet].StageType[stage].nNumCoin;
+	
+	if (Coin <= 0)
+		Coin = 0;
+
+	return Coin;
+}
+
+//========================================
+// ステージ解放の設定
+// Author:KEISUKE OTONO
+//========================================
+void CStageEditor::SetStageRel(int planet, int stage, bool bRel)
+{
+	if (planet <= 0)
+		planet = 0;
+	else if (planet >= m_Info.nPlanetMax)
+		planet = m_Info.nPlanetMax - 1;
+
+	if (stage <= 0)
+		stage = 0;
+	else if (stage >= m_PlanetType[planet].nStageMax)
+		stage = m_PlanetType[planet].nStageMax - 1;
+
+	m_PlanetType[planet].StageType[stage].bRelease = bRel;
+}
+
+//========================================
+// ステージ解放の取得
+// Author:KEISUKE OTONO
+//========================================
+bool CStageEditor::GetStageRel(int planet, int stage)
+{
+	if (planet <= 0)
+		planet = 0;
+	else if (planet >= m_Info.nPlanetMax)
+		planet = m_Info.nPlanetMax - 1;
+
+	if (stage <= 0)
+		stage = 0;
+	else if (stage >= m_PlanetType[planet].nStageMax)
+		stage = m_PlanetType[planet].nStageMax - 1;
+
+	return m_PlanetType[planet].StageType[stage].bRelease;
 }
 
 //========================================

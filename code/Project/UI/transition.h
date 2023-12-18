@@ -16,7 +16,7 @@ class CTransition {
 public:
 	//========== [[[ —ñ‹“Œ^’è‹` ]]]
 	enum class STATE { NONE, OPEN, OPEN_WAIT, BLACK, CLOSE, };
-	enum class TYPE  { NONE, FADE, };
+	enum class TYPE  { NONE, NUI,  FADE, };
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CTransition();

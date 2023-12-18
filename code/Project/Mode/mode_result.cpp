@@ -37,7 +37,7 @@ void CMode_Result::Init(void) {
 	CMode::Init();
 
 	// ‘JˆÚÝ’è
-	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::NUI, 60);
 
 	// ƒJƒƒ‰‚ÌŽ‹“_/’Ž‹“_‚ðÝ’è
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -500.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -63,7 +63,7 @@ void CMode_Result::Update(void) {
 	CMode::Update();
 
 	if (RNLib::Input().GetKeyTrigger(DIK_SPACE) && Manager::Transition().GetState() == CTransition::STATE::NONE)
-		Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+		Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
 
 }
 

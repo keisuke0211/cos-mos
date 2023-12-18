@@ -14,7 +14,8 @@
 
 #define  MAX_COUNT		(2000)
 #define  MAX_CLOUD		(5)
-
+#define  MAX_BUBBLE		(7)
+#define  MAX_BUBBLECNT	(640)
 //****************************************
 // 無名空間
 //****************************************
@@ -31,9 +32,13 @@ namespace {
 	//========== [[[ 変数宣言 ]]]
 	int             planetIdx;
 	int             stageIdx;
-	int				Count;
 	Pos3D			cloudpos[MAX_CLOUD];
+	Pos3D			bubblepos[MAX_BUBBLE];
+	Pos3D			fishpos;
 	float			cloudmove[MAX_CLOUD];
+	Pos3D			bubblemove[MAX_BUBBLE];
+	int				cloudtex[MAX_CLOUD];
+	int				bubbleCnt;
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -43,20 +48,14 @@ namespace {
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
 
-	// クジラ
-	int             whaleCounter;
-	CDoll3D*        whaleDoll;
-
-	//ステージ情報の保存場所
+	//ステージクリアタイムの保存場所
 	struct Record
 	{
-		int MaxStage = 0;        //ステージ数
-		float *pBestTime = NULL; //各ステージのベストタイム
-		int  nNumCoin = 0;       //各ステージのコイン数
-		bool *bGet = NULL;       //各コインごとに取得しているかどうか
+		int MaxStage;     //ステージ数
+		float *pBestTime; //各ステージのベストタイム
 	};
-	Record *pRecord = NULL; //惑星ごとのレコード
-	int MaxPlanet = 0;      //最大惑星数
+	Record *pRecord; //惑星ごとのレコード
+	int MaxPlanet;   //最大惑星数
 
 					 //文字添削
 	const char COMMENT = '#';       //コメント文字
@@ -94,15 +93,24 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
-	Count = 0;
+	bubbleCnt = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
+	fishpos = Pos3D(100.0f,300.0f,0.0f);
+
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 200,200.0f,200.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,100.0f,0.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
+		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
+	}
+	Pos3D pos = Pos3D(100.0f + (rand() % 500 - 250), 200.0f, 200.0f);
+	for (int nCnt = 0; nCnt < MAX_BUBBLE; nCnt++)
+	{
+		bubblepos[nCnt] = pos;
+		bubblemove[nCnt] = Pos3D((rand() % 40 + 20), 100.0f, 0.0f);
 	}
 	// ブロックの読み込み処理
 	CBlock::Load();
@@ -112,7 +120,6 @@ void Stage::Init(void) {
 
 	MaxPlanet = 0;
 	ClearRecord();
-	LoadRecord();
 }
 
 //========================================
@@ -179,7 +186,6 @@ void Stage::StartStage(void) {
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
 
-
 	for (int cnt = 0; cnt < 2; cnt++) {
 		{// [[[ UI用カメラの生成 ]]]
 			UICamera[cnt] = new CCamera(Size2D(200.0f, RNLib::Window().GetHeight()));
@@ -189,28 +195,29 @@ void Stage::StartStage(void) {
 
 			// 背景色設定
 			UICamera[cnt]->SetBGCol(Color(0, 0, 0, 100));
+
+			// ライトを設定
+			UICamera[cnt]->SetLightID(Manager::GetLightIdx(0));
 		}
 
 		{// [[[ UI用ドールを生成 ]]]
 			UIDoll[cnt] = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(cnt == 0 ? "data\\SETUP\\Player_Mouth.txt" : "data\\SETUP\\Player_Eye.txt"));
 
 			// モーション設定
-			UIDoll[cnt]->SetMotion(RNLib::Motion3D().Load(cnt == 0 ? "data\\MOTION\\Player_Mouth\\Walk.txt" : "data\\MOTION\\Player_Eye\\Walk.txt"));
+			UIDoll[cnt]->SetMotion(RNLib::Motion3D().Load(cnt == 0 ? "data\\MOTION\\Player_Mouth\\Happy.txt" : "data\\MOTION\\Player_Eye\\Walk.txt"));
 
 			// 位置/向き設定
 			UIDoll[cnt]->SetPos(Pos3D(0.0f, -8.0f, 100.0f));
-			UIDoll[cnt]->SetRot(Rot3D(0.0f, D3DX_PI * 1.1f, 0.0f));
+			UIDoll[cnt]->SetRot(Rot3D(0.0f, D3DX_PI * (cnt == 0 ? 0.9f : 1.1f), 0.0f));
 
 			// クリッピング設定
 			UIDoll[cnt]->SetClippingCamera(UICamera[cnt]->GetID());
 		}
 	}
 
-	if (Stage::CheckPlanetIdx(1)) {
-		whaleCounter = 0;
-		whaleDoll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
-		whaleDoll->SetMotion(RNLib::Motion3D().Load("data\\MOTION\\Whale.txt"));
-	}
+	// カメラのライト
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
+	Manager::GetSubCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 }
 
 //========================================
@@ -350,10 +357,6 @@ void Stage::EndStage(void) {
 		}
 	}
 
-	if (Stage::CheckPlanetIdx(1)) {
-		delete whaleDoll;
-	}
-
 	// UI用ドールを破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
 		delete UIDoll[cnt];
@@ -368,7 +371,7 @@ namespace {
 
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ 背景描画 ]]]
-			
+
 			// 上
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
@@ -380,12 +383,12 @@ namespace {
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-			
+
 			// 雲
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 			{
 				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+					->SetTex(CResources::TEXTURE_IDXES[cloudtex[nCnt]])
 					->SetVtxPos(Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z))
 					->SetBillboard(true)
 					->SetZTest(false)
@@ -395,10 +398,10 @@ namespace {
 
 				if (cloudpos[nCnt].x >= 550.0f)
 				{
-					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 100 - 100, 200.0f, 200.0f + rand() % 200 - 100);
+					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 200 - 200, 200.0f, 200.0f + rand() % 200 - 100);
 				}
 			}
-		
+
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
@@ -425,20 +428,39 @@ namespace {
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
-			whaleCounter = (whaleCounter + 1) % 1800;
-			float whaleRate = whaleCounter / 1800.0f;
-			float whaleScale = (whaleRate > 0.5f ? 0.5f + (0.5f - whaleRate) : whaleRate) * 2.0f;
-			Matrix mtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), RNLib::Matrix().ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
+			// 魚
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
+				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
+				->SetBillboard(true);
 
-			whaleDoll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
-			whaleDoll->SetRot(Rot3D(0.0f, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f));
-			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
-			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
+			bubbleCnt++;
+
+
+			if (bubbleCnt % 10 == 0)
+			{
+				Pos3D pos = Pos3D(100.0f + (rand() % 700 - 350), (rand() % 200 + 100), 200.0f);
+				float scale = rand() % 5 + 5;
+
+
+
+				D3DXVECTOR3 move = D3DXVECTOR3(rand() % 800 - 400, rand() % 100 + 50, 0);
+
+				Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\BackGround\\bubble.png"),
+					pos,
+					Scale3D(scale, scale, 0.0f),
+					Color(255, 255, 255, 255),
+					CParticle::TYPE::TYPE_FLOATUP,
+					MAX_BUBBLECNT,
+					D3DXVECTOR3(0.0f, 0.0f, 0.0f),
+					move);
+
+			}
+
+			// [[[ 壁モデル描画 ]]]
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		}
-
-		// [[[ 壁モデル描画 ]]]
-		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 	}
 }
 
@@ -454,19 +476,11 @@ namespace
 		{
 			for (int nCntRecord = 0; nCntRecord < MaxPlanet; nCntRecord++)
 			{
-				//ベストタイムの破棄
 				if (pRecord[nCntRecord].pBestTime != NULL)
 				{
 					delete[] pRecord[nCntRecord].pBestTime;
+					pRecord[nCntRecord].pBestTime = NULL;
 				}
-				pRecord[nCntRecord].pBestTime = NULL;
-
-				//コイン取得情報の破棄
-				if (pRecord[nCntRecord].bGet != NULL)
-				{
-					delete[] pRecord[nCntRecord].bGet;
-				}
-				pRecord[nCntRecord].bGet = NULL;
 			}
 
 			delete[] pRecord;
@@ -500,10 +514,6 @@ namespace
 
 			//ステージ数分のレコード場所確保
 			pRecord[nCntStage].pBestTime = new float[MaxStage];
-
-			//コイン取得状況はクリア
-			pRecord[nCntStage].nNumCoin = 0;
-			pRecord[nCntStage].bGet = NULL;
 		}
 	}
 }
@@ -580,20 +590,10 @@ namespace
 			//ロード
 			else if (strncmp(&Text[0], CODE_RECORD, sizeof CODE_RECORD - 1) == 0)
 			{
-				char temp[TXT_MAX] = {};
-				strcpy(&temp[0], &Text[0]);
 				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
 				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
 				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
-
-				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);    //レコード代入
-				CInt NUM_COIN = pRecord[planetID].nNumCoin = LoadInt(NULL, CHR_PAUSE);//コイン数取得
-				pRecord[planetID].bGet = new bool[NUM_COIN];                          //コイン取得状況場所を確保
-
-				for (int nCntCoin = 0; nCntCoin < NUM_COIN; nCntCoin++)
-				{
-					pRecord[planetID].bGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
-				}
+				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
 			}
 		}
 
@@ -629,25 +629,14 @@ namespace
 		fprintf(pFile, "#ワールド - ステージ - ベストタイム");
 		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
-			//各ワールドのレコードを参照
-			Record& rRecord = pRecord[nCntPlanet];
-
 			//ワールド名書き出し
 			fprintf(pFile, WORLD_COMMENT, nCntPlanet + 1);
 
-			for (int nCntStage = 0; nCntStage < rRecord.MaxStage; nCntStage++)
+			for (int nCntStage = 0; nCntStage < pRecord[nCntPlanet].MaxStage; nCntStage++)
 			{
 				//レコード記述
-				fprintf(pFile, "	%s = %d - %d - %.2f = %d", 
-						CODE_RECORD, nCntPlanet, nCntStage, rRecord.pBestTime[nCntStage], rRecord.nNumCoin);
-
-				//コインの取得状況取得
-				for (int nCntCoin = 0; nCntCoin < rRecord.nNumCoin; nCntCoin++)
-				{
-					fprintf(pFile, " - %d", rRecord.bGet[nCntCoin] ? 1 : 0);
-				}
-
-				fprintf(pFile, "\n");
+				fprintf(pFile, "	%s = %d - %d - %.2f\n", 
+						CODE_RECORD, nCntPlanet, nCntStage, pRecord[nCntPlanet].pBestTime[nCntStage]);
 			}
 		}
 

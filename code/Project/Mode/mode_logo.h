@@ -38,6 +38,7 @@ public:
 
 private:
 	static int m_TexLogo;
+	static int m_TexBg;
 	int m_nStateCtr;
 	STATE m_state;
 

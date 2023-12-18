@@ -47,7 +47,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.nRightCoolDown = COOLDOWN;
 	m_Menu.SubMenuCD = false;
 	m_Menu.nRightTextType = 0;
-	m_Menu.bElasticity = false;
+	m_Menu.bAllElasticity = false;
 	m_Menu.bMenu = false;
 	m_Menu.bSubMenu = false;
 	m_Menu.bClose = false;
@@ -122,6 +122,8 @@ void CMenuUI::Update(void)
 {
 	if (!m_Menu.bClose && m_Menu.bMenu)
 		MenuSelect();
+
+	PartElasticity();
 
 	MenuAnime();
 
@@ -251,6 +253,7 @@ void CMenuUI::SelectInput(void)
 	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK))
 	{
 		if (!m_Menu.bSubMenu) {
+			m_Menu.nCntLeftAnime = 0;
 			m_Menu.bBackMode = true;
 			m_Menu.bSubMenuMove = true;
 			m_Menu.bClose = true;
@@ -269,6 +272,8 @@ void CMenuUI::SelectInput(void)
 			m_Menu.nMaineSelect--;
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect--;
+
+		m_Menu.bPartElasticity = true;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::DOWN))
 	{
@@ -276,6 +281,8 @@ void CMenuUI::SelectInput(void)
 			m_Menu.nMaineSelect++;
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect++;
+
+		m_Menu.bPartElasticity = true;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT))
 	{
@@ -311,6 +318,10 @@ void CMenuUI::SelectInput(void)
 		m_Menu.bSubMenuMove = true;
 		m_Menu.SubMenuCD = true;
 	}
+	else if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == -1 && m_Menu.bSubMenuMove)
+	{
+		m_Menu.bSubMenuDisp = true;
+	}
 	else if (m_Menu.bSubMenuMove && m_Menu.bSubMenuDisp && m_Menu.SubMenuCD) {
 		if (m_Menu.nMaineSelect != m_Menu.nMaineOldSelect) {
 			if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID >= 0)
@@ -322,6 +333,7 @@ void CMenuUI::SelectInput(void)
 			m_Menu.nRightCoolDown = COOLDOWN;
 		}
 	}
+
 
 	if (m_Menu.nMaineSelect != m_Menu.nMaineOldSelect) {
 		m_Menu.nMaineOldSelect = m_Menu.nMaineSelect;
@@ -352,7 +364,8 @@ void CMenuUI::MenuCreate(void)
 	m_Menu.SubMenuCD = false;
 	m_Menu.nRightTextType = 0;
 	m_Menu.nNumLeftMenu = 0;
-	m_Menu.bElasticity = false;
+	m_Menu.bPartElasticity = false;
+	m_Menu.bAllElasticity = false;
 	m_Menu.bMenu = false;
 	m_Menu.bSubMenu = false;
 	m_Menu.bClose = false;
@@ -386,6 +399,13 @@ void CMenuUI::MenuCreate(void)
 		m_pMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 			D3DXVECTOR3(pos.x, pos.y + (100.0f * nText), pos.z), size,
 			"", CFont::FONT_ROND_B, &pFont);
+
+		if (nText == m_Menu.nMaineSelect) {
+			m_pMenu[nText]->SetTxtBoxColor(Color{ 255,255,255,255 });
+		}
+		else {
+			m_pMenu[nText]->SetTxtBoxColor(Color{ 155,155,155,255 });
+		}
 
 		m_pMenu[nText]->SetTxtBoxTgtSize(TargetSize.x, TargetSize.y);
 
@@ -476,6 +496,7 @@ void CMenuUI::MenuAnime(void)
 		if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
 			m_Menu.nCntLeftAnime = 0;
 
+			m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
 			{// TextÇÃçƒê∂ê¨
 				D3DXCOLOR col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 				if (Txt == m_Menu.nMaineSelect) {
@@ -496,7 +517,10 @@ void CMenuUI::MenuAnime(void)
 			}
 
 			if (++m_Menu.nNumLeftMenu >= m_Menu.MainMenuMax)
+			{
 				m_Menu.bMenu = true;
+				m_Menu.bPartElasticity = true;
+			}
 		}
 	}
 
@@ -504,7 +528,7 @@ void CMenuUI::MenuAnime(void)
 	if (m_Menu.bMenu && m_Menu.bClose) {
 
 		// ñcÇÁÇﬁ ÅE èkÇﬁ
-		if (!m_Menu.bElasticity) {
+		if (!m_Menu.bAllElasticity) {
 			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++) {
 
 				if (m_Menu.nCntLeftAnime == 0) {
@@ -540,7 +564,7 @@ void CMenuUI::MenuAnime(void)
 				m_Menu.nCntLeftAnime = 0;
 
 				if (!m_Menu.bBackMode)
-					m_Menu.bElasticity = true;
+					m_Menu.bAllElasticity = true;
 				else if (m_Menu.bBackMode)
 				{
 					m_MenuEnd = true;
@@ -548,7 +572,7 @@ void CMenuUI::MenuAnime(void)
 				}
 			}
 		}
-		else if (m_Menu.bElasticity)
+		else if (m_Menu.bAllElasticity && !m_MenuEnd)
 		{
 			int Txt = m_Menu.nMaineSelect;
 			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + 80.0f;
@@ -676,15 +700,73 @@ void CMenuUI::MenuAnime(void)
 			switch (m_Menu.nMaineSelect)
 			{
 			case PAUSE_MENU_RESET:
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
 				Manager::EffectMgr()->ReleaseAll();
 				break;
 			case PAUSE_MENU_SELECT:
-				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
 				CMode_Title::SetSelect(true);
 				Manager::EffectMgr()->ReleaseAll();
 				break;
 			}
+		}
+
+		TextRelease(TEXT_ALL);
+	}
+}
+
+//========================================
+// àÍïîÇÃêLèkèàóù
+//========================================
+void CMenuUI::PartElasticity(void)
+{
+	if (m_Menu.bPartElasticity)
+	{
+		for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++)
+		{
+			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
+			float TgtSizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+
+			float TxtSizeX = m_pMenu[Txt]->GetTxtBoxSize().x;
+			float TxtSizeY = m_pMenu[Txt]->GetTxtBoxSize().y;
+
+			bool bChg = false;
+
+			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float SizeX = 0;
+			float SizeY = 0;
+
+			if (Txt == m_Menu.nMaineSelect && TxtSizeX < TgtSizeX)
+			{
+				bChg = true;
+				SizeX = (TgtSizeX * 0.8f) + ((TgtSizeX * 0.2f) * ScaleRate);
+				SizeY = (TgtSizeY * 0.8f) + ((TgtSizeY * 0.2f) * ScaleRate);
+			}
+			else if (Txt != m_Menu.nMaineSelect && TxtSizeX > (TgtSizeX * 0.8f))
+			{
+				bChg = true;
+				SizeX = TgtSizeX - ((TgtSizeX * 0.2f) * ScaleRate);
+				SizeY = TgtSizeY - ((TgtSizeY * 0.2f) * ScaleRate);
+			}
+
+			if (bChg)
+				m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
+		}
+
+		if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
+
+			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++)
+			{
+				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
+				float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+
+				if (Txt == m_Menu.nMaineSelect)
+					m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
+				else if (Txt != m_Menu.nMaineSelect)
+					m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX * 0.8f, SizeY * 0.8f);
+			}
+			m_Menu.nCntLeftAnime = 0;
+			m_Menu.bPartElasticity = false;
 		}
 	}
 }
@@ -737,7 +819,7 @@ void CMenuUI::MenuSelect(void)
 	}
 
 	// ñÓàÛÇÃï\é¶
-	if (m_Menu.nSubSelect == SETTING_BGM || m_Menu.nSubSelect == SETTING_SE) {
+	if (m_Menu.bSubMenu && (m_Menu.nSubSelect == SETTING_BGM || m_Menu.nSubSelect == SETTING_SE)) {
 
 		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
 		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");

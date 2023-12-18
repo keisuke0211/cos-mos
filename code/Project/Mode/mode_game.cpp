@@ -60,7 +60,7 @@ void CMode_Game::Init(void) {
 	Stage::StartStage();
 
 	// ‘JˆÚİ’è
-	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::NUI, 60);
 
 	// ó‘Ôİ’è
 	SetState((int)STATE::NONE);

@@ -103,7 +103,7 @@ public:
 		//-------------------------------
 		//SWAP待ちの吹き出し用
 		//-------------------------------
-		int  swapWaitBalloonCounter;
+		int  swapWaitCounter;
 
 		// どちらの世界に存在するか
 		WORLD_SIDE side;
@@ -173,7 +173,7 @@ public:
 	static int GetSwapInterval(void) { return s_nSwapInterval; }
 
 	// スワップ待ちフラグを取得
-	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitBalloonCounter > 0 || m_aInfo[1].swapWaitBalloonCounter > 0; }
+	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitCounter > 0 || m_aInfo[1].swapWaitCounter > 0; }
 
 	// 出現
 	static void Pop(void) {}
@@ -219,6 +219,7 @@ public:
 		short fall;
 		short landing;
 		short dance;
+		short getup;
 	};
 
 	//モーション情報取得
@@ -278,8 +279,10 @@ private:
 	static const int POP_CLEARTIME = 60; // クリアタイム表示時間
 	static       int s_nGoalInterval;    // ゴール後の余韻カウンター
 
-	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
-	static       int s_zoomUpCounter;    // ズームアップカウンター
+	static const int ZOOM_UP_TIME       = 120; // ズームアップにかかる時間
+	static const int ZOOM_UP_FIXED_TIME = 90;  // ズームアップの固定時間
+	static       int s_zoomUpCounter;          // ズームアップカウンター
+	static       int s_zoomUpFixedCounter;    // ズームアップ固定カウンター2
 
 	void Swap(void);
 	void SwapAnimation(void);

@@ -108,7 +108,8 @@ public:
 
 		// メニュー
 		int nNumLeftMenu;		// メニュー数
-		bool bElasticity;		// 伸縮
+		bool bPartElasticity;	// 一部の伸縮
+		bool bAllElasticity;	// 全体の伸縮
 		bool bMenu;				// 生成したかのフラグ
 		bool bBackMode;			// 前の画面に戻るかのフラグ
 		bool bClose;			// メニュー閉じるかのフラグ
@@ -182,6 +183,7 @@ public:
 	/* メインの生成		*/void MenuCreate(void);
 	/* サブの生成		*/void SubTextCreate(void);
 	/* メニュー選択		*/void MenuSelect(void);
+	/* 一部の伸縮		*/void PartElasticity(void);
 
 	// -- 入力関連 -----------------------------------------------------------------------
 	/* 決定	*/void DecisionInput(void);

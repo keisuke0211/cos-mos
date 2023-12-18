@@ -13,7 +13,7 @@
 #define HARF_PI			(157)		//îºâ~é¸
 #define MAGNI			(100.0f)	//î{ó¶
 #define ATTEN_RATE		(0.3f)		//å∏êäó¶
-#define POISON_Y_RATE	(0.05f)		//å∏êäó¶Y
+#define FLOATUP_RATE	(0.05f)		//å∏êäó¶Y
 
 //========================================
 // ê√ìIïœêî
@@ -33,6 +33,7 @@ CParticle::CParticle(void)
 	m_Info.rot = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
 	m_Info.col = COLOR_WHITE;
+	m_move = INITVECTOR3D;
 
 	m_nNumAll++;
 }
@@ -62,16 +63,21 @@ HRESULT CParticle::Init(int nTex,int nCount)
 	else if (m_type == TYPE::TYPE_SPIN)
 	{
 		m_Info.move = D3DXVECTOR3(
-			10.0f * sinf(m_Info.rot.z),
-			10.0f * cosf(m_Info.rot.z),
+			m_move.x * sinf(m_Info.rot.z),
+			m_move.y * cosf(m_Info.rot.z),
 			0.0f);
 	}
 	else if (m_type == TYPE::TYPE_FLOATUP)
 	{
+		float rate = 0.01f + RNLib::Number().GetRandomFloat(0.01f);
+
 		m_Info.move = D3DXVECTOR3(
-			0.0f + sinf(m_Info.rot.z),
-			(80.0f - (float)(rand() % 40)) / MAGNI * cosf(m_Info.rot.z),
+			m_move.x * sinf(m_Info.rot.z) * rate,
+			m_move.y * cosf(m_Info.rot.z) * rate,
 			0.0f);
+
+		m_Info.rot.x = 0.0f;
+		m_Info.rot.y = 0.0f;
 	}
 	else if (m_type == TYPE::TYPE_STOP)
 	{
@@ -112,19 +118,17 @@ void CParticle::Update(void)
 		->SetTex(m_Info.nTex)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x, m_Info.scale.y)
-		->SetZTest(false)
+		->SetZTest(true)
 		->SetAlphaBlendMode(m_Info.alphamode);
 
 	//à⁄ìÆó å∏êä
-	if (m_type != TYPE::TYPE_FLOATUP)
-	{
+	if (m_type != TYPE::TYPE_FLOATUP){
 		m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;
 		m_Info.move.y += (0.0f - m_Info.move.y) * ATTEN_RATE;
 	}
-	else
-	{
-		m_Info.move.x += (0.0f - m_Info.move.x) * ATTEN_RATE;
-		m_Info.move.y += (0.0f - m_Info.move.y) * POISON_Y_RATE;
+	else{
+		m_Info.move.x += (0.0f - m_Info.move.x) * FLOATUP_RATE;
+		m_Info.move.y += (0.0f - m_Info.move.y) * FLOATUP_RATE;
 	}
 
 	//ìßñæÇ…ÇµÇƒÇ¢Ç≠
@@ -134,9 +138,7 @@ void CParticle::Update(void)
 	m_Info.nCount--;
 
 	if (m_Info.nCount <= 0)
-	{
 		CObject::Delete();
-	}
 }
 
 //========================================

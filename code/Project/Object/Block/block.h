@@ -76,6 +76,8 @@ public:
 		POWER_POLE_R					   = 56,	// 電柱(右側に電線)
 		POWER_POLE_B					   = 57,	// 電柱(両方に電線)
 		BUS_STOP						   = 58,	// バス停
+		STREET_LIGHT					   = 59,	// 街灯
+		SIGN							   = 60,	// 看板
 		MAX,
 	};
 	enum class OTHER_TEXTURE {

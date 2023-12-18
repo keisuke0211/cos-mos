@@ -64,6 +64,7 @@ private:
 		TEX_BG = 0,		// îwåi
 		TEX_PLANET,		// òfêØ
 		TEX_NUM,		// êîéö
+		TEX_LOCK,		// è˘ëO
 		TEX_MAX
 	};
 	enum TEXT {
@@ -93,6 +94,7 @@ private:
 	void StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor);
 	void TextRelease(TEXT type);
 	void SwapMode(TITLE aTitle);
+	void StageRel(int nPlanet, int nStage);
 
 	// *** ê√ìIïœêî ***
 	static CMenuUI *m_MenuUI;
@@ -108,8 +110,10 @@ private:
 	D3DXVECTOR3 m_RocketRot;
 	D3DXVECTOR3 m_RocketRotOld;
 	D3DXVECTOR3 m_RocketRotDiff;
+	D3DXVECTOR3 m_rotEff;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
+	int m_EffTex;
 	int m_nSelectTemp;
 	int m_nOldSelect;
 	int m_nOldnPlanet;
