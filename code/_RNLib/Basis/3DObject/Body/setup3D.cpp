@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CSetUp3D::CSetUp3D() {
+_RNC_SetUp3D::_RNC_SetUp3D() {
 
 	m_datas    = NULL;
 	m_editData = NULL;
@@ -24,47 +24,47 @@ CSetUp3D::CSetUp3D() {
 //========================================
 // デストラクタ
 //========================================
-CSetUp3D::~CSetUp3D() {
+_RNC_SetUp3D::~_RNC_SetUp3D() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CSetUp3D::Init(void) {
+void _RNC_SetUp3D::Init(void) {
 
 }
 
 //========================================
 // 終了処理
 //========================================
-void CSetUp3D::Uninit(void) {
+void _RNC_SetUp3D::Uninit(void) {
 
 	// データの解放
-	CMemory::ReleaseDouble(&m_datas, m_num);
+	RNLib::Memory().ReleaseDouble(&m_datas, m_num);
 
 	// エディットデータの解放
-	CMemory::Release(&m_editData);
+	RNLib::Memory().Release(&m_editData);
 }
 
 //========================================
 // 更新処理
 //========================================
-void CSetUp3D::Update(void) {
+void _RNC_SetUp3D::Update(void) {
 
 }
 
 //========================================
 // 読み込み処理
 //========================================
-short CSetUp3D::Load(const char* loadPath, short idx) {
+short _RNC_SetUp3D::Load(const char* loadPath, short idx) {
 
 	const UShort numOld = m_num;
 
 	if (CRegist::Load(loadPath, idx))
 	{// 読み込み成功
 		// データのメモリ再確保
-		CMemory::ReAllocDouble(&m_datas, numOld, m_num);
+		RNLib::Memory().ReAllocDouble(&m_datas, numOld, m_num);
 
 		// データの破棄(番号指定の場合)
 		if (idx != NONEDATA)
@@ -86,19 +86,19 @@ short CSetUp3D::Load(const char* loadPath, short idx) {
 //========================================
 // 読み込み処理(エディットデータ)
 //========================================
-bool CSetUp3D::LoadEditData(const char* loadPath) {
+bool _RNC_SetUp3D::LoadEditData(const char* loadPath) {
 
 	CData* loadData = NULL;
-	CMemory::Alloc(&loadData);
+	RNLib::Memory().Alloc(&loadData);
 
 	// 読み込み実行
 	if (!ExecutionLoad(loadPath, *loadData)) {
-		CMemory::Release(&loadData);
+		RNLib::Memory().Release(&loadData);
 		return false;
 	}
 
 	// エディットデータを解放
-	CMemory::Release(&m_editData);
+	RNLib::Memory().Release(&m_editData);
 
 	// エディットデータを上書き
 	m_editData = loadData;
@@ -114,10 +114,10 @@ bool CSetUp3D::LoadEditData(const char* loadPath) {
 //========================================
 // 書き出し処理(エディットデータ)
 //========================================
-void CSetUp3D::SaveEditData(const char* savePath) {
+void _RNC_SetUp3D::SaveEditData(const char* savePath) {
 
 	if (m_editData == NULL) {
-		RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータが存在しません。"));
+		RNLib::Window().Message_ERROR(String("セットアップ3Dデータが存在しません。"));
 		return;
 	}
 
@@ -180,18 +180,18 @@ void CSetUp3D::SaveEditData(const char* savePath) {
 	else
 	{// 書き出し失敗
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータファイルが見つかりませんでした。\n%s", savePath));
+		RNLib::Window().Message_ERROR(String("セットアップ3Dデータファイルが見つかりませんでした。\n%s", savePath));
 	}
 }
 
 //========================================
 // メモリを指定数に初期化
 //========================================
-void CSetUp3D::InitMemory(const UShort& num) {
+void _RNC_SetUp3D::InitMemory(const UShort& num) {
 	CRegist::InitMemory(num);
 
 	// データのメモリ確保
-	CMemory::Alloc(&m_datas, num);
+	RNLib::Memory().Alloc(&m_datas, num);
 }
 
 //================================================================================
@@ -203,7 +203,7 @@ void CSetUp3D::InitMemory(const UShort& num) {
 //========================================
 // 読み込み実行処理
 //========================================
-bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
+bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 	// ファイルを開く
 	if (RNLib::File().OpenLoadFile(loadPath, "SetUp3DFile")) {
@@ -212,13 +212,13 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 				BoneData*& boneDatas = data.m_boneDatas;
 				
 				// ボーンデータ群を解放
-				CMemory::Release(&boneDatas);
+				RNLib::Memory().Release(&boneDatas);
 
 				// ボーンデータ数読み込み
-				RNLib::File().Scan(CFile::SCAN::SHORT, &data.m_boneDataNum);
+				RNLib::File().Scan(_RNC_File::SCAN::SHORT, &data.m_boneDataNum);
 
 				// ボーンデータ群のメモリ確保
-				CMemory::Alloc(&boneDatas, data.m_boneDataNum);
+				RNLib::Memory().Alloc(&boneDatas, data.m_boneDataNum);
 
 				// ボーンデータ群の読み込み
 				int cntBoneData = 0;
@@ -227,7 +227,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 						// エラーメッセージ
 						if (cntBoneData >= data.m_boneDataNum) {
-							RNLib::Window().Message_ERROR(CreateText("ボーンデータの数が指定数をオーバーしています。\n%s", loadPath));
+							RNLib::Window().Message_ERROR(String("ボーンデータの数が指定数をオーバーしています。\n%s", loadPath));
 
 							// ファイルを閉じる
 							RNLib::File().CloseFile();
@@ -241,29 +241,29 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 						// 部品情報の読み込みを開始
 						while (RNLib::File().SearchLoop("}")) {
-							RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.idx, "idx");
-							RNLib::File().Scan(CFile::SCAN::MODELIDX, &boneData.modelIdx, "modelIdx");
-							RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.parentIdx, "parentIdx");
-							RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.relativePos, "relativePos");
-							RNLib::File().Scan(CFile::SCAN::ROT3D_CORRECT, &boneData.relativeRot, "relativeRot");
+							RNLib::File().Scan(_RNC_File::SCAN::SHORT, &boneData.idx, "idx");
+							RNLib::File().Scan(_RNC_File::SCAN::MODELIDX, &boneData.modelIdx, "modelIdx");
+							RNLib::File().Scan(_RNC_File::SCAN::SHORT, &boneData.parentIdx, "parentIdx");
+							RNLib::File().Scan(_RNC_File::SCAN::POS3D, &boneData.relativePos, "relativePos");
+							RNLib::File().Scan(_RNC_File::SCAN::ROT3D_CORRECT, &boneData.relativeRot, "relativeRot");
 							if (RNLib::File().CheckIdentifier("swaying{")) {
-								CMemory::Alloc(&boneData.swaying);
+								RNLib::Memory().Alloc(&boneData.swaying);
 
 								while (RNLib::File().SearchLoop("}")) {
-									RNLib::File().Scan(CFile::SCAN::USHORT, &boneData.swaying->timeMin, "timeMin");
-									RNLib::File().Scan(CFile::SCAN::USHORT, &boneData.swaying->timeAdd, "timeAdd");
-									RNLib::File().Scan(CFile::SCAN::FLOAT, &boneData.swaying->distMin, "distMin");
-									RNLib::File().Scan(CFile::SCAN::FLOAT, &boneData.swaying->distAdd, "distAdd");
+									RNLib::File().Scan(_RNC_File::SCAN::USHORT, &boneData.swaying->timeMin, "timeMin");
+									RNLib::File().Scan(_RNC_File::SCAN::USHORT, &boneData.swaying->timeAdd, "timeAdd");
+									RNLib::File().Scan(_RNC_File::SCAN::FLOAT, &boneData.swaying->distMin, "distMin");
+									RNLib::File().Scan(_RNC_File::SCAN::FLOAT, &boneData.swaying->distAdd, "distAdd");
 								}
 							}
 							else if (RNLib::File().CheckIdentifier("follow{")) {
-								CMemory::Alloc(&boneData.follow);
+								RNLib::Memory().Alloc(&boneData.follow);
 
 								while (RNLib::File().SearchLoop("}")) {
-									RNLib::File().Scan(CFile::SCAN::SHORT, &boneData.follow->followIdx, "followIdx");
-									RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.follow->posRate, "posRate");
-									RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.follow->rotRate, "rotRate");
-									RNLib::File().Scan(CFile::SCAN::POS3D, &boneData.follow->scaleRate, "scaleRate");
+									RNLib::File().Scan(_RNC_File::SCAN::SHORT, &boneData.follow->followIdx, "followIdx");
+									RNLib::File().Scan(_RNC_File::SCAN::POS3D, &boneData.follow->posRate, "posRate");
+									RNLib::File().Scan(_RNC_File::SCAN::POS3D, &boneData.follow->rotRate, "rotRate");
+									RNLib::File().Scan(_RNC_File::SCAN::POS3D, &boneData.follow->scaleRate, "scaleRate");
 								}
 							}
 						}
@@ -275,7 +275,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 				// エラーメッセージ
 				if (cntBoneData < data.m_boneDataNum) {
-					RNLib::Window().Message_ERROR(CreateText("ボーンデータの数が指定数に対して不足しています。\n%s", loadPath));
+					RNLib::Window().Message_ERROR(String("ボーンデータの数が指定数に対して不足しています。\n%s", loadPath));
 
 					// ファイルを閉じる
 					RNLib::File().CloseFile();
@@ -310,13 +310,13 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 				FaceData*& faceDatas = data.m_faceDatas;
 
 				// フェイスデータ群を解放
-				CMemory::Release(&faceDatas);
+				RNLib::Memory().Release(&faceDatas);
 
 				// フェイスデータ数読み込み
-				RNLib::File().Scan(CFile::SCAN::SHORT, &data.m_faceDataNum);
+				RNLib::File().Scan(_RNC_File::SCAN::SHORT, &data.m_faceDataNum);
 
 				// フェイスデータ群のメモリ確保
-				CMemory::Alloc(&faceDatas, data.m_faceDataNum);
+				RNLib::Memory().Alloc(&faceDatas, data.m_faceDataNum);
 
 				// フェイスデータ群の読み込み
 				int cntFaceData = 0;
@@ -325,7 +325,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 						// エラーメッセージ
 						if (cntFaceData >= data.m_faceDataNum) {
-							RNLib::Window().Message_ERROR(CreateText("フェイスデータの数が指定数をオーバーしています。\n%s", loadPath));
+							RNLib::Window().Message_ERROR(String("フェイスデータの数が指定数をオーバーしています。\n%s", loadPath));
 
 							// ファイルを閉じる
 							RNLib::File().CloseFile();
@@ -340,11 +340,11 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 						// 頂点情報の読み込みを開始
 						while (RNLib::File().SearchLoop("}")) {
 							struct LocalFunc {
-								static void LoadFaceVtxData(CSetUp3D::FaceVtxData& vtxData) {
+								static void LoadFaceVtxData(_RNC_SetUp3D::FaceVtxData& vtxData) {
 									while (RNLib::File().SearchLoop("}")) {
-										RNLib::File().Scan(CFile::SCAN::USHORT, &vtxData.boneIdx, "boneIdx");
-										RNLib::File().Scan(CFile::SCAN::UINT, &vtxData.vtxIdx, "vtxIdx");
-										RNLib::File().Scan(CFile::SCAN::POS2D, &vtxData.texPos, "texPos");
+										RNLib::File().Scan(_RNC_File::SCAN::USHORT, &vtxData.boneIdx, "boneIdx");
+										RNLib::File().Scan(_RNC_File::SCAN::UINT, &vtxData.vtxIdx, "vtxIdx");
+										RNLib::File().Scan(_RNC_File::SCAN::POS2D, &vtxData.texPos, "texPos");
 									}
 								}
 							};
@@ -359,8 +359,8 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 							else if (RNLib::File().CheckIdentifier("vtx3{"))
 								LocalFunc::LoadFaceVtxData(faceData.vtxs[3]);
 
-							RNLib::File().Scan(CFile::SCAN::TEXIDX, &faceData.texIdx, "texIdx");
-							RNLib::File().Scan(CFile::SCAN::COLOR, &faceData.col, "col");
+							RNLib::File().Scan(_RNC_File::SCAN::TEXIDX, &faceData.texIdx, "texIdx");
+							RNLib::File().Scan(_RNC_File::SCAN::COLOR, &faceData.col, "col");
 						}
 
 						// カウントを加算
@@ -370,7 +370,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 				// エラーメッセージ
 				if (cntFaceData < data.m_faceDataNum) {
-					RNLib::Window().Message_ERROR(CreateText("フェイスデータの数が指定数に対して不足しています。\n%s", loadPath));
+					RNLib::Window().Message_ERROR(String("フェイスデータの数が指定数に対して不足しています。\n%s", loadPath));
 
 					// ファイルを閉じる
 					RNLib::File().CloseFile();
@@ -388,7 +388,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 	else 
 	{// 読み込み失敗
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("セットアップ3Dデータファイルが存在しません。\n%s", loadPath));
+		RNLib::Window().Message_ERROR(String("セットアップ3Dデータファイルが存在しません。\n%s", loadPath));
 	}
 
 	return false;
@@ -403,7 +403,7 @@ bool CSetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 //========================================
 // コンストラクタ
 //========================================
-CSetUp3D::CData::CData() {
+_RNC_SetUp3D::CData::CData() {
 
 	m_boneDatas   = NULL;
 	m_boneDataNum = 0;
@@ -414,7 +414,7 @@ CSetUp3D::CData::CData() {
 //========================================
 // デストラクタ
 //========================================
-CSetUp3D::CData::~CData() {
+_RNC_SetUp3D::CData::~CData() {
 
 	// 解放処理
 	Release();
@@ -423,12 +423,12 @@ CSetUp3D::CData::~CData() {
 //========================================
 // 解放処理
 //========================================
-void CSetUp3D::CData::Release(void) {
+void _RNC_SetUp3D::CData::Release(void) {
 
 	for (int cntBone = 0; cntBone < m_boneDataNum; cntBone++) {
-		CMemory::Release(&m_boneDatas[cntBone].swaying);
-		CMemory::Release(&m_boneDatas[cntBone].follow);
+		RNLib::Memory().Release(&m_boneDatas[cntBone].swaying);
+		RNLib::Memory().Release(&m_boneDatas[cntBone].follow);
 	}
-	CMemory::Release(&m_boneDatas);
-	CMemory::Release(&m_faceDatas);
+	RNLib::Memory().Release(&m_boneDatas);
+	RNLib::Memory().Release(&m_faceDatas);
 }

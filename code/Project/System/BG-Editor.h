@@ -41,7 +41,7 @@ public:
 		short       lifeMax    = NONEDATA;
 		D3DXVECTOR3 spin       = INITD3DXVECTOR3;
 		D3DXVECTOR3 spinAdd    = INITD3DXVECTOR3;
-		Color		col        = INITCOLOR;
+		Color		col        = COLOR_WHITE;
 		short       modelIdx   = NONEDATA;
 		WORLD_SIDE  side       = WORLD_SIDE::NONE;
 		void*       moveInfo   = NULL;

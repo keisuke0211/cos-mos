@@ -28,7 +28,7 @@ CTransition::CTransition() {
 	m_fMove = 0.0f;
 	m_stateCounter = 0;
 	m_time = 0;
-	m_col = INITCOLOR;
+	m_col = COLOR_WHITE;
 	m_texIdxes[0] = 0;
 	m_texIdxes[1] = 0;
 	m_startGearAngle = 0.0f;
@@ -139,7 +139,7 @@ bool CTransition::Open(const TYPE& type, const UShort& time) {
 	m_stateCounter = 0;
 	m_state = STATE::OPEN;
 	m_time = time;
-	m_startGearAngle = D3DX_PI * fRand();
+	m_startGearAngle = D3DX_PI * RNLib::Number().GetRandomFloat(1.0f);
 
 	return true;
 }

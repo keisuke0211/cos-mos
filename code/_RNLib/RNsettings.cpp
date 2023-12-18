@@ -18,7 +18,7 @@ namespace {
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| RNSettingsの関数
+//==========| RNSettings
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -27,8 +27,8 @@ namespace {
 //========================================
 void RNSettings::Release(void) {
 
-	CMemory::Release(&info.projectName);
-	CMemory::Release(&info.fontListPath);
+	RNLib::Memory().Release(&info.projectName);
+	RNLib::Memory().Release(&info.fontListPath);
 }
 
 //========================================
@@ -37,17 +37,25 @@ void RNSettings::Release(void) {
 bool RNSettings::LoadAndSave(const char* path) {
 
 	// 読み込むファイルとして開けた時、
-	bool isLoad = RNLib::File().OpenLoadFile(path);
+	bool isLoad = false;
+	String loadPath("");
+	switch (RNSystem::GetMode()) {
+	case RNSystem::MODE::SETUP3D_EDITOR:loadPath = "RNData\\SetUp3DEditorSettings.txt"; break;
+	case RNSystem::MODE::LIGHT3D_EDITOR:loadPath = "RNData\\Light3DEditorSettings.txt"; break;
+	case RNSystem::MODE::RAIL3D_EDITOR :loadPath = "RNData\\Rail3DEditorSettings.txt" ; break;
+	default:loadPath = path; break;
+	}
+	isLoad = RNLib::File().OpenLoadFile(loadPath);
 	if (isLoad) {
 		while (RNLib::File().SearchLoop("END")) {
-			RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &info.projectName                     , "projectName"                     );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowWidth                     , "windowWidth"                     );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.windowHeight                    , "windowHeight"                    );
-			RNLib::File().Scan(CFile::SCAN::BOOL          , &info.isFullScreen                    , "isFullScreen"                    );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.resolution                      , "resolution"                      );
-			RNLib::File().Scan(CFile::SCAN::STRING_DYNAMIC, &info.fontListPath                    , "fontListPath"                    );
-			RNLib::File().Scan(CFile::SCAN::FLOAT         , &info.modelOutLineAddDistanceInterval , "modelOutLineAddDistanceInterval" );
-			RNLib::File().Scan(CFile::SCAN::USHORT        , &info.modelOutLineAddDistanceDelimiter, "modelOutLineAddDistanceDelimiter");
+			RNLib::File().Scan(_RNC_File::SCAN::STRING_DYNAMIC, &info.projectName                     , "projectName"                     );
+			RNLib::File().Scan(_RNC_File::SCAN::FLOAT         , &info.windowWidth                     , "windowWidth"                     );
+			RNLib::File().Scan(_RNC_File::SCAN::FLOAT         , &info.windowHeight                    , "windowHeight"                    );
+			RNLib::File().Scan(_RNC_File::SCAN::BOOL          , &info.isFullScreen                    , "isFullScreen"                    );
+			RNLib::File().Scan(_RNC_File::SCAN::FLOAT         , &info.resolution                      , "resolution"                      );
+			RNLib::File().Scan(_RNC_File::SCAN::STRING_DYNAMIC, &info.fontListPath                    , "fontListPath"                    );
+			RNLib::File().Scan(_RNC_File::SCAN::FLOAT         , &info.modelOutLineAddDistanceInterval , "modelOutLineAddDistanceInterval" );
+			RNLib::File().Scan(_RNC_File::SCAN::USHORT        , &info.modelOutLineAddDistanceDelimiter, "modelOutLineAddDistanceDelimiter");
 		}
 
 		// ファイルを閉じる
@@ -55,7 +63,7 @@ bool RNSettings::LoadAndSave(const char* path) {
 	}
 	else {
 		// エラーメッセージ
-		RNLib::Window().Message_ERROR(CreateText("RNライブラリの設定ファイルを開けませんでした。\n以下のパスに設定ファイルを作成するので、情報を入力してください。\n%s", path));
+		RNLib::Window().Message_ERROR(String("RNライブラリの設定ファイルを開けませんでした。\n"));
 	}
 
 	// 書き込むファイルとして開く
@@ -84,13 +92,4 @@ bool RNSettings::LoadAndSave(const char* path) {
 RNSettings::Info RNSettings::GetInfo(void) {
 
 	return info;
-}
-
-//========================================
-// スクリーンモード
-//========================================
-void RNSettings::SetFulScreen(bool screen) {
-
-	info.isFullScreen = screen;
-	RNLib::Window().SetIsFullScreen(screen);
 }

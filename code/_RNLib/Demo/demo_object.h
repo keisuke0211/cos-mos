@@ -19,11 +19,11 @@ public:
 	enum class TYPE { PLAYER, ZONE, MAX, };
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	CDemoObject(const TYPE& type);
+	CDemoObject         (const TYPE& type);
 	virtual ~CDemoObject();
-	void  Update (void) = 0;
-	TYPE& GetType(void)             { return m_type; }
-	void  SetType(const TYPE& type) { m_type = type; }
+	void  Update        (void) = 0;
+	TYPE& GetType       (void)             { return m_type; }
+	void  SetType       (const TYPE& type) { m_type = type; }
 
 protected:
 	//========== [[[ •Ï”éŒ¾ ]]]

@@ -11,6 +11,11 @@
 #include "stage.h"
 
 //****************************************
+// マクロ定義
+//****************************************
+#define LIGHT3D_MAX (1)
+
+//****************************************
 // 無名空間
 //****************************************
 namespace {
@@ -25,6 +30,7 @@ namespace {
 	CCamera*        m_camera;
 	CCamera*        m_subCamera;
 	CTransition     m_transition;
+	CLight3D*       m_light3D[LIGHT3D_MAX];
 }
 
 //================================================================================
@@ -40,6 +46,7 @@ CEffMgr* Manager::EffectMgr(void) { return &m_effectMgr; }
 CStageEditor* Manager::StgEd(void) { return &m_StgEd; }
 CFont* Manager::Font(void) { return &m_Font; }
 CTransition& Manager::Transition(void) { return m_transition; }
+short& Manager::GetLightIdx(UShort lightIdx) { return m_light3D[lightIdx]->GetID(); }
 
 //========================================
 // 初期化処理
@@ -50,9 +57,23 @@ void Manager::Init(CMode::TYPE mode) {
 	// リソースの読み込み
 	CResources::Load();
 
+	// ライト3Dの生成
+	String test = "data\\LIGHT3D\\AmbientLight.txt";
+	for (int cnt = 0; cnt < LIGHT3D_MAX; cnt++) {
+		switch (cnt) {
+		case 0:m_light3D[cnt] = new CLight3D(test); break;
+		default:
+			m_light3D[cnt] = NULL;
+			assert(false);
+			break;
+		}
+	}
+
 	// カメラの生成
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
+	m_camera->SetLightID(m_light3D[0]->GetID());
 	m_subCamera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
+	m_subCamera->SetLightID(m_light3D[0]->GetID());
 
 	// モード設定
 	SetMode(mode);
@@ -110,7 +131,7 @@ void Manager::Update(void) {
 		RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
 			->SetTexUV(m_camera)
 			->SetSize(windowWidth, windowHeight)
-			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
 	// 予約されている時、遷移がモード設定待ちならモードを設定する
@@ -187,5 +208,5 @@ void Manager::Transition(CMode::TYPE newMode, CTransition::TYPE transType) {
 	m_reserveModeType = newMode;
 
 	// 遷移設定
-	m_transition.Close(transType, INITCOLOR, 60);
+	m_transition.Close(transType, COLOR_WHITE, 60);
 }

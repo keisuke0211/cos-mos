@@ -16,29 +16,29 @@
 // クラス定義
 //****************************************
 // ポリゴン2Dクラス
-class CPolygon2D {
+class _RNC_Polygon2D {
 public:
 	//========== [[[ クラス定義 ]]]
 	// 描画情報
 	class CDrawInfo : public CDrawInfoBase {
 	public:
 		// [[[ 関数宣言 ]]]
-		CDrawInfo                         ();
-		~CDrawInfo                        ();
 		static void InitCreateVertexBuffer(void);
-		static void CreateVertexBuffer    (const UShort& num);
-		static void ReleaseVertexBuffer   (void);
+		static void CreateVertexBuffer(const UShort& num);
+		static void ReleaseVertexBuffer(void);
+		CDrawInfo ();
+		~CDrawInfo();
 
 		// [[[ 変数宣言 ]]]
-		static VertexBuffer            ms_vtxBuff;
-		static UShort                  ms_allocPower;
-		static UShort                  ms_allocNum;
-		static UShort                  ms_idxCount;
-		short                          m_idx;
-		void*                          m_tex;
-		Polygon2DAnd3D::TEX_TYPE       m_texType;
-		CDrawState::INTERPOLATION_MODE m_interpolationMode;
-		Vertex2D                       m_vtxs[4];
+		static VertexBuffer ms_vtxBuff;
+		static UShort       ms_allocPower;
+		static UShort       ms_allocNum;
+		static UShort       ms_idxCount;
+		short                              m_idx;
+		void*                              m_tex;
+		Polygon2DAnd3D::TEX_TYPE           m_texType;
+		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
+		Vertex2D                           m_vtxs[4];
 	};
 
 	// 登録情報
@@ -48,7 +48,7 @@ public:
 		CRegistInfo();
 		~CRegistInfo();
 		void ClearParameter(void);
-		CPolygon2D::CDrawInfo* ConvToDrawInfo(void);
+		_RNC_Polygon2D::CDrawInfo* ConvToDrawInfo(void);
 		CRegistInfo* SetIdx              (const short& idx);
 		CRegistInfo* SetPos              (const Pos2D& pos);
 		CRegistInfo* SetAngle            (const Angle& angle);
@@ -61,7 +61,7 @@ public:
 		CRegistInfo* SetTexUV            (const short& texIdx, const Pos2D& pos0 = Pos2D(0.0f, 0.0f), const Pos2D& pos1 = Pos2D(1.0f, 0.0f), const Pos2D& pos2 = Pos2D(0.0f, 1.0f), const Pos2D& pos3 = Pos2D(1.0f, 1.0f));
 		CRegistInfo* SetTexUV            (CCamera* camera,     const Pos2D& pos0 = Pos2D(0.0f, 0.0f), const Pos2D& pos1 = Pos2D(1.0f, 0.0f), const Pos2D& pos2 = Pos2D(0.0f, 1.0f), const Pos2D& pos3 = Pos2D(1.0f, 1.0f));
 		CRegistInfo* SetTexMirrorX       (const bool& isMirror);
-		CRegistInfo* SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode);
+		CRegistInfo* SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode);
 
 	private:
 		// <<< 基本情報 >>>
@@ -86,25 +86,25 @@ public:
 		Polygon2DAnd3D::CSetTexInfoSum m_setTexInfoSum;
 
 		// <<< 描画情報設定 >>>
-		CDrawState::INTERPOLATION_MODE m_interpolationMode;
+		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	static void SetVtxPos        (Vertex2D* vtxs, const Pos2D& pos, const Angle& angle, const float& width, const float& height);
-	static void SetVtxPos        (Vertex2D* vtxs, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
-	static void SetVtxPos_TopLeft(Vertex2D* vtxs, const Pos2D& pos, const float& width, const float& height);
-	static void ApplyResolution  (Vertex2D* vtxs);
-	static void SetVtxRHW        (Vertex2D* vtxs);
-	static void SetVtxCol        (Vertex2D* vtxs, const Color& col);
-	static void SetVtxTex        (Vertex2D* vtxs);
-	static void SetVtxTex_Cut    (Vertex2D* vtxs, const Pos2D& cutPos, const float& width, const float& height);
-	static void SetVtxTex_Cut    (Vertex2D* vtxs, const Pos2D& cutPos, const float& size);
-	CPolygon2D();
-	~CPolygon2D();
-	void Init  (void);
-	void Uninit(void);
-	void Update(void);
-	CRegistInfo* Put(const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen = false);
-	CRegistInfo* Put(const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
-	CRegistInfo* Put(const UShort& priority, const bool& isOnScreen = false);
+	_RNC_Polygon2D                ();
+	~_RNC_Polygon2D               ();
+	void         Init             (void);
+	void         Uninit           (void);
+	void         Update           (void);
+	CRegistInfo* Put              (const UShort& priority, const Pos2D& pos, const Angle& angle, const bool& isOnScreen = false);
+	CRegistInfo* Put              (const UShort& priority, const Pos3D& pos, const Angle& angle, const bool& isOnScreen = false);
+	CRegistInfo* Put              (const UShort& priority, const bool& isOnScreen = false);
+	void         SetVtxPos        (Vertex2D* vtxs, const Pos2D& pos, const Angle& angle, const float& width, const float& height);
+	void         SetVtxPos        (Vertex2D* vtxs, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
+	void         SetVtxPos_TopLeft(Vertex2D* vtxs, const Pos2D& pos, const float& width, const float& height);
+	void         ApplyResolution  (Vertex2D* vtxs);
+	void         SetVtxRHW        (Vertex2D* vtxs);
+	void         SetVtxCol        (Vertex2D* vtxs, const Color& col);
+	void         SetVtxTex        (Vertex2D* vtxs);
+	void         SetVtxTex_Cut    (Vertex2D* vtxs, const Pos2D& cutPos, const float& width, const float& height);
+	void         SetVtxTex_Cut    (Vertex2D* vtxs, const Pos2D& cutPos, const float& size);
 };

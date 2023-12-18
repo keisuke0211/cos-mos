@@ -10,11 +10,11 @@
 // クラス定義
 //****************************************
 // スタティックメッシュクラス
-class CStaticMesh {
+class _RNC_StaticMesh {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CStaticMesh            ();
-	~CStaticMesh           ();
+	_RNC_StaticMesh        ();
+	~_RNC_StaticMesh       ();
 	void   Init            (const UShort& priorityMax);
 	void   Uninit          (void);
 	void   Update          (void);
@@ -38,9 +38,9 @@ private:
 	class CMesh {
 	public:
 		// [[[ 関数宣言 ]]]
-		CMesh();
-		~CMesh();
-		void Draw(Device& device);
+		CMesh        ();
+		~CMesh       ();
+		void Draw    (Device& device);
 		bool SetModel(const Matrix& mtx, const short& modelIdx, const Color& col, const short& matIdx, const short& matNum);
 
 		// [[[ 変数宣言 ]]]

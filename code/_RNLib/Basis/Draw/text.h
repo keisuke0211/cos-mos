@@ -12,7 +12,7 @@
 // クラス定義
 //****************************************
 // テキストクラス
-class CText {
+class _RNC_Text {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	enum class ALIGNMENT { CENTER, LEFT, RIGHT, MAX, };
@@ -27,8 +27,8 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CText                  ();
-	~CText                 ();
+	_RNC_Text              ();
+	~_RNC_Text             ();
 	void      Init         (void);
 	void      Uninit       (void);
 	void      Update       (void);

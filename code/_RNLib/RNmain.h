@@ -54,6 +54,7 @@
 #define INITD3DXVECTOR2       D3DXVECTOR2  (0.0f,0.0f)
 // èâä˙íl
 #define INITMATRIX            Matrix       (1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)
+#define INITMATERIAL          Material     {Color(255,255,255,255),Color(0,0,0,255),Color(255,255,255,255),Color(0,0,0,255),0.0f}
 #define INITPOS2D             Pos2D        (0.0f,0.0f)
 #define INITROT2D             Rot2D        (0.0f,0.0f)
 #define INITVECTOR2D          Vector2D     (0.0f,0.0f)
@@ -64,8 +65,6 @@
 #define INITVECTOR3D          Vector3D     (0.0f,0.0f,0.0f)
 #define INITNORMAL3D          Normal3D     (0.0f,0.0f,0.0f)
 #define INITSCALE3D           Scale3D      (1.0f,1.0f,1.0f)
-#define INITBGCOLOR           Color        {0,0,0,255}
-#define INITCOLOR             Color        {255,255,255,255}
 // â~é¸ó¶
 #define D3DX_PI_HALF          (D3DX_PI*0.5f)
 #define D3DX_PI_DOUBLE        (D3DX_PI*2.0f)
@@ -115,13 +114,16 @@ struct Vertex3D {
 // ç\ë¢ëÃïœä∑
 //****************************************
 // Num
+typedef unsigned char           UChar;
 typedef unsigned short          UShort;
 typedef unsigned int            UInt;
 typedef unsigned long           ULong;
+typedef const char              CChar;
 typedef const short             CShort;
 typedef const int               CInt;
 typedef const long              CLong;
 typedef const float             CFloat;
+typedef const unsigned char     CUChar;
 typedef const unsigned short    CUShort;
 typedef const unsigned int      CUInt;
 typedef const unsigned long     CULong;

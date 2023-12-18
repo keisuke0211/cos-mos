@@ -14,11 +14,11 @@
 // クラス定義
 //****************************************
 // ドール3Dマネージャークラス
-class CDoll3DMgr : public CObjectMgr {
+class _RNC_Doll3DMgr : public CObjectMgr {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CDoll3DMgr                                 ();
-	~CDoll3DMgr                                ();
+	_RNC_Doll3DMgr                             ();
+	~_RNC_Doll3DMgr                            ();
 	void      Update                           (void);
 	void      SetEditDoll                      (CDoll3D*& editDoll)                   { m_editInfo.editDoll = editDoll; }
 	CDoll3D*& GetEditDoll                      (void)                                 { return m_editInfo.editDoll; }

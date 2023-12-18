@@ -34,11 +34,11 @@ CStageEditor::CStageEditor(void)
 	}
 
 	{
-		m_StageColor.Set = INITCOLOR;
-		m_StageColor.Player1 = INITCOLOR;
-		m_StageColor.Player2 = INITCOLOR;
-		m_StageColor.Block = INITCOLOR;
-		m_StageColor.FillBlock = INITCOLOR;
+		m_StageColor.Set = COLOR_WHITE;
+		m_StageColor.Player1 = COLOR_WHITE;
+		m_StageColor.Player2 = COLOR_WHITE;
+		m_StageColor.Block = COLOR_WHITE;
+		m_StageColor.FillBlock = COLOR_WHITE;
 	}
 
 	m_Info.nRow = 0;
@@ -518,10 +518,10 @@ void CStageEditor::StgColor(CSVFILE *pFile, int nRow, int nLine)
 void CStageEditor::SetColor(CSVFILE *pFile, int nRow, int nLine)
 {
 	nLine += 4;
-	ToData(m_StageColor.Set.r, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.g, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
-	ToData(m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.r, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.g, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.b, pFile, nRow, nLine); nLine++;
+	ToData(*(int*)&m_StageColor.Set.a, pFile, nRow, nLine); nLine++;
 }
 
 //========================================
@@ -539,7 +539,7 @@ void CStageEditor::SetStage(int nType)
 		pos.x += ((m_Info.nLineMax * -0.5f) + m_Info.nLine + 0.5f) * fSizeX;
 		pos.y -= ((m_Info.nRowMax * -0.5f) + m_Info.nRow + 0.5f) * fSizeY;
 
-		pos.z = 0.0f/* + fRand() * 4.0f*/;
+		pos.z = 0.0f/* + RNLib::Number().GetRandomFloat(1.0f) * 4.0f*/;
 
 		// ”z’u
 		ObjPlace(fSizeX,fSizeY,pos,nType);

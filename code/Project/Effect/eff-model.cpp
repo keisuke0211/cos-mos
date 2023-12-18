@@ -31,7 +31,7 @@ CEffect_Model::CEffect_Model(void)
 	m_move = INITD3DXVECTOR3;
 	m_scale = INITD3DXVECTOR3;
 	m_rot = INITD3DXVECTOR3;
-	m_col = INITCOLOR;
+	m_col = COLOR_WHITE;
 	m_nNumAll++;
 }
 
@@ -85,7 +85,7 @@ void CEffect_Model::Update(void)
 		m_nCount--;
 
 		//äÑçáåvéZ
-		float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_nCount, m_nCountMax);
+		float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_nCount, m_nCountMax);
 
 		m_move.y -= 0.49f * (m_pos.y / fabsf(m_pos.y));
 

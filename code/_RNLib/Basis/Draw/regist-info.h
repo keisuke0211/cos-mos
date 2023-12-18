@@ -16,10 +16,10 @@
 class CRegistInfoBase {
 public:
 	//===== [[[ ŠÖ”éŒ¾ ]]]
-	CRegistInfoBase();
+	CRegistInfoBase         ();
 	virtual ~CRegistInfoBase();
-	void ClearParameter(void);
-	void AssignToDrawInfo(CDrawInfoBase& drawInfo);
+	void ClearParameter     (void);
+	void AssignToDrawInfo   (CDrawInfoBase& drawInfo);
 
 	//===== [[[ •Ï”’è‹` ]]]
 	short m_clippingID;

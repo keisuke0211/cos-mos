@@ -69,7 +69,7 @@ void CDemo::Init(void) {
 void CDemo::Uninit(void) {
 
 	for (int cntPlayer = 0; cntPlayer < (int)PLAYER::MAX; cntPlayer++)
-		CMemory::Release(&m_players[cntPlayer]);
+		RNLib::Memory().Release(&m_players[cntPlayer]);
 }
 
 //========================================
@@ -77,9 +77,9 @@ void CDemo::Uninit(void) {
 //========================================
 void CDemo::Update(void) {
 
-	RNLib::Text2D().PutDebugLog(CreateText("----------Demo"));
-	RNLib::Text2D().PutDebugLog(CreateText("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
-	RNLib::Text2D().PutDebugLog(CreateText("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
+	RNLib::Text2D().PutDebugLog(String("----------Demo"));
+	RNLib::Text2D().PutDebugLog(String("ControlPlayer[Q]:%s", PLAYER_NAMES[m_controlPlayerCount]));
+	RNLib::Text2D().PutDebugLog(String("ScreenType   [E]:%s", SCREEN_TYPE_NAMES[m_screenTypeCount]));
 
 	{// [[[ ‘€ì ]]]
 		// ‘€ìƒvƒŒƒCƒ„[Ø‚è‘Ö‚¦

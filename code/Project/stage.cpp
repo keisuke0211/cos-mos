@@ -31,9 +31,10 @@ namespace {
 	//========== [[[ ïœêîêÈåæ ]]]
 	int             planetIdx;
 	int             stageIdx;
-	int				Count;
 	Pos3D			cloudpos[MAX_CLOUD];
+	Pos3D			fishpos;
 	float			cloudmove[MAX_CLOUD];
+	int				cloudtex[MAX_CLOUD];
 	CPlayer*        player;
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
@@ -92,15 +93,16 @@ void Stage::Init(void) {
 
 	planetIdx = 0;
 	stageIdx = 0;
-	Count = 0;
 	player = NULL;
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
+	fishpos = Pos3D(100.0f,300.0f,0.0f);
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 200,200.0f,200.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,200.0f,200.0f + rand() % 200 - 100);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
+		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
 	}
 	// ÉuÉçÉbÉNÇÃì«Ç›çûÇ›èàóù
 	CBlock::Load();
@@ -232,7 +234,7 @@ void Stage::UpdateStage(void) {
 				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
 				->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 				->SetSize(windowWidth, windowHeightHalf)
-				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 		}
 	}
 
@@ -246,21 +248,21 @@ void Stage::UpdateStage(void) {
 			if (--counter < 0)
 				counter = 0;
 		}
-		const float rate = CEase::Easing(CEase::TYPE::OUT_SINE, counter, 30);
+		const float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, counter, 30);
 
 		// UIÉJÉÅÉâï`âÊ
 		RNLib::Polygon2D().Put(0, true)
 			->SetPos(Pos2D(-100.0f, windowHeightHalf) + Pos2D(250.0f * rate, 0.0f))
 			->SetTexUV(UICamera[0], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 			->SetSize(200.0f, windowHeight)
-			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 		RNLib::Polygon2D().Put(0, true)
 			->SetPos(Pos2D(windowWidth + 100.0f, windowHeightHalf) + Pos2D(-250.0f * rate, 0.0f))
 			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 			->SetSize(200.0f, windowHeight)
-			->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
-		Matrix eyeMtx = CMatrix::ConvPosRotToMtx(Pos3D(0.0f, 6.0f, 6.85f), Rot3D(0.0f, D3DX_PI, 0.0f));
+		Matrix eyeMtx = RNLib::Matrix().ConvPosRotToMtx(Pos3D(0.0f, 6.0f, 6.85f), Rot3D(0.0f, D3DX_PI, 0.0f));
 
 		static int eyeCounter = 0;
 		static int eyeCounter2 = 0;
@@ -275,7 +277,7 @@ void Stage::UpdateStage(void) {
 			eyeTime = 5 + (rand() % 90);
 		}
 
-		RNLib::Polygon3D().Put(PRIORITY_OBJECT, CMatrix::MultiplyMtx(eyeMtx, UIDoll[1]->GetBoneState(0).GetWorldMtx()))
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, RNLib::Matrix().MultiplyMtx(eyeMtx, UIDoll[1]->GetBoneState(0).GetWorldMtx()))
 			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
 			->SetSize(4.0f, 4.0f)
 			->SetClippingCamera(*UICamera[1]);
@@ -371,18 +373,18 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
 				->SetBillboard(true)
-				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
 				->SetBillboard(true)
-				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 			
 			// â_
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 			{
 				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CLOUD])
+					->SetTex(CResources::TEXTURE_IDXES[cloudtex[nCnt]])
 					->SetVtxPos(Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z))
 					->SetBillboard(true)
 					->SetZTest(false)
@@ -392,7 +394,7 @@ namespace {
 
 				if (cloudpos[nCnt].x >= 550.0f)
 				{
-					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 100 - 100, 200.0f, 200.0f + rand() % 200 - 100);
+					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 200 - 200, 200.0f, 200.0f + rand() % 200 - 100);
 				}
 			}
 		
@@ -402,7 +404,7 @@ namespace {
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true)
-				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 		}
 		if (Stage::CheckPlanetIdx(1))
@@ -413,26 +415,33 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
 				->SetBillboard(true)
-				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			// â∫
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetBillboard(true)
-				->SetInterpolationMode(CDrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			whaleCounter = (whaleCounter + 1) % 1800;
 			float whaleRate = whaleCounter / 1800.0f;
 			float whaleScale = (whaleRate > 0.5f ? 0.5f + (0.5f - whaleRate) : whaleRate) * 2.0f;
-			Matrix mtx = CMatrix::MultiplyMtx(CMatrix::ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), CMatrix::ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
+			Matrix mtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosToMtx(Pos3D(-200.0f, -160.0f, -600.0f)), RNLib::Matrix().ConvPosRotToMtx(Pos3D(-400.0f, 0.0f, 0.0f), Rot3D(whaleRate * D3DX_PI_HALF, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f)));
 
-			whaleDoll->SetPos(CMatrix::ConvMtxToPos(mtx));
+			whaleDoll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
 			whaleDoll->SetRot(Rot3D(0.0f, -D3DX_PI + D3DX_PI_DOUBLE * whaleRate, 0.0f));
 			whaleDoll->SetCol(Color(255, 255, 255, 255 * whaleScale));
 			whaleDoll->SetScale(Scale3D((whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f, (whaleRate < 0.5f ? whaleRate * 2.0f : 1.0f) * 3.0f));
 		}
-
+		else if (Stage::CheckPlanetIdx(1))
+		{// [[[ îwåiï`âÊ ]]]
+		 // ãõ
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
+				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(00.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(200.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
+				->SetBillboard(true);
+		}
 		// [[[ ï«ÉÇÉfÉãï`âÊ ]]]
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);

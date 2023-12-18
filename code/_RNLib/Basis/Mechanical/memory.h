@@ -12,19 +12,14 @@
 //****************************************
 // クラス定義
 //****************************************
-class CMemory {
+class _RNC_Memory {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CMemory();
-	~CMemory();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	static std::mutex& GetMutex(void) { return m_memoryMutex; }
+	static std::mutex& GetMutex(void) { return ms_memoryMutex; }
+	static void AllocString(char** string, const char* source);
 
-	//========================================
+	//========== [[[ 関数定義 ]]]
 	// メモリ確保処理
-	//========================================
 	template <class T>static void Alloc(T** alloc, const int& num = 1, const bool& isMutex = false) {
 		
 		// 解放しておく
@@ -36,15 +31,12 @@ public:
 
 		// 競合回避の為Mutexをロック
 		if (isMutex)
-			std::lock_guard<std::mutex> lock(m_memoryMutex);
+			std::lock_guard<std::mutex> lock(ms_memoryMutex);
 
 		// メモリ確保する
 		*alloc = new T[num];
 	}
-
-	//========================================
 	// メモリ再確保処理(Double)
-	//========================================
 	template <class T>static void AllocDouble(T*** alloc, const int& num, const bool& isMutex = false) {
 
 		// ポインタメモリを再確保
@@ -57,10 +49,7 @@ public:
 			Alloc(&allocTemp[cnt], 1, isMutex);
 		}
 	}
-
-	//========================================
 	// メモリ確保処理(サイズ指定)
-	//========================================
 	static void Alloc(void** alloc, const size_t& size, const bool& isMutex = true) {
 		
 		// 解放しておく
@@ -68,15 +57,12 @@ public:
 
 		// 競合回避の為Mutexをロック
 		if (isMutex)
-			std::lock_guard<std::mutex> lock(m_memoryMutex);
+			std::lock_guard<std::mutex> lock(ms_memoryMutex);
 
 		// メモリ確保する
 		*alloc = malloc(size);
 	}
-
-	//========================================
 	// メモリ再確保処理
-	//========================================
 	template <class T>static void ReAlloc(T** alloc, const int& beforeNum, const int& afterNum, const bool& isMutex = false) {
 
 		// 新しい数が0以下の時、解放して終了
@@ -104,10 +90,7 @@ public:
 		Release(alloc);
 		*alloc = newAlloc;
 	}
-
-	//========================================
 	// メモリ再確保処理(Double)
-	//========================================
 	template <class T>static void ReAllocDouble(T*** alloc, const int& beforeNum, const int& afterNum, const bool& isMutex = false) {
 
 		// [[[ 減っている時 ]]]
@@ -133,10 +116,7 @@ public:
 			}
 		}
 	}
-
-	//========================================
 	// メモリ解放処理
-	//========================================
 	template <class T>static void Release(T** release) {
 
 		// NULLなら解放しない
@@ -147,10 +127,7 @@ public:
 		delete[] (*release);
 		*release = NULL;
 	}
-
-	//========================================
 	// メモリ解放処理(Double)
-	//========================================
 	template <class T>static void ReleaseDouble(T*** release, const int& num) {
 
 		// NULLなら解放しない
@@ -166,5 +143,5 @@ public:
 
 private:
 	//========== [[[ 変数宣言 ]]]
-	static std::mutex m_memoryMutex;
+	static std::mutex ms_memoryMutex;
 };

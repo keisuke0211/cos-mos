@@ -78,7 +78,7 @@ void CPlanet::Update(void) {
 
 	if (m_moveCounter % s_maxAnimeCounter == 0)
 	{
-		m_move = CGeometry::GetRandomVec() * 0.05f;
+		m_move = RNLib::Geometry().GetRandomVec() * 0.05f;
 		m_move.z = 0.0f;
 	}
 

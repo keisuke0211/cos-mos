@@ -71,9 +71,9 @@ void CSpike::Update(void)
 	else
 	{
 		m_nCnt = MAX_COUNT;
-		float m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
+		float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
 		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y, m_pos.z);
-		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos,D3DXVECTOR3(m_ScaleTex, m_ScaleTex,0.0f), Color{ 255,0,255,255 }, CParticle::TYPE::TYPE_FLOATUP, 300,m_rot);
+		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], m_TexPos,D3DXVECTOR3(ScaleTex, ScaleTex,0.0f), Color{ 255,0,255,255 }, CParticle::TYPE::TYPE_FLOATUP, 300,m_rot);
 	}
 }
 

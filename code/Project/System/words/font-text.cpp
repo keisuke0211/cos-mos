@@ -14,7 +14,7 @@
 CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 {
 	m_Info.TxtBoxPos = INITD3DXVECTOR2;
-	m_Info.TxtBoxCol = INITCOLOR;
+	m_Info.TxtBoxCol = COLOR_WHITE;
 	m_Info.TxtBoxMove = INITD3DXVECTOR2;
 	m_Info.FontCol = INITD3DCOLOR;
 	m_Info.TxtBoxColOld = INITD3DCOLOR;
@@ -71,7 +71,7 @@ CFontText::~CFontText()
 //========================================
 HRESULT CFontText::Init()
 {
-	m_Info.TxtBoxCol = INITCOLOR;
+	m_Info.TxtBoxCol = COLOR_WHITE;
 	m_Info.FontCol = INITD3DCOLOR;
 	m_Info.TxtBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;

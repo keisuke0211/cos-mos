@@ -111,12 +111,11 @@ void CExtenddog::Update(void) {
 	}
 
 	// 割合計算 
-	CFloat fCountRate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
+	CFloat fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_nCntShrink, MAX_COUNT);
 
 	const Rot3D Rot = !m_bInversion ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI);
 
 	//サイズ割合
-	CFloat SizeRate = SIZE_OF_1_SQUARE * fCountRate;
 	CFloat HeightRate = (m_nHeightMax - m_nHeightMin) * fCountRate;
 
 	//高さ
@@ -193,14 +192,14 @@ void CExtenddog::Update(void) {
 	{
 		CFloat IDealMax = m_HeadPos.y + SIZE_OF_1_SQUARE * 0.5f;
 		CFloat IDealMin = m_HipPos.y - SIZE_OF_1_SQUARE * 0.5f;
-		RNLib::Text2D().PutDebugLog(CreateText("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
+		RNLib::Text2D().PutDebugLog(String("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
 									IDealMax, IDealMin, IDealMax - IDealMin, m_height));
 	}
 	else
 	{
 		CFloat IDealMax = m_HipPos.y + SIZE_OF_1_SQUARE * 0.5f;
 		CFloat IDealMin = m_HeadPos.y - SIZE_OF_1_SQUARE * 0.5f;
-		RNLib::Text2D().PutDebugLog(CreateText("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
+		RNLib::Text2D().PutDebugLog(String("理想高Y:%.1f, 理想低Y:%.1f  理想高さ:%.1f  実際高さ%.1f",
 									IDealMax, IDealMin, IDealMax - IDealMin, m_height));
 	}
 #endif

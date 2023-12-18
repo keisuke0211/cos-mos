@@ -25,7 +25,7 @@ CRocketPartsUI::CRocketPartsUI(void) {
 	m_scale = Scale2D(SCALE, SCALE);
 	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\rocket_001.png");
 	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\parts_frame.png");
-	m_colorA = INITCOLOR.a;
+	m_colorA = COLOR_WHITE.a;
 	m_num = 0;
 	m_state = NULL;
 	m_FramePos = 0.0f;
@@ -93,13 +93,13 @@ void CRocketPartsUI::Update(void) {
 			}
 			else if (m_state[nUI] == STATE::OBTAIN)
 			{
-				m_colorA = INITCOLOR.a;
+				m_colorA = COLOR_WHITE.a;
 			}
 
 			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + m_scale.x * nUI, m_pos.y), 0.0f)
 				->SetSize(m_scale.x, m_scale.y)
 				->SetTex(m_TexIdx[0])
-				->SetCol(Color{ INITCOLOR.r,INITCOLOR.g,INITCOLOR.b,(UShort)m_colorA });
+				->SetCol(Color{ COLOR_WHITE.r,COLOR_WHITE.g,COLOR_WHITE.b,(UShort)m_colorA });
 		}
 	}
 }

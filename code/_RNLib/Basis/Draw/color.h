@@ -1,10 +1,12 @@
 //========================================
 // 
-// 色の処理のヘッダファイル
+// 色クラス
 // Author:RIKU NISHIMURA
 // 
 //========================================
 #pragma once
+
+#include "../Calculation/number.h"
 
 //****************************************
 // マクロ定義
@@ -32,26 +34,15 @@ public:
 
 	// 設定
 	template <class R, class G, class B, class A>Color(const R& setR, const G& setG, const B& setB, const A& setA) {
-		if (!(typeid(R) == typeid(int) || typeid(R) == typeid(UInt) || typeid(R) == typeid(short) || typeid(R) == typeid(UShort) || typeid(R) == typeid(long) || typeid(R) == typeid(ULong) || typeid(R) == typeid(float))) {
-			assert(false); 
-			return; 
-		}
-		if (!(typeid(G) == typeid(int) || typeid(G) == typeid(UInt) || typeid(G) == typeid(short) || typeid(G) == typeid(UShort) || typeid(G) == typeid(long) || typeid(G) == typeid(ULong) || typeid(G) == typeid(float))) {
-			assert(false);
-			return;
-		}
-		if (!(typeid(B) == typeid(int) || typeid(B) == typeid(UInt) || typeid(B) == typeid(short) || typeid(B) == typeid(UShort) || typeid(B) == typeid(long) || typeid(B) == typeid(ULong) || typeid(B) == typeid(float))) {
-			assert(false); 
-			return;
-		}
-		if (!(typeid(A) == typeid(int) || typeid(A) == typeid(UInt) || typeid(A) == typeid(short) || typeid(A) == typeid(UShort) || typeid(A) == typeid(long) || typeid(A) == typeid(ULong) || typeid(A) == typeid(float))) {
-			assert(false);
-			return;
-		}
-		UShort convR = (UShort)setR;
-		UShort convG = (UShort)setG;
-		UShort convB = (UShort)setB;
-		UShort convA = (UShort)setA;
+		
+		if (!_RNC_Number::FindIsNumber(setR)) { assert(false); return; }
+		if (!_RNC_Number::FindIsNumber(setG)) { assert(false); return; }
+		if (!_RNC_Number::FindIsNumber(setB)) { assert(false); return; }
+		if (!_RNC_Number::FindIsNumber(setA)) { assert(false); return; }
+		ULong convR = (ULong)setR;
+		ULong convG = (ULong)setG;
+		ULong convB = (ULong)setB;
+		ULong convA = (ULong)setA;
 		convR = convR > 255 ? 255 : convR;
 		convG = convG > 255 ? 255 : convG;
 		convB = convB > 255 ? 255 : convB;
@@ -61,13 +52,17 @@ public:
 		b = convB;
 		a = convA;
 	}
+	// 変換
+	operator D3DCOLOR      const() { return D3DCOLOR_RGBA(r, g, b, a); }
+	operator D3DXCOLOR     const() { return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255); }
+	operator D3DCOLORVALUE const() { return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255); }
 	// 加算
-	Color operator +(const Color& ovr) const {
+	Color operator +(const Color& other) const {
 		Color col = *this;
-		col.r += ovr.r;
-		col.g += ovr.g;
-		col.b += ovr.b;
-		col.a += ovr.a;
+		col.r += other.r;
+		col.g += other.g;
+		col.b += other.b;
+		col.a += other.a;
 		return col;
 	}
 	// 乗算
@@ -89,11 +84,11 @@ public:
 		return col;
 	}
 	// 加算代入
-	Color operator +=(Color& col) {
-		this->r += col.r;
-		this->g += col.g;
-		this->b += col.b;
-		this->a += col.a;
+	Color operator +=(Color& other) {
+		this->r += other.r;
+		this->g += other.g;
+		this->b += other.b;
+		this->a += other.a;
 		return *this;
 	}
 	// 乗算代入
@@ -113,33 +108,33 @@ public:
 		return *this;
 	}
 	// 等価比較(等しい)
-	bool operator ==(const Color& col) {
+	bool operator ==(const Color& other) {
 		return (
-			(this->r == col.r) &&
-			(this->g == col.g) &&
-			(this->b == col.b) &&
-			(this->a == col.a)
+			(this->r == other.r) &&
+			(this->g == other.g) &&
+			(this->b == other.b) &&
+			(this->a == other.a)
 			);
 	}
 	// 等価比較(等しくない)
-	bool operator !=(const Color& col) {
-		return !(*this == col);
+	bool operator !=(const Color& other) {
+		return !(*this == other);
 	}
 	// 設定
-	Color Set(const D3DXCOLOR& col) {
-		this->r = col.r * 255;
-		this->g = col.g * 255;
-		this->b = col.b * 255;
-		this->a = col.a * 255;
+	Color Set(const D3DXCOLOR& other) {
+		this->r = other.r * 255;
+		this->g = other.g * 255;
+		this->b = other.b * 255;
+		this->a = other.a * 255;
 		return *this;
 	}
 	// 混ぜた色を取得
-	Color GetMixed(const Color& col) {
+	Color GetMixed(const Color& other) {
 		Color selfCol = *this;
-		selfCol.r *= (float)col.r / 255;
-		selfCol.g *= (float)col.g / 255;
-		selfCol.b *= (float)col.b / 255;
-		selfCol.a *= (float)col.a / 255;
+		selfCol.r *= (float)other.r / 255;
+		selfCol.g *= (float)other.g / 255;
+		selfCol.b *= (float)other.b / 255;
+		selfCol.a *= (float)other.a / 255;
 		return selfCol;
 	}
 	// 明るくした色を取得
@@ -154,14 +149,14 @@ public:
 		col.a = col.a > 255 ? 255 : col.a;
 		return col;
 	}
-	// 変換
-	D3DCOLOR ConvD3DCOLOR(void) const {
-		return D3DCOLOR_RGBA(r, g, b, a);
+	// 透明にした色を取得
+	Color GetAlphaApplied(const float& alpha) {
+		Color col = *this;
+		col.a *= alpha;
+		col.a = col.a > 255 ? 255 : col.a;
+		return col;
 	}
-	D3DXCOLOR ConvD3DXCOLOR(void) const {
-		return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255);
-	}
-
+	
 	//========== [[[ 変数宣言 ]]]
 	UShort r;	// 赤
 	UShort g;	// 緑
