@@ -13,18 +13,18 @@
 class _RNC_Count {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	_RNC_Count       ();
-	~_RNC_Count      ();
-	void   Init      (void);
-	void   Uninit    (void);
-	void   Update    (void);
-	UShort GetCount  (void) { return m_count; };
-	bool   GetBlinkF2(void) { return m_isBlinkF2; }
-	bool   GetBlinkF4(void) { return m_isBlinkF4; }
+	_RNC_Count      ();
+	~_RNC_Count     ();
+	void  Init      (void);
+	void  Uninit    (void);
+	void  Update    (void);
+	ULong GetCount  (void) { return m_count; };
+	bool  GetBlinkF2(void) { return m_isBlinkF2; }
+	bool  GetBlinkF4(void) { return m_isBlinkF4; }
 
 private:
 	//========== [[[ •Ï”éŒ¾ ]]]
-	UShort m_count;
-	bool   m_isBlinkF2;
-	bool   m_isBlinkF4;
+	ULong m_count;
+	bool  m_isBlinkF2;
+	bool  m_isBlinkF4;
 };
