@@ -108,6 +108,9 @@ void Stage::Init(void) {
 	// 環境音プレイヤーの初期化処理
 	StageSoundPlayer::Init();
 
+	// カメラのライト
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
+
 	MaxPlanet = 0;
 	ClearRecord();
 }
