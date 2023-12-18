@@ -28,6 +28,8 @@ private:
 	CRail3D m_rail3D;
 	short   m_counter;
 	short   m_time;
+	short   m_modelIdx;
+	CDoll3D m_doll;
 	short   m_selectPointIdx;
 	bool    m_isSaved;
 };
