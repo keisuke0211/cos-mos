@@ -15,9 +15,9 @@
 class CDrawInfoBase {
 public:
 	//===== [[[ ŠÖ”éŒ¾ ]]]
-	CDrawInfoBase();
+	CDrawInfoBase         ();
 	virtual ~CDrawInfoBase();
-	virtual void Draw(Device& device, const Matrix& viewMtx) {}
+	virtual void Draw     (Device& device, const Matrix& viewMtx) {}
 
 	//===== [[[ •Ï”’è‹` ]]]
 	short m_clippingID;

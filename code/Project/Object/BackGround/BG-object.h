@@ -28,12 +28,12 @@ public:
 			return;
 		m_Info.lifeMax = m_Info.life;
 		m_pos  = m_Info.pos;
-		m_pos.x += m_Info.posAdd.x * fRand();
-		m_pos.y += m_Info.posAdd.y * fRand();
-		m_pos.z += m_Info.posAdd.z * fRand();
-		m_Info.spin.x += m_Info.spinAdd.x * fRand();
-		m_Info.spin.y += m_Info.spinAdd.y * fRand();
-		m_Info.spin.z += m_Info.spinAdd.z * fRand();
+		m_pos.x += m_Info.posAdd.x * RNLib::Number().GetRandomFloat(1.0f);
+		m_pos.y += m_Info.posAdd.y * RNLib::Number().GetRandomFloat(1.0f);
+		m_pos.z += m_Info.posAdd.z * RNLib::Number().GetRandomFloat(1.0f);
+		m_Info.spin.x += m_Info.spinAdd.x * RNLib::Number().GetRandomFloat(1.0f);
+		m_Info.spin.y += m_Info.spinAdd.y * RNLib::Number().GetRandomFloat(1.0f);
+		m_Info.spin.z += m_Info.spinAdd.z * RNLib::Number().GetRandomFloat(1.0f);
 	}
 
 protected:

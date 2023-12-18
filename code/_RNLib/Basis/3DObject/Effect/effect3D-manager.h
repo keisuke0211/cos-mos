@@ -12,10 +12,10 @@
 // クラス定義
 //****************************************
 // エフェクト3Dマネージャークラス
-class CEffect3DMgr : public CObjectMgr {
+class _RNC_Effect3DMgr : public CObjectMgr {
 public:
 	//========== [[[ 関数宣言 ]]]
-	CEffect3DMgr();
-	~CEffect3DMgr();
-	void Update(void);
+	_RNC_Effect3DMgr ();
+	~_RNC_Effect3DMgr();
+	void Update      (void);
 };

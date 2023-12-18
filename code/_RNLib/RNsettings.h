@@ -29,5 +29,4 @@ namespace RNSettings {
 	void Release(void);
 	bool LoadAndSave(const char* path);
 	Info GetInfo(void);
-	void SetFulScreen(bool screen);
 }

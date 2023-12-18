@@ -15,20 +15,20 @@
 //========================================
 // コンストラクタ
 //========================================
-CCameraMgr::CCameraMgr() : CObjectMgr("RN_CameraMgr") {
+_RNC_CameraMgr::_RNC_CameraMgr() : CObjectMgr("RN_CameraMgr") {
 
 }
 
 //========================================
 // デストラクタ
 //========================================
-CCameraMgr::~CCameraMgr() {
+_RNC_CameraMgr::~_RNC_CameraMgr() {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CCameraMgr::Update(void) {
+void _RNC_CameraMgr::Update(void) {
 
 }

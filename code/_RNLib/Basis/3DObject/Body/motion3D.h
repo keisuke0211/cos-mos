@@ -13,7 +13,7 @@
 //****************************************
 // クラス定義
 //****************************************
-class CMotion3D : public CRegist {
+class _RNC_Motion3D : public CRegist {
 public:
 	//========== [[[ 列挙型定義 ]]]
 	// コマンド
@@ -30,17 +30,17 @@ public:
 	struct CommandData_Move {
 		UShort      time;
 		Pos3D       targetPos;
-		CEase::TYPE easeType;
+		_RNC_Ease::TYPE easeType;
 	};
 	struct CommandData_Spin {
 		UShort      time;
 		Rot3D       targetRot;
-		CEase::TYPE easeType;
+		_RNC_Ease::TYPE easeType;
 	};
 	struct CommandData_Scaling {
 		UShort      time;
 		Scale3D     targetScale;
-		CEase::TYPE easeType;
+		_RNC_Ease::TYPE easeType;
 	};
 	struct CommandData {
 		short   time    = 0;
@@ -73,8 +73,8 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CMotion3D          ();
-	~CMotion3D         ();
+	_RNC_Motion3D      ();
+	~_RNC_Motion3D     ();
 	void   Init        (void);
 	void   Uninit      (void);
 	void   Update      (void);

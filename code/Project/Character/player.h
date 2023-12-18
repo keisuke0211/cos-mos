@@ -98,6 +98,7 @@ public:
 		bool isDeath;       // 死亡フラグ
 		int  deathCounter;  // 死亡カウンター
 		int  deathCounter2; // 死亡カウンター2
+		int  DeathType;     // 死亡タイプ
 
 		//-------------------------------
 		//SWAP待ちの吹き出し用
@@ -111,7 +112,7 @@ public:
 		//キーコンフィグ
 		//-------------------------------
 		int Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
-		CInput::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
+		_RNC_Input::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
 
 	static const float SIZE_WIDTH;	// 横幅
@@ -202,6 +203,7 @@ public:
 		SWAP_GUIDE,     // スワップガイド
 		CHARACTER,      // キャラクター
 		DEATH_MARK,     // 死亡マーク
+		DEATH_INK,      // 死亡インク
 		DEATH_PARTI,    // 死亡パーティクル
 		GOAL_EFFECT,    // ゴール・ロケット乗車時のエフェクト
 		MAX
@@ -337,7 +339,7 @@ private:
 		short expand;    // 膨らみ
 		short explosion; // 破裂
 
-		CSound *pSound;	// サウンドクラス保管用
+		_RNC_Sound *pSound;	// サウンドクラス保管用
 	};
 	static SE s_SE;		//サウンド用構造体
 

@@ -13,9 +13,44 @@
 //================================================================================
 
 //========================================
-// [静的]2点の距離を調べる
+// コンストラクタ
 //========================================
-float CGeometry::FindDistance(const Pos3D& posA, const Pos3D& posB) {
+_RNC_Geometry::_RNC_Geometry() {
+
+}
+
+//========================================
+// デストラクタ
+//========================================
+_RNC_Geometry::~_RNC_Geometry() {
+
+}
+
+//========================================
+// 初期化処理
+//========================================
+void _RNC_Geometry::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void _RNC_Geometry::Uninit(void) {
+
+}
+
+//========================================
+// 更新処理
+//========================================
+void _RNC_Geometry::Update(void) {
+
+}
+
+//========================================
+// 2点の距離を調べる
+//========================================
+float _RNC_Geometry::FindDistance(const Pos3D& posA, const Pos3D& posB) {
 
 	const float x = posA.x - posB.x;	// 平方根のX辺
 	const float y = posA.y - posB.y;	// 平方根のY辺
@@ -26,9 +61,9 @@ float CGeometry::FindDistance(const Pos3D& posA, const Pos3D& posB) {
 }
 
 //========================================
-// [静的]2点の距離を調べる(XZ平面)
+// 2点の距離を調べる(XZ平面)
 //========================================
-float CGeometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {
+float _RNC_Geometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {
 
 	const float x = posA.x - posB.x;	// 平方根のX辺
 	const float z = posA.z - posB.z;	// 平方根のZ辺
@@ -38,9 +73,9 @@ float CGeometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {
 }
 
 //========================================
-// [静的]面までの垂直距離を調べる
+// 面までの垂直距離を調べる
 //========================================
-float CGeometry::FindDistanceToPlane(const Pos3D& basePos, const Pos3D& targetPos, const Vector3D& targetNor) {
+float _RNC_Geometry::FindDistanceToPlane(const Pos3D& basePos, const Pos3D& targetPos, const Vector3D& targetNor) {
 
 	Vector3D planeToPosVec = basePos - targetPos;
 	Vector3D planeNor = targetNor;
@@ -50,33 +85,33 @@ float CGeometry::FindDistanceToPlane(const Pos3D& basePos, const Pos3D& targetPo
 }
 
 //========================================
-// [静的]2点の角度を調べる(XY平面)
+// 2点の角度を調べる(XY平面)
 //========================================
-Angle CGeometry::FindAngleXY(const Pos3D& pos, const Pos3D& targetPos) {
+Angle _RNC_Geometry::FindAngleXY(const Pos3D& pos, const Pos3D& targetPos) {
 	
 	return -(atan2f(targetPos.y - pos.y, targetPos.x - pos.x) - D3DX_PI_HALF);
 }
 
 //========================================
-// [静的]2点の角度を調べる(XZ平面)
+// 2点の角度を調べる(XZ平面)
 //========================================
-Angle CGeometry::FindAngleXZ(const Pos3D& pos, const Pos3D& targetPos) {
+Angle _RNC_Geometry::FindAngleXZ(const Pos3D& pos, const Pos3D& targetPos) {
 	
 	return -(atan2f(targetPos.z - pos.z, targetPos.x - pos.x) - D3DX_PI_HALF);
 }
 
 //========================================
-// [静的]2点の向きを調べる
+// 2点の向きを調べる
 //========================================
-Rot3D CGeometry::FindRot(const Pos3D& pos, const Pos3D& targetPos) {
+Rot3D _RNC_Geometry::FindRot(const Pos3D& pos, const Pos3D& targetPos) {
 
-	return CGeometry::FindVecRot(targetPos - pos);
+	return RNLib::Geometry().FindVecRot(targetPos - pos);
 }
 
 //========================================
-// [静的]交点座標を調べる(XZ平面)
+// 交点座標を調べる(XZ平面)
 //========================================
-Pos3D CGeometry::FindIntersectionXZ(const Pos3D& posA1, const Pos3D& posA2, const Pos3D& posB1, const Pos3D& posB2) {
+Pos3D _RNC_Geometry::FindIntersectionXZ(const Pos3D& posA1, const Pos3D& posA2, const Pos3D& posB1, const Pos3D& posB2) {
 
 	const Vector3D B1B2Vec = posB2 - posB1;	// ベクトルB1⇒B2
 	const Vector3D A1A2Vec = posA2 - posA1;	// ベクトルA1⇒A2
@@ -90,9 +125,9 @@ Pos3D CGeometry::FindIntersectionXZ(const Pos3D& posA1, const Pos3D& posA2, cons
 }
 
 //========================================
-// [静的]角度の差を調べる
+// 角度の差を調べる
 //========================================
-Angle CGeometry::FindAngleDifference(const Angle& angle, const Angle& targetAngle) {
+Angle _RNC_Geometry::FindAngleDifference(const Angle& angle, const Angle& targetAngle) {
 	
 	// [[[ angle = + & targetAngle = + ]]]
 	if ((angle >= 0.0f) && (targetAngle >= 0.0f))
@@ -131,9 +166,9 @@ Angle CGeometry::FindAngleDifference(const Angle& angle, const Angle& targetAngl
 }
 
 //========================================
-// [静的]向きのベクトルを調べる
+// 向きのベクトルを調べる
 //========================================
-Vector3D CGeometry::FindRotVec(const Rot3D& rot) {
+Vector3D _RNC_Geometry::FindRotVec(const Rot3D& rot) {
 
 	const float sinX = sinf(rot.x);
 	const float cosX = cosf(rot.x);
@@ -147,9 +182,9 @@ Vector3D CGeometry::FindRotVec(const Rot3D& rot) {
 }
 
 //========================================
-// [静的]ベクトルの向きを調べる
+// ベクトルの向きを調べる
 //========================================
-Rot3D CGeometry::FindVecRot(const Vector3D& vec) {
+Rot3D _RNC_Geometry::FindVecRot(const Vector3D& vec) {
 
 	Normal3D nor = vec;
 	D3DXVec3Normalize(&nor, &nor);
@@ -158,9 +193,9 @@ Rot3D CGeometry::FindVecRot(const Vector3D& vec) {
 }
 
 //========================================
-// [静的]外積から法線を調べる
+// 外積から法線を調べる
 //========================================
-Normal3D CGeometry::FindVecNor(const Vector3D& vecA, const Vector3D& vecB) {
+Normal3D _RNC_Geometry::FindVecNor(const Vector3D& vecA, const Vector3D& vecB) {
 
 	Normal3D nor = INITNORMAL3D;
 	D3DXVec3Cross(&nor, &vecA, &vecB);
@@ -170,13 +205,13 @@ Normal3D CGeometry::FindVecNor(const Vector3D& vecA, const Vector3D& vecB) {
 }
 
 //========================================
-// [静的]ランダムなベクトルを取得
+// ランダムなベクトルを取得
 //========================================
-Normal3D CGeometry::GetRandomVec(void) {
+Normal3D _RNC_Geometry::GetRandomVec(void) {
 
-	float x   = fRand();
-	float y   = fRand();
-	float z   = fRand();
+	float x   = RNLib::Number().GetRandomFloat(1.0f);
+	float y   = RNLib::Number().GetRandomFloat(1.0f);
+	float z   = RNLib::Number().GetRandomFloat(1.0f);
 	float sum = x + y + z;
 	if (sum > 0.0f) {
 		x /= sum;
@@ -192,39 +227,4 @@ Normal3D CGeometry::GetRandomVec(void) {
 	}
 
 	return Normal3D(x, y, z);
-}
-
-//========================================
-// コンストラクタ
-//========================================
-CGeometry::CGeometry() {
-
-}
-
-//========================================
-// デストラクタ
-//========================================
-CGeometry::~CGeometry() {
-
-}
-
-//========================================
-// 初期化処理
-//========================================
-void CGeometry::Init(void) {
-
-}
-
-//========================================
-// 終了処理
-//========================================
-void CGeometry::Uninit(void) {
-
-}
-
-//========================================
-// 更新処理
-//========================================
-void CGeometry::Update(void) {
-
 }

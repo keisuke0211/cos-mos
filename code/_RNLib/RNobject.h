@@ -36,12 +36,12 @@ public:
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CMotion3D         m_motion3D;
-	CSetUp3D          m_setUp3D;
-	CDoll3DMgr        m_doll3DMgr;
-	CEffect3D         m_effect3D;
-	CEffect3DMgr      m_effect3DMgr;
-	CStandardEffect3D m_standardEffect3D;
+	_RNC_Motion3D         m_motion3D;
+	_RNC_SetUp3D          m_setUp3D;
+	_RNC_Doll3DMgr        m_doll3DMgr;
+	_RNC_Effect3D         m_effect3D;
+	_RNC_Effect3DMgr      m_effect3DMgr;
+	_RNC_StandardEffect3D m_standardEffect3D;
 };
 
 // åvéZ
@@ -71,11 +71,11 @@ public:
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CEase     m_ease;
-	CGeometry m_geometry;
-	CHitTest  m_hitTest;
-	CMatrix   m_matrix;
-	CNumber   m_number;
+	_RNC_Ease     m_ease;
+	_RNC_Geometry m_geometry;
+	_RNC_HitTest  m_hitTest;
+	_RNC_Matrix   m_matrix;
+	_RNC_Number   m_number;
 };
 
 // ï`âÊ
@@ -83,7 +83,7 @@ class CDraw {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init(Device& device, const UShort& priorityMax) {
-		m_staticMesh   .Init(priorityMax);
+		m_staticMesh.Init(priorityMax);
 		m_model		.Init();
 		m_polygon2D	.Init();
 		m_polygon3D	.Init();
@@ -91,12 +91,11 @@ public:
 		m_text3D	.Init();
 		m_drawMgr	.Init(priorityMax);
 		m_drawState	.Init(device);
-		m_light3D	.Init();
 		m_text		.Init();
 		m_texture	.Init();
 	}
 	void Uninit(void) {
-		m_staticMesh   .Uninit();
+		m_staticMesh.Uninit();
 		m_model		.Uninit();
 		m_polygon2D	.Uninit();
 		m_polygon3D	.Uninit();
@@ -104,12 +103,11 @@ public:
 		m_text3D	.Uninit();
 		m_drawMgr	.Uninit();
 		m_drawState	.Uninit();
-		m_light3D	.Uninit();
 		m_text		.Uninit();
 		m_texture	.Uninit();
 	}
 	void Update(void) {
-		m_staticMesh   .Update();
+		m_staticMesh.Update();
 		m_model		.Update();
 		m_polygon2D	.Update();
 		m_polygon3D	.Update();
@@ -117,24 +115,23 @@ public:
 		m_text3D	.Update();
 		m_drawMgr	.Update();
 		m_drawState	.Update();
-		m_light3D	.Update();
 		m_text		.Update();
 		m_texture	.Update();
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CStaticMesh m_staticMesh;
-	CModel      m_model;
-	CPolygon2D  m_polygon2D;
-	CPolygon3D  m_polygon3D;
-	CText2D     m_text2D;
-	CText3D     m_text3D;
-	CCameraMgr  m_cameraMgr;
-	CDrawMgr    m_drawMgr;
-	CDrawState  m_drawState;
-	CLight3D    m_light3D;
-	CText       m_text;
-	CTexture    m_texture;
+	_RNC_StaticMesh m_staticMesh;
+	_RNC_Model      m_model;
+	_RNC_Polygon2D  m_polygon2D;
+	_RNC_Polygon3D  m_polygon3D;
+	_RNC_Text2D     m_text2D;
+	_RNC_Text3D     m_text3D;
+	_RNC_CameraMgr  m_cameraMgr;
+	_RNC_DrawMgr    m_drawMgr;
+	_RNC_DrawState  m_drawState;
+	_RNC_Light3DMgr m_light3DMgr;
+	_RNC_Text       m_text;
+	_RNC_Texture    m_texture;
 };
 
 // ã@äB
@@ -145,7 +142,6 @@ public:
 		m_count	.Init();
 		m_file	.Init();
 		m_input	.Init(instanceHandle);
-		m_memory.Init();
 		m_sound	.Init();
 		m_window.Init();
 	}
@@ -153,7 +149,6 @@ public:
 		m_count	.Uninit();
 		m_file	.Uninit();
 		m_input	.Uninit();
-		m_memory.Uninit();
 		m_sound	.Uninit();
 		m_window.Uninit();
 	}
@@ -161,18 +156,16 @@ public:
 		m_count	.Update();
 		m_file	.Update();
 		m_input	.Update();
-		m_memory.Update();
 		m_sound	.Update();
 		m_window.Update();
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CCount  m_count;
-	CFile   m_file;
-	CInput  m_input;
-	CMemory m_memory;
-	CSound  m_sound;
-	CWindow m_window;
+	_RNC_Count  m_count;
+	_RNC_File   m_file;
+	_RNC_Input  m_input;
+	_RNC_Sound  m_sound;
+	_RNC_Window m_window;
 };
 
 // ÇªÇÃëº
@@ -181,14 +174,18 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init(void) {
 		m_defaultData.Init();
+		m_options    .Init();
 	}
 	void Uninit(void) {
 		m_defaultData.Uninit();
+		m_options    .Uninit();
 	}
 	void Update(void) {
 		m_defaultData.Update();
+		m_options    .Update();
 	}
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	CDefaultData m_defaultData;
+	_RNC_DefaultData m_defaultData;
+	_RNC_Options     m_options;
 };

@@ -1,0 +1,11 @@
+#KeyOption
+projectName							SetUp3DEditor
+windowWidth							1280.00
+windowHeight						720.00
+isFullScreen						0
+resolution							2.00
+fontListPath						NONEDATA
+#OtherOption
+modelOutLineAddDistanceInterval		0.1
+modelOutLineAddDistanceDelimiter	20
+END

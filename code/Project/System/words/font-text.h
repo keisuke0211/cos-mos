@@ -92,22 +92,25 @@ public:
 	// -- 設定 ------------------------------------------
 	/* 移動量				*/void SetMove(D3DXVECTOR3 move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
-	/* ポーズ中の生成		*/void SetTetPause(bool bPause);
-	/* TextBoxの表示		*/void SetTexBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
-	/* TextBoxのテクスチャ	*/void SetBoxTex(const char* Path = NULL, int PthIdx = -1, int PthX = 1, int PthY = 1);
-	/* TextBoxのパターン番号*/void SetBoxPthIdx(int PthIdx);
-	/* TextBoxの色			*/void SetBoxColor(Color col);
-	/* TextBoxの種類		*/void SetBoxType(Box type);
-	/* テキストの色			*/bool SetTextColor(D3DXCOLOR col);
+	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
+	/* TextBoxの表示		*/void SetTetBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
+	/* TextBoxのサイズ		*/void SetTxtBoxSize(float width, float height) { m_Info.TxtBoxSize = D3DXVECTOR2(width, height); }
+	/* TextBoxの目標サイズ	*/void SetTxtBoxTgtSize(float width, float height) { m_Info.TxtBoxTgtSize = D3DXVECTOR2(width, height); }
+	/* TextBoxのテクスチャ	*/void SetTxtBoxTex(const char* Path = NULL, int PthIdx = -1, int PthX = 1, int PthY = 1);
+	/* TextBoxのパターン番号*/void SetTxtBoxPthIdx(int PthIdx);
+	/* TextBoxの色			*/void SetTxtBoxColor(Color col);
+	/* TextBoxの種類		*/void SetTxtBoxType(Box type);
+	/* テキストの色			*/bool SetTxtColor(D3DXCOLOR col);
 	/* 文字変更(単体)		*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
 	/* 文字変更(全体)		*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
 	/* テキストの再生		*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
 
 
 	// -- 取得 ------------------------------------------
-	/*　位置		*/D3DXVECTOR2 GetTexPos() { return m_Info.TexPos; }
-	/*　Texサイズ	*/D3DXVECTOR2 GetTexSize() { return m_Info.TexSize; }
-	/*　文字サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
+	/* 位置			*/D3DXVECTOR2 GetTxtBoxPos() { return m_Info.TxtBoxPos; }
+	/* Txtサイズ	*/D3DXVECTOR2 GetTxtBoxSize() { return m_Info.TxtBoxSize; }
+	/* Txt目標サイズ*/D3DXVECTOR2 GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
+	/* 文字サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
 
 private:
 
@@ -134,14 +137,15 @@ private:
 	// テキスト情報
 	struct Info
 	{
-		Color TextBoxCol;		// テキストボックスの色
-		D3DXCOLOR FontCol;		// 文字の色
-		D3DXCOLOR TextBoxColOld;// 前回のテキストボックスの色
-		D3DXCOLOR FontColOld;	// 前回の文字の色
-		bool bCol;				// 色変更フラグ(ポーズ切替)
-		D3DXVECTOR2 TexPos;		// 位置
-		D3DXVECTOR2 TexMove;	// 移動量		
-		D3DXVECTOR2 TexSize;	// サイズ
+		Color TxtBoxCol;			// テキストボックスの色
+		D3DXCOLOR FontCol;			// 文字の色
+		D3DXCOLOR TxtBoxColOld;		// 前回のテキストボックスの色
+		D3DXCOLOR FontColOld;		// 前回の文字の色
+		bool bCol;					// 色変更フラグ(ポーズ切替)
+		D3DXVECTOR2 TxtBoxPos;		// 位置
+		D3DXVECTOR2 TxtBoxMove;		// 移動量
+		D3DXVECTOR2 TxtBoxSize;		// サイズ
+		D3DXVECTOR2 TxtBoxTgtSize;	// 目標のサイズ
 
 		Texture Tex;			// テクスチャ情報
 

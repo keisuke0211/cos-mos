@@ -34,7 +34,7 @@ private:
 
 	//========== [[[ 定数定義 ]]]
 	static const char* PUTOBJECT_TYPE_NAME[(int)PUTOBJECT_TYPE::MAX];
-	static const char* ALIGNMENT_NAME     [(int)CText::ALIGNMENT::MAX];
+	static const char* ALIGNMENT_NAME     [(int)_RNC_Text::ALIGNMENT::MAX];
 
 	//========== [[[ 構造体定義 ]]]
 	// 種類毎のデータ
@@ -45,12 +45,12 @@ private:
 	};
 	// 『プットオブジェクトテスト』の情報
 	struct TypeInfo_PutObjectTest_Text3DInfo {
-		int              drawNum   = 0;
-		CText::ALIGNMENT alignment = CText::ALIGNMENT::CENTER;
+		int                  drawNum   = 0;
+		_RNC_Text::ALIGNMENT alignment = _RNC_Text::ALIGNMENT::CENTER;
 	};
 	struct TypeInfo_PutObjectTest_Model {
 		int   drawNum                = 0;
-		Color col                    = INITCOLOR;
+		Color col                    = COLOR_WHITE;
 		bool  isTex                  = false;
 		bool  isZTest                = true;
 		bool  isLighting             = true;

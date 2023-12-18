@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffect3D_Cylinder::CEffect3D_Cylinder(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const CEase::TYPE& easeType, const CDrawState::ALPHA_BLEND_MODE& alphaBlendType) : CEffect3D_Base(priority, pos, rot, life, easeType, alphaBlendType) {
+CEffect3D_Cylinder::CEffect3D_Cylinder(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType) : CEffect3D_Base(priority, pos, rot, life, easeType, alphaBlendType) {
 
 	m_fadeOutStartRate = 0.0f;
 	m_spinZ			   = 0.0f;
@@ -46,7 +46,7 @@ void CEffect3D_Cylinder::Update(void) {
 	m_rot.z += m_spinZ * rateOpp;
 
 	// マトリックスを算出
-	const Matrix mtx = CMatrix::ConvPosRotToMtx(m_pos, m_rot);
+	const Matrix mtx = RNLib::Matrix().ConvPosRotToMtx(m_pos, m_rot);
 
 	// 半径/奥行きを取得
 	const float radiusA = (rate * m_circleFront.endRadius) + (rateOpp * m_circleFront.startRadius);
@@ -59,10 +59,10 @@ void CEffect3D_Cylinder::Update(void) {
 	Pos3D* vtxPosesA = NULL;
 	Pos3D* vtxPosesB = NULL;
 	float* vtxTexX = NULL;
-	CMemory::Alloc(&vtxNors, m_divisionNum);
-	CMemory::Alloc(&vtxPosesA, m_divisionNum);
-	CMemory::Alloc(&vtxPosesB, m_divisionNum);
-	CMemory::Alloc(&vtxTexX, m_divisionNum);
+	RNLib::Memory().Alloc(&vtxNors, m_divisionNum);
+	RNLib::Memory().Alloc(&vtxPosesA, m_divisionNum);
+	RNLib::Memory().Alloc(&vtxPosesB, m_divisionNum);
+	RNLib::Memory().Alloc(&vtxTexX, m_divisionNum);
 	for (int cntDiv = 0; cntDiv < m_divisionNum; cntDiv++) {
 		const float rate = (float)cntDiv / m_divisionNum;
 		const float angle = -D3DX_PI + (rate * D3DX_PI_DOUBLE);
@@ -96,13 +96,13 @@ void CEffect3D_Cylinder::Update(void) {
 			->SetVtxCol(colA, colA, colB, colB)
 			->SetZTest(false)
 			->SetTexUV(m_texIdx, Pos2D(vtxTexX[cntDiv], 0.0f), Pos2D(rightTexX, 0.0f), Pos2D(vtxTexX[cntDiv], 1.0f), Pos2D(rightTexX, 1.0f))
-			->SetCullingMode(CDrawState::CULLING_MODE::BOTH_SIDES)
+			->SetCullingMode(_RNC_DrawState::CULLING_MODE::BOTH_SIDES)
 			->SetAlphaBlendMode(m_alphaBlendMode);
 	}
 
 	// 頂点の法線/位置情報を解放
-	CMemory::Release(&vtxNors);
-	CMemory::Release(&vtxPosesA);
-	CMemory::Release(&vtxPosesB);
-	CMemory::Release(&vtxTexX);
+	RNLib::Memory().Release(&vtxNors);
+	RNLib::Memory().Release(&vtxPosesA);
+	RNLib::Memory().Release(&vtxPosesB);
+	RNLib::Memory().Release(&vtxTexX);
 }

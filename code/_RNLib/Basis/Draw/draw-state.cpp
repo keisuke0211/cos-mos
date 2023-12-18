@@ -15,21 +15,21 @@
 //========================================
 // コンストラクタ
 //========================================
-CDrawState::CDrawState() {
+_RNC_DrawState::_RNC_DrawState() {
 
 }
 
 //========================================
 // デストラクタ
 //========================================
-CDrawState::~CDrawState() {
+_RNC_DrawState::~_RNC_DrawState() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CDrawState::Init(Device& device) {
+void _RNC_DrawState::Init(Device& device) {
 
 	// ~~~ 固定設定 ~~~
 
@@ -53,21 +53,21 @@ void CDrawState::Init(Device& device) {
 //========================================
 // 終了処理
 //========================================
-void CDrawState::Uninit(void) {
+void _RNC_DrawState::Uninit(void) {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CDrawState::Update(void) {
+void _RNC_DrawState::Update(void) {
 
 }
 
 //========================================
 // 可変設定のリセット処理
 //========================================
-void CDrawState::ResetVariableSetting(Device& device) {
+void _RNC_DrawState::ResetVariableSetting(Device& device) {
 
 	//----------------------------------------
 	// テクスチャ透過モードの設定
@@ -103,13 +103,13 @@ void CDrawState::ResetVariableSetting(Device& device) {
 	// フォグの初期設定
 	//----------------------------------------
 	SetIsFog(device, false);
-	SetFogParameter(device, INITCOLOR, 0.0f, 0.0f);
+	SetFogParameter(device, COLOR_WHITE, 0.0f, 0.0f);
 }
 
 //========================================
 // Zテストの設定
 //========================================
-void CDrawState::SetIsZTest(Device& device, const bool& isZTest) {
+void _RNC_DrawState::SetIsZTest(Device& device, const bool& isZTest) {
 
 	if (isZTest) {
 		device->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
@@ -124,7 +124,7 @@ void CDrawState::SetIsZTest(Device& device, const bool& isZTest) {
 //========================================
 // カリングモードの設定
 //========================================
-void CDrawState::SetCullingMode(Device& device, const CULLING_MODE& mode) {
+void _RNC_DrawState::SetCullingMode(Device& device, const CULLING_MODE& mode) {
 
 	switch (mode) {
 	case CULLING_MODE::FRONT_SIDE:device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW ); break;
@@ -136,7 +136,7 @@ void CDrawState::SetCullingMode(Device& device, const CULLING_MODE& mode) {
 //========================================
 // アルファブレンドモードの設定
 //========================================
-void CDrawState::SetAlphaBlendMode(Device& device, const ALPHA_BLEND_MODE& mode) {
+void _RNC_DrawState::SetAlphaBlendMode(Device& device, const ALPHA_BLEND_MODE& mode) {
 
 	switch (mode) {
 		// [[[ 通常 ]]]
@@ -163,7 +163,7 @@ void CDrawState::SetAlphaBlendMode(Device& device, const ALPHA_BLEND_MODE& mode)
 //========================================
 // 補間モードの設定
 //========================================
-void CDrawState::SetInterpolationMode(Device& device, const INTERPOLATION_MODE& mode) {
+void _RNC_DrawState::SetInterpolationMode(Device& device, const INTERPOLATION_MODE& mode) {
 
 	switch (mode) {
 		// [[[ 無し(ポイント) ]]]
@@ -182,7 +182,7 @@ void CDrawState::SetInterpolationMode(Device& device, const INTERPOLATION_MODE& 
 //========================================
 // テクスチャ透過モードの設定
 //========================================
-void CDrawState::SetIsTextureAlpha(Device& device, const bool& isTextureAlpha) {
+void _RNC_DrawState::SetIsTextureAlpha(Device& device, const bool& isTextureAlpha) {
 
 	device->SetTextureStageState(0, D3DTSS_ALPHAOP, isTextureAlpha ? D3DTOP_MODULATE : D3DTOP_DISABLE);
 }
@@ -190,7 +190,7 @@ void CDrawState::SetIsTextureAlpha(Device& device, const bool& isTextureAlpha) {
 //========================================
 // ライティングモードの設定(フラグ指定)
 //========================================
-void CDrawState::SetIsLighting(Device& device, const bool& isLighting) {
+void _RNC_DrawState::SetIsLighting(Device& device, const bool& isLighting) {
 
 	device->SetRenderState(D3DRS_LIGHTING, isLighting);
 }
@@ -198,7 +198,7 @@ void CDrawState::SetIsLighting(Device& device, const bool& isLighting) {
 //========================================
 // フォグモードの設定
 //========================================
-void CDrawState::SetIsFog(Device& device, const bool& isFog) {
+void _RNC_DrawState::SetIsFog(Device& device, const bool& isFog) {
 
 	device->SetRenderState(D3DRS_FOGENABLE, isFog);
 }
@@ -206,9 +206,9 @@ void CDrawState::SetIsFog(Device& device, const bool& isFog) {
 //========================================
 // フォグモードの設定(フラグ指定)
 //========================================
-void CDrawState::SetFogParameter(Device& device, const Color& col, const float& startDist, const float& endDist) {
+void _RNC_DrawState::SetFogParameter(Device& device, const Color& col, const float& startDist, const float& endDist) {
 
-	device->SetRenderState(D3DRS_FOGCOLOR, col.ConvD3DCOLOR());
+	device->SetRenderState(D3DRS_FOGCOLOR, D3DCOLOR_RGBA(col.r, col.g, col.b, col.a));
 	device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&startDist));
 	device->SetRenderState(D3DRS_FOGEND  , *(DWORD*)(&endDist));
 }

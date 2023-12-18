@@ -16,7 +16,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CModel::CModel() {
+_RNC_Model::_RNC_Model() {
 
 	m_datas = NULL;
 }
@@ -24,21 +24,21 @@ CModel::CModel() {
 //========================================
 // デストラクタ
 //========================================
-CModel::~CModel() {
+_RNC_Model::~_RNC_Model() {
 	
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CModel::Init(void) {
+void _RNC_Model::Init(void) {
 
 }
 
 //========================================
 // 終了処理
 //========================================
-void CModel::Uninit(void) {
+void _RNC_Model::Uninit(void) {
 
 	// 解放処理
 	Release();
@@ -47,23 +47,23 @@ void CModel::Uninit(void) {
 //========================================
 // 更新処理
 //========================================
-void CModel::Update(void) {
+void _RNC_Model::Update(void) {
 
 }
 
 //========================================
 // 解放処理
 //========================================
-void CModel::Release(void) {
+void _RNC_Model::Release(void) {
 
 	// データの解放
-	CMemory::ReleaseDouble(&m_datas, m_num);
+	RNLib::Memory().ReleaseDouble(&m_datas, m_num);
 }
 
 //========================================
 // 読み込み処理
 //========================================
-short CModel::Load(const char* loadPath, short idx) {
+short _RNC_Model::Load(const char* loadPath, short idx) {
 
 	const UShort oldNum = m_num;
 	const short  idxOld = idx;
@@ -71,7 +71,7 @@ short CModel::Load(const char* loadPath, short idx) {
 	if (CRegist::Load(loadPath, idx)) 
 	{// 読み込み成功
 		// データのメモリ再確保
-		CMemory::ReAllocDouble(&m_datas, oldNum, m_num);
+		RNLib::Memory().ReAllocDouble(&m_datas, oldNum, m_num);
 
 		// データの破棄(番号指定の場合)
 		if (idxOld != NONEDATA)
@@ -82,10 +82,10 @@ short CModel::Load(const char* loadPath, short idx) {
 		if (FAILED(D3DXLoadMeshFromX(loadPath, D3DXMESH_SYSTEMMEM, device, NULL, &m_datas[idx]->m_matBuff, NULL, (DWORD*)&m_datas[idx]->m_matNum, &m_datas[idx]->m_mesh))) 
 		{// 読み込み失敗
 			// エラーメッセージ
-			RNLib::Window().Message_ERROR(CreateText("モデルの読み込みに失敗しました。\n%s", loadPath));
+			RNLib::Window().Message_ERROR(String("モデルの読み込みに失敗しました。\n%s", loadPath));
 
 			// データのメモリリセット
-			CMemory::ReAllocDouble(&m_datas, m_num, oldNum);
+			RNLib::Memory().ReAllocDouble(&m_datas, m_num, oldNum);
 
 			// 読み込み済パスのメモリリセット
 			ReAllocLoadPath(oldNum);
@@ -104,16 +104,16 @@ short CModel::Load(const char* loadPath, short idx) {
 			m_datas[idx]->m_vtxNum = m_datas[idx]->m_mesh->GetNumVertices();
 
 			// 頂点データを作成
-			CMemory::Alloc(&m_datas[idx]->m_vtxDatas, m_datas[idx]->m_vtxNum);
+			RNLib::Memory().Alloc(&m_datas[idx]->m_vtxDatas, m_datas[idx]->m_vtxNum);
 			for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; cntVtx++) {
 				m_datas[idx]->m_vtxDatas[cntVtx] = {};
-				CMemory::Alloc(&m_datas[idx]->m_vtxDatas[cntVtx].isMats, m_datas[idx]->m_matNum);
+				RNLib::Memory().Alloc(&m_datas[idx]->m_vtxDatas[cntVtx].isMats, m_datas[idx]->m_matNum);
 				for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++)
 					m_datas[idx]->m_vtxDatas[cntVtx].isMats[cntMat] = false;
 			}
 
 			// マテリアルデータを生成
-			CMemory::Alloc(&m_datas[idx]->m_matDatas, m_datas[idx]->m_matNum);
+			RNLib::Memory().Alloc(&m_datas[idx]->m_matDatas, m_datas[idx]->m_matNum);
 			for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++) {
 				m_datas[idx]->m_matDatas[cntMat] = {};
 			}
@@ -129,7 +129,7 @@ short CModel::Load(const char* loadPath, short idx) {
 
 			// 頂点の縁取り情報を生成
 			VertexOutLine* vertexOutLines = NULL;
-			CMemory::Alloc(&vertexOutLines, m_datas[idx]->m_vtxNum);
+			RNLib::Memory().Alloc(&vertexOutLines, m_datas[idx]->m_vtxNum);
 			for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; vertexOutLines[cntVtx] = {}, cntVtx++);
 
 			{// 頂点の縁取り情報を算出
@@ -143,7 +143,7 @@ short CModel::Load(const char* loadPath, short idx) {
 					Vector3D* nor = (Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 					{// 半径の最大を調べる
-						const float dist = CGeometry::FindDistance(INITD3DXVECTOR3, *pos);
+						const float dist = RNLib::Geometry().FindDistance(INITD3DXVECTOR3, *pos);
 
 						if (m_datas[idx]->m_radiusMax < dist)
 							m_datas[idx]->m_radiusMax = dist;
@@ -186,10 +186,10 @@ short CModel::Load(const char* loadPath, short idx) {
 				m_datas[idx]->m_idxNum = m_datas[idx]->m_faceNum * 3;
 
 				// インデックス情報を生成
-				CMemory::Alloc(&m_datas[idx]->m_idxes, m_datas[idx]->m_idxNum);
+				RNLib::Memory().Alloc(&m_datas[idx]->m_idxes, m_datas[idx]->m_idxNum);
 
 				// 面毎の番号を生成
-				CMemory::Alloc(&m_datas[idx]->m_faceMatIdxes, m_datas[idx]->m_faceNum);
+				RNLib::Memory().Alloc(&m_datas[idx]->m_faceMatIdxes, m_datas[idx]->m_faceNum);
 
 				for (ULong cntFace = 0; cntFace < m_datas[idx]->m_faceNum; cntFace++) {
 
@@ -215,7 +215,7 @@ short CModel::Load(const char* loadPath, short idx) {
 
 					// マテリアルの頂点番号列
 					ULong* matVtxIdxes = NULL;
-					CMemory::Alloc(&matVtxIdxes, m_datas[idx]->m_vtxNum); {
+					RNLib::Memory().Alloc(&matVtxIdxes, m_datas[idx]->m_vtxNum); {
 						ULong matVtxCount = 0;
 						for (ULong cntVtx = 0; cntVtx < m_datas[idx]->m_vtxNum; cntVtx++) {
 
@@ -235,7 +235,7 @@ short CModel::Load(const char* loadPath, short idx) {
 					}
 
 					// マテリアル毎のインデックス情報を生成
-					CMemory::Alloc(&m_datas[idx]->m_matDatas[cntMat].idxes, m_datas[idx]->m_matDatas[cntMat].idxNum);
+					RNLib::Memory().Alloc(&m_datas[idx]->m_matDatas[cntMat].idxes, m_datas[idx]->m_matDatas[cntMat].idxNum);
 
 					// マテリアル毎のインデックス情報を代入していく
 					ULong matFaceCount = 0;
@@ -250,7 +250,7 @@ short CModel::Load(const char* loadPath, short idx) {
 						}
 					}
 
-					CMemory::Release(&matVtxIdxes);
+					RNLib::Memory().Release(&matVtxIdxes);
 				}
 
 				// インデックスバッファをアンロック
@@ -261,7 +261,7 @@ short CModel::Load(const char* loadPath, short idx) {
 			}
 
 			// 輪郭メッシュを生成する
-			CMemory::Alloc(&m_datas[idx]->m_outLineMeshs, RNSettings::GetInfo().modelOutLineAddDistanceDelimiter);
+			RNLib::Memory().Alloc(&m_datas[idx]->m_outLineMeshs, RNSettings::GetInfo().modelOutLineAddDistanceDelimiter);
 
 			for (UShort cntOutLine = 0; cntOutLine < RNSettings::GetInfo().modelOutLineAddDistanceDelimiter; cntOutLine++) {
 
@@ -291,8 +291,8 @@ short CModel::Load(const char* loadPath, short idx) {
 			const D3DXMATERIAL* mats = (D3DXMATERIAL*)m_datas[idx]->m_matBuff->GetBufferPointer();
 
 			// テクスチャのメモリ確保
-			CMemory::Alloc(&m_datas[idx]->m_texIdxes, m_datas[idx]->m_matNum);
-			CMemory::Alloc(&m_datas[idx]->m_texes, m_datas[idx]->m_matNum);
+			RNLib::Memory().Alloc(&m_datas[idx]->m_texIdxes, m_datas[idx]->m_matNum);
+			RNLib::Memory().Alloc(&m_datas[idx]->m_texes, m_datas[idx]->m_matNum);
 
 			// テクスチャの読み込み
 			for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++) {
@@ -309,7 +309,7 @@ short CModel::Load(const char* loadPath, short idx) {
 //========================================
 // 頂点情報を格納
 //========================================
-void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Vertex3DInfo** vtxInfos, const short& matIdx) {
+void _RNC_Model::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Vertex3DInfo** vtxInfos, const short& matIdx) {
 
 	if (modelIdx == NONEDATA) {
 		*vtxInfos = NULL;
@@ -324,7 +324,7 @@ void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Vertex3
 	m_datas[modelIdx]->m_mesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&vtxBuff);
 
 	// 頂点情報を生成
-	CMemory::Alloc(vtxInfos, matIdx == NONEDATA ? m_datas[modelIdx]->m_vtxNum : m_datas[modelIdx]->m_matDatas[matIdx].vtxNum);
+	RNLib::Memory().Alloc(vtxInfos, matIdx == NONEDATA ? m_datas[modelIdx]->m_vtxNum : m_datas[modelIdx]->m_matDatas[matIdx].vtxNum);
 
 	// テクスチャ座標のオフセットを計算
 	const DWORD texCoordOffset = dwSizeFVF - sizeof(float) * 2;  // 2は2次元のテクスチャ座標の要素数
@@ -353,7 +353,7 @@ void CModel::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Vertex3
 //========================================
 // 設置処理
 //========================================
-CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, const Matrix& mtx, const bool& isOnScreen) {
+_RNC_Model::CRegistInfo* _RNC_Model::Put(const UShort& priority, const short& modelIdx, const Matrix& mtx, const bool& isOnScreen) {
 
 	// モデル番号が無しの時、
 	if (modelIdx == NONEDATA)
@@ -366,17 +366,17 @@ CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, 
 //========================================
 // 設置処理(位置と向きで指定)
 //========================================
-CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const bool& isOnScreen) {
+_RNC_Model::CRegistInfo* _RNC_Model::Put(const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const bool& isOnScreen) {
 	
-	return Put(priority, modelIdx, CMatrix::ConvPosRotToMtx(pos, rot), isOnScreen);
+	return Put(priority, modelIdx, RNLib::Matrix().ConvPosRotToMtx(pos, rot), isOnScreen);
 }
 
 //========================================
 // 設置処理(位置と向きと拡大倍率で指定)
 //========================================
-CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const bool& isOnScreen) {
+_RNC_Model::CRegistInfo* _RNC_Model::Put(const UShort& priority, const short& modelIdx, const Pos3D& pos, const Rot3D& rot, const Scale3D& scale, const bool& isOnScreen) {
 
-	return Put(priority, modelIdx, CMatrix::ConvPosRotScaleToMtx(pos, rot, scale), isOnScreen);
+	return Put(priority, modelIdx, RNLib::Matrix().ConvPosRotScaleToMtx(pos, rot, scale), isOnScreen);
 }
 
 //================================================================================
@@ -388,18 +388,18 @@ CModel::CRegistInfo* CModel::Put(const UShort& priority, const short& modelIdx, 
 //========================================
 // 頂点情報の格納実行処理
 //========================================
-void CModel::ExecutionStoreVtxInfo(Vertex3DInfo* vtx, const Matrix& modelMtx, const ULong& cntVtx, BYTE*& vtxBuff, const DWORD& dwSizeFVF, const DWORD& texCoordOffset) {
+void _RNC_Model::ExecutionStoreVtxInfo(Vertex3DInfo* vtx, const Matrix& modelMtx, const ULong& cntVtx, BYTE*& vtxBuff, const DWORD& dwSizeFVF, const DWORD& texCoordOffset) {
 
 	vtx->pos = *(Vector3D*)(vtxBuff + (dwSizeFVF * cntVtx));
 	vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 	// ワールドマトリックスを算出
-	Matrix worldMtx = CMatrix::MultiplyMtx(CMatrix::ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
+	Matrix worldMtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
 
-	vtx->worldPos = CMatrix::ConvMtxToPos(worldMtx);
-	vtx->rot      = CGeometry::FindVecRot(vtx->nor);
+	vtx->worldPos = RNLib::Matrix().ConvMtxToPos(worldMtx);
+	vtx->rot      = RNLib::Geometry().FindVecRot(vtx->nor);
 	vtx->worldNor = Normal3D(worldMtx._31, worldMtx._32, worldMtx._33);
-	vtx->worldRot = CGeometry::FindVecRot(vtx->worldNor);
+	vtx->worldRot = RNLib::Geometry().FindVecRot(vtx->worldNor);
 	vtx->texPos   = *(Pos2D*)(vtxBuff + (dwSizeFVF * cntVtx) + texCoordOffset);
 }
 
@@ -412,7 +412,7 @@ void CModel::ExecutionStoreVtxInfo(Vertex3DInfo* vtx, const Matrix& modelMtx, co
 //========================================
 // コンストラクタ
 //========================================
-CModel::CData::CData() {
+_RNC_Model::CData::CData() {
 
 	m_texIdxes	   = NULL;
 	m_texes		   = NULL;
@@ -433,7 +433,7 @@ CModel::CData::CData() {
 //========================================
 // デストラクタ
 //========================================
-CModel::CData::~CData() {
+_RNC_Model::CData::~CData() {
 
 	Release();
 }
@@ -441,29 +441,29 @@ CModel::CData::~CData() {
 //========================================
 // 解放処理
 //========================================
-void CModel::CData::Release(void) {
+void _RNC_Model::CData::Release(void) {
 
 	// テクスチャの破棄
-	CMemory::Release(&m_texIdxes);
-	CMemory::Release(&m_texes);
+	RNLib::Memory().Release(&m_texIdxes);
+	RNLib::Memory().Release(&m_texes);
 
 	// 頂点データの破棄
 	for (ULong cnt = 0; cnt < m_vtxNum; cnt++) {
-		CMemory::Release(&m_vtxDatas[cnt].isMats);
+		RNLib::Memory().Release(&m_vtxDatas[cnt].isMats);
 	}
-	CMemory::Release(&m_vtxDatas);
+	RNLib::Memory().Release(&m_vtxDatas);
 
 	// インデックスの破棄
-	CMemory::Release(&m_idxes);
+	RNLib::Memory().Release(&m_idxes);
 
 	// マテリアルデータを生成
 	for (ULong cnt = 0; cnt < m_matNum; cnt++) {
-		CMemory::Release(&m_matDatas[cnt].idxes);
+		RNLib::Memory().Release(&m_matDatas[cnt].idxes);
 	}
-	CMemory::Release(&m_matDatas);
+	RNLib::Memory().Release(&m_matDatas);
 
 	// 面毎のマテリアル番号の破棄
-	CMemory::Release(&m_faceMatIdxes);
+	RNLib::Memory().Release(&m_faceMatIdxes);
 
 	// メッシュの破棄
 	if (m_mesh != NULL) {
@@ -480,7 +480,7 @@ void CModel::CData::Release(void) {
 			}
 		}
 	}
-	CMemory::Release(&m_outLineMeshs);
+	RNLib::Memory().Release(&m_outLineMeshs);
 
 	// マテリアルの破棄
 	if (m_matBuff != NULL) {
@@ -498,7 +498,7 @@ void CModel::CData::Release(void) {
 //****************************************
 // 静的変数定義
 //****************************************
-Material CModel::CDrawInfo::ms_outLineMat = {
+Material _RNC_Model::CDrawInfo::ms_outLineMat = {
 	{ 0.0f, 0.0f, 0.0f, 1.0f },
 	{ 0.0f, 0.0f, 0.0f, 0.0f },
 	{ 1.0f, 1.0f, 1.0f, 1.0f },
@@ -509,7 +509,7 @@ Material CModel::CDrawInfo::ms_outLineMat = {
 //========================================
 // コンストラクタ
 //========================================
-CModel::CDrawInfo::CDrawInfo() {
+_RNC_Model::CDrawInfo::CDrawInfo() {
 
 	m_mtx                  = INITMATRIX;
 	m_mats                 = NULL;
@@ -519,16 +519,16 @@ CModel::CDrawInfo::CDrawInfo() {
 	m_outLineMesh          = NULL;
 	m_isScaling            = false;
 	m_isZTest              = true;
-	m_interpolationMode    = CDrawState::INTERPOLATION_MODE::NONE;
-	m_isLighting           = false;
+	m_interpolationMode    = _RNC_DrawState::INTERPOLATION_MODE::NONE;
+	m_isLighting           = true;
 }
 
 //========================================
 // デストラクタ
 //========================================
-CModel::CDrawInfo::~CDrawInfo() {
+_RNC_Model::CDrawInfo::~CDrawInfo() {
 
-	CMemory::Release(&m_mats);
+	RNLib::Memory().Release(&m_mats);
 
 	// 拡大倍率に変更があった時、解放する
 	if (m_isScaling) {
@@ -547,7 +547,7 @@ CModel::CDrawInfo::~CDrawInfo() {
 //========================================
 // コンストラクタ
 //========================================
-CModel::CRegistInfo::CRegistInfo() {
+_RNC_Model::CRegistInfo::CRegistInfo() {
 
 	ClearParameter();
 }
@@ -555,40 +555,40 @@ CModel::CRegistInfo::CRegistInfo() {
 //========================================
 // デストラクタ
 //========================================
-CModel::CRegistInfo::~CRegistInfo() {
+_RNC_Model::CRegistInfo::~CRegistInfo() {
 
 }
 
 //========================================
 // パラメータークリア処理
 //========================================
-void CModel::CRegistInfo::ClearParameter(void) {
+void _RNC_Model::CRegistInfo::ClearParameter(void) {
 
 	CRegistInfoBase::ClearParameter();
 	m_mtx                  = INITMATRIX;
-	m_col                  = INITCOLOR;
+	m_col                  = COLOR_WHITE;
 	m_modelIdx             = NONEDATA;
 	m_texIdx               = NONEDATA;
 	m_isZTest              = true;
-	m_isLighting           = false;
+	m_isLighting           = true;
 	m_outLineIdx           = NONEDATA;
 	m_brightnessOfEmissive = 1.0f;
-	m_interpolationMode    = CDrawState::INTERPOLATION_MODE::NONE;
+	m_interpolationMode    = _RNC_DrawState::INTERPOLATION_MODE::NONE;
 }
 
 //========================================
 // 描画情報に変換
 //========================================
-CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
+_RNC_Model::CDrawInfo* _RNC_Model::CRegistInfo::ConvToDrawInfo(Device& device) {
 
 	// 描画情報のメモリ確保
 	CDrawInfo* drawInfo = NULL;
-	CMemory::Alloc(&drawInfo);
+	RNLib::Memory().Alloc(&drawInfo);
 
 	// 基底情報を代入
 	AssignToDrawInfo(*drawInfo);
 
-	const CModel::CData& modelData = RNLib::Model().GetData(m_modelIdx);
+	const _RNC_Model::CData& modelData = RNLib::Model().GetData(m_modelIdx);
 
 	// 情報を代入
 	drawInfo->m_mtx               = m_mtx;
@@ -611,7 +611,7 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 			drawInfo->m_radiusMax += RNSettings::GetInfo().modelOutLineAddDistanceInterval * m_outLineIdx;
 		}
 
-		const Scale3D scale = CMatrix::ConvMtxToScale(m_mtx);
+		const Scale3D scale = RNLib::Matrix().ConvMtxToScale(m_mtx);
 		float scaleMax = scale.x;
 		if (scaleMax < scale.y)
 			scaleMax = scale.y;
@@ -626,7 +626,7 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	//----------------------------------------
 	{
 		D3DXMATERIAL* mats= (D3DXMATERIAL*)modelData.m_matBuff->GetBufferPointer();
-		CMemory::Alloc(&drawInfo->m_mats, drawInfo->m_matNum);
+		RNLib::Memory().Alloc(&drawInfo->m_mats, drawInfo->m_matNum);
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
 			
@@ -657,8 +657,8 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 	// メッシュ情報を算出
 	//----------------------------------------
 	// マトリックスの拡大倍率を取得し、
-	const Scale3D scale = CMatrix::ConvMtxToScale(m_mtx);
-	drawInfo->m_isScaling = !EqualFloat(scale.x, 1.0f, 0.01f) ? true : !EqualFloat(scale.y, 1.0f, 0.01f) ? true : !EqualFloat(scale.z, 1.0f, 0.01f);
+	const Scale3D scale = RNLib::Matrix().ConvMtxToScale(m_mtx);
+	drawInfo->m_isScaling = !RNLib::Number().EqualFloat(scale.x, 1.0f, 0.01f) ? true : !RNLib::Number().EqualFloat(scale.y, 1.0f, 0.01f) ? true : !RNLib::Number().EqualFloat(scale.z, 1.0f, 0.01f);
 	if (drawInfo->m_isScaling)
 	{// もし拡大倍率に変更があった時、
 		const DWORD fvf       = modelData.m_mesh->GetFVF();
@@ -670,7 +670,7 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 
 		// メッシュがNULLであれば、
 		if (drawInfo->m_mesh == NULL) {
-			CMemory::Release(&drawInfo);
+			RNLib::Memory().Release(&drawInfo);
 			return NULL;
 		}
 
@@ -702,7 +702,7 @@ CModel::CDrawInfo* CModel::CRegistInfo::ConvToDrawInfo(Device& device) {
 //========================================
 // クリッピングカメラ設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetClippingCamera(CCamera& camera) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetClippingCamera(CCamera& camera) {
 
 	if (this == NULL)
 		return NULL;
@@ -718,7 +718,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetClippingCamera(CCamera& camera) {
 //========================================
 // クリッピングカメラ設定(ID指定)
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetClippingCamera(const short& ID) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetClippingCamera(const short& ID) {
 
 	if (this == NULL)
 		return NULL;
@@ -731,7 +731,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetClippingCamera(const short& ID) {
 //========================================
 // マトリックスを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetMtx(const Matrix& mtx) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetMtx(const Matrix& mtx) {
 
 	if (this == NULL)
 		return NULL;
@@ -744,7 +744,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetMtx(const Matrix& mtx) {
 //========================================
 // 色を設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetCol(const Color& col) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetCol(const Color& col) {
 
 	if (this == NULL)
 		return NULL;
@@ -757,7 +757,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetCol(const Color& col) {
 //========================================
 // モデルを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetModel(const short& modelIdx) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetModel(const short& modelIdx) {
 
 	if (this == NULL)
 		return NULL;
@@ -770,7 +770,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetModel(const short& modelIdx) {
 //========================================
 // テクスチャを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetTex(const short& texIdx) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetTex(const short& texIdx) {
 
 	if (this == NULL)
 		return NULL;
@@ -783,7 +783,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetTex(const short& texIdx) {
 //========================================
 // Zテストを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetZTest(const bool& isZTest) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetZTest(const bool& isZTest) {
 
 	if (this == NULL)
 		return NULL;
@@ -796,7 +796,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetZTest(const bool& isZTest) {
 //========================================
 // ライティングを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetLighting(const bool& isLighting) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetLighting(const bool& isLighting) {
 
 	if (this == NULL)
 		return NULL;
@@ -809,7 +809,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetLighting(const bool& isLighting) {
 //========================================
 // 輪郭線を設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetOutLineIdx(const UShort& outLineIdx) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetOutLineIdx(const UShort& outLineIdx) {
 
 	if (this == NULL)
 		return NULL;
@@ -822,7 +822,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetOutLineIdx(const UShort& outLineIdx
 //========================================
 // 発光部分の明るさを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetBrightnessOfEmissive(const float& brightnessOfEmissive) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetBrightnessOfEmissive(const float& brightnessOfEmissive) {
 
 	if (this == NULL)
 		return NULL;
@@ -835,7 +835,7 @@ CModel::CRegistInfo* CModel::CRegistInfo::SetBrightnessOfEmissive(const float& b
 //========================================
 // 補間モードを設定
 //========================================
-CModel::CRegistInfo* CModel::CRegistInfo::SetInterpolationMode(const CDrawState::INTERPOLATION_MODE& interpolationMode) {
+_RNC_Model::CRegistInfo* _RNC_Model::CRegistInfo::SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode) {
 
 	if (this == NULL)
 		return NULL;

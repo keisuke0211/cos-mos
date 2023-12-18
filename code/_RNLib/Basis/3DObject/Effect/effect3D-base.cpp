@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffect3D_Base::CEffect3D_Base(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const CEase::TYPE& easeType, const CDrawState::ALPHA_BLEND_MODE& alphaBlendType) {
+CEffect3D_Base::CEffect3D_Base(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType) {
 
 	// リストに追加
 	RNSystem::GetEffet3DMgr().AddList(this);
@@ -54,7 +54,7 @@ float CEffect3D_Base::CountLife(void) {
 			Delete();
 		}
 
-		return CEase::Easing(m_easeType, m_lifeMax - m_life, m_lifeMax);
+		return RNLib::Ease().Easing(m_easeType, m_lifeMax - m_life, m_lifeMax);
 	}
 
 	return 0.0f;

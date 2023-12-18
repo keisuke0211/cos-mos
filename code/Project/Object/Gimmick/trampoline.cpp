@@ -95,7 +95,7 @@ void CTrampoline::Update(void) {
 	}
 
 	//äÑçáåvéZ
-	const float fCountRate = CEase::Easing(CEase::TYPE::IN_SINE, m_nSpringCounter, MAX_COUNT);
+	const float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nSpringCounter, MAX_COUNT);
 
 	if (m_state == STATE::UP_LAND)
 	{

@@ -18,20 +18,20 @@
 class CEffect3D_Base : CObject {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CEffect3D_Base(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const CEase::TYPE& easeType, const CDrawState::ALPHA_BLEND_MODE& alphaBlendType);
+	CEffect3D_Base         (const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType);
 	virtual ~CEffect3D_Base();
-	virtual void Update(void) = 0;
+	virtual void Update    (void) = 0;
 
 protected:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	float CountLife(void);
 
 	//========== [[[ ïœêîêÈåæ ]]]
-	UShort                       m_priority;
-	Pos3D                        m_pos;
-	Rot3D                        m_rot;
-	short                        m_life;
-	short                        m_lifeMax;
-	CEase::TYPE                  m_easeType;
-	CDrawState::ALPHA_BLEND_MODE m_alphaBlendMode;
+	UShort                           m_priority;
+	Pos3D                            m_pos;
+	Rot3D                            m_rot;
+	short                            m_life;
+	short                            m_lifeMax;
+	_RNC_Ease::TYPE                  m_easeType;
+	_RNC_DrawState::ALPHA_BLEND_MODE m_alphaBlendMode;
 };

@@ -23,12 +23,12 @@ public:
 	enum class PLAYER   { RED, BLUE, MAX, };
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CDemo();
-	~CDemo();
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	CDemoPlayer& GetPlayer(const PLAYER& player) { return *m_players[(int)player]; }
+	CDemo                     ();
+	~CDemo                    ();
+	void         Init         (void);
+	void         Uninit       (void);
+	void         Update       (void);
+	CDemoPlayer& GetPlayer    (const PLAYER& player) { return *m_players[(int)player]; }
 	CObjectMgr&  GetDemoObjMgr(void) { return m_demoObjMgr; }
 
 private:

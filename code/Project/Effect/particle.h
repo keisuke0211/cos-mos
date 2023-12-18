@@ -25,7 +25,7 @@ public:
 		int nCountMax;
 		int nTex;
 		int rdmMagni;
-		CDrawState::ALPHA_BLEND_MODE alphamode;
+		_RNC_DrawState::ALPHA_BLEND_MODE alphamode;
 	};
 
 	// ã§í èÓïÒ
@@ -55,7 +55,7 @@ public:
 	/* ägèk		*/void SetScale(const D3DXVECTOR3 scale) { m_Info.scale = scale; }
 	/* ägèk		*/void SetType(const TYPE type) { m_type = type; }
 	/* ägèk		*/void SetRdmMagni(const int magni) { m_Info.rdmMagni = magni; }
-	/* ägèk		*/void SetAlphaMode(const CDrawState::ALPHA_BLEND_MODE  alphamode) { m_Info.alphamode = alphamode; }
+	/* ägèk		*/void SetAlphaMode(const _RNC_DrawState::ALPHA_BLEND_MODE  alphamode) { m_Info.alphamode = alphamode; }
 
 	// -- èäìæ ---------------------------------------------
 	/* êF		*/Color GetColor(void) { return m_Info.col; }

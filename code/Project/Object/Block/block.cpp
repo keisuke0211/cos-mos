@@ -71,6 +71,7 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
 	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(右に電線)
 	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(両方に電線)
+	{ "data\\MODEL\\Bus-Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // バス停
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -173,7 +174,7 @@ CBlock::CBlock(void) {
 //========================================
 CBlock::~CBlock() {
 
-	CMemory::Release(&m_doll);
+	RNLib::Memory().Release(&m_doll);
 	m_num--;
 }
 
@@ -184,7 +185,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	m_looksType = looksType;
 
 	m_pos.z += LOOKS_DATAS[(int)m_looksType].depth;
-	m_pos.y += LOOKS_DATAS[(int)m_looksType].height * GetPlusMinus(m_pos.y);
+	m_pos.y += LOOKS_DATAS[(int)m_looksType].height * RNLib::Number().GetPlusMinus(m_pos.y);
 
 	// ドールの生成
 	switch (m_looksType) {
@@ -233,9 +234,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
-				RNLib::StaticMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+				RNLib::StaticMesh().SetMaterialModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 			else 
-				RNLib::StaticMesh().SetModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
+				RNLib::StaticMesh().SetModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 0.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], LOOKS_DATAS[(int)m_looksType].col, false);
 		}
 
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::BACKWARD ||
@@ -245,9 +246,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 			setCol.g *= 0.7f;
 			setCol.b *= 0.7f;
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
-				RNLib::StaticMesh().SetMaterialModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
+				RNLib::StaticMesh().SetMaterialModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
 			else
-				RNLib::StaticMesh().SetModel(PRIORITY_OBJECT, CMatrix::ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], setCol, false);
+				RNLib::StaticMesh().SetModel(PRIORITY_OBJECT, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], setCol, false);
 		}
 
 		if (!m_isCollision)
@@ -277,10 +278,10 @@ void CBlock::Update(void) {
 			m_counterMax = 60 + rand() % 60;
 			m_counter = m_counterMax;
 			m_oldAddPos = m_addPos;
-			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+			m_targetAddPos = RNLib::Geometry().GetRandomVec() * (1.0f + RNLib::Number().GetRandomFloat(1.0f));
 		}
 
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_counter, m_counterMax);
 		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
 
 		/*RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
@@ -310,7 +311,7 @@ void CBlock::Update(void) {
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
-				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 			}
 		}
 		else {
@@ -319,7 +320,7 @@ void CBlock::Update(void) {
 				for (int cnt = 0; cnt < 3; cnt++)
 					Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::SWAP_PARTI00), m_pos, Scale3D(8.0f, 8.0f, 0.0f), Color{ 255,200,0,255 });
 
-				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], CSound::CATEGORY::SE, 1.0f, false);
+				RNLib::Sound().Play(m_otherSoundIdxes[(int)OTHER_SOUND::COIN], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 			}
 		}
 
@@ -333,7 +334,7 @@ void CBlock::Update(void) {
 			// 乗られた瞬間
 			if (!m_isHitOlds[(int)CCollision::ROT::OVER] && m_isHits[(int)CCollision::ROT::OVER]) {
 				if (++m_counter == 1)
-					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, 1.0f, false);
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 			}
 
 			// 乗られたことがある
@@ -341,7 +342,7 @@ void CBlock::Update(void) {
 				if (++m_counter > 30) {
 					m_counter = 30;
 					if (rand() % 20 == 0) {
-						Manager::EffectMgr()->ParticleCreate(m_otherTexIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (rand() % 40),(100 + rand() % 80),(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
+						Manager::EffectMgr()->ParticleCreate(m_otherTexIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + RNLib::Geometry().GetRandomVec() * RNLib::Number().GetRandomFloat(1.0f) * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (rand() % 40),(100 + rand() % 80),(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
 					}
 				}
 			}
@@ -350,7 +351,7 @@ void CBlock::Update(void) {
 			// 乗られた瞬間
 			if (!m_isHitOlds[(int)CCollision::ROT::UNDER] && m_isHits[(int)CCollision::ROT::UNDER]) {
 				if (++m_counter == 1)
-					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], CSound::CATEGORY::SE, 1.0f, false);
+					RNLib::Sound().Play(m_otherSoundIdxes[rand() % 2 ? (int)OTHER_SOUND::LIGHT_A : (int)OTHER_SOUND::LIGHT_B], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 			}
 
 			// 乗られたことがある
@@ -358,7 +359,7 @@ void CBlock::Update(void) {
 				if (++m_counter > 30) {
 					m_counter = 30;
 					if (rand() % 20 == 0) {
-						Manager::EffectMgr()->ParticleCreate(m_otherTexIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + CGeometry::GetRandomVec() * fRand() * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (rand() % 40),(100 + rand() % 80),(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
+						Manager::EffectMgr()->ParticleCreate(m_otherTexIdxes[(int)OTHER_TEXTURE::EFFECT], m_pos + RNLib::Geometry().GetRandomVec() * RNLib::Number().GetRandomFloat(1.0f) * 16.0f, Scale3D(8.0f, 8.0f, 0.0f), Color{ (rand() % 40),(100 + rand() % 80),(100 + rand() % 80),255 }, CParticle::TYPE::TYPE_FIXED, 60 + rand() % 60);
 					}
 				}
 			}
@@ -380,7 +381,7 @@ void CBlock::Update(void) {
 		if (m_pos.y > 0)
 		{
 			pos = Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE)->pos;
-			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
+			float fatan = -RNLib::Geometry().FindAngleXY(m_pos, pos);
 
 			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y + 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
 				->SetSize(m_eyescale)
@@ -395,7 +396,7 @@ void CBlock::Update(void) {
 		else
 		{
 			pos = Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND)->pos;
-			float fatan = -CGeometry::FindAngleXY(m_pos, pos);
+			float fatan = -RNLib::Geometry().FindAngleXY(m_pos, pos);
 			RNLib::Polygon3D().Put(PRIORITY_OBJECT, D3DXVECTOR3(m_pos.x, m_pos.y - 4.0f, m_pos.z - 10.0f), D3DXVECTOR3(0.0f, 0.0f, fatan), false)
 				->SetSize(m_eyescale)
 				->SetTex(m_nTexIdx);
@@ -420,10 +421,10 @@ void CBlock::Update(void) {
 			m_counterMax = 60 + rand() % 60;
 			m_counter = m_counterMax;
 			m_oldAddPos = m_addPos;
-			m_targetAddPos = CGeometry::GetRandomVec() * (1.0f + fRand());
+			m_targetAddPos = RNLib::Geometry().GetRandomVec() * (1.0f + RNLib::Number().GetRandomFloat(1.0f));
 		}
 
-		float rate = CEase::Easing(CEase::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_counter, m_counterMax);
 		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)

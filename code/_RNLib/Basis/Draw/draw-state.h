@@ -10,7 +10,7 @@
 // クラス定義
 //****************************************
 // 描画状態クラス
-class CDrawState {
+class _RNC_DrawState {
 public:
 	//========== [[[ 列挙型定義 ]]]]
 	// カリングモード
@@ -31,8 +31,8 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	CDrawState               ();
-	~CDrawState              ();
+	_RNC_DrawState           ();
+	~_RNC_DrawState          ();
 	void Init                (Device& device);
 	void Uninit              (void);
 	void Update              (void);

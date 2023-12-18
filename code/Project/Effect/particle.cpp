@@ -32,7 +32,7 @@ CParticle::CParticle(void)
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.rot = INITD3DXVECTOR3;
 	m_Info.scale = INITD3DXVECTOR3;
-	m_Info.col = INITCOLOR;
+	m_Info.col = COLOR_WHITE;
 
 	m_nNumAll++;
 }
@@ -78,7 +78,7 @@ HRESULT CParticle::Init(int nTex,int nCount)
 		m_Info.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
 	
-	m_Info.col = INITCOLOR;
+	m_Info.col = COLOR_WHITE;
 	m_Info.nTex = nTex;
 	m_Info.nCount = m_Info.nCountMax = nCount;
 
@@ -102,7 +102,7 @@ void CParticle::Update(void)
 	m_Info.pos += m_Info.move;
 
 	//äÑçáåvéZ
-	float fCountRate = CEase::Easing(CEase::TYPE::OUT_SINE, m_Info.nCount, m_Info.nCountMax);
+	float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_Info.nCount, m_Info.nCountMax);
 
 	D3DXVECTOR3 fScaleRate = m_Info.scale * fCountRate;
 

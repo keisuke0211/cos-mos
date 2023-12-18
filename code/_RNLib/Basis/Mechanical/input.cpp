@@ -21,13 +21,13 @@
 // 定数定義
 //****************************************
 // マウスのマスク
-const int CInput::MOUSE_MASK[(int)MOUSEBUTTON::MAX] = {
+const int _RNC_Input::MOUSE_MASK[(int)MOUSEBUTTON::MAX] = {
 	VK_LBUTTON,
 	VK_RBUTTON,
 };
 
 // ボタンのマスク
-const int CInput::BUTTON_MASK[(int)BUTTON::MAX] = {
+const int _RNC_Input::BUTTON_MASK[(int)BUTTON::MAX] = {
 	XINPUT_GAMEPAD_DPAD_UP,
 	XINPUT_GAMEPAD_DPAD_DOWN,
 	XINPUT_GAMEPAD_DPAD_LEFT,
@@ -49,21 +49,21 @@ const int CInput::BUTTON_MASK[(int)BUTTON::MAX] = {
 //========================================
 // コンストラクタ
 //========================================
-CInput::CInput() {
+_RNC_Input::_RNC_Input() {
 
 }
 
 //========================================
 // デストラクタ
 //========================================
-CInput::~CInput() {
+_RNC_Input::~_RNC_Input() {
 
 }
 
 //========================================
 // 初期化処理
 //========================================
-void CInput::Init(HINSTANCE& instanceHandle) {
+void _RNC_Input::Init(HINSTANCE& instanceHandle) {
 
 	m_joyPads = NULL;
 	m_joyPadNum = 0;
@@ -102,7 +102,7 @@ void CInput::Init(HINSTANCE& instanceHandle) {
 //========================================
 // 終了処理
 //========================================
-void CInput::Uninit(void) {
+void _RNC_Input::Uninit(void) {
 
 	// XInputを閉じる
 	XInputEnable(false);
@@ -121,13 +121,13 @@ void CInput::Uninit(void) {
 	}
 
 	// ジョイパッド解放
-	CMemory::Release(&m_joyPads);
+	RNLib::Memory().Release(&m_joyPads);
 }
 
 //========================================
 // 更新処理
 //========================================
-void CInput::Update(void) {
+void _RNC_Input::Update(void) {
 
 	UpdateKeyboard();
 	UpdateCursor();
@@ -135,13 +135,13 @@ void CInput::Update(void) {
 	UpdateJoyPad();
 
 	// ホイールの回転をリセットする
-	SetWheelSpin(CInput::WHEELSPIN::NONE);
+	SetWheelSpin(_RNC_Input::WHEELSPIN::NONE);
 }
 
 //========================================
 // 入力情報クリア処理
 //========================================
-void CInput::ClearInputInfo(void) {
+void _RNC_Input::ClearInputInfo(void) {
 
 	for (int cntKey = 0; cntKey < NUM_KEY_MAX; cntKey++)
 		m_keyInputs[cntKey] = {};
@@ -156,7 +156,7 @@ void CInput::ClearInputInfo(void) {
 //========================================
 // キーボードの更新処理
 //========================================
-void CInput::UpdateKeyboard(void) {
+void _RNC_Input::UpdateKeyboard(void) {
 
 	// キーボードの入力情報
 	BYTE keyInputs[NUM_KEY_MAX];
@@ -187,7 +187,7 @@ void CInput::UpdateKeyboard(void) {
 //========================================
 // マウスの更新処理
 //========================================
-void CInput::UpdateMouseButton(void) {
+void _RNC_Input::UpdateMouseButton(void) {
 
 	// 画面にフォーカスが当たっているかどうか調べる
 	bool isWindowFocused = RNLib::Window().FindFocused(RNLib::Window().GetHandle());
@@ -215,7 +215,7 @@ void CInput::UpdateMouseButton(void) {
 //========================================
 // カーソルの更新処理
 //========================================
-void CInput::UpdateCursor(void) {
+void _RNC_Input::UpdateCursor(void) {
 
 	// 過去の位置として保存
 	Pos2D oldCursorPos = m_cursorInfo.pos;
@@ -256,10 +256,10 @@ void CInput::UpdateCursor(void) {
 //========================================
 // ジョイパッド数設定処理
 //========================================
-void CInput::SetJoyPadNum(const UShort& num) {
+void _RNC_Input::SetJoyPadNum(const UShort& num) {
 
 	// メモリ再確保
-	CMemory::ReAlloc(&m_joyPads, m_joyPadNum, num);
+	RNLib::Memory().ReAlloc(&m_joyPads, m_joyPadNum, num);
 
 	// 数を代入
 	m_joyPadNum = num;
@@ -272,7 +272,7 @@ void CInput::SetJoyPadNum(const UShort& num) {
 //========================================
 // コントローラーの更新処理
 //========================================
-void CInput::UpdateJoyPad(void) {
+void _RNC_Input::UpdateJoyPad(void) {
 
 	for (int cntJoyPad = 0; cntJoyPad < m_joyPadNum; cntJoyPad++)
 		m_joyPads[cntJoyPad].Update();
@@ -287,7 +287,7 @@ void CInput::UpdateJoyPad(void) {
 //========================================
 // コンストラクタ
 //========================================
-CInput::CJoyPad::CJoyPad() {
+_RNC_Input::CJoyPad::CJoyPad() {
 
 	m_idx                 = 0;
 	for (int cntButton = 0; cntButton < (int)BUTTON::MAX; cntButton++)
@@ -303,14 +303,14 @@ CInput::CJoyPad::CJoyPad() {
 //========================================
 // デストラクタ
 //========================================
-CInput::CJoyPad::~CJoyPad() {
+_RNC_Input::CJoyPad::~CJoyPad() {
 
 }
 
 //========================================
 // 更新処理
 //========================================
-void CInput::CJoyPad::Update(void) {
+void _RNC_Input::CJoyPad::Update(void) {
 
 	// XInputの状態を取得
 	XInputGetState(m_idx, &m_xInputState);
@@ -323,7 +323,7 @@ void CInput::CJoyPad::Update(void) {
 //========================================
 // ボタンの更新処理
 //========================================
-void CInput::CJoyPad::UpdateButton(void) {
+void _RNC_Input::CJoyPad::UpdateButton(void) {
 
 	for (int cntButton = 0; cntButton < (int)BUTTON::MAX; cntButton++) {
 
@@ -362,7 +362,7 @@ void CInput::CJoyPad::UpdateButton(void) {
 //========================================
 // スティックの更新処理
 //========================================
-void CInput::CJoyPad::UpdateStick(void) {
+void _RNC_Input::CJoyPad::UpdateStick(void) {
 
 	// スティックの入力情報
 	BYTE angleInputs[(int)INPUT_ANGLE::MAX];
@@ -384,7 +384,7 @@ void CInput::CJoyPad::UpdateStick(void) {
 		}
 
 		// 角度を取得
-		m_sticInputs[cntStick].tiltAngle = CGeometry::FindAngleXY(Pos3D(X, Y, 0.0f), Pos3D(0.0f, 0.0f, 0.0f)) * -1;
+		m_sticInputs[cntStick].tiltAngle = RNLib::Geometry().FindAngleXY(Pos3D(X, Y, 0.0f), Pos3D(0.0f, 0.0f, 0.0f)) * -1;
 
 		// スティックの倒し具合を取得
 		m_sticInputs[cntStick].tiltRate = fabsf(X);
@@ -442,7 +442,7 @@ void CInput::CJoyPad::UpdateStick(void) {
 //========================================
 // 振動の更新処理
 //========================================
-void CInput::CJoyPad::UpdateVibration(void) {
+void _RNC_Input::CJoyPad::UpdateVibration(void) {
 
 	if (m_vibration > 0.0f)
 	{// 振動倍率が0を上回っている時、
@@ -471,7 +471,7 @@ void CInput::CJoyPad::UpdateVibration(void) {
 //========================================
 // コントローラーの振動設定処理
 //========================================
-void CInput::CJoyPad::SetVibration(const float& vibration) {
+void _RNC_Input::CJoyPad::SetVibration(const float& vibration) {
 
 	// 自身がジョイパッド0番でアクティブでない時、処理を終了
 	if (RNLib::Input().GetJoyPadNum() == 0)
