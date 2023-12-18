@@ -10,6 +10,7 @@
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
+#include "../Sound/title-sound.h"
 #include "../UI/MenuUi.h"
 #include "../System/words/words.h"
 #include "../System/words/font-text.h"
@@ -112,6 +113,9 @@ void CMode_Title::Init(void) {
 	// ëJà⁄ê›íË
 	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
 
+	//BGMäJénèàóù
+	titleSound::Start();
+
 	// ÉeÉLÉXÉgÇÃèâä˙âª
 	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
 		m_bMove[nCnt] = false; 
@@ -158,6 +162,9 @@ void CMode_Title::Init(void) {
 	if (m_CoinUI == NULL) {
 		m_CoinUI = CCoinUI::Create(COINUIPOS,Scale2D(4.0f,4.0f),false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
 	}
+
+	// ÉJÉÅÉâÇÃÉâÉCÉgê›íË
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(0));
 
 	// èÛë‘ê›íË
 	SetState((int)STATE::NONE);
@@ -776,22 +783,22 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		TextRelease(TEXT_TITLE);
 		{
-			m_TitleShadow[0] = CWords::Create("Çb", D3DXVECTOR3(786.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[1] = CWords::Create("Çn", D3DXVECTOR3(946.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[0] = CWords::Create("Çb", D3DXVECTOR3(586.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[1] = CWords::Create("Çn", D3DXVECTOR3(846.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 			m_TitleShadow[2] = CWords::Create("Çr", D3DXVECTOR3(1096.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 			m_TitleShadow[3] = CWords::Create("Å^", D3DXVECTOR3(1246.0f, -54.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TitleShadow[4] = CWords::Create("Çl", D3DXVECTOR3(1406.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[5] = CWords::Create("Çn", D3DXVECTOR3(1566.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[6] = CWords::Create("Çr", D3DXVECTOR3(1706.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[4] = CWords::Create("Çl", D3DXVECTOR3(1506.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[5] = CWords::Create("Çn", D3DXVECTOR3(1766.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
+			m_TitleShadow[6] = CWords::Create("Çr", D3DXVECTOR3(2056.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
 		}
 		{
-			m_TITLE[0] = CWords::Create("Çb", D3DXVECTOR3(780.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[1] = CWords::Create("Çn", D3DXVECTOR3(940.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[0] = CWords::Create("Çb", D3DXVECTOR3(580.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
+			m_TITLE[1] = CWords::Create("Çn", D3DXVECTOR3(840.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
 			m_TITLE[2] = CWords::Create("Çr", D3DXVECTOR3(1090.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
 			m_TITLE[3] = CWords::Create("Å^", D3DXVECTOR3(1234.0f, -66.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[4] = CWords::Create("Çl", D3DXVECTOR3(1400.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TITLE[5] = CWords::Create("Çn", D3DXVECTOR3(1560.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TITLE[6] = CWords::Create("Çr", D3DXVECTOR3(1700.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[4] = CWords::Create("Çl", D3DXVECTOR3(1500.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[5] = CWords::Create("Çn", D3DXVECTOR3(1760.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
+			m_TITLE[6] = CWords::Create("Çr", D3DXVECTOR3(2050.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
 		}
 		m_bMove[0] = true;
 		m_bBackMode = false;
@@ -803,7 +810,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
 		m_pMenu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-			"É{É^ÉìÇâüÇµÇƒÇÀÑD", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+			"É{É^ÉìÇÇ®ÇµÇƒÇÀÑD", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
 	}
 		break;
 	case CMode_Title::TITLE_MENU_ANIME:

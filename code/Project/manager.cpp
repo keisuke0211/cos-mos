@@ -13,7 +13,7 @@
 //****************************************
 // マクロ定義
 //****************************************
-#define LIGHT3D_MAX (1)
+#define LIGHT3D_MAX (3)
 
 //****************************************
 // 無名空間
@@ -58,10 +58,11 @@ void Manager::Init(CMode::TYPE mode) {
 	CResources::Load();
 
 	// ライト3Dの生成
-	String test = "data\\LIGHT3D\\AmbientLight.txt";
 	for (int cnt = 0; cnt < LIGHT3D_MAX; cnt++) {
 		switch (cnt) {
-		case 0:m_light3D[cnt] = new CLight3D(test); break;
+		case 0:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\Title.txt"); break;
+		case 1:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\World1.txt"); break;
+		case 2:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\World2.txt"); break;
 		default:
 			m_light3D[cnt] = NULL;
 			assert(false);
