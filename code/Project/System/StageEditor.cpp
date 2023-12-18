@@ -575,13 +575,13 @@ void CStageEditor::SwapStage(int nStageIdx)
 		{
 			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
 				Stage::SetStageNumber(planet, NecstStage);
 			}
 		}
 		else
 		{
-			Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+			Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
 			CMode_Title::SetSelect(true);
 		}
 	}

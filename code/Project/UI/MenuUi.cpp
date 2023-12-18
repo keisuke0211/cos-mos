@@ -700,11 +700,11 @@ void CMenuUI::MenuAnime(void)
 			switch (m_Menu.nMaineSelect)
 			{
 			case PAUSE_MENU_RESET:
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
 				Manager::EffectMgr()->ReleaseAll();
 				break;
 			case PAUSE_MENU_SELECT:
-				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::FADE);
+				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
 				CMode_Title::SetSelect(true);
 				Manager::EffectMgr()->ReleaseAll();
 				break;

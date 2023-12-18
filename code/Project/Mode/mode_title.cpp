@@ -112,7 +112,7 @@ void CMode_Title::Init(void) {
 	CMode::Init();
 
 	// ‘JˆÚÝ’è
-	Manager::Transition().Open(CTransition::TYPE::FADE, 60);
+	Manager::Transition().Open(CTransition::TYPE::NUI, 60);
 
 	//BGMŠJŽnˆ—
 	titleSound::Start();
@@ -264,14 +264,20 @@ void CMode_Title::Update(void) {
 						break;
 					case TITLE_SELECT:
 					{
-						SwapMode(TITLE_NEXT);
-						Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
-						Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::FADE);
 
-						if (m_PlanetType != NULL)
+						bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect);
+
+						if (!bStgRel)
 						{
-							delete[] m_PlanetType;
-							m_PlanetType = NULL;
+							SwapMode(TITLE_NEXT);
+							Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
+							Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
+
+							if (m_PlanetType != NULL)
+							{
+								delete[] m_PlanetType;
+								m_PlanetType = NULL;
+							}
 						}
 					}
 					break;
