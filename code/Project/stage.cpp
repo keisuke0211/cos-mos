@@ -437,10 +437,10 @@ namespace {
 			bubbleCnt++;
 
 
-			if (bubbleCnt % 20 == 0)
+			if (bubbleCnt % 10 == 0)
 			{
 				Pos3D pos = Pos3D(100.0f + (rand() % 700 - 350), (rand() % 200 + 100), 200.0f);
-				float scale = rand() % 10 + 10;
+				float scale = rand() % 5 + 5;
 
 
 
