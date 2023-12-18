@@ -163,6 +163,9 @@ void CMode_Title::Init(void) {
 		m_CoinUI = CCoinUI::Create(COINUIPOS,Scale2D(4.0f,4.0f),false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
 	}
 
+	// ƒJƒƒ‰‚Ìƒ‰ƒCƒgİ’è
+	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(0));
+
 	// ó‘Ôİ’è
 	SetState((int)STATE::NONE);
 }

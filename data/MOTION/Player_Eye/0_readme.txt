@@ -21,3 +21,9 @@ Summon.txt
 
 起き上がり：ステージ開始時
 GetUp.txt
+
+喜ぶ
+Happy.txt
+
+うんざり
+Bored.txt
