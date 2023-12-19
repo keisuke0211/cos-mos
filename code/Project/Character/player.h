@@ -83,8 +83,9 @@ public:
 		//-------------------------------
 		//特定のギミック用
 		//-------------------------------
-		bool  bRide; // ロケットに乗っているかどうか
-		bool  bGoal; // ゴールしたかどうか
+		bool  bRide;         // ロケットに乗っているかどうか
+		int   nRideInterval; //ロケットに乗り降りした時のインターバル
+		bool  bGoal;         // ゴールしたかどうか
 		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間
 		float fTramTargetPosY;  // トランポリン用の目標位置
 		bool  bTramJump;        // トランポリン用の特殊ジャンプ
@@ -352,6 +353,7 @@ private:
 	static bool s_bAimPlayer;
 	static int s_nAimNo;
 	static Pos3D s_addPosV;
+	static Pos3D s_addPosR;
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;

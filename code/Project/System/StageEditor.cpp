@@ -275,8 +275,8 @@ void CStageEditor::FileLoad(void)
 			{
 				fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aFileName[0]);	// ファイル名
 				fscanf(pFile, "%d", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].nNumCoin);		// コイン数
+				fscanf(pFile, "%d", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].nLimitTime);		// 制限時間
 				//fscanf(pFile, "%s", &m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].aName[0]);		// ステージ名
-
 
 				if (nPlanet == 0 && pCntStage[nPlanet] == 0)
 					m_PlanetType[nPlanet].StageType[pCntStage[nPlanet]].bRelease = false;
@@ -1210,6 +1210,15 @@ int CStageEditor::GetStageCoin(int planet, int stage)
 		Coin = 0;
 
 	return Coin;
+}
+
+//========================================
+// 制限時間の取得
+// Author:KEISUKE OTONO
+//========================================
+int CStageEditor::GetStageLimittime(int planet, int stage) {
+
+	return m_PlanetType[planet].StageType[stage].nLimitTime;
 }
 
 //========================================

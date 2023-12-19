@@ -27,6 +27,7 @@ public:
 
 private:
 
+	int m_nID;
 	int m_ModelIdx;
 
 	static int s_Num;		//ステージ内で取得したコイン

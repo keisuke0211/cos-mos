@@ -50,6 +50,7 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+	int             limitTimeCounter;
 
 	//各惑星ごとのデータ
 	struct WorldData
@@ -172,6 +173,9 @@ void Stage::StartStage(void) {
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
+	// 制限時間を設定
+	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+
 	// プレイヤーの生成
 	if (player == NULL)
 		player = CPlayer::Create();
@@ -240,6 +244,11 @@ void Stage::UpdateStage(void) {
 
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
+
+	// 制限時間のカウント
+	if (--limitTimeCounter < 0) {
+		// タイムオーバーの処理
+	}
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
@@ -750,4 +759,19 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 		//取得状況代入
 		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
 	}
+}
+
+//========================================
+// コイン取得状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+
+	//取得状況代入
+	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
 }
