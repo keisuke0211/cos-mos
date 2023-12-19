@@ -11,11 +11,14 @@
 #include "Sound/stage-sound-player.h"
 #include "UI/partsUI.h"
 #include "resource.h"
+#include "BackGround/fishes.h"
 
-#define  MAX_COUNT		(2000)
-#define  MAX_CLOUD		(5)
-#define  MAX_BUBBLE		(7)
-#define  MAX_BUBBLECNT	(640)
+#define  MAX_COUNT		 (2000)
+#define  MAX_CLOUD		 (5)
+#define  MAX_BUBBLE		 (7)
+#define  MAX_BUBBLECNT	 (640)
+#define  WHALE_MOVE_TIME (360)
+
 //****************************************
 // 無名空間
 //****************************************
@@ -47,6 +50,7 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+	int             limitTimeCounter;
 
 	//各惑星ごとのデータ
 	struct WorldData
@@ -66,10 +70,6 @@ namespace {
 	const char *SET_RECORD = "SET_RECORD";
 	const char *END_RECORD = "END_RECORD";
 	const char *CODE_RECORD = "RECORD";
-
-	CDoll3D* m_doll;
-	int      m_counter;
-	CRail3D  m_rail("NONEDATA");
 }
 
 //================================================================================
@@ -173,6 +173,9 @@ void Stage::StartStage(void) {
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
+	// 制限時間を設定
+	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+
 	// プレイヤーの生成
 	if (player == NULL)
 		player = CPlayer::Create();
@@ -195,12 +198,9 @@ void Stage::StartStage(void) {
 	StageSoundPlayer::Start();
 
 	if (CheckPlanetIdx(1)) {
-		m_doll = new CDoll3D(PRIORITY_BACKGROUND, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
-		m_rail.Load("data\\RAIL3D\\Test.txt");
-		m_counter = 0;
-	}
-	else {
-		m_doll = NULL;
+
+		// 魚更新処理
+		Fishes::Start();
 	}
 
 	for (int cnt = 0; cnt < 2; cnt++) {
@@ -244,6 +244,11 @@ void Stage::UpdateStage(void) {
 
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
+
+	// 制限時間のカウント
+	if (--limitTimeCounter < 0) {
+		// タイムオーバーの処理
+	}
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
@@ -349,11 +354,6 @@ void Stage::EndStage(void) {
 		coinUI = NULL;
 	}
 
-	if (m_doll != NULL) {
-		delete m_doll;
-		m_doll = NULL;
-	}
-
 	// ステージオブジェクトと背景を解放
 	Manager::StageObjectMgr()->ReleaseAll();
 	Manager::BGMgr()->ReleaseAll();
@@ -370,6 +370,12 @@ void Stage::EndStage(void) {
 
 	// スタティックメッシュの削除
 	RNLib::StaticMesh().Delete(false);
+
+	if (CheckPlanetIdx(1)) {
+
+		// 魚終了処理
+		Fishes::End();
+	}
 
 	// UI用カメラの破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
@@ -442,31 +448,21 @@ namespace {
 		{// [[[ 背景描画 ]]]
 
 			// 上
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
 			// 下
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
-			// 魚
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
-				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
-				->SetBillboard(true);
-
-			// クジラ
-			m_counter++;
-			RNLib::Number().LoopClamp(&m_counter, 60, 0);
-			{
-				Matrix mtx = m_rail.GetMtx(m_counter / 60.0f);
-				m_doll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
-				m_doll->SetRot(RNLib::Matrix().ConvMtxToRot(mtx));
-			}
+			// 魚更新処理
+			Fishes::Update();
 
 			bubbleCnt++;
 
@@ -763,4 +759,19 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 		//取得状況代入
 		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
 	}
+}
+
+//========================================
+// コイン取得状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+
+	//取得状況代入
+	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
 }

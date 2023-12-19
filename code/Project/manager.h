@@ -18,6 +18,7 @@
 // —ñ‹“Œ^’è‹`
 //****************************************
 typedef enum {
+	PRIORITY_BACKGROUND_DEPTH,
 	PRIORITY_BACKGROUND,
 	PRIORITY_PLAYER,
 	PRIORITY_OBJECT,

@@ -38,4 +38,5 @@ namespace Stage {
 	void  RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime);
 	Data  GetData(CInt& planetIdx, CInt& stageIdx);
 	void  SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data);
+	void  SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet);
 };
