@@ -47,6 +47,7 @@ namespace {
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
 	bool            isPause;
+	bool            isReset;
 	bool            isCutIn;
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
@@ -87,6 +88,7 @@ void Stage::SetStageNumber  (const int& setPlanetIdx, const int& setStageIdx) { 
 void Stage::SetPause        (const bool& setIsPause)                          { isPause     = setIsPause; }
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
+void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
 
 //========================================
 // 取得系関数
@@ -105,6 +107,7 @@ void Stage::Init(void) {
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
+	isReset = false;
 	fishpos = Pos3D(100.0f,300.0f,0.0f);
 
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
@@ -169,6 +172,9 @@ bool Stage::CheckStageNumber(const int& planetIdx, const int& stageIdx) {
 // ステージ開始処理（※やり直しを含む）
 //========================================
 void Stage::StartStage(void) {
+
+	// リセットしたかフラグ
+	isReset;
 
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
@@ -235,6 +241,9 @@ void Stage::StartStage(void) {
 	// カメラのライト
 	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 	Manager::GetSubCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
+
+	// リセットフラグを偽にする
+	isReset = false;
 }
 
 //========================================

@@ -5,6 +5,7 @@
 // 
 //========================================
 #include "MenuUi.h"
+#include "../stage.h"
 #include "../main.h"
 #include "../../_RNLib/RNsettings.h"
 #include "../../_RNLib/Basis/Mechanical/sound.h"
@@ -700,6 +701,7 @@ void CMenuUI::MenuAnime(void)
 			switch (m_Menu.nMaineSelect)
 			{
 			case PAUSE_MENU_RESET:
+				Stage::SetIsReset(true);
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
 				Manager::EffectMgr()->ReleaseAll();
 				break;
