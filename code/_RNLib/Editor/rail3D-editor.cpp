@@ -131,6 +131,34 @@ void CRail3DEditor::Update(void) {
 			RNLib::Number().Clamp(&m_counter, SHRT_MAX, 0);
 		}
 
+		{// スケールの加算/減算
+			float& scale = m_rail3D.GetScale();
+
+			if (RNLib::Input().GetKeyTrigger(DIK_G)) {
+				if (scale <= 0.1f) {
+					scale -= 0.01f;
+				}
+				else if (scale <= 1.0f) {
+					scale -= 0.1f;
+				}
+				else {
+					scale -= 1.0f;
+				}
+			}
+			if (RNLib::Input().GetKeyTrigger(DIK_H)) {
+				if (scale < 0.099f) {
+					scale += 0.01f;
+				}
+				else if (scale < 1.0f) {
+					scale += 0.1f;
+				}
+				else {
+					scale += 1.0f;
+				}
+			}
+			RNLib::Number().Clamp(&scale, FLT_MAX, 0.0f);
+		}
+
 		// ポイントのループ
 		if (RNLib::Input().GetKeyTrigger(DIK_X)) {
 			bool& isLoop = m_rail3D.GetIsLoop();
@@ -216,7 +244,7 @@ void CRail3DEditor::Update(void) {
 		// ドールは非表示
 		m_doll.SetIsShow(false);
 
-		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, m_modelIdx, m_rail3D.GetMtx((float)m_counter / m_time))
+		RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, m_modelIdx, m_rail3D.GetMtx((float)m_counter / m_time, false))
 			->SetCol(m_modelIdx == RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::PYRAMID_ALLOW) ? Color(255, 0, 0, 255) : COLOR_WHITE);
 	}
 	else {
@@ -224,20 +252,20 @@ void CRail3DEditor::Update(void) {
 		// ドールを表示
 		m_doll.SetIsShow(true);
 
-		Matrix mtx = m_rail3D.GetMtx((float)m_counter / m_time);
+		Matrix mtx = m_rail3D.GetMtx((float)m_counter / m_time, false);
 		m_doll.SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
 		m_doll.SetRot(RNLib::Matrix().ConvMtxToRot(mtx));
 	}
 
 	if (m_rail3D.GetPointNum() >= 2)
 	{// ラインの描画
-		Matrix mtx      = m_rail3D.GetMtx(0.0f);
+		Matrix mtx      = m_rail3D.GetMtx(0.0f, false);
 		Pos3D  oldPos   = RNLib::Matrix().ConvMtxToPos(mtx);
 		float  oldAngle = RNLib::Matrix().ConvMtxToRot(mtx).y;
 
 		const UShort divNum = (m_rail3D.GetPointNum() - 1) * 5;
 		for (int cntDiv = 1; cntDiv <= divNum; cntDiv++) {
-			mtx = m_rail3D.GetMtx((float)cntDiv / divNum);
+			mtx = m_rail3D.GetMtx((float)cntDiv / divNum, false);
 			Pos3D pos = RNLib::Matrix().ConvMtxToPos(mtx);
 			float angle = RNLib::Matrix().ConvMtxToRot(mtx).y;
 			RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::UI3D, INITMATRIX)
@@ -278,6 +306,7 @@ void CRail3DEditor::Update(void) {
 	RNLib::Text2D().PutDebugLog(String("SetModel          [4]"));
 	RNLib::Text2D().PutDebugLog(String("SetDoll           [5]"));
 	RNLib::Text2D().PutDebugLog(String("Time              [T][Y]:%d", m_time));
+	RNLib::Text2D().PutDebugLog(String("scale             [G][H]:%.2f", m_rail3D.GetScale()));
 	RNLib::Text2D().PutDebugLog(String("IsLoop            [X]   :%s", m_rail3D.GetIsLoop() ? "TRUE" : "FALSE"));
 	RNLib::Text2D().PutDebugLog(String("AddPointNum       [C]   :%d", m_rail3D.GetPointNum()));
 	RNLib::Text2D().PutDebugLog(String("SubPoint          [Z]"));

@@ -461,9 +461,9 @@ namespace {
 
 			// ƒNƒWƒ‰
 			m_counter++;
-			RNLib::Number().LoopClamp(&m_counter, 60, 0);
+			RNLib::Number().LoopClamp(&m_counter, 360, 0);
 			{
-				Matrix mtx = m_rail.GetMtx(m_counter / 60.0f);
+				Matrix mtx = m_rail.GetMtx(m_counter / 360.0f, true);
 				m_doll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
 				m_doll->SetRot(RNLib::Matrix().ConvMtxToRot(mtx));
 			}

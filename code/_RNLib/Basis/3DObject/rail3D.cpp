@@ -40,6 +40,7 @@ CRail3D::~CRail3D() {
 void CRail3D::Clear(void) {
 
     m_isLoop = false;
+    m_scale = 1.0f;
     RNLib::Memory().Release(&m_points);
     m_pointNum = 0;
 }
@@ -53,6 +54,7 @@ void CRail3D::Load(const String& loadPath) {
 	if (RNLib::File().OpenLoadFile(loadPath, "Rail3DFile")) {
         while (RNLib::File().SearchLoop("END")) {
             RNLib::File().Scan(_RNC_File::SCAN::BOOL, &m_isLoop, "isLoop");
+            RNLib::File().Scan(_RNC_File::SCAN::FLOAT, &m_scale, "scale");
 
             if (RNLib::File().CheckIdentifier("points{")) {
                 RNLib::File().Scan(_RNC_File::SCAN::USHORT, &m_pointNum);
@@ -77,15 +79,16 @@ void CRail3D::Load(const String& loadPath) {
 //========================================
 // 書き込み処理
 //========================================
-void CRail3D::Save(const String& savePath) {
+void CRail3D::Save(const String& savePath, const float& scale) {
 
     // ファイルを開く
     if (RNLib::File().OpenSaveFile(savePath)) {
         fprintf(RNLib::File().GetFile(), "Rail3DFile\n");
         fprintf(RNLib::File().GetFile(), "isLoop %d\n", m_isLoop);
+        fprintf(RNLib::File().GetFile(), "scale %f\n", m_scale);
         fprintf(RNLib::File().GetFile(), "points{ %d\n", m_pointNum);
         for (UShort cntPoint = 0; cntPoint < m_pointNum; cntPoint++) {
-            fprintf(RNLib::File().GetFile(), "  %f %f %f\n", m_points[cntPoint].x, m_points[cntPoint].y, m_points[cntPoint].z);
+            fprintf(RNLib::File().GetFile(), "  %f %f %f\n", m_points[cntPoint].x * scale, m_points[cntPoint].y * scale, m_points[cntPoint].z * scale);
         }
         fprintf(RNLib::File().GetFile(), "}\n");
         fprintf(RNLib::File().GetFile(), "END\n");
@@ -98,7 +101,7 @@ void CRail3D::Save(const String& savePath) {
 //========================================
 // 割合に基づいてマトリックスを計算
 //========================================
-Matrix CRail3D::GetMtx(float rate) {
+Matrix CRail3D::GetMtx(float rate, const bool& isApplyScale) {
     
     if (m_pointNum < 3)
         return INITMATRIX;
@@ -110,6 +113,10 @@ Matrix CRail3D::GetMtx(float rate) {
     Pos3D pos;
     Vector3D tangent;
     CalculateCatmullRomSpline(rate, pos, tangent);
+
+    if (isApplyScale) {
+        pos *= m_scale;
+    }
 
     return RNLib::Matrix().ConvPosRotToMtx(pos, RNLib::Geometry().FindVecRot(tangent));
 }
