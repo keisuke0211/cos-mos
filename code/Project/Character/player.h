@@ -83,8 +83,9 @@ public:
 		//-------------------------------
 		//特定のギミック用
 		//-------------------------------
-		bool  bRide; // ロケットに乗っているかどうか
-		bool  bGoal; // ゴールしたかどうか
+		bool  bRide;         // ロケットに乗っているかどうか
+		int   nRideInterval; //ロケットに乗り降りした時のインターバル
+		bool  bGoal;         // ゴールしたかどうか
 		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間
 		float fTramTargetPosY;  // トランポリン用の目標位置
 		bool  bTramJump;        // トランポリン用の特殊ジャンプ
@@ -238,6 +239,12 @@ public:
 
 	// ズームアップカウンター
 	static int GetZoomUpCounter(void) { return s_zoomUpCounter; }
+
+	static bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
+
 private:
 	//種類の略称を設定
 	typedef CStageObject::TYPE OBJECT_TYPE;
@@ -323,11 +330,6 @@ private:
 	// 各プレイヤーの当たり判定が終わった後の処理
 	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot);
 
-	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
-	bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
-	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
-	bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
-
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
 	void UpdateDeath(Info& info, const int& count);
@@ -351,6 +353,7 @@ private:
 	static bool s_bAimPlayer;
 	static int s_nAimNo;
 	static Pos3D s_addPosV;
+	static Pos3D s_addPosR;
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;
