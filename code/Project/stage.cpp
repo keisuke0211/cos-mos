@@ -65,6 +65,8 @@ namespace {
 	WorldData *pWldData; //惑星ごとのレコード
 	int MaxPlanet;      //最大惑星数
 
+	const char *STAGE_DATA = "data\\GAMEDATA\\STAGE\\STAGE_DATA.txt";
+
 					 //文字添削
 	const char COMMENT = '#';       //コメント文字
 	const char CHR_END = '\0';      //終端文字
@@ -624,7 +626,7 @@ namespace
 	{
 		if (pWldData != NULL) return;
 
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+		FILE *pFile = fopen(STAGE_DATA, "r");
 		if (pFile == NULL) return;
 
 		//メモリ確保
@@ -695,7 +697,7 @@ namespace
 	{
 		if (pWldData == NULL) return;
 
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "w");
+		FILE *pFile = fopen(STAGE_DATA, "w");
 		if (pFile == NULL) return;
 
 		const char *WORLD_COMMENT = "\n#=====[ %d面 ]\n";

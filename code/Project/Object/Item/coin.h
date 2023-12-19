@@ -31,6 +31,7 @@ private:
 	int m_ModelIdx;
 	Color m_color;
 
-	static int s_Num;		//ステージ内で取得したコイン
-	static int s_NumAll;	//今までのコイン総数
+	static int s_Num;    //ステージ内で取得したコイン
+	static int s_NumAll; //今までのコイン総数
+	static int s_CorrNumAll; //今現在のステージのコイン総数
 };
