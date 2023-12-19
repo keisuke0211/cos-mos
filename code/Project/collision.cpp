@@ -688,9 +688,11 @@ void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SI
 	if (!pRocket->GetReady() && !pInfo->bRide) return;
 
 	// ƒƒPƒbƒg‚É“‹æ
-	if (!CPlayer::IsKeyConfigTrigger(pInfo->idx, *pSide, CPlayer::KEY_CONFIG::JUMP)) return;
+	if (!CPlayer::IsKeyConfigTrigger(pInfo->idx, *pSide, CPlayer::KEY_CONFIG::JUMP) ||
+		pInfo->nRideInterval != 0) return;
 
 	pInfo->bRide = true;
+	pInfo->nRideInterval = CRocket::RIDE_ONOFF_INTERVAL;
 	pRocket->RideOn();
 	
 	CInt ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");

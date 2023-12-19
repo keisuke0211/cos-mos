@@ -764,3 +764,18 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
 	}
 }
+
+//========================================
+// コイン取得状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+
+	//取得状況代入
+	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
+}
