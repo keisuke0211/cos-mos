@@ -328,6 +328,7 @@ void CPlayer::InitInfo(void) {
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
 		Player.swapWaitCounter = 0;
+		Player.nRideInterval = 0;
 	}
 
 	CGoalGate::ResetEtr();
@@ -500,6 +501,10 @@ void CPlayer::UpdateInfo(void)
 					->SetBillboard(true);
 			}
 		}
+
+		//ロケット乗り降りインターバル減少
+		if (Player.nRideInterval > 0)
+			Player.nRideInterval--;
 
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal)
@@ -764,6 +769,10 @@ void CPlayer::ActionControl(void)
 		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer + 1) % NUM_PLAYER].bGoal &&
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
+			//ロケットに乗っていたらインターバル設定
+			if (Player.bRide)
+				Player.nRideInterval = CRocket::RIDE_ONOFF_INTERVAL;
+
 			CGoalGate::EntrySub();
 			CRocket::RideOff();
 			Player.bRide = false;

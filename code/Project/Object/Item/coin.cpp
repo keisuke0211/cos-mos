@@ -21,6 +21,8 @@ CCoin::CCoin() {
 
 	if (s_Num != 0)
 		s_Num = 0;
+
+	m_nID = s_NumAll++;
 }
 
 //========================================
@@ -29,6 +31,7 @@ CCoin::CCoin() {
 CCoin::~CCoin() {
 
 	Manager::StageObjectMgr()->SubList(this);
+	s_NumAll--;
 }
 
 //========================================
@@ -40,16 +43,23 @@ void CCoin::Update(void) {
 	RNLib::Model().Put(PRIORITY_OBJECT, m_ModelIdx, m_pos, m_rot, false)
 		->SetOutLineIdx(8);
 
-	CPlayer *pPlayer = Stage::GetPlayer();
-	CPlayer::Info *pInfo[2];
-	pPlayer->GetInfo(pInfo[0],pInfo[1]);
-	
-	for (int nCnt = 0; nCnt < 2; nCnt++)
+	for (int nCnt = 0; nCnt < CPlayer::NUM_PLAYER; nCnt++)
 	{
-		if (RNLib::Geometry().FindDistance(m_pos, pInfo[nCnt]->pos) <= 16)
+		//プレイヤー情報取得
+		CPlayer::Info *pInfo = CPlayer::GetInfo(nCnt);
+
+		if (RNLib::Geometry().FindDistance(m_pos, pInfo->pos) <= 16)
 		{
 			Delete();
 			s_Num++;
+
+			//現在のワールド・ステージ番号を取得
+			CStageEditor *pEd = Manager::StgEd();
+			CInt planet = pEd->GetPlanetIdx();
+			CInt stage = pEd->GetType()[planet].nStageIdx;
+			
+			//取得状況代入
+			Stage::SetCoinInfo(planet, stage, m_nID, true);
 		}
 	}
 }
