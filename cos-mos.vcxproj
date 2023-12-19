@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\Project\BackGround\fishes.cpp" />
     <ClCompile Include="code\Project\Character\player.cpp" />
     <ClCompile Include="code\Project\collision.cpp" />
     <ClCompile Include="code\Project\Effect\eff-death.cpp" />
@@ -266,6 +267,7 @@
     <ClCompile Include="code\_RNLib\Editor\setup3D-editor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code\Project\BackGround\fishes.h" />
     <ClInclude Include="code\Project\Character\player.h" />
     <ClInclude Include="code\Project\collision.h" />
     <ClInclude Include="code\Project\Effect\eff-death.h" />
