@@ -216,13 +216,6 @@ void CMode_Title::Update(void) {
 					m_TitleLogo.Logo[nCnt].VtxPos[2], m_TitleLogo.Logo[nCnt].VtxPos[3]);
 		}
 
-		if (TitleAnima == ANIME_TEXT1)
-		{
-			RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(625.0f, 280.0f, 0.0f), 0.0f, false)
-				->SetSize(44.0f, 128.0f)
-				->SetCol(Color{ 0,0,0,255 });
-		}
-
 		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_PLANET], m_PlanetAngle, false)
 			->SetSize(1400.0f, 1400.0f)
 			->SetCol(Color{ 255,255,255,255 })
@@ -412,7 +405,7 @@ void CMode_Title::TextAnime(void)
 		D3DXVECTOR2 size = m_TitleLogo.Logo[LOGO_NUI].size;
 		float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_TitleLogo.nCntAnime, NUI_ANIME);
 		float PosRate = 20 * Rate;
-		float AngleRate = -0.6f * Rate;
+		float AngleRate = -0.3f * Rate;
 
 		// à íu
 		m_TitleLogo.Logo[LOGO_NUI].pos.x = m_TitleLogo.Logo[LOGO_NUI].InitPos.x + PosRate;
@@ -425,6 +418,8 @@ void CMode_Title::TextAnime(void)
 			m_TitleLogo.nCntAnime = 0;
 			TitleAnima = ANIME_TM;
 		}
+
+		CenterPos.y = m_TitleLogo.Logo[LOGO_NUI].InitPos.y + (size.y * 0.025f);
 
 		{
 			// ëŒäpê¸ÇÃí∑Ç≥Ç∆å¸Ç´
@@ -1099,7 +1094,9 @@ void CMode_Title::TitleLogoInit(bool bSwitch)
 
 					// í∏ì_ç¿ïWÇê›íË
 					{
-						m_TitleLogo.Logo[nLogo].angle = -0.6f;
+						m_TitleLogo.Logo[nLogo].angle = -0.3f;
+						CenterPos.y = m_TitleLogo.Logo[LOGO_NUI].InitPos.y + (size.y * 0.025f);
+
 						m_TitleLogo.Logo[LOGO_NUI].pos.x = m_TitleLogo.Logo[LOGO_NUI].InitPos.x + 20;
 						CenterPos = m_TitleLogo.Logo[LOGO_NUI].pos;
 						float angle = m_TitleLogo.Logo[nLogo].angle;

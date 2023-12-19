@@ -10,7 +10,7 @@ Start
 
 -- ÇPå¬ñ⁄ÇÃê›íË ------------------------------------------------------
 	SetLogo
-		Pos = 365.0 150.0 0.0
+		Pos = 385.0 150.0 0.0
 		Size = 256.0 128.0
 		TexPath = data\\TEXTURE\\TitleLogo\\Cos1.png
 	EndLogo
@@ -31,14 +31,14 @@ Start
 
 -- ÇSå¬ñ⁄ÇÃê›íË ------------------------------------------------------
 	SetLogo
-		Pos = 510.0 260.0 0.0
+		Pos = 545.0 260.0 0.0
 		Size = 128.0 64.0
 		TexPath = data\\TEXTURE\\TitleLogo\\Cos2.png
 	EndLogo
 	
 -- ÇTå¬ñ⁄ÇÃê›íË ------------------------------------------------------
 	SetLogo
-		Pos = 735.0 260.0 0.0
+		Pos = 745.0 260.0 0.0
 		Size = 128.0 64.0
 		TexPath = data\\TEXTURE\\TitleLogo\\Mos2.png
 	EndLogo
