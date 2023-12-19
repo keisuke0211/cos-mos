@@ -373,8 +373,15 @@ void CPlayer::Update(void)
 		GoalDirector();
 	}
 
+	m_aInfo[0].posOld;
+	m_aInfo[1].posOld;
+
 	// 当たり判定まとめ
 	CollisionToStageObject();
+
+	// 過去の位置を設定
+	m_aInfo[0].posOld = m_aInfo[0].pos;
+	m_aInfo[1].posOld = m_aInfo[1].pos;
 
 	// 情報更新
 	UpdateInfo();
@@ -1139,12 +1146,12 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 	// ロケットに乗ってたら　or ゴールしていたらスキップ
 	if (Player.bRide || Player.bGoal) return;
 
+	
 	// 移動量反映
 	switch (vec)
 	{
 	case VECTOL::X:
-		// 過去の位置を設定
-		Player.posOld.x = Player.pos.x;
+		
 
 		// 慣性処理
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
@@ -1158,8 +1165,7 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 
 		// 重力処理
 	case VECTOL::Y:
-		// 過去の位置を設定
-		Player.posOld.y = Player.pos.y;
+		
 
 		// トランポリンによる特殊ジャンプ中
 		if (Player.bTramJump)
@@ -1243,12 +1249,9 @@ void CPlayer::CollisionToStageObject(void)
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
-					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE) {
-
-					if (D3DXVec3Length(&(colliInfo.pos - Player.pos)) >
-						D3DXVec2Length(&D3DXVECTOR2(colliInfo.fWidth + SIZE_WIDTH, colliInfo.fHeight + SIZE_HEIGHT)))
-						continue;
-				}
+					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE && 
+					CCollision::IsInRange(Self, colliInfo, true, true))
+					continue;
 
 				//独自の当たり判定設定
 				//場合によってはここで判定終了
