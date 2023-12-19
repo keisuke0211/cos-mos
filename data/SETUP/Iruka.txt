@@ -5,7 +5,7 @@ boneDataSum{ 2
 		modelIdx data\\Model\\Iruka_Body.x
 		parentIdx -1
 		relativePos 0.00 10.00 0.00
-		relativeRot 0.00 0.00 0.00
+		relativeRot 0.00 -1.50 0.00
 	}
 	boneData{
 		idx 1
