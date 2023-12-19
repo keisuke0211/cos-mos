@@ -832,6 +832,11 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 {
 	LoadWorldData();
 
+	if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
+		RNLib::Window().Message_ERROR("コインの枚数が実際の配置数とずれています。");
+		return false;
+	}
+
 	//回収状況を返す
 	return pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID];
 }
