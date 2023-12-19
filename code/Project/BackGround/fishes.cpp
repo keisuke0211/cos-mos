@@ -75,9 +75,7 @@ void Fishes::End(void) {
 void Fishes::Update(void) {
 
 	for (int cnt = 0; cnt < FISH_NUM; cnt++) {
-		if (++fishes[cnt].counter > fishDatas[cnt].time) {
-			fishes[cnt].counter = fishDatas[cnt].time;
-		}
+		fishes[cnt].counter = (fishes[cnt].counter + 1) % fishDatas[cnt].time;
 
 		Matrix mtx = fishes[cnt].rail->GetMtx(fishes[cnt].counter / (float)fishDatas[cnt].time, true);
 		fishes[cnt].doll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx) + fishDatas[cnt].basePos);
