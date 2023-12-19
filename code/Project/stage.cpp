@@ -412,6 +412,9 @@ namespace {
 				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
+			// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		}
 		if (Stage::CheckPlanetIdx(1))
 		{// [[[ ”wŒi•`‰æ ]]]
@@ -458,10 +461,6 @@ namespace {
 					move);
 
 			}
-
-			// [[[ •Çƒ‚ƒfƒ‹•`‰æ ]]]
-			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		}
 	}
 }
