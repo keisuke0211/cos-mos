@@ -48,19 +48,12 @@ namespace {
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
 
-	//各ステージごとのデータ
-	struct StageData
-	{
-		int CoinNums; //コインの枚数
-		bool *pGet;   //各ステージの各コインの取得状況
-	};
-
 	//各惑星ごとのデータ
 	struct WorldData
 	{
 		int MaxStage;      //ステージ数
 		float *pBestTime;  //各ステージのベストタイム
-		StageData *pStgRec;//各ステージごとのデータ
+		Stage::Data *pStgRec;//各ステージごとのデータ
 	};
 	WorldData *pWldData; //惑星ごとのレコード
 	int MaxPlanet;      //最大惑星数
@@ -502,13 +495,15 @@ namespace
 							delete[] pWldData[nCntWorld].pStgRec[nCntStage].pGet;
 							pWldData[nCntWorld].pStgRec[nCntStage].pGet = NULL;
 						}
-
-						delete[] pWldData[nCntWorld].pStgRec;
-						pWldData[nCntWorld].pStgRec = NULL;
 					}
+
+					//全ステージデータ削除
+					delete[] pWldData[nCntWorld].pStgRec;
+					pWldData[nCntWorld].pStgRec = NULL;
 				}
 			}
 
+			//全ワールドデータ削除
 			delete[] pWldData;
 			pWldData = NULL;
 		}
@@ -537,7 +532,7 @@ namespace
 
 			//ステージ数分のレコード場所確保
 			pWldData[nCntPlanet].pBestTime = new float[MaxStage];
-			pWldData[nCntPlanet].pStgRec = new StageData[MaxStage];
+			pWldData[nCntPlanet].pStgRec = new Stage::Data[MaxStage];
 
 			for (int nCntStage = 0; nCntStage < MaxStage; nCntStage++)
 			{
@@ -709,4 +704,34 @@ void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 	//タイム更新
 	if (ClearTime < pWldData[planetIdx].pBestTime[stageIdx])
 		pWldData[planetIdx].pBestTime[stageIdx] = ClearTime;
+}
+
+//========================================
+// ステージ情報を取得
+// Author：HIRASAWA SHION
+//========================================
+Stage::Data Stage::GetData(CInt& planetIdx, CInt& stageIdx)
+{
+	LoadWorldData();
+
+	//指定されたステージの情報を返す
+	return pWldData[planetIdx].pStgRec[stageIdx];
+}
+
+//========================================
+// コイン取得状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums) return;
+
+	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
+	{
+		//取得状況代入
+		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
+	}
 }
