@@ -17,7 +17,13 @@
 //========================================
 _RNC_DrawMgr::_RNC_DrawMgr() {
 
-	m_reAllocCount = 0;
+	m_reAllocCount     = 0;
+	for(int cnt = 0;cnt < 2;cnt++){
+		m_isDrawPolygon2D [cnt] = true;
+		m_isDrawPolygon3D [cnt] = true;
+		m_isDrawModel     [cnt] = true;
+		m_isDrawStaticMesh[cnt] = true;
+	}
 }
 
 //========================================
@@ -473,70 +479,69 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 		//----------------------------------------
 		// モデル描画
 		//----------------------------------------
-		for (int cntModel = 0; cntModel < drawInfo[cntPriority].m_modelNum; cntModel++) {
+		if (m_isDrawModel[isOnSreen]) {
+			for (int cntModel = 0; cntModel < drawInfo[cntPriority].m_modelNum; cntModel++) {
 
-			if (drawInfo[cntPriority].m_model[cntModel] == NULL)
-				continue;
-
-			// クリッピングIDが対象外であれば折り返す
-			if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != NONEDATA || isCameraClipping)
-				if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != cameraID)
+				if (drawInfo[cntPriority].m_model[cntModel] == NULL)
 					continue;
 
-			/*if (!CHitTest::XYZ::InPointToCameraView(CMatrix::ConvMtxToPos(drawInfo[cntPriority].m_model[cntModel]->m_mtx), cameraPosV, cameraPosR, cameraScale.x, cameraScale.y, D3DXToRadian(45.0f)))
-				continue;*/
+				// クリッピングIDが対象外であれば折り返す
+				if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != NONEDATA || isCameraClipping)
+					if (drawInfo[cntPriority].m_model[cntModel]->m_clippingID != cameraID)
+						continue;
 
-			// 本体のワールドマトリックスの設定
-			device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_model[cntModel]->m_mtx);
+				/*if (!CHitTest::XYZ::InPointToCameraView(CMatrix::ConvMtxToPos(drawInfo[cntPriority].m_model[cntModel]->m_mtx), cameraPosV, cameraPosR, cameraScale.x, cameraScale.y, D3DXToRadian(45.0f)))
+					continue;*/
 
-			// [[[ Zテストの設定 ]]]
-			RNLib::DrawStateMgr().SetIsZTest(device, drawInfo[cntPriority].m_model[cntModel]->m_isZTest);
+					// 本体のワールドマトリックスの設定
+				device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_model[cntModel]->m_mtx);
 
-			// [[[ ライティングを有効/無効にする ]]]
-			RNLib::DrawStateMgr().SetIsLighting(device, drawInfo[cntPriority].m_model[cntModel]->m_isLighting);
+				// [[[ Zテストの設定 ]]]
+				RNLib::DrawStateMgr().SetIsZTest(device, drawInfo[cntPriority].m_model[cntModel]->m_isZTest);
 
-			// [[[ 補間モードの設定 ]]]
-			RNLib::DrawStateMgr().SetInterpolationMode(device, drawInfo[cntPriority].m_model[cntModel]->m_interpolationMode);
+				// [[[ ライティングを有効/無効にする ]]]
+				RNLib::DrawStateMgr().SetIsLighting(device, drawInfo[cntPriority].m_model[cntModel]->m_isLighting);
 
-			// 描画
-			for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
-
-				// マテリアルの設定
-				device->SetMaterial(&drawInfo[cntPriority].m_model[cntModel]->m_mats[cntMat]);
-
-				// [[[ テクスチャの設定 ]]]
-				device->SetTexture(0, drawInfo[cntPriority].m_model[cntModel]->m_texes[cntMat]);
+				// [[[ 補間モードの設定 ]]]
+				RNLib::DrawStateMgr().SetInterpolationMode(device, drawInfo[cntPriority].m_model[cntModel]->m_interpolationMode);
 
 				// 描画
-				drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat);
-
-				
-			}
-
-			// 輪郭線の描画
-			if (drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh != NULL) {
-
-				// マテリアルの設定
-				device->SetMaterial(&_RNC_Model::CDrawInfo::ms_outLineMat);
-
-				// 裏面
-				RNLib::DrawStateMgr().SetCullingMode(device, _RNC_DrawState::CULLING_MODE::BACK_SIDE);
-
 				for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++) {
-					drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh->DrawSubset(cntMat);
+
+					// マテリアルの設定
+					device->SetMaterial(&drawInfo[cntPriority].m_model[cntModel]->m_mats[cntMat]);
+
+					// [[[ テクスチャの設定 ]]]
+					device->SetTexture(0, drawInfo[cntPriority].m_model[cntModel]->m_texes[cntMat]);
+
+					// 描画
+					drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat);
 				}
 
-				// 表面
-				RNLib::DrawStateMgr().SetCullingMode(device, _RNC_DrawState::CULLING_MODE::FRONT_SIDE);
-			}
-		}
+				// 輪郭線の描画
+				if (drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh != NULL) {
 
-		// 可変設定のリセット
-		RNLib::DrawStateMgr().ResetVariableSetting(device);
-		
-		{// マテリアルの初期化
-			const Material initMat = INITMATERIAL;
-			device->SetMaterial(&initMat);
+					// マテリアルの設定
+					device->SetMaterial(&_RNC_Model::CDrawInfo::ms_outLineMat);
+
+					// 裏面
+					RNLib::DrawStateMgr().SetCullingMode(device, _RNC_DrawState::CULLING_MODE::BACK_SIDE);
+
+					for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++)
+						drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh->DrawSubset(cntMat);
+
+					// 表面
+					RNLib::DrawStateMgr().SetCullingMode(device, _RNC_DrawState::CULLING_MODE::FRONT_SIDE);
+				}
+			}
+
+			// 可変設定のリセット
+			RNLib::DrawStateMgr().ResetVariableSetting(device);
+
+			{// マテリアルの初期化
+				const Material initMat = INITMATERIAL;
+				device->SetMaterial(&initMat);
+			}
 		}
 
 		//----------------------------------------
@@ -547,7 +552,8 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 		//----------------------------------------
 		// スタティックメッシュ描画
 		//----------------------------------------
-		{
+		if (m_isDrawStaticMesh[isOnSreen]) {
+
 			// ワールドマトリックスの設定
 			device->SetTransform(D3DTS_WORLD, &INITMATRIX);
 
@@ -557,7 +563,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 		//----------------------------------------
 		// ポリゴン3D
 		//----------------------------------------
-		if (_RNC_Polygon3D::CDrawInfo::ms_vtxBuff != NULL) {
+		if (_RNC_Polygon3D::CDrawInfo::ms_vtxBuff != NULL && m_isDrawPolygon3D[isOnSreen]) {
 
 			// 頂点バッファをデータストリームに設定
 			device->SetStreamSource(0, _RNC_Polygon3D::CDrawInfo::ms_vtxBuff, 0, sizeof(Vertex3D));
@@ -607,7 +613,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 		//----------------------------------------
 		// ポリゴン2D
 		//----------------------------------------
-		if (_RNC_Polygon2D::CDrawInfo::ms_vtxBuff != NULL) {
+		if (_RNC_Polygon2D::CDrawInfo::ms_vtxBuff != NULL && m_isDrawPolygon2D[isOnSreen]) {
 
 			// ZテストをOFFに
 			RNLib::DrawStateMgr().SetIsZTest(device, false);

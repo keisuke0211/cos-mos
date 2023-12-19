@@ -1048,16 +1048,18 @@ void CPlayer::SwapGuide(Info& Player)
 	CFloat TexVUnder = 1.0f - TexVOver;
 
 	//スワップ先のマーク描画
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
-		->SetSize(MarkSize, MarkSize)
-		->SetBillboard(true)
-		->SetZTest(false)
-		->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
-		->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
-		->SetLighting(false)
-		->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
-				   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
-				   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
+	if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
+			->SetSize(MarkSize, MarkSize)
+			->SetBillboard(true)
+			->SetZTest(false)
+			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
+			->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
+			->SetLighting(false)
+			->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
+				Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
+				Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
+	}
 
 	//スワップ先までの中心座標
 	const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
@@ -1077,15 +1079,17 @@ void CPlayer::SwapGuide(Info& Player)
 		Player.fGuideTexVPos = 0.0f;
 
 	//スワップガイドの描画
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
-		->SetSize(GUIDE_WIDTH, (fabsf(Player.pos.y) - SIZE_HEIGHT) * 2.0f)
-		->SetBillboard(true)
-		->SetZTest(false)
-		->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
-		->SetLighting(false)
-		->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
-				   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
-				   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
+	if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
+			->SetSize(GUIDE_WIDTH, (fabsf(Player.pos.y) - SIZE_HEIGHT) * 2.0f)
+			->SetBillboard(true)
+			->SetZTest(false)
+			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+			->SetLighting(false)
+			->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+				Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
+				Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
+	}
 }
 
 //----------------------------

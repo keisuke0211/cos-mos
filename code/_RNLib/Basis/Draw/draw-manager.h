@@ -35,7 +35,7 @@ public:
 	// 5 free
 	// 6 free
 	// 7 デバッグログ
-	static const UShort SCREEN_PRIORITY_DEBUG_LOG = 7;
+	static const UShort SCREEN_PRIORITY_DEBUG_LOG  = 7;
 
 	//----------------------------------------
 	// クラス定義
@@ -51,11 +51,11 @@ public:
 
 		// [[[ 変数宣言 ]]]
 		_RNC_Model::CDrawInfo**     m_model;
-		UShort                  m_modelNum;
+		UShort                      m_modelNum;
 		_RNC_Polygon3D::CDrawInfo** m_polygon3D;
-		UShort                  m_polygon3DNum;
+		UShort                      m_polygon3DNum;
 		_RNC_Polygon2D::CDrawInfo** m_polygon2D;
-		UShort                  m_polygon2DNum;
+		UShort                      m_polygon2DNum;
 	};
 
 	// 登録情報情報総括クラス
@@ -92,23 +92,31 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	_RNC_DrawMgr                                ();
-	~_RNC_DrawMgr                               ();
-	void                         Init           (const UShort& priorityMax);
-	void                         Uninit         (void);
-	void                         Update         (void);
-	void                         StartDraw      (Device& device);
-	void                         EndDraw        (Device& device);
-	void                         Release        (void);
-	_RNC_Polygon2D::CRegistInfo* PutPolygon2D   (const UShort& priority, const bool& isOnScreen);
-	_RNC_Polygon3D::CRegistInfo* PutPolygon3D   (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	_RNC_Text2D::CRegistInfo*    PutText2D      (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
-	_RNC_Text3D::CRegistInfo*    PutText3D      (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	_RNC_Model::CRegistInfo*     PutModel       (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
-	const UShort&                GetPriorityMax (void) { return m_priorityMax; }
-	UShort                       GetPolygon2DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
-	UShort                       GetPolygon3DNum(void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
-	UShort                       GetModelNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
+	_RNC_DrawMgr                                    ();
+	~_RNC_DrawMgr                                   ();
+	void                         Init               (const UShort& priorityMax);
+	void                         Uninit             (void);
+	void                         Update             (void);
+	void                         StartDraw          (Device& device);
+	void                         EndDraw            (Device& device);
+	void                         Release            (void);
+	_RNC_Polygon2D::CRegistInfo* PutPolygon2D       (const UShort& priority, const bool& isOnScreen);
+	_RNC_Polygon3D::CRegistInfo* PutPolygon3D       (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	_RNC_Text2D::CRegistInfo*    PutText2D          (const UShort& priority, const Pos2D& pos, const float& angle, const bool& isOnScreen);
+	_RNC_Text3D::CRegistInfo*    PutText3D          (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	_RNC_Model::CRegistInfo*     PutModel           (const UShort& priority, const Matrix& mtx, const bool& isOnScreen);
+	void                         SetIsDrawPolygon2D (const bool& isOnScreen, const bool& isDraw) { m_isDrawPolygon2D [isOnScreen] = isDraw; }
+	void                         SetIsDrawPolygon3D (const bool& isOnScreen, const bool& isDraw) { m_isDrawPolygon3D [isOnScreen] = isDraw; }
+	void                         SetIsDrawModel     (const bool& isOnScreen, const bool& isDraw) { m_isDrawModel     [isOnScreen] = isDraw; }
+	void                         SetIsDrawStaticMesh(const bool& isOnScreen, const bool& isDraw) { m_isDrawStaticMesh[isOnScreen] = isDraw; }
+	bool&                        GetIsDrawPolygon2D (const bool& isOnScreen) { return m_isDrawPolygon2D [isOnScreen]; }
+	bool&                        GetIsDrawPolygon3D (const bool& isOnScreen) { return m_isDrawPolygon3D [isOnScreen]; }
+	bool&                        GetIsDrawModel     (const bool& isOnScreen) { return m_isDrawModel     [isOnScreen]; }
+	bool&                        GetIsDrawStaticMesh(const bool& isOnScreen) { return m_isDrawStaticMesh[isOnScreen]; }
+	const UShort&                GetPriorityMax     (void) { return m_priorityMax; }
+	UShort                       GetPolygon2DNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon2DNum, cnt++); return num; }
+	UShort                       GetPolygon3DNum    (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_polygon3DNum, cnt++); return num; }
+	UShort                       GetModelNum        (void) { UShort num = 0; for (UShort cnt = 0; cnt < m_priorityMax; num += m_drawInfoSum[cnt].m_modelNum    , cnt++); return num; }
 
 private:
 	//========== [[[ 関数宣言 ]]]
@@ -133,6 +141,10 @@ private:
 	CDrawInfoSum*   m_drawInfoSumOvr;			// 描画情報(上書き)
 	CDrawInfoSum*   m_drawInfoSumScreen;		// スクリーン描画情報
 	CDrawInfoSum*   m_drawInfoSumScreenOvr;		// スクリーン描画情報(上書き)
+	bool            m_isDrawPolygon2D [2];
+	bool            m_isDrawPolygon3D [2];
+	bool            m_isDrawModel     [2];
+	bool            m_isDrawStaticMesh[2];
 	UShort          m_priorityMax;
 	UShort          m_reAllocCount;
 };
