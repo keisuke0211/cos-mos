@@ -60,6 +60,7 @@ UShort          CPlayer::ms_guideCounter = 0;
 
 bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
+Pos3D CPlayer::s_addPosV = INITPOS3D;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
 float CPlayer::s_fAimWorkSpeed = 1.0f;
@@ -696,33 +697,42 @@ void CPlayer::ActionControl(void)
 		}
 		else{
 			_RNC_Input *pInput = &RNLib::Input();
-			if (pInput->GetKeyTrigger(DIK_B))
-			{//視点切替
-				if (!s_bAimPlayer)
-				{
-					s_bAimPlayer = !s_bAimPlayer;
-					s_nAimNo = 0;
-				}
-				else if (s_nAimNo == 0)
-					s_nAimNo = 1;
-				else
-				{
-					s_bAimPlayer = false;
-					s_nAimNo = 0;
+			if (RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
+				if (pInput->GetKeyTrigger(DIK_B))
+				{//視点切替
+					if (!s_bAimPlayer)
+					{
+						s_bAimPlayer = !s_bAimPlayer;
+						s_nAimNo = 0;
+					}
+					else if (s_nAimNo == 0)
+						s_nAimNo = 1;
+					else
+					{
+						s_bAimPlayer = false;
+						s_nAimNo = 0;
+					}
 				}
 			}
 
-			if (s_bAimPlayer)
-			{
+			if (s_bAimPlayer) {
+				targetPosV.x = targetPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
+				targetPosV.y = targetPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
+				targetPosV.z = -100.0f;
+				targetPosV += s_addPosV;
+
+				if (RNLib::Input().GetKeyPress(DIK_T)) { s_addPosV.z += 1.0f; }
+				if (RNLib::Input().GetKeyPress(DIK_G)) { s_addPosV.z -= 1.0f; }
+				if (RNLib::Input().GetKeyPress(DIK_H)) { s_addPosV.x += 1.0f; }
+				if (RNLib::Input().GetKeyPress(DIK_F)) { s_addPosV.x -= 1.0f; }
+				if (RNLib::Input().GetKeyPress(DIK_U)) { s_addPosV.y += 1.0f; }
+				if (RNLib::Input().GetKeyPress(DIK_J)) { s_addPosV.y -= 1.0f; }
+#if 0
 				if (pInput->GetKeyTrigger(DIK_V)) s_fCorrWidth -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_N)) s_fCorrWidth += 0.1f;
 				if (pInput->GetKeyTrigger(DIK_G)) s_fCorrHeight -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_H)) s_fCorrHeight += 0.1f;
-
-				targetPosV.x = targetPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
-				targetPosV.y = targetPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
-				targetPosV.z =- 100.0f;
-
+				
 				//本来の当たり判定範囲
 				RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_aInfo[0].pos, INITVECTOR3D)
 					->SetCol(Color{ 255,255,255,255 })
@@ -734,6 +744,7 @@ void CPlayer::ActionControl(void)
 					->SetSize(SIZE_WIDTH * 1.0f, SIZE_HEIGHT * 1.0f);
 
 				RNLib::Text2D().PutDebugLog(String("横の調整量:%f  縦の調整量:%f", s_fCorrWidth, s_fCorrHeight));
+#endif
 			}
 
 			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
@@ -1108,11 +1119,8 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		if(s_bAimPlayer && s_nAimNo == cntPlayer)
-			RNLib::Number().Clamp(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
-		else
-			RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
-
+		RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+		
 		// 位置更新
 		Player.pos.x += Player.move.x;
 		break;
