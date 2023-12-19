@@ -27,6 +27,15 @@ namespace Stage {
 	void     SetIsCutIn      (const bool& isCutIn);
 	CPlayer* GetPlayer       (void);
 
-	float    GetBestTime(CInt& planetIdx, CInt& stageIdx);
-	void     RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime);
+	//各ステージごとのデータ
+	struct Data
+	{
+		int CoinNums; //コインの枚数
+		bool *pGet;   //各ステージの各コインの取得状況
+	};
+
+	float GetBestTime(CInt& planetIdx, CInt& stageIdx);
+	void  RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime);
+	Data  GetData(CInt& planetIdx, CInt& stageIdx);
+	void  SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data);
 };

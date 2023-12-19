@@ -48,19 +48,12 @@ namespace {
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
 
-	//各ステージごとのデータ
-	struct StageData
-	{
-		int CoinNums; //コインの枚数
-		bool *pGet;   //各ステージの各コインの取得状況
-	};
-
 	//各惑星ごとのデータ
 	struct WorldData
 	{
 		int MaxStage;      //ステージ数
 		float *pBestTime;  //各ステージのベストタイム
-		StageData *pStgRec;//各ステージごとのデータ
+		Stage::Data *pStgRec;//各ステージごとのデータ
 	};
 	WorldData *pWldData; //惑星ごとのレコード
 	int MaxPlanet;      //最大惑星数
@@ -73,6 +66,10 @@ namespace {
 	const char *SET_RECORD = "SET_RECORD";
 	const char *END_RECORD = "END_RECORD";
 	const char *CODE_RECORD = "RECORD";
+
+	CDoll3D* m_doll;
+	int      m_counter;
+	CRail3D  m_rail("NONEDATA");
 }
 
 //================================================================================
@@ -144,6 +141,8 @@ void Stage::Uninit(void)
 
 	//メモリ開放
 	ClearWorldData();
+
+	
 }
 
 //========================================
@@ -194,6 +193,15 @@ void Stage::StartStage(void) {
 
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
+
+	if (CheckPlanetIdx(1)) {
+		m_doll = new CDoll3D(PRIORITY_BACKGROUND, RNLib::SetUp3D().Load("data\\SETUP\\Whale.txt"));
+		m_rail.Load("data\\RAIL3D\\Test.txt");
+		m_counter = 0;
+	}
+	else {
+		m_doll = NULL;
+	}
 
 	for (int cnt = 0; cnt < 2; cnt++) {
 		{// [[[ UI用カメラの生成 ]]]
@@ -341,6 +349,11 @@ void Stage::EndStage(void) {
 		coinUI = NULL;
 	}
 
+	if (m_doll != NULL) {
+		delete m_doll;
+		m_doll = NULL;
+	}
+
 	// ステージオブジェクトと背景を解放
 	Manager::StageObjectMgr()->ReleaseAll();
 	Manager::BGMgr()->ReleaseAll();
@@ -378,6 +391,12 @@ namespace {
 	//========================================
 	void PutBackGround(void) {
 
+		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
+			->SetVtxPos(Pos3D(-400.0f, 0.0f, 1000.0f), Pos3D(400.0f, 0.0f, 1000.0f), Pos3D(-400.0f, 0.0f, 0.0f), Pos3D(400.0f, 0.0f, 0.0f))
+			->SetVtxCol(Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 255), Color(0, 0, 0, 255))
+			->SetCullingMode(_RNC_DrawState::CULLING_MODE::BOTH_SIDES);
+
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ 背景描画 ]]]
 
@@ -385,12 +404,10 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			// 雲
@@ -399,7 +416,6 @@ namespace {
 				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 					->SetTex(CResources::TEXTURE_IDXES[cloudtex[nCnt]])
 					->SetVtxPos(Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z))
-					->SetBillboard(true)
 					->SetZTest(false)
 					->SetCol(Color{ 255,255,255,100 });
 
@@ -416,7 +432,6 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			// [[[ 壁モデル描画 ]]]
@@ -430,14 +445,12 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			// 魚
@@ -445,6 +458,15 @@ namespace {
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
 				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
 				->SetBillboard(true);
+
+			// クジラ
+			m_counter++;
+			RNLib::Number().LoopClamp(&m_counter, 60, 0);
+			{
+				Matrix mtx = m_rail.GetMtx(m_counter / 60.0f);
+				m_doll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
+				m_doll->SetRot(RNLib::Matrix().ConvMtxToRot(mtx));
+			}
 
 			bubbleCnt++;
 
@@ -502,13 +524,15 @@ namespace
 							delete[] pWldData[nCntWorld].pStgRec[nCntStage].pGet;
 							pWldData[nCntWorld].pStgRec[nCntStage].pGet = NULL;
 						}
-
-						delete[] pWldData[nCntWorld].pStgRec;
-						pWldData[nCntWorld].pStgRec = NULL;
 					}
+
+					//全ステージデータ削除
+					delete[] pWldData[nCntWorld].pStgRec;
+					pWldData[nCntWorld].pStgRec = NULL;
 				}
 			}
 
+			//全ワールドデータ削除
 			delete[] pWldData;
 			pWldData = NULL;
 		}
@@ -537,7 +561,7 @@ namespace
 
 			//ステージ数分のレコード場所確保
 			pWldData[nCntPlanet].pBestTime = new float[MaxStage];
-			pWldData[nCntPlanet].pStgRec = new StageData[MaxStage];
+			pWldData[nCntPlanet].pStgRec = new Stage::Data[MaxStage];
 
 			for (int nCntStage = 0; nCntStage < MaxStage; nCntStage++)
 			{
@@ -709,4 +733,34 @@ void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
 	//タイム更新
 	if (ClearTime < pWldData[planetIdx].pBestTime[stageIdx])
 		pWldData[planetIdx].pBestTime[stageIdx] = ClearTime;
+}
+
+//========================================
+// ステージ情報を取得
+// Author：HIRASAWA SHION
+//========================================
+Stage::Data Stage::GetData(CInt& planetIdx, CInt& stageIdx)
+{
+	LoadWorldData();
+
+	//指定されたステージの情報を返す
+	return pWldData[planetIdx].pStgRec[stageIdx];
+}
+
+//========================================
+// コイン取得状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums) return;
+
+	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
+	{
+		//取得状況代入
+		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
+	}
 }
