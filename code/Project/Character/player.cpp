@@ -797,8 +797,9 @@ void CPlayer::ActionControl(void)
 			Player.move.x *= -2.0f;
 		}
 
-		// ロケットに乗っている　or ゴールしている or ズームアップ の時スキップ
-		if (Player.bRide || Player.bGoal || isZoomUp) continue;
+		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ
+		if (Player.bRide || Player.bGoal || isZoomUp || Stage::GetIsTimeOver()) 
+			continue;
 
 		// ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))

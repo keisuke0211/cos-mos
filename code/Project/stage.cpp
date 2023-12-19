@@ -17,7 +17,6 @@
 #define  MAX_CLOUD		 (5)
 #define  MAX_BUBBLE		 (7)
 #define  MAX_BUBBLECNT	 (640)
-#define  WHALE_MOVE_TIME (360)
 
 //****************************************
 // 無名空間
@@ -89,6 +88,8 @@ void Stage::SetPause        (const bool& setIsPause)                          { 
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
 void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
+bool Stage::GetIsTimeOver   (void)                                            { return (limitTimeCounter <= 0); }
+bool Stage::GetIsShowUI     (void)                                            { return !isPause && !isCutIn && CPlayer::GetZoomUpCounter() <= 0; }
 
 //========================================
 // 取得系関数
@@ -255,16 +256,40 @@ void Stage::UpdateStage(void) {
 	StageSoundPlayer::Update();
 
 	// 制限時間のカウント
-	if (--limitTimeCounter < 0) {
-		// タイムオーバーの処理
+	if(GetIsShowUI()) {
+		if (--limitTimeCounter <= 0) {
+
+			// タイムオーバーの処理
+			if (limitTimeCounter == 0) {
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::TIME_OVER], _RNC_Sound::CATEGORY::SE, 0.2f, false);
+			}
+
+			if (limitTimeCounter == -300) {
+				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
+			}
+		}
+		else if (limitTimeCounter % 60 == 0 && limitTimeCounter / 60 > 0 && limitTimeCounter / 60 <= 10) {
+			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::TIME_COUNT], _RNC_Sound::CATEGORY::SE, 0.2f, false);
+		}
 	}
 
-	//フレーム
-	RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(180.0f, 120.0f), 0.0f)
-		->SetSize(200.0f, 60.0f)
-		->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_FRAME]);
-	RNLib::Text2D().Put(PRIORITY_UI, String("%d.%d", limitTimeCounter / 60, (limitTimeCounter / 6) % 10), _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(180.0f, 120.0f), 0.0f)
-		->SetSize(Size2D(28.0f, 28.0f));
+	// 時間表示
+	if (GetIsShowUI()) {
+		RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(180.0f, 120.0f), 0.0f)
+			->SetSize(200.0f, 60.0f)
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_FRAME]);
+		{
+			float rate = (limitTimeCounter % 60) / 60.0f;
+			float scale = 1.0f + rate * 0.2f;
+
+			_RNC_Text2D::CRegistInfo* registInfo = RNLib::Text2D().Put(PRIORITY_UI, String("%d", limitTimeCounter / 60 < 0 ? 0: limitTimeCounter / 60), _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(180.0f, 120.0f), 0.0f)
+				->SetSize(limitTimeCounter > 0 ? Size2D(28.0f * scale, 28.0f * scale) : Size2D(28.0f, 28.0f));
+
+			if (limitTimeCounter / 60 <= 10) {
+				registInfo->SetCol(Color(255, 255 * (1.0f - rate), 255 * (1.0f - rate), 255));
+			}
+		}
+	}
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
@@ -275,6 +300,7 @@ void Stage::UpdateStage(void) {
 
 	if (CPlayer::GetZoomUpCounter() > 0) {
 		if (CheckStageNumber(0, 0)) {
+
 			// 下カメラ描画
 			RNLib::Polygon2D().Put(0, true)
 				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
@@ -291,8 +317,7 @@ void Stage::UpdateStage(void) {
 				counter = 30;
 		}
 		else {
-			if (--counter < 0)
-				counter = 0;
+			counter = 0;
 		}
 		const float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, counter, 30);
 
@@ -373,6 +398,9 @@ void Stage::EndStage(void) {
 	// ステージオブジェクトと背景を解放
 	Manager::StageObjectMgr()->ReleaseAll();
 	Manager::BGMgr()->ReleaseAll();
+
+	// エフェクト3Dの解放
+	Manager::EffectMgr()->ReleaseAll();
 
 	// ロケットパーツUIを解放
 	if (rocketparts != NULL) {
@@ -833,7 +861,7 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 	LoadWorldData();
 
 	if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
-		RNLib::Window().Message_ERROR(String("コインの枚数が実際の配置数とずれています。\nID:%d 実際の枚数:%d", coinID, pWldData[planetIdx].pStgRec[stageIdx].CoinNums));
+		RNLib::Window().Message_ERROR(String("コインの枚数が実際の配置数とずれています。\nID:%d 間違えた枚数:%d", coinID, pWldData[planetIdx].pStgRec[stageIdx].CoinNums));
 		return false;
 	}
 

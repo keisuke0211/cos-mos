@@ -6,6 +6,7 @@
 //========================================
 #include "coinUI.h"
 #include "../main.h"
+#include "../stage.h"
 #include "../Object/Item/coin.h"
 
 #define FRAME_INTER (Scale2D(128.0f,30.0f))				//フレーム間隔
@@ -59,6 +60,9 @@ void CCoinUI::Uninit(void) {
 // Author: RYUKI FUJIWARA
 //========================================
 void CCoinUI::Update(void) {
+
+	if (!Stage::GetIsShowUI())
+		return;
 
 	if (m_bFrame) {
 		//フレーム

@@ -74,8 +74,8 @@
 #define D3DX_PI_RIGHT_UP      (D3DX_PI*0.75f)
 #define D3DX_PI_RIGHT_DOWN    (D3DX_PI*0.25f)
 #define D3DX_PI_LEFT          (D3DX_PI*-0.5f)
-#define D3DX_PI_LEFT_UP       (D3DX_PI*-0.25f)
-#define D3DX_PI_LEFT_DOWN     (D3DX_PI*-0.75f)
+#define D3DX_PI_LEFT_UP       (D3DX_PI*-0.75f)
+#define D3DX_PI_LEFT_DOWN     (D3DX_PI*-0.25f)
 // ÉfÅ[É^ñ≥Çµ
 #define NONEDATA              ((short)-1)
 #define EDITDATA              ((short)-2)

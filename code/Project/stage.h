@@ -26,6 +26,8 @@ namespace Stage {
 	void     SetRocketPartsUI(CRocketPartsUI* parts);
 	void     SetIsCutIn      (const bool& isCutIn);
 	void     SetIsReset      (const bool& isReset);
+	bool     GetIsTimeOver   (void);
+	bool     GetIsShowUI     (void);
 	CPlayer* GetPlayer       (void);
 
 	//各ステージごとのデータ

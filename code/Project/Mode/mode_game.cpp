@@ -106,7 +106,7 @@ void CMode_Game::Update(void) {
 	if (m_state != (int)STATE::PAUSE) {
 
 		// ポーズ（時間も保存
-		if (!CPlayer::GetSwapAnim() && !CPlayer::GetDeath() && CPlayer::GetZoomUpCounter() == 0) {
+		if (!CPlayer::GetSwapAnim() && !CPlayer::GetDeath() && CPlayer::GetZoomUpCounter() == 0 && !Stage::GetIsTimeOver()) {
 			if (RNLib::Input().GetTrigger(DIK_P, _RNC_Input::BUTTON::START)) {
 				SetState((int)STATE::PAUSE);
 				s_GameTime.LastPause = timeGetTime();
