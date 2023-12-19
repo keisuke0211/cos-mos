@@ -1,4 +1,4 @@
 OptionsData
 isFullScreen 0
-categoryVolumes 0.500000 1.000000 1.000000
+categoryVolumes 0.600000 1.000000 1.000000
 END

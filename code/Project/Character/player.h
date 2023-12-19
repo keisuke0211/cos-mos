@@ -351,6 +351,7 @@ private:
 	static bool s_bAimPlayer;
 	static int s_nAimNo;
 	static Pos3D s_addPosV;
+	static Pos3D s_addPosR;
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;

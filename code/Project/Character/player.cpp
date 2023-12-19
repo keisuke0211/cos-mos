@@ -61,6 +61,7 @@ UShort          CPlayer::ms_guideCounter = 0;
 bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
 Pos3D CPlayer::s_addPosV = INITPOS3D;
+Pos3D CPlayer::s_addPosR = INITPOS3D;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
 float CPlayer::s_fAimWorkSpeed = 1.0f;
@@ -705,28 +706,43 @@ void CPlayer::ActionControl(void)
 						s_bAimPlayer = !s_bAimPlayer;
 						s_nAimNo = 0;
 					}
-					else if (s_nAimNo == 0)
+					else if (s_nAimNo == 0) {
 						s_nAimNo = 1;
+					}
 					else
 					{
 						s_bAimPlayer = false;
 						s_nAimNo = 0;
 					}
+
+					if (s_bAimPlayer) {
+						s_addPosV.x = s_addPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
+						s_addPosV.y = s_addPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
+						s_addPosV.z = -100.0f;
+					}
 				}
 			}
 
 			if (s_bAimPlayer) {
-				targetPosV.x = targetPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
-				targetPosV.y = targetPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
-				targetPosV.z = -100.0f;
-				targetPosV += s_addPosV;
+				if (RNLib::Input().GetKeyPress(DIK_R)) {
+					if (RNLib::Input().GetKeyPress(DIK_T)) { s_addPosR.z += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_G)) { s_addPosR.z -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_H)) { s_addPosR.x += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_F)) { s_addPosR.x -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_U)) { s_addPosR.y += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_J)) { s_addPosR.y -= 1.0f; }
+				}
+				else {
+					if (RNLib::Input().GetKeyPress(DIK_T)) { s_addPosV.z += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_G)) { s_addPosV.z -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_H)) { s_addPosV.x += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_F)) { s_addPosV.x -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_U)) { s_addPosV.y += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_J)) { s_addPosV.y -= 1.0f; }
+				}
 
-				if (RNLib::Input().GetKeyPress(DIK_T)) { s_addPosV.z += 1.0f; }
-				if (RNLib::Input().GetKeyPress(DIK_G)) { s_addPosV.z -= 1.0f; }
-				if (RNLib::Input().GetKeyPress(DIK_H)) { s_addPosV.x += 1.0f; }
-				if (RNLib::Input().GetKeyPress(DIK_F)) { s_addPosV.x -= 1.0f; }
-				if (RNLib::Input().GetKeyPress(DIK_U)) { s_addPosV.y += 1.0f; }
-				if (RNLib::Input().GetKeyPress(DIK_J)) { s_addPosV.y -= 1.0f; }
+				Manager::GetMainCamera()->SetPosVAndPosR(s_addPosV, s_addPosR);
+
 #if 0
 				if (pInput->GetKeyTrigger(DIK_V)) s_fCorrWidth -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_N)) s_fCorrWidth += 0.1f;
@@ -746,8 +762,9 @@ void CPlayer::ActionControl(void)
 				RNLib::Text2D().PutDebugLog(String("‰¡‚Ì’²®—Ê:%f  c‚Ì’²®—Ê:%f", s_fCorrWidth, s_fCorrHeight));
 #endif
 			}
-
-			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
+			else {
+				Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
+			}
 		}
 	}
 	else 
