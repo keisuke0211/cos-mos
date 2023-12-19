@@ -1,0 +1,6 @@
+Rail3DFile
+isLoop 0
+points{ 1
+  40.039612 0.000000 41.871422
+}
+END
