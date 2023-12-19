@@ -154,11 +154,11 @@ void StageSoundPlayer::Update(void) {
 			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 409 - 4
 			|| RNLib::Sound().GetPlay(swapBGMPlayID).GetCount() == 435 - 4
 			) {
-			if (CPlayer::GetInfo(0)->swapWaitBalloonCounter == 5) {
+			if (CPlayer::GetInfo(0)->swapWaitCounter == 5) {
 				RNLib::Input().SetVibration(0.5f, 1);
 				RNLib::Input().SetVibration(0.3f, 0);
 			}
-			else if (CPlayer::GetInfo(1)->swapWaitBalloonCounter == 5) {
+			else if (CPlayer::GetInfo(1)->swapWaitCounter == 5) {
 				RNLib::Input().SetVibration(0.5f, 0);
 				RNLib::Input().SetVibration(0.3f, 1);
 			}

@@ -15,7 +15,7 @@
 //=======================================
 CCollision::CCollision()
 {
-	m_pOthColli = NULL;
+
 }
 
 //=======================================
@@ -23,17 +23,7 @@ CCollision::CCollision()
 //=======================================
 CCollision::~CCollision()
 {
-	OthColliDelete();
-}
 
-//----------------------------
-// 他の当たり判定情報のメモリ解放
-//----------------------------
-void CCollision::OthColliDelete(void)
-{
-	if (m_pOthColli == NULL) return;
-	delete m_pOthColli;
-	m_pOthColli = NULL;
 }
 
 //----------------------------
@@ -698,10 +688,14 @@ void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SI
 	if (!pRocket->GetReady() && !pInfo->bRide) return;
 
 	// ロケットに搭乗
+	if (!CPlayer::IsKeyConfigTrigger(pInfo->idx, *pSide, CPlayer::KEY_CONFIG::JUMP) ||
+		pInfo->nRideInterval != 0) return;
+
 	pInfo->bRide = true;
+	pInfo->nRideInterval = CRocket::RIDE_ONOFF_INTERVAL;
 	pRocket->RideOn();
 	
-	const int ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
+	CInt ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
 	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 	{
 		Manager::EffectMgr()->ParticleCreate(ParTex, pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
@@ -865,15 +859,11 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 //------------------------
 // 引数１	self	：自分の情報
 // 引数２	target	：対象の情報
-// 引数３	value	：ベクトル
-// 引数４	pAngle	：当たった方向を返す
+// 引数３	pAngle	：当たった方向を返す
 // 返り値	対象物にめりこんでいる方向を返す（NONEなら当たっていない
 //========================
-bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec, float *pAngle)
+bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, float *pAngle)
 {
-	// 自分の現在と前回の最小・最大位置
-	SetMinMaxPos(self);
-
 	// 対象の現在と前回の最小・最大位置
 	SetMinMaxPos(target);
 
@@ -885,49 +875,28 @@ bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer:
 	//距離が、自分の半径＋対象の対角線の長さより大きい
 	if (PosDiffLen > self.fRadius + TargetLen) return false;
 
-	//当たった方向を代入する
-	if (pAngle != NULL)
+	//自分から対象までの角度
+	CFloat Angle = atan2f(-PosDiff.x, -PosDiff.y);
+	const Pos2D NearPos = Pos2D(sinf(Angle) * self.fRadius + self.pos.x,
+								cosf(Angle) * self.fRadius + self.pos.y);
+
+	//対象の中に、自分から対象までの最短ポイントがめり込んでいる
+	if (target.minPos.x <= NearPos.x && NearPos.x <= target.maxPos.x &&
+		target.minPos.y <= NearPos.y && NearPos.y <= target.maxPos.y)
 	{
-		*pAngle = atan2f(PosDiff.x, PosDiff.y);
+		//当たった方向を代入する
+		if (pAngle != NULL)
+		{
+			//対象から自分までの角度
+			*pAngle = atan2f(PosDiff.x, PosDiff.y);
+		}
+
+		//当たった
+		return true;
 	}
 
-	switch (vec)
-	{
-		case CPlayer::VECTOL::X:
-			//左から当たっているか
-			if (self.maxPosOld.x < target.minPosOld.x &&
-				self.maxPos.x >= target.minPos.x)
-			{
-				self.pos.x = target.minPos.x - self.fRadius;
-			}
-
-			//右から当たっているか
-			else if (self.minPosOld.x > target.maxPosOld.x &&
-					 self.minPos.x <= target.maxPos.x)
-			{
-				self.pos.x = target.maxPos.x + self.fRadius;
-			}
-			break;
-
-		case CPlayer::VECTOL::Y:
-			//下から当たっているか
-			if (self.maxPosOld.y < target.minPosOld.y &&
-				self.maxPos.y >= target.minPos.y)
-			{
-				self.pos.y = target.minPos.y - self.fRadius;
-			}
-
-			//上から当たっているか
-			else if (self.minPosOld.y > target.maxPosOld.y &&
-					 self.minPos.y <= target.maxPos.y)
-			{
-				self.pos.y = target.maxPos.y + self.fRadius;
-			}
-			break;
-	}
-
-	//当たった
-	return true;
+	//当たらなかった
+	return false;
 }
 
 //========================
@@ -951,6 +920,4 @@ void CCollision::SetMinMaxPos(ColliInfo& colli)
 	colli.maxPos = Pos2D(colli.pos.x + colli.fWidth, colli.pos.y + colli.fHeight);
 	colli.minPosOld = Pos2D(colli.posOld.x - colli.fWidth, colli.posOld.y - colli.fHeight);
 	colli.maxPosOld = Pos2D(colli.posOld.x + colli.fWidth, colli.posOld.y + colli.fHeight);
-
-	Vec2x100 minpos = Vec2x100(1, 0);
 }

@@ -5,7 +5,7 @@ boneDataSum{ 4
 		modelIdx data\\Model\\Whale_Body.x
 		parentIdx -1
 		relativePos 0.00 10.00 0.00
-		relativeRot 0.00 0.00 0.00
+		relativeRot 0.00 -1.50 0.00
 	}
 	boneData{
 		idx 1
@@ -31,19 +31,22 @@ boneDataSum{ 4
 }
 
 
-faceDataSum{1
+
+
+
+faceDataSum{ 8
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale.png
 	col 204 204 204 255
 	vtx0{
 		boneIdx 3
 		vtxIdx 6
-		texPos 0.00 1.00
+		texPos 0.00 0.05
 	}
 	vtx1{
 		boneIdx 3
 		vtxIdx 31
-		texPos 1.00 1.00
+		texPos 0.05 0.05
 	}
 	vtx2{
 		boneIdx 0
@@ -53,7 +56,189 @@ faceData{
 	vtx3{
 		boneIdx 0
 		vtxIdx 108
-		texPos 1.00 0.00
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 31
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 30
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 108
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 105
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 30
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 26
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 105
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 96
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 26
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 22
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 96
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 101
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 22
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 18
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 101
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 102
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 18
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 14
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 102
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 99
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale_2.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 14
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 10
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 99
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 92
+		texPos 0.05 0.00
+	}
+}
+
+
+faceData{
+	texIdx data\\TEXTURE\\Whale_2.png
+	col 204 204 204 255
+	vtx0{
+		boneIdx 3
+		vtxIdx 10
+		texPos 0.00 0.05
+	}
+	vtx1{
+		boneIdx 3
+		vtxIdx 6
+		texPos 0.05 0.05
+	}
+	vtx2{
+		boneIdx 0
+		vtxIdx 92
+		texPos 0.00 0.00
+	}
+	vtx3{
+		boneIdx 0
+		vtxIdx 107
+		texPos 0.05 0.00
 	}
 }
 }

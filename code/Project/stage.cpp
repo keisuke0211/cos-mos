@@ -11,21 +11,25 @@
 #include "Sound/stage-sound-player.h"
 #include "UI/partsUI.h"
 #include "resource.h"
+#include "BackGround/fishes.h"
 
-#define  MAX_COUNT		(2000)
-#define  MAX_CLOUD		(5)
-#define  MAX_BUBBLE		(7)
-#define  MAX_BUBBLECNT	(640)
+#define  MAX_COUNT		 (2000)
+#define  MAX_CLOUD		 (5)
+#define  MAX_BUBBLE		 (7)
+#define  MAX_BUBBLECNT	 (640)
+#define  WHALE_MOVE_TIME (360)
+
 //****************************************
 // 無名空間
 //****************************************
 namespace {
 	//========== [[[ 関数宣言 ]]]
 	void PutBackGround(void);
-	void ClearRecord(void);
-	void AllocRecord(void);
-	void LoadRecord(void);
-	void SaveRecord(void);
+	void ClearWorldData(void);
+	void AllocWorldData(void);
+	void LoadWorldData(void);
+	void SaveWorldData(void);
+	void UpdateData(void); //ワールド/ステージ情報を塗り替え（更新処理ではない
 	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
 	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
@@ -47,15 +51,18 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+	int             limitTimeCounter;
 
-	//ステージクリアタイムの保存場所
-	struct Record
+	//各惑星ごとのデータ
+	struct WorldData
 	{
-		int MaxStage;     //ステージ数
-		float *pBestTime; //各ステージのベストタイム
+		int MaxStage;      //ステージ数
+		float *pBestTime;  //各ステージのベストタイム
+		Stage::Data *pStgRec;//各ステージごとのデータ
+		Stage::Data *pStart; //ステージ開始時の情報（やり直し時のコイン回収状況リセットなどに仕様
 	};
-	Record *pRecord; //惑星ごとのレコード
-	int MaxPlanet;   //最大惑星数
+	WorldData *pWldData; //惑星ごとのレコード
+	int MaxPlanet;      //最大惑星数
 
 					 //文字添削
 	const char COMMENT = '#';       //コメント文字
@@ -119,7 +126,8 @@ void Stage::Init(void) {
 	StageSoundPlayer::Init();
 
 	MaxPlanet = 0;
-	ClearRecord();
+	ClearWorldData();
+	LoadWorldData();
 }
 
 //========================================
@@ -131,10 +139,12 @@ void Stage::Uninit(void)
 	StageSoundPlayer::Uninit();
 
 	//レコード記録
-	SaveRecord();
+	SaveWorldData();
 
 	//メモリ開放
-	ClearRecord();
+	ClearWorldData();
+
+	
 }
 
 //========================================
@@ -165,6 +175,9 @@ void Stage::StartStage(void) {
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
+	// 制限時間を設定
+	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+
 	// プレイヤーの生成
 	if (player == NULL)
 		player = CPlayer::Create();
@@ -185,6 +198,12 @@ void Stage::StartStage(void) {
 
 	// 環境音プレイヤーの開始処理
 	StageSoundPlayer::Start();
+
+	if (CheckPlanetIdx(1)) {
+
+		// 魚更新処理
+		Fishes::Start();
+	}
 
 	for (int cnt = 0; cnt < 2; cnt++) {
 		{// [[[ UI用カメラの生成 ]]]
@@ -227,6 +246,11 @@ void Stage::UpdateStage(void) {
 
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
+
+	// 制限時間のカウント
+	if (--limitTimeCounter < 0) {
+		// タイムオーバーの処理
+	}
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
@@ -349,6 +373,12 @@ void Stage::EndStage(void) {
 	// スタティックメッシュの削除
 	RNLib::StaticMesh().Delete(false);
 
+	if (CheckPlanetIdx(1)) {
+
+		// 魚終了処理
+		Fishes::End();
+	}
+
 	// UI用カメラの破棄
 	for (int cnt = 0; cnt < 2; cnt++) {
 		if (UICamera[cnt] != NULL) {
@@ -369,6 +399,12 @@ namespace {
 	//========================================
 	void PutBackGround(void) {
 
+		RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
+			->SetVtxPos(Pos3D(-400.0f, 0.0f, 1000.0f), Pos3D(400.0f, 0.0f, 1000.0f), Pos3D(-400.0f, 0.0f, 0.0f), Pos3D(400.0f, 0.0f, 0.0f))
+			->SetVtxCol(Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 255), Color(0, 0, 0, 255))
+			->SetCullingMode(_RNC_DrawState::CULLING_MODE::BOTH_SIDES);
+
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ 背景描画 ]]]
 
@@ -376,12 +412,10 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
 				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
 			// 雲
@@ -390,7 +424,6 @@ namespace {
 				RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 					->SetTex(CResources::TEXTURE_IDXES[cloudtex[nCnt]])
 					->SetVtxPos(Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z), Pos3D(cloudpos[nCnt].x + 200.0f, cloudpos[nCnt].y - 100.0f + 32.0f, cloudpos[nCnt].z))
-					->SetBillboard(true)
 					->SetZTest(false)
 					->SetCol(Color{ 255,255,255,100 });
 
@@ -407,32 +440,31 @@ namespace {
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
+			// [[[ 壁モデル描画 ]]]
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
+			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		}
 		if (Stage::CheckPlanetIdx(1))
 		{// [[[ 背景描画 ]]]
 
 			// 上
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetBillboard(true)
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
 			// 下
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetBillboard(true)
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
-			// 魚
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
-				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
-				->SetBillboard(true);
+			// 魚更新処理
+			Fishes::Update();
 
 			bubbleCnt++;
 
@@ -456,47 +488,79 @@ namespace {
 					move);
 
 			}
-
-			// [[[ 壁モデル描画 ]]]
-			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[0], Pos3D(-CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
-			RNLib::Model().Put(PRIORITY_BACKGROUND, wallModelIdxes[1], Pos3D(CStageObject::SIZE_OF_1_SQUARE * 23, 0.0f, 0.0f), INITROT3D);
 		}
 	}
 }
 
-//========================================
-// レコードのメモリ開放
-// Author：HIRASAWA SHION
-//========================================
 namespace
 {
-	void ClearRecord(void)
+	//========================================
+	// レコードのメモリ開放
+	// Author：HIRASAWA SHION
+	//========================================
+	void ClearWorldData(void)
 	{
-		if (pRecord != NULL)
+		if (pWldData != NULL)
 		{
-			for (int nCntRecord = 0; nCntRecord < MaxPlanet; nCntRecord++)
+			for (int nCntWorld = 0; nCntWorld < MaxPlanet; nCntWorld++)
 			{
-				if (pRecord[nCntRecord].pBestTime != NULL)
+				//ベストタイム破棄
+				if (pWldData[nCntWorld].pBestTime != NULL)
 				{
-					delete[] pRecord[nCntRecord].pBestTime;
-					pRecord[nCntRecord].pBestTime = NULL;
+					delete[] pWldData[nCntWorld].pBestTime;
+					pWldData[nCntWorld].pBestTime = NULL;
+				}
+
+				if (pWldData[nCntWorld].pStgRec != NULL)
+				{
+					//各ステージごとのデータ破棄
+					for (int nCntStage = 0; nCntStage < pWldData[nCntWorld].MaxStage; nCntStage++)
+					{
+						//コインの回収状況破棄
+						if (pWldData[nCntWorld].pStgRec[nCntStage].pGet != NULL)
+						{
+							delete[] pWldData[nCntWorld].pStgRec[nCntStage].pGet;
+							pWldData[nCntWorld].pStgRec[nCntStage].pGet = NULL;
+						}
+					}
+
+					//全ステージデータ削除
+					delete[] pWldData[nCntWorld].pStgRec;
+					pWldData[nCntWorld].pStgRec = NULL;
+				}
+
+				//保存していた情報も開放
+				if (pWldData[nCntWorld].pStart != NULL)
+				{
+					//各ステージごとのデータ破棄
+					for (int nCntStage = 0; nCntStage < pWldData[nCntWorld].MaxStage; nCntStage++)
+					{
+						//コインの回収状況破棄
+						if (pWldData[nCntWorld].pStart[nCntStage].pGet != NULL)
+						{
+							delete[] pWldData[nCntWorld].pStart[nCntStage].pGet;
+							pWldData[nCntWorld].pStart[nCntStage].pGet = NULL;
+						}
+					}
+				
+					//全ステージデータ削除
+					delete[] pWldData[nCntWorld].pStart;
+					pWldData[nCntWorld].pStart = NULL;
 				}
 			}
 
-			delete[] pRecord;
-			pRecord = NULL;
+			//全ワールドデータ削除
+			delete[] pWldData;
+			pWldData = NULL;
 		}
 		MaxPlanet = 0;
 	}
-}
 
-//========================================
-// レコードのメモリ確保
-// Author：HIRASAWA SHION
-//========================================
-namespace
-{
-	void AllocRecord(void)
+	//========================================
+	// レコードのメモリ確保
+	// Author：HIRASAWA SHION
+	//========================================
+	void AllocWorldData(void)
 	{
 		//ステージエディター取得
 		CStageEditor *pEd = Manager::StgEd();
@@ -505,64 +569,52 @@ namespace
 		MaxPlanet = pEd->GetPlanetMax();
 
 		//惑星の数だけメモリ確保
-		pRecord = new Record[MaxPlanet];
+		pWldData = new WorldData[MaxPlanet];
 
-		for (int nCntStage = 0; nCntStage < MaxPlanet; nCntStage++)
+		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
 			//指定された惑星のステージ数を取得
-			CInt MaxStage = pRecord[nCntStage].MaxStage = pEd->GetType()[nCntStage].nStageMax;
+			CInt MaxStage = pWldData[nCntPlanet].MaxStage = pEd->GetType()[nCntPlanet].nStageMax;
 
 			//ステージ数分のレコード場所確保
-			pRecord[nCntStage].pBestTime = new float[MaxStage];
+			pWldData[nCntPlanet].pBestTime = new float[MaxStage];
+			pWldData[nCntPlanet].pStgRec = new Stage::Data[MaxStage];
+			pWldData[nCntPlanet].pStart = new Stage::Data[MaxStage];
+
+			//各ステージ情報をクリア
+			for (int nCntStage = 0; nCntStage < MaxStage; nCntStage++)
+			{
+				if (pWldData[nCntPlanet].pBestTime != NULL)
+					pWldData[nCntPlanet].pBestTime[nCntStage] = 0.0f;
+
+				if (pWldData[nCntPlanet].pStgRec != NULL)
+				{
+					pWldData[nCntPlanet].pStgRec[nCntStage].CoinNums = 0;
+					pWldData[nCntPlanet].pStgRec[nCntStage].pGet = NULL;
+				}
+
+				if (pWldData[nCntPlanet].pStart != NULL)
+				{
+					pWldData[nCntPlanet].pStart[nCntStage].CoinNums = 0;
+					pWldData[nCntPlanet].pStart[nCntStage].pGet = NULL;
+				}
+			}
 		}
 	}
-}
 
-//========================================
-// 指定されたステージのベストタイムを返す
-// Author：HIRASAWA SHION
-//========================================
-float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
-{
-	//レコード読込
-	LoadRecord();
-
-	//読み込めたらベストタイムを返す
-	if (pRecord != NULL)
-		return pRecord[planetIdx].pBestTime[stageIdx];
-
-	//失敗なら大きい数字を返す
-	return 10000.0f;
-}
-
-//========================================
-// タイム更新
-// Author：HIRASAWA SHION
-//========================================
-void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
-{
-	LoadRecord();
-
-	//タイム更新
-	if (ClearTime < pRecord[planetIdx].pBestTime[stageIdx])
-		pRecord[planetIdx].pBestTime[stageIdx] = ClearTime;
-}
-
-//========================================
-// レコードファイル読み込み
-// Author：HIRASAWA SHION
-//========================================
-namespace 
-{
-	void LoadRecord(void)
+	//========================================
+	// レコードファイル読み込み
+	// Author：HIRASAWA SHION
+	//========================================
+	void LoadWorldData(void)
 	{
-		if (pRecord != NULL) return;
+		if (pWldData != NULL) return;
 
 		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
 		if (pFile == NULL) return;
 
 		//メモリ確保
-		AllocRecord();
+		AllocWorldData();
 
 		char Text[TXT_MAX] = {}; // 一行分の文字
 		while (true)
@@ -593,23 +645,41 @@ namespace
 				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
 				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
 				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
-				pRecord[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
+
+				WorldData& rWld = pWldData[planetID]; //長いので省略
+
+				rWld.pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
+
+				CInt NumCoin = rWld.pStgRec[StageID].CoinNums = LoadInt(NULL, CHR_PAUSE);//コイン数取得
+
+				if (NumCoin != 0)
+				{
+					//回収状況場所確保
+					rWld.pStgRec[StageID].pGet = new bool[NumCoin];
+
+					for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+					{
+						//コイン回収状況取得
+						rWld.pStgRec[StageID].pGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
+					}
+				}
 			}
 		}
 
+		//ファイルを閉じる
 		fclose(pFile);
-	}
-}
 
-//========================================
-// レコードファイル書き出し
-// Author：HIRASAWA SHION
-//========================================
-namespace 
-{
-	void SaveRecord(void)
+		//初期情報保存
+		UpdateData();
+	}
+
+	//========================================
+	// レコードファイル書き出し
+	// Author：HIRASAWA SHION
+	//========================================
+	void SaveWorldData(void)
 	{
-		if (pRecord == NULL) return;
+		if (pWldData == NULL) return;
 
 		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "w");
 		if (pFile == NULL) return;
@@ -626,17 +696,37 @@ namespace
 		fprintf(pFile, "SET_RECORD\n\n");
 
 		//レコードの説明文
-		fprintf(pFile, "#ワールド - ステージ - ベストタイム");
+		fprintf(pFile, "#下のフォーマット絶対順守!!\n");
+		fprintf(pFile, "#ワールド - ステージ - ベストタイム = コイン数 - n枚目のコインの回収状況(0=未回収  1=回収済み)\n");
 		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
 			//ワールド名書き出し
 			fprintf(pFile, WORLD_COMMENT, nCntPlanet + 1);
 
-			for (int nCntStage = 0; nCntStage < pRecord[nCntPlanet].MaxStage; nCntStage++)
+			for (int nCntStage = 0; nCntStage < pWldData[nCntPlanet].MaxStage; nCntStage++)
 			{
 				//レコード記述
-				fprintf(pFile, "	%s = %d - %d - %.2f\n", 
-						CODE_RECORD, nCntPlanet, nCntStage, pRecord[nCntPlanet].pBestTime[nCntStage]);
+				fprintf(pFile, "	%s = %d - %d - %.2f = ",
+						CODE_RECORD, nCntPlanet, nCntStage, pWldData[nCntPlanet].pBestTime[nCntStage]);
+
+				if (pWldData[nCntPlanet].pStgRec == NULL)
+					fprintf(pFile, "0");
+				else
+				{
+					//コイン数参照
+					CInt& NumCoins = pWldData[nCntPlanet].pStgRec[nCntStage].CoinNums;
+
+					//コイン数書き出し
+					fprintf(pFile, "%d", NumCoins);
+
+					//回収状況書き出し
+					for (int nCntCoin = 0; nCntCoin < NumCoins; nCntCoin++)
+					{
+						fprintf(pFile, " - %d", pWldData[nCntPlanet].pStgRec[nCntStage].pGet[nCntCoin] ? 1 : 0);
+					}
+				}
+
+				fprintf(pFile, "\n");
 			}
 		}
 
@@ -644,4 +734,123 @@ namespace
 		fprintf(pFile, "\n%s", END_RECORD);
 		fclose(pFile);
 	}
+
+	//========================================
+	//ワールド/ステージ情報を塗り替え（更新処理ではない
+	// Author：HIRASAWA SHION
+	//========================================
+	void UpdateData(void)
+	{
+		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+		{
+			//長いので省略
+			WorldData& rWld = pWldData[nCntPlanet];
+
+			for (int nCntStage = 0; nCntStage < rWld.MaxStage; nCntStage++)
+			{
+				//コイン数取得
+				CInt& NumCoin = rWld.pStgRec[nCntStage].CoinNums;
+
+				//０なら引き返す
+				if (NumCoin == 0) continue;
+
+				//コイン数と回収状況保存場所確保
+				rWld.pStart[nCntStage].CoinNums = NumCoin;
+				rWld.pStart[nCntStage].pGet = new bool[NumCoin];
+
+				for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+				{
+					//回収状況代入
+					rWld.pStart[nCntStage].pGet[nCntCoin] = rWld.pStgRec[nCntStage].pGet[nCntCoin];
+				}
+			}
+		}
+	}
+}
+
+//========================================
+// 指定されたステージのベストタイムを返す
+// Author：HIRASAWA SHION
+//========================================
+float Stage::GetBestTime(CInt& planetIdx, CInt& stageIdx)
+{
+	//レコード読込
+	LoadWorldData();
+
+	//読み込めたらベストタイムを返す
+	if (pWldData != NULL)
+		return pWldData[planetIdx].pBestTime[stageIdx];
+
+	//失敗なら大きい数字を返す
+	return 10000.0f;
+}
+
+//========================================
+// タイム更新
+// Author：HIRASAWA SHION
+//========================================
+void Stage::RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime)
+{
+	LoadWorldData();
+
+	//タイム更新
+	if (ClearTime < pWldData[planetIdx].pBestTime[stageIdx])
+		pWldData[planetIdx].pBestTime[stageIdx] = ClearTime;
+}
+
+//========================================
+// ステージ情報を取得
+// Author：HIRASAWA SHION
+//========================================
+Stage::Data Stage::GetData(CInt& planetIdx, CInt& stageIdx)
+{
+	LoadWorldData();
+
+	//指定されたステージの情報を返す
+	return pWldData[planetIdx].pStgRec[stageIdx];
+}
+
+//========================================
+// コイン回収状況を取得
+// Author：HIRASAWA SHION
+//========================================
+bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
+{
+	LoadWorldData();
+
+	//回収状況を返す
+	return pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID];
+}
+
+//========================================
+// コイン回収状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums) return;
+
+	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
+	{
+		//回収状況代入
+		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
+	}
+}
+
+//========================================
+// コイン回収状況を設定
+// Author：HIRASAWA SHION
+//========================================
+void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
+{
+	LoadWorldData();
+
+	//コイン数が違っていたら設定しない
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+
+	//回収状況代入
+	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
 }

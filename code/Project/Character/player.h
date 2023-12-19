@@ -83,8 +83,9 @@ public:
 		//-------------------------------
 		//特定のギミック用
 		//-------------------------------
-		bool  bRide; // ロケットに乗っているかどうか
-		bool  bGoal; // ゴールしたかどうか
+		bool  bRide;         // ロケットに乗っているかどうか
+		int   nRideInterval; //ロケットに乗り降りした時のインターバル
+		bool  bGoal;         // ゴールしたかどうか
 		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間
 		float fTramTargetPosY;  // トランポリン用の目標位置
 		bool  bTramJump;        // トランポリン用の特殊ジャンプ
@@ -103,7 +104,7 @@ public:
 		//-------------------------------
 		//SWAP待ちの吹き出し用
 		//-------------------------------
-		int  swapWaitBalloonCounter;
+		int  swapWaitCounter;
 
 		// どちらの世界に存在するか
 		WORLD_SIDE side;
@@ -173,7 +174,7 @@ public:
 	static int GetSwapInterval(void) { return s_nSwapInterval; }
 
 	// スワップ待ちフラグを取得
-	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitBalloonCounter > 0 || m_aInfo[1].swapWaitBalloonCounter > 0; }
+	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitCounter > 0 || m_aInfo[1].swapWaitCounter > 0; }
 
 	// 出現
 	static void Pop(void) {}
@@ -219,6 +220,7 @@ public:
 		short fall;
 		short landing;
 		short dance;
+		short getup;
 	};
 
 	//モーション情報取得
@@ -237,6 +239,12 @@ public:
 
 	// ズームアップカウンター
 	static int GetZoomUpCounter(void) { return s_zoomUpCounter; }
+
+	static bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
+
 private:
 	//種類の略称を設定
 	typedef CStageObject::TYPE OBJECT_TYPE;
@@ -278,8 +286,10 @@ private:
 	static const int POP_CLEARTIME = 60; // クリアタイム表示時間
 	static       int s_nGoalInterval;    // ゴール後の余韻カウンター
 
-	static const int ZOOM_UP_TIME = 120; // ズームアップにかかる時間
-	static       int s_zoomUpCounter;    // ズームアップカウンター
+	static const int ZOOM_UP_TIME       = 120; // ズームアップにかかる時間
+	static const int ZOOM_UP_FIXED_TIME = 90;  // ズームアップの固定時間
+	static       int s_zoomUpCounter;          // ズームアップカウンター
+	static       int s_zoomUpFixedCounter;    // ズームアップ固定カウンター2
 
 	void Swap(void);
 	void SwapAnimation(void);
@@ -320,11 +330,6 @@ private:
 	// 各プレイヤーの当たり判定が終わった後の処理
 	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot);
 
-	bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
-	bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
-	bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
-	bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
-
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
 	void UpdateDeath(Info& info, const int& count);
@@ -345,10 +350,10 @@ private:
 
 	static Motion s_motion[2];
 
-	static CCollision *s_pColli;
-
 	static bool s_bAimPlayer;
 	static int s_nAimNo;
+	static Pos3D s_addPosV;
+	static Pos3D s_addPosR;
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;

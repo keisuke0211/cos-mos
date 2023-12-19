@@ -16,6 +16,9 @@
 //****************************************
 class CRocket : public CStageObject {
 public:
+	//乗り降りする際のインターバル
+	static const int RIDE_ONOFF_INTERVAL = 60;
+
 	//========== [[[ 列挙型定義 ]]]
 	enum class ANIME_STATE {
 		NONE = -1,// 何もなし

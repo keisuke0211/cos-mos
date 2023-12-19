@@ -26,6 +26,7 @@ CPlayer::SWAP_ANIM CPlayer::s_AnimState = CPlayer::SWAP_ANIM::PROLOGUE;	//アニメ
 
 int CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
 int CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
+int CPlayer::s_zoomUpFixedCounter = 0;// ズームアップカウンター
 
 const float CPlayer::SIZE_WIDTH = 7.0f; // 横幅
 const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
@@ -54,15 +55,16 @@ int CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 
 CPlayer::SE     CPlayer::s_SE = {};	//サウンド用構造体
 CPlayer::Motion CPlayer::s_motion[2] = {};	//モーション用構造体
-CCollision     *CPlayer::s_pColli = NULL;
 bool            CPlayer::ms_bSwapEnd = false;
 UShort          CPlayer::ms_guideCounter = 0;
 
 bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
+Pos3D CPlayer::s_addPosV = INITPOS3D;
+Pos3D CPlayer::s_addPosR = INITPOS3D;
 float CPlayer::s_fCorrWidth = 0.0f;
 float CPlayer::s_fCorrHeight = 0.0f;
-float CPlayer::s_fAimWorkSpeed = 0.1f;
+float CPlayer::s_fAimWorkSpeed = 1.0f;
 CPlayer::Info CPlayer::m_aInfo[CPlayer::NUM_PLAYER];	// 各プレイヤーの情報
 
 //=======================================
@@ -125,8 +127,6 @@ CPlayer::CPlayer()
 		Player.side = WORLD_SIDE::FACE;        // どちらの世界に存在するか
 		cntPlayer++;
 	}
-
-	s_pColli = NULL;	// 当たり判定クラス
 }
 
 //=======================================
@@ -136,13 +136,6 @@ CPlayer::~CPlayer()
 {
 	delete m_aInfo[0].doll;
 	delete m_aInfo[1].doll;
-
-	if (s_pColli != NULL)
-	{
-		s_pColli->OthColliDelete();
-		delete s_pColli;
-	}
-	s_pColli = NULL;
 }
 
 //=======================================
@@ -211,6 +204,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
 			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Dance.txt");
+			s_motion[cnt].getup   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\GetUp.txt");
 		}
 		else {
 			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
@@ -219,6 +213,7 @@ HRESULT CPlayer::Init(void)
 			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
 			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
 			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Dance.txt");
+			s_motion[cnt].getup   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\GetUp.txt");
 		}
 	}
 
@@ -228,13 +223,12 @@ HRESULT CPlayer::Init(void)
 	// ※ 来れないとステージ入る前に一瞬着地SEがなる
 	m_aInfo[0].bJump = m_aInfo[1].bJump = false;
 
-	if(s_pColli == NULL)
-	s_pColli = new CCollision;
-
 	s_zoomUpCounter = 0;
+	s_zoomUpFixedCounter = 0;
 	if (Manager::StgEd()->GetPlanetIdx() == 0) {
 		if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
 			s_zoomUpCounter = ZOOM_UP_TIME;
+			s_zoomUpFixedCounter = ZOOM_UP_FIXED_TIME;
 		}
 	}
 
@@ -334,7 +328,8 @@ void CPlayer::InitInfo(void) {
 		Player.isDeath = false;
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
-		Player.swapWaitBalloonCounter = 0;
+		Player.swapWaitCounter = 0;
+		Player.nRideInterval = 0;
 	}
 
 	CGoalGate::ResetEtr();
@@ -508,6 +503,10 @@ void CPlayer::UpdateInfo(void)
 			}
 		}
 
+		//ロケット乗り降りインターバル減少
+		if (Player.nRideInterval > 0)
+			Player.nRideInterval--;
+
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal)
 			continue;
@@ -647,24 +646,41 @@ void CPlayer::ActionControl(void)
 	// プレイヤー番号
 	int nIdxPlayer = -1;
 
+	bool isZoomUp = false;
+	if (s_zoomUpCounter > 0 &&
+		Manager::StgEd()->GetPlanetIdx() == 0 &&
+		Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+		isZoomUp = true;
+	}
+
 	// [[[ カメラ制御 ]]]
 	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath) 
 	{// どちらも死んでいない
-		bool isZoomUp = false;
-		if (s_zoomUpCounter > 0 &&
-			Manager::StgEd()->GetPlanetIdx() == 0 &&
-			Manager::StgEd()->GetType()[0].nStageIdx == 0)
-		{
-			isZoomUp = true;
-		}
-
 		Pos3D targetPosV = Manager::StgEd()->GetCameraPos();
 		Pos3D targetPosR = (m_aInfo[0].pos + m_aInfo[1].pos) * 0.5f;
 		targetPosR.x *= 0.25f;
 		targetPosR.y = 0.0f;
 
 		if (isZoomUp) {
-			s_zoomUpCounter--;
+			if (s_zoomUpFixedCounter > 0) {
+				s_zoomUpFixedCounter--;
+				if (s_zoomUpFixedCounter <= ZOOM_UP_FIXED_TIME - 60) {
+					if (s_zoomUpFixedCounter == ZOOM_UP_FIXED_TIME - 60) {
+						m_aInfo[0].doll->OverwriteMotion(s_motion[0].jump);
+						m_aInfo[1].doll->OverwriteMotion(s_motion[1].jump);
+						m_aInfo[0].move.y += 2.5f;
+						m_aInfo[1].move.y -= 2.5f;
+					}
+				}
+				else {
+					m_aInfo[0].doll->OverwriteMotion(s_motion[0].getup);
+					m_aInfo[1].doll->OverwriteMotion(s_motion[1].getup);
+				}
+			}
+			else {
+				s_zoomUpCounter--;
+			}
+			
 
 			Pos3D basePosRMain = m_aInfo[0].pos + Pos3D(0.0f, -16.0f, 0.0f);
 			Pos3D basePosRSub  = m_aInfo[1].pos + Pos3D(0.0f, 16.0f, 0.0f);
@@ -687,33 +703,57 @@ void CPlayer::ActionControl(void)
 		}
 		else{
 			_RNC_Input *pInput = &RNLib::Input();
-			if (pInput->GetKeyTrigger(DIK_B))
-			{//視点切替
-				if (!s_bAimPlayer)
-				{
-					s_bAimPlayer = !s_bAimPlayer;
-					s_nAimNo = 0;
-				}
-				else if (s_nAimNo == 0)
-					s_nAimNo = 1;
-				else
-				{
-					s_bAimPlayer = false;
-					s_nAimNo = 0;
+			if (RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
+				if (pInput->GetKeyTrigger(DIK_B))
+				{//視点切替
+					if (!s_bAimPlayer)
+					{
+						s_bAimPlayer = !s_bAimPlayer;
+						s_nAimNo = 0;
+					}
+					else if (s_nAimNo == 0) {
+						s_nAimNo = 1;
+					}
+					else
+					{
+						s_bAimPlayer = false;
+						s_nAimNo = 0;
+					}
+
+					if (s_bAimPlayer) {
+						s_addPosV.x = s_addPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
+						s_addPosV.y = s_addPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
+						s_addPosV.z = -100.0f;
+					}
 				}
 			}
 
-			if (s_bAimPlayer)
-			{
+			if (s_bAimPlayer) {
+				if (RNLib::Input().GetKeyPress(DIK_R)) {
+					if (RNLib::Input().GetKeyPress(DIK_T)) { s_addPosR.z += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_G)) { s_addPosR.z -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_H)) { s_addPosR.x += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_F)) { s_addPosR.x -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_U)) { s_addPosR.y += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_J)) { s_addPosR.y -= 1.0f; }
+				}
+				else {
+					if (RNLib::Input().GetKeyPress(DIK_T)) { s_addPosV.z += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_G)) { s_addPosV.z -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_H)) { s_addPosV.x += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_F)) { s_addPosV.x -= 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_U)) { s_addPosV.y += 1.0f; }
+					if (RNLib::Input().GetKeyPress(DIK_J)) { s_addPosV.y -= 1.0f; }
+				}
+
+				Manager::GetMainCamera()->SetPosVAndPosR(s_addPosV, s_addPosR);
+
+#if 0
 				if (pInput->GetKeyTrigger(DIK_V)) s_fCorrWidth -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_N)) s_fCorrWidth += 0.1f;
 				if (pInput->GetKeyTrigger(DIK_G)) s_fCorrHeight -= 0.1f;
 				if (pInput->GetKeyTrigger(DIK_H)) s_fCorrHeight += 0.1f;
-
-				targetPosV.x = targetPosR.x = m_aInfo[s_nAimNo].pos.x + s_fCorrWidth;
-				targetPosV.y = targetPosR.y = m_aInfo[s_nAimNo].pos.y + s_fCorrHeight;
-				targetPosV.z =- 100.0f;
-
+				
 				//本来の当たり判定範囲
 				RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_aInfo[0].pos, INITVECTOR3D)
 					->SetCol(Color{ 255,255,255,255 })
@@ -725,9 +765,11 @@ void CPlayer::ActionControl(void)
 					->SetSize(SIZE_WIDTH * 1.0f, SIZE_HEIGHT * 1.0f);
 
 				RNLib::Text2D().PutDebugLog(String("横の調整量:%f  縦の調整量:%f", s_fCorrWidth, s_fCorrHeight));
+#endif
 			}
-
-			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
+			else {
+				Manager::GetMainCamera()->SetPosVAndPosR(targetPosV, targetPosR);
+			}
 		}
 	}
 	else 
@@ -744,6 +786,10 @@ void CPlayer::ActionControl(void)
 		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer + 1) % NUM_PLAYER].bGoal &&
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
+			//ロケットに乗っていたらインターバル設定
+			if (Player.bRide)
+				Player.nRideInterval = CRocket::RIDE_ONOFF_INTERVAL;
+
 			CGoalGate::EntrySub();
 			CRocket::RideOff();
 			Player.bRide = false;
@@ -751,8 +797,8 @@ void CPlayer::ActionControl(void)
 			Player.move.x *= -2.0f;
 		}
 
-		// ロケットに乗ってたら　or ゴールしていたらスキップ
-		if (Player.bRide || Player.bGoal) continue;
+		// ロケットに乗っている　or ゴールしている or ズームアップ の時スキップ
+		if (Player.bRide || Player.bGoal || isZoomUp) continue;
 
 		// ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
@@ -764,7 +810,6 @@ void CPlayer::ActionControl(void)
 		}
 
 		bool isMove = false;
-
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
 			RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT, nIdxPlayer))
 		{// 右に移動
@@ -781,7 +826,8 @@ void CPlayer::ActionControl(void)
 			isMove = true;
 		}
 
-		if (Player.swapWaitBalloonCounter > 0) {
+		
+		if (Player.swapWaitCounter > 0) {
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
 		}
 		else if (!Player.bGround) {
@@ -804,14 +850,14 @@ void CPlayer::ActionControl(void)
 		// スワップ入力
 		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
 			Player.nSwapAlpha = 255;
-			if (++Player.swapWaitBalloonCounter > SWAP_WAIT_BALLOON_TIME)
-				Player.swapWaitBalloonCounter = SWAP_WAIT_BALLOON_TIME;
+			if (++Player.swapWaitCounter > SWAP_WAIT_BALLOON_TIME)
+				Player.swapWaitCounter = SWAP_WAIT_BALLOON_TIME;
 		}
 		//スワップ非入力
 		else {
 			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
-			if (--Player.swapWaitBalloonCounter < 0)
-				Player.swapWaitBalloonCounter = 0;
+			if (--Player.swapWaitCounter < 0)
+				Player.swapWaitCounter = 0;
 		}
 
 		{// 吹き出しの表示
@@ -819,10 +865,10 @@ void CPlayer::ActionControl(void)
 			putPos.y += RNLib::Number().GetPlusMinus(Player.pos.y) * 12.0f;
 			_RNC_Polygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f, 0.0f, -0.1f + (RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, RNLib::Number().GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_WAITBUBBLE], Player.pos.y < 0.0f, 2, 1)
-				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitBalloonCounter / SWAP_WAIT_BALLOON_TIME)))
+				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitCounter / SWAP_WAIT_BALLOON_TIME)))
 				->SetZTest(false);
 			
-			Size2D size = Size2D(16.0f, 32.0f * ((float)Player.swapWaitBalloonCounter / SWAP_WAIT_BALLOON_TIME));
+			Size2D size = Size2D(16.0f, 32.0f * ((float)Player.swapWaitCounter / SWAP_WAIT_BALLOON_TIME));
 			if (Player.pos.y > 0.0f) {
 				polygon3D->SetVtxPos(
 					Pos3D(-size.x, size.y, 0.0f),
@@ -857,9 +903,9 @@ void CPlayer::Swap(void)
 		return;
 	}
 
-	// 両者ともにスワップボタンを押しているまたはどちらかがロケットに乗っている
-	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) || m_aInfo[0].bRide) &&
-		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) || m_aInfo[1].bRide))
+	// 両者ともにスワップボタンを押している
+	if ((IsKeyConfigPress(0, m_aInfo[0].side, KEY_CONFIG::SWAP) && m_aInfo[0].swapWaitCounter > 0) &&
+		(IsKeyConfigPress(1, m_aInfo[1].side, KEY_CONFIG::SWAP) && m_aInfo[1].swapWaitCounter > 0))
 	{
 		//ロケットに乗っていないときにサウンド再生
 		if (CRocket::GetCounter() != NUM_PLAYER)
@@ -886,7 +932,7 @@ void CPlayer::Swap(void)
 			Player.bGroundOld = Player.bGround;
 
 			// 吹き出しカウンター初期化
-			Player.swapWaitBalloonCounter = 0;
+			Player.swapWaitCounter = 0;
 		}
 	}
 }
@@ -929,7 +975,7 @@ void CPlayer::SwapAnimation(void)
 
 		const int nTex = rand() % 2 + 2;
 
-		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),INITD3DXVECTOR3, 8, _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
+		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),INITD3DXVECTOR3,false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL,8);
 	}
 }
 
@@ -1099,11 +1145,8 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		if(s_bAimPlayer && s_nAimNo == cntPlayer)
-			RNLib::Number().Clamp(&Player.move.x, s_fAimWorkSpeed, -s_fAimWorkSpeed);
-		else
-			RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
-
+		RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+		
 		// 位置更新
 		Player.pos.x += Player.move.x;
 		break;
@@ -1207,7 +1250,7 @@ void CPlayer::CollisionToStageObject(void)
 				if (!UniqueColliOpption(pObj, type, Player, &colliInfo.pos, &colliInfo.posOld, &colliInfo.fWidth, &colliInfo.fHeight)) continue;
 
 				// 当たった方向を格納
-				colliInfo.Rot = s_pColli->IsBoxToBoxCollider(Self, colliInfo, vec);
+				colliInfo.Rot = CCollision::IsBoxToBoxCollider(Self, colliInfo, vec);
 				CInt nColliRot = (int)colliInfo.Rot;
 
 				// 当たっていない
@@ -1225,18 +1268,18 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 s_pColli->Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::FILLBLOCK: s_pColli->FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::TRAMPOLINE:s_pColli->Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::SPIKE:	 s_pColli->Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:s_pColli->MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::METEOR:	 s_pColli->Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
-				//case OBJECT_TYPE::LASER:	 s_pColli->Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:s_pColli->Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::GOALGATE:	 s_pColli->GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::PARTS:	 s_pColli->Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::ROCKET:	 s_pColli->Rocket(&Self, (CRocket*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::PILE:		 s_pColli->Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::BLOCK:	 CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::METEOR:	 CCollision::Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
+				//case OBJECT_TYPE::LASER:	 CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::GOALGATE:	 CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::PARTS:	 CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::ROCKET:	 CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::PILE:		 CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &bDeath); break;
 				}
 
 				// 死亡判定ON
@@ -1594,10 +1637,43 @@ void CPlayer::GoalDirector(void)
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
+		//ステージ情報取得
+		/*
+		Stage::Data data = Stage::GetData(planet, stage);
+		CFloat CoinUISize = 40.0f;
+		CFloat CoinUISPace = 10.0f;
+
+		CFloat SizeSpace = data.CoinNums % EVENPARITY == 1 ? CoinUISize * 0.5f : 0.0f;
+		CFloat AllSize = data.CoinNums / EVENPARITY * CoinUISize * 0.5f + ((data.CoinNums - 1) / 2.0f) * CoinUISPace + SizeSpace;
+
+		CFloat CoinUIStartX = Center.x - AllSize;
+
+		RNLib::Text2D().Put(PRIORITY_UI, String("コイン数:%d", data.CoinNums), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Pos2D(Center.x, 100.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f))
+			->SetCol(COLOR_WHITE);
+
+		RNLib::Polygon2D().Put(PRIORITY_UI, Center, 0.0f)
+			->SetSize(2.0f, Center.y)
+			->SetCol(COLOR_WHITE);
+
+		for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
+		{
+			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(CoinUIStartX + (CoinUISize + CoinUISPace) * nCntData, 150.0f), 0.0f)
+				->SetSize(CoinUISize, CoinUISize)
+				->SetCol(data.pGet[nCntData] ? Color{ 255,255,0,255 } : Color{ 200,200,200,255 })//true : 黄色    false : 灰色
+				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK));
+
+			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(test + (CoinUISize + CoinUISPace) * nCntData, 200.0f), 0.0f)
+				->SetSize(CoinUISize, CoinUISize)
+				->SetCol(Color{ 255,255,0,255 })//true : 黄色    false : 灰色
+				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK));
+		}
+		*/
+
 		if(ClearTime < BestTime)
 			RNLib::Text2D().Put(PRIORITY_UI, String("New Record!!"), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f))
-			->SetCol(Color{ 255,255,0,255 });;
+			->SetCol(Color{ 255,255,0,255 });
 
 		RNLib::Text2D().Put(PRIORITY_UI, String("ベストタイム:%.1f秒", BestTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));

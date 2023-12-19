@@ -91,6 +91,10 @@ private:
 		LOGO_TM,		// TM
 	};
 
+	enum DIRECTION {
+		RIGHT = 0,	// 右
+		LEFT,		// 左
+	};
 	//========== [[[ 構造体定義 ]]]
 	// ステージ種類情報
 	struct PlanetType{
@@ -168,9 +172,11 @@ private:
 	bool m_bRocketMove;
 	bool m_bRocketRot;
 	bool m_bRotDir;
+	bool m_bStgEnter;
 	TitleLogoInfo m_TitleLogo;
 	CFontText *m_pMenu;
 	PlanetType *m_PlanetType;
 	STAGE m_StgFlag;
 	CCoinUI *m_CoinUI;
+	DIRECTION m_Direction;
 };

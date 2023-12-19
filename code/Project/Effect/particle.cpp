@@ -71,10 +71,22 @@ HRESULT CParticle::Init(int nTex,int nCount)
 	{
 		float rate = 0.01f + RNLib::Number().GetRandomFloat(0.01f);
 
-		m_Info.move = D3DXVECTOR3(
-			m_move.x * sinf(m_Info.rot.z) * rate,
-			m_move.y * cosf(m_Info.rot.z) * rate,
-			0.0f);
+		if (m_bVec3D) {
+			m_Info.rot = RNLib::Geometry().FindRotVec(m_Info.rot);
+
+			m_Info.move = D3DXVECTOR3(
+				m_move.x * m_Info.rot.x * rate,
+				m_move.y * m_Info.rot.y * rate,
+				0.0f);
+		}
+		else {
+
+			m_Info.move = D3DXVECTOR3(
+				m_move.x * sinf(m_Info.rot.z) * rate,
+				m_move.y * cosf(m_Info.rot.z) * rate,
+				0.0f);
+		}
+	
 
 		m_Info.rot.x = 0.0f;
 		m_Info.rot.y = 0.0f;
@@ -118,7 +130,7 @@ void CParticle::Update(void)
 		->SetTex(m_Info.nTex)
 		->SetCol(m_Info.col)
 		->SetSize(m_Info.scale.x, m_Info.scale.y)
-		->SetZTest(true)
+		->SetZTest(m_bZtest)
 		->SetAlphaBlendMode(m_Info.alphamode);
 
 	//ˆÚ“®—ÊŒ¸Š

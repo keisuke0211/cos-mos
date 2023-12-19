@@ -8,35 +8,6 @@
 #include "Object/stage-object-manager.h"
 #include "Character\player.h"
 
-//位置を１００倍整数にする構造体（D3DXVECTOR2用
-struct Vec2x100{
-public:
-	Vec2x100(){};
-	Vec2x100(int vx, int vy) { x = vx; y = vy; }
-
-	// 代入
-	Vec2x100 &operator =(const Vec2x100 &v) { return Vec2x100(x = v.x, y = v.y); }
-	Vec2x100 &operator =(const Vector2D &v) { return Vec2x100(x = (int)(v.x * 100), (int)(y = v.y * 100)); }
-
-	// 加算
-	Vec2x100 operator +(const Vec2x100 &v) { return Vec2x100(x + v.x, y + v.y); }
-	Vec2x100 operator +(const Vector2D &v) { return Vec2x100(x + (int)(v.x * 100), y + (int)(v.y * 100)); }
-
-	// 減算
-	Vec2x100 operator -(const Vec2x100 &v) { return Vec2x100(x - v.x, y - v.y); }
-	Vec2x100 operator -(const Vector2D &v) { return Vec2x100(x - (int)(v.x * 100), y - (int)(v.y * 100)); }
-
-	// 乗算
-	Vec2x100 operator *(const int &v) {	return Vec2x100(x * v, y * v); }
-
-	// 徐算
-	Vec2x100 operator /(const int &v) { if (v == 0) return Vec2x100(0, 0);  return Vec2x100(x / v, y / v); }
-
-	//位置ベクトルを代入
-	int x = 0;
-	int y = 0;
-};
-
 //当たり判定クラス
 class CCollision{
 public:
@@ -100,40 +71,34 @@ public:
 	//------------------------
 	// 引数１	self	：自分の情報
 	// 引数２	target	：対象の情報
-	// 引数３	value	：ベクトル
-	// 引数４	pAngle	：当たった方向を返す
+	// 引数３	pAngle	：当たった方向を返す
 	// 返り値	対象物にめりこんでいるか返す  true:めり込んだ  false:めり込んでいない
 	//========================
-	static bool CircleToBoxCollider(SelfInfo& self, ColliInfo& target, CPlayer::VECTOL vec, float *pAngle);
+	static bool CircleToBoxCollider(SelfInfo& self, ColliInfo& target, float *pAngle);
 
-	void Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::Info& Player, CBlock* pBlock, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void FillBlock(SelfInfo *pSelfInfo, ROT ColliRot, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline *pTrampoline, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Meteor(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli,CObject *obj, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-	void Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
-
-	//メモリ開放
-	void OthColliDelete(void);
+	static void Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::Info& Player, CBlock* pBlock, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void FillBlock(SelfInfo *pSelfInfo, ROT ColliRot, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Trampoline(SelfInfo *pSelfInfo, ColliInfo *pColli, CTrampoline *pTrampoline, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Spike(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void MoveBlock(SelfInfo *pSelfInfo, CMoveBlock *pMoveBlock, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Meteor(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli,CObject *obj, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
+	static void Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPlayer::WORLD_SIDE *pSide = NULL, bool *pDeath = NULL);
 
 private:
-	// 他パーツの当たり判定情報
-	ColliInfo *m_pOthColli;
 
 	//上下左右の当たり判定による位置・移動量修正
-	void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY, float fHeight);
-	void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight);
-	void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth);
-	void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth);
+	static void FixPos_OVER(float *pPosY, float fMaxPosY, float *pMoveY, float fHeight);
+	static void FixPos_UNDER(float *pPosY, float fMinPosY, float *pMoveY, float fHeight);
+	static void FixPos_LEFT(float *pPosX, float fMinPosX, float *pMoveX, float fWidth);
+	static void FixPos_RIGHT(float *pPosX, float fMaxPosX, float *pMoveX, float fWidth);
 
 	//上下どちらかに当たった（乗った）プレイヤーの設定処理
-	void LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY);
+	static void LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY);
 
 	//最小最大位置設定処理
 	static void SetMinMaxPos(SelfInfo& self);

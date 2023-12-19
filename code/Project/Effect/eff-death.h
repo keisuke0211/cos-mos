@@ -76,18 +76,20 @@ public:
 	void SetBallSize(BALL_SIZE_LV Lv);
 
 private:
-	static const int CREATE_INTERVAL = 30;  //生成インターバル
-	static const int FUSION_INTERVAL = 120; //融合インターバル
+	static CInt CREATE_INTERVAL = 30;  //生成インターバル
+	static CInt FUSION_INTERVAL = 10;  //融合インターバル
+	static CInt KICK_INTERVAL = 20;    //蹴飛ばしインターバル
 
-	static const int MAX_INK_LIFE = 600;    //インクの寿命
+	static CInt MAX_INK_LIFE = 600;    //インクの寿命
 
-	static const float CREATE_SPREAD_POWER; //生成時の拡散力
-	static const float PLAYER_COLLI_POWER;  //プレイヤーに当たったときの吹っ飛び力
-	static const float MOVE_X_CORRECT;      //Ⅹベクトルの移動補正係数
-	static const float GRAVITY_POWER;       //重力加速度
-	static const float BOUND_POWER;         //バウンド係数
+	static CFloat CREATE_SPREAD_POWER; //生成時の拡散力
+	static CFloat PLAYER_COLLI_POWER;  //プレイヤーに当たったときの吹っ飛び力
+	static CFloat PLAYER_KICK_POWER;   //プレイヤーのキック量
+	static CFloat MOVE_X_CORRECT;      //Ⅹベクトルの移動補正係数
+	static CFloat GRAVITY_POWER;       //重力加速度
+	static CFloat BOUND_POWER;         //バウンド係数
 	static const short BALL_ALPHA_DECREASE; //ボールのα値減少量（当たり判定でUnknownが出た際に使用
-	static const float BALL_SIZE[(int)BALL_SIZE_LV::MAX];//ボールサイズを格納
+	static CFloat BALL_SIZE[(int)BALL_SIZE_LV::MAX];//ボールサイズを格納
 	static       int   s_BallModelID[(int)BALL_SIZE_LV::MAX]; //ボールモデル番号を格納
 	static const char *BALL_MODEL_PATH[(int)BALL_SIZE_LV::MAX];//ボールモデルパスを格納
 
@@ -99,7 +101,6 @@ private:
 	void BallFusion(void);
 
 	//情報更新処理
-	CCollision::ROT PlayerCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec);
 	CCollision::ROT StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec, CStageObject::TYPE& type);
 	void SetSelfInfo(CCollision::SelfInfo *pSelfInfo);
 	void Move(CPlayer::VECTOL vec);

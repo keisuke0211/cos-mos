@@ -5,7 +5,7 @@ boneDataSum{ 2
 		modelIdx data\\Model\\Iruka_Body.x
 		parentIdx -1
 		relativePos 0.00 10.00 0.00
-		relativeRot 0.00 0.00 0.00
+		relativeRot 0.00 -1.50 0.00
 	}
 	boneData{
 		idx 1
@@ -15,6 +15,209 @@ boneDataSum{ 2
 		relativeRot 0.00 0.00 0.00
 	}
 }
-faceDataSum{ 0
+
+
+
+
+
+faceDataSum{ 8
+faceData{
+	texIdx NONEDATA
+	col 145 204 204 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 128
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 126
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 130
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 134
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 145 204 204 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 130
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 128
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 131
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 130
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 145 204 204 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 132
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 130
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 132
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 131
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 145 204 204 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 134
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 132
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 129
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 132
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 145 204 204 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 133
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 134
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 133
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 129
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 145 204 204 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 122
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 133
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 135
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 133
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 160 160 160 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 124
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 122
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 136
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 135
+		texPos 1.00 1.00
+	}
+}
+
+faceData{
+	texIdx NONEDATA
+	col 160 160 160 255
+	vtx0{
+		boneIdx 0
+		vtxIdx 126
+		texPos 0.00 0.00
+	}
+	vtx1{
+		boneIdx 0
+		vtxIdx 124
+		texPos 1.00 0.00
+	}
+	vtx2{
+		boneIdx 1
+		vtxIdx 134
+		texPos 0.00 1.00
+	}
+	vtx3{
+		boneIdx 1
+		vtxIdx 136
+		texPos 1.00 1.00
+	}
+}
 }
 END
