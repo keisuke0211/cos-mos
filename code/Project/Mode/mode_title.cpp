@@ -24,6 +24,7 @@
 //==========| CMode_Titleクラス
 //----------|---------------------------------------------------------------------
 //================================================================================
+const char* CMode_Title::TITLE_LOGO_FILE = "data\\GAMEDATA\\TitleLogo.txt";
 const D3DXVECTOR3 SELECTBOX = D3DXVECTOR3(7.5f, -15.0f, -125.0f);
 const D3DXVECTOR3 UNSELECTBOX = D3DXVECTOR3(7.5f, -20.0f, -120.0f);
 const D3DXVECTOR3 SELBOXRATE = SELECTBOX - UNSELECTBOX;
@@ -54,6 +55,7 @@ CMode_Title::CMode_Title(void) {
 
 	Title              = TITLE_TITLE;
 	NextTitle		   = TITLE_TITLE;
+	TitleAnima		   = ANIME_NUI;
 	m_nOldSelect       = 0;
 	m_nOldnPlanet      = 0;
 	m_PlanetAngle      = 0.0f;
@@ -77,18 +79,6 @@ CMode_Title::CMode_Title(void) {
 // デストラクタ
 //========================================
 CMode_Title::~CMode_Title(void) {
-
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
-		if (m_TITLE[nCnt] != NULL) {
-			m_TITLE[nCnt]->Uninit();
-			m_TITLE[nCnt] = NULL;
-		}
-
-		if (m_TitleShadow[nCnt] != NULL) {
-			m_TitleShadow[nCnt]->Uninit();
-			m_TitleShadow[nCnt] = NULL;
-		}
-	}
 
 	if (m_PlanetType != NULL) {
 		delete[] m_PlanetType;
@@ -117,15 +107,14 @@ void CMode_Title::Init(void) {
 	//BGM開始処理
 	titleSound::Start();
 
-	// テキストの初期化
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++) {
-		m_bMove[nCnt] = false; 
-		m_TITLE[nCnt] = m_TitleShadow[nCnt] = NULL;
-	}
+	// タイトルロゴの初期化
+	TitleLogoInit(false);
 
-	for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
-		m_pMenu[nCnt] = NULL;
-	}
+	// タイトルロゴの読込
+	TitleLoad();
+
+	// テキストの初期化
+	m_pMenu = NULL;
 
 	// メニュー生成
 	m_MenuUI = CMenuUI::Create(CMode::TYPE::TITLE );
@@ -135,8 +124,8 @@ void CMode_Title::Init(void) {
 
 	if (m_bStageSelect) 
 	{// ステージ選択時、
+		TitleLogoInit(true);
 		SwapMode(TITLE_SELECT);
-		m_bStageSelect = false;
 	}
 	else
 	{// ステージ非選択時、
@@ -213,6 +202,26 @@ void CMode_Title::Update(void) {
 
 	if (Title <= TITLE_MENU)
 	{
+		// タイトルロゴ
+		for (int nCnt = 0; nCnt < TITLE_LOGO_MAX; nCnt++) {
+
+			RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, false)
+				->SetCol(m_TitleLogo.Logo[nCnt].color)
+				->SetTexUV(m_TitleLogo.Logo[nCnt].TexIdx,
+					m_TitleLogo.Logo[nCnt].TexUV[0], m_TitleLogo.Logo[nCnt].TexUV[1],
+					m_TitleLogo.Logo[nCnt].TexUV[2], m_TitleLogo.Logo[nCnt].TexUV[3])
+				->SetVtxPos(
+					m_TitleLogo.Logo[nCnt].VtxPos[0], m_TitleLogo.Logo[nCnt].VtxPos[1],
+					m_TitleLogo.Logo[nCnt].VtxPos[2], m_TitleLogo.Logo[nCnt].VtxPos[3]);
+		}
+
+		if (TitleAnima == ANIME_TEXT1)
+		{
+			RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(625.0f, 280.0f, 0.0f), 0.0f, false)
+				->SetSize(44.0f, 128.0f)
+				->SetCol(Color{ 0,0,0,255 });
+		}
+
 		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_PLANET], m_PlanetAngle, false)
 			->SetSize(1400.0f, 1400.0f)
 			->SetCol(Color{ 255,255,255,255 })
@@ -323,35 +332,158 @@ void CMode_Title::ProcessState(const PROCESS process) {
 //========================================
 void CMode_Title::TextAnime(void)
 {
-	for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
+	if (TitleAnima == ANIME_NUI)
 	{
-		if (m_TITLE[nCnt] != NULL)
+		D3DXVECTOR3 CenterPos = m_TitleLogo.Logo[LOGO_NUI].pos;
+		D3DXVECTOR2 size = m_TitleLogo.Logo[LOGO_NUI].size;
+		float DownPosY = m_TitleLogo.Logo[LOGO_NUI].pos.y + size.y;
+
+		float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_TitleLogo.nCntAnime, NUI_ANIME);
+		float ScaleY = (m_TitleLogo.Logo[LOGO_NUI].size.y * 2) * Rate;
+
+		m_TitleLogo.Logo[LOGO_NUI].VtxPos[0].y = DownPosY - ScaleY;
+		m_TitleLogo.Logo[LOGO_NUI].VtxPos[1].y = DownPosY - ScaleY;
+
+		if (++m_TitleLogo.nCntAnime > NUI_ANIME){
+			m_TitleLogo.nCntAnime = 0;
+			TitleAnima = ANIME_TEXT1;
+		}
+	}
+	else if (TitleAnima == ANIME_TEXT1)
+	{
+		for (int nCnt = 0; nCnt < TITLE_LOGO_MAX; nCnt++)
 		{
-			D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
+			if (nCnt == LOGO_NUI || nCnt == LOGO_TM)	continue;
 
-			if (pos.y <= 210.0f && m_bMove[nCnt]) {
-				D3DXVECTOR3 move;
+			D3DXVECTOR3 CenterPos = m_TitleLogo.Logo[nCnt].pos;
+			D3DXVECTOR2 size = m_TitleLogo.Logo[nCnt].size;
+			float RightPosX = m_TitleLogo.Logo[nCnt].pos.x + size.x;
+			float LeftPosX = m_TitleLogo.Logo[nCnt].pos.x - size.x;
+			float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_TitleLogo.nCntAnime, TITLE_TEXT_ANIME);
+			float PosRateX = 0.0f;
+			float TexRateX = 1 * Rate;
 
-				move.y = 15.0f;
+			// 割合
+			if (nCnt == LOGO_COS1 || nCnt == LOGO_COS2)
+			{
+				PosRateX = (m_TitleLogo.Logo[nCnt].size.x * 2.0f) * Rate;
+			}
+			else if (nCnt == LOGO_MOS1 || nCnt == LOGO_MOS2)
+			{
+				PosRateX = (m_TitleLogo.Logo[nCnt].size.x * 2.0f) * Rate;
+			}
 
-				m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-				m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+			// 設定
+			if (nCnt == LOGO_COS1 || nCnt == LOGO_COS2)
+			{
+				m_TitleLogo.Logo[nCnt].VtxPos[0].x = RightPosX - PosRateX;
+				m_TitleLogo.Logo[nCnt].VtxPos[2].x = RightPosX - PosRateX;
 
-				if (pos.y >= 200.0f) {
-					move.y = 0.0f;
-					pos.y = 200;
+				m_TitleLogo.Logo[nCnt].TexUV[1].x = TexRateX;
+				m_TitleLogo.Logo[nCnt].TexUV[3].x = TexRateX;
+			}
+			else if (nCnt == LOGO_MOS1 || nCnt == LOGO_MOS2)
+			{
+				m_TitleLogo.Logo[nCnt].VtxPos[1].x = LeftPosX + PosRateX;
+				m_TitleLogo.Logo[nCnt].VtxPos[3].x = LeftPosX + PosRateX;
+				 
+				m_TitleLogo.Logo[nCnt].TexUV[0].x = (1 - TexRateX);
+				m_TitleLogo.Logo[nCnt].TexUV[2].x = (1 - TexRateX);
+			}
+			
+		}
 
-					m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-					m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
+		if (++m_TitleLogo.nCntAnime > TITLE_TEXT_ANIME)
+		{
+			m_TitleLogo.nCntAnime = 0;
+			TitleAnima = ANIME_NUI_LEAN;
+		}
+	}
+	else if (TitleAnima == ANIME_NUI_LEAN)
+	{
+		D3DXVECTOR2 size = m_TitleLogo.Logo[LOGO_NUI].size;
+		float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_TitleLogo.nCntAnime, NUI_ANIME);
+		float PosRate = 20 * Rate;
+		float AngleRate = -0.6f * Rate;
 
-					if (nCnt == WORDS_MAX - 1)
-						SwapMode(TITLE_OUTSET);
+		// 位置
+		m_TitleLogo.Logo[LOGO_NUI].pos.x = m_TitleLogo.Logo[LOGO_NUI].InitPos.x + PosRate;
+		D3DXVECTOR3 CenterPos = m_TitleLogo.Logo[LOGO_NUI].pos;
 
-				}
-				else if (pos.y >= 20 && nCnt != WORDS_MAX - 1 && !m_bMove[nCnt + 1])
-					m_bMove[nCnt + 1] = true;
+		// 角度
+		m_TitleLogo.Logo[LOGO_NUI].angle = AngleRate;
+
+		if (++m_TitleLogo.nCntAnime > NUI_ANIME) {
+			m_TitleLogo.nCntAnime = 0;
+			TitleAnima = ANIME_TM;
+		}
+
+		{
+			// 対角線の長さと向き
+			const float length = sqrtf(((size.x * 2) * (size.x * 2)) + ((size.y * 2) * (size.y * 2))) * 0.5f;
+			const float vtxAngle = atan2f((size.x * 2), (size.y * 2));
+			const float inverseVtxAngle = D3DX_PI - vtxAngle;
+
+			// 頂点座標を設定
+			{
+				float angle = m_TitleLogo.Logo[LOGO_NUI].angle;
+				float resultAngle = angle - inverseVtxAngle;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[0].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[0].y = CenterPos.y + cosf(resultAngle) * length;
+				resultAngle = angle + inverseVtxAngle;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[1].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[1].y = CenterPos.y + cosf(resultAngle) * length;
+				resultAngle = angle - vtxAngle;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[2].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[2].y = CenterPos.y + cosf(resultAngle) * length;
+				resultAngle = angle + vtxAngle;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[3].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_NUI].VtxPos[3].y = CenterPos.y + cosf(resultAngle) * length;
+			}
+		}			
+	}
+	else if (TitleAnima == ANIME_TM)
+	{
+		D3DXVECTOR3 CenterPos = m_TitleLogo.Logo[LOGO_TM].pos;
+		D3DXVECTOR2 size = m_TitleLogo.Logo[LOGO_TM].size;
+		float Rate1 = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_TitleLogo.nCntAnime, NUI_ANIME);
+		float Rate2 = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_TitleLogo.nCntAnime, NUI_ANIME);
+		float SizeRateX = (size.x * 2) * Rate1;
+		float SizeRateY = (size.y * 2) * Rate1;
+		float ColorRate = 255 * Rate2;
+
+		m_TitleLogo.Logo[LOGO_TM].color.a = ColorRate;
+
+		if (++m_TitleLogo.nCntAnime > NUI_ANIME) {
+			TitleAnima = ANIME_NONE;
+			SwapMode(TITLE_OUTSET);
+			m_TitleLogo.nCntAnime = 0;
+		}
+
+		{
+			// 対角線の長さと向き
+			const float length = sqrtf((SizeRateX * SizeRateX) + (SizeRateY * SizeRateY)) * 0.5f;
+			const float vtxAngle = atan2f(SizeRateX, SizeRateY);
+			const float inverseVtxAngle = D3DX_PI - vtxAngle;
+
+			// 頂点座標を設定
+			{
+				float angle = m_TitleLogo.Logo[LOGO_TM].angle;
+				float resultAngle = angle - inverseVtxAngle;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[0].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[0].y = CenterPos.y + cosf(resultAngle) * length;
+				resultAngle = angle + inverseVtxAngle;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[1].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[1].y = CenterPos.y + cosf(resultAngle) * length;
+				resultAngle = angle - vtxAngle;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[2].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[2].y = CenterPos.y + cosf(resultAngle) * length;
+				resultAngle = angle + vtxAngle;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[3].x = CenterPos.x + sinf(resultAngle) * length;
+				m_TitleLogo.Logo[LOGO_TM].VtxPos[3].y = CenterPos.y + cosf(resultAngle) * length;
 			}
 		}
+
 	}
 }
 
@@ -369,30 +501,6 @@ void CMode_Title::MenuAnime(void)
 		TextRelease(TEXT_ALL);
 		NextTitle = TITLE_SELECT;
 			return;
-	}
-
-	// タイトル
-	if (Title == TITLE_MENU) {
-		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++)
-		{
-			if (m_TITLE[nCnt] != NULL) {
-				D3DXVECTOR3 pos = m_TITLE[nCnt]->GetPos();
-
-				if (pos.y >= -60.0f && m_bMove[nCnt]) {
-					D3DXVECTOR3 move;
-
-					move.y = -20.0f;
-
-					m_TITLE[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-					m_TitleShadow[nCnt]->SetMove(D3DXVECTOR3(0.0f, move.y, 0.0f));
-
-					if (pos.y <= -60.0f) {
-						delete[nCnt] m_TITLE[nCnt];
-						m_TITLE[nCnt] = NULL;
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -775,6 +883,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		}
 	}
 }
+
 //========================================
 // ステージ切り替え処理
 //========================================
@@ -821,27 +930,9 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 	case CMode_Title::TITLE_TITLE:
 	{
-		TextRelease(TEXT_TITLE);
-		{
-			m_TitleShadow[0] = CWords::Create("Ｃ", D3DXVECTOR3(586.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[1] = CWords::Create("Ｏ", D3DXVECTOR3(846.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[2] = CWords::Create("Ｓ", D3DXVECTOR3(1096.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[3] = CWords::Create("／", D3DXVECTOR3(1246.0f, -54.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TitleShadow[4] = CWords::Create("Ｍ", D3DXVECTOR3(1506.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[5] = CWords::Create("Ｏ", D3DXVECTOR3(1766.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-			m_TitleShadow[6] = CWords::Create("Ｓ", D3DXVECTOR3(2056.0f, -52.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f));
-		}
-		{
-			m_TITLE[0] = CWords::Create("Ｃ", D3DXVECTOR3(580.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[1] = CWords::Create("Ｏ", D3DXVECTOR3(840.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[2] = CWords::Create("Ｓ", D3DXVECTOR3(1090.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[3] = CWords::Create("／", D3DXVECTOR3(1234.0f, -66.0f, 0.0f), D3DXVECTOR3(100.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.2f, 0.8f, 0.5f, 1.0f));
-			m_TITLE[4] = CWords::Create("Ｍ", D3DXVECTOR3(1500.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TITLE[5] = CWords::Create("Ｏ", D3DXVECTOR3(1760.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-			m_TITLE[6] = CWords::Create("Ｓ", D3DXVECTOR3(2050.0f, -60.0f, 0.0f), D3DXVECTOR3(125.0f, 125.0f, 0.0f), CFont::FONT_ROND_B, D3DXCOLOR(0.8f, 0.2f, 0.4f, 1.0f));
-		}
-		m_bMove[0] = true;
 		m_bBackMode = false;
+
+		TitleLogoInit(true);
 	}
 		break;
 	case CMode_Title::TITLE_OUTSET:
@@ -849,8 +940,8 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
 		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
-		m_pMenu[0] = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-			"ボタンをおしてねД", CFont::FONT_ROND_B, &pFont, false, false, &pShadow);
+		m_pMenu = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+			"ボタンをおしてねД", CFont::FONT_AMECHAN, &pFont, false, false, &pShadow);
 	}
 		break;
 	case CMode_Title::TITLE_MENU_ANIME:
@@ -900,31 +991,174 @@ void CMode_Title::StageRel(int nPlanet, int nStgMax)
 }
 
 //========================================
-// テキスト削除
+// タイトルロゴの初期化
 //========================================
-void CMode_Title::TextRelease(TEXT type) {
-	// タイトル
-	if (type == TEXT_TITLE || type == TEXT_ALL) {
-		for (int nCnt = 0; nCnt < WORDS_MAX; nCnt++){
-			if (m_TITLE[nCnt] != NULL){
-				m_TITLE[nCnt]->Uninit();
-				m_TITLE[nCnt] = NULL;
-			}
+void CMode_Title::TitleLogoInit(bool bSwitch)
+{
+	for (int nLogo = 0; nLogo < TITLE_LOGO_MAX; nLogo++) {
 
-			if (m_TitleShadow[nCnt] != NULL){
-				m_TitleShadow[nCnt]->Uninit();
-				m_TitleShadow[nCnt] = NULL;
+		m_TitleLogo.Logo[nLogo].color = Color{ 255,255,255,255 };
+		m_TitleLogo.Logo[nLogo].angle = 0.0f;
+
+		m_TitleLogo.Logo[nLogo].TexUV[0] = Pos2D(0.0f, 0.0f);
+		m_TitleLogo.Logo[nLogo].TexUV[1] = Pos2D(1.0f, 0.0f);
+		m_TitleLogo.Logo[nLogo].TexUV[2] = Pos2D(0.0f, 1.0f);
+		m_TitleLogo.Logo[nLogo].TexUV[3] = Pos2D(1.0f, 1.0f);
+
+		if (!bSwitch)
+		{
+			m_TitleLogo.Logo[nLogo].pos = INITD3DXVECTOR3;
+			m_TitleLogo.Logo[nLogo].size = INITD3DXVECTOR2;
+			m_TitleLogo.Logo[nLogo].TexIdx = 0;
+
+			for (int nCnt = 0; nCnt < 4; nCnt++) {
+				m_TitleLogo.Logo[nLogo].VtxPos[nCnt] = Pos2D(0.0f, 0.0f);
+			}			
+		}
+		else
+		{
+			D3DXVECTOR3 CenterPos = m_TitleLogo.Logo[nLogo].pos;
+			D3DXVECTOR2 size = m_TitleLogo.Logo[nLogo].size;
+
+			m_TitleLogo.Logo[nLogo].VtxPos[0] = Pos2D(CenterPos.x - size.x, CenterPos.y - size.y);
+			m_TitleLogo.Logo[nLogo].VtxPos[1] = Pos2D(CenterPos.x + size.x, CenterPos.y - size.y);
+			m_TitleLogo.Logo[nLogo].VtxPos[2] = Pos2D(CenterPos.x - size.x, CenterPos.y + size.y);
+			m_TitleLogo.Logo[nLogo].VtxPos[3] = Pos2D(CenterPos.x + size.x, CenterPos.y + size.y);
+
+			if (!m_bStageSelect)
+			{
+				if (nLogo == LOGO_COS1 || nLogo == LOGO_COS2) {
+					m_TitleLogo.Logo[nLogo].VtxPos[0].x = CenterPos.x + size.x;
+					m_TitleLogo.Logo[nLogo].VtxPos[2].x = CenterPos.x + size.x;
+
+					m_TitleLogo.Logo[nLogo].TexUV[1].x = 1.0f;
+					m_TitleLogo.Logo[nLogo].TexUV[3].x = 1.0f;
+				}
+				else if (nLogo == LOGO_MOS1 || nLogo == LOGO_MOS2) {
+					m_TitleLogo.Logo[nLogo].VtxPos[1].x = CenterPos.x - size.x;
+					m_TitleLogo.Logo[nLogo].VtxPos[3].x = CenterPos.x - size.x;
+
+					m_TitleLogo.Logo[nLogo].TexUV[0].x = 1.0f;
+					m_TitleLogo.Logo[nLogo].TexUV[2].x = 1.0f;
+				}
+				else if (nLogo == LOGO_NUI) {
+					m_TitleLogo.Logo[nLogo].VtxPos[0].y = CenterPos.y + size.y;
+					m_TitleLogo.Logo[nLogo].VtxPos[1].y = CenterPos.y + size.y;
+				}
+				else if (nLogo == LOGO_TM) {
+					m_TitleLogo.Logo[nLogo].color.a = 0;
+				}
+			}
+			else
+			{
+				if(nLogo == LOGO_NUI)
+				{
+					// 対角線の長さと向き
+					const float length = sqrtf(((size.x * 2) * (size.x * 2)) + ((size.y * 2) * (size.y * 2))) * 0.5f;
+					const float vtxAngle = atan2f((size.x * 2), (size.y * 2));
+					const float inverseVtxAngle = D3DX_PI - vtxAngle;
+
+					// 頂点座標を設定
+					{
+						m_TitleLogo.Logo[nLogo].angle = -0.6f;
+						m_TitleLogo.Logo[LOGO_NUI].pos.x = m_TitleLogo.Logo[LOGO_NUI].InitPos.x + 20;
+						CenterPos = m_TitleLogo.Logo[LOGO_NUI].pos;
+						float angle = m_TitleLogo.Logo[nLogo].angle;
+						float resultAngle = angle - inverseVtxAngle;
+						m_TitleLogo.Logo[nLogo].VtxPos[0].x = CenterPos.x + sinf(resultAngle) * length;
+						m_TitleLogo.Logo[nLogo].VtxPos[0].y = CenterPos.y + cosf(resultAngle) * length;
+						resultAngle = angle + inverseVtxAngle;
+						m_TitleLogo.Logo[nLogo].VtxPos[1].x = CenterPos.x + sinf(resultAngle) * length;
+						m_TitleLogo.Logo[nLogo].VtxPos[1].y = CenterPos.y + cosf(resultAngle) * length;
+						resultAngle = angle - vtxAngle;
+						m_TitleLogo.Logo[nLogo].VtxPos[2].x = CenterPos.x + sinf(resultAngle) * length;
+						m_TitleLogo.Logo[nLogo].VtxPos[2].y = CenterPos.y + cosf(resultAngle) * length;
+						resultAngle = angle + vtxAngle;
+						m_TitleLogo.Logo[nLogo].VtxPos[3].x = CenterPos.x + sinf(resultAngle) * length;
+						m_TitleLogo.Logo[nLogo].VtxPos[3].y = CenterPos.y + cosf(resultAngle) * length;
+					}
+				}
+
 			}
 		}
 	}
+	TitleAnima = ANIME_NUI;
+	m_TitleLogo.nCntAnime = 0;
+}
+
+//========================================
+// タイトルロゴの読込
+//========================================
+void CMode_Title::TitleLoad(void)
+{
+	int nCntLogo = 0;
+	char aDataSearch[TXT_MAX];
+
+	// ファイル読込
+	FILE *pFile = fopen(TITLE_LOGO_FILE, "r");;
+
+	if (pFile == NULL)
+	{// 種類毎の情報のデータファイルが開けなかった場合、
+	 //処理を終了する
+		return;
+	}
+
+	// ENDが見つかるまで読み込みを繰り返す
+	while (1)
+	{
+		fscanf(pFile, "%s", aDataSearch);	// 検索
+
+		if (!strcmp(aDataSearch, "END")) {
+			fclose(pFile);
+			break;
+		}
+		else if (aDataSearch[0] == '#')	continue;
+		else if (!strcmp(aDataSearch, "SetLogo"))
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", aDataSearch);	// 検索
+				if (!strcmp(aDataSearch, "EndLogo")) {
+					nCntLogo++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "Pos")) {
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%f", &m_TitleLogo.Logo[nCntLogo].pos.x);
+					fscanf(pFile, "%f", &m_TitleLogo.Logo[nCntLogo].pos.y);
+					fscanf(pFile, "%f", &m_TitleLogo.Logo[nCntLogo].pos.z);
+
+					m_TitleLogo.Logo[nCntLogo].InitPos = m_TitleLogo.Logo[nCntLogo].pos;
+
+				}
+				else if (!strcmp(aDataSearch, "Size")) {
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%f", &m_TitleLogo.Logo[nCntLogo].size.x);
+					fscanf(pFile, "%f", &m_TitleLogo.Logo[nCntLogo].size.y);
+				}
+				else if (!strcmp(aDataSearch, "TexPath"))	{
+					char aFileName[0xff];
+
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%s", &aFileName);		// ファイル名
+
+					m_TitleLogo.Logo[nCntLogo].TexIdx = RNLib::Texture().Load(aFileName);
+				}
+			}
+		}
+	}
+}
+
+//========================================
+// テキスト削除
+//========================================
+void CMode_Title::TextRelease(TEXT type) {
 
 	// メニュー
 	if (type == TEXT_MENU || type == TEXT_ALL) {
-		for (int nCnt = 0; nCnt < MENU_MAX; nCnt++) {
-			if (m_pMenu[nCnt] != NULL) {
-				m_pMenu[nCnt]->Uninit();
-				m_pMenu[nCnt] = NULL;
-			}
+		if (m_pMenu != NULL) {
+			m_pMenu->Uninit();
+			m_pMenu = NULL;
 		}
 	}
 }
