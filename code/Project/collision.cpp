@@ -812,17 +812,15 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 	switch (vec)
 	{
 		case CPlayer::VECTOL::X:
-			if (self.minPos.y < target.maxPos.y && target.minPos.y < self.maxPos.y)
+			if (RN_GetIsLs(self.minPos.y, target.maxPos.y) && RN_GetIsLs(target.minPos.y, self.maxPos.y))
 			{// Y”ÍˆÍ“à
-				const bool isLeft  = self.maxPos.x >= target.minPos.x;
-				const bool isRight = self.minPos.x <= target.maxPos.x;
+				const bool isLeft  = RN_GetIsGtOrEq(self.maxPos.x, target.minPos.x);
+				const bool isRight = RN_GetIsLsOrEq(self.minPos.x, target.maxPos.x);
 
-				if (isLeft && (
-					self.maxPosOld.x <= target.minPosOld.x || self.posOld.x <= target.minPosOld.x))
+				if (isLeft && (RN_GetIsLsOrEq(self.maxPosOld.x, target.minPosOld.x) || RN_GetIsLsOrEq(self.posOld.x, target.minPosOld.x)))
 					return ROT::LEFT;
 
-				if (isRight && (
-					self.minPosOld.x >= target.maxPosOld.x || self.posOld.x >= target.maxPosOld.x))
+				if (isRight && (RN_GetIsGtOrEq(self.minPosOld.x, target.maxPosOld.x) || RN_GetIsGtOrEq(self.posOld.x, target.maxPosOld.x)))
 					return ROT::RIGHT;
 
 				if (isLeft && isRight)
@@ -831,13 +829,13 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 			break;
 
 		case CPlayer::VECTOL::Y:
-			if (self.minPos.x < target.maxPos.x && target.minPos.x < self.maxPos.x)
+			if (RN_GetIsLs(self.minPos.x, target.maxPos.x) && RN_GetIsLs(target.minPos.x, self.maxPos.x))
 			{// X”ÍˆÍ“à
-				const bool isUnder = self.maxPos.y >= target.minPos.y;
-				const bool isOver  = self.minPos.y <= target.maxPos.y;
+				const bool isUnder = RN_GetIsGtOrEq(self.maxPos.y, target.minPos.y);
+				const bool isOver =  RN_GetIsLsOrEq(self.minPos.y, target.maxPos.y);
 
 				if (isUnder && (
-					self.maxPosOld.y <= target.minPosOld.y || self.posOld.y <= target.minPosOld.y))
+					RN_GetIsLsOrEq(self.maxPosOld.y, target.minPosOld.y) || RN_GetIsLsOrEq(self.posOld.y, target.minPosOld.y)))
 					return ROT::UNDER;
 
 				if (isOver && (
