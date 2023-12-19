@@ -51,6 +51,7 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+	int             limitTimeCounter;
 
 	//各惑星ごとのデータ
 	struct WorldData
@@ -174,6 +175,9 @@ void Stage::StartStage(void) {
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
+	// 制限時間を設定
+	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+
 	// プレイヤーの生成
 	if (player == NULL)
 		player = CPlayer::Create();
@@ -242,6 +246,11 @@ void Stage::UpdateStage(void) {
 
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
+
+	// 制限時間のカウント
+	if (--limitTimeCounter < 0) {
+		// タイムオーバーの処理
+	}
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();
@@ -441,22 +450,18 @@ namespace {
 		{// [[[ 背景描画 ]]]
 
 			// 上
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
 			// 下
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-
-			// 魚
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
-				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
-				->SetBillboard(true);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
 			// 魚更新処理
 			Fishes::Update();

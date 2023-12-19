@@ -79,6 +79,10 @@ private:
 		DESPAWN		// 消滅
 	};
 
+	enum DIRECTION {
+		RIGHT = 0,	// 右
+		LEFT,		// 左
+	};
 	//========== [[[ 構造体定義 ]]]
 	// ステージ種類情報
 	struct PlanetType{
@@ -135,10 +139,12 @@ private:
 	bool m_bRocketMove;
 	bool m_bRocketRot;
 	bool m_bRotDir;
+	bool m_bStgEnter;
 	CWords *m_TITLE[WORDS_MAX];
 	CWords *m_TitleShadow[WORDS_MAX];
 	CFontText *m_pMenu[MENU_MAX];
 	PlanetType *m_PlanetType;
 	STAGE m_StgFlag;
 	CCoinUI *m_CoinUI;
+	DIRECTION m_Direction;
 };
