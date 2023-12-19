@@ -224,7 +224,7 @@ void CMenuUI::DecisionInput(void)
 
 					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
 
 					m_Menu.nCntScrChg = 20;
 				}
@@ -385,7 +385,7 @@ void CMenuUI::MenuCreate(void)
 	D3DXVECTOR2 TargetSize = INITD3DXVECTOR2;
 
 	if (Mode == CMode::TYPE::TITLE) {
-		pos = D3DXVECTOR3(m_Menu.LeftPos.x - 10, 300.0f, 0.0f);
+		pos = D3DXVECTOR3(m_Menu.LeftPos.x - 10, 400.0f, 0.0f);
 		size = D3DXVECTOR2(0.0f, 0.0f);
 		TargetSize = D3DXVECTOR2(450.0f, 100.0f);
 	}
@@ -398,7 +398,7 @@ void CMenuUI::MenuCreate(void)
 	for (int nText = 0; nText < m_Menu.MainMenuMax; nText++) {
 		m_pMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 			D3DXVECTOR3(pos.x, pos.y + (100.0f * nText), pos.z), size,
-			"", CFont::FONT_ROND_B, &pFont);
+			"", CFont::FONT_AMECHAN, &pFont);
 
 		if (nText == m_Menu.nMaineSelect) {
 			m_pMenu[nText]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -427,18 +427,18 @@ void CMenuUI::SubTextCreate(void)
 	if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 0) {
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
-			"", CFont::FONT_ROND_B, &pFont);
+			"", CFont::FONT_AMECHAN, &pFont);
 
 		for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
 			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 				D3DXVECTOR3(m_Menu.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-				"", CFont::FONT_ROND_B, &pFont, false, false);
+				"", CFont::FONT_AMECHAN, &pFont, false, false);
 		}
 	}
 	else if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 1) {
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),//-210
-			"", CFont::FONT_ROND_B, &pFont);
+			"", CFont::FONT_AMECHAN, &pFont);
 
 		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),30.0f,1,1,-1, };
 
@@ -468,7 +468,7 @@ void CMenuUI::SubTextCreate(void)
 
 			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
 				pos, size,
-				"", CFont::FONT_ROND_B, &pFont, false, true);
+				"", CFont::FONT_AMECHAN, &pFont, false, true);
 		}
 	}
 
@@ -506,7 +506,7 @@ void CMenuUI::MenuAnime(void)
 				FormFont pFont = { col,35.0f,3,1,-1, };
 				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
-				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
+				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_AMECHAN, &pFont, &pShadow);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -535,7 +535,7 @@ void CMenuUI::MenuAnime(void)
 					FormFont pFont = { D3DXCOLOR(0.0f,0.0f,0.0f,0.0f),35.0f,3,1,-1, };
 					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
-					m_pMenu[Txt]->Regeneration("", CFont::FONT_ROND_B, &pFont, &pShadow);
+					m_pMenu[Txt]->Regeneration("", CFont::FONT_AMECHAN, &pFont, &pShadow);
 				}
 
 				// ñcèk
@@ -648,7 +648,7 @@ void CMenuUI::MenuAnime(void)
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 0) {
 						for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
 							if (m_pSubMenu[nText] != NULL)
-								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_ROND_B, &pFont, &pShadow);
+								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_AMECHAN, &pFont, &pShadow);
 						}
 					}
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 1) {
@@ -671,7 +671,7 @@ void CMenuUI::MenuAnime(void)
 								else
 									sprintf(data, "%s", m_Menu.pSetting[nText].Text);
 
-								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
 							}
 						}
 					}
@@ -865,7 +865,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
-			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::BGM, volume);
@@ -877,7 +877,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
-			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_ROND_B, &pFont, &pShadow);
+			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);

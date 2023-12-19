@@ -29,6 +29,7 @@ namespace {
 	void AllocWorldData(void);
 	void LoadWorldData(void);
 	void SaveWorldData(void);
+	void UpdateData(void); //ワールド/ステージ情報を塗り替え（更新処理ではない
 	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
 	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
@@ -58,6 +59,7 @@ namespace {
 		int MaxStage;      //ステージ数
 		float *pBestTime;  //各ステージのベストタイム
 		Stage::Data *pStgRec;//各ステージごとのデータ
+		Stage::Data *pStart; //ステージ開始時の情報（やり直し時のコイン回収状況リセットなどに仕様
 	};
 	WorldData *pWldData; //惑星ごとのレコード
 	int MaxPlanet;      //最大惑星数
@@ -519,7 +521,7 @@ namespace
 					//各ステージごとのデータ破棄
 					for (int nCntStage = 0; nCntStage < pWldData[nCntWorld].MaxStage; nCntStage++)
 					{
-						//コインの取得状況破棄
+						//コインの回収状況破棄
 						if (pWldData[nCntWorld].pStgRec[nCntStage].pGet != NULL)
 						{
 							delete[] pWldData[nCntWorld].pStgRec[nCntStage].pGet;
@@ -530,6 +532,25 @@ namespace
 					//全ステージデータ削除
 					delete[] pWldData[nCntWorld].pStgRec;
 					pWldData[nCntWorld].pStgRec = NULL;
+				}
+
+				//保存していた情報も開放
+				if (pWldData[nCntWorld].pStart != NULL)
+				{
+					//各ステージごとのデータ破棄
+					for (int nCntStage = 0; nCntStage < pWldData[nCntWorld].MaxStage; nCntStage++)
+					{
+						//コインの回収状況破棄
+						if (pWldData[nCntWorld].pStart[nCntStage].pGet != NULL)
+						{
+							delete[] pWldData[nCntWorld].pStart[nCntStage].pGet;
+							pWldData[nCntWorld].pStart[nCntStage].pGet = NULL;
+						}
+					}
+				
+					//全ステージデータ削除
+					delete[] pWldData[nCntWorld].pStart;
+					pWldData[nCntWorld].pStart = NULL;
 				}
 			}
 
@@ -563,7 +584,9 @@ namespace
 			//ステージ数分のレコード場所確保
 			pWldData[nCntPlanet].pBestTime = new float[MaxStage];
 			pWldData[nCntPlanet].pStgRec = new Stage::Data[MaxStage];
+			pWldData[nCntPlanet].pStart = new Stage::Data[MaxStage];
 
+			//各ステージ情報をクリア
 			for (int nCntStage = 0; nCntStage < MaxStage; nCntStage++)
 			{
 				if (pWldData[nCntPlanet].pBestTime != NULL)
@@ -573,6 +596,12 @@ namespace
 				{
 					pWldData[nCntPlanet].pStgRec[nCntStage].CoinNums = 0;
 					pWldData[nCntPlanet].pStgRec[nCntStage].pGet = NULL;
+				}
+
+				if (pWldData[nCntPlanet].pStart != NULL)
+				{
+					pWldData[nCntPlanet].pStart[nCntStage].CoinNums = 0;
+					pWldData[nCntPlanet].pStart[nCntStage].pGet = NULL;
 				}
 			}
 		}
@@ -621,26 +650,32 @@ namespace
 				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
 				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
 				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
-				pWldData[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
 
-				CInt NumCoin = pWldData[planetID].pStgRec[StageID].CoinNums = LoadInt(NULL, CHR_PAUSE);//コイン数取得
+				WorldData& rWld = pWldData[planetID]; //長いので省略
 
-				//０なら引き返す
-				if (NumCoin == 0) continue;
+				rWld.pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
 
-				//取得状況場所確保
-				//RNLib::Memory().Alloc(&pWldData[planetID].pStgRec[StageID].pGet, NumCoin);
-				pWldData[planetID].pStgRec[StageID].pGet = new bool[NumCoin];
+				CInt NumCoin = rWld.pStgRec[StageID].CoinNums = LoadInt(NULL, CHR_PAUSE);//コイン数取得
 
-				for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+				if (NumCoin != 0)
 				{
-					//コイン取得状況取得
-					pWldData[planetID].pStgRec[StageID].pGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
+					//回収状況場所確保
+					rWld.pStgRec[StageID].pGet = new bool[NumCoin];
+
+					for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+					{
+						//コイン回収状況取得
+						rWld.pStgRec[StageID].pGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
+					}
 				}
 			}
 		}
 
+		//ファイルを閉じる
 		fclose(pFile);
+
+		//初期情報保存
+		UpdateData();
 	}
 
 	//========================================
@@ -667,7 +702,7 @@ namespace
 
 		//レコードの説明文
 		fprintf(pFile, "#下のフォーマット絶対順守!!\n");
-		fprintf(pFile, "#ワールド - ステージ - ベストタイム = コイン数 - n枚目のコインの取得状況(0=未回収  1=回収済み)\n");
+		fprintf(pFile, "#ワールド - ステージ - ベストタイム = コイン数 - n枚目のコインの回収状況(0=未回収  1=回収済み)\n");
 		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
 			//ワールド名書き出し
@@ -689,7 +724,7 @@ namespace
 					//コイン数書き出し
 					fprintf(pFile, "%d", NumCoins);
 
-					//取得状況書き出し
+					//回収状況書き出し
 					for (int nCntCoin = 0; nCntCoin < NumCoins; nCntCoin++)
 					{
 						fprintf(pFile, " - %d", pWldData[nCntPlanet].pStgRec[nCntStage].pGet[nCntCoin] ? 1 : 0);
@@ -703,6 +738,38 @@ namespace
 		//終了
 		fprintf(pFile, "\n%s", END_RECORD);
 		fclose(pFile);
+	}
+
+	//========================================
+	//ワールド/ステージ情報を塗り替え（更新処理ではない
+	// Author：HIRASAWA SHION
+	//========================================
+	void UpdateData(void)
+	{
+		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+		{
+			//長いので省略
+			WorldData& rWld = pWldData[nCntPlanet];
+
+			for (int nCntStage = 0; nCntStage < rWld.MaxStage; nCntStage++)
+			{
+				//コイン数取得
+				CInt& NumCoin = rWld.pStgRec[nCntStage].CoinNums;
+
+				//０なら引き返す
+				if (NumCoin == 0) continue;
+
+				//コイン数と回収状況保存場所確保
+				rWld.pStart[nCntStage].CoinNums = NumCoin;
+				rWld.pStart[nCntStage].pGet = new bool[NumCoin];
+
+				for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+				{
+					//回収状況代入
+					rWld.pStart[nCntStage].pGet[nCntCoin] = rWld.pStgRec[nCntStage].pGet[nCntCoin];
+				}
+			}
+		}
 	}
 }
 
@@ -749,7 +816,19 @@ Stage::Data Stage::GetData(CInt& planetIdx, CInt& stageIdx)
 }
 
 //========================================
-// コイン取得状況を設定
+// コイン回収状況を取得
+// Author：HIRASAWA SHION
+//========================================
+bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
+{
+	LoadWorldData();
+
+	//回収状況を返す
+	return pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID];
+}
+
+//========================================
+// コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
 void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
@@ -761,13 +840,13 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 
 	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
 	{
-		//取得状況代入
+		//回収状況代入
 		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
 	}
 }
 
 //========================================
-// コイン取得状況を設定
+// コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
 void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
@@ -777,6 +856,6 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bo
 	//コイン数が違っていたら設定しない
 	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
 
-	//取得状況代入
+	//回収状況代入
 	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
 }
