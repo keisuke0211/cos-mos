@@ -50,6 +50,7 @@ namespace {
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
+	int             limitTimeCounter;
 
 	//各惑星ごとのデータ
 	struct WorldData
@@ -172,6 +173,9 @@ void Stage::StartStage(void) {
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
+	// 制限時間を設定
+	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+
 	// プレイヤーの生成
 	if (player == NULL)
 		player = CPlayer::Create();
@@ -240,6 +244,11 @@ void Stage::UpdateStage(void) {
 
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
+
+	// 制限時間のカウント
+	if (--limitTimeCounter < 0) {
+		// タイムオーバーの処理
+	}
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();

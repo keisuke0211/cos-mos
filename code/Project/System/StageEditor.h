@@ -32,6 +32,7 @@ public:
 		char	aName[0xff];		// ステージ名
 
 		int		nNumCoin;			// 解放に必要なコイン数
+		int		nLimitTime;			// 制限時間
 		bool	bRelease;			// ステージが解放されたか
 	};
 
@@ -135,6 +136,7 @@ public:
 
 	// -- 取得 ---------------------------------------------
 	/* 解放のコイン数	*/int GetStageCoin(int planet, int stage);
+	/* 制限時間      	*/int GetStageLimittime(int planet, int stage);
 	/* ステージ解放		*/bool GetStageRel(int planet, int stage);
 	/* 行数の最大値		*/int GetRowMax(void) { return m_Info.nRowMax; }
 	/* 列数の最大値		*/int GetLineMax(void) { return m_Info.nLineMax; }
