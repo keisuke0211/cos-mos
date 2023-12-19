@@ -28,7 +28,7 @@ namespace {
 	void AllocWorldData(void);
 	void LoadWorldData(void);
 	void SaveWorldData(void);
-	void UpdateData(void); //ワールド/ステージ情報を塗り替え（更新処理ではない
+	void RefreshData(void); //ワールド/ステージ情報を塗り替え
 	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
 	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
@@ -714,7 +714,7 @@ namespace
 		fclose(pFile);
 
 		//初期情報保存
-		UpdateData();
+		RefreshData();
 	}
 
 	//========================================
@@ -780,10 +780,10 @@ namespace
 	}
 
 	//========================================
-	//ワールド/ステージ情報を塗り替え（更新処理ではない
+	//ワールド/ステージ情報を塗り替え
 	// Author：HIRASAWA SHION
 	//========================================
-	void UpdateData(void)
+	void RefreshData(void)
 	{
 		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
