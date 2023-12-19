@@ -143,8 +143,6 @@ void Stage::Uninit(void)
 
 	//メモリ開放
 	ClearWorldData();
-
-	
 }
 
 //========================================
@@ -176,7 +174,7 @@ void Stage::StartStage(void) {
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
 	// 制限時間を設定
-	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+	limitTimeCounter = Manager::StgEd()->GetStageLimittime(planetIdx, stageIdx) * 60;
 
 	// プレイヤーの生成
 	if (player == NULL)
@@ -251,6 +249,13 @@ void Stage::UpdateStage(void) {
 	if (--limitTimeCounter < 0) {
 		// タイムオーバーの処理
 	}
+
+	//フレーム
+	RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(180.0f, 120.0f), 0.0f)
+		->SetSize(200.0f, 60.0f)
+		->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_FRAME]);
+	RNLib::Text2D().Put(PRIORITY_UI, String("%d.%d", limitTimeCounter / 60, (limitTimeCounter / 6) % 10), _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(180.0f, 120.0f), 0.0f)
+		->SetSize(Size2D(28.0f, 28.0f));
 
 	// ウィンドウ情報を取得
 	const Pos2D windowCenterPos   = RNLib::Window().GetCenterPos();

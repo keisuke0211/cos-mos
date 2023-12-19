@@ -28,6 +28,7 @@ public:
 		CHR_BLACK_EYE,
 		BG_FISH,
 		BG_BUBBLE,
+		UI_FRAME,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
