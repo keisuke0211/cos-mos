@@ -1629,19 +1629,37 @@ void CPlayer::GoalDirector(void)
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
 		//ステージ情報取得
+		/*
 		Stage::Data data = Stage::GetData(planet, stage);
-		CFloat CoinUISize = 20.0f;
+		CFloat CoinUISize = 40.0f;
 		CFloat CoinUISPace = 10.0f;
-		CFloat CoinUIStartX = Center.x - 
-			0.0f - //偶数かどうか（偶数の場合、中心は間隔をあける
-			0.0f;
+
+		CFloat SizeSpace = data.CoinNums % EVENPARITY == 1 ? CoinUISize * 0.5f : 0.0f;
+		CFloat AllSize = data.CoinNums / EVENPARITY * CoinUISize * 0.5f + ((data.CoinNums - 1) / 2.0f) * CoinUISPace + SizeSpace;
+
+		CFloat CoinUIStartX = Center.x - AllSize;
+
+		RNLib::Text2D().Put(PRIORITY_UI, String("コイン数:%d", data.CoinNums), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Pos2D(Center.x, 100.0f), 0.0f)
+			->SetSize(Size2D(20.0f, 20.0f))
+			->SetCol(COLOR_WHITE);
+
+		RNLib::Polygon2D().Put(PRIORITY_UI, Center, 0.0f)
+			->SetSize(2.0f, Center.y)
+			->SetCol(COLOR_WHITE);
 
 		for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
 		{
-			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(CoinUIStartX, 150.0f), 0.0f)
+			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(CoinUIStartX + (CoinUISize + CoinUISPace) * nCntData, 150.0f), 0.0f)
 				->SetSize(CoinUISize, CoinUISize)
-				->SetTex((short)0);
+				->SetCol(data.pGet[nCntData] ? Color{ 255,255,0,255 } : Color{ 200,200,200,255 })//true : 黄色    false : 灰色
+				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK));
+
+			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(test + (CoinUISize + CoinUISPace) * nCntData, 200.0f), 0.0f)
+				->SetSize(CoinUISize, CoinUISize)
+				->SetCol(Color{ 255,255,0,255 })//true : 黄色    false : 灰色
+				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK));
 		}
+		*/
 
 		if(ClearTime < BestTime)
 			RNLib::Text2D().Put(PRIORITY_UI, String("New Record!!"), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
