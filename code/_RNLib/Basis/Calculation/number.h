@@ -15,14 +15,21 @@
 class _RNC_Number {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	void  Init          (void);
-	void  Uninit        (void);
-	void  Update        (void);
-	bool  Lottery       (const float& prob)                                                { return (prob > (0.001f * (rand() % 100000))); }
-	float GetRandomFloat(const float& max)                                                 { return ((float)rand() / RAND_MAX) * max; }
-	bool  EqualFloat    (const float& numA, const float& numB, const float& allowableError){ return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB)))); }
-	float RoundUpFloat  (const float& num, const float& interval)                          { return (long)((num / interval) + 1) * interval; }
-	float RoundDownFloat(const float& num, const float& interval)                          { return (long)(num / interval) * interval; }
+	void  Init            (void);
+	void  Uninit          (void);
+	void  Update          (void);
+	bool  Lottery         (const float& prob)                                                                 { return (prob > (0.001f * (rand() % 100000))); }
+	float GetRandomFloat  (const float& max)                                                                  { return ((float)rand() / RAND_MAX) * max; }
+	//----- float’l“™‰¿”äŠr
+	bool  GetIsEq     /* == */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB)))); }
+	bool  GetIsNoEq   /* != */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB)))); }
+	bool  GetIsGtOrEq /* >= */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA > numB) ||  GetIsEq(numA, numB, allowableError); }
+	bool  GetIsGt     /* >  */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA > numB) && !GetIsEq(numA, numB, allowableError); }
+	bool  GetIsLsOrEq /* <= */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA < numB) ||  GetIsEq(numA, numB, allowableError); }
+	bool  GetIsLs     /* <  */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA < numB) && !GetIsEq(numA, numB, allowableError); }
+	//-----
+	float RoundUpFloat        (const float& num, const float& interval)                                       { return (long)((num / interval) + 1) * interval; }
+	float RoundDownFloat      (const float& num, const float& interval)                                       { return (long)(num / interval) * interval; }
 
 	//========== [[[ ŠÖ”’è‹` ]]]
 	// ”ÍˆÍ“à§Œä

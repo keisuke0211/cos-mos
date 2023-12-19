@@ -658,7 +658,7 @@ _RNC_Model::CDrawInfo* _RNC_Model::CRegistInfo::ConvToDrawInfo(Device& device) {
 	//----------------------------------------
 	// ƒ}ƒgƒŠƒbƒNƒX‚ÌŠg‘å”{—¦‚ðŽæ“¾‚µA
 	const Scale3D scale = RNLib::Matrix().ConvMtxToScale(m_mtx);
-	drawInfo->m_isScaling = !RNLib::Number().EqualFloat(scale.x, 1.0f, 0.01f) ? true : !RNLib::Number().EqualFloat(scale.y, 1.0f, 0.01f) ? true : !RNLib::Number().EqualFloat(scale.z, 1.0f, 0.01f);
+	drawInfo->m_isScaling = !RNLib::Number().GetIsEq(scale.x, 1.0f, 0.01f) ? true : !RNLib::Number().GetIsEq(scale.y, 1.0f, 0.01f) ? true : !RNLib::Number().GetIsEq(scale.z, 1.0f, 0.01f);
 	if (drawInfo->m_isScaling)
 	{// ‚à‚µŠg‘å”{—¦‚É•ÏX‚ª‚ ‚Á‚½ŽžA
 		const DWORD fvf       = modelData.m_mesh->GetFVF();

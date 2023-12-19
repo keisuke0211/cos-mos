@@ -55,6 +55,9 @@ public:
 
 		GET_PARTS,		//ロケットパーツ取得
 		GET_COIN,		//コイン取得
+
+		TIME_COUNT,		//タイムカウント
+		TIME_OVER,		//タイムオーバー
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];
