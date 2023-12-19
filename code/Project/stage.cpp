@@ -64,6 +64,8 @@ namespace {
 	WorldData *pWldData; //惑星ごとのレコード
 	int MaxPlanet;      //最大惑星数
 
+	const char *STAGE_DATA = "data\\GAMEDATA\\STAGE\\STAGE_DATA.txt";
+
 					 //文字添削
 	const char COMMENT = '#';       //コメント文字
 	const char CHR_END = '\0';      //終端文字
@@ -652,7 +654,7 @@ namespace
 	{
 		if (pWldData != NULL) return;
 
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+		FILE *pFile = fopen(STAGE_DATA, "r");
 		if (pFile == NULL) return;
 
 		//メモリ確保
@@ -723,7 +725,7 @@ namespace
 	{
 		if (pWldData == NULL) return;
 
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "w");
+		FILE *pFile = fopen(STAGE_DATA, "w");
 		if (pFile == NULL) return;
 
 		const char *WORLD_COMMENT = "\n#=====[ %d面 ]\n";
@@ -860,8 +862,13 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 {
 	LoadWorldData();
 
-	if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
-		RNLib::Window().Message_ERROR(String("コインの枚数が実際の配置数とずれています。\nID:%d 間違えた枚数:%d", coinID, pWldData[planetIdx].pStgRec[stageIdx].CoinNums));
+	if (pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL)
+	{
+		RNLib::Window().Message_ERROR(String("このステージにはコインは配置されていません。"));
+		return false;
+	}
+	else if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
+		RNLib::Window().Message_ERROR(String("コインの枚数が実際の配置数とずれています。\nID:%d 枚数:%d", coinID, pWldData[planetIdx].pStgRec[stageIdx].CoinNums));
 		return false;
 	}
 
@@ -878,7 +885,8 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 	LoadWorldData();
 
 	//コイン数が違っていたら設定しない
-	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums) return;
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums ||
+		pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL) return;
 
 	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
 	{
@@ -896,7 +904,8 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bo
 	LoadWorldData();
 
 	//コイン数が違っていたら設定しない
-	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID ||
+		pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL) return;
 
 	//回収状況代入
 	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;

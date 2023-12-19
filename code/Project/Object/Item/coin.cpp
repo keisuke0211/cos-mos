@@ -11,6 +11,8 @@
 
 int CCoin::s_NumAll = 0;
 int CCoin::s_Num = 0;
+int CCoin::s_CorrNumAll = 0; //今現在のステージのコイン総数
+
 //========================================
 // コンストラクタ
 //========================================
@@ -22,7 +24,7 @@ CCoin::CCoin() {
 	if (s_Num != 0)
 		s_Num = 0;
 
-	m_nID = s_NumAll++;
+	m_nID = s_CorrNumAll++;
 
 	//現在のワールド・ステージ番号を取得
 	CStageEditor *pEd = Manager::StgEd();
@@ -39,7 +41,7 @@ CCoin::CCoin() {
 CCoin::~CCoin() {
 
 	Manager::StageObjectMgr()->SubList(this);
-	s_NumAll--;
+	s_CorrNumAll--;
 }
 
 //========================================
