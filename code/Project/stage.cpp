@@ -448,22 +448,18 @@ namespace {
 		{// [[[ ”wŒi•`‰æ ]]]
 
 			// ã
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_OCEAN])
 				->SetVtxPos(Pos3D(-1024.0f, 512.0f, 700.0f), Pos3D(1024.0f, 512.0f, 700.0f), Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
 			// ‰º
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
+			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
 				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-
-			// ‹›
-			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FISH])
-				->SetVtxPos(Pos3D(-100.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, 100.0f + fishpos.y, 700.0f), Pos3D(-100.0f + fishpos.x, -100.0f + fishpos.y, 700.0f), Pos3D(0.0f + fishpos.x, -100.0f + fishpos.y, 700.0f))
-				->SetBillboard(true);
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
+				->SetZTest(false);
 
 			// ‹›XVˆ—
 			Fishes::Update();

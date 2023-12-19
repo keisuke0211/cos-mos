@@ -14,6 +14,7 @@
 struct FishData {
 	String setUpPath;
 	float  scale;
+	Pos3D  basePos;
 	String motionPath;
 	String railPath;
 	int    time;
@@ -28,12 +29,13 @@ struct Fish {
 //****************************************
 // 魚の定義
 //****************************************
-#define FISH_NUM (1)
+#define FISH_NUM (2)
 static Fish fishes[FISH_NUM];
 static const FishData fishDatas[FISH_NUM] = {
 	// ※パスが無しなら"NONEDATA"と記入する
 	// セットアップパス と その倍率 / モーションパス / レール3Dパス / 1周にかかる時間 / カウント開始時間
-	{ "data\\SETUP\\Whale.txt", 1.0f, "data\\MOTION\\Whale.txt", "data\\RAIL3D\\Whale.txt", 360, 0 },
+	{ "data\\SETUP\\Whale.txt", 2.0f, Pos3D(0.0f,300.0f,0.0f), "data\\MOTION\\Whale.txt", "data\\RAIL3D\\Whale.txt", 720, 0 },
+	{ "data\\SETUP\\Iruka.txt", 1.0f, Pos3D(0.0f,-150.0f,50.0f), "data\\MOTION\\Iruka.txt", "data\\RAIL3D\\Iruka.txt", 720, 0 },
 };
 
 //================================================================================
@@ -78,7 +80,7 @@ void Fishes::Update(void) {
 		}
 
 		Matrix mtx = fishes[cnt].rail->GetMtx(fishes[cnt].counter / (float)fishDatas[cnt].time, true);
-		fishes[cnt].doll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx));
+		fishes[cnt].doll->SetPos(RNLib::Matrix().ConvMtxToPos(mtx) + fishDatas[cnt].basePos);
 		fishes[cnt].doll->SetRot(RNLib::Matrix().ConvMtxToRot(mtx));
 	}
 }
