@@ -832,7 +832,12 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 {
 	LoadWorldData();
 
-	if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
+	if (pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL)
+	{
+		RNLib::Window().Message_ERROR(String("このステージにはコインは配置されていません。"));
+		return false;
+	}
+	else if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
 		RNLib::Window().Message_ERROR(String("コインの枚数が実際の配置数とずれています。\nID:%d 実際の枚数:%d", coinID, pWldData[planetIdx].pStgRec[stageIdx].CoinNums));
 		return false;
 	}
@@ -850,7 +855,8 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 	LoadWorldData();
 
 	//コイン数が違っていたら設定しない
-	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums) return;
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums ||
+		pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL) return;
 
 	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
 	{
@@ -868,7 +874,8 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bo
 	LoadWorldData();
 
 	//コイン数が違っていたら設定しない
-	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID ||
+		pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL) return;
 
 	//回収状況代入
 	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
