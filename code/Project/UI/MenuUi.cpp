@@ -57,7 +57,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.bGameEnd = false;
 	m_Menu.pOperation = NULL;
 	m_Menu.pSetting = NULL;
-	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
+	m_Menu.bFullScreen = RNLib::Options().GetIsFullScreen();
 
 	m_Menu.MainMenuMax = 0;
 	m_Menu.SubMenuMax = 0;
@@ -215,9 +215,13 @@ void CMenuUI::DecisionInput(void)
 			switch (m_Menu.nSubSelect)
 			{
 			case SETTING_SCREEN:
+
 				if (m_Menu.nCntScrChg <= 0) {
 					int nText = m_Menu.nSubSelect;
 					m_Menu.bFullScreen = !m_Menu.bFullScreen;
+
+					// ウインドウのモードを切り替える
+					RNLib::Options().SetIsFullScreen(m_Menu.bFullScreen);
 
 					char data[TXT_MAX] = {};
 					if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
@@ -227,7 +231,7 @@ void CMenuUI::DecisionInput(void)
 					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
-					m_Menu.nCntScrChg = 20;
+					m_Menu.nCntScrChg = 30;
 				}
 
 				break;
@@ -784,10 +788,7 @@ void CMenuUI::MenuSelect(void)
 		m_Menu.nCntScrChg--;
 
 		if (m_Menu.nCntScrChg == 0)
-		{// 画面モード切り替えカウンターが0の時、
-		 // ウインドウのモードを切り替える
-			RNLib::Window().SetIsFullScreen(m_Menu.bFullScreen);
-		}
+			m_Menu.nCntScrChg = 0;
 	}
 
 	// 選択・非選択
