@@ -132,7 +132,7 @@ void CDemoZone::Update(void) {
 		}break;
 		case PUTOBJECT_TYPE::TEXT3D: {
 
-			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, "TEST", typeInfo->text3DInfo.alignment, 0, pos + Pos3D(0.0f, 5.0f, -45.0f), INITROT3D)
+			RNLib::Text3D().Put((UShort)RNMode::PRIORITY::UI3D, "TEST", typeInfo->text3DInfo.alignment, NONEDATA, pos + Pos3D(0.0f, 5.0f, -45.0f), INITROT3D)
 				->SetSize(Size2D(10.0f, 10.0f))
 				->SetBillboard(true);
 
