@@ -968,6 +968,10 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 			m_nStageSelect = nStage - 1;
 			m_nOldSelect = nStage;
+
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 			
@@ -975,6 +979,10 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			m_nStageSelect = 0;
 			m_nOldSelect = -1;
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 
 	m_nDrawPlanet = m_nPlanetIdx;
@@ -1032,6 +1040,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		m_bStageSelect = false;
 
 		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
 		bColorChange = true;
 
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
