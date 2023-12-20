@@ -495,7 +495,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 				/*if (!CHitTest::XYZ::InPointToCameraView(CMatrix::ConvMtxToPos(drawInfo[cntPriority].m_model[cntModel]->m_mtx), cameraPosV, cameraPosR, cameraScale.x, cameraScale.y, D3DXToRadian(45.0f)))
 					continue;*/
 
-					// 本体のワールドマトリックスの設定
+				// 本体のワールドマトリックスの設定
 				device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_model[cntModel]->m_mtx);
 
 				// [[[ Zテストの設定 ]]]
