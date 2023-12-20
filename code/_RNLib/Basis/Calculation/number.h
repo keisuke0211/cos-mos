@@ -28,8 +28,8 @@ public:
 	bool  GetIsLsOrEq/* <= */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA < numB) ||  GetIsEq(numA, numB, allowableError); }
 	bool  GetIsLs    /* <  */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA < numB) && !GetIsEq(numA, numB, allowableError); }
 	//-----
-	float RoundUpFloat        (const float& num, const float& interval)                                      { return (long)((num / interval) + 1) * interval; }
-	float RoundDownFloat      (const float& num, const float& interval)                                      { return (long)(num / interval) * interval; }
+	float RoundUpFloat  (const float& num, const float& interval)                                      { return (long)((num / interval) + 1) * interval; }
+	float RoundDownFloat(const float& num, const float& interval)                                      { return (long)(num / interval) * interval; }
 
 	//========== [[[ ŠÖ”’è‹` ]]]
 	// ”ÍˆÍ“à§Œä
