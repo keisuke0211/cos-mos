@@ -127,10 +127,10 @@ void CLight3DEditor::Update(void) {
 		}
 
 		// フォグのスタート/エンド
-		if (RNLib::Input().GetKeyPress(DIK_I)) { m_light->GetFogInfo().start--; m_isSaved = false; }
-		if (RNLib::Input().GetKeyPress(DIK_O)) { m_light->GetFogInfo().start++; m_isSaved = false; }
-		if (RNLib::Input().GetKeyPress(DIK_K)) { m_light->GetFogInfo().end--  ; m_isSaved = false; }
-		if (RNLib::Input().GetKeyPress(DIK_L)) { m_light->GetFogInfo().end++  ; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_I) && m_light->GetFogInfo().start > 0) { m_light->GetFogInfo().start--; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_O))                                    { m_light->GetFogInfo().start++; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_K) && m_light->GetFogInfo().end > 0)   { m_light->GetFogInfo().end--  ; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_L))                                    { m_light->GetFogInfo().end++  ; m_isSaved = false; }
 		RNLib::Number().Clamp(&m_light->GetFogInfo().start, USHRT_MAX, 0);
 		RNLib::Number().Clamp(&m_light->GetFogInfo().end, USHRT_MAX, m_light->GetFogInfo().start);
 
