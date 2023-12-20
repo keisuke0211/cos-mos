@@ -1,4 +1,6 @@
 Light3DFile
+isFog 1
+BGCol 7 42 64 30
 linearLights{ 4
 	linearLight{
 		rot -0.785398 0.000000 0.000000
@@ -16,5 +18,9 @@ linearLights{ 4
 		rot 0.000000 -1.570796 0.000000
 		col 180 180 180 255
 	}
+}
+fogInfo{
+	start 500
+	end 3000
 }
 END
