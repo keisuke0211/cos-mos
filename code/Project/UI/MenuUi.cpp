@@ -225,7 +225,7 @@ void CMenuUI::DecisionInput(void)
 
 					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 					m_Menu.nCntScrChg = 20;
 				}
@@ -867,7 +867,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
-			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::BGM, volume);
@@ -879,7 +879,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
-			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);

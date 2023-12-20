@@ -10,6 +10,7 @@
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
+#include "../resource.h"
 #include "../Sound/title-sound.h"
 #include "../Object/Item/coin.h"
 #include "../UI/MenuUi.h"
@@ -51,6 +52,26 @@ CMode_Title::CMode_Title(void) {
 	for (int nCnt = 0; nCnt < TEX_MAX; nCnt++) {
 		m_BgPos[nCnt] = INITD3DXVECTOR3;
 		m_TexIdx[nCnt] = 0;
+	}
+
+	for (int nCnt = 0; nCnt < 3; nCnt++)
+	{
+		m_BgTexPthPos[nCnt] = INITPOS2D;
+		m_BgTexPthMove[nCnt] = INITPOS2D;
+
+		switch (nCnt){
+		case 0:
+			m_BgTexPthPos[nCnt].x = -0.0001f;
+			break;
+		case 1:
+			m_BgTexPthPos[nCnt].x = -0.0002f;
+			break;
+		case 2:
+			m_BgTexPthPos[nCnt].x = -0.0003f;
+			break;
+		default:
+			break;
+		}
 	}
 
 	Title              = TITLE_TITLE;
@@ -135,18 +156,15 @@ void CMode_Title::Init(void) {
 	}
 
 	// テクスチャ
-	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
-	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
+	m_BgPos[TEX_SPACE] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
 	}
 
 	// テクスチャの読み込み
-	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
-	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Planet.png");
-	m_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Number.png");
-	m_TexIdx[3] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Lock.png");
+	m_TexIdx[TEX_NUM] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Number.png");
+	m_TexIdx[TEX_LOCK] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Lock.png");
 
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -186,10 +204,19 @@ void CMode_Title::Update(void) {
 	CMode::Update();
 
 	// 背景の描画
-	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_BG], 0.0f, false)
-		->SetSize(1280.0f, 720.0f)
-		->SetCol(Color{ 255,255,255,255 })
-		->SetTex(m_TexIdx[TEX_BG]);
+	for (int nCnt = 0; nCnt < 3; nCnt++)
+	{
+		int nTexIdx = (int)CResources::TEXTURE::BG_SPACE00 + nCnt;
+
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_SPACE], 0.0f, false)
+			->SetSize(1280.0f, 720.0f)
+			->SetCol(Color{ 255,255,255,255 })
+			->SetTex(CResources::TEXTURE_IDXES[nTexIdx], 0, 1, 1, m_BgTexPthMove[nCnt]);
+
+		m_BgTexPthMove[nCnt].x += m_BgTexPthPos[nCnt].x;
+
+		RNLib::Number().LoopClamp(&m_BgTexPthMove[nCnt].x, 1.0f, 0.0f);
+	}
 
 	if (Title <= TITLE_MENU || Title == TITLE_SELECT)
 	{
@@ -215,11 +242,6 @@ void CMode_Title::Update(void) {
 					m_TitleLogo.Logo[nCnt].VtxPos[0], m_TitleLogo.Logo[nCnt].VtxPos[1],
 					m_TitleLogo.Logo[nCnt].VtxPos[2], m_TitleLogo.Logo[nCnt].VtxPos[3]);
 		}
-
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_PLANET], m_PlanetAngle, false)
-			->SetSize(1400.0f, 1400.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(m_TexIdx[TEX_PLANET]);
 
 		// ロケット
 		Matrix baseMtx = RNLib::Matrix().ConvPosRotToMtx(D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f));
@@ -871,12 +893,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				if (!bStgRel)
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 					->SetSize(5.0f, 5.0f)
-					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
+					->SetTex(m_TexIdx[TEX_NUM], nCnt + 1, 8, 1);
 				else
 				{
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 						->SetSize(5.0f, 5.0f)
-						->SetTex(m_TexIdx[3]);
+						->SetTex(m_TexIdx[TEX_LOCK]);
 
 					int nStgCoin = Manager::StgEd()->GetStageCoin(m_nPlanetIdx, nCnt);
 					Matrix mtxNum = RNLib::Matrix().MultiplyMtx(
@@ -907,12 +929,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
-					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
+					->SetTex(m_TexIdx[TEX_NUM], nCnt + 1, 8, 1);
 				else
 					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
-					->SetTex(m_TexIdx[3]);
+					->SetTex(m_TexIdx[TEX_LOCK]);
 			}
 		}
 	}
