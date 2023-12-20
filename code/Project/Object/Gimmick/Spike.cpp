@@ -74,13 +74,17 @@ void CSpike::Update(void)
 		float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.2) + 1.0f);
 
 		D3DXVECTOR3 TexPos;
+		Rot3D rot = m_rot;
 
-		if(m_rot.z == D3DX_PI || m_rot.z == -D3DX_PI)
+		if(m_rot.z == D3DX_PI || m_rot.z == 0)
 			TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width - m_width * 0.5), m_pos.y, m_pos.z);
-		else
+		else {
+			rot.z = m_rot.z + D3DX_PI;
 			TexPos = D3DXVECTOR3(m_pos.x, m_pos.y + (float)(rand() % (int)m_height - m_height * 0.5), m_pos.z);
 
-		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], TexPos,D3DXVECTOR3(ScaleTex, ScaleTex,0.0f), Color{ 255,0,255,255 }, CParticle::TYPE::TYPE_FLOATUP, 300,m_rot,D3DXVECTOR3(40.0f,40.0f,0.0f));
+		}
+
+		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], TexPos,D3DXVECTOR3(ScaleTex, ScaleTex,0.0f), Color{ 255,0,255,255 }, CParticle::TYPE::TYPE_FLOATUP, 300,rot,D3DXVECTOR3(40.0f,40.0f,0.0f));
 	}
 }
 

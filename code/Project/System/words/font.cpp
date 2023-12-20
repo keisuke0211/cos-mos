@@ -11,7 +11,7 @@
 //　フォントパス
 const char* CFont::s_FileName[] =
 {
-	"data/FONT/851Gkktt.ttf",
+	"data/FONT/07にくまるフォント.otf",
 	"data/FONT/AmeChanPopMaruLight-Regular.otf",
 	"data/FONT/meiryob.ttc",
 };
@@ -20,7 +20,7 @@ static_assert(sizeof(CFont::s_FileName) / sizeof(CFont::s_FileName[0]) == CFont:
 // フォント名
 const char* CFont::s_FontName[] =
 {
-	"851ゴチカクット",
+	"07にくまるフォント",
 	"AmeChanPopMaruLight-Regular",
 	"メイリオ",
 };

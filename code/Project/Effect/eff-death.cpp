@@ -193,6 +193,9 @@ void CEffect_Death::UpdateType_Ball(void)
 		}
 	}
 
+	//当たり判定情報設定
+	SetSelfInfo(&SelfInfo);
+
 	for (int nCntVec = 0; nCntVec < (int)CPlayer::VECTOL::MAX; nCntVec++)
 	{
 		const CPlayer::VECTOL vec = (CPlayer::VECTOL)nCntVec;
@@ -203,39 +206,35 @@ void CEffect_Death::UpdateType_Ball(void)
 		//ステージオブジェクトとの当たり判定
 		CStageObject::TYPE type = CStageObject::TYPE::NONE;
 		ColliRot = StgObjCollider(&SelfInfo, &colliInfo, vec, type);
-		if (ColliRot != CCollision::ROT::NONE)
+		switch (type)
 		{
-			switch (type)
-			{
-					//ブロックの判定
-				case CStageObject::TYPE::BLOCK:
-					//当たった方向による処理
-					switch (ColliRot)
-					{
-						//左右に当たった場合
-						case CCollision::ROT::LEFT:
-						case CCollision::ROT::RIGHT: m_Info.move.x *= BOUND_POWER; break;
+			//ブロックの判定
+			case CStageObject::TYPE::BLOCK:
+				//当たった方向による処理
+				switch (ColliRot)
+				{
+					//左右に当たった場合
+					case CCollision::ROT::LEFT:
+					case CCollision::ROT::RIGHT: m_Info.move.x *= BOUND_POWER; break;
 
 						//上下に当たった場合
 						//落下速度がほぼ０なら０に設定
 						//違うなら速度を弱めつつ、バウンド
-						case CCollision::ROT::OVER:
-						case CCollision::ROT::UNDER: m_Info.move.y *= BOUND_POWER;break;
+					case CCollision::ROT::OVER:
+					case CCollision::ROT::UNDER: m_Info.move.y *= BOUND_POWER; break;
 
 						//当たった方向が分からない
-						case CCollision::ROT::UNKNOWN:
-						{//α値を減少させ、０以下で死亡
-							ColliRot = StgObjCollider(&SelfInfo, &colliInfo, vec, type);
-							if (m_color.a <= BALL_ALPHA_DECREASE)
-								m_Info.bDeath = true;
-							else m_color.a -= BALL_ALPHA_DECREASE;
-						}
+					case CCollision::ROT::UNKNOWN:
+					{//α値を減少させ、０以下で死亡
+						if (m_color.a <= BALL_ALPHA_DECREASE)
+							m_Info.bDeath = true;
+						else m_color.a -= BALL_ALPHA_DECREASE;
 					}break;
+				}break;
 
-					//穴埋めブロックの判定
-					//死亡
-				case CStageObject::TYPE::FILLBLOCK: m_Info.bDeath = true;break;
-			}
+				//穴埋めブロックの判定
+				//死亡
+			case CStageObject::TYPE::FILLBLOCK: m_Info.bDeath = true; break;
 		}
 	}
 
@@ -280,9 +279,6 @@ void CEffect_Death::UpdateType_Ink(void)
 //=======================================
 CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, CCollision::ColliInfo *pColliInfo, CPlayer::VECTOL vec, CStageObject::TYPE& type)
 {
-	//自分の情報を反映
-	SetSelfInfo(pSelfInfo);
-
 	//当たった方向を格納
 	CCollision::ROT ColliRot = CCollision::ROT::NONE;
 
@@ -304,12 +300,9 @@ CCollision::ROT CEffect_Death::StgObjCollider(CCollision::SelfInfo *pSelfInfo, C
 		pColliInfo->fHeight = stageObj->GetHeight() * 0.5f;
 
 		//当たった方向を格納
-		float fAngle = 0.0f;
-		if (!CCollision::CircleToBoxCollider(*pSelfInfo, *pColliInfo, &fAngle)) continue;
+		if (!CCollision::CircleToBoxCollider(*pSelfInfo, *pColliInfo, NULL)) continue;
 		
-		ColliRot = CCollision::IsBoxToBoxCollider(*pSelfInfo, *pColliInfo, CPlayer::VECTOL::X);
-		if(ColliRot == CCollision::ROT::NONE || ColliRot == CCollision::ROT::UNKNOWN)
-			ColliRot = CCollision::IsBoxToBoxCollider(*pSelfInfo, *pColliInfo, CPlayer::VECTOL::X);
+		ColliRot = CCollision::IsBoxToBoxCollider(*pSelfInfo, *pColliInfo, vec);
 		break;
 	}
 

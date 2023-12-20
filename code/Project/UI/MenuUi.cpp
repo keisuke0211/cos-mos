@@ -507,7 +507,7 @@ void CMenuUI::MenuAnime(void)
 				FormFont pFont = { col,35.0f,3,1,-1, };
 				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
-				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_AMECHAN, &pFont, &pShadow);
+				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -649,7 +649,7 @@ void CMenuUI::MenuAnime(void)
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 0) {
 						for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
 							if (m_pSubMenu[nText] != NULL)
-								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_AMECHAN, &pFont, &pShadow);
+								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 						}
 					}
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 1) {
@@ -672,7 +672,7 @@ void CMenuUI::MenuAnime(void)
 								else
 									sprintf(data, "%s", m_Menu.pSetting[nText].Text);
 
-								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 							}
 						}
 					}
