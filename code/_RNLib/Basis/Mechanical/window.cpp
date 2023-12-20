@@ -161,10 +161,10 @@ void _RNC_Window::ShowTaskBar(const bool& isShow) {
 //========================================
 // フルスクリーン設定
 //========================================
-void _RNC_Window::SetIsFullScreen(const bool& isFullScreen) {
+void _RNC_Window::SetIsFullScreen(bool& isFullScreen) {
 
 	if (!RNSettings::GetInfo().isFullScreen && isFullScreen)
-		return;
+		isFullScreen = RNSettings::GetInfo().isFullScreen;
 
 	// デスクトップの情報を取得
 	HDC desctopHandle = GetDC(GetDesktopWindow());

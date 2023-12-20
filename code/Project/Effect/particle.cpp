@@ -77,7 +77,7 @@ HRESULT CParticle::Init(int nTex,int nCount)
 			m_Info.move = D3DXVECTOR3(
 				m_move.x * m_Info.rot.x * rate,
 				m_move.y * m_Info.rot.y * rate,
-				0.0f);
+				m_move.z * m_Info.rot.z * rate);
 		}
 		else {
 

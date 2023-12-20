@@ -19,6 +19,7 @@
 #include "../resource.h"
 #include "../stage.h"
 #include "../UI/coinUI.h"
+#include "../../_RNLib/Basis/3DObject/rail3D.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -47,7 +48,7 @@ int CMode_Title::m_nStageSelect = 0;
 //========================================
 // コンストラクタ
 //========================================
-CMode_Title::CMode_Title(void) {
+CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 
 	for (int nCnt = 0; nCnt < TEX_MAX; nCnt++) {
 		m_BgPos[nCnt] = INITD3DXVECTOR3;
@@ -75,7 +76,10 @@ CMode_Title::CMode_Title(void) {
 	}
 
 	BgColor = Color{ 0,0,0,255 };
+	BgOldColor = Color{ 0,0,0,255 };
 	BgNextColor = Color{ 0,0,0,255 };
+	nCntColorChange = 0;
+	bColorChange = false;
 
 	Title              = TITLE_TITLE;
 	NextTitle		   = TITLE_TITLE;
@@ -280,7 +284,9 @@ void CMode_Title::Update(void) {
 		else if (Title == TITLE_NEXT)
 			return;
 
-		if (m_bStageChange == false) {
+		ColorChange();
+
+		if (m_bStageChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
 				{
@@ -300,28 +306,32 @@ void CMode_Title::Update(void) {
 						if(m_Direction == RIGHT)
 							m_RocketPos = FADEROCKET;
 						else if (m_Direction == LEFT)
-							m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+							m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
 
+						m_RocketposDiff = m_RocketPos - m_RocketPosOld;
 						m_RocketAnimCnt = 0;
+						m_nStgStartCnt = 0;
 						m_bStgEnter = true;
-
-						bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect);
-
-						if (!bStgRel || RNSystem::GetMode() == RNSystem::MODE::DEBUG)
-						{
-							SwapMode(TITLE_NEXT);
-							Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
-							Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
-
-							if (m_PlanetType != NULL)
-							{
-								delete[] m_PlanetType;
-								m_PlanetType = NULL;
-							}
-						}
 					}
 					break;
 					}
+				}
+			}
+		}
+
+		if (m_nStgStartCnt == m_RocketRail.GetPointNum() * 10) {
+			bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect);
+
+			if (!bStgRel || RNSystem::GetMode() == RNSystem::MODE::DEBUG)
+			{
+				SwapMode(TITLE_NEXT);
+				Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
+				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
+
+				if (m_PlanetType != NULL)
+				{
+					delete[] m_PlanetType;
+					m_PlanetType = NULL;
 				}
 			}
 		}
@@ -605,6 +615,9 @@ void CMode_Title::StageSelect(void) {
 			if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) {
 				TextRelease(TEXT_MENU);
 				SwapMode(TITLE_MENU_ANIME);
+
+				BgNextColor = Color{ 0,0,0,255 };
+				bColorChange = true;
 				return;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT)) {
@@ -780,53 +793,93 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			//傾き割合
 			float RotRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_RotCnt, ANIMCOUNT * 0.5);
 			if (m_RotCnt < ANIMCOUNT * 0.5) m_RotCnt++;
+
+			//ロケットアニメーション割合
 			RktAnimRt = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_RocketAnimCnt, ANIMCOUNT);
 
-			//ロケットのアニメーション処理
-			if (m_RocketAnimCnt < ANIMCOUNT) m_RocketAnimCnt++;
-			if (m_RocketAnimCnt == ANIMCOUNT) {
-				if (m_bStageChange == true) {
-					m_RocketAnimCnt = 0;
-					m_bStageChange = false;
-					m_bRocketMove = true;
-					m_bRocketRot = false;
+			//ロケットのアニメーション処理(選択中)
+			if (!m_bStgEnter) {
 
-					if (m_nStageSelect == 0)
-						m_RocketPosOld = FADEROCKET;
-					else if (m_nStageSelect == nStage - 1)
-						m_RocketPosOld = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+				if (m_RocketAnimCnt < ANIMCOUNT) m_RocketAnimCnt++;
+				if (m_RocketAnimCnt == ANIMCOUNT) {
+
+					if (m_bStageChange) {
+						m_RocketAnimCnt = 0;
+						m_bStageChange = false;
+						m_bRocketMove = true;
+						m_bRocketRot = false;
+
+						if (m_nStageSelect == 0)
+							m_RocketPosOld = FADEROCKET;
+						else if (m_nStageSelect == nStage - 1)
+							m_RocketPosOld = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+					}
+					else {
+						m_bRocketMove = false;
+						m_RocketPosOld = m_RocketPos; m_RocketposDiff = INITD3DXVECTOR3;
+					}
+
+				}
+
+				if (m_bRocketMove == false) {
+					if (m_bStageChange == false)
+						m_RocketPos = UNSELECTBOX - poscor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
+
+					if (m_bStageChange == true) {
+
+						if (m_nStageSelect == 0)
+							m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+						else if (m_nStageSelect == nStage - 1)
+							m_RocketPos = FADEROCKET;
+					}
 				}
 				else {
-					m_bRocketMove = false;
-					m_RocketPosOld = m_RocketPos; m_RocketposDiff = INITD3DXVECTOR3;
+					if (m_RocketAnimCnt > 0) {
+						if (m_nStageSelect == 0)
+							m_RocketPos = UNSELECTBOX - poscor + 0.0f * NUMPOSSELBOX + NUMPOSROCKET;
+						else if (m_nStageSelect == nStage - 1)
+							m_RocketPos = UNSELECTBOX - poscor + (nStage - 1) * NUMPOSSELBOX + NUMPOSROCKET;
+					}
 				}
 			}
+			else if (m_bStgEnter) {//発射中アニメーション処理
+				m_RocketposDiff = INITD3DXVECTOR3;
 
-			if (m_bRocketMove == false && !m_bStgEnter) {
-				if (m_bStageChange == false)
-					m_RocketPos = UNSELECTBOX - poscor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
+				if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 10) {
 
-				if (m_bStageChange == true) {
+					if (m_nStgStartCnt == 0 && m_RocketAnimCnt == 0) {
+						RktAnimRt = 1.0f;
+						m_RocketAnimCnt = 0;
+					}
 
-					if (m_nStageSelect == 0)
-						m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
-					else if (m_nStageSelect == nStage - 1)
-						m_RocketPos = FADEROCKET;
+					if (m_RocketAnimCnt < ANIMCOUNT) m_RocketAnimCnt++;
+					else if (m_RocketAnimCnt == ANIMCOUNT) m_nStgStartCnt++;
 				}
-			}
-			else {
-				if (m_RocketAnimCnt > 0 && !m_bStgEnter) {
-					if (m_nStageSelect == 0)
-						m_RocketPos = UNSELECTBOX - poscor + 0.0f * NUMPOSSELBOX + NUMPOSROCKET;
-					else if (m_nStageSelect == nStage - 1)
-						m_RocketPos = UNSELECTBOX - poscor + (nStage - 1) * NUMPOSSELBOX + NUMPOSROCKET;
+					
+				if (m_RocketAnimCnt == ANIMCOUNT) {
+					m_RocketPosOld = m_RocketPos;
+					m_RocketRotDiff = INITD3DXVECTOR3;
+
+					D3DXVECTOR3 Pos = RNLib::Matrix().ConvMtxToPos(m_RocketRail.GetMtx((1.0f / (m_RocketRail.GetPointNum() * 10.0f)) * m_nStgStartCnt, true));
+					D3DXVECTOR3 Rot = RNLib::Matrix().ConvMtxToRot(m_RocketRail.GetMtx((1.0f / (m_RocketRail.GetPointNum() * 10.0f)) * m_nStgStartCnt, true));
+
+					if (m_Direction == RIGHT) {
+						m_RocketPos = Pos + FADEROCKET;
+						m_RocketRotOld = Rot + Rot3D(D3DX_PI * 0.5f,0.0f,0.0f);
+					}
+					else if (m_Direction == LEFT) {
+						m_RocketPos = Pos3D(-Pos.x, Pos.y, Pos.z) + Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+						m_RocketRotOld = Rot3D(Rot.x, -Rot.y, -Rot.z) + Rot3D(D3DX_PI * 0.5f, 0.0f, 0.0f);
+					}
 				}
+				m_RocketposDiff = m_RocketPos - m_RocketPosOld;
 			}
 
-			if (m_nStageSelect != m_nOldSelect || m_bStgEnter){
+			//選択変更処理
+			if (m_nStageSelect != m_nOldSelect) {
 				m_RocketposDiff = m_RocketPos - m_RocketPosOld;
 
-				if (!m_bRocketRot) {
+				if (!m_bRocketRot && !m_bStgEnter) {
 					m_RocketRotOld = m_RocketRot;
 
 					if (m_RocketposDiff.x > 0) {
@@ -837,14 +890,13 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 						m_Direction = LEFT;
 						m_RocketRot = D3DXVECTOR3(D3DX_PI, 0.0f, D3DX_PI * 0.5f);
 					}
-						
+
 					m_RocketRotDiff = m_RocketRot - m_RocketRotOld;
+					if (m_bStageChange)
+						m_bRocketRot = true;
 				}
-
-				if (m_bStageChange)
-					m_bRocketRot = true;
 			}
-
+		
 			{//ロケット描画
 				Matrix mtxRocket = RNLib::Matrix().ConvPosRotScaleToMtx(m_RocketPosOld + (m_RocketposDiff * RktAnimRt),m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f));
 				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, mtxRocket, false);
@@ -960,6 +1012,11 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 			m_nStageSelect = nStage - 1;
 			m_nOldSelect = nStage;
+
+			BgOldColor = BgColor;
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 			
@@ -967,6 +1024,11 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			m_nStageSelect = 0;
 			m_nOldSelect = -1;
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
+			BgOldColor = BgColor;
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 
 	m_nDrawPlanet = m_nPlanetIdx;
@@ -1023,6 +1085,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 
 		m_bStageSelect = false;
 
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
 		break;
@@ -1049,6 +1116,59 @@ void CMode_Title::StageRel(int nPlanet, int nStgMax)
 			{
 				Manager::StgEd()->SetStageRel(nPlanet, nCnt, false);
 			}
+		}
+	}
+}
+
+//========================================
+// 色変更
+//========================================
+void CMode_Title::ColorChange(void)
+{
+	if (bColorChange)
+	{
+		float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, nCntColorChange, COLOR_CHANGE_TIME);
+		int r = BgNextColor.r - BgOldColor.r;	int g = BgNextColor.g - BgOldColor.g;
+		int b = BgNextColor.b - BgOldColor.b;	int a = BgNextColor.a - BgOldColor.a;
+
+		if (r <= 0)
+		{
+			r *= -1;
+			BgColor.r = BgOldColor.r - (r * Rate);
+		}
+		else
+			BgColor.r = BgOldColor.r + (r * Rate);
+
+		if (g <= 0)
+		{
+			g *= -1;
+			BgColor.g = BgOldColor.g - (g * Rate);
+		}
+		else
+			BgColor.g = BgOldColor.g + (g * Rate);
+
+		if (b <= 0)
+		{
+			b *= -1;
+			BgColor.b = BgOldColor.b - (b * Rate);
+		}
+		else
+			BgColor.b = BgOldColor.b + (b * Rate);
+
+
+		if (a <= 0)
+		{
+			a *= -1;
+			BgColor.a = BgOldColor.a - (a * Rate);
+		}
+		else
+			BgColor.a = BgOldColor.a + (a * Rate);
+
+		if (++nCntColorChange > COLOR_CHANGE_TIME)
+		{
+			nCntColorChange = 0;
+			BgOldColor = BgColor;
+			bColorChange = false;
 		}
 	}
 }

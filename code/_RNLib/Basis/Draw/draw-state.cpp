@@ -103,6 +103,7 @@ void _RNC_DrawState::ResetVariableSetting(Device& device) {
 	//----------------------------------------
 	// ライティングの初期設定
 	//----------------------------------------
+	device->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
 	SetIsLighting(device, true);
 }
 
@@ -208,9 +209,9 @@ void _RNC_DrawState::SetIsFog(Device& device, const bool& isFog) {
 //========================================
 void _RNC_DrawState::SetFogParameter(Device& device, const Color& col, const UShort& startDist, const UShort& endDist) {
 
-	DWORD start = 10000; startDist;
-	DWORD end   = 10000; endDist;
+	const float start = startDist;
+	const float end   = endDist;
 	device->SetRenderState(D3DRS_FOGCOLOR, D3DCOLOR_RGBA(col.r, col.g, col.b, col.a));
-	device->SetRenderState(D3DRS_FOGSTART, start);
-	device->SetRenderState(D3DRS_FOGEND  , end);
+	device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&start));
+	device->SetRenderState(D3DRS_FOGEND  , *(DWORD*)(&end));
 }

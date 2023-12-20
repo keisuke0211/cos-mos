@@ -133,7 +133,8 @@ void CLight3D::Save(const String& savePath) {
 	// ファイルを開く
 	if (RNLib::File().OpenSaveFile(savePath)) {
 		fprintf(RNLib::File().GetFile(), "Light3DFile\n");
-		fprintf(RNLib::File().GetFile(), "BGCol %d %d %d %d\n", m_col.r, m_col.g, m_col.b, m_col.a);
+		fprintf(RNLib::File().GetFile(), "isFog %d\n", m_isFog);
+		fprintf(RNLib::File().GetFile(), "BGCol %d %d %d %d\n", m_BGCol.r, m_BGCol.g, m_BGCol.b, m_BGCol.a);
 		fprintf(RNLib::File().GetFile(), "linearLights{ %d\n", m_linearLightNum);
 		for (int cntLinearLight = 0; cntLinearLight < m_linearLightNum; cntLinearLight++) {
 			fprintf(RNLib::File().GetFile(), "	linearLight{\n");
