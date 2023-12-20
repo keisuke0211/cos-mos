@@ -140,6 +140,10 @@ private:
 	TITLE Title;
 	TITLE NextTitle;
 	TITLE_ANIME TitleAnima;
+
+	Color BgColor;
+	Color BgNextColor;
+
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	Pos2D m_BgTexPthPos[4];
 	Pos2D m_BgTexPthMove[4];

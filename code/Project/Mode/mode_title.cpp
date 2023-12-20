@@ -74,6 +74,9 @@ CMode_Title::CMode_Title(void) {
 		}
 	}
 
+	BgColor = Color{ 0,0,0,255 };
+	BgNextColor = Color{ 0,0,0,255 };
+
 	Title              = TITLE_TITLE;
 	NextTitle		   = TITLE_TITLE;
 	TitleAnima		   = ANIME_NUI;
@@ -156,7 +159,7 @@ void CMode_Title::Init(void) {
 	}
 
 	// ƒeƒNƒXƒ`ƒƒ
-	m_BgPos[TEX_SPACE] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
+	m_BgPos[TEX_SPACE] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -10.0f);
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
@@ -204,6 +207,11 @@ void CMode_Title::Update(void) {
 	CMode::Update();
 
 	// ”wŒi‚Ì•`‰æ
+	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f), 0.0f, false)
+		->SetSize(1280.0f, 720.0f)
+		->SetCol(BgColor);
+
+	// ”wŒi(‰F’ˆ)‚Ì•`‰æ
 	for (int nCnt = 0; nCnt < 3; nCnt++)
 	{
 		int nTexIdx = (int)CResources::TEXTURE::BG_SPACE00 + nCnt;
@@ -545,7 +553,6 @@ void CMode_Title::CreateStageSelectInfo(void) {
 
 	for (int nCnt = 0; nCnt < nPlanetMax; nCnt++) {
 		char *aTexFile = Manager::StgEd()->GetType()[nCnt].aTexFile;
-		char *aStgName = Manager::StgEd()->GetType()[nCnt].aName;
 
 		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
 	}

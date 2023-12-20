@@ -40,7 +40,7 @@ public:
 	struct PlanetType
 	{
 		char	aTexFile[0xff];		// テクスチャパス
-		char	aName[0xff];		// 名前
+		Color	color;				// 背景色
 		StageType *StageType;		// ステージ情報
 		int nStageIdx;				// 現在のステージ
 		int nStageMax;				// 最大ステージ
