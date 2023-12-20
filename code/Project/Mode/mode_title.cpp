@@ -969,6 +969,7 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			m_nStageSelect = nStage - 1;
 			m_nOldSelect = nStage;
 
+			BgOldColor = BgColor;
 			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
 			nCntColorChange = 0;
 			bColorChange = true;
@@ -980,6 +981,7 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			m_nOldSelect = -1;
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 
+			BgOldColor = BgColor;
 			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
 			nCntColorChange = 0;
 			bColorChange = true;
@@ -1039,6 +1041,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 
 		m_bStageSelect = false;
 
+		BgOldColor = BgColor;
 		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
 		nCntColorChange = 0;
 		bColorChange = true;
