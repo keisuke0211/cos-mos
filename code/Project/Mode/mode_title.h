@@ -167,6 +167,7 @@ private:
 	int m_ImageStgCnt;
 	int m_RotCnt;
 	int m_nCnt;
+	int m_nStgStartCnt;
 	bool m_bBackMode;
 	bool m_bStageChange;
 	bool m_bRocketMove;
@@ -178,5 +179,6 @@ private:
 	PlanetType *m_PlanetType;
 	STAGE m_StgFlag;
 	CCoinUI *m_CoinUI;
+	CRail3D m_RocketRail;
 	DIRECTION m_Direction;
 };
