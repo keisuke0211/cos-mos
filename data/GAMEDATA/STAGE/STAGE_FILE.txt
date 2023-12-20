@@ -9,22 +9,36 @@
 NUM_PLANET = 2
 
 #========================================
-# ステージ数 / モデル / 惑星名
+# ステージ数 / モデル / 背景色
 #========================================
-PLANET = 5 data\MODEL\World1.x ポラリス
-PLANET = 3 data\MODEL\Regulus.x パッパラパー星
+
+-- １つ目の設定 ------------------------------------------------------
+SetPlanet
+	NumStage = 5
+	ModelPath = data\MODEL\World1.x
+	BackColor = 0 115 80 255
+
+EndPlanet
+
+-- ２つ目の設定 ------------------------------------------------------
+SetPlanet
+	NumStage = 3
+	ModelPath = data\MODEL\Regulus.x
+	BackColor = 45 110 135 255
+
+EndPlanet
 
 #================================================================================
 # 惑星番号 / ステージのファイル名 / コインの解放数
 #================================================================================
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv 		0	60
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv 		0	30
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-2.csv 		1	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-3.csv 		2	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv 		3	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-TEST.csv 	0	60
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv 		4	60
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 		5	60
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 		6	60
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 		5	300
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 		6	300
 
 END
 

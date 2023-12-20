@@ -91,7 +91,7 @@ void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { 
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
 void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
 bool Stage::GetIsTimeOver   (void)                                            { return (limitTimeCounter <= 0); }
-bool Stage::GetIsShowUI     (void)                                            { return !isPause && !isCutIn && CPlayer::GetZoomUpCounter() <= 0; }
+bool Stage::GetIsShowUI     (void)                                            { return !isPause && !isCutIn && CPlayer::GetZoomUpCounter() <= 0 && !isReset; }
 
 //========================================
 // 取得系関数
@@ -220,7 +220,7 @@ void Stage::StartStage(void) {
 			UICamera[cnt]->SetIsClipping(true);
 
 			// 背景色設定
-			UICamera[cnt]->SetBGCol(Color(0, 0, 0, 100));
+			UICamera[cnt]->SetOverwriteBGCol(Color(0, 0, 0, 100));
 
 			// ライトを設定
 			UICamera[cnt]->SetLightID(Manager::GetLightIdx(0));
@@ -257,8 +257,12 @@ void Stage::UpdateStage(void) {
 	// 環境音プレイヤーの更新処理
 	StageSoundPlayer::Update();
 
+	static bool isLimit = true;
+	if (RNLib::Input().GetKeyTrigger(DIK_F8) && RNSystem::GetMode() == RNSystem::MODE::DEBUG)
+		isLimit = !isLimit;
+
 	// 制限時間のカウント
-	if(GetIsShowUI()) {
+	if(GetIsShowUI() && isLimit) {
 		if (--limitTimeCounter <= 0) {
 
 			// タイムオーバーの処理

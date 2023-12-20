@@ -22,7 +22,6 @@ CLight3DEditor::CLight3DEditor() : m_editPath("NONEDATA") {
 	m_light = new CLight3D(NULL);
 
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
-	m_camera->SetBGCol(Color{ 128,128,128,255 });
 	m_camera->SetGrabAirMouse(1.0f, 1.0f, 1.0f);
 	m_camera->SetPosVAndPosR(Pos3D(0.0f, 100.0f, -100.0f), INITPOS3D);
 	m_camera->SetLightID(m_light->GetID());
@@ -106,6 +105,35 @@ void CLight3DEditor::Update(void) {
 			RNLib::Number().LoopClamp(&lightRot.y, D3DX_PI, -D3DX_PI);
 		}
 
+		if (RNLib::Count().GetCount() % 3 == 0)
+		{// 背景の色
+			if (RNLib::Input().GetKeyPress(DIK_Y)) { m_light->GetBGCol().r--; m_isSaved = false; }
+			if (RNLib::Input().GetKeyPress(DIK_U)) { m_light->GetBGCol().r++; m_isSaved = false; }
+			if (RNLib::Input().GetKeyPress(DIK_H)) { m_light->GetBGCol().g--; m_isSaved = false; }
+			if (RNLib::Input().GetKeyPress(DIK_J)) { m_light->GetBGCol().g++; m_isSaved = false; }
+			if (RNLib::Input().GetKeyPress(DIK_N)) { m_light->GetBGCol().b--; m_isSaved = false; }
+			if (RNLib::Input().GetKeyPress(DIK_M)) { m_light->GetBGCol().b++; m_isSaved = false; }
+
+			// 制御
+			RNLib::Number().LoopClamp(&m_light->GetBGCol().r, 255, 0);
+			RNLib::Number().LoopClamp(&m_light->GetBGCol().g, 255, 0);
+			RNLib::Number().LoopClamp(&m_light->GetBGCol().b, 255, 0);
+		}
+
+		// フォグのON/OFF
+		if (RNLib::Input().GetKeyTrigger(DIK_X)) {
+			m_isSaved = false;
+			m_light->SetIsFog(!m_light->GetIsFog());
+		}
+
+		// フォグのスタート/エンド
+		if (RNLib::Input().GetKeyPress(DIK_I) && m_light->GetFogInfo().start > 0) { m_light->GetFogInfo().start--; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_O))                                    { m_light->GetFogInfo().start++; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_K) && m_light->GetFogInfo().end > 0)   { m_light->GetFogInfo().end--  ; m_isSaved = false; }
+		if (RNLib::Input().GetKeyPress(DIK_L))                                    { m_light->GetFogInfo().end++  ; m_isSaved = false; }
+		RNLib::Number().Clamp(&m_light->GetFogInfo().start, USHRT_MAX, 0);
+		RNLib::Number().Clamp(&m_light->GetFogInfo().end, USHRT_MAX, m_light->GetFogInfo().start);
+
 		// リニアライトの加算
 		if (RNLib::Input().GetKeyTrigger(DIK_C)) {
 			m_isSaved = false;
@@ -135,7 +163,7 @@ void CLight3DEditor::Update(void) {
 			// 選択リニアライトの制御
 			RNLib::Number().LoopClamp(&m_selectLinearLightIdx, m_light->GetLinearLightNum() - 1, 0);
 
-			if (RNLib::Count().GetCount() % 4 == 0)
+			if (RNLib::Count().GetCount() % 3 == 0)
 			{// 選択リニアライトの色
 				if (RNLib::Input().GetKeyPress(DIK_R)) { m_light->GetLinearLight(m_selectLinearLightIdx).col.r--; m_isSaved = false; }
 				if (RNLib::Input().GetKeyPress(DIK_T)) { m_light->GetLinearLight(m_selectLinearLightIdx).col.r++; m_isSaved = false; }
@@ -173,6 +201,11 @@ void CLight3DEditor::Update(void) {
 		->SetSize(RNLib::Window().GetWidth(), RNLib::Window().GetHeight());
 
 	// [[[ グリッド描画 ]]]
+	if (m_light->GetIsFog()) {
+		RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, Pos3D(0.0f, -50.0f, 0.0f), Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
+			->SetSize(Size2D(100000.0f, 100000.0f))
+			->SetCol(Color(0, 0, 0, 255));
+	}
 	RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, INITPOS3D, Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
 		->SetSize(Size2D(90.0f, 90.0f))
 		->SetTexUV(
@@ -181,7 +214,7 @@ void CLight3DEditor::Update(void) {
 			Pos2D(9.0f, 0.0f),
 			Pos2D(0.0f, 9.0f),
 			Pos2D(9.0f, 9.0f));
-
+	
 	{
 		const float  dist = 50.0f;
 		const Pos3D  lightRot = m_light->GetRot();
@@ -209,6 +242,13 @@ void CLight3DEditor::Update(void) {
 	RNLib::Text2D().PutDebugLog(String("Light3DSave         [3]"));
 	RNLib::Text2D().PutDebugLog(String("Light3DRot          [DIR]       :%.2fPI,%.2fPI", m_light->GetRot().x / D3DX_PI, m_light->GetRot().y / D3DX_PI));
 	RNLib::Text2D().PutDebugLog(String("Light3DRotReset     [P]"));
+	RNLib::Text2D().PutDebugLog(String("BackGroundCol       [YU][HJ][NM]:%d %d %d",
+		m_light->GetBGCol().r,
+		m_light->GetBGCol().g,
+		m_light->GetBGCol().b));
+	RNLib::Text2D().PutDebugLog(String("IsFog               [X]         :%s", m_light->GetIsFog() ? "TRUE" : "FALSE"));
+	RNLib::Text2D().PutDebugLog(String("FogStart            [I][O]      :%d", m_light->GetFogInfo().start));
+	RNLib::Text2D().PutDebugLog(String("FogEnd              [K][L]      :%d", m_light->GetFogInfo().end));
 	RNLib::Text2D().PutDebugLog(String("AddLinearLightNum   [C]         :%d", m_light->GetLinearLightNum()));
 	RNLib::Text2D().PutDebugLog(String("SubLinearLight      [Z]"));
 	if (m_light->GetLinearLightNum() > 0) {

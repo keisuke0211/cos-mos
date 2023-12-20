@@ -20,7 +20,6 @@
 CSetUp3DEditor::CSetUp3DEditor() {
 
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
-	m_camera->SetBGCol(Color{ 128,128,128,255 });
 	m_camera->SetGrabAirMouse(1.0f, 1.0f, 1.0f);
 	m_camera->SetPosVAndPosR(Pos3D(0.0f, 100.0f, -100.0f), INITPOS3D);
 	m_camera->SetLightID((new CLight3D("RNData\\StandardLight.txt"))->GetID());

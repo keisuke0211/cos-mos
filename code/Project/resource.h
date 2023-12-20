@@ -16,6 +16,9 @@ public:
 	// テクスチャ
 	// CResources::TEXTURE_IDXES[(int)CResources::TEXTURE]
 	enum class TEXTURE {
+		BG_SPACE00,
+		BG_SPACE01,
+		BG_SPACE02,
 		BG_WILDERNESS,
 		BG_FOREST,
 		BG_CAVE,

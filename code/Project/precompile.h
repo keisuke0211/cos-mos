@@ -22,7 +22,7 @@
 #include "../_RNLib/Basis/Draw/camera-manager.h"
 #include "../_RNLib/Basis/Draw/color.h"
 #include "../_RNLib/Basis/Draw/draw-manager.h"
-#include "../_RNLib/Basis/Draw/draw-state.h"
+//#include "../_RNLib/Basis/Draw/draw-state.h"
 //#include "../_RNLib/Basis/Draw/light3D.h"
 #include "../_RNLib/Basis/Draw/regist-info.h"
 #include "../_RNLib/Basis/Draw/text.h"

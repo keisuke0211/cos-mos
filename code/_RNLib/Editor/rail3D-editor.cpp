@@ -19,7 +19,6 @@
 //========================================
 CRail3DEditor::CRail3DEditor() : m_camera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight())), m_rail3D("NONEDATA"), m_editPath("NONEDATA"), m_doll((UShort)RNMode::PRIORITY::OBJECT3D, NONEDATA) {
 
-	m_camera.SetBGCol       (Color{ 128,128,128,255 });
 	m_camera.SetGrabAirMouse(1.0f, 1.0f, 1.0f);
 	m_camera.SetPosVAndPosR (Pos3D(0.0f, 100.0f, -100.0f), INITPOS3D);
 	m_camera.SetLightID     ((new CLight3D("RNData\\StandardLight.txt"))->GetID());

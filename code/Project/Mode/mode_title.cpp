@@ -10,6 +10,7 @@
 #include "../main.h"
 #include "mode_title.h"
 #include "mode_game.h"
+#include "../resource.h"
 #include "../Sound/title-sound.h"
 #include "../Object/Item/coin.h"
 #include "../UI/MenuUi.h"
@@ -53,6 +54,32 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 		m_BgPos[nCnt] = INITD3DXVECTOR3;
 		m_TexIdx[nCnt] = 0;
 	}
+
+	for (int nCnt = 0; nCnt < 3; nCnt++)
+	{
+		m_BgTexPthPos[nCnt] = INITPOS2D;
+		m_BgTexPthMove[nCnt] = INITPOS2D;
+
+		switch (nCnt){
+		case 0:
+			m_BgTexPthPos[nCnt].x = -0.0001f;
+			break;
+		case 1:
+			m_BgTexPthPos[nCnt].x = -0.0002f;
+			break;
+		case 2:
+			m_BgTexPthPos[nCnt].x = -0.0003f;
+			break;
+		default:
+			break;
+		}
+	}
+
+	BgColor = Color{ 0,0,0,255 };
+	BgOldColor = Color{ 0,0,0,255 };
+	BgNextColor = Color{ 0,0,0,255 };
+	nCntColorChange = 0;
+	bColorChange = false;
 
 	Title              = TITLE_TITLE;
 	NextTitle		   = TITLE_TITLE;
@@ -136,18 +163,15 @@ void CMode_Title::Init(void) {
 	}
 
 	// テクスチャ
-	m_BgPos[0] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f);
-	m_BgPos[1] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, 1060, -50.0f);
+	m_BgPos[TEX_SPACE] = D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -10.0f);
 
 	for (int nCnt = 1; nCnt < TEX_MAX; nCnt++) {
 		m_TexIdx[nCnt] = 0;
 	}
 
 	// テクスチャの読み込み
-	m_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Space.png");
-	m_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\BackGround\\Planet.png");
-	m_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Number.png");
-	m_TexIdx[3] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Lock.png");
+	m_TexIdx[TEX_NUM] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Number.png");
+	m_TexIdx[TEX_LOCK] = RNLib::Texture().Load("data\\TEXTURE\\StageSelect\\Lock.png");
 
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -187,10 +211,24 @@ void CMode_Title::Update(void) {
 	CMode::Update();
 
 	// 背景の描画
-	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_BG], 0.0f, false)
+	RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, D3DXVECTOR3(RNLib::Window().GetCenterPos().x, RNLib::Window().GetCenterPos().y, -100.0f), 0.0f, false)
 		->SetSize(1280.0f, 720.0f)
-		->SetCol(Color{ 255,255,255,255 })
-		->SetTex(m_TexIdx[TEX_BG]);
+		->SetCol(BgColor);
+
+	// 背景(宇宙)の描画
+	for (int nCnt = 0; nCnt < 3; nCnt++)
+	{
+		int nTexIdx = (int)CResources::TEXTURE::BG_SPACE00 + nCnt;
+
+		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_SPACE], 0.0f, false)
+			->SetSize(1280.0f, 720.0f)
+			->SetCol(Color{ 255,255,255,255 })
+			->SetTex(CResources::TEXTURE_IDXES[nTexIdx], 0, 1, 1, m_BgTexPthMove[nCnt]);
+
+		m_BgTexPthMove[nCnt].x += m_BgTexPthPos[nCnt].x;
+
+		RNLib::Number().LoopClamp(&m_BgTexPthMove[nCnt].x, 1.0f, 0.0f);
+	}
 
 	if (Title <= TITLE_MENU || Title == TITLE_SELECT)
 	{
@@ -216,11 +254,6 @@ void CMode_Title::Update(void) {
 					m_TitleLogo.Logo[nCnt].VtxPos[0], m_TitleLogo.Logo[nCnt].VtxPos[1],
 					m_TitleLogo.Logo[nCnt].VtxPos[2], m_TitleLogo.Logo[nCnt].VtxPos[3]);
 		}
-
-		RNLib::Polygon2D().Put(PRIORITY_BACKGROUND, m_BgPos[TEX_PLANET], m_PlanetAngle, false)
-			->SetSize(1400.0f, 1400.0f)
-			->SetCol(Color{ 255,255,255,255 })
-			->SetTex(m_TexIdx[TEX_PLANET]);
 
 		// ロケット
 		Matrix baseMtx = RNLib::Matrix().ConvPosRotToMtx(D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f));
@@ -250,6 +283,8 @@ void CMode_Title::Update(void) {
 			StageSelect();
 		else if (Title == TITLE_NEXT)
 			return;
+
+		ColorChange();
 
 		if (m_bStageChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
@@ -528,7 +563,6 @@ void CMode_Title::CreateStageSelectInfo(void) {
 
 	for (int nCnt = 0; nCnt < nPlanetMax; nCnt++) {
 		char *aTexFile = Manager::StgEd()->GetType()[nCnt].aTexFile;
-		char *aStgName = Manager::StgEd()->GetType()[nCnt].aName;
 
 		m_PlanetType[nCnt].nModel = RNLib::Model().Load(aTexFile);
 	}
@@ -581,6 +615,9 @@ void CMode_Title::StageSelect(void) {
 			if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) {
 				TextRelease(TEXT_MENU);
 				SwapMode(TITLE_MENU_ANIME);
+
+				BgNextColor = Color{ 0,0,0,255 };
+				bColorChange = true;
 				return;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT)) {
@@ -915,12 +952,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				if (!bStgRel)
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 					->SetSize(5.0f, 5.0f)
-					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
+					->SetTex(m_TexIdx[TEX_NUM], nCnt + 1, 8, 1);
 				else
 				{
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 						->SetSize(5.0f, 5.0f)
-						->SetTex(m_TexIdx[3]);
+						->SetTex(m_TexIdx[TEX_LOCK]);
 
 					int nStgCoin = Manager::StgEd()->GetStageCoin(m_nPlanetIdx, nCnt);
 					Matrix mtxNum = RNLib::Matrix().MultiplyMtx(
@@ -951,12 +988,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
-					->SetTex(m_TexIdx[2], nCnt + 1, 8, 1);
+					->SetTex(m_TexIdx[TEX_NUM], nCnt + 1, 8, 1);
 				else
 					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
 					->SetCol(Color{ 85,85,85,255 })
-					->SetTex(m_TexIdx[3]);
+					->SetTex(m_TexIdx[TEX_LOCK]);
 			}
 		}
 	}
@@ -975,6 +1012,11 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 			m_nStageSelect = nStage - 1;
 			m_nOldSelect = nStage;
+
+			BgOldColor = BgColor;
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 			
@@ -982,6 +1024,11 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			m_nStageSelect = 0;
 			m_nOldSelect = -1;
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
+			BgOldColor = BgColor;
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 
 	m_nDrawPlanet = m_nPlanetIdx;
@@ -1038,6 +1085,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 
 		m_bStageSelect = false;
 
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
 		break;
@@ -1064,6 +1116,59 @@ void CMode_Title::StageRel(int nPlanet, int nStgMax)
 			{
 				Manager::StgEd()->SetStageRel(nPlanet, nCnt, false);
 			}
+		}
+	}
+}
+
+//========================================
+// 色変更
+//========================================
+void CMode_Title::ColorChange(void)
+{
+	if (bColorChange)
+	{
+		float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, nCntColorChange, COLOR_CHANGE_TIME);
+		int r = BgNextColor.r - BgOldColor.r;	int g = BgNextColor.g - BgOldColor.g;
+		int b = BgNextColor.b - BgOldColor.b;	int a = BgNextColor.a - BgOldColor.a;
+
+		if (r <= 0)
+		{
+			r *= -1;
+			BgColor.r = BgOldColor.r - (r * Rate);
+		}
+		else
+			BgColor.r = BgOldColor.r + (r * Rate);
+
+		if (g <= 0)
+		{
+			g *= -1;
+			BgColor.g = BgOldColor.g - (g * Rate);
+		}
+		else
+			BgColor.g = BgOldColor.g + (g * Rate);
+
+		if (b <= 0)
+		{
+			b *= -1;
+			BgColor.b = BgOldColor.b - (b * Rate);
+		}
+		else
+			BgColor.b = BgOldColor.b + (b * Rate);
+
+
+		if (a <= 0)
+		{
+			a *= -1;
+			BgColor.a = BgOldColor.a - (a * Rate);
+		}
+		else
+			BgColor.a = BgOldColor.a + (a * Rate);
+
+		if (++nCntColorChange > COLOR_CHANGE_TIME)
+		{
+			nCntColorChange = 0;
+			BgOldColor = BgColor;
+			bColorChange = false;
 		}
 	}
 }

@@ -33,6 +33,7 @@ CCoin::CCoin() {
 
 	//FÝ’èiŠù‚ÉŽæ“¾‚µ‚Ä‚¢‚½‚ç”¼“§–¾‚É
 	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 255,255,255, 100 } : COLOR_WHITE;
+	m_outLineIdx = Stage::GetCoinInfo(planet, stage, m_nID) ? 8 : NONEDATA;
 }
 
 //========================================
@@ -52,7 +53,7 @@ void CCoin::Update(void) {
 
 	RNLib::Model().Put(PRIORITY_OBJECT, m_ModelIdx, m_pos, m_rot, false)
 		->SetCol(m_color)
-		->SetOutLineIdx(8);
+		->SetOutLineIdx(m_outLineIdx);
 
 	for (int nCnt = 0; nCnt < CPlayer::NUM_PLAYER; nCnt++)
 	{

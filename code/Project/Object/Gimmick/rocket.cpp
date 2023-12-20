@@ -121,19 +121,6 @@ void CRocket::Update(void)
 		break;
 	}
 
-	if (RNLib::Input().GetKeyTrigger(DIK_Q))
-	{
-		m_Info.bEffect = true;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_E))
-	{
-		m_Info.bEffect = false;
-	}
-	else if (RNLib::Input().GetKeyTrigger(DIK_F))
-	{
-		m_Info.Animstate = ANIME_STATE::FLY;
-	}
-
 	if (m_Info.bEffect)
 	{
 		m_Info.nEffectAnimCounter++;
