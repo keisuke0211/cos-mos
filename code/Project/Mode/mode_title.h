@@ -57,8 +57,7 @@ public:
 private:
 	//========== [[[ óÒãìå^íËã` ]]]
 	enum TEX{
-		TEX_BG = 0,		// îwåi
-		TEX_PLANET,		// òfêØ
+		TEX_SPACE = 0,	// âFíà
 		TEX_NUM,		// êîéö
 		TEX_LOCK,		// è˘ëO
 		TEX_MAX
@@ -141,7 +140,13 @@ private:
 	TITLE Title;
 	TITLE NextTitle;
 	TITLE_ANIME TitleAnima;
+
+	Color BgColor;
+	Color BgNextColor;
+
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
+	Pos2D m_BgTexPthPos[4];
+	Pos2D m_BgTexPthMove[4];
 	D3DXVECTOR3 m_RocketPos;
 	D3DXVECTOR3 m_RocketposDiff;
 	D3DXVECTOR3 m_RocketPosOld;
