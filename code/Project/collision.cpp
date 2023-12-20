@@ -724,6 +724,8 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 //----------------------------
 void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
+	RNLib::Text2D().PutDebugLog("ƒƒPƒbƒg‚É“–‚½‚Á‚Ä‚¢‚é");
+
 	CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 	if (!pRocket->GetReady() && !pInfo->bRide) return;
 

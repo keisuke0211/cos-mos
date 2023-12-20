@@ -1,0 +1,42 @@
+SetUp3DFile
+boneDataSum{ 5
+	boneData{
+		idx 0
+		modelIdx data\\Model\\Small_Fish.x
+		parentIdx -1
+		relativePos 0.00 13.00 0.00
+		relativeRot 0.00 -1.50 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\Model\\Small_Fish.x
+		parentIdx 0
+		relativePos 10.00 8.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\Model\\Small_Fish.x
+		parentIdx 0
+		relativePos 10.00 -8.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\Model\\Small_Fish.x
+		parentIdx 0
+		relativePos 20.00 16.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	boneData{
+		idx 1
+		modelIdx data\\Model\\Small_Fish.x
+		parentIdx 0
+		relativePos 20.00 -16.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+}
+faceDataSum{ 0
+	
+}
+END

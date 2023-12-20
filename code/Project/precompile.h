@@ -1,6 +1,6 @@
 #pragma once
 
-#if 1
+#if 0
 
 // ../_RNLib/
 #include "../_RNLib/RNmain.h"

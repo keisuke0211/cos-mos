@@ -33,7 +33,7 @@ CDemoPlayer::CDemoPlayer(const Pos3D& pos, const Rot3D& rot, const Color& col, c
 	m_spin   = INITVECTOR3D;
 	m_col    = col;
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
-	m_camera->SetBGCol(cameraCol);
+	m_camera->SetOverwriteBGCol(cameraCol);
 	m_clippingCameraID = NONEDATA;
 }
 

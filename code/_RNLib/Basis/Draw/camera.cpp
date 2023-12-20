@@ -60,7 +60,7 @@ CCamera::CCamera(const Size2D& scale2D) {
 	m_stateInfo       = NULL;
 	m_isDraw          = false;
 	m_lightID         = NONEDATA;
-	m_BGCol           = Color{0,0,0,0};
+	m_ovrBGCol        = NULL;
 	m_isClipping      = false;
 	m_motionBlur      = {};
 
@@ -219,9 +219,6 @@ void CCamera::Update(void) {
 //========================================
 void CCamera::StartRenderingScreen(Device& device) {
 
-	// [[[ 画面をクリア ]]]
-	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
-
 	// [[[ ビューマトリックスの作成 ]]]
 	Matrix mtxView = INITMATRIX; {
 		Pos3D posV = Pos3D(0.0f, 0.0f, 0.0f);
@@ -251,9 +248,6 @@ void CCamera::StartRendering(Device& device) {
 
 	// ビューポートを設定
 	device->SetViewport(&m_MTInfo.viewport);
-
-	// [[[ 画面をクリア ]]]
-	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), m_BGCol, 1.0f, 0);
 
 	// [[[ ビューマトリックスの作成 ]]]
 	Matrix mtxView = INITMATRIX; {

@@ -45,6 +45,12 @@ void _RNC_DrawState::Init(Device& device) {
 	device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
+	//----------------------------------------
+	// フォグの初期設定
+	//----------------------------------------
+	SetIsFog(device, false);
+	SetFogParameter(device, COLOR_WHITE, 0, 0);
+
 	// ~~~ 可変設定 ~~~
 
 	ResetVariableSetting(device);
@@ -98,12 +104,6 @@ void _RNC_DrawState::ResetVariableSetting(Device& device) {
 	// ライティングの初期設定
 	//----------------------------------------
 	SetIsLighting(device, true);
-
-	//----------------------------------------
-	// フォグの初期設定
-	//----------------------------------------
-	SetIsFog(device, false);
-	SetFogParameter(device, COLOR_WHITE, 0.0f, 0.0f);
 }
 
 //========================================
@@ -206,9 +206,11 @@ void _RNC_DrawState::SetIsFog(Device& device, const bool& isFog) {
 //========================================
 // フォグモードの設定(フラグ指定)
 //========================================
-void _RNC_DrawState::SetFogParameter(Device& device, const Color& col, const float& startDist, const float& endDist) {
+void _RNC_DrawState::SetFogParameter(Device& device, const Color& col, const UShort& startDist, const UShort& endDist) {
 
+	DWORD start = 10000; startDist;
+	DWORD end   = 10000; endDist;
 	device->SetRenderState(D3DRS_FOGCOLOR, D3DCOLOR_RGBA(col.r, col.g, col.b, col.a));
-	device->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&startDist));
-	device->SetRenderState(D3DRS_FOGEND  , *(DWORD*)(&endDist));
+	device->SetRenderState(D3DRS_FOGSTART, start);
+	device->SetRenderState(D3DRS_FOGEND  , end);
 }

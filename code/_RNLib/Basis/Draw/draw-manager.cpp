@@ -448,8 +448,9 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 	cameraBillboardMtx._43 = 0.0f;
 
 	// [[[ ライト3Dの設定 ]]]
+	bool isFog = false;
 	if (camera == NULL) {
-
+		CLight3D::AllDisable(device);
 	}
 	else {
 		const short lightID = camera->GetLightID();
@@ -461,7 +462,8 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 			bool      isSetting = false;
 			while (RNSystem::GetLight3DMgr().ListLoop((CObject**)&light)) {
 				if (light->GetID() == lightID) {
-					light->Setting(device);
+					light->Setting(device, camera->GetOverwriteBGCol());
+					isFog = light->GetIsFog();
 					isSetting = true;
 					break;
 				}
@@ -618,6 +620,10 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 			// ZテストをOFFに
 			RNLib::DrawStateMgr().SetIsZTest(device, false);
 
+			// フォグを解除
+			if (isFog)
+				RNLib::DrawStateMgr().SetIsFog(device, false);
+
 			// 頂点フォーマットの設定
 			device->SetFVF(FVF_VERTEX_2D);
 
@@ -643,6 +649,10 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 				// ポリゴンの描画
 				device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_idx, 2);
 			}
+
+			// フォグを戻す
+			if (isFog)
+				RNLib::DrawStateMgr().SetIsFog(device, true);
 		}
 
 		// 可変設定のリセット

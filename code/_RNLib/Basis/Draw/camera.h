@@ -54,7 +54,8 @@ public:
 	bool&       GetIsDraw           (void)                   { return m_isDraw; }
 	void        SetLightID          (const short& ID)        { m_lightID = ID; }
 	short&      GetLightID          (void)                   { return m_lightID; }
-	void        SetBGCol            (const Color& col)       { m_BGCol = col; }
+	void        SetOverwriteBGCol   (const Color& col)       { _RNC_Memory::Alloc(&m_ovrBGCol); *m_ovrBGCol = col; }
+	Color*&     GetOverwriteBGCol   (void)                   { return m_ovrBGCol; }
 	void        SetIsClipping       (const bool& isClipping) { m_isClipping = isClipping; }
 	bool&       GetIsClipping       (void)                   { return m_isClipping; }
 	Texture&    GetTexture          (void)                   { return m_MTInfo.textures[0]; }
@@ -130,7 +131,7 @@ private:
 	// •`‰æŠÖ˜A
 	bool            m_isDraw;
 	short           m_lightID;
-	Color           m_BGCol;
+	Color*          m_ovrBGCol;
 	bool            m_isClipping;
 	MTRenderingInfo m_MTInfo;
 	MotionBlur      m_motionBlur;
