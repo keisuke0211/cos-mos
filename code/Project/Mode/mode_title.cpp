@@ -75,7 +75,10 @@ CMode_Title::CMode_Title(void) {
 	}
 
 	BgColor = Color{ 0,0,0,255 };
+	BgOldColor = Color{ 0,0,0,255 };
 	BgNextColor = Color{ 0,0,0,255 };
+	nCntColorChange = 0;
+	bColorChange = false;
 
 	Title              = TITLE_TITLE;
 	NextTitle		   = TITLE_TITLE;
@@ -279,6 +282,8 @@ void CMode_Title::Update(void) {
 			StageSelect();
 		else if (Title == TITLE_NEXT)
 			return;
+
+		ColorChange();
 
 		if (m_bStageChange == false) {
 			if (m_bRocketMove == false) {
@@ -605,6 +610,9 @@ void CMode_Title::StageSelect(void) {
 			if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) {
 				TextRelease(TEXT_MENU);
 				SwapMode(TITLE_MENU_ANIME);
+
+				BgNextColor = Color{ 0,0,0,255 };
+				bColorChange = true;
 				return;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT)) {
@@ -960,6 +968,11 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
 			m_nStageSelect = nStage - 1;
 			m_nOldSelect = nStage;
+
+			BgOldColor = BgColor;
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 			
@@ -967,6 +980,11 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 			m_nStageSelect = 0;
 			m_nOldSelect = -1;
 			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
+			BgOldColor = BgColor;
+			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+			nCntColorChange = 0;
+			bColorChange = true;
 		}
 
 	m_nDrawPlanet = m_nPlanetIdx;
@@ -1023,6 +1041,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 
 		m_bStageSelect = false;
 
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
 		break;
@@ -1049,6 +1072,59 @@ void CMode_Title::StageRel(int nPlanet, int nStgMax)
 			{
 				Manager::StgEd()->SetStageRel(nPlanet, nCnt, false);
 			}
+		}
+	}
+}
+
+//========================================
+// êFïœçX
+//========================================
+void CMode_Title::ColorChange(void)
+{
+	if (bColorChange)
+	{
+		float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, nCntColorChange, COLOR_CHANGE_TIME);
+		int r = BgNextColor.r - BgOldColor.r;	int g = BgNextColor.g - BgOldColor.g;
+		int b = BgNextColor.b - BgOldColor.b;	int a = BgNextColor.a - BgOldColor.a;
+
+		if (r <= 0)
+		{
+			r *= -1;
+			BgColor.r = BgOldColor.r - (r * Rate);
+		}
+		else
+			BgColor.r = BgOldColor.r + (r * Rate);
+
+		if (g <= 0)
+		{
+			g *= -1;
+			BgColor.g = BgOldColor.g - (g * Rate);
+		}
+		else
+			BgColor.g = BgOldColor.g + (g * Rate);
+
+		if (b <= 0)
+		{
+			b *= -1;
+			BgColor.b = BgOldColor.b - (b * Rate);
+		}
+		else
+			BgColor.b = BgOldColor.b + (b * Rate);
+
+
+		if (a <= 0)
+		{
+			a *= -1;
+			BgColor.a = BgOldColor.a - (a * Rate);
+		}
+		else
+			BgColor.a = BgOldColor.a + (a * Rate);
+
+		if (++nCntColorChange > COLOR_CHANGE_TIME)
+		{
+			nCntColorChange = 0;
+			BgOldColor = BgColor;
+			bColorChange = false;
 		}
 	}
 }
