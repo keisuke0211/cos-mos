@@ -1254,11 +1254,16 @@ void CPlayer::CollisionToStageObject(void)
 				colliInfo.fHeight = pObj->GetHeight() * 0.5f;
 				colliInfo.vec = nCntVec;
 
+				if (type == OBJECT_TYPE::ROCKET)
+				{
+					colliInfo.pos = pObj->GetPos();
+				}
+
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
 					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE && 
-					CCollision::IsInRange(Self, colliInfo, true, true))
+					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true))
 					continue;
 
 				//独自の当たり判定設定
