@@ -50,13 +50,13 @@ float CCollision::Length(Pos3D& vec1, Pos3D& vec2, bool bXVec, bool bYVec, bool 
 //引数１・２  判定する情報（位置とサイズ
 //引数３・４  各ベクトルを使用するかどうか（サイズに奥行きは無いのでZベクトルは使用しない
 //========================
-bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec)
+bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius, bool bUseTargetRadius)
 {
 	//２つの情報のサイズを格納
 	Pos3D selfSize = INITPOS3D, targetSize = INITPOS3D;
 
-	/*  幅代入  */ if (bXVec) { selfSize.x = self.fWidth; targetSize.x = target.fWidth; }
-	/* 高さ代入 */ if (bYVec) { selfSize.y = self.fHeight; targetSize.y = target.fHeight; }
+	/*  幅代入  */ if (bXVec) { selfSize.x = bUseSelfRadius ? self.fRadius : self.fWidth;  targetSize.x = bUseTargetRadius ? target.fRadius : target.fWidth; }
+	/* 高さ代入 */ if (bYVec) { selfSize.y = bUseSelfRadius ? self.fRadius : self.fHeight; targetSize.y = bUseTargetRadius ? target.fRadius : target.fHeight; }
 
 	//位置・サイズの距離を取得
 	CFloat PosLength = Length(self.pos, target.pos, bXVec, bYVec, false);
@@ -903,15 +903,11 @@ bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, float *p
 	// 対象の現在と前回の最小・最大位置
 	SetMinMaxPos(target);
 
-	//対象までの距離と、対象の対角線を算出
-	const Pos3D PosDiff = self.pos - target.pos;
-	const float PosDiffLen = D3DXVec3Length(&PosDiff);
-	const float TargetLen = D3DXVec2Length(&Pos2D(target.fWidth, target.fWidth));
-
 	//距離が、自分の半径＋対象の対角線の長さより大きい
-	if (PosDiffLen > self.fRadius + TargetLen) return false;
+	if (IsInRange(self, target, true, true, true, false)) return false;
 
 	//自分から対象までの角度
+	const Pos3D PosDiff = self.pos - target.pos;
 	CFloat Angle = atan2f(-PosDiff.x, -PosDiff.y);
 	const Pos2D NearPos = Pos2D(sinf(Angle) * self.fRadius + self.pos.x,
 								cosf(Angle) * self.fRadius + self.pos.y);
