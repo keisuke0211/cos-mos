@@ -44,5 +44,5 @@ public:
 	void SetIsTextureAlpha   (Device& device, const bool& isTextureAlpha);
 	void SetIsLighting       (Device& device, const bool& isLighting);
 	void SetIsFog            (Device& device, const bool& isFog);
-	void SetFogParameter     (Device& device, const Color& col, const float& startDist, const float& endDist);
+	void SetFogParameter     (Device& device, const Color& col, const UShort& startDist, const UShort& endDist);
 };

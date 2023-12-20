@@ -1,4 +1,5 @@
 Light3DFile
+BGCol 128 128 128 255
 linearLights{ 4
 	linearLight{
 		rot 0.640002 0.000000 0.000000

@@ -53,9 +53,9 @@ public:
 		a = convA;
 	}
 	// •ÏŠ·
-	operator D3DCOLOR      const() { return D3DCOLOR_RGBA(r, g, b, a); }
-	operator D3DXCOLOR     const() { return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255); }
-	operator D3DCOLORVALUE const() { return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255); }
+	operator D3DCOLOR     () const { return D3DCOLOR_RGBA(r, g, b, a); }
+	operator D3DXCOLOR    () const { return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255); }
+	operator D3DCOLORVALUE() const { return D3DXCOLOR((float)r / 255, (float)g / 255, (float)b / 255, (float)a / 255); }
 	// ‰ÁŽZ
 	Color operator +(const Color& other) const {
 		Color col = *this;

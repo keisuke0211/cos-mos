@@ -17,7 +17,7 @@ PLANET = 3 data\MODEL\Regulus.x パッパラパー星
 #================================================================================
 # 惑星番号 / ステージのファイル名 / コインの解放数
 #================================================================================
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv 		0	60
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv 		0	30
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-2.csv 		1	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-3.csv 		2	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv 		3	60
