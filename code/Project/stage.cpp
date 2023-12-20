@@ -17,7 +17,6 @@
 #define  MAX_CLOUD		 (5)
 #define  MAX_BUBBLE		 (7)
 #define  MAX_BUBBLECNT	 (640)
-#define  WHALE_MOVE_TIME (360)
 
 //****************************************
 // 無名空間
@@ -29,6 +28,7 @@ namespace {
 	void AllocWorldData(void);
 	void LoadWorldData(void);
 	void SaveWorldData(void);
+	void RefreshData(void); //ワールド/ステージ情報を塗り替え
 	int LoadInt(char *pString, const char *pPunc) { return atoi(strtok(pString, pPunc)); }
 	float LoadFloat(char *pString, const char *pPunc) { return (float)atof(strtok(pString, pPunc)); }
 
@@ -46,6 +46,7 @@ namespace {
 	CCoinUI*        coinUI;
 	CRocketPartsUI* rocketparts;
 	bool            isPause;
+	bool            isReset;
 	bool            isCutIn;
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
@@ -58,9 +59,12 @@ namespace {
 		int MaxStage;      //ステージ数
 		float *pBestTime;  //各ステージのベストタイム
 		Stage::Data *pStgRec;//各ステージごとのデータ
+		Stage::Data *pStart; //ステージ開始時の情報（やり直し時のコイン回収状況リセットなどに仕様
 	};
 	WorldData *pWldData; //惑星ごとのレコード
 	int MaxPlanet;      //最大惑星数
+
+	const char *STAGE_DATA = "data\\GAMEDATA\\STAGE\\STAGE_DATA.txt";
 
 					 //文字添削
 	const char COMMENT = '#';       //コメント文字
@@ -85,6 +89,9 @@ void Stage::SetStageNumber  (const int& setPlanetIdx, const int& setStageIdx) { 
 void Stage::SetPause        (const bool& setIsPause)                          { isPause     = setIsPause; }
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
+void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
+bool Stage::GetIsTimeOver   (void)                                            { return (limitTimeCounter <= 0); }
+bool Stage::GetIsShowUI     (void)                                            { return !isPause && !isCutIn && CPlayer::GetZoomUpCounter() <= 0; }
 
 //========================================
 // 取得系関数
@@ -103,6 +110,7 @@ void Stage::Init(void) {
 	coinUI = NULL;
 	rocketparts = NULL;
 	isPause = false;
+	isReset = false;
 	fishpos = Pos3D(100.0f,300.0f,0.0f);
 
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
@@ -141,8 +149,6 @@ void Stage::Uninit(void)
 
 	//メモリ開放
 	ClearWorldData();
-
-	
 }
 
 //========================================
@@ -170,11 +176,14 @@ bool Stage::CheckStageNumber(const int& planetIdx, const int& stageIdx) {
 //========================================
 void Stage::StartStage(void) {
 
+	// リセットしたかフラグ
+	isReset;
+
 	// ステージ生成
 	Manager::StgEd()->StageLoad(planetIdx, stageIdx);
 
 	// 制限時間を設定
-	limitTimeCounter = Manager::StgEd()->GetStageCoin(planetIdx, stageIdx) * 60;
+	limitTimeCounter = Manager::StgEd()->GetStageLimittime(planetIdx, stageIdx) * 60;
 
 	// プレイヤーの生成
 	if (player == NULL)
@@ -235,6 +244,9 @@ void Stage::StartStage(void) {
 	// カメラのライト
 	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 	Manager::GetSubCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
+
+	// リセットフラグを偽にする
+	isReset = false;
 }
 
 //========================================
@@ -246,8 +258,39 @@ void Stage::UpdateStage(void) {
 	StageSoundPlayer::Update();
 
 	// 制限時間のカウント
-	if (--limitTimeCounter < 0) {
-		// タイムオーバーの処理
+	if(GetIsShowUI()) {
+		if (--limitTimeCounter <= 0) {
+
+			// タイムオーバーの処理
+			if (limitTimeCounter == 0) {
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::TIME_OVER], _RNC_Sound::CATEGORY::SE, 0.2f, false);
+			}
+
+			if (limitTimeCounter == -300) {
+				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
+			}
+		}
+		else if (limitTimeCounter % 60 == 0 && limitTimeCounter / 60 > 0 && limitTimeCounter / 60 <= 10) {
+			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::TIME_COUNT], _RNC_Sound::CATEGORY::SE, 0.2f, false);
+		}
+	}
+
+	// 時間表示
+	if (GetIsShowUI()) {
+		RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(180.0f, 120.0f), 0.0f)
+			->SetSize(200.0f, 60.0f)
+			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_FRAME]);
+		{
+			float rate = (limitTimeCounter % 60) / 60.0f;
+			float scale = 1.0f + rate * 0.2f;
+
+			_RNC_Text2D::CRegistInfo* registInfo = RNLib::Text2D().Put(PRIORITY_UI, String("%d", limitTimeCounter / 60 < 0 ? 0: limitTimeCounter / 60), _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(180.0f, 120.0f), 0.0f)
+				->SetSize(limitTimeCounter > 0 ? Size2D(28.0f * scale, 28.0f * scale) : Size2D(28.0f, 28.0f));
+
+			if (limitTimeCounter / 60 <= 10) {
+				registInfo->SetCol(Color(255, 255 * (1.0f - rate), 255 * (1.0f - rate), 255));
+			}
+		}
 	}
 
 	// ウィンドウ情報を取得
@@ -259,6 +302,7 @@ void Stage::UpdateStage(void) {
 
 	if (CPlayer::GetZoomUpCounter() > 0) {
 		if (CheckStageNumber(0, 0)) {
+
 			// 下カメラ描画
 			RNLib::Polygon2D().Put(0, true)
 				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
@@ -275,8 +319,7 @@ void Stage::UpdateStage(void) {
 				counter = 30;
 		}
 		else {
-			if (--counter < 0)
-				counter = 0;
+			counter = 0;
 		}
 		const float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, counter, 30);
 
@@ -357,6 +400,9 @@ void Stage::EndStage(void) {
 	// ステージオブジェクトと背景を解放
 	Manager::StageObjectMgr()->ReleaseAll();
 	Manager::BGMgr()->ReleaseAll();
+
+	// エフェクト3Dの解放
+	Manager::EffectMgr()->ReleaseAll();
 
 	// ロケットパーツUIを解放
 	if (rocketparts != NULL) {
@@ -514,7 +560,7 @@ namespace
 					//各ステージごとのデータ破棄
 					for (int nCntStage = 0; nCntStage < pWldData[nCntWorld].MaxStage; nCntStage++)
 					{
-						//コインの取得状況破棄
+						//コインの回収状況破棄
 						if (pWldData[nCntWorld].pStgRec[nCntStage].pGet != NULL)
 						{
 							delete[] pWldData[nCntWorld].pStgRec[nCntStage].pGet;
@@ -525,6 +571,25 @@ namespace
 					//全ステージデータ削除
 					delete[] pWldData[nCntWorld].pStgRec;
 					pWldData[nCntWorld].pStgRec = NULL;
+				}
+
+				//保存していた情報も開放
+				if (pWldData[nCntWorld].pStart != NULL)
+				{
+					//各ステージごとのデータ破棄
+					for (int nCntStage = 0; nCntStage < pWldData[nCntWorld].MaxStage; nCntStage++)
+					{
+						//コインの回収状況破棄
+						if (pWldData[nCntWorld].pStart[nCntStage].pGet != NULL)
+						{
+							delete[] pWldData[nCntWorld].pStart[nCntStage].pGet;
+							pWldData[nCntWorld].pStart[nCntStage].pGet = NULL;
+						}
+					}
+				
+					//全ステージデータ削除
+					delete[] pWldData[nCntWorld].pStart;
+					pWldData[nCntWorld].pStart = NULL;
 				}
 			}
 
@@ -558,7 +623,9 @@ namespace
 			//ステージ数分のレコード場所確保
 			pWldData[nCntPlanet].pBestTime = new float[MaxStage];
 			pWldData[nCntPlanet].pStgRec = new Stage::Data[MaxStage];
+			pWldData[nCntPlanet].pStart = new Stage::Data[MaxStage];
 
+			//各ステージ情報をクリア
 			for (int nCntStage = 0; nCntStage < MaxStage; nCntStage++)
 			{
 				if (pWldData[nCntPlanet].pBestTime != NULL)
@@ -568,6 +635,12 @@ namespace
 				{
 					pWldData[nCntPlanet].pStgRec[nCntStage].CoinNums = 0;
 					pWldData[nCntPlanet].pStgRec[nCntStage].pGet = NULL;
+				}
+
+				if (pWldData[nCntPlanet].pStart != NULL)
+				{
+					pWldData[nCntPlanet].pStart[nCntStage].CoinNums = 0;
+					pWldData[nCntPlanet].pStart[nCntStage].pGet = NULL;
 				}
 			}
 		}
@@ -581,7 +654,7 @@ namespace
 	{
 		if (pWldData != NULL) return;
 
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "r");
+		FILE *pFile = fopen(STAGE_DATA, "r");
 		if (pFile == NULL) return;
 
 		//メモリ確保
@@ -616,26 +689,32 @@ namespace
 				char *pSprit = strtok(&Text[0], CHR_PAUSE); // 区切り文字までを消す
 				CInt planetID = LoadInt(NULL, CHR_PAUSE);   // 惑星番号取得
 				CInt StageID = LoadInt(NULL, CHR_PAUSE);    // ステージ番号取得
-				pWldData[planetID].pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
 
-				CInt NumCoin = pWldData[planetID].pStgRec[StageID].CoinNums = LoadInt(NULL, CHR_PAUSE);//コイン数取得
+				WorldData& rWld = pWldData[planetID]; //長いので省略
 
-				//０なら引き返す
-				if (NumCoin == 0) continue;
+				rWld.pBestTime[StageID] = LoadFloat(NULL, CHR_PAUSE);//レコード代入
 
-				//取得状況場所確保
-				//RNLib::Memory().Alloc(&pWldData[planetID].pStgRec[StageID].pGet, NumCoin);
-				pWldData[planetID].pStgRec[StageID].pGet = new bool[NumCoin];
+				CInt NumCoin = rWld.pStgRec[StageID].CoinNums = LoadInt(NULL, CHR_PAUSE);//コイン数取得
 
-				for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+				if (NumCoin != 0)
 				{
-					//コイン取得状況取得
-					pWldData[planetID].pStgRec[StageID].pGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
+					//回収状況場所確保
+					rWld.pStgRec[StageID].pGet = new bool[NumCoin];
+
+					for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+					{
+						//コイン回収状況取得
+						rWld.pStgRec[StageID].pGet[nCntCoin] = LoadInt(NULL, CHR_PAUSE) == 0 ? false : true;
+					}
 				}
 			}
 		}
 
+		//ファイルを閉じる
 		fclose(pFile);
+
+		//初期情報保存
+		RefreshData();
 	}
 
 	//========================================
@@ -646,7 +725,7 @@ namespace
 	{
 		if (pWldData == NULL) return;
 
-		FILE *pFile = fopen("data\\GAMEDATA\\STAGE\\CLEAR_TIME.txt", "w");
+		FILE *pFile = fopen(STAGE_DATA, "w");
 		if (pFile == NULL) return;
 
 		const char *WORLD_COMMENT = "\n#=====[ %d面 ]\n";
@@ -662,7 +741,7 @@ namespace
 
 		//レコードの説明文
 		fprintf(pFile, "#下のフォーマット絶対順守!!\n");
-		fprintf(pFile, "#ワールド - ステージ - ベストタイム = コイン数 - n枚目のコインの取得状況(0=未回収  1=回収済み)\n");
+		fprintf(pFile, "#ワールド - ステージ - ベストタイム = コイン数 - n枚目のコインの回収状況(0=未回収  1=回収済み)\n");
 		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
 		{
 			//ワールド名書き出し
@@ -684,7 +763,7 @@ namespace
 					//コイン数書き出し
 					fprintf(pFile, "%d", NumCoins);
 
-					//取得状況書き出し
+					//回収状況書き出し
 					for (int nCntCoin = 0; nCntCoin < NumCoins; nCntCoin++)
 					{
 						fprintf(pFile, " - %d", pWldData[nCntPlanet].pStgRec[nCntStage].pGet[nCntCoin] ? 1 : 0);
@@ -698,6 +777,38 @@ namespace
 		//終了
 		fprintf(pFile, "\n%s", END_RECORD);
 		fclose(pFile);
+	}
+
+	//========================================
+	//ワールド/ステージ情報を塗り替え
+	// Author：HIRASAWA SHION
+	//========================================
+	void RefreshData(void)
+	{
+		for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+		{
+			//長いので省略
+			WorldData& rWld = pWldData[nCntPlanet];
+
+			for (int nCntStage = 0; nCntStage < rWld.MaxStage; nCntStage++)
+			{
+				//コイン数取得
+				CInt& NumCoin = rWld.pStgRec[nCntStage].CoinNums;
+
+				//０なら引き返す
+				if (NumCoin == 0) continue;
+
+				//コイン数と回収状況保存場所確保
+				rWld.pStart[nCntStage].CoinNums = NumCoin;
+				rWld.pStart[nCntStage].pGet = new bool[NumCoin];
+
+				for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+				{
+					//回収状況代入
+					rWld.pStart[nCntStage].pGet[nCntCoin] = rWld.pStgRec[nCntStage].pGet[nCntCoin];
+				}
+			}
+		}
 	}
 }
 
@@ -744,7 +855,29 @@ Stage::Data Stage::GetData(CInt& planetIdx, CInt& stageIdx)
 }
 
 //========================================
-// コイン取得状況を設定
+// コイン回収状況を取得
+// Author：HIRASAWA SHION
+//========================================
+bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
+{
+	LoadWorldData();
+
+	if (pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL)
+	{
+		RNLib::Window().Message_ERROR(String("このステージにはコインは配置されていません。"));
+		return false;
+	}
+	else if (coinID >= pWldData[planetIdx].pStgRec[stageIdx].CoinNums) {
+		RNLib::Window().Message_ERROR(String("コインの枚数が実際の配置数とずれています。\nID:%d 枚数:%d", coinID, pWldData[planetIdx].pStgRec[stageIdx].CoinNums));
+		return false;
+	}
+
+	//回収状況を返す
+	return pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID];
+}
+
+//========================================
+// コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
 void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
@@ -752,17 +885,18 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 	LoadWorldData();
 
 	//コイン数が違っていたら設定しない
-	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums) return;
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums != data.CoinNums ||
+		pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL) return;
 
 	for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
 	{
-		//取得状況代入
+		//回収状況代入
 		pWldData[planetIdx].pStgRec[stageIdx].pGet[nCntData] = data.pGet[nCntData];
 	}
 }
 
 //========================================
-// コイン取得状況を設定
+// コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
 void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
@@ -770,8 +904,9 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bo
 	LoadWorldData();
 
 	//コイン数が違っていたら設定しない
-	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID) return;
+	if (pWldData[planetIdx].pStgRec[stageIdx].CoinNums <= coinID ||
+		pWldData[planetIdx].pStgRec[stageIdx].pGet == NULL) return;
 
-	//取得状況代入
+	//回収状況代入
 	pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID] = bGet;
 }

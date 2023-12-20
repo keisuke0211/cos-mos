@@ -21,7 +21,7 @@ struct AmbientSEInfo {
 
 // タイトル
 #define BGM_PATH "data\\SOUND\\BGM\\SELECT.wav"
-#define BGM_VOLUME (0.5f)
+#define BGM_VOLUME (0.8f)
 
 //****************************************
 // 変数定義

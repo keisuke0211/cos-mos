@@ -25,6 +25,9 @@ namespace Stage {
 	void     SetPause        (const bool& isPause);
 	void     SetRocketPartsUI(CRocketPartsUI* parts);
 	void     SetIsCutIn      (const bool& isCutIn);
+	void     SetIsReset      (const bool& isReset);
+	bool     GetIsTimeOver   (void);
+	bool     GetIsShowUI     (void);
 	CPlayer* GetPlayer       (void);
 
 	//各ステージごとのデータ
@@ -37,6 +40,7 @@ namespace Stage {
 	float GetBestTime(CInt& planetIdx, CInt& stageIdx);
 	void  RegistTime(CInt& planetIdx, CInt& stageIdx, CFloat& ClearTime);
 	Data  GetData(CInt& planetIdx, CInt& stageIdx);
+	bool  GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID);
 	void  SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data);
 	void  SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet);
 };

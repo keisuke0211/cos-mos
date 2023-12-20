@@ -26,6 +26,46 @@ CCollision::~CCollision()
 
 }
 
+//========================
+//距離を測る関数（判定するベクトル指定可能
+//------------------------
+//引数１・２  判定する座標など
+//引数３～５  各ベクトルを使用するかどうか
+//========================
+float CCollision::Length(Pos3D& vec1, Pos3D& vec2, bool bXVec, bool bYVec, bool bZVec)
+{
+	Pos3D vectol = INITPOS3D;
+
+	/*Xベクトル使用*/if (bXVec) vectol.x = vec1.x - vec2.x;
+	/*Yベクトル使用*/if (bYVec) vectol.y = vec1.y - vec2.y;
+	/*Zベクトル使用*/if (bZVec) vectol.z = vec1.z - vec2.z;
+
+	//長さを返す
+	return D3DXVec3Length(&vectol);
+}
+
+//========================
+//2点の距離が、サイズの範囲内かどうかを判定（判定するベクトル指定可能
+//------------------------
+//引数１・２  判定する情報（位置とサイズ
+//引数３・４  各ベクトルを使用するかどうか（サイズに奥行きは無いのでZベクトルは使用しない
+//========================
+bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec)
+{
+	//２つの情報のサイズを格納
+	Pos3D selfSize = INITPOS3D, targetSize = INITPOS3D;
+
+	/*  幅代入  */ if (bXVec) { selfSize.x = self.fWidth; targetSize.x = target.fWidth; }
+	/* 高さ代入 */ if (bYVec) { selfSize.y = self.fHeight; targetSize.y = target.fHeight; }
+
+	//位置・サイズの距離を取得
+	CFloat PosLength = Length(self.pos, target.pos, bXVec, bYVec, false);
+	CFloat SizeLength = Length(selfSize, targetSize, bXVec, bYVec, false);
+
+	//範囲内に居るかどうか返す
+	return PosLength < SizeLength;
+}
+
 //----------------------------
 // 上からの当たり判定による位置修正
 //----------------------------
@@ -812,17 +852,15 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 	switch (vec)
 	{
 		case CPlayer::VECTOL::X:
-			if (self.minPos.y < target.maxPos.y && target.minPos.y < self.maxPos.y)
+			if (RN_GetIsLs(self.minPos.y, target.maxPos.y) && RN_GetIsLs(target.minPos.y, self.maxPos.y))
 			{// Y範囲内
-				const bool isLeft  = self.maxPos.x >= target.minPos.x;
-				const bool isRight = self.minPos.x <= target.maxPos.x;
+				const bool isLeft  = RN_GetIsGtOrEq(self.maxPos.x, target.minPos.x);
+				const bool isRight = RN_GetIsLsOrEq(self.minPos.x, target.maxPos.x);
 
-				if (isLeft && (
-					self.maxPosOld.x <= target.minPosOld.x || self.posOld.x <= target.minPosOld.x))
+				if (isLeft && (RN_GetIsLsOrEq(self.maxPosOld.x, target.minPosOld.x) || RN_GetIsLsOrEq(self.posOld.x, target.minPosOld.x)))
 					return ROT::LEFT;
 
-				if (isRight && (
-					self.minPosOld.x >= target.maxPosOld.x || self.posOld.x >= target.maxPosOld.x))
+				if (isRight && (RN_GetIsGtOrEq(self.minPosOld.x, target.maxPosOld.x) || RN_GetIsGtOrEq(self.posOld.x, target.maxPosOld.x)))
 					return ROT::RIGHT;
 
 				if (isLeft && isRight)
@@ -831,17 +869,15 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 			break;
 
 		case CPlayer::VECTOL::Y:
-			if (self.minPos.x < target.maxPos.x && target.minPos.x < self.maxPos.x)
+			if (RN_GetIsLs(self.minPos.x, target.maxPos.x) && RN_GetIsLs(target.minPos.x, self.maxPos.x))
 			{// X範囲内
-				const bool isUnder = self.maxPos.y >= target.minPos.y;
-				const bool isOver  = self.minPos.y <= target.maxPos.y;
+				const bool isUnder = RN_GetIsGtOrEq(self.maxPos.y, target.minPos.y);
+				const bool isOver =  RN_GetIsLsOrEq(self.minPos.y, target.maxPos.y);
 
-				if (isUnder && (
-					self.maxPosOld.y <= target.minPosOld.y || self.posOld.y <= target.minPosOld.y))
+				if (isUnder && (RN_GetIsLsOrEq(self.maxPosOld.y, target.minPosOld.y) || RN_GetIsLsOrEq(self.posOld.y, target.minPosOld.y)))
 					return ROT::UNDER;
 
-				if (isOver && (
-					self.minPosOld.y >= target.maxPosOld.y || self.posOld.y >= target.maxPosOld.y))
+				if (isOver && (RN_GetIsGtOrEq(self.minPosOld.y, target.maxPosOld.y) || RN_GetIsGtOrEq(self.posOld.y, target.maxPosOld.y)))
 					return ROT::OVER;
 
 				if (isUnder && isOver)

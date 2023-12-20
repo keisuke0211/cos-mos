@@ -15,6 +15,7 @@ const char* CResources::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"data\\TEXTURE\\BlackEye.PNG",
 	"data\\TEXTURE\\BackGround\\fish.png",
 	"data\\TEXTURE\\BackGround\\bubble.png",
+	"data\\TEXTURE\\parts_frame.png",
 };
 
 short CResources::SOUND_IDXES[(int)SOUND::MAX] = {};
@@ -33,4 +34,6 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\vibration.wav",
 	"data\\SOUND\\SE\\rocket\\parts_get.wav",
 	"NONEDATA",
+	"data\\SOUND\\SE\\time-count.wav",
+	"data\\SOUND\\SE\\time-over.wav",
 };

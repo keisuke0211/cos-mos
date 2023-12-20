@@ -135,6 +135,12 @@ void Manager::Update(void) {
 			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 	}
 
+	if (RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
+		if (RNLib::Input().GetKeyTrigger(DIK_F9)) {
+			RNLib::DrawMgr().SetIsDrawPolygon2D(false, !RNLib::DrawMgr().GetIsDrawPolygon2D(false));
+		}
+	}
+
 	// 予約されている時、遷移がモード設定待ちならモードを設定する
 	if (m_reserveModeType != CMode::TYPE::NONE) {
 		if (m_transition.GetState() == CTransition::STATE::OPEN_WAIT) {

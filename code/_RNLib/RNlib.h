@@ -67,9 +67,27 @@
 namespace RNSystem {
 
 	//========== [[[ 列挙型定義 ]]]
-	enum class SIGNAL { NONE, INIT, UNINIT, END_UNINIT, UNINIT_WAIT, UPDATE, UPDATE_WAIT, DRAW, END_DRAW, END, };
-	enum class MODE   { EXECUTION, DEBUG, DEMO, SETUP3D_EDITOR, LIGHT3D_EDITOR, RAIL3D_EDITOR, };
-
+	enum class MODE {
+		EXECUTION,		// 実行
+		DEBUG,			// デバッグ
+		DEMO,			// デモ
+		SETUP3D_EDITOR,	// セットアップ3Dエディター
+		LIGHT3D_EDITOR,	// ライト3Dエディター
+		RAIL3D_EDITOR,	// レール3Dエディター
+	};
+	enum class SIGNAL { 
+		NONE, 			//   (※取得非推奨)
+		INIT, 			// 初期処理
+		UNINIT,			// 終了処理
+		END_UNINIT,		//   (※取得非推奨)
+		UNINIT_WAIT,	//   (※取得非推奨)
+		UPDATE,			// 更新処理
+		UPDATE_WAIT,	//   (※取得非推奨)
+		DRAW,			// 描画処理
+		END_DRAW,		//   (※取得非推奨)
+		END,			//   (※取得非推奨)
+	};
+	
 	//========== [[[ 関数宣言 ]]]
 	bool              MainLoop      (HINSTANCE& instanceHandle, const char* settingsPath, const char* optionsDataPath, const UShort& priorityMax, const MODE& mode);
 	SIGNAL            GetSignal     (void);

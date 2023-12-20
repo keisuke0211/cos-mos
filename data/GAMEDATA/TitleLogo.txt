@@ -1,0 +1,53 @@
+#========================================
+#
+# ƒ^ƒCƒgƒ‹ƒƒSî•ñ
+# Author KEISUKE OOTONO
+#
+#========================================
+# ƒƒS‚Ìİ’è
+#========================================
+Start
+
+-- ‚PŒÂ–Ú‚Ìİ’è ------------------------------------------------------
+	SetLogo
+		Pos = 385.0 150.0 0.0
+		Size = 256.0 128.0
+		TexPath = data\\TEXTURE\\TitleLogo\\Cos1.png
+	EndLogo
+	
+-- ‚QŒÂ–Ú‚Ìİ’è ------------------------------------------------------
+	SetLogo
+		Pos = 890.0 150.0 0.0
+		Size = 256.0 128.0
+		TexPath = data\\TEXTURE\\TitleLogo\\Mos1.png
+	EndLogo
+
+-- ‚RŒÂ–Ú‚Ìİ’è ------------------------------------------------------
+	SetLogo
+		Pos = 630.0 100.0 0.0
+		Size = 64.0 128.0
+		TexPath = data\\TEXTURE\\TitleLogo\\Nui.png
+	EndLogo
+
+-- ‚SŒÂ–Ú‚Ìİ’è ------------------------------------------------------
+	SetLogo
+		Pos = 545.0 260.0 0.0
+		Size = 128.0 64.0
+		TexPath = data\\TEXTURE\\TitleLogo\\Cos2.png
+	EndLogo
+	
+-- ‚TŒÂ–Ú‚Ìİ’è ------------------------------------------------------
+	SetLogo
+		Pos = 745.0 260.0 0.0
+		Size = 128.0 64.0
+		TexPath = data\\TEXTURE\\TitleLogo\\Mos2.png
+	EndLogo
+	
+-- ‚UŒÂ–Ú‚Ìİ’è ------------------------------------------------------
+	SetLogo
+		Pos = 1050.0 260.0 0.0
+		Size = 128.0 64.0
+		TexPath = data\\TEXTURE\\TitleLogo\\TM.png
+	EndLogo
+
+END

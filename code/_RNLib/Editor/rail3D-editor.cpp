@@ -146,7 +146,7 @@ void CRail3DEditor::Update(void) {
 				}
 			}
 			if (RNLib::Input().GetKeyTrigger(DIK_H)) {
-				if (scale < 0.099f) {
+				if (RNLib::Number().GetIsLs(scale, 0.1f)) {
 					scale += 0.01f;
 				}
 				else if (scale < 1.0f) {

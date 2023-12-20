@@ -11,6 +11,8 @@
 
 int CCoin::s_NumAll = 0;
 int CCoin::s_Num = 0;
+int CCoin::s_CorrNumAll = 0; //今現在のステージのコイン総数
+
 //========================================
 // コンストラクタ
 //========================================
@@ -22,7 +24,15 @@ CCoin::CCoin() {
 	if (s_Num != 0)
 		s_Num = 0;
 
-	m_nID = s_NumAll++;
+	m_nID = s_CorrNumAll++;
+
+	//現在のワールド・ステージ番号を取得
+	CStageEditor *pEd = Manager::StgEd();
+	CInt planet = pEd->GetPlanetIdx();
+	CInt stage = pEd->GetType()[planet].nStageIdx;
+
+	//色設定（既に取得していたら半透明に
+	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 255,255,255, 100 } : COLOR_WHITE;
 }
 
 //========================================
@@ -31,7 +41,7 @@ CCoin::CCoin() {
 CCoin::~CCoin() {
 
 	Manager::StageObjectMgr()->SubList(this);
-	s_NumAll--;
+	s_CorrNumAll--;
 }
 
 //========================================
@@ -41,6 +51,7 @@ void CCoin::Update(void) {
 	m_rot.y -= 0.01f;
 
 	RNLib::Model().Put(PRIORITY_OBJECT, m_ModelIdx, m_pos, m_rot, false)
+		->SetCol(m_color)
 		->SetOutLineIdx(8);
 
 	for (int nCnt = 0; nCnt < CPlayer::NUM_PLAYER; nCnt++)

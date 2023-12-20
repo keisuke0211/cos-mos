@@ -373,8 +373,15 @@ void CPlayer::Update(void)
 		GoalDirector();
 	}
 
+	m_aInfo[0].posOld;
+	m_aInfo[1].posOld;
+
 	// 当たり判定まとめ
 	CollisionToStageObject();
+
+	// 過去の位置を設定
+	m_aInfo[0].posOld = m_aInfo[0].pos;
+	m_aInfo[1].posOld = m_aInfo[1].pos;
 
 	// 情報更新
 	UpdateInfo();
@@ -405,18 +412,22 @@ void CPlayer::UpdateInfo(void)
 							if (ms_guideCounter == 1) {
 								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 							}
-							RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-								->SetZTest(false)
-								->SetBillboard(true);
+							if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+								RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+									->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+									->SetZTest(false)
+									->SetBillboard(true);
+							}
 						}
 						else {
 							if (s_nSwapInterval == 0) {
-								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-									->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-									->SetZTest(false)
-									->SetBillboard(true);
-								isSwapGuide = true;
+								if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+									RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+										->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+										->SetZTest(false)
+										->SetBillboard(true);
+									isSwapGuide = true;
+								}
 							}
 						}
 					}
@@ -429,16 +440,20 @@ void CPlayer::UpdateInfo(void)
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 						}
-						RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-							->SetZTest(false)
-							->SetBillboard(true);
+						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+							RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+						}
 					}
 					else {
-						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-							->SetZTest(false)
-							->SetBillboard(true);
+						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+							RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+						}
 					}
 				}
 			}
@@ -797,8 +812,9 @@ void CPlayer::ActionControl(void)
 			Player.move.x *= -2.0f;
 		}
 
-		// ロケットに乗っている　or ゴールしている or ズームアップ の時スキップ
-		if (Player.bRide || Player.bGoal || isZoomUp) continue;
+		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ
+		if (Player.bRide || Player.bGoal || isZoomUp || Stage::GetIsTimeOver()) 
+			continue;
 
 		// ジャンプ入力（空中じゃない）
 		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
@@ -975,7 +991,7 @@ void CPlayer::SwapAnimation(void)
 
 		const int nTex = rand() % 2 + 2;
 
-		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos, Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),INITD3DXVECTOR3, 8, _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
+		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos + Pos3D(0.0f,0.0f,-10.0f), Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),INITD3DXVECTOR3,false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL,8);
 	}
 }
 
@@ -1048,16 +1064,18 @@ void CPlayer::SwapGuide(Info& Player)
 	CFloat TexVUnder = 1.0f - TexVOver;
 
 	//スワップ先のマーク描画
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
-		->SetSize(MarkSize, MarkSize)
-		->SetBillboard(true)
-		->SetZTest(false)
-		->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
-		->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
-		->SetLighting(false)
-		->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
-				   Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
-				   Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
+	if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, MarkPos, INITD3DXVECTOR3)
+			->SetSize(MarkSize, MarkSize)
+			->SetBillboard(true)
+			->SetZTest(false)
+			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
+			->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
+			->SetLighting(false)
+			->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
+				Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
+				Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
+	}
 
 	//スワップ先までの中心座標
 	const Pos3D Center = Pos3D(Player.pos.x, 0.0f, MarkPos.z);
@@ -1077,15 +1095,17 @@ void CPlayer::SwapGuide(Info& Player)
 		Player.fGuideTexVPos = 0.0f;
 
 	//スワップガイドの描画
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
-		->SetSize(GUIDE_WIDTH, (fabsf(Player.pos.y) - SIZE_HEIGHT) * 2.0f)
-		->SetBillboard(true)
-		->SetZTest(false)
-		->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
-		->SetLighting(false)
-		->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
-				   Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
-				   Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
+	if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, Center, INITD3DXVECTOR3)
+			->SetSize(GUIDE_WIDTH, (fabsf(Player.pos.y) - SIZE_HEIGHT) * 2.0f)
+			->SetBillboard(true)
+			->SetZTest(false)
+			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
+			->SetLighting(false)
+			->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+				Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
+				Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
+	}
 }
 
 //----------------------------
@@ -1134,12 +1154,12 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 	// ロケットに乗ってたら　or ゴールしていたらスキップ
 	if (Player.bRide || Player.bGoal) return;
 
+	
 	// 移動量反映
 	switch (vec)
 	{
 	case VECTOL::X:
-		// 過去の位置を設定
-		Player.posOld.x = Player.pos.x;
+		
 
 		// 慣性処理
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
@@ -1153,8 +1173,7 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 
 		// 重力処理
 	case VECTOL::Y:
-		// 過去の位置を設定
-		Player.posOld.y = Player.pos.y;
+		
 
 		// トランポリンによる特殊ジャンプ中
 		if (Player.bTramJump)
@@ -1238,12 +1257,9 @@ void CPlayer::CollisionToStageObject(void)
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
-					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE) {
-
-					if (D3DXVec3Length(&(colliInfo.pos - Player.pos)) >
-						D3DXVec2Length(&D3DXVECTOR2(colliInfo.fWidth + SIZE_WIDTH, colliInfo.fHeight + SIZE_HEIGHT)))
-						continue;
-				}
+					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE && 
+					CCollision::IsInRange(Self, colliInfo, true, true))
+					continue;
 
 				//独自の当たり判定設定
 				//場合によってはここで判定終了
