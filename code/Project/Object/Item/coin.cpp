@@ -33,7 +33,7 @@ CCoin::CCoin() {
 
 	//Fİ’èiŠù‚Éæ“¾‚µ‚Ä‚¢‚½‚ç”¼“§–¾‚É
 	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 255,255,255, 100 } : COLOR_WHITE;
-	m_outLineIdx = Stage::GetCoinInfo(planet, stage, m_nID) ? 8 : NONEDATA;
+	m_outLineIdx = Stage::GetCoinInfo(planet, stage, m_nID) ? NONEDATA : 8;
 }
 
 //========================================

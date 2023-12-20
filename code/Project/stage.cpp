@@ -115,7 +115,7 @@ void Stage::Init(void) {
 
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,100.0f,0.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,100.0f,50.0f + rand() % 50);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
 	}
@@ -480,6 +480,7 @@ namespace {
 				if (cloudpos[nCnt].x >= 550.0f)
 				{
 					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 200 - 200, 200.0f, 200.0f + rand() % 200 - 100);
+					cloudpos[nCnt].z = 50 + rand() % 50;
 				}
 			}
 
