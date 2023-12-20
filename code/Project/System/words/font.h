@@ -26,7 +26,7 @@ public:
 	// ƒtƒHƒ“ƒg
 	enum FONT
 	{
-		FONT_851GKKTT = 0,
+		FONT_07NIKUMARU = 0,
 		FONT_AMECHAN,
 		FONT_MEIRIO,
 		FONT_MAX,
