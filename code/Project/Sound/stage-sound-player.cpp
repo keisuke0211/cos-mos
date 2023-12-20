@@ -55,7 +55,7 @@ static const char* sc_blockLandingSE[(int)CBlock::LOOKS_TYPE::MAX] = {
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[6] 柱の上
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[7] 柱の繋ぎ
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[8] 柱の根本
-	"data\\SOUND\\SE\\landing\\jamp.wav",	//[9] 草ブロック
+	"data\\SOUND\\SE\\landing\\grass.wav",	//[9] 草ブロック
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[10] 木の幹
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[11] 木の根元
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[12] バオバブの木(背景用)
@@ -65,9 +65,9 @@ static const char* sc_blockLandingSE[(int)CBlock::LOOKS_TYPE::MAX] = {
 	"data\\SOUND\\SE\\landing\\ground.wav",	//[16] 古代の石レンガブロック
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[17] 土＆古代の石ブロック(中間用)
 	"data\\SOUND\\SE\\landing\\jamp.wav",	//[18] ヤシの木
-	"data\\SOUND\\SE\\landing\\jamp.wav",	//[19] 三つ目のブロック
-	"data\\SOUND\\SE\\landing\\jamp.wav",	//[20] 草ブロック(木の実)
-	"data\\SOUND\\SE\\landing\\jamp.wav",	//[21] ヌイの家ブロック
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[19] 三つ目のブロック
+	"data\\SOUND\\SE\\landing\\grass.wav",	//[20] 草ブロック(木の実)
+	"data\\SOUND\\SE\\landing\\ground.wav",	//[21] ヌイの家ブロック
 	"data\\SOUND\\SE\\landing\\ground.wav",	//[22] アスファルトブロック
 	"data\\SOUND\\SE\\landing\\ground.wav",	//[23] ひび割れたアスファルトブロック
 	"data\\SOUND\\SE\\landing\\iron.wav",	//[24] 鉄格子(当たり判定無し想定)
