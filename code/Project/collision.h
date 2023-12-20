@@ -57,6 +57,23 @@ public:
 	~CCollision();
 
 	//========================
+	//距離を測る関数（判定するベクトル指定可能
+	//------------------------
+	//引数１・２  判定する座標など
+	//引数３～５  各ベクトルを使用するかどうか
+	//========================
+	static float Length(Pos3D& vec1, Pos3D& vec2, bool bXVec, bool bYVec, bool bZVec);
+
+	//========================
+	//2点の距離が、サイズの範囲内かどうかを判定（判定するベクトル指定可能
+	//------------------------
+	//引数１・２  判定する情報（位置とサイズ
+	//引数３・４  各ベクトルを使用するかどうか（サイズに奥行きは無いのでZベクトルは使用しない
+	//引数５・６  各情報の半径を使用するかどうか
+	//========================
+	static bool IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius = false, bool bUseTargetRadius = false);
+
+	//========================
 	// 矩形と矩形の当たり判定
 	//------------------------
 	// 引数１	self	：自分の情報
@@ -103,4 +120,6 @@ private:
 	//最小最大位置設定処理
 	static void SetMinMaxPos(SelfInfo& self);
 	static void SetMinMaxPos(ColliInfo& colli);
+
+	bool IsEqual(float& f11, float& f12, float& f21, float& f22);
 };

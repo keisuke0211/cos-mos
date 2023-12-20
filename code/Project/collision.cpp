@@ -26,6 +26,46 @@ CCollision::~CCollision()
 
 }
 
+//========================
+//距離を測る関数（判定するベクトル指定可能
+//------------------------
+//引数１・２  判定する座標など
+//引数３～５  各ベクトルを使用するかどうか
+//========================
+float CCollision::Length(Pos3D& vec1, Pos3D& vec2, bool bXVec, bool bYVec, bool bZVec)
+{
+	Pos3D vectol = INITPOS3D;
+
+	/*Xベクトル使用*/if (bXVec) vectol.x = vec1.x - vec2.x;
+	/*Yベクトル使用*/if (bYVec) vectol.y = vec1.y - vec2.y;
+	/*Zベクトル使用*/if (bZVec) vectol.z = vec1.z - vec2.z;
+
+	//長さを返す
+	return D3DXVec3Length(&vectol);
+}
+
+//========================
+//2点の距離が、サイズの範囲内かどうかを判定（判定するベクトル指定可能
+//------------------------
+//引数１・２  判定する情報（位置とサイズ
+//引数３・４  各ベクトルを使用するかどうか（サイズに奥行きは無いのでZベクトルは使用しない
+//========================
+bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius, bool bUseTargetRadius)
+{
+	//２つの情報のサイズを格納
+	Pos3D selfSize = INITPOS3D, targetSize = INITPOS3D;
+
+	/*  幅代入  */ if (bXVec) { selfSize.x = bUseSelfRadius ? self.fRadius : self.fWidth;  targetSize.x = bUseTargetRadius ? target.fRadius : target.fWidth; }
+	/* 高さ代入 */ if (bYVec) { selfSize.y = bUseSelfRadius ? self.fRadius : self.fHeight; targetSize.y = bUseTargetRadius ? target.fRadius : target.fHeight; }
+
+	//位置・サイズの距離を取得
+	CFloat PosLength = Length(self.pos, target.pos, bXVec, bYVec, false);
+	CFloat SizeLength = Length(selfSize, targetSize, bXVec, bYVec, false);
+
+	//範囲内に居るかどうか返す
+	return PosLength < SizeLength;
+}
+
 //----------------------------
 // 上からの当たり判定による位置修正
 //----------------------------
@@ -834,12 +874,10 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 				const bool isUnder = RN_GetIsGtOrEq(self.maxPos.y, target.minPos.y);
 				const bool isOver =  RN_GetIsLsOrEq(self.minPos.y, target.maxPos.y);
 
-				if (isUnder && (
-					RN_GetIsLsOrEq(self.maxPosOld.y, target.minPosOld.y) || RN_GetIsLsOrEq(self.posOld.y, target.minPosOld.y)))
+				if (isUnder && (RN_GetIsLsOrEq(self.maxPosOld.y, target.minPosOld.y) || RN_GetIsLsOrEq(self.posOld.y, target.minPosOld.y)))
 					return ROT::UNDER;
 
-				if (isOver && (
-					self.minPosOld.y >= target.maxPosOld.y || self.posOld.y >= target.maxPosOld.y))
+				if (isOver && (RN_GetIsGtOrEq(self.minPosOld.y, target.maxPosOld.y) || RN_GetIsGtOrEq(self.posOld.y, target.maxPosOld.y)))
 					return ROT::OVER;
 
 				if (isUnder && isOver)
@@ -865,15 +903,11 @@ bool CCollision::CircleToBoxCollider(SelfInfo& self, ColliInfo& target, float *p
 	// 対象の現在と前回の最小・最大位置
 	SetMinMaxPos(target);
 
-	//対象までの距離と、対象の対角線を算出
-	const Pos3D PosDiff = self.pos - target.pos;
-	const float PosDiffLen = D3DXVec3Length(&PosDiff);
-	const float TargetLen = D3DXVec2Length(&Pos2D(target.fWidth, target.fWidth));
-
 	//距離が、自分の半径＋対象の対角線の長さより大きい
-	if (PosDiffLen > self.fRadius + TargetLen) return false;
+	if (IsInRange(self, target, true, true, true, false)) return false;
 
 	//自分から対象までの角度
+	const Pos3D PosDiff = self.pos - target.pos;
 	CFloat Angle = atan2f(-PosDiff.x, -PosDiff.y);
 	const Pos2D NearPos = Pos2D(sinf(Angle) * self.fRadius + self.pos.x,
 								cosf(Angle) * self.fRadius + self.pos.y);
