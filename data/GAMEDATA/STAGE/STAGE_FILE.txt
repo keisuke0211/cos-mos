@@ -24,7 +24,7 @@ EndPlanet
 SetPlanet
 	NumStage = 3
 	ModelPath = data\MODEL\Regulus.x
-	BackColor = 5 40 140 255
+	BackColor = 25 25 112 255
 
 EndPlanet
 
