@@ -412,18 +412,22 @@ void CPlayer::UpdateInfo(void)
 							if (ms_guideCounter == 1) {
 								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 							}
-							RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-								->SetZTest(false)
-								->SetBillboard(true);
+							if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+								RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+									->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+									->SetZTest(false)
+									->SetBillboard(true);
+							}
 						}
 						else {
 							if (s_nSwapInterval == 0) {
-								RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-									->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-									->SetZTest(false)
-									->SetBillboard(true);
-								isSwapGuide = true;
+								if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+									RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+										->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+										->SetZTest(false)
+										->SetBillboard(true);
+									isSwapGuide = true;
+								}
 							}
 						}
 					}
@@ -436,16 +440,20 @@ void CPlayer::UpdateInfo(void)
 						if (ms_guideCounter == 1) {
 							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 						}
-						RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-							->SetZTest(false)
-							->SetBillboard(true);
+						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+							RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+						}
 					}
 					else {
-						RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-							->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-							->SetZTest(false)
-							->SetBillboard(true);
+						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+							RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+						}
 					}
 				}
 			}
