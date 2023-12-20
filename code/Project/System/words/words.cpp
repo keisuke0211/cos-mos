@@ -227,6 +227,9 @@ void CWords::SetWords(const char*text, CFont::FONT type)
 			if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\TextBox\\joystick2_left.png", &m_pTex)))
 				m_pTex = Manager::Font()->GetFont(text, type);
 		}
+		else if (Txt == "„X") {
+			m_pTex = Manager::Font()->GetFont("", type);
+		}
 	}
 	else
 	{

@@ -3,6 +3,9 @@
 
 short CResources::TEXTURE_IDXES[(int)TEXTURE::MAX] = {};
 const char* CResources::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
+	"data\\TEXTURE\\BackGround\\Space0.png",
+	"data\\TEXTURE\\BackGround\\Space1.png",
+	"data\\TEXTURE\\BackGround\\Space2.png",
 	"data\\TEXTURE\\BackGround\\Wilderness.png",
 	"data\\TEXTURE\\BackGround\\Forest.png",
 	"data\\TEXTURE\\BackGround\\Cave.png",

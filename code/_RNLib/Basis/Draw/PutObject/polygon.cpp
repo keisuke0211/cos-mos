@@ -103,10 +103,10 @@ void Polygon2DAnd3D::CSetTexInfoSum::AssignTexInfo(void*& tex, TEX_TYPE& texType
 		SetTexInfo* setTexInfo = (SetTexInfo*)m_setTexInfo;
 
 		if ((setTexInfo->ptn == 0 && setTexInfo->ptnX == 1 && setTexInfo->ptnY == 1) || setTexInfo->ptnX <= 0 || setTexInfo->ptnY <= 0) {
-			pos0 = Pos2D(0.0f, 0.0f);
-			pos1 = Pos2D(1.0f, 0.0f);
-			pos2 = Pos2D(0.0f, 1.0f);
-			pos3 = Pos2D(1.0f, 1.0f);
+			pos0 = Pos2D(0.0f + setTexInfo->ptnPos.x, 0.0f + setTexInfo->ptnPos.y);
+			pos1 = Pos2D(1.0f + setTexInfo->ptnPos.x, 0.0f + setTexInfo->ptnPos.y);
+			pos2 = Pos2D(0.0f + setTexInfo->ptnPos.x, 1.0f + setTexInfo->ptnPos.y);
+			pos3 = Pos2D(1.0f + setTexInfo->ptnPos.x, 1.0f + setTexInfo->ptnPos.y);
 		}
 		else {
 			const float divX   = (1.0f / setTexInfo->ptnX);
