@@ -246,9 +246,9 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::BACKWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
 			Color setCol = LOOKS_DATAS[(int)m_looksType].col;
-			setCol.r *= 0.7f;
-			setCol.g *= 0.7f;
-			setCol.b *= 0.7f;
+			setCol.r *= 0.4f;
+			setCol.g *= 0.4f;
+			setCol.b *= 0.4f;
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
 				RNLib::StaticMesh().SetMaterialModel(priority, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], m_pasteTexIdxes[(int)m_looksType], setCol, false);
 			else
