@@ -37,8 +37,8 @@ STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-3.csv 		2	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv 		3	60
 STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-TEST.csv 	0	60
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv 		4	60
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 		5	60
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 		6	60
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 		5	300
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 		6	300
 
 END
 
