@@ -26,7 +26,7 @@ const float CRocket::s_MoveAdd = 0.01f;		// 移動量の増加量
 const float CRocket::s_HeightDis = 40.0f;	// 高さの距離
 const int   CRocket::s_FadeModeCountMax = 240;	// フェードのモードのカウント最大
 const int   CRocket::s_Firerate = 4;		// 炎の出現割合
-const int   CRocket::s_Smokerate = 6;		// 煙の出現割合
+const int   CRocket::s_Smokerate = 4;		// 煙の出現割合
 int         CRocket::s_nCountPlayer = 0;	// プレイヤーのカウント
 bool		CRocket::s_bReady = false;		// 乗る準備クリア
 
@@ -54,10 +54,10 @@ CRocket::CRocket(void)
 	m_Info.bEffect = false;
 	m_Info.nModelIdx = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 
-	m_Info.Firetex.TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Fire_002.png");
+	m_Info.Firetex.TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png");
 	m_Info.Smoketex.TexIdx = RNLib::Texture().Load("data\\TEXTURE\\Effect\\Smoke.png");
 	m_Info.Firetex.col = Color{ 255,100,0,255 };
-	m_Info.Smoketex.col = Color{ 255,255,255,255 };
+	m_Info.Smoketex.col = Color{ 255,255,255,200 };
 	m_Info.Firetex.pos = INITD3DXVECTOR3;
 	m_Info.Smoketex.pos = INITD3DXVECTOR3;
 	m_Info.Firetex.move = D3DXVECTOR3(rand() % 2 - 1 * 0.1f, -0.1f, 0.0f);
@@ -124,19 +124,31 @@ void CRocket::Update(void)
 	if (m_Info.bEffect)
 	{
 		m_Info.nEffectAnimCounter++;
+
+		D3DXVECTOR3 SmokeMove1 = D3DXVECTOR3(rand() % 6 - 3, rand() % 4 - 3, 0.0f);
+		D3DXVECTOR3 SmokeMove2 = D3DXVECTOR3(rand() % 6 - 3, rand() % 4 - 3, 0.0f);
+		D3DXVECTOR3 SmokeMove3 = D3DXVECTOR3(rand() % 6 - 3, rand() % 4 - 3, 0.0f);
+
+		int SmokeLife1 = rand() % 10 + 40;
+		int SmokeLife2 = rand() % 20 + 30;
+		int SmokeLife3 = rand() % 20 + 30;
+
 		if (m_Info.nEffectAnimCounter % s_Smokerate == 0)
 		{
-			m_Info.Smoketex.move = D3DXVECTOR3(rand() % 6 - 3, rand() % 4 - 3, 0.0f);
-
 			// 煙のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - s_HeightDis, m_pos.z), Scale3D(30.0f, 30.0f, 30.0f), m_Info.Smoketex.col, 120, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Smoketex.move, false, D3DXVECTOR3(1.05f, 1.05f, 1.00f));
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - s_HeightDis, m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Smoketex.col, SmokeLife1, D3DXVECTOR3(0.0f, 0.0f, 0.1f), SmokeMove1, false, D3DXVECTOR3(1.05f, 1.05f, 1.00f));
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x, m_pos.y - s_HeightDis, m_pos.z), Scale3D(15.0f, 15.0f, 15.0f), m_Info.Smoketex.col, SmokeLife2, D3DXVECTOR3(0.0f, 0.0f, 0.1f), SmokeMove2, false, D3DXVECTOR3(1.05f, 1.05f, 1.00f));
+			Manager::EffectMgr()->EffectCreate(m_Info.Smoketex.TexIdx, D3DXVECTOR3(m_pos.x + 2.0f, m_pos.y - s_HeightDis, m_pos.z), Scale3D(10.0f, 10.0f, 10.0f), m_Info.Smoketex.col, SmokeLife3, D3DXVECTOR3(0.0f, 0.0f, 0.1f), SmokeMove3, false, D3DXVECTOR3(1.05f, 1.05f, 1.00f));
 		}
 		if (m_Info.nEffectAnimCounter % s_Firerate == 0 && m_Info.Animstate == CRocket::ANIME_STATE::FLY)
 		{
-			m_Info.Firetex.move = D3DXVECTOR3(0.0f, -0.1f, 0.0f);
+			D3DXVECTOR3 move1 = D3DXVECTOR3(0.0f, rand() % 2 - 1, 0.0f);
+			D3DXVECTOR3 move2 = D3DXVECTOR3(rand() % 2 - 1, rand() % 2 - 1, 0.0f);
 
 			// 炎のエフェクト
-			Manager::EffectMgr()->EffectCreate(m_Info.Firetex.TexIdx, D3DXVECTOR3(m_pos.x - rand() % 4 - 2, m_pos.y - s_HeightDis, m_pos.z), Scale3D(30.0f, 30.0f, 30.0f), m_Info.Firetex.col, 160, D3DXVECTOR3(0.0f, 0.0f, 0.1f), m_Info.Firetex.move, false);
+			Manager::EffectMgr()->EffectCreate(m_Info.Firetex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - (s_HeightDis - 3.0f), m_pos.z), Scale3D(20.0f, 20.0f, 20.0f), m_Info.Firetex.col, 120, D3DXVECTOR3(0.0f, 0.0f, 0.1f), move1, false);
+			Manager::EffectMgr()->EffectCreate(m_Info.Firetex.TexIdx, D3DXVECTOR3(m_pos.x - 2.0f, m_pos.y - (s_HeightDis - 3.0f), m_pos.z), Scale3D(15.0f, 15.0f, 15.0f), m_Info.Firetex.col, 120, D3DXVECTOR3(0.0f, 0.0f, 0.1f), move2, false);
+
 		}
 	}
 	

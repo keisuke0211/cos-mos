@@ -57,7 +57,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.bGameEnd = false;
 	m_Menu.pOperation = NULL;
 	m_Menu.pSetting = NULL;
-	m_Menu.bFullScreen = RNSettings::GetInfo().isFullScreen;
+	m_Menu.bFullScreen = RNLib::Options().GetIsFullScreen();
 
 	m_Menu.MainMenuMax = 0;
 	m_Menu.SubMenuMax = 0;
@@ -215,9 +215,13 @@ void CMenuUI::DecisionInput(void)
 			switch (m_Menu.nSubSelect)
 			{
 			case SETTING_SCREEN:
+
 				if (m_Menu.nCntScrChg <= 0) {
 					int nText = m_Menu.nSubSelect;
 					m_Menu.bFullScreen = !m_Menu.bFullScreen;
+
+					// ウインドウのモードを切り替える
+					RNLib::Options().SetIsFullScreen(m_Menu.bFullScreen);
 
 					char data[TXT_MAX] = {};
 					if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
@@ -225,9 +229,9 @@ void CMenuUI::DecisionInput(void)
 
 					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 					FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
-					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
-					m_Menu.nCntScrChg = 20;
+					m_Menu.nCntScrChg = 30;
 				}
 
 				break;
@@ -507,7 +511,7 @@ void CMenuUI::MenuAnime(void)
 				FormFont pFont = { col,35.0f,3,1,-1, };
 				FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f), true, D3DXVECTOR3(4.0f,4.0f,0.0f), D3DXVECTOR2(4.0f,4.0f) };
 
-				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_AMECHAN, &pFont, &pShadow);
+				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -649,7 +653,7 @@ void CMenuUI::MenuAnime(void)
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 0) {
 						for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
 							if (m_pSubMenu[nText] != NULL)
-								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_AMECHAN, &pFont, &pShadow);
+								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 						}
 					}
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 1) {
@@ -672,7 +676,7 @@ void CMenuUI::MenuAnime(void)
 								else
 									sprintf(data, "%s", m_Menu.pSetting[nText].Text);
 
-								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 							}
 						}
 					}
@@ -784,10 +788,7 @@ void CMenuUI::MenuSelect(void)
 		m_Menu.nCntScrChg--;
 
 		if (m_Menu.nCntScrChg == 0)
-		{// 画面モード切り替えカウンターが0の時、
-		 // ウインドウのモードを切り替える
-			RNLib::Window().SetIsFullScreen(m_Menu.bFullScreen);
-		}
+			m_Menu.nCntScrChg = 0;
 	}
 
 	// 選択・非選択
@@ -867,7 +868,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
-			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::BGM, volume);
@@ -879,7 +880,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
-			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_AMECHAN, &pFont, &pShadow);
+			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);

@@ -245,23 +245,40 @@ void CStageEditor::FileLoad(void)
 			}
 
 		}
-		else if (!strcmp(aDataSearch, "PLANET"))
+		else if (!strcmp(aDataSearch, "SetPlanet"))
 		{
-			if (nCntPlanet < m_Info.nPlanetMax)
+			while (1)
 			{
-				int StageMax = 0;
+				fscanf(pFile, "%s", aDataSearch);	// 検索
 
-				fscanf(pFile, "%s", &aDataSearch[0]);
-				fscanf(pFile, "%d", &StageMax);	// ステージ数
+				if (!strcmp(aDataSearch, "EndPlanet"))
+				{
+					nCntPlanet++;
+					break;
+				}
+				else if (!strcmp(aDataSearch, "NumStage")) {
+					int StageMax = 0;
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%d", &StageMax);	// ステージ数
 
-				m_PlanetType[nCntPlanet].nStageMax = StageMax;
-				m_PlanetType[nCntPlanet].StageType = new StageType[StageMax];
-				assert(m_PlanetType[nCntPlanet].StageType != NULL);
+					m_PlanetType[nCntPlanet].nStageMax = StageMax;
+					m_PlanetType[nCntPlanet].StageType = new StageType[StageMax];
+					assert(m_PlanetType[nCntPlanet].StageType != NULL);
+				}
+				else if (!strcmp(aDataSearch, "ModelPath")) {
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					fscanf(pFile, "%s", &m_PlanetType[nCntPlanet].aTexFile[0]);	// テクスチャパス
+				}
+				else if (!strcmp(aDataSearch, "BackColor")) {
+					fscanf(pFile, "%s", &aDataSearch[0]);
+					int r = 0; int g = 0; int b = 0; int a = 0;
+					fscanf(pFile, "%d", &r);
+					fscanf(pFile, "%d", &g);
+					fscanf(pFile, "%d", &b);
+					fscanf(pFile, "%d", &a);
 
-				fscanf(pFile, "%s", &m_PlanetType[nCntPlanet].aTexFile[0]);	// テクスチャパス
-				fscanf(pFile, "%s", &m_PlanetType[nCntPlanet].aName[0]);	// 惑星名
-
-				nCntPlanet++;
+					m_PlanetType[nCntPlanet].color = Color{r,g,b,a};
+				}
 			}
 		}
 		else if (!strcmp(aDataSearch, "STAGE"))
