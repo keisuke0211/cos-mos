@@ -27,6 +27,7 @@ public:
 	static const int TITLE_LOGO_MAX = 6;		// タイトルロゴの最大数
 	static const int NUI_ANIME = 20;			// ヌイのアニメーション時間
 	static const int TITLE_TEXT_ANIME = 40;		// タイトルテキストのアニメーション時間
+	static const int COLOR_CHANGE_TIME = 60;	// 色の推移時間
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -120,6 +121,7 @@ private:
 	};
 
 	// *** 関数 ***
+	void ColorChange(void);
 	void MenuAnime(void);
 	void TextAnime(void);
 	void CreateStageSelectInfo(void);
@@ -142,7 +144,10 @@ private:
 	TITLE_ANIME TitleAnima;
 
 	Color BgColor;
+	Color BgOldColor;
 	Color BgNextColor;
+	int nCntColorChange;
+	bool bColorChange;
 
 	D3DXVECTOR3 m_BgPos[TEX_MAX];
 	Pos2D m_BgTexPthPos[4];
