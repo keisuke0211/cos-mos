@@ -16,7 +16,7 @@ NUM_PLANET = 2
 SetPlanet
 	NumStage = 5
 	ModelPath = data\MODEL\World1.x
-	BackColor = 24 140 5 255
+	BackColor = 25 25 112 255
 
 EndPlanet
 
