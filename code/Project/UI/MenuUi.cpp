@@ -501,7 +501,7 @@ void CMenuUI::SubTextCreate(void)
 			// サイズとボックス種類
 			CFontText::Box type = CFontText::BOX_NONE;
 			if (nText > SETTING_BACK) {
-				size = D3DXVECTOR2(256.0f, 80.0f);
+				size = D3DXVECTOR2(256.0f, 64.0f);
 				type = CFontText::BOX_SUB_MENU01;
 			}
 			else if (nText == SETTING_BACK) {

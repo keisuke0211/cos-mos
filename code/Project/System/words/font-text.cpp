@@ -598,13 +598,13 @@ void CFontText::SetTxtBoxType(Box type)
 	else if (type == BOX_SUB_TITLE)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox11.png");
 	else if (type == BOX_SUB_MENU00)
-		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
-	else if (type == BOX_SUB_SELECTU00)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox13.png");
+	else if (type == BOX_SUB_SELECTU00)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
 	else if (type == BOX_SUB_MENU01)
-		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox14.png");
-	else if (type == BOX_SUB_SELECTU01)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox15.png");
+	else if (type == BOX_SUB_SELECTU01)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox14.png");
 	else if (type == BOX_NONE || type == BOX_MAX)
 		m_Info.Tex.Idx = -1;
 }
