@@ -44,9 +44,9 @@ public:
 	enum PAUSE_MENU {
 		PAUSE_MENU_RESUME = 0,	// 続ける
 		PAUSE_MENU_RESET,		// やり直す
-		PAUSE_MENU_SELECT,		// ステージ選択
 		PAUSE_MENU_CONTROLLER,	// 操作方法
 		PAUSE_MENU_SETTING,		// 設定
+		PAUSE_MENU_SELECT,		// ステージ選択
 		PAUSE_MENU_MAX
 	};
 

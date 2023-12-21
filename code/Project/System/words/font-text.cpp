@@ -513,6 +513,7 @@ void CFontText::TextLetter(const char * Text, int AppearTime)
 	m_Info.nAddCount = AppearTime;
 	m_Info.nAppearTime = m_Info.nAddCount;
 	m_Info.nAddLetter = 0;
+	m_Info.bLetterEnd = false;
 	m_Info.words = new CWords*[m_Info.nTextLength];
 
 	for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++)
