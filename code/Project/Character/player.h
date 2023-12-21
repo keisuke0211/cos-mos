@@ -328,7 +328,7 @@ private:
 	bool UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Info &Player, Pos3D *pPos, Pos3D *pPosOld, float *pWidth, float *pHeight);
 
 	// 各プレイヤーの当たり判定が終わった後の処理
-	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot);
+	void CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot, Info& info);
 
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
