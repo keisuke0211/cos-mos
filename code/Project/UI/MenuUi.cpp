@@ -252,7 +252,7 @@ void CMenuUI::DecisionInput(void)
 					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
 					if (m_pSubMenu[nText] != NULL)
-						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
+						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
 
 					m_Menu.nCntScrChg = 30;
 				}
