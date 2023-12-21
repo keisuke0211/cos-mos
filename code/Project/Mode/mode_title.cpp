@@ -19,6 +19,7 @@
 #include "../resource.h"
 #include "../stage.h"
 #include "../UI/coinUI.h"
+#include "../Talk/talk.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -44,6 +45,7 @@ bool CMode_Title::m_bStageSelect = false;
 int CMode_Title::m_nPlanetIdx = 0;
 int CMode_Title::m_nStageSelect = 0;
 
+CTalk *g_pTalk = NULL;
 //========================================
 // コンストラクタ
 //========================================
@@ -98,6 +100,8 @@ CMode_Title::CMode_Title(void) {
 	m_bStageChange = false;
 	m_bRocketMove = false;
 	m_bRocketRot = false;
+
+	//g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
 }
 
 //========================================
@@ -105,6 +109,12 @@ CMode_Title::CMode_Title(void) {
 //========================================
 CMode_Title::~CMode_Title(void) {
 
+	if (g_pTalk != NULL)
+	{
+		g_pTalk->Uninit();
+		delete g_pTalk;
+		g_pTalk = NULL;
+	}
 	if (m_PlanetType != NULL) {
 		delete[] m_PlanetType;
 		m_PlanetType = NULL;
@@ -329,6 +339,9 @@ void CMode_Title::Update(void) {
 		if (Title != NextTitle)
 			SwapMode(NextTitle);
 	}
+
+
+//	g_pTalk->Update();
 }
 
 //========================================

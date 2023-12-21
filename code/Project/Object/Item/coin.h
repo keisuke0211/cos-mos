@@ -8,6 +8,8 @@
 
 #include "../../../_RNLib/RNlib.h"
 #include "../stage-object.h"
+#include "../../stage.h"
+
 //****************************************
 // クラス定義
 //****************************************
@@ -22,8 +24,13 @@ public:
 
 	static void AddNumAll(void) { s_NumAll += s_Num; s_Num = 0;}
 
+	//取得した数
 	static int GetNum(void) { return s_Num; }
+	//プレイ中に取得した総数
 	static int GetNumAll(void) { return s_NumAll; }
+
+	//全体を総括して取得した数（セーブデータから読み取ってすでに回収済みの数も含む
+	static int GetWholeAll(void) { return s_Num + s_NumAll + Stage::GetCoinAll(); }
 
 private:
 
