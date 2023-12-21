@@ -1,0 +1,14 @@
+SetUp3DFile
+boneDataSum{ 1
+	boneData{
+		idx 0
+		modelIdx data\\Model\\Kani.x
+		parentIdx -1
+		relativePos 0.00 15.00 0.00
+		relativeRot 0.00 -1.50 0.00
+	}
+}
+faceDataSum{ 0
+	
+}
+END
