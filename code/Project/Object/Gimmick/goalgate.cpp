@@ -7,6 +7,7 @@
 #include "goalgate.h"
 #include "../../main.h"
 #include "../../Character/player.h"
+#include "../../resource.h"
 
 //マクロ定義
 #define MAX_COUNT		(90)						//最大カウント数
@@ -386,6 +387,11 @@ void CGoalGate::SetEntry(bool bEntry)
 		m_nEntryNo = s_numEntry++;
 		m_nCntEtrX = ETR_CNT;
 		m_nCntEtrY = ETR_CNT * 0.5;
+
+		if (s_num == s_numEntry)
+		{
+			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::GATE_CLOSE], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+		}
 
 		for (int ParCnt = 0; ParCnt < 16; ParCnt++)
 		{

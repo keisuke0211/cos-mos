@@ -34,6 +34,7 @@ public:
 		UI_FRAME,
 		UI_CONTROL_0,
 		UI_CONTROL_1,
+		EFF_CIRCLE,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
@@ -60,7 +61,7 @@ public:
 
 		GET_PARTS,		//ロケットパーツ取得
 		GET_COIN,		//コイン取得　（無）
-		GATE_IN,		//ワープゲート消えるときの音
+		GATE_CLOSE,		//ワープゲート消えるときの音
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
