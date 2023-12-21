@@ -22,7 +22,7 @@ boneDataSum{ 2
 
 faceDataSum{ 8
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -32,22 +32,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 133
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 35
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 46
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -57,22 +57,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 134
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 46
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 47
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -82,22 +82,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 132
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 47
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 45
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -107,22 +107,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 130
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 45
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 43
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -132,22 +132,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 128
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 43
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 41
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -157,22 +157,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 126
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 41
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 39
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -182,22 +182,22 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 124
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 39
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 37
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 
 faceData{
-	texIdx NONEDATA
+	texIdx data\\TEXTURE\\Whale_2.png
 	col 145 204 204 255
 	vtx0{
 		boneIdx 0
@@ -207,17 +207,17 @@ faceData{
 	vtx1{
 		boneIdx 0
 		vtxIdx 122
-		texPos 1.00 0.00
+		texPos 0.20 0.00
 	}
 	vtx2{
 		boneIdx 1
 		vtxIdx 37
-		texPos 0.00 1.00
+		texPos 0.00 0.20
 	}
 	vtx3{
 		boneIdx 1
 		vtxIdx 35
-		texPos 1.00 1.00
+		texPos 0.20 0.20
 	}
 }
 }

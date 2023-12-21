@@ -135,9 +135,12 @@ void CCollision::LandPlayerOption(CPlayer::Info *pInfo, const float fMaxY)
 		}
 		RNLib::StandardEffect3D().CreateDustStormOnLanding(createPos, createRot, Color{ 169,158,93,255 }, 20.0f);
 
-		// モーション
-		pInfo->landingCounter = 30;
-		pInfo->doll->OverwriteMotion(CPlayer::GetMotion(pInfo->idx).landing);
+		if (pInfo->swapWaitCounter == 0) {
+
+			// モーション
+			pInfo->landingCounter = 30;
+			pInfo->doll->OverwriteMotion(CPlayer::GetMotion(pInfo->idx).landing);
+		}
 	}
 
 	pInfo->bGround = true;	// 地面に接している

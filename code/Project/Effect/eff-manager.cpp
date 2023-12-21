@@ -93,7 +93,7 @@ CEffect_Meteor * CEffMgr::EffectMeteorCreate(D3DXVECTOR3 pos)
 //========================================
 // パーティクル
 //========================================
-CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,Color col, CParticle::TYPE type ,int nCount,D3DXVECTOR3 rot, D3DXVECTOR3 move,bool bZtest, bool bVec3D, _RNC_DrawState::ALPHA_BLEND_MODE alphamode, int magni)
+CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,Color col, CParticle::TYPE type ,int nCount,D3DXVECTOR3 rot, D3DXVECTOR3 move,bool bZtest, bool bVec3D, _RNC_DrawState::ALPHA_BLEND_MODE alphamode)
 {
 	CParticle *pObj = NULL;
 
@@ -101,7 +101,6 @@ CParticle *CEffMgr::ParticleCreate(int nTex, D3DXVECTOR3 pos,D3DXVECTOR3 scale,C
 
 	// 初期化処理
 	pObj->SetType(type);
-	pObj->SetRdmMagni(magni);
 	pObj->SetPos(pos);
 	pObj->SetMove(move);
 	pObj->SetRot(rot);
