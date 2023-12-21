@@ -32,9 +32,16 @@ CCoin::CCoin() {
 	CInt stage = pEd->GetType()[planet].nStageIdx;
 
 	//Fİ’èiŠù‚Éæ“¾‚µ‚Ä‚¢‚½‚ç”¼“§–¾‚É
-	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 255,255,255, 100 } : COLOR_WHITE;
-	m_outLineIdx = Stage::GetCoinInfo(planet, stage, m_nID) ? NONEDATA : 8;
-	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 0, 0, 100, 10 } : COLOR_WHITE;
+	if (Stage::GetCoinInfo(planet, stage, m_nID))
+	{
+		m_color = Color{ 0, 0, 100, 10 };
+		m_outLineIdx = NONEDATA;
+	}
+	else
+	{
+		m_color = COLOR_WHITE;
+		m_outLineIdx = 8;
+	}
 }
 
 //========================================

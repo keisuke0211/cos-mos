@@ -22,6 +22,7 @@ public:
 	void Uninit(void) {}
 	void Update(void);
 
+	//Šl“¾”‰ÁZ
 	static void AddNumAll(void) { s_NumAll += s_Num; s_Num = 0;}
 
 	//æ“¾‚µ‚½”
