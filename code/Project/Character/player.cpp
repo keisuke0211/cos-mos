@@ -992,7 +992,7 @@ void CPlayer::SwapAnimation(void)
 
 		const int nTex = rand() % 2 + 2;
 
-		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos + Pos3D(0.0f,0.0f,0.0f), Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),INITD3DXVECTOR3,false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL,8);
+		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos + Pos3D(0.0f,0.0f,0.0f), Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),D3DXVECTOR3(8.0f,8.0f,0.0f),false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
 	}
 }
 
