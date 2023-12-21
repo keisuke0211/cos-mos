@@ -42,7 +42,7 @@ public:
 
 	// サウンド
 	// CResources::SOUND[(int)CResources::SOUND]
-	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::], CSound::CATEGORY::, 1.0f, );
+	// RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::], _RNC_Sound::CATEGORY::, 1.0f,false );
 	enum class SOUND {
 		OK,				//「OK」音声
 		SELECT,			// 決定音
@@ -61,6 +61,7 @@ public:
 
 		GET_PARTS,		//ロケットパーツ取得
 		GET_COIN,		//コイン取得　（無）
+		GATE_CLOSE,		//ワープゲート消えるときの音
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー

@@ -28,11 +28,20 @@ CTalk::CTalk()
 	m_bTalk = false;       //会話中かどうか
 	m_nTalkNumAll = 0;     //最大会話数
 	m_nTalkID = 0;         //会話番号
-	m_nNextInterval = 0;   //次の文字・会話を表示するまでのインターバル
-	m_nStringNumAll = 0;   //現在の会話の最大文字数
-	m_nStringNum = 0;      //現在の会話の表示文字数
 	m_bEndSpeak = false;   //発言終了（会話自体の終了ではない
-	m_pPopText = NULL;     //表示するテキスト
+
+	m_pText = NULL;
+
+	m_pFont.col = COLOR_WHITE;   // 文字の色
+	m_pFont.fTextSize  = 40.0f;  // 文字のサイズ
+	m_pFont.nAppearTime = 5;     // 1文字目が表示されるまでの時間
+	m_pFont.nStandTime = 8;      // 待機時間
+	m_pFont.nEraseTime = 0;      // 消えるまでの時間
+
+	m_pShadow.col = COLOR_BLACK; // 影の色
+	m_pShadow.bShadow = true;                   // 影フラグ
+	m_pShadow.AddPos = Pos3D(6.0f, 6.0f, 0.0f); // 文字の位置からずらす値 
+	m_pShadow.AddSize = Pos2D(4.0f, 4.0f);      // 文字のサイズの加算値 
 
 	DeleteLog(); //会話ログ削除
 }
@@ -93,11 +102,8 @@ void CTalk::DeleteLog(void)
 	m_bTalk = false;       //会話中かどうか
 	m_nTalkNumAll = 0;     //最大会話数
 	m_nTalkID = 0;         //会話番号
-	m_nNextInterval = 0;   //次の文字・会話を表示するまでのインターバル
-	m_nStringNumAll = 0;   //現在の会話の最大文字数
-	m_nStringNum = 0;      //現在の会話の表示文字数
 	m_bEndSpeak = false;   //発言終了（会話自体の終了ではない
-	m_pPopText = NULL;     //表示するテキスト
+	DeleteText();          //表示するテキストのメモリ開放
 }
 
 //=======================================
@@ -122,27 +128,19 @@ void CTalk::LoadTalk(EVENT &Event)
 
 			//会話内容読み取り
 			else if (RNLib::File().CheckIdentifier("SET_TALK")){
-				//一時初期化
-				s_pTalk[nTalkCounter].pLog = NULL;
-				s_pTalk[nTalkCounter].TalkerID = NONEDATA;
-				s_pTalk[nTalkCounter].nTex = NONEDATA;
 
+				//会話ログ保管用
 				char LogTmp[TXT_MAX] = {};
-
 				while (RNLib::File().SearchLoop("END_TALK")) {
 					RNLib::File().Scan(_RNC_File::SCAN::STRING, &LogTmp[0], "TALK");
 					RNLib::File().Scan(_RNC_File::SCAN::INT,    &s_pTalk[nTalkCounter].TalkerID, "PLAYER");
 					RNLib::File().Scan(_RNC_File::SCAN::INT,    &s_pTalk[nTalkCounter].nTex, "TEXTURE");
 				}
 
-				CInt len = strlen(&LogTmp[0]);
-				s_pTalk[nTalkCounter].pLog = new char[len + 1];
+				//文字列代入
+				CInt len = strlen(&LogTmp[0]) + 1;
+				s_pTalk[nTalkCounter].pLog = new char[len];
 				strcpy(&s_pTalk[nTalkCounter].pLog[0], &LogTmp[0]);
-
-				ZeroMemory(LogTmp, len);
-				strcpy(&LogTmp[0], &s_pTalk[nTalkCounter].pLog[0]);
-				CInt Talker = s_pTalk[nTalkCounter].TalkerID;
-				CInt nTex = s_pTalk[nTalkCounter].nTex;
 
 				//次の番号へ
 				nTalkCounter++;
@@ -167,13 +165,10 @@ void CTalk::Init(EVENT &Event)
 	{
 		//会話開始
 		m_bTalk = true;
-		m_nTalkID = 0;       //会話番号
-		m_nNextInterval = 0; //次の文字・会話を表示するまでのインターバル
-		m_nStringNum = 0;    //現在の会話の表示文字数
+		m_nTalkID = -1;      //会話番号
 		m_bEndSpeak = false; //発言終了（会話自体の終了ではない
-		m_pPopText = NULL;   //表示するテキスト
 
-		m_nStringNumAll = strlen(s_pTalk[0].pLog) + 1; //現在の会話の最大文字数
+		NextSpeak();         //次に表示するテキスト
 	}
 }
 
@@ -191,83 +186,53 @@ void CTalk::Uninit(void)
 //=======================================
 void CTalk::Update(void)
 {
-	if (s_pTalk == NULL)
-		return;
-
-	//テキスト表示
-	PopUpText();
-
 	//会話終了
-	if (!m_bTalk)
+	if (s_pTalk == NULL || !m_bTalk)
 		return;
-
-	//発言がまだ終わっていない
-	else if (!m_bEndSpeak)
-		NextChar();
 
 	//次の会話へ  or  会話終了
-	else if (RNLib::Input().GetTrigger(DIK_RETURN, _RNC_Input::BUTTON::A) ||
-			 RNLib::Input().GetTrigger(DIK_RETURN, _RNC_Input::BUTTON::A, 1))
+	else if (!m_bEndSpeak &&
+			 (RNLib::Input().GetTrigger(DIK_T, _RNC_Input::BUTTON::Y) ||
+			 RNLib::Input().GetTrigger(DIK_T, _RNC_Input::BUTTON::Y, 1)))
 	{
 		//次の発言へ
-		m_nTalkID++;
-		m_bEndSpeak = false;
-		m_pPopText = NULL;
-
-		//会話終了
-		if (m_nTalkID == m_nTalkNumAll)
-			m_bTalk = false;
+		NextSpeak();
 	}
 }
 
 //=======================================
-// 次の文字を表示
+//表示するテキストのメモリ開放
 //=======================================
-void CTalk::NextChar(void)
+void CTalk::DeleteText(void)
 {
-	//インターバル減少して終了
-	if (--m_nNextInterval > 0) {
-		m_nNextInterval--;
-		return;
-	}
-
-	char Text[TXT_MAX] = {};
-
-	//インターバルクリア
-	m_nNextInterval = 0;
-
-	//次の文字数へ（次の文字数が最大数を超えたら最大文字数に設定
-	CInt NextTextNum = m_nStringNum + 2 <= m_nStringNumAll ? m_nStringNum + 2 : m_nStringNumAll;
-
-	//次の文字まで接続
-	for (int nCntText = 0; nCntText < NextTextNum; nCntText++)
+	//メモリ開放
+	if (m_pText != NULL)
 	{
-		sprintf(&Text[0], "%s%c", &Text[0], s_pTalk[m_nTalkID].pLog[nCntText]);
+		m_pText->Uninit();
+		m_pText = NULL;
 	}
-
-	//m_pPopText開放・確保
-	//文字列コピー
-	//strcpy(&m_pPopText[0], &Text[0]);
-
-	//文字数が最大数と一致なら発言終了
-	if (NextTextNum == m_nStringNumAll)
-		m_bEndSpeak = true;
-
-	//インターバル設定
-	m_nNextInterval = NEXT_INTERVAL;
 }
 
 //=======================================
-// 文章表示
+//次にしゃべるテキストの設定
 //=======================================
-void CTalk::PopUpText(void)
+void CTalk::NextSpeak(void)
 {
-	//テキストの背景
-	RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(RNLib::Window().GetCenterX(), 600.0f), 0.0f)
-		->SetCol(Color{ 10,10,10,200 })
-		->SetSize(600.0f, 40.0f);
+	//次の喋り手へ
+	m_nTalkID++;
 
-	//テキスト
-	RNLib::Text2D().Put(PRIORITY_TEXT, m_pPopText, _RNC_Text::ALIGNMENT::LEFT, NONEDATA, Pos2D(60.0f, 600.0f), 0.0f)
-		->SetSize(Size2D(10.0f, 10.0f));
+	//会話終了
+	if (m_nTalkID == m_nTalkNumAll)
+	{
+		DeleteLog();
+	}
+	else
+	{
+		//次の会話の最大文字数
+		m_bEndSpeak = false;
+		DeleteText();
+
+		m_pText = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 700.0f, 0.0f), INITPOS2D,
+									s_pTalk[m_nTalkID].pLog, CFont::FONT_07NIKUMARU, &m_pFont, false, false, &m_pShadow);
+	}
 }
