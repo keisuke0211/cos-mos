@@ -926,7 +926,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\OneDrive\\デスクトップ\\卒業制作\\cos-mos\\data\\TEXTURE\\Whale_2.png";
+    "data\\TEXTURE\\Whale_2.png";
    }
   }
  }

@@ -13,7 +13,7 @@
 #include "eff-death.h"
 #include "eff-model.h"
 #define EFFECT_COUNT		(60)		// カウント
-#define RANDOM_MAGNI	(16)		//ランダム倍率
+#define RANDOM_MAGNI		(12)		//ランダム倍率
 #define INIT_EFFECT_SCALE	(D3DXVECTOR3(32.0f,32.0f,0.0f))
 
 //****************************************
