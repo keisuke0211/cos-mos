@@ -55,7 +55,6 @@ public:
 	/* å¸Ç´			*/void SetRot(const D3DXVECTOR3 rot) { m_Info.rot = rot; }
 	/* ägèk			*/void SetScale(const D3DXVECTOR3 scale) { m_Info.scale = scale; }
 	/* éÌóﬁ			*/void SetType(const TYPE type) { m_type = type; }
-	/* î{ó¶			*/void SetRdmMagni(const int magni) { m_Info.rdmMagni = magni; }
 	/* â¡éZçáê¨		*/void SetAlphaMode(const _RNC_DrawState::ALPHA_BLEND_MODE  alphamode) { m_Info.alphamode = alphamode; }
 	/* Ztest		*/void SetZtest(const bool bZtest) { m_bZtest = bZtest; }
 	/* ï˚å¸Vec		*/void SetVec3D(const bool bVec3D) { m_bVec3D = bVec3D; }

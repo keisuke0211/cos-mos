@@ -921,11 +921,11 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				Effcol[1] = Color(0, 0, 0, 100);
 				Effcol[2] = Color(50,50,50,120);
 
-				if(m_nStgStartCnt == m_RocketRail.GetPointNum() * 9)
+				if(m_nStgStartCnt == m_RocketRail.GetPointNum() * 8)
 					for (int Particle = 0; Particle < 64; Particle++) {
 						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + INIT_EFFECT_SCALE.x * 0.5);
-						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 2], m_RocketPosOld + (m_RocketposDiff * RktAnimRt),Scale3D(ScaleTex,ScaleTex,0.0f), Effcol[rand() % 3], CParticle::TYPE::TYPE_NORMAL, 180);
-
+						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 2], m_RocketPosOld + (m_RocketposDiff * RktAnimRt),Scale3D(ScaleTex,ScaleTex,0.0f), Effcol[rand() % 3], CParticle::TYPE::TYPE_NORMAL, 180,INITD3DXVECTOR3,D3DXVECTOR3(8.0f,8.0f,0.0f));
+						//SEì¸ÇÍÇÈèÍèäDEATH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 					}
 				
 				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
