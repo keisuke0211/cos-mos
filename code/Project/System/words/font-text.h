@@ -115,6 +115,7 @@ public:
 	/* Txtサイズ		*/D3DXVECTOR2 GetTxtBoxSize() { return m_Info.TxtBoxSize; }
 	/* Txt目標サイズ	*/D3DXVECTOR2 GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
 	/* 文字サイズ		*/float GetTxtSize() { return m_Info.fTextSize; }
+	/* Textの生成フラグ	*/bool GetLetter() { return m_Info.bLetterEnd; }
 
 private:
 
@@ -162,9 +163,9 @@ private:
 		int nLetterPopCount;	// 文字を出した最大数
 		int nLetterPopCountX;	// 横に文字を出した数
 		int nNiCount;			// 改行の数
+		bool bLetterEnd;		// 文字の生成終了したか
 
 		int nStandTime;			// 待機時間
-		bool bStand;			// 待機フラグ
 
 		int nDisapTime;			// 消える時間
 		int nDisapTimeMax;		// 消える最大時間

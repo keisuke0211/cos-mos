@@ -36,8 +36,9 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.Tex.PtnX = 1;
 	m_Info.Tex.PtnY = 1;
 
+	m_Info.bLetterEnd = false;
+
 	m_Info.nStandTime = 0;
-	m_Info.bStand = false;
 
 	m_Info.nDisapTime = 0;
 	m_Info.nDisapTimeMax = 0;
@@ -90,7 +91,7 @@ HRESULT CFontText::Init()
 	SetType(TYPE_FONT);
 	
 	m_Info.nStandTime = 0;
-	m_Info.bStand = false;
+	m_Info.bLetterEnd = false;
 
 	m_Info.nDisapTime = 0;
 	m_Info.nDisapTimeMax = 0;
@@ -166,9 +167,22 @@ void CFontText::Update()
 	m_Info.TxtBoxMove = INITD3DXVECTOR2;
 
 	// テキスト生成
-	if (!m_Info.bStand)
+	if (!m_Info.bLetterEnd)
 	{
-		LetterForm();
+		if (m_Info.nAppearTime <= 0)
+		{
+			while (1)
+			{
+				LetterForm();
+
+				if (m_Info.bLetterEnd)
+					break;
+			}
+		}
+		else
+		{
+			LetterForm();
+		}
 	}
 
 	// 待機処理
@@ -362,7 +376,7 @@ void CFontText::LetterForm(void)
 			}
 			else
 			{
-				m_Info.bStand = true;
+				m_Info.bLetterEnd = true;
 			}
 		}
 
@@ -376,7 +390,7 @@ void CFontText::LetterForm(void)
 //========================================
 void CFontText::StandTime(void)
 {
-	if (m_Info.bStand && m_Info.nStandTime >= 1)
+	if (m_Info.bLetterEnd && m_Info.nStandTime >= 1)
 	{
 		if (--m_Info.nStandTime <= 0)
 		{
@@ -474,7 +488,6 @@ void CFontText::SetStandTime(int StandTime)
 		StandTime = 0;
 	}
 	m_Info.nStandTime = StandTime;
-	m_Info.bStand = false;
 }
 
 //========================================
