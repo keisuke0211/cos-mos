@@ -26,6 +26,11 @@ public:
 	void Uninit(void);
 	void Update(void);
 
+	// -- 設定 ------------------------------------------
+	void SetPos(const Pos3D &pos) { m_pos = pos; }
+	void SetSize(CFloat size)     { m_pFont.fTextSize = size; }
+
+	// -- 取得 ------------------------------------------
 	static CTalk *Create(EVENT Event);    // 会話イベント指定
 	bool IsTalk(void) { return m_bTalk; } // 会話中かどうか取得
 
@@ -57,6 +62,8 @@ private:
 	FormFont   m_pFont;
 	FormShadow m_pShadow;
 
+	Pos3D  m_pos;
+	Pos2D  m_size;
 	int    m_nTalkNumAll; //最大会話数
 	int    m_nTalkID;     //会話番号
 	bool   m_bEndSpeak;   //発言終了（会話自体の終了ではない
