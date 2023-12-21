@@ -7,6 +7,7 @@
 #include "../../_RNLib/RNlib.h"
 #include "stage-sound-player.h"
 #include "../manager.h"
+#include "../Effect/eff-circle.h"
 
 //****************************************
 // \‘¢‘Ì’è‹`
@@ -157,10 +158,12 @@ void StageSoundPlayer::Update(void) {
 			if (CPlayer::GetInfo(0)->swapWaitCounter == 5) {
 				RNLib::Input().SetVibration(0.5f, 1);
 				RNLib::Input().SetVibration(0.3f, 0);
+				new CEffCircle(60, CPlayer::GetInfo(0)->pos, Color(255, 155, 59, 50), 0.0f, 250.0f);
 			}
 			else if (CPlayer::GetInfo(1)->swapWaitCounter == 5) {
 				RNLib::Input().SetVibration(0.5f, 0);
 				RNLib::Input().SetVibration(0.3f, 1);
+				new CEffCircle(60, CPlayer::GetInfo(1)->pos, Color(65, 233, 210, 50), 0.0f, 250.0f);
 			}
 		}
 	}

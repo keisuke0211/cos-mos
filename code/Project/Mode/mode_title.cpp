@@ -105,7 +105,7 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_bRocketMove = false;
 	m_bRocketRot = false;
 
-	//g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
+	g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
 }
 
 //========================================
@@ -351,7 +351,7 @@ void CMode_Title::Update(void) {
 	}
 
 
-//	g_pTalk->Update();
+	g_pTalk->Update();
 }
 
 //========================================
