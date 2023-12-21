@@ -21,6 +21,7 @@ const char* CResources::TEXTURE_PATHS[(int)TEXTURE::MAX] = {
 	"data\\TEXTURE\\parts_frame.png",
 	"data\\TEXTURE\\UI\\Control0.png",
 	"data\\TEXTURE\\UI\\Control1.png",
+	"data\\TEXTURE\\Effect\\eff_ring.png",
 };
 
 short CResources::SOUND_IDXES[(int)SOUND::MAX] = {};

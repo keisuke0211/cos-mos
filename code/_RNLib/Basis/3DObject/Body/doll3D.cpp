@@ -347,7 +347,7 @@ void CDoll3D::DrawModelVtxIdx(_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum)
 // フェイスを描画
 //========================================
 void CDoll3D::DrawFace(_RNC_SetUp3D::CData& setUp, _RNC_Model::Vertex3DInfo**& vtxInfo, ULong*& vtxNum) {
-
+	
 	for (int cntFace = 0; cntFace < setUp.m_faceDataNum; cntFace++) {
 		const _RNC_SetUp3D::FaceVtxData& vtx0 = setUp.m_faceDatas[cntFace].vtxs[0];
 		const _RNC_SetUp3D::FaceVtxData& vtx1 = setUp.m_faceDatas[cntFace].vtxs[1];

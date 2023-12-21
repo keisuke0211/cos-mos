@@ -34,6 +34,7 @@ public:
 		UI_FRAME,
 		UI_CONTROL_0,
 		UI_CONTROL_1,
+		EFF_CIRCLE,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
