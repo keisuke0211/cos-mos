@@ -101,6 +101,7 @@ public:
 	/* TextBoxの色			*/void SetTxtBoxColor(Color col);
 	/* TextBoxの種類		*/void SetTxtBoxType(Box type);
 	/* テキストの色			*/bool SetTxtColor(D3DXCOLOR col);
+	/* テキストのサイズ		*/bool SetTxtSize(float size);
 	/* 文字変更(単体)		*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
 	/* 文字変更(全体)		*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
 	/* テキストの再生		*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);

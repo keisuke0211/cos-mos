@@ -21,15 +21,16 @@ class CFontText;
 class CMenuUI {
 public:
 	//========== [[[ 定数定義 ]]]
-	static const char* TITLE_MENU_FILE;			// メインメニュー情報のファイルパス
-	static const char* PAUSE_MENU_FILE;			// メインメニュー情報のファイルパス
-	static const char* SUB_MENU_FILE;			// サブメニュー情報のファイルパス
-	static const int WORDS_MAX = 7;				// 文字の最大数
-	static const int FONT_TEXT_MAX = 10;		// テキストの最大数
-	static const int PAUSE_LEFT_ANIME = 10;		// 画面左のアニメーション時間
-	static const int PAUSE_RIGHT_ANIME = 20;	// 画面右のアニメーション時間
-	static const int VOLUME_MSX = 20;			// サウンドの最大値
-	static const int COOLDOWN = 20;				// クールダウン
+	static const char* TITLE_MENU_FILE;				// メインメニュー情報のファイルパス
+	static const char* PAUSE_MENU_FILE;				// メインメニュー情報のファイルパス
+	static const char* SUB_MENU_FILE;				// サブメニュー情報のファイルパス
+	static const int SUB_TEXT_MAX = 10;				// テキストの最大数
+	static const int FONT_TEXT_MAX = 10;			// テキストの最大数
+	static const int PAUSE_LEFT_ANIME = 10;			// 画面左のアニメーション時間
+	static const int PAUSE_RIGHT_ANIME = 20;		// 画面右のアニメーション時間
+	static const int PAUSE_RIGHT_TEXT_ANIME = 10;	// 画面右のアニメーション時間
+	static const int VOLUME_MSX = 20;				// サウンドの最大値
+	static const int COOLDOWN = 20;					// クールダウン
 
 	//========== [[[ 列挙型定義 ]]]
 	enum TITLE_MENU {
@@ -70,7 +71,7 @@ public:
 	enum TEXT {
 		TEXT_TITLE = 0,	// タイトル
 		TEXT_MENU,		// メニュー
-		TEXT_RIGHT,		// 左画面
+		TEXT_RIGHT,		// 右画面
 		TEXT_ALL,		// 全部
 		TEXT_MAX
 	};
@@ -92,14 +93,12 @@ public:
 		D3DXVECTOR3 LeftPos;
 		D3DXVECTOR3 RightPos;
 
-		float LeftScaleX;
-		float RightScaleX;
-
-		float LeftScaleMaxX;
-		float RightScaleMaxX;
+		D3DXVECTOR2 RightScale;
+		D3DXVECTOR2 RightScaleMax;
 
 		int nCntLeftAnime;
 		int nCntRightAnime;
+		int nCntRightTextAnime;
 		int nRightCoolDown;	//　左画面出現のクールダウン
 		int nMaineSelect;
 		int nMaineOldSelect;
@@ -117,10 +116,15 @@ public:
 
 
 		// サブメニュー
-		bool bSubMenu;			// 生成したかフラグ
-		bool bSubMenuMove;		// 移動方向の切替フラグ
-		bool bSubMenuDisp;		// 削除フラグ
-		bool SubMenuCD;			// 生成間隔のクールダウン
+		int nSubMenuIdx;			// 生成したメニュー番号
+		bool bSubMenu;				// 生成したかフラグ
+		bool bSubMenuMove;			// 移動方向の切替フラグ
+		bool bSubMenuDisp;			// 削除フラグ
+		bool bSubMenuCD;			// 生成間隔のクールダウン
+		bool bSubTextMenu;			// サブテキストのアニメーション
+		bool bSubText;				// サブテキスト
+		D3DXVECTOR2 *SubMenuSize;		// タイトルのサイズ
+		D3DXVECTOR2 *SubMenuSizeMax;	// タイトルの最大サイズ
 
 		int BoxTex;
 		int OperationMax;

@@ -456,6 +456,15 @@ namespace {
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ 背景描画 ]]]
 
+			RNLib::Polygon3D().Put(PRIORITY_UI, Pos3D(-184.0f, -100.0f, -20.0f), INITROT3D)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_CONTROL_0])
+				->SetSize(Size2D(150.0f, 75.0f))
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+			RNLib::Polygon3D().Put(PRIORITY_UI, Pos3D(184.0f, 100.0f, -20.0f), INITROT3D)
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_CONTROL_1])
+				->SetSize(Size2D(150.0f, 75.0f))
+				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+
 			// 上
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_WILDERNESS])
@@ -879,6 +888,41 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 
 	//回収状況を返す
 	return pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID];
+}
+
+//========================================
+// 外部ファイルよりすでに回収しているコインの総数を返す
+// Author：HIRASAWA SHION
+//========================================
+int  Stage::GetCoinAll(void)
+{
+	LoadWorldData();
+
+	int nNumAll = 0;
+
+	for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+	{
+		//長いので省略
+		WorldData& rWld = pWldData[nCntPlanet];
+
+		for (int nCntStage = 0; nCntStage < rWld.MaxStage; nCntStage++)
+		{
+			//コイン数取得
+			CInt& NumCoin = rWld.pStgRec[nCntStage].CoinNums;
+
+			//０なら引き返す
+			if (NumCoin == 0) continue;
+
+			for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+			{
+				//回収状況代入
+				if (rWld.pStgRec[nCntStage].pGet[nCntCoin])nNumAll++;
+			}
+		}
+	}
+
+	//既に回収している総数を返す
+	return nNumAll;
 }
 
 //========================================
