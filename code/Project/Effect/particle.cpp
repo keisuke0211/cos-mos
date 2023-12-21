@@ -126,6 +126,9 @@ void CParticle::Update(void)
 
 	m_Info.scale = fScaleRate;
 
+	if (m_Info.col.r == 0 && m_Info.col.g == 0 && m_Info.col.b == 0)
+		m_Info.alphamode = _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL;
+
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
 		->SetTex(m_Info.nTex)
 		->SetCol(m_Info.col)

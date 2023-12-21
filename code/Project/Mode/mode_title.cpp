@@ -913,6 +913,15 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			{//ロケット描画
 				Matrix mtxRocket = RNLib::Matrix().ConvPosRotScaleToMtx(m_RocketPosOld + (m_RocketposDiff * RktAnimRt),m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f));
 				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, mtxRocket, false);
+
+				Color Effcol[3];
+				Effcol[0] = Color(255, 55, 0, 255);
+				Effcol[1] = Color(0, 0, 0, 100);
+				Effcol[2] = Color(100,100,100,155);
+
+				if(m_nStgStartCnt == m_RocketRail.GetPointNum() * 8)
+					for(int Particle = 0; Particle < 64; Particle++)
+						Manager::EffectMgr()->ParticleCreate(m_EffTex, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), INIT_EFFECT_SCALE * 0.7f,Effcol[rand() % 3]);
 				
 				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
 				D3DXVECTOR3 TexPos = INITPOS3D;
@@ -926,7 +935,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex, EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,60, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
+				Manager::EffectMgr()->ParticleCreate(m_EffTex, EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
 			}
 
 			//数字ブロックアニメーション処理
