@@ -108,7 +108,6 @@ CBlock *CStageObjectMgr::BlockCreate(D3DXVECTOR3 pos,CBlock::LOOKS_TYPE type, Co
 	// ‰Šú‰»ˆ—
 	pObj->SetPos(pos);
 	pObj->SetColor(color);
-	pObj->SetCollision(isCollision);
 	pObj->Init(type);
 
 	return pObj;

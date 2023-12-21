@@ -456,7 +456,7 @@ namespace {
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ ”wŒi•`‰æ ]]]
 
-			if (Stage::CheckStageNumber(0, 0)) {
+			if (Stage::CheckStageNumber(0, 0) && false) {
 				RNLib::Polygon3D().Put(PRIORITY_UI, Pos3D(-184.0f, -100.0f, -20.0f), INITROT3D)
 					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_CONTROL_0])
 					->SetSize(Size2D(150.0f, 75.0f))
@@ -474,8 +474,7 @@ namespace {
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_FOREST])
-				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f))
-				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
+				->SetVtxPos(Pos3D(-400.0f, 100.0f + 32.0f, 200.0f), Pos3D(400.0f, 100.0f + 32.0f, 200.0f), Pos3D(-400.0f, 0.0f, 200.0f), Pos3D(400.0f, 0.0f, 200.0f));
 
 			// ‰_
 			for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
