@@ -38,7 +38,8 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\extend.wav",
 	"data\\SOUND\\SE\\vibration.wav",
 	"data\\SOUND\\SE\\rocket\\parts_get.wav",
-	"NONEDATA",
+	"data\\SOUND\\SE\\get_coin.wav",
+	"data\\SOUND\\SE\\gate_in.wav",
 	"data\\SOUND\\SE\\time-count.wav",
 	"data\\SOUND\\SE\\time-over.wav",
 };
