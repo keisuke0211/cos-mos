@@ -8,7 +8,7 @@
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| オブジェクトマネージャークラス
+//==========| [公開]オブジェクトマネージャークラス
 //----------|---------------------------------------------------------------------
 //================================================================================
 
@@ -37,7 +37,7 @@ void CObjectMgr::ReleaseAllMgrs(void) {
 
 	// 全マネージャーの全更新処理と更新処理を行う
 	for (int cntObjectMgr = 0; cntObjectMgr < ms_objectMgrNum; cntObjectMgr++) {
-		ms_objectMgrs[cntObjectMgr]->ReleaseAll();
+		ms_objectMgrs[cntObjectMgr]->DeleteAll();
 	}
 }
 
@@ -95,7 +95,7 @@ CObjectMgr::CObjectMgr(const char* name) {
 CObjectMgr::~CObjectMgr(void) {
 
 	// 全開放処理
-	CObjectMgr::ReleaseAll();
+	CObjectMgr::DeleteAll();
 
 	// 自身をマネージャー列から排除
 	SubMgr(this);
@@ -105,9 +105,9 @@ CObjectMgr::~CObjectMgr(void) {
 }
 
 //========================================
-// 全開放処理
+// 全削除処理
 //========================================
-void CObjectMgr::ReleaseAll(void) {
+void CObjectMgr::DeleteAll(void) {
 
 	// 先頭から順番に最後尾まで削除フラグを立たせる
 	// (※継承先の要素は解放されるが、
@@ -136,54 +136,6 @@ void CObjectMgr::UpdateAll(void) {
 
 	// 削除フラグが立っているオブジェクトを解放する
 	ReleaseDeleteObj();
-}
-
-//========================================
-// 削除フラグが立っているオブジェクトを解放する
-//========================================
-void CObjectMgr::ReleaseDeleteObj(void) {
-
-	// 先頭から順番に最後尾まで解放していく
-	// (※削除フラグが真の時、解放処理)
-	CObject* obj = m_top;
-	while (obj != NULL) {
-		CObject* nextObj = obj->GetNext();
-
-		// 削除フラグが真の時、解放処理
-		if (obj->GetIsDelete())
-			Release(obj);
-
-		obj = nextObj;
-	}
-}
-
-//========================================
-// リストループ処理
-//========================================
-bool CObjectMgr::ListLoop(CObject** obj) {
-
-	if (*obj == NULL)
-		*obj = m_top;
-	else
-		*obj = (*obj)->GetNext();
-
-	return (*obj != NULL);
-}
-
-//========================================
-// オブジェクト解放処理
-//========================================
-void CObjectMgr::Release(CObject* obj) {
-
-	// 既にNULLであれば終了
-	if (obj == NULL)
-		return;
-
-	// リストから削除
-	SubList(obj);
-
-	// 解放
-	RNLib::Memory().Release(&obj);
 }
 
 //========================================
@@ -268,4 +220,45 @@ void CObjectMgr::SubList(CObject* obj) {
 	}
 
 	m_num--;
+}
+
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| [非公開]オブジェクトマネージャークラス
+//----------|---------------------------------------------------------------------
+//================================================================================
+
+//========================================
+// オブジェクト解放処理
+//========================================
+void CObjectMgr::Release(CObject* obj) {
+
+	// 既にNULLであれば終了
+	if (obj == NULL)
+		return;
+
+	// リストから削除
+	SubList(obj);
+
+	// 解放
+	RNLib::Memory().Release(&obj);
+}
+
+//========================================
+// 削除フラグが立っているオブジェクトを解放する
+//========================================
+void CObjectMgr::ReleaseDeleteObj(void) {
+
+	// 先頭から順番に最後尾まで解放していく
+	// (※削除フラグが真の時、解放処理)
+	CObject* obj = m_top;
+	while (obj != NULL) {
+		CObject* nextObj = obj->GetNext();
+
+		// 削除フラグが真の時、解放処理
+		if (obj->GetIsDelete())
+			Release(obj);
+
+		obj = nextObj;
+	}
 }

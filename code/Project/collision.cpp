@@ -857,15 +857,15 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 	switch (vec)
 	{
 		case CPlayer::VECTOL::X:
-			if (RN_GetIsLs(self.minPos.y, target.maxPos.y) && RN_GetIsLs(target.minPos.y, self.maxPos.y))
+			if (RNLib::Number().GetIsLs(self.minPos.y, target.maxPos.y) && RNLib::Number().GetIsLs(target.minPos.y, self.maxPos.y))
 			{// Y”ÍˆÍ“à
-				const bool isLeft  = RN_GetIsGtOrEq(self.maxPos.x, target.minPos.x);
-				const bool isRight = RN_GetIsLsOrEq(self.minPos.x, target.maxPos.x);
+				const bool isLeft  = RNLib::Number().GetIsGtOrEq(self.maxPos.x, target.minPos.x);
+				const bool isRight = RNLib::Number().GetIsLsOrEq(self.minPos.x, target.maxPos.x);
 
-				if (isLeft && (RN_GetIsLsOrEq(self.maxPosOld.x, target.minPosOld.x) || RN_GetIsLsOrEq(self.posOld.x, target.minPosOld.x)))
+				if (isLeft && (RNLib::Number().GetIsLsOrEq(self.maxPosOld.x, target.minPosOld.x) || RNLib::Number().GetIsLsOrEq(self.posOld.x, target.minPosOld.x)))
 					return ROT::LEFT;
 
-				if (isRight && (RN_GetIsGtOrEq(self.minPosOld.x, target.maxPosOld.x) || RN_GetIsGtOrEq(self.posOld.x, target.maxPosOld.x)))
+				if (isRight && (RNLib::Number().GetIsGtOrEq(self.minPosOld.x, target.maxPosOld.x) || RNLib::Number().GetIsGtOrEq(self.posOld.x, target.maxPosOld.x)))
 					return ROT::RIGHT;
 
 				if (isLeft && isRight)
@@ -874,15 +874,15 @@ CCollision::ROT CCollision::IsBoxToBoxCollider(SelfInfo& self, ColliInfo& target
 			break;
 
 		case CPlayer::VECTOL::Y:
-			if (RN_GetIsLs(self.minPos.x, target.maxPos.x) && RN_GetIsLs(target.minPos.x, self.maxPos.x))
+			if (RNLib::Number().GetIsLs(self.minPos.x, target.maxPos.x) && RNLib::Number().GetIsLs(target.minPos.x, self.maxPos.x))
 			{// X”ÍˆÍ“à
-				const bool isUnder = RN_GetIsGtOrEq(self.maxPos.y, target.minPos.y);
-				const bool isOver =  RN_GetIsLsOrEq(self.minPos.y, target.maxPos.y);
+				const bool isUnder = RNLib::Number().GetIsGtOrEq(self.maxPos.y, target.minPos.y);
+				const bool isOver =  RNLib::Number().GetIsLsOrEq(self.minPos.y, target.maxPos.y);
 
-				if (isUnder && (RN_GetIsLsOrEq(self.maxPosOld.y, target.minPosOld.y) || RN_GetIsLsOrEq(self.posOld.y, target.minPosOld.y)))
+				if (isUnder && (RNLib::Number().GetIsLsOrEq(self.maxPosOld.y, target.minPosOld.y) || RNLib::Number().GetIsLsOrEq(self.posOld.y, target.minPosOld.y)))
 					return ROT::UNDER;
 
-				if (isOver && (RN_GetIsGtOrEq(self.minPosOld.y, target.maxPosOld.y) || RN_GetIsGtOrEq(self.posOld.y, target.maxPosOld.y)))
+				if (isOver && (RNLib::Number().GetIsGtOrEq(self.minPosOld.y, target.maxPosOld.y) || RNLib::Number().GetIsGtOrEq(self.posOld.y, target.maxPosOld.y)))
 					return ROT::OVER;
 
 				if (isUnder && isOver)

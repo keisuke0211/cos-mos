@@ -26,7 +26,6 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CEffect3D_Cylinder                     (const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType);
 	~CEffect3D_Cylinder                    ();
-	void                Update             (void);
 	CEffect3D_Cylinder* SetFadeOutStartRate(const float& fadeOutStartRate)    { m_fadeOutStartRate = fadeOutStartRate; return this; }
 	CEffect3D_Cylinder* SetSpinZ           (const float& spinZ)               { m_spinZ			   = spinZ			 ; return this; }
 	CEffect3D_Cylinder* SetDivisionNum     (const UShort& divisionNum)        { m_divisionNum	   = divisionNum	 ; return this; }
@@ -36,6 +35,9 @@ public:
 	CEffect3D_Cylinder* SetCircleBack      (const Circle& circleBack)         { m_circleBack       = circleBack		 ; return this; }
 
 private:
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	void Update(void);
+
 	//========== [[[ •Ï”éŒ¾ ]]]
 	float  m_fadeOutStartRate;
 	float  m_spinZ;

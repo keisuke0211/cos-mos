@@ -67,20 +67,24 @@ public:
 	};
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	_RNC_SetUp3D       ();
-	~_RNC_SetUp3D      ();
-	void   Init        (void);
-	void   Uninit      (void);
-	void   Update      (void);
-	short  Load        (const char* loadPath, short idx = NONEDATA);
-	bool   LoadEditData(const char* loadPath);
-	void   SaveEditData(const char* savePath);
-	CData& GetData     (const short& idx) { return idx == EDITDATA ? *m_editData : (idx == NONEDATA ? *(CData*)(nullptr) : *m_datas[idx]); }
-	void   InitMemory  (const UShort& num);
+	_RNC_SetUp3D  ();
+	~_RNC_SetUp3D ();
+	short  Load   (const char* loadPath, short idx = NONEDATA);
+	CData& GetData(const short& idx) { return idx == EDITDATA ? *m_editData : (idx == NONEDATA ? *(CData*)(nullptr) : *m_datas[idx]); }
 
 private:
+	//========== [[[ —F’BéŒ¾ ]]]
+	friend class C3DObject;
+	friend class CSetUp3DEditor;
+
 	//========== [[[ ŠÖ”éŒ¾ ]]]
+	void Init         (void);
+	void Uninit       (void);
+	void Update       (void);
+	bool LoadEditData (const char* loadPath);
+	void SaveEditData (const char* savePath);
 	bool ExecutionLoad(const char* loadPath, CData& data);
+	void InitMemory   (const UShort& num);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	CData** m_datas;

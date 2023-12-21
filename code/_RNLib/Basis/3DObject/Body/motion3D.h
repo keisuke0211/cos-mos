@@ -28,18 +28,18 @@ public:
 	//========== [[[ 構造体定義 ]]]
 	// コマンド構造体
 	struct CommandData_Move {
-		UShort      time;
-		Pos3D       targetPos;
+		UShort          time;
+		Pos3D           targetPos;
 		_RNC_Ease::TYPE easeType;
 	};
 	struct CommandData_Spin {
-		UShort      time;
-		Rot3D       targetRot;
+		UShort          time;
+		Rot3D           targetRot;
 		_RNC_Ease::TYPE easeType;
 	};
 	struct CommandData_Scaling {
-		UShort      time;
-		Scale3D     targetScale;
+		UShort          time;
+		Scale3D         targetScale;
 		_RNC_Ease::TYPE easeType;
 	};
 	struct CommandData {
@@ -73,20 +73,24 @@ public:
 	};
 
 	//========== [[[ 関数宣言 ]]]
-	_RNC_Motion3D      ();
-	~_RNC_Motion3D     ();
-	void   Init        (void);
-	void   Uninit      (void);
-	void   Update      (void);
-	short  Load        (const char* loadPath, short idx = NONEDATA);
-	bool   LoadEditData(const char* loadPath);
-	void   SaveEditData(const char* savePath);
-	CData& GetData     (const short& idx) { return idx == EDITDATA ? *m_editData : (idx == NONEDATA ? *(CData*)(nullptr) : *m_datas[idx]); }
-	void   InitMemory  (const UShort& num);
+	_RNC_Motion3D ();
+	~_RNC_Motion3D();
+	short  Load   (const char* loadPath, short idx = NONEDATA);
+	CData& GetData(const short& idx) { return idx == EDITDATA ? *m_editData : (idx == NONEDATA ? *(CData*)(nullptr) : *m_datas[idx]); }
 
 private:
+	//========== [[[ 友達宣言 ]]]
+	friend class C3DObject;
+	friend class CSetUp3DEditor;
+
 	//========== [[[ 関数宣言 ]]]
+	void Init         (void);
+	void Uninit       (void);
+	void Update       (void);
+	bool LoadEditData (const char* loadPath);
+	void SaveEditData (const char* savePath);
 	bool ExecutionLoad(const char* loadPath, CData& data);
+	void InitMemory   (const UShort& num);
 
 	//========== [[[ 変数宣言 ]]]
 	CData** m_datas;
