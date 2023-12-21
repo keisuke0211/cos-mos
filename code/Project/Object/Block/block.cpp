@@ -63,16 +63,16 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // サンゴ礁3
 	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 岩1
 	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // 岩2
-	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物1
-	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物2
+	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物1
+	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物2
 	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -10.0f , 30.0f, },	  // 木の柵
 	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 平屋
-	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(電線無し)
-	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
-	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(右に電線)
-	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(両方に電線)
+	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(電線無し)
+	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
+	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(右に電線)
+	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(両方に電線)
 	{ "data\\MODEL\\Bus_Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // バス停
-	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 街灯
+	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(175,238,238,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 街灯
 	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 看板
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
