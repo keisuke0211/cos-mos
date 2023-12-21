@@ -64,6 +64,7 @@ public:
 		SETTING_BGM,		// BGM
 		SETTING_SE,			// SE
 		SETTING_BACK,
+		SETTING_SCREEN_TEXT,
 		SETTING_BGM_TEXT,
 		SETTING_SE_TEXT,
 		SETTING_MAX
@@ -126,7 +127,8 @@ public:
 		D3DXVECTOR2 *SubMenuSize;		// タイトルのサイズ
 		D3DXVECTOR2 *SubMenuSizeMax;	// タイトルの最大サイズ
 
-		int BoxTex;
+		int BoxTex[2];
+		int BoxTexIdx;
 		int OperationMax;
 		int SettingMax;
 

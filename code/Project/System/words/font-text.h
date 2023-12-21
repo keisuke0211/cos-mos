@@ -55,10 +55,12 @@ public:
 	// テキストボックスの種類
 	enum Box
 	{
-		BOX_NORMAL_GRAY = 0,	// ノーマル(灰色)
-		BOX_NORMAL_BLUE,		// ノーマル(青)
-		BOX_NORMAL_RED,			// ノーマル(赤)
-		BOX_NORMAL_GREEN,		// ノーマル(緑)
+		BOX_MAINE_MENU = 0,		// メインメニュー
+		BOX_SUB_TITLE,			// サブメニューのタイトル
+		BOX_SUB_MENU00,			// サブメニュー00
+		BOX_SUB_SELECTU00,		// サブメニュー00の選択時
+		BOX_SUB_MENU01,			// サブメニュー00
+		BOX_SUB_SELECTU01,		// サブメニュー00の選択時
 		BOX_NONE,				// 無し
 		BOX_MAX
 	};
@@ -108,10 +110,11 @@ public:
 
 
 	// -- 取得 ------------------------------------------
-	/* 位置			*/D3DXVECTOR2 GetTxtBoxPos() { return m_Info.TxtBoxPos; }
-	/* Txtサイズ	*/D3DXVECTOR2 GetTxtBoxSize() { return m_Info.TxtBoxSize; }
-	/* Txt目標サイズ*/D3DXVECTOR2 GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
-	/* 文字サイズ	*/float GetTxtSize() { return m_Info.fTextSize; }
+	/* TxtBotのTex番号	*/Box GetTxtBoxType() { return m_Info.Tex.type; }
+	/* 位置				*/D3DXVECTOR2 GetTxtBoxPos() { return m_Info.TxtBoxPos; }
+	/* Txtサイズ		*/D3DXVECTOR2 GetTxtBoxSize() { return m_Info.TxtBoxSize; }
+	/* Txt目標サイズ	*/D3DXVECTOR2 GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
+	/* 文字サイズ		*/float GetTxtSize() { return m_Info.fTextSize; }
 
 private:
 
@@ -119,6 +122,7 @@ private:
 
 	// テクスチャ情報
 	struct Texture {
+		Box type;		// TxtBoxの種類
 		int Idx;		// テクスチャ番号
 		int PtnIdx;		// パターン	番号
 		int PtnX;		//			Xの分割数

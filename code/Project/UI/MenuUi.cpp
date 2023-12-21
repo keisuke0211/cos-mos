@@ -39,6 +39,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.nCntLeftAnime = 0;
 	m_Menu.nCntRightAnime = 0;
 	m_Menu.nCntRightTextAnime = 0;
+	m_Menu.BoxTexIdx = 0;
 	m_Menu.nMaineSelect = 0;
 	m_Menu.nMaineOldSelect = 0;
 	m_Menu.nSubSelect = 1;
@@ -153,7 +154,7 @@ void CMenuUI::Update(void)
 	// サブメニュー
 	RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x + 10, 400.0f, 100.0f), 0.0f, false)
 		->SetSize(m_Menu.RightScale.x, m_Menu.RightScale.y)
-		->SetTex(m_Menu.BoxTex);
+		->SetTex(m_Menu.BoxTex[m_Menu.BoxTexIdx]);
 		
 	// 入力
 	DecisionInput();
@@ -239,15 +240,15 @@ void CMenuUI::DecisionInput(void)
 			case SETTING_SCREEN:
 
 				if (m_Menu.nCntScrChg <= 0) {
-					int nText = m_Menu.nSubSelect;
+					int nText = SETTING_SCREEN_TEXT;
 					m_Menu.bFullScreen = !m_Menu.bFullScreen;
 
 					// ウインドウのモードを切り替える
 					RNLib::Options().SetIsFullScreen(m_Menu.bFullScreen);
 
 					char data[TXT_MAX] = {};
-					if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
-					else if (m_Menu.bFullScreen)	sprintf(data, "%s ：ON", m_Menu.pSetting[nText].Text);
+					if (!m_Menu.bFullScreen)	sprintf(data, " OFF");
+					else if (m_Menu.bFullScreen)	sprintf(data, " ON");
 
 					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
@@ -265,7 +266,7 @@ void CMenuUI::DecisionInput(void)
 			case SETTING_BACK:
 				m_Menu.bSubMenu = false;
 				m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(COLOR_WHITE);
-				m_pSubMenu[m_Menu.nSubSelect]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
+				m_pSubMenu[m_Menu.nSubSelect]->SetTxtBoxType(CFontText::BOX_SUB_MENU00);
 				break;
 			}
 		}
@@ -295,7 +296,18 @@ void CMenuUI::SelectInput(void)
 			m_Menu.bSubMenu = false;
 			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxPthIdx(1);
 			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(COLOR_WHITE);
-			m_pSubMenu[m_Menu.nSubSelect]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
+
+			for (int nText = 0; nText < m_Menu.SettingMax; nText++) {
+				if (m_pSubMenu[nText] != NULL) {
+
+					CFontText::Box BoxType = m_pSubMenu[nText]->GetTxtBoxType();
+
+					if (BoxType == CFontText::BOX_SUB_SELECTU00)
+						m_pSubMenu[nText]->SetTxtBoxType(CFontText::BOX_SUB_MENU00);
+					else if (BoxType == CFontText::BOX_SUB_SELECTU01)
+						m_pSubMenu[nText]->SetTxtBoxType(CFontText::BOX_SUB_MENU01);
+				}
+			}
 		}
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_W) || RNLib::Input().GetKeyTrigger(DIK_UP) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::UP) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::UP))
@@ -337,7 +349,7 @@ void CMenuUI::SelectInput(void)
 
 	// ループ制御
 	RNLib::Number().LoopClamp(&m_Menu.nMaineSelect, m_Menu.MainMenuMax - 1, 0);
-	RNLib::Number().LoopClamp(&m_Menu.nSubSelect, m_Menu.SettingMax - 3, 1);
+	RNLib::Number().LoopClamp(&m_Menu.nSubSelect, SETTING_SCREEN_TEXT - 1, 1);
 
 	// アニメーション
 	if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID != -1 && !m_Menu.bSubMenuMove && !m_Menu.bSubMenuDisp) {
@@ -399,7 +411,8 @@ void CMenuUI::MenuCreate(void)
 	m_Menu.bBackMode = false;
 	m_Menu.bGameEnd = false;
 
-	m_Menu.BoxTex = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox20.png");
+	m_Menu.BoxTex[0] = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox20.png");
+	m_Menu.BoxTex[1] = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox21.png");
 
 	CMode::TYPE Mode = Manager::GetMode();
 	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,0.0f),35.0f,1,1,-1, };
@@ -420,7 +433,7 @@ void CMenuUI::MenuCreate(void)
 	}
 
 	for (int nText = 0; nText < m_Menu.MainMenuMax; nText++) {
-		m_pMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+		m_pMenu[nText] = CFontText::Create(CFontText::BOX_MAINE_MENU,
 			D3DXVECTOR3(pos.x, pos.y + (100.0f * nText), pos.z), size,
 			"", CFont::FONT_AMECHAN, &pFont);
 
@@ -448,24 +461,26 @@ void CMenuUI::SubTextCreate(void)
 	if (m_pSubMenu != NULL)
 		TextRelease(TEXT_RIGHT);
 
-	m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(175.0f, 70.0f);
-
 	if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 0) {
+
+		m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(256.0f, 70.0f);
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 130, 50.0f, 0.0f), D3DXVECTOR2(256.0f, 70.0f),
 			"", CFont::FONT_07NIKUMARU, &pFont);
 
 		for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NONE,
 				D3DXVECTOR3(m_Menu.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-				"", CFont::FONT_07NIKUMARU, &pFont, false, true);
+				"", CFont::FONT_07NIKUMARU, &pFont, false, false);
 
 			m_Menu.SubMenuSizeMax[nText] = D3DXVECTOR2(370.0f, 80.0f);
 		}
 	}
 	else if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 1) {
+
+		m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(175.0f, 70.0f);
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_NORMAL_GREEN, D3DXVECTOR3(m_Menu.RightPos.x - 210, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 180, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 			"", CFont::FONT_07NIKUMARU, &pFont);
 
 		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
@@ -476,26 +491,29 @@ void CMenuUI::SubTextCreate(void)
 			D3DXVECTOR2 size = INITD3DXVECTOR2;
 
 			// 位置
-			if (nText <= SETTING_BGM)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x, 100.0f + (80.0f * nText), 0.0f);
-			else if (nText == SETTING_SE)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x, 100.0f + (160.0f * ((nText - 2) + 1)), 0.0f);
+			if (nText <= SETTING_SE)
+				pos = D3DXVECTOR3(m_Menu.RightPos.x, 180.0f + (130 * (nText - 1)), 0.0f);
 			else if (nText == SETTING_BACK)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 190.0f, 650.0f, 0.0f);//190
-			else if (nText == SETTING_BGM_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * (nText - 2)), 0.0f);
-			else if (nText == SETTING_SE_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 150.0f, 100.0f + (80.0f * ((nText - 2) + 1)), 0.0f);
+				pos = D3DXVECTOR3(m_Menu.RightPos.x + 160.0f, 620.0f, 0.0f);//190
+			else if (nText >= SETTING_SCREEN_TEXT)
+				pos = D3DXVECTOR3(m_Menu.RightPos.x + 85.0f, 230.0f + (130.0f * (nText - SETTING_SCREEN_TEXT)), 0.0f);
 
-			// size
-			if (nText > SETTING_BACK)
-				size = D3DXVECTOR2(180.0f, 80.0f);
-			else if (nText == SETTING_BACK)
-				size = D3DXVECTOR2(100.0f, 80.0f);
-			else
+			// サイズとボックス種類
+			CFontText::Box type = CFontText::BOX_NONE;
+			if (nText > SETTING_BACK) {
+				size = D3DXVECTOR2(256.0f, 80.0f);
+				type = CFontText::BOX_SUB_MENU01;
+			}
+			else if (nText == SETTING_BACK) {
+				size = D3DXVECTOR2(150.0f, 80.0f);
+				type = CFontText::BOX_SUB_MENU00;
+			}
+			else {
 				size = D3DXVECTOR2(480.0f, 60.0f);
+				type = CFontText::BOX_SUB_MENU00;
+			}
 
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NORMAL_GRAY,
+			m_pSubMenu[nText] = CFontText::Create(type,
 				pos, size,
 				"", CFont::FONT_07NIKUMARU, &pFont, false, true);
 
@@ -634,8 +652,8 @@ void CMenuUI::MenuAnime(void)
 		if (!m_Menu.bClose && !m_Menu.bSubMenuDisp) nMainSelect = m_Menu.nMaineSelect;
 		else if (m_Menu.bClose || m_Menu.bSubMenuDisp) nMainSelect = m_Menu.nSubMenuIdx;
 
-		if (m_MaineMenu[nMainSelect].nSubMenuID == 0) nTextMax = m_Menu.OperationMax;
-		else if (m_MaineMenu[nMainSelect].nSubMenuID == 1) nTextMax = m_Menu.SettingMax;
+		if (m_MaineMenu[nMainSelect].nSubMenuID == 0) { nTextMax = m_Menu.OperationMax; m_Menu.BoxTexIdx = 1; }
+		else if (m_MaineMenu[nMainSelect].nSubMenuID == 1) { nTextMax = m_Menu.SettingMax; m_Menu.BoxTexIdx = 0; }
 
 		D3DXVECTOR3 move = INITD3DXVECTOR3;
 
@@ -703,13 +721,24 @@ void CMenuUI::MenuAnime(void)
 					m_Menu.bSubMenuDisp = true;
 					m_Menu.nSubMenuIdx = m_Menu.nMaineSelect;
 
-					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+					FormFont pFontTitle = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+					FormFont pFontText = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
 					// テキストの再生成
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 0) {
 						for (int nText = 0; nText < m_Menu.OperationMax; nText++) {
 							if (m_pSubMenu[nText] != NULL)
-								m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_07NIKUMARU, &pFont);
+							{
+								if (nText != 0)
+									m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_07NIKUMARU, &pFontText);
+								else
+								{
+									char data[TXT_MAX];
+									sprintf(data, " %s", m_Menu.pOperation[nText].Text);
+
+									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFontTitle);
+								}
+							}
 						}
 					}
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 1) {
@@ -717,22 +746,30 @@ void CMenuUI::MenuAnime(void)
 							if (m_pSubMenu[nText] != NULL) {
 
 								char data[TXT_MAX];
-								if (nText == SETTING_SCREEN) {
-									if (!m_Menu.bFullScreen)	sprintf(data, "%s ：OFF", m_Menu.pSetting[nText].Text);
-									else if (m_Menu.bFullScreen)	sprintf(data, "%s ：ON", m_Menu.pSetting[nText].Text);
+								if (nText == SETTING_SCREEN_TEXT) {
+									if (!m_Menu.bFullScreen)	sprintf(data, " OFF");
+									else if (m_Menu.bFullScreen)	sprintf(data, " ON");
 								}
 								else if (nText == SETTING_BGM_TEXT) {
 									int nData = m_Menu.nBGMVolume * 5;
-									sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
+									sprintf(data, " %d%s", nData, m_Menu.pSetting[nText].Text);
 								}
 								else if (nText == SETTING_SE_TEXT) {
 									int nData = m_Menu.nSEVolume * 5;
-									sprintf(data, "%d%s", nData, m_Menu.pSetting[nText].Text);
+									sprintf(data, " %d%s", nData, m_Menu.pSetting[nText].Text);
 								}
 								else
-									sprintf(data, "%s", m_Menu.pSetting[nText].Text);
+								{
+									if (nText != 0 && nText != SETTING_BACK)
+										sprintf(data, " %s", m_Menu.pSetting[nText].Text);
+									else
+										sprintf(data, "%s", m_Menu.pSetting[nText].Text);
+								}
 
-								m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
+								if (nText != 0)
+									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFontText);
+								else
+									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFontTitle);
 							}
 						}
 					}
@@ -748,7 +785,8 @@ void CMenuUI::MenuAnime(void)
 			else if (m_MaineMenu[m_Menu.nSubMenuIdx].nSubMenuID == 1) nTextMax = m_Menu.SettingMax;
 
 			float size = 35.0f * Rate;
-			m_pSubMenu[0]->SetTxtSize(size);
+			if (m_pSubMenu[0] != NULL)
+				m_pSubMenu[0]->SetTxtSize(size);
 			for (int nTxt = 1; nTxt < nTextMax; nTxt++)
 			{
 				if (m_pSubMenu[nTxt] != NULL)
@@ -818,39 +856,34 @@ void CMenuUI::PartElasticity(void)
 
 			bool bChg = false;
 
-			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 			float SizeX = 0;
 			float SizeY = 0;
+			float size = 0;
 
 			if (Txt == m_Menu.nMaineSelect && TxtSizeX < TgtSizeX)
 			{
 				bChg = true;
-				SizeX = (TgtSizeX * 0.8f) + ((TgtSizeX * 0.2f) * ScaleRate);
-				SizeY = (TgtSizeY * 0.8f) + ((TgtSizeY * 0.2f) * ScaleRate);
+				SizeX = (TgtSizeX * 0.8f) + ((TgtSizeX * 0.2f) * Rate);
+				SizeY = (TgtSizeY * 0.8f) + ((TgtSizeY * 0.2f) * Rate);
 			}
 			else if (Txt != m_Menu.nMaineSelect && TxtSizeX > (TgtSizeX * 0.8f))
 			{
 				bChg = true;
-				SizeX = TgtSizeX - ((TgtSizeX * 0.2f) * ScaleRate);
-				SizeY = TgtSizeY - ((TgtSizeY * 0.2f) * ScaleRate);
+				SizeX = TgtSizeX - ((TgtSizeX * 0.2f) * Rate);
+				SizeY = TgtSizeY - ((TgtSizeY * 0.2f) * Rate);
 			}
+
 
 			if (bChg)
-				m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
+			{
+				if (m_pMenu[Txt] != NULL)
+					m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
+			}
 		}
 
-		if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
+		if (++m_Menu.nCntLeftAnime > PAUSE_LEFT_ANIME) {
 
-			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++)
-			{
-				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
-				float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
-
-				if (Txt == m_Menu.nMaineSelect)
-					m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
-				else if (Txt != m_Menu.nMaineSelect)
-					m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX * 0.8f, SizeY * 0.8f);
-			}
 			m_Menu.nCntLeftAnime = 0;
 			m_Menu.bPartElasticity = false;
 		}
@@ -893,10 +926,31 @@ void CMenuUI::MenuSelect(void)
 	{
 		if (m_Menu.bSubMenu) {
 			if (m_pSubMenu[nCnt] != NULL) {
+
+				CFontText::Box BoxType = m_pSubMenu[nCnt]->GetTxtBoxType();
+
 				if (nCnt == m_Menu.nSubSelect)
-					m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_NORMAL_BLUE);
+				{
+					if (BoxType == CFontText::Box::BOX_SUB_MENU00)
+						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU00);
+
+					if(nCnt == SETTING_SCREEN)
+						m_pSubMenu[SETTING_SCREEN_TEXT]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU01);
+					else if (nCnt == SETTING_BGM)
+						m_pSubMenu[SETTING_BGM_TEXT]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU01);
+					else if (nCnt == SETTING_SE)
+						m_pSubMenu[SETTING_SE_TEXT]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU01);
+				}
 				else
-					m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_NORMAL_GRAY);
+				{
+					if (BoxType == CFontText::Box::BOX_SUB_SELECTU00)
+						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_MENU00);
+					else if (BoxType == CFontText::Box::BOX_SUB_SELECTU01 && 
+						((nCnt == SETTING_SCREEN_TEXT && m_Menu.nSubSelect != SETTING_SCREEN) ||
+						(nCnt == SETTING_BGM_TEXT && m_Menu.nSubSelect != SETTING_BGM) ||
+						(nCnt == SETTING_SE_TEXT && m_Menu.nSubSelect != SETTING_SE)))
+						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_MENU01);
+				}
 			}
 		}
 	}
@@ -944,7 +998,7 @@ void CMenuUI::MenuSelect(void)
 		m_Menu.nBGMOldVolume = m_Menu.nBGMVolume;
 
 		char data[TXT_MAX];		int nData = m_Menu.nBGMVolume * 5;
-		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
+		sprintf(data, " %d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
 			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
@@ -956,7 +1010,7 @@ void CMenuUI::MenuSelect(void)
 		m_Menu.nSEOldVolume = m_Menu.nSEVolume;
 
 		char data[TXT_MAX];		int nData = m_Menu.nSEVolume * 5;
-		sprintf(data, "%d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
+		sprintf(data, " %d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
 			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
