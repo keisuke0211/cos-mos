@@ -64,6 +64,9 @@ void CCoinUI::Update(void) {
 	if (!Stage::GetIsShowUI())
 		return;
 
+	//獲得しているコイン数を取得
+	CInt NumAll = CCoin::GetWholeAll();
+
 	if (m_bFrame) {
 		//フレーム
 		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + m_scale.x, m_pos.y),0.0f)
@@ -76,7 +79,7 @@ void CCoinUI::Update(void) {
 			->SetTex(m_TexIdx[0]);
 
 		//数
-		RNLib::Text2D().Put(PRIORITY_UI, String("%d", CCoin::GetNum()), _RNC_Text::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x, m_pos.y),0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, String("%d", NumAll), _RNC_Text::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x, m_pos.y),0.0f)
 			->SetSize(Size2D(m_scale.x * 0.7f, m_scale.y* 0.7f))
 			->SetCol(COLOR_WHITE);
 	}
@@ -89,7 +92,7 @@ void CCoinUI::Update(void) {
 			->SetZTest(false);
 
 		//数
-		RNLib::Text3D().Put(PRIORITY_UI, String("%d",CCoin::GetNum()), _RNC_Text::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), m_rot)
+		RNLib::Text3D().Put(PRIORITY_UI, String("%d", NumAll), _RNC_Text::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), m_rot)
 			->SetSize(Size2D(3.0f, 3.0f))
 			->SetCol(COLOR_WHITE)
 			->SetZTest(false);

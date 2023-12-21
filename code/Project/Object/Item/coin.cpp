@@ -64,7 +64,10 @@ void CCoin::Update(void) {
 		if (RNLib::Geometry().FindDistance(m_pos, pInfo->pos) <= 16)
 		{
 			Delete();
-			s_Num++;
+
+			//‚Ü‚¾Žæ“¾‚µ‚Ä‚¢‚È‚¯‚ê‚ÎŠl“¾‘”‚ð‘‚â‚·
+			if(m_color == COLOR_WHITE)
+				s_Num++;
 
 			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::GET_COIN], _RNC_Sound::CATEGORY::SE, 1.0f,false );
 

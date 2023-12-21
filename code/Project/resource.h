@@ -32,6 +32,8 @@ public:
 		BG_FISH,
 		BG_BUBBLE,
 		UI_FRAME,
+		UI_CONTROL_0,
+		UI_CONTROL_1,
 		MAX,
 	};
 	static short TEXTURE_IDXES[(int)TEXTURE::MAX];
