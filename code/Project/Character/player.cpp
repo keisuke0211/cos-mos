@@ -816,33 +816,47 @@ void CPlayer::ActionControl(void)
 		if (Player.bRide || Player.bGoal || isZoomUp || Stage::GetIsTimeOver()) 
 			continue;
 
-		// ジャンプ入力（空中じゃない）
-		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
-		{
-			Player.bGround = false;            // 地面から離れた
-			Player.move.y = Player.fJumpPower; // ジャンプ量代入
-			Player.bJump = true;               // ジャンプした
-			PlaySE(SE_LABEL::JUMP);            // SE再生
-		}
-
 		bool isMove = false;
-		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
-			RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT, nIdxPlayer))
-		{// 右に移動
-			Player.move.x += MOVE_SPEED;
-			Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
-			isMove = true;
 
+		// スワップ入力
+		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
+			Player.nSwapAlpha = 255;
+			if (++Player.swapWaitCounter > SWAP_WAIT_BALLOON_TIME)
+				Player.swapWaitCounter = SWAP_WAIT_BALLOON_TIME;
+			Player.rot.y = D3DX_PI;
 		}
-		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
-				 RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT, nIdxPlayer))
-		{// 左に移動
-			Player.move.x -= MOVE_SPEED;
-			Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
-			isMove = true;
+		//スワップ非入力
+		else {
+			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
+			if (--Player.swapWaitCounter < 0)
+				Player.swapWaitCounter = 0;
+
+			// ジャンプ入力（空中じゃない）
+			if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
+			{
+				Player.bGround = false;            // 地面から離れた
+				Player.move.y = Player.fJumpPower; // ジャンプ量代入
+				Player.bJump = true;               // ジャンプした
+				PlaySE(SE_LABEL::JUMP);            // SE再生
+			}
+
+			if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
+				RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT, nIdxPlayer))
+			{// 右に移動
+				Player.move.x += MOVE_SPEED;
+				Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
+				isMove = true;
+
+			}
+			else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
+				RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT, nIdxPlayer))
+			{// 左に移動
+				Player.move.x -= MOVE_SPEED;
+				Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
+				isMove = true;
+			}
 		}
 
-		
 		if (Player.swapWaitCounter > 0) {
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
 		}
@@ -861,19 +875,6 @@ void CPlayer::ActionControl(void)
 		}
 		else {
 			Player.landingCounter--;
-		}
-
-		// スワップ入力
-		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
-			Player.nSwapAlpha = 255;
-			if (++Player.swapWaitCounter > SWAP_WAIT_BALLOON_TIME)
-				Player.swapWaitCounter = SWAP_WAIT_BALLOON_TIME;
-		}
-		//スワップ非入力
-		else {
-			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
-			if (--Player.swapWaitCounter < 0)
-				Player.swapWaitCounter = 0;
 		}
 
 		{// 吹き出しの表示
@@ -991,7 +992,7 @@ void CPlayer::SwapAnimation(void)
 
 		const int nTex = rand() % 2 + 2;
 
-		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos + Pos3D(0.0f,0.0f,0.0f), Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),INITD3DXVECTOR3,false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL,8);
+		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos + Pos3D(0.0f,0.0f,0.0f), Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),D3DXVECTOR3(8.0f,8.0f,0.0f),false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
 	}
 }
 

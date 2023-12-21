@@ -30,13 +30,15 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.nLetterPopCountX = 0;
 	m_Info.nNiCount = 0;
 
+	m_Info.Tex.type = BOX_NONE;
 	m_Info.Tex.Idx = 0;
 	m_Info.Tex.PtnIdx = -1;
 	m_Info.Tex.PtnX = 1;
 	m_Info.Tex.PtnY = 1;
 
+	m_Info.bLetterEnd = false;
+
 	m_Info.nStandTime = 0;
-	m_Info.bStand = false;
 
 	m_Info.nDisapTime = 0;
 	m_Info.nDisapTimeMax = 0;
@@ -89,7 +91,7 @@ HRESULT CFontText::Init()
 	SetType(TYPE_FONT);
 	
 	m_Info.nStandTime = 0;
-	m_Info.bStand = false;
+	m_Info.bLetterEnd = false;
 
 	m_Info.nDisapTime = 0;
 	m_Info.nDisapTimeMax = 0;
@@ -165,9 +167,22 @@ void CFontText::Update()
 	m_Info.TxtBoxMove = INITD3DXVECTOR2;
 
 	// テキスト生成
-	if (!m_Info.bStand)
+	if (!m_Info.bLetterEnd)
 	{
-		LetterForm();
+		if (m_Info.nAppearTime <= 0)
+		{
+			while (1)
+			{
+				LetterForm();
+
+				if (m_Info.bLetterEnd)
+					break;
+			}
+		}
+		else
+		{
+			LetterForm();
+		}
 	}
 
 	// 待機処理
@@ -199,16 +214,7 @@ CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const 
 		// -- メッセージボックス ----------------
 
 		// テクスチャ設定
-		if(type == BOX_NORMAL_GRAY)
-			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
-		else if (type == BOX_NORMAL_BLUE)
-			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox11.png");
-		else if (type == BOX_NORMAL_RED)
-			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
-		else if (type == BOX_NORMAL_GREEN)
-			pText->m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox13.png");
-		else if(type == BOX_NONE || type == BOX_MAX)
-			pText->m_Info.Tex.Idx = -1;
+		pText->SetTxtBoxType(type);
 
 		pText->m_Info.TxtBoxPos = Pos2D(pos.x, pos.y);
 		pText->m_Info.TxtBoxSize = size;
@@ -370,7 +376,7 @@ void CFontText::LetterForm(void)
 			}
 			else
 			{
-				m_Info.bStand = true;
+				m_Info.bLetterEnd = true;
 			}
 		}
 
@@ -384,7 +390,7 @@ void CFontText::LetterForm(void)
 //========================================
 void CFontText::StandTime(void)
 {
-	if (m_Info.bStand && m_Info.nStandTime >= 1)
+	if (m_Info.bLetterEnd && m_Info.nStandTime >= 1)
 	{
 		if (--m_Info.nStandTime <= 0)
 		{
@@ -482,7 +488,6 @@ void CFontText::SetStandTime(int StandTime)
 		StandTime = 0;
 	}
 	m_Info.nStandTime = StandTime;
-	m_Info.bStand = false;
 }
 
 //========================================
@@ -508,6 +513,7 @@ void CFontText::TextLetter(const char * Text, int AppearTime)
 	m_Info.nAddCount = AppearTime;
 	m_Info.nAppearTime = m_Info.nAddCount;
 	m_Info.nAddLetter = 0;
+	m_Info.bLetterEnd = false;
 	m_Info.words = new CWords*[m_Info.nTextLength];
 
 	for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++)
@@ -584,16 +590,21 @@ void CFontText::SetTxtBoxColor(Color col)
 void CFontText::SetTxtBoxType(Box type)
 {
 	// -- メッセージボックス ----------------
+	m_Info.Tex.type = type;
 
 	// テクスチャ設定
-	if (type == BOX_NORMAL_GRAY)
+	if (type == BOX_MAINE_MENU)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox10.png");
-	else if (type == BOX_NORMAL_BLUE)
+	else if (type == BOX_SUB_TITLE)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox11.png");
-	else if (type == BOX_NORMAL_RED)
-		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
-	else if (type == BOX_NORMAL_GREEN)
+	else if (type == BOX_SUB_MENU00)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox13.png");
+	else if (type == BOX_SUB_SELECTU00)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox12.png");
+	else if (type == BOX_SUB_MENU01)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox15.png");
+	else if (type == BOX_SUB_SELECTU01)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox14.png");
 	else if (type == BOX_NONE || type == BOX_MAX)
 		m_Info.Tex.Idx = -1;
 }

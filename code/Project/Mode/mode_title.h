@@ -161,7 +161,7 @@ private:
 	D3DXVECTOR3 m_rotEff;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
-	int m_EffTex;
+	int m_EffTex[3];
 	int m_nSelectTemp;
 	int m_nOldSelect;
 	int m_nOldnPlanet;

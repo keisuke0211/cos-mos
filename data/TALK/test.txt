@@ -37,12 +37,4 @@ SET_TALK
 	PLAYER  1
 END_TALK
 
-
-
-
-
-
-
-
-
 END
