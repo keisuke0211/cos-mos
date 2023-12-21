@@ -45,13 +45,13 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\StageObject\\SandAndAsphaltBlock.x"       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 砂＆アスファルトブロック(中間用)
 	{ "data\\MODEL\\StageObject\\SandBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 砂ブロック
 	{ "data\\MODEL\\Torch.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 松明
-	{ "data\\MODEL\\Snake.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -2.0f  , 30.0f, },	  // 蛇の壁画
+	{ "data\\MODEL\\Snake.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -4.0f  , 30.0f, },	  // 蛇の壁画
 	{ "data\\MODEL\\leaf_large.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 緑色の葉っぱ(大)
 	{ "data\\MODEL\\leaf_small.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 緑色の葉っぱ(小)
 	{ "data\\MODEL\\dry-leaf_large.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 茶色の葉っぱ(大)
 	{ "data\\MODEL\\dry-leaf_small.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 茶色の葉っぱ(小)
-	{ "data\\MODEL\\StoneDragon.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 龍の石像
-	{ "data\\MODEL\\StoneSword.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 剣の石像
+	{ "data\\MODEL\\StoneDragon.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  5.0f  , 30.0f, },	  // 龍の石像
+	{ "data\\MODEL\\StoneSword.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -3.0f  , 30.0f, },	  // 剣の石像
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // なめらかなコンクリートブロック
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // なめらかなひび割れたコンクリートブロック
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // コンクリートブロック
@@ -59,21 +59,21 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)なめらかなひび割れたコンクリートブロック
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)コンクリートブロック
 	{ "data\\MODEL\\sango_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -12.0f , 30.0f, },	  // サンゴ礁1
-	{ "data\\MODEL\\sango_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -12.0f , 30.0f, },	  // サンゴ礁2
-	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // サンゴ礁3
-	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 岩1
+	{ "data\\MODEL\\sango_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -14.0f , 30.0f, },	  // サンゴ礁2
+	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // サンゴ礁3
+	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -1.0f  , 30.0f, },	  // 岩1
 	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // 岩2
-	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物1
-	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 建物2
+	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, },	  // 建物1
+	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, },	  // 建物2
 	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -10.0f , 30.0f, },	  // 木の柵
-	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 60.0f, },	  // 平屋
-	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(電線無し)
-	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(左に電線)
-	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(右に電線)
-	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 電柱(両方に電線)
-	{ "data\\MODEL\\Bus_Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // バス停
-	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 街灯
-	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -7.0f  , 30.0f, },	  // 看板
+	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, },	  // 平屋
+	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(電線無し)
+	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(左に電線)
+	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(右に電線)
+	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(両方に電線)
+	{ "data\\MODEL\\Bus_Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // バス停
+	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(175,238,238,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 街灯
+	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 看板
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -434,11 +434,13 @@ void CBlock::Update(void) {
 	}break;
 	case LOOKS_TYPE::TORCH: {
 		// 炎のエフェクト
-		float m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.3) + 1.0f);
+		float m_ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.6f) + 1.0f);
 
 		D3DXVECTOR3 m_TexPos = D3DXVECTOR3(m_pos.x + (float)(rand() % (int)m_width * 0.25 - m_width * 0.125), m_pos.y > 0.0f ? m_pos.y + 5.0f : m_pos.y - 5.0f, m_pos.z);
 
-		Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png"), m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,50,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 200, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI),D3DXVECTOR3(40.0f,40.0f,0.0f),true);
+		if (RNLib::Count().GetCount() % 4 == 0) {
+			Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png"), m_TexPos, D3DXVECTOR3(m_ScaleTex, m_ScaleTex, 0.0f), Color{ 255,50,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 100, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), D3DXVECTOR3(40.0f, 40.0f, 0.0f), true);
+		}
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos, m_pos.y > 0.0f ? Rot3D(0.0f, 0.0f, 0.0f) : Rot3D(0.0f, 0.0f, D3DX_PI), false)
 			->SetCol(m_color);

@@ -619,6 +619,25 @@ bool CFontText::SetTxtColor(D3DXCOLOR col)
 }
 
 //========================================
+// テキストのサイズ設定
+//========================================
+bool CFontText::SetTxtSize(float size)
+{
+	for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++)
+	{
+		if (m_Info.words[wordsCount] != NULL)
+		{
+			m_Info.words[wordsCount]->SetSize(D3DXVECTOR3(size,size,0.0f));
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+//========================================
 // 文字変更(単体)
 //========================================
 bool CFontText::ChgWords(char* Text, int nIdx, D3DXCOLOR col)
