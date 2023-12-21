@@ -9,10 +9,10 @@
 
 //会話イベントのファイルパス
 const char *CTalk::EVENT_FILE[(int)EVENT::MAX] = {
-	"",                 //イベント無し
-	"data\\TALK\\.txt", // 出発前（タイトル->ステージ選択の合間？
-	"data\\TALK\\.txt", // 不時着陸（1-1の開始イベント
-	"data\\TALK\\.txt", // ロケット発見(1-3クリア後
+	"",//イベント無し
+	"data\\TALK\\talk000.txt", // 出発前（タイトル->ステージ選択の合間？
+	"data\\TALK\\talk001.txt", // 不時着陸（1-1の開始イベント
+	"data\\TALK\\talk002.txt", // ロケット発見(1-3クリア後
 };
 
 CTalk::Talk  *CTalk::s_pTalk = NULL;        //会話内容
@@ -61,7 +61,7 @@ CTalk::~CTalk()
 CTalk *CTalk::Create(EVENT Event)
 {
 	//会話中なのでNULLを返す
-	if (s_pTalk != NULL && s_Event != EVENT::NONE) return NULL;
+	if (s_pTalk != NULL && s_Event != EVENT::NONE && Event == EVENT::NONE) return NULL;
 
 	//インスタンス生成
 	CTalk *pTalk = new CTalk;
@@ -114,7 +114,7 @@ void CTalk::LoadTalk(EVENT &Event)
 	int nTalkCounter = 0;
 
 	// ファイルを開く
-	if (RNLib::File().OpenLoadFile("data\\TALK\\test.txt")) {
+	if (RNLib::File().OpenLoadFile(EVENT_FILE[(int)Event])) {
 		while (RNLib::File().SearchLoop("END")) {
 			if (nTalkCounter != 0 &&
 				nTalkCounter >= m_nTalkNumAll) break;
