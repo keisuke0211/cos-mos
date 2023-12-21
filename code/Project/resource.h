@@ -60,7 +60,7 @@ public:
 
 		GET_PARTS,		//ロケットパーツ取得
 		GET_COIN,		//コイン取得　（無）
-		GATE_IN,		//ワープゲート消えるときの音
+		GATE_CLOSE,		//ワープゲート消えるときの音
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
