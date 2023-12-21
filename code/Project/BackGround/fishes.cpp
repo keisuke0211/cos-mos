@@ -29,15 +29,22 @@ struct Fish {
 //****************************************
 // 魚の定義
 //****************************************
-#define FISH_NUM (4)
+#define FISH_NUM (11)
 static Fish fishes[FISH_NUM];
 static const FishData fishDatas[FISH_NUM] = {
 	// ※パスが無しなら"NONEDATA"と記入する
 	// セットアップパス と その倍率 / モーションパス / レール3Dパス / 1周にかかる時間 / カウント開始時間
 	{ "data\\SETUP\\Whale.txt", 3.0f, Pos3D(-100.0f,300.0f,200.0f), "data\\MOTION\\Whale.txt", "data\\RAIL3D\\Whale.txt", 1800, 0 },
 	{ "data\\SETUP\\Iruka.txt", 1.5f, Pos3D(0.0f,-150.0f,500.0f), "data\\MOTION\\Iruka.txt", "data\\RAIL3D\\Iruka.txt", 2040, 0 },
-	{ "data\\SETUP\\Small_Fish.txt", 1.0f, Pos3D(0.0f,0.0f,30.0f), "NONEDATA", "data\\RAIL3D\\Small_Fish.txt", 720, 0 },
-	{ "data\\SETUP\\Small_Fish.txt", 1.0f, Pos3D(0.0f,50.0f,30.0f), "NONEDATA", "data\\RAIL3D\\Small_Fish.txt", 720, 60 },
+	{ "data\\SETUP\\Small_Fish.txt", 1.0f, Pos3D(0.0f,0.0f,30.0f), "NONEDATA", "data\\RAIL3D\\Small_Fish.txt", 1200, 0 },
+	{ "data\\SETUP\\Small_Fish.txt", 1.0f, Pos3D(0.0f,50.0f,30.0f), "NONEDATA", "data\\RAIL3D\\Small_Fish.txt", 1200, 60 },
+	{ "data\\SETUP\\Big_Fish.txt", 1.5f, Pos3D(0.0f,0.0f,30.0f), "NONEDATA", "data\\RAIL3D\\Small_Fish.txt", 540, 120 },
+	{ "data\\SETUP\\Big_Fish.txt", 1.5f, Pos3D(0.0f,50.0f,30.0f), "NONEDATA", "data\\RAIL3D\\Small_Fish.txt", 540, 180 },
+	{ "data\\SETUP\\shrak.txt", 2.0f, Pos3D(0.0f,50.0f,300.0f), "data\\MOTION\\shrak.txt", "data\\RAIL3D\\Shrak.txt", 720, 0 },
+	{ "data\\SETUP\\Kani.txt", 1.5f, Pos3D(0.0f,30.0f,100.0f), "NONEDATA", "data\\RAIL3D\\Kani.txt", 3000, 0 },
+	{ "data\\SETUP\\Kurage.txt", 1.3f, Pos3D(0.0f,60.0f,100.0f), "NONEDATA", "data\\RAIL3D\\Kurage.txt", 3600, 0 },
+	{ "data\\SETUP\\Kurage.txt", 1.3f, Pos3D(0.0f,130.0f,100.0f), "NONEDATA", "data\\RAIL3D\\Kurage.txt", 3000, 360 },
+	{ "data\\SETUP\\Kurage.txt", 1.3f, Pos3D(0.0f,180.0f,100.0f), "NONEDATA", "data\\RAIL3D\\Kurage.txt", 2400, 720 },
 };
 
 //================================================================================

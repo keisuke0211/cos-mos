@@ -1,0 +1,33 @@
+#=======================================
+#
+#会話000[タイトル画面からステージ選択には入る合間の会話]
+#Author：HIRASAWA SHION
+#Scenario Writer：OMIYA AIRA
+#
+#=======================================
+
+#会話数
+NUM_TALK   3
+
+#会話内容
+SET_TALK
+	TALK    それじゃあ宇宙旅行に出発しようか
+	PLAYER  0
+	TEXTURE -1
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    荷物は大丈夫？
+	PLAYER  0
+	TEXTURE -1
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    全部ツボに詰めたよ!
+	PLAYER  1
+	TEXTURE -1
+END_TALK
+
+END

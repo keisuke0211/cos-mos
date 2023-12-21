@@ -8,6 +8,7 @@
 #include "../../manager.h"
 #include "../../Mode/mode_game.h"
 #include "../../stage.h"
+#include "../../resource.h"
 
 int CCoin::s_NumAll = 0;
 int CCoin::s_Num = 0;
@@ -32,16 +33,8 @@ CCoin::CCoin() {
 	CInt stage = pEd->GetType()[planet].nStageIdx;
 
 	//色設定（既に取得していたら半透明に
-	if (Stage::GetCoinInfo(planet, stage, m_nID))
-	{
-		m_color = Color{ 0, 0, 100, 10 };
-		m_outLineIdx = NONEDATA;
-	}
-	else
-	{
-		m_color = COLOR_WHITE;
-		m_outLineIdx = 8;
-	}
+	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 255,255,255, 150 } : COLOR_WHITE;
+	m_outLineIdx = Stage::GetCoinInfo(planet, stage, m_nID) ? NONEDATA : 8;
 }
 
 //========================================
@@ -75,6 +68,8 @@ void CCoin::Update(void) {
 			//まだ取得していなければ獲得総数を増やす
 			if(m_color == COLOR_WHITE)
 				s_Num++;
+
+			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::GET_COIN], _RNC_Sound::CATEGORY::SE, 1.0f,false );
 
 			//現在のワールド・ステージ番号を取得
 			CStageEditor *pEd = Manager::StgEd();

@@ -56,8 +56,8 @@ HRESULT CParticle::Init(int nTex,int nCount)
 	if (m_type == TYPE::TYPE_NORMAL)
 	{
 		m_Info.move = D3DXVECTOR3(
-			sinf((float)(rand() % PI - HARF_PI) / MAGNI) * (float)(rand() % m_Info.rdmMagni - m_Info.rdmMagni * 0.5f),	//x‚ÌˆÚ“®—Ê
-			cosf((float)(rand() % PI - HARF_PI) / MAGNI) * (float)(rand() % m_Info.rdmMagni - m_Info.rdmMagni * 0.5f),	//y‚ÌˆÚ“®—Ê
+			sinf((float)(rand() % PI - HARF_PI) / MAGNI) * (float)(rand() % (int)m_move.x - m_move.x * 0.5f),	//x‚ÌˆÚ“®—Ê
+			cosf((float)(rand() % PI - HARF_PI) / MAGNI) * (float)(rand() % (int)m_move.y - m_move.y * 0.5f),	//y‚ÌˆÚ“®—Ê
 			INITD3DXVECTOR3.z);
 	}
 	else if (m_type == TYPE::TYPE_SPIN)
@@ -125,6 +125,9 @@ void CParticle::Update(void)
 	D3DXVECTOR3 fScaleRate = m_Info.scale * fCountRate;
 
 	m_Info.scale = fScaleRate;
+
+	if (m_Info.col.r == 0 && m_Info.col.g == 0 && m_Info.col.b == 0)
+		m_Info.alphamode = _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL;
 
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
 		->SetTex(m_Info.nTex)

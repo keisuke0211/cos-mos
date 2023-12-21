@@ -16,7 +16,7 @@ Landing.txt
 歩き
 Walk.txt
 
-出現
+SWAPした時の出現
 Summon.txt
 
 起き上がり：ステージ開始時

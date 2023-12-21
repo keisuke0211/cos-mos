@@ -150,16 +150,16 @@ public:
 		return col;
 	}
 	// 透明にした色を取得
-	Color GetAlphaApplied(const float& alpha) {
+	Color GetAlphaApplied(const float& alphaRate) {
 		Color col = *this;
-		col.a *= alpha;
+		col.a *= alphaRate;
 		col.a = col.a > 255 ? 255 : col.a;
 		return col;
 	}
 	
 	//========== [[[ 変数宣言 ]]]
-	UShort r;	// 赤
-	UShort g;	// 緑
-	UShort b;	// 青
-	UShort a;	// 不透明度
+	short r;	// 赤
+	short g;	// 緑
+	short b;	// 青
+	short a;	// 不透明度
 };

@@ -1,0 +1,19 @@
+#=======================================
+#
+#会話000[]
+#Author：HIRASAWA SHION
+#Scenario Writer：OMIYA AIRA
+#
+#=======================================
+
+#会話数
+NUM_TALK   0
+
+#会話内容
+SET_TALK
+	TALK    
+	PLAYER  
+	TEXTURE 
+END_TALK
+
+END
