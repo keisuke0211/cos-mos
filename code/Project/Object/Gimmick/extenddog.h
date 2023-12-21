@@ -45,6 +45,7 @@ public:
 
 	// -- 取得 ---------------------------------------------
 	STATE GetState(void)      { return m_state; }      //種類
+	STATE GetStateOld(void)	  { return m_stateOld; }   //過去の種類
 	Pos3D GetHeadPos(void)    { return m_HeadPos; }    //頭位置
 	Pos3D GetBodyPos(void)    { return m_BodyPos; }    //体位置
 	Pos3D GetBodyPosOld(void) { return m_BodyPosOld; } //体位置（前回
@@ -73,6 +74,7 @@ private:
 	int   m_modelIdx[(int)Parts::Max]; // モデル番号
 	static const char *MODEL_PATH[(int)Parts::Max];//モデルパス
 	STATE m_state;       // 種類
+	STATE m_stateOld;	 // 過去の種類
 	Pos3D m_scale;       // 大きさ
 	bool  m_bElasticity; // 触って縮むか伸びるか
 	bool  m_bInversion;  // 反転

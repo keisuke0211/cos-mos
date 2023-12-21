@@ -1321,7 +1321,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				//当たり判定の事後処理
-				CollisionAfter(pObj, type, &nColliRot);
+				CollisionAfter(pObj, type, &nColliRot, Player);
 			}
 		}
 	}
@@ -1408,7 +1408,7 @@ bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Inf
 //----------------------------
 // 各プレイヤーの当たり判定が終わった後の処理
 //----------------------------
-void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot)
+void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot, Info& info)
 {
 	// 種類ごとに関数分け
 	switch (type)
@@ -1440,8 +1440,13 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			CExtenddog *pDog = (CExtenddog *)pStageObj;
 
 			//お尻の方向と当たった方向が同じ
-			if (pDog->GetHipRot() == *pColliRot)
+			if (pDog->GetHipRot() == *pColliRot) {
 				pDog->SetState(CExtenddog::STATE::RETURN);
+				
+				if (!info.bGroundOld) {
+					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::DOG_00], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+				}
+			}
 			break;
 		}
 
