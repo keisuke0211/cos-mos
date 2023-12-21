@@ -20,7 +20,7 @@ public:
 
 	CTalk();
 	~CTalk();
-	void Init(void);
+	void Init(EVENT &Event);
 	void Uninit(void);
 	void Update(void);
 
@@ -30,6 +30,8 @@ public:
 private:
 	//会話イベントのファイルパス
 	static const char *EVENT_FILE[(int)EVENT::MAX];
+
+	static const int NEXT_INTERVAL = 20;//次の文字を表示するインターバル
 
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込
@@ -45,8 +47,8 @@ private:
 		int TalkerID; // 会話しているプレイヤーID
 	};
 
-	static Talk *s_pTalk;  //会話内容
-	static EVENT s_Event;  //イベント
+	static Talk *s_pTalk;   //会話内容
+	static EVENT s_Event;   //イベント
 	bool   m_bTalk;         //会話中かどうか
 	int    m_nTalkNumAll;   //最大会話数
 	int    m_nTalkID;       //会話番号
@@ -54,4 +56,5 @@ private:
 	int    m_nStringNumAll; //現在の会話の最大文字数
 	int    m_nStringNum;    //現在の会話の表示文字数
 	int    m_bEndSpeak;     //発言終了（会話自体の終了ではない
+	char   *m_pPopText;     //表示するテキスト
 };

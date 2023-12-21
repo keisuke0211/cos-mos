@@ -882,6 +882,41 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 }
 
 //========================================
+// 外部ファイルよりすでに回収しているコインの総数を返す
+// Author：HIRASAWA SHION
+//========================================
+int  Stage::GetCoinAll(void)
+{
+	LoadWorldData();
+
+	int nNumAll = 0;
+
+	for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+	{
+		//長いので省略
+		WorldData& rWld = pWldData[nCntPlanet];
+
+		for (int nCntStage = 0; nCntStage < rWld.MaxStage; nCntStage++)
+		{
+			//コイン数取得
+			CInt& NumCoin = rWld.pStgRec[nCntStage].CoinNums;
+
+			//０なら引き返す
+			if (NumCoin == 0) continue;
+
+			for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+			{
+				//回収状況代入
+				if (rWld.pStgRec[nCntStage].pGet[nCntCoin])nNumAll++;
+			}
+		}
+	}
+
+	//既に回収している総数を返す
+	return nNumAll;
+}
+
+//========================================
 // コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
