@@ -916,12 +916,15 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 				Color Effcol[3];
 				Effcol[0] = Color(255, 55, 0, 255);
-				Effcol[1] = Color(0, 0, 0, 100);
-				Effcol[2] = Color(100,100,100,155);
+				Effcol[1] = Color(0, 0, 0, 150);
+				Effcol[2] = Color(50,50,50,150);
 
 				if(m_nStgStartCnt == m_RocketRail.GetPointNum() * 8)
-					for(int Particle = 0; Particle < 64; Particle++)
-						Manager::EffectMgr()->ParticleCreate(m_EffTex, m_RocketPosOld + (m_RocketposDiff * RktAnimRt), INIT_EFFECT_SCALE * 0.7f,Effcol[rand() % 3]);
+					for (int Particle = 0; Particle < 64; Particle++) {
+						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + INIT_EFFECT_SCALE.x * 0.5);
+						Manager::EffectMgr()->ParticleCreate(m_EffTex, m_RocketPosOld + (m_RocketposDiff * RktAnimRt),Scale3D(ScaleTex,ScaleTex,0.0f), Effcol[rand() % 3], CParticle::TYPE::TYPE_NORMAL, 180);
+
+					}
 				
 				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
 				D3DXVECTOR3 TexPos = INITPOS3D;
