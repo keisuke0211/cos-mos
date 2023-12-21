@@ -115,7 +115,7 @@ void Stage::Init(void) {
 
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
 	{
-		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,100.0f,0.0f + rand() % 200 - 100);
+		cloudpos[nCnt] = Pos3D(-400.0f + rand() % 400,100.0f,50.0f + rand() % 50);
 		cloudmove[nCnt] = (rand() % 20 + 10) * 0.01f;
 		cloudtex[nCnt] = (int)CResources::TEXTURE::BG_CLOUD_A + rand() % 3;
 	}
@@ -480,6 +480,7 @@ namespace {
 				if (cloudpos[nCnt].x >= 550.0f)
 				{
 					cloudpos[nCnt] = cloudpos[nCnt] = Pos3D(-500.0f + rand() % 200 - 200, 200.0f, 200.0f + rand() % 200 - 100);
+					cloudpos[nCnt].z = 50 + rand() % 50;
 				}
 			}
 
@@ -878,6 +879,41 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 
 	//回収状況を返す
 	return pWldData[planetIdx].pStgRec[stageIdx].pGet[coinID];
+}
+
+//========================================
+// 外部ファイルよりすでに回収しているコインの総数を返す
+// Author：HIRASAWA SHION
+//========================================
+int  Stage::GetCoinAll(void)
+{
+	LoadWorldData();
+
+	int nNumAll = 0;
+
+	for (int nCntPlanet = 0; nCntPlanet < MaxPlanet; nCntPlanet++)
+	{
+		//長いので省略
+		WorldData& rWld = pWldData[nCntPlanet];
+
+		for (int nCntStage = 0; nCntStage < rWld.MaxStage; nCntStage++)
+		{
+			//コイン数取得
+			CInt& NumCoin = rWld.pStgRec[nCntStage].CoinNums;
+
+			//０なら引き返す
+			if (NumCoin == 0) continue;
+
+			for (int nCntCoin = 0; nCntCoin < NumCoin; nCntCoin++)
+			{
+				//回収状況代入
+				if (rWld.pStgRec[nCntStage].pGet[nCntCoin])nNumAll++;
+			}
+		}
+	}
+
+	//既に回収している総数を返す
+	return nNumAll;
 }
 
 //========================================

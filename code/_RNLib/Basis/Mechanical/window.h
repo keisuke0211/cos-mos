@@ -21,7 +21,7 @@ public:
 	int     Create          (HINSTANCE& hInstance, WNDPROC lpfnWndProc);
 	void    Delete          (void);
 	void    ShowTaskBar     (const bool& isShow);
-	void    SetIsFullScreen (const bool& isFullScreen);
+	void    SetIsFullScreen (bool& isFullScreen);
 	bool    FindFocused     (const HWND& windowHandle);
 	void    Message         (const char* pText, const char* pCaption);
 	void    Message_ERROR   (const char* pText);

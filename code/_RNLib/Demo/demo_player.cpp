@@ -34,6 +34,7 @@ CDemoPlayer::CDemoPlayer(const Pos3D& pos, const Rot3D& rot, const Color& col, c
 	m_col    = col;
 	m_camera = new CCamera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight()));
 	m_camera->SetOverwriteBGCol(cameraCol);
+	m_camera->SetLightID((new CLight3D("RNData\\StandardLight.txt"))->GetID());
 	m_clippingCameraID = NONEDATA;
 }
 

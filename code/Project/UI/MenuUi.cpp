@@ -186,7 +186,8 @@ void CMenuUI::DecisionInput(void)
 		CMode::TYPE Mode = Manager::GetMode();
 
 		if (!m_Menu.bSubMenu) {
-			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxPthIdx(0);
+			if(m_pMenu[m_Menu.nMaineSelect] != NULL)
+				m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxPthIdx(0);
 			if (Mode == CMode::TYPE::TITLE)	{
 				switch (m_Menu.nMaineSelect)
 				{
@@ -198,7 +199,9 @@ void CMenuUI::DecisionInput(void)
 				case TITLE_MENU_SETTING:
 					if (!m_Menu.bSubMenu) {
 						m_Menu.bSubMenu = true;
-						m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(Color{ 155,155,155,255 });
+
+						if (m_pMenu[m_Menu.nMaineSelect] != NULL)
+							m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(Color{ 155,155,155,255 });
 					}
 					break;
 				case TITLE_MENU_END:
@@ -222,7 +225,9 @@ void CMenuUI::DecisionInput(void)
 					break;
 				case PAUSE_MENU_SETTING:
 					m_Menu.bSubMenu = true;
-					m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(Color{ 155,155,155,255 });
+
+					if (m_pMenu[m_Menu.nMaineSelect] != NULL)
+						m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(Color{ 155,155,155,255 });
 					break;
 				}
 			}
@@ -245,7 +250,9 @@ void CMenuUI::DecisionInput(void)
 					else if (m_Menu.bFullScreen)	sprintf(data, "%s FON", m_Menu.pSetting[nText].Text);
 
 					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
-					m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
+
+					if (m_pSubMenu[nText] != NULL)
+						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont, &pShadow);
 
 					m_Menu.nCntScrChg = 30;
 				}
