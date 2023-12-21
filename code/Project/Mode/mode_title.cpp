@@ -918,8 +918,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 				Color Effcol[3];
 				Effcol[0] = Color(255, 55, 0, 255);
-				Effcol[1] = Color(0, 0, 0, 150);
-				Effcol[2] = Color(50,50,50,150);
+				Effcol[1] = Color(0, 0, 0, 100);
+				Effcol[2] = Color(50,50,50,120);
 
 				if(m_nStgStartCnt == m_RocketRail.GetPointNum() * 9)
 					for (int Particle = 0; Particle < 64; Particle++) {
