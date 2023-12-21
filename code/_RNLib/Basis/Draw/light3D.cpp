@@ -23,9 +23,15 @@ UShort CLight3D::ms_linearLightNumOld = 0;
 //========================================
 void CLight3D::AllDisable(Device& device) {
 
+	// 画面のクリア
+	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
+
 	// 光を全て無効にする
 	for (int cntLinearLight = 0; cntLinearLight < ms_linearLightNumOld; device->LightEnable(cntLinearLight, FALSE), cntLinearLight++);
 	ms_linearLightNumOld = 0;
+
+	// フォグを使用しない
+	RNLib::DrawStateMgr().SetIsFog(device, false);
 }
 
 //========================================
@@ -42,6 +48,7 @@ CLight3D::CLight3D(const String& loadPath) {
 
 	// クリア処理
 	m_linearLights = NULL;
+	m_fogInfo      = {};
 	Clear();
 
 	// 読み込み処理
@@ -66,9 +73,11 @@ CLight3D::~CLight3D() {
 //========================================
 void CLight3D::Clear(void) {
 
-	// リニアライトを解放
 	RNLib::Memory().Release(&m_linearLights);
 	m_linearLightNum = 0;
+	m_isFog          = false;
+	m_fogInfo        = {};
+	m_BGCol          = COLOR_BLACK;
 	m_rot            = INITROT3D;
 	m_col            = COLOR_WHITE;
 }
@@ -81,6 +90,9 @@ void CLight3D::Load(const String& loadPath) {
 	// ファイルを開く
 	if (RNLib::File().OpenLoadFile(loadPath, "Light3DFile")) {
 		while (RNLib::File().SearchLoop("END")) {
+			RNLib::File().Scan(_RNC_File::SCAN::COLOR, &m_BGCol, "BGCol");
+			RNLib::File().Scan(_RNC_File::SCAN::BOOL , &m_isFog, "isFog");
+
 			if (RNLib::File().CheckIdentifier("linearLights{")) {
 				RNLib::File().Scan(_RNC_File::SCAN::USHORT, &m_linearLightNum);
 				RNLib::Memory().Alloc(&m_linearLights, m_linearLightNum);
@@ -100,6 +112,12 @@ void CLight3D::Load(const String& loadPath) {
 					}
 				}
 			}
+			else if (RNLib::File().CheckIdentifier("fogInfo{")) {
+				while (RNLib::File().SearchLoop("}")) {
+					RNLib::File().Scan(_RNC_File::SCAN::USHORT, &m_fogInfo.start, "start");
+					RNLib::File().Scan(_RNC_File::SCAN::USHORT, &m_fogInfo.end, "end");
+				}
+			}
 		}
 
 		// ファイルを閉じる
@@ -115,6 +133,8 @@ void CLight3D::Save(const String& savePath) {
 	// ファイルを開く
 	if (RNLib::File().OpenSaveFile(savePath)) {
 		fprintf(RNLib::File().GetFile(), "Light3DFile\n");
+		fprintf(RNLib::File().GetFile(), "isFog %d\n", m_isFog);
+		fprintf(RNLib::File().GetFile(), "BGCol %d %d %d %d\n", m_BGCol.r, m_BGCol.g, m_BGCol.b, m_BGCol.a);
 		fprintf(RNLib::File().GetFile(), "linearLights{ %d\n", m_linearLightNum);
 		for (int cntLinearLight = 0; cntLinearLight < m_linearLightNum; cntLinearLight++) {
 			fprintf(RNLib::File().GetFile(), "	linearLight{\n");
@@ -123,6 +143,10 @@ void CLight3D::Save(const String& savePath) {
 			fprintf(RNLib::File().GetFile(), "		col %d %d %d %d\n", m_linearLights[cntLinearLight].col.r, m_linearLights[cntLinearLight].col.g, m_linearLights[cntLinearLight].col.b, m_linearLights[cntLinearLight].col.a);
 			fprintf(RNLib::File().GetFile(), "	}\n");
 		}
+		fprintf(RNLib::File().GetFile(), "}\n");
+		fprintf(RNLib::File().GetFile(), "fogInfo{\n");
+		fprintf(RNLib::File().GetFile(), "	start %d\n", m_fogInfo.start);
+		fprintf(RNLib::File().GetFile(), "	end %d\n", m_fogInfo.end);
 		fprintf(RNLib::File().GetFile(), "}\n");
 		fprintf(RNLib::File().GetFile(), "END");
 
@@ -134,7 +158,10 @@ void CLight3D::Save(const String& savePath) {
 //========================================
 // セッティング処理
 //========================================
-void CLight3D::Setting(Device& device) {
+void CLight3D::Setting(Device& device, const Color* ovrCol) {
+
+	// 画面のクリア
+	device->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), ovrCol == NULL ? m_BGCol : *ovrCol, 1.0f, 0);
 
 	{// リニアライトの設定
 		// もう使用されない光を全て無効にする
@@ -161,6 +188,15 @@ void CLight3D::Setting(Device& device) {
 
 		// 過去の数として保存しておく
 		ms_linearLightNumOld = m_linearLightNum;
+	}
+
+	// フォグの設定
+	if (m_isFog) {
+		RNLib::DrawStateMgr().SetIsFog(device, true);
+		RNLib::DrawStateMgr().SetFogParameter(device, m_BGCol, m_fogInfo.start, m_fogInfo.end);
+	}
+	else {
+		RNLib::DrawStateMgr().SetIsFog(device, false);
 	}
 }
 

@@ -32,7 +32,8 @@ CCoin::CCoin() {
 	CInt stage = pEd->GetType()[planet].nStageIdx;
 
 	//色設定（既に取得していたら半透明に
-	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 0, 0, 100, 10 } : COLOR_WHITE;
+	m_color = Stage::GetCoinInfo(planet, stage, m_nID) ? Color{ 255,255,255, 100 } : COLOR_WHITE;
+	m_outLineIdx = Stage::GetCoinInfo(planet, stage, m_nID) ? NONEDATA : 8;
 }
 
 //========================================
@@ -52,7 +53,7 @@ void CCoin::Update(void) {
 
 	RNLib::Model().Put(PRIORITY_OBJECT, m_ModelIdx, m_pos, m_rot, false)
 		->SetCol(m_color)
-		->SetOutLineIdx(8);
+		->SetOutLineIdx(m_outLineIdx);
 
 	for (int nCnt = 0; nCnt < CPlayer::NUM_PLAYER; nCnt++)
 	{
@@ -62,10 +63,7 @@ void CCoin::Update(void) {
 		if (RNLib::Geometry().FindDistance(m_pos, pInfo->pos) <= 16)
 		{
 			Delete();
-
-			//まだ取得していなければ獲得総数を増やす
-			if(m_color == COLOR_WHITE)
-				s_Num++;
+			s_Num++;
 
 			//現在のワールド・ステージ番号を取得
 			CStageEditor *pEd = Manager::StgEd();

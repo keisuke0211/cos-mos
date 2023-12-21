@@ -57,7 +57,7 @@ public:
 		DOG_03,			// 震える
 
 		GET_PARTS,		//ロケットパーツ取得
-		GET_COIN,		//コイン取得
+		GET_COIN,		//コイン取得　（無）
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
