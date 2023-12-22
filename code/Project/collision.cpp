@@ -49,8 +49,10 @@ float CCollision::Length(Pos3D& vec1, Pos3D& vec2, bool bXVec, bool bYVec, bool 
 //------------------------
 //引数１・２  判定する情報（位置とサイズ
 //引数３・４  各ベクトルを使用するかどうか（サイズに奥行きは無いのでZベクトルは使用しない
+//引数５・６  各情報の半径を使用するかどうか
+//引数７      スワップインターバル中かどうか
 //========================
-bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius, bool bUseTargetRadius)
+bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius, bool bUseTargetRadius, int ForPlayerInterval)
 {
 	//２つの情報のサイズを格納
 	Pos3D selfSize = INITPOS3D, targetSize = INITPOS3D;
@@ -63,7 +65,8 @@ bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool b
 	CFloat SizeLength = Length(selfSize, targetSize, bXVec, bYVec, false);
 
 	//範囲内に居るかどうか返す
-	return PosLength < SizeLength;
+	bool bRange = PosLength < SizeLength;
+	return bRange || ForPlayerInterval != 0;
 }
 
 //----------------------------

@@ -70,8 +70,9 @@ public:
 	//引数１・２  判定する情報（位置とサイズ
 	//引数３・４  各ベクトルを使用するかどうか（サイズに奥行きは無いのでZベクトルは使用しない
 	//引数５・６  各情報の半径を使用するかどうか
+	//引数７      スワップインターバル中かどうか
 	//========================
-	static bool IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius = false, bool bUseTargetRadius = false);
+	static bool IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool bYVec, bool bUseSelfRadius = false, bool bUseTargetRadius = false, int ForPlayerInterval = 0);
 
 	//========================
 	// 矩形と矩形の当たり判定

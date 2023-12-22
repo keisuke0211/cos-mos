@@ -1256,7 +1256,7 @@ void CPlayer::CollisionToStageObject(void)
 				// ※特定オブジェクトを除く
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
 					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE && 
-					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true))
+					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true, false, false, s_nSwapInterval))
 					continue;
 
 				//独自の当たり判定設定
@@ -1282,10 +1282,7 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:
-					//当たり判定終了
-					CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);
-					break;
+				case OBJECT_TYPE::BLOCK:CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);break;
 				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
