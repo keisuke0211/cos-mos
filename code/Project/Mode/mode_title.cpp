@@ -300,7 +300,8 @@ void CMode_Title::Update(void) {
 
 		if (m_bStageChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
-				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) && Manager::Transition().GetState() == CTransition::STATE::NONE)
+				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
+					Manager::Transition().GetState() == CTransition::STATE::NONE)
 				{
 					//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
 
@@ -315,15 +316,17 @@ void CMode_Title::Update(void) {
 						break;
 					case TITLE_SELECT:
 					{
-						if(m_Direction == RIGHT)
-							m_RocketPos = FADEROCKET;
-						else if (m_Direction == LEFT)
-							m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+						if (!Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) || RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
+							if (m_Direction == RIGHT)
+								m_RocketPos = FADEROCKET;
+							else if (m_Direction == LEFT)
+								m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
 
-						m_RocketposDiff = m_RocketPos - m_RocketPosOld;
-						m_RocketAnimCnt = 0;
-						m_nStgStartCnt = 0;
-						m_bStgEnter = true;
+							m_RocketposDiff = m_RocketPos - m_RocketPosOld;
+							m_RocketAnimCnt = 0;
+							m_nStgStartCnt = 0;
+							m_bStgEnter = true;
+						}
 					}
 					break;
 					}
@@ -332,19 +335,14 @@ void CMode_Title::Update(void) {
 		}
 
 		if (m_nStgStartCnt == m_RocketRail.GetPointNum() * 10) {
-			bool bStgRel = Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect);
+			SwapMode(TITLE_NEXT);
+			Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
+			Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
 
-			if (!bStgRel || RNSystem::GetMode() == RNSystem::MODE::DEBUG)
+			if (m_PlanetType != NULL)
 			{
-				SwapMode(TITLE_NEXT);
-				Stage::SetStageNumber(m_nPlanetIdx, m_nStageSelect);
-				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
-
-				if (m_PlanetType != NULL)
-				{
-					delete[] m_PlanetType;
-					m_PlanetType = NULL;
-				}
+				delete[] m_PlanetType;
+				m_PlanetType = NULL;
 			}
 		}
 
