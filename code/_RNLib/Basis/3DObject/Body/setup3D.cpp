@@ -29,32 +29,6 @@ _RNC_SetUp3D::~_RNC_SetUp3D() {
 }
 
 //========================================
-// 初期化処理
-//========================================
-void _RNC_SetUp3D::Init(void) {
-
-}
-
-//========================================
-// 終了処理
-//========================================
-void _RNC_SetUp3D::Uninit(void) {
-
-	// データの解放
-	RNLib::Memory().ReleaseDouble(&m_datas, m_num);
-
-	// エディットデータの解放
-	RNLib::Memory().Release(&m_editData);
-}
-
-//========================================
-// 更新処理
-//========================================
-void _RNC_SetUp3D::Update(void) {
-
-}
-
-//========================================
 // 読み込み処理
 //========================================
 short _RNC_SetUp3D::Load(const char* loadPath, short idx) {
@@ -83,6 +57,38 @@ short _RNC_SetUp3D::Load(const char* loadPath, short idx) {
 	return idx;
 }
 
+//================================================================================
+//----------|---------------------------------------------------------------------
+//==========| [非公開]セットアップ3Dクラス
+//----------|---------------------------------------------------------------------
+//================================================================================
+
+//========================================
+// 初期化処理
+//========================================
+void _RNC_SetUp3D::Init(void) {
+
+}
+
+//========================================
+// 終了処理
+//========================================
+void _RNC_SetUp3D::Uninit(void) {
+
+	// データの解放
+	RNLib::Memory().ReleaseDouble(&m_datas, m_num);
+
+	// エディットデータの解放
+	RNLib::Memory().Release(&m_editData);
+}
+
+//========================================
+// 更新処理
+//========================================
+void _RNC_SetUp3D::Update(void) {
+
+}
+
 //========================================
 // 読み込み処理(エディットデータ)
 //========================================
@@ -104,7 +110,7 @@ bool _RNC_SetUp3D::LoadEditData(const char* loadPath) {
 	m_editData = loadData;
 
 	// 再セットアップ
-	CDoll3D* doll = RNLib::Doll3DMgr().GetEditDoll();
+	CDoll3D* doll = RNSystem::GetDoll3DMgr().GetEditDoll();
 	if (doll != NULL)
 		doll->SetUp(EDITDATA);
 
@@ -131,11 +137,11 @@ void _RNC_SetUp3D::SaveEditData(const char* savePath) {
 			fprintf(RNLib::File().GetFile(), "		idx %d\n", m_editData->m_boneDatas[cntBoneData].idx);
 			fprintf(RNLib::File().GetFile(), "		modelIdx %s\n", RNLib::Model().GetLoadPath(m_editData->m_boneDatas[cntBoneData].modelIdx));
 			fprintf(RNLib::File().GetFile(), "		parentIdx %d\n", m_editData->m_boneDatas[cntBoneData].parentIdx);
-			fprintf(RNLib::File().GetFile(), "		relativePos %.2f %.2f %.2f\n", 
+			fprintf(RNLib::File().GetFile(), "		relativePos %.2f %.2f %.2f\n",
 				m_editData->m_boneDatas[cntBoneData].relativePos.x,
 				m_editData->m_boneDatas[cntBoneData].relativePos.y,
 				m_editData->m_boneDatas[cntBoneData].relativePos.z);
-			fprintf(RNLib::File().GetFile(), "		relativeRot %.2f %.2f %.2f\n", 
+			fprintf(RNLib::File().GetFile(), "		relativeRot %.2f %.2f %.2f\n",
 				m_editData->m_boneDatas[cntBoneData].relativeRot.x / D3DX_PI,
 				m_editData->m_boneDatas[cntBoneData].relativeRot.y / D3DX_PI,
 				m_editData->m_boneDatas[cntBoneData].relativeRot.z / D3DX_PI);
@@ -183,22 +189,6 @@ void _RNC_SetUp3D::SaveEditData(const char* savePath) {
 		RNLib::Window().Message_ERROR(String("セットアップ3Dデータファイルが見つかりませんでした。\n%s", savePath));
 	}
 }
-
-//========================================
-// メモリを指定数に初期化
-//========================================
-void _RNC_SetUp3D::InitMemory(const UShort& num) {
-	CRegist::InitMemory(num);
-
-	// データのメモリ確保
-	RNLib::Memory().Alloc(&m_datas, num);
-}
-
-//================================================================================
-//----------|---------------------------------------------------------------------
-//==========| [非公開]セットアップ3Dクラス
-//----------|---------------------------------------------------------------------
-//================================================================================
 
 //========================================
 // 読み込み実行処理
@@ -392,6 +382,16 @@ bool _RNC_SetUp3D::ExecutionLoad(const char* loadPath, CData& data) {
 	}
 
 	return false;
+}
+
+//========================================
+// メモリを指定数に初期化
+//========================================
+void _RNC_SetUp3D::InitMemory(const UShort& num) {
+	CRegist::InitMemory(num);
+
+	// データのメモリ確保
+	RNLib::Memory().Alloc(&m_datas, num);
 }
 
 //================================================================================

@@ -43,6 +43,8 @@ CTalk::CTalk()
 	m_pShadow.AddPos = Pos3D(6.0f, 6.0f, 0.0f); // 文字の位置からずらす値 
 	m_pShadow.AddSize = Pos2D(4.0f, 4.0f);      // 文字のサイズの加算値 
 
+	m_pos = D3DXVECTOR3(330.0f, 700.0f, 0.0f);
+
 	DeleteLog(); //会話ログ削除
 }
 
@@ -232,7 +234,7 @@ void CTalk::NextSpeak(void)
 		m_bEndSpeak = false;
 		DeleteText();
 
-		m_pText = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 700.0f, 0.0f), INITPOS2D,
+		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D,
 									s_pTalk[m_nTalkID].pLog, CFont::FONT_07NIKUMARU, &m_pFont, false, false, &m_pShadow);
 	}
 }

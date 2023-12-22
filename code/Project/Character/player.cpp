@@ -816,33 +816,47 @@ void CPlayer::ActionControl(void)
 		if (Player.bRide || Player.bGoal || isZoomUp || Stage::GetIsTimeOver()) 
 			continue;
 
-		// ジャンプ入力（空中じゃない）
-		if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
-		{
-			Player.bGround = false;            // 地面から離れた
-			Player.move.y = Player.fJumpPower; // ジャンプ量代入
-			Player.bJump = true;               // ジャンプした
-			PlaySE(SE_LABEL::JUMP);            // SE再生
-		}
-
 		bool isMove = false;
-		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
-			RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT, nIdxPlayer))
-		{// 右に移動
-			Player.move.x += MOVE_SPEED;
-			Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
-			isMove = true;
 
+		// スワップ入力
+		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
+			Player.nSwapAlpha = 255;
+			if (++Player.swapWaitCounter > SWAP_WAIT_BALLOON_TIME)
+				Player.swapWaitCounter = SWAP_WAIT_BALLOON_TIME;
+			Player.rot.y = D3DX_PI;
 		}
-		else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
-				 RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT, nIdxPlayer))
-		{// 左に移動
-			Player.move.x -= MOVE_SPEED;
-			Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
-			isMove = true;
+		//スワップ非入力
+		else {
+			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
+			if (--Player.swapWaitCounter < 0)
+				Player.swapWaitCounter = 0;
+
+			// ジャンプ入力（空中じゃない）
+			if (!Player.bJump && Player.bGround && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
+			{
+				Player.bGround = false;            // 地面から離れた
+				Player.move.y = Player.fJumpPower; // ジャンプ量代入
+				Player.bJump = true;               // ジャンプした
+				PlaySE(SE_LABEL::JUMP);            // SE再生
+			}
+
+			if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_RIGHT) ||
+				RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT, nIdxPlayer))
+			{// 右に移動
+				Player.move.x += MOVE_SPEED;
+				Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, D3DX_PI * 0.7f) * 0.5f;
+				isMove = true;
+
+			}
+			else if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::MOVE_LEFT) ||
+				RNLib::Input().GetStickAnglePress(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT, nIdxPlayer))
+			{// 左に移動
+				Player.move.x -= MOVE_SPEED;
+				Player.rot.y += RNLib::Geometry().FindAngleDifference(Player.rot.y, -D3DX_PI * 0.7f) * 0.5f;
+				isMove = true;
+			}
 		}
 
-		
 		if (Player.swapWaitCounter > 0) {
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
 		}
@@ -861,19 +875,6 @@ void CPlayer::ActionControl(void)
 		}
 		else {
 			Player.landingCounter--;
-		}
-
-		// スワップ入力
-		if (IsKeyConfigPress(nIdxPlayer, Player.side, KEY_CONFIG::SWAP)) {
-			Player.nSwapAlpha = 255;
-			if (++Player.swapWaitCounter > SWAP_WAIT_BALLOON_TIME)
-				Player.swapWaitCounter = SWAP_WAIT_BALLOON_TIME;
-		}
-		//スワップ非入力
-		else {
-			Player.nSwapAlpha = NORMAL_SWAP_ALPHA;
-			if (--Player.swapWaitCounter < 0)
-				Player.swapWaitCounter = 0;
 		}
 
 		{// 吹き出しの表示
@@ -1320,7 +1321,7 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				//当たり判定の事後処理
-				CollisionAfter(pObj, type, &nColliRot);
+				CollisionAfter(pObj, type, &nColliRot, Player);
 			}
 		}
 	}
@@ -1407,7 +1408,7 @@ bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Inf
 //----------------------------
 // 各プレイヤーの当たり判定が終わった後の処理
 //----------------------------
-void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot)
+void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE type, CInt *pColliRot, Info& info)
 {
 	// 種類ごとに関数分け
 	switch (type)
@@ -1439,8 +1440,13 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			CExtenddog *pDog = (CExtenddog *)pStageObj;
 
 			//お尻の方向と当たった方向が同じ
-			if (pDog->GetHipRot() == *pColliRot)
+			if (pDog->GetHipRot() == *pColliRot) {
 				pDog->SetState(CExtenddog::STATE::RETURN);
+				
+				if (!info.bGroundOld) {
+					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::DOG_00], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+				}
+			}
 			break;
 		}
 

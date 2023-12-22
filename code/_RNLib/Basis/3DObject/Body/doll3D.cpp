@@ -19,7 +19,7 @@
 CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 
 	// リストに追加
-	RNLib::Doll3DMgr().AddList(this);
+	RNSystem::GetDoll3DMgr().AddList(this);
 
 	m_priority             = priority;
 	m_clippingID           = NONEDATA;
@@ -41,33 +41,10 @@ CDoll3D::CDoll3D(const UShort& priority, const short& setUpIdx) {
 CDoll3D::~CDoll3D() {
 
 	// リストから削除
-	RNLib::Doll3DMgr().SubList(this);
+	RNSystem::GetDoll3DMgr().SubList(this);
 
 	// ボーン状態のメモリ解放
 	RNLib::Memory().Release(&m_boneStates);
-}
-
-//========================================
-// 更新処理
-//========================================
-void CDoll3D::Update(void) {
-
-	// 位置が設定されていない時、処理を終了する
-	if (!m_isSetPos)
-		return;
-
-	if (m_setUpIdx != NONEDATA)
-	{// セットアップが設定されている時、
-		// セットアップデータ取得
-		_RNC_SetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
-
-		// ボーンの更新処理
-		UpdateBone(setUp);
-
-		// モーションの更新処理
-		// (※ボーンの後でなければ、time0のコマンドを通らなくなってしまう)
-		UpdateMotion();
-	}
 }
 
 //========================================
@@ -155,6 +132,29 @@ void CDoll3D::OverwriteMotion(const short& motionIdx) {
 //================================================================================
 
 //========================================
+// 更新処理
+//========================================
+void CDoll3D::Update(void) {
+
+	// 位置が設定されていない時、処理を終了する
+	if (!m_isSetPos)
+		return;
+
+	if (m_setUpIdx != NONEDATA)
+	{// セットアップが設定されている時、
+		// セットアップデータ取得
+		_RNC_SetUp3D::CData& setUp = RNLib::SetUp3D().GetData(m_setUpIdx);
+
+		// ボーンの更新処理
+		UpdateBone(setUp);
+
+		// モーションの更新処理
+		// (※ボーンの後でなければ、time0のコマンドを通らなくなってしまう)
+		UpdateMotion();
+	}
+}
+
+//========================================
 // モーションの更新処理
 //========================================
 void CDoll3D::UpdateMotion(void) {
@@ -223,10 +223,10 @@ void CDoll3D::UpdateBone(_RNC_SetUp3D::CData& setUp) {
 				->SetClippingCamera(m_clippingID);
 
 			// 頂点番号の描画
-			if (RNLib::Doll3DMgr().GetEditDoll() == this &&
-				RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() &&
-				RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx() == cntBone &&
-				RNLib::Doll3DMgr().GetEditCamera() != NULL) {
+			if (RNSystem::GetDoll3DMgr().GetEditDoll() == this &&
+				RNSystem::GetDoll3DMgr().GetEditDollIsDrawModelVtxIdx() &&
+				RNSystem::GetDoll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx() == cntBone &&
+				RNSystem::GetDoll3DMgr().GetEditCamera() != NULL) {
 				DrawModelVtxIdx(vtxInfo[cntBone], vtxNum[cntBone]);
 			}
 		}
@@ -250,7 +250,7 @@ void CDoll3D::UpdateBone(_RNC_SetUp3D::CData& setUp) {
 void CDoll3D::DrawModelVtxIdx(_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum) {
 
 	// 頂点番号描画数
-	ULong drawVtxIdxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+	ULong drawVtxIdxNum = RNSystem::GetDoll3DMgr().GetEditDollDrawModelVtxIdxNum();
 	if (drawVtxIdxNum > vtxNum)
 		drawVtxIdxNum = vtxNum;
 
@@ -262,7 +262,7 @@ void CDoll3D::DrawModelVtxIdx(_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum)
 		float* vtxDists = NULL;
 		RNLib::Memory().Alloc(&vtxIdxs, vtxNum);
 		RNLib::Memory().Alloc(&vtxDists, vtxNum);
-		const Pos3D& cameraPos = RNLib::Doll3DMgr().GetEditCamera()->GetPosV();
+		const Pos3D& cameraPos = RNSystem::GetDoll3DMgr().GetEditCamera()->GetPosV();
 		for (ULong cntVtx = 0; cntVtx < vtxNum; cntVtx++) {
 			vtxIdxs[cntVtx] = cntVtx;
 			vtxDists[cntVtx] = RNLib::Geometry().FindDistance(cameraPos, vtxInfo[cntVtx].pos);

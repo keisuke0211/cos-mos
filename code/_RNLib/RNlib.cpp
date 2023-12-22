@@ -7,6 +7,7 @@
 #include "RNlib.h"
 #include "RNmode.h"
 #include "RNobject.h"
+#include "RNagent.h"
 #include "Demo/demo.h"
 #include "Editor/setup3D-editor.h"
 #include "Editor/light3D-editor.h"
@@ -21,15 +22,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 // 無名空間
 //****************************************
 namespace {
-
-	//========== [[[ 関数宣言 ]]]
-	void Init(HINSTANCE& instanceHandle, const char*& settingsPath, const char*& optionsDataPath, const UShort& priorityMax, const RNSystem::MODE& mode);
-	void Uninit(void);
-	void EndUninit(void);
-	void Update(void);
-	void Draw(void);
-	void EndDraw(void);
-
 	//========== [[[ 変数宣言 ]]]
 	RNSystem::SIGNAL signal = RNSystem::SIGNAL::NONE;
 	RNSystem::MODE   nowMode;
@@ -56,7 +48,6 @@ namespace {
 //==========| RNライブラリ
 //----------|---------------------------------------------------------------------
 //================================================================================
-_RNC_Doll3DMgr&        RNLib::Doll3DMgr       (void) { return _3DObject.m_doll3DMgr;        }
 _RNC_Motion3D&         RNLib::Motion3D        (void) { return _3DObject.m_motion3D;         }
 _RNC_SetUp3D&          RNLib::SetUp3D         (void) { return _3DObject.m_setUp3D;          }
 _RNC_Effect3D&         RNLib::Effect3D        (void) { return _3DObject.m_effect3D;         }
@@ -100,6 +91,7 @@ int               RNSystem::GetFPS         (void)               { return FPS; }
 void              RNSystem::SetSpace3DStop (const bool& isStop) { isSpace3DStopReserve = isStop; }
 bool              RNSystem::GetSpace3DStop (void)               { return isSpace3DStop; }
 bool              RNSystem::GetSceneSwap   (void)               { return isSceneSwap; }
+_RNC_Doll3DMgr&   RNSystem::GetDoll3DMgr   (void)               { return _3DObject.m_doll3DMgr; }
 _RNC_Effect3DMgr& RNSystem::GetEffet3DMgr  (void)               { return _3DObject.m_effect3DMgr; }
 _RNC_CameraMgr&   RNSystem::GetCameraMgr   (void)               { return draw.m_cameraMgr; }
 _RNC_Light3DMgr&  RNSystem::GetLight3DMgr  (void)               { return draw.m_light3DMgr; }
@@ -165,26 +157,26 @@ bool RNSystem::MainLoop(HINSTANCE& instanceHandle, const char* settingsPath, con
 	// [[[ 信号に応じた処理 ]]]
 	switch (signal) {
 	case RNSystem::SIGNAL::INIT: {
-		Init(instanceHandle, settingsPath, optionsDataPath, (mode == MODE::EXECUTION || mode == MODE::DEBUG) ? priorityMax : (UShort)RNMode::PRIORITY::MAX, mode);
+		_RNC_Agent::Init(instanceHandle, settingsPath, optionsDataPath, (mode == MODE::EXECUTION || mode == MODE::DEBUG) ? priorityMax : (UShort)RNMode::PRIORITY::MAX, mode);
 	}break;
 	case RNSystem::SIGNAL::UNINIT: {
-		Uninit();
+		_RNC_Agent::Uninit();
 	}break;
 	case RNSystem::SIGNAL::END_UNINIT: {
-		EndUninit();
+		_RNC_Agent::EndUninit();
 	}break;
 	case RNSystem::SIGNAL::UPDATE: {
-		Update();
+		_RNC_Agent::Update();
 		isMessageLoop = false;
 	}break;
 	case RNSystem::SIGNAL::UPDATE_WAIT: {
 		isMessageLoop = true;
 	}break;
 	case RNSystem::SIGNAL::DRAW: {
-		Draw();
+		_RNC_Agent::Draw();
 	}break;
 	case RNSystem::SIGNAL::END_DRAW: {
-		EndDraw();
+		_RNC_Agent::EndDraw();
 	}break;
 	case RNSystem::SIGNAL::END: {
 		return false;
@@ -212,184 +204,183 @@ CDemo& RNDemo::Get(void) { return nowMode == RNSystem::MODE::DEMO ? *(CDemo*)mod
 
 //================================================================================
 //----------|---------------------------------------------------------------------
-//==========| 無名空間の関数
+//==========| RNエージェント(仲介者)クラス
 //----------|---------------------------------------------------------------------
 //================================================================================
-namespace {
-	//========================================
-	// 初期処理
-	//========================================
-	void Init(HINSTANCE& instanceHandle, const char*& settingsPath, const char*& optionsDataPath, const UShort& priorityMax, const RNSystem::MODE& mode) {
 
-		// モードを保存
-		nowMode = mode;
+//========================================
+// 初期処理
+//========================================
+void _RNC_Agent::Init(HINSTANCE& instanceHandle, const char*& settingsPath, const char*& optionsDataPath, const UShort& priorityMax, const RNSystem::MODE& mode) {
 
-		// 終了後にメモリリークを出力
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	// モードを保存
+	nowMode = mode;
+
+	// 終了後にメモリリークを出力
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// 乱数の種を取得
+	srand((unsigned int)time(0));
+
+	// 分解能を設定
+	timeBeginPeriod(1);
 	
-		// 乱数の種を取得
-		srand((unsigned int)time(0));
+	// 変数を初期化
+	execLastTime         = timeGetTime();
+	FPSCount             = 0;
+	lastTime             = timeGetTime();
+	isSpace3DStop        = false;
+	isSpace3DStopReserve = false;
+	isSceneSwap          = false;
+	isBeginScene         = false;
 
-		// 分解能を設定
-		timeBeginPeriod(1);
-		
-		// 変数を初期化
-		execLastTime         = timeGetTime();
-		FPSCount             = 0;
-		lastTime             = timeGetTime();
-		isSpace3DStop        = false;
-		isSpace3DStopReserve = false;
-		isSceneSwap          = false;
-		isBeginScene         = false;
-
-		// オプションのパスを設定し、読み込み処理
-		other.m_options.SetOptionsDataPath(optionsDataPath);
-		other.m_options.Load();
-		
-		// 設定ファイルを読み込み&書き出し
-		if (RNSettings::LoadAndSave(settingsPath))
-		{// 成功した時、設定情報を元にウィンドウを生成
-			if (FAILED(mechanical.m_window.Create(instanceHandle, WindowProc))) {
-				signal = RNSystem::SIGNAL::UNINIT;
-				return;
-			}
-		}
-		else
-		{// 失敗した時、シグナルを終了にする
+	// オプションのパスを設定し、読み込み処理
+	other.m_options.SetOptionsDataPath(optionsDataPath);
+	other.m_options.Load();
+	
+	// 設定ファイルを読み込み&書き出し
+	if (RNSettings::LoadAndSave(settingsPath))
+	{// 成功した時、設定情報を元にウィンドウを生成
+		if (FAILED(mechanical.m_window.Create(instanceHandle, WindowProc))) {
 			signal = RNSystem::SIGNAL::UNINIT;
 			return;
 		}
+	}
+	else
+	{// 失敗した時、シグナルを終了にする
+		signal = RNSystem::SIGNAL::UNINIT;
+		return;
+	}
 
-		// RNオブジェクトの初期化
-		_3DObject  .Init();
-		calculation.Init();
-		draw	   .Init(mechanical.m_window.GetD3DDevice(), priorityMax);
-		mechanical .Init(instanceHandle);
-		other	   .Init();
+	// RNオブジェクトの初期化
+	_3DObject  .Init();
+	calculation.Init();
+	draw	   .Init(mechanical.m_window.GetD3DDevice(), priorityMax);
+	mechanical .Init(instanceHandle);
+	other	   .Init();
 
-		modeObject = NULL;
-		switch (mode) {
-		case RNSystem::MODE::DEMO: {
-			RNLib::Memory().Alloc((CDemo**)&modeObject);
-			CDemo* demo = (CDemo*)modeObject;
-			demo->Init();
-		}break;
-		case RNSystem::MODE::SETUP3D_EDITOR: {
-			RNLib::Memory().Alloc((CSetUp3DEditor**)&modeObject);
-			((CSetUp3DEditor*)modeObject)->Init();
-		}break;
-		case RNSystem::MODE::LIGHT3D_EDITOR: {
-			RNLib::Memory().Alloc((CLight3DEditor**)&modeObject);
-			((CLight3DEditor*)modeObject)->Init();
-		}break;
-		case RNSystem::MODE::RAIL3D_EDITOR: {
-			RNLib::Memory().Alloc((CRail3DEditor**)&modeObject);
-			((CRail3DEditor*)modeObject)->Init();
-		}break;
-		}
+	modeObject = NULL;
+	switch (mode) {
+	case RNSystem::MODE::DEMO: {
+		RNLib::Memory().Alloc((CDemo**)&modeObject);
+		CDemo* demo = (CDemo*)modeObject;
+		demo->Init();
+	}break;
+	case RNSystem::MODE::SETUP3D_EDITOR: {
+		RNLib::Memory().Alloc((CSetUp3DEditor**)&modeObject);
+		((CSetUp3DEditor*)modeObject)->Init();
+	}break;
+	case RNSystem::MODE::LIGHT3D_EDITOR: {
+		RNLib::Memory().Alloc((CLight3DEditor**)&modeObject);
+		((CLight3DEditor*)modeObject)->Init();
+	}break;
+	case RNSystem::MODE::RAIL3D_EDITOR: {
+		RNLib::Memory().Alloc((CRail3DEditor**)&modeObject);
+		((CRail3DEditor*)modeObject)->Init();
+	}break;
+	}
+}
+
+//========================================
+// 終了処理
+//========================================
+void _RNC_Agent::Uninit(void) {
+
+	// RNオブジェクトの解放
+	_3DObject  .Uninit();
+	calculation.Uninit();
+	draw	   .Uninit();
+	mechanical .Uninit();
+	other	   .Uninit();
+
+	switch (nowMode) {
+	case RNSystem::MODE::DEMO: {
+		((CDemo*)modeObject)->Uninit();
+		RNLib::Memory().Release((CDemo**)&modeObject);
+	}break;
+	case RNSystem::MODE::SETUP3D_EDITOR: {
+		((CSetUp3DEditor*)modeObject)->Uninit();
+		RNLib::Memory().Release((CSetUp3DEditor**)&modeObject);
+	}break;
+	case RNSystem::MODE::LIGHT3D_EDITOR: {
+		((CLight3DEditor*)modeObject)->Uninit();
+		RNLib::Memory().Release((CLight3DEditor**)&modeObject);
+	}break;
+	case RNSystem::MODE::RAIL3D_EDITOR: {
+		((CRail3DEditor*)modeObject)->Uninit();
+		RNLib::Memory().Release((CRail3DEditor**)&modeObject);
+	}break;
 	}
 	
-	//========================================
-	// 終了処理
-	//========================================
-	void Uninit(void) {
+	// 設定情報の解放処理
+	RNSettings::Release();
 
-		// RNオブジェクトの解放
-		_3DObject  .Uninit();
-		calculation.Uninit();
-		draw	   .Uninit();
-		mechanical .Uninit();
-		other	   .Uninit();
+	// 分解能を戻す
+	timeEndPeriod(1);
+}
 
-		switch (nowMode) {
-		case RNSystem::MODE::DEMO: {
-			((CDemo*)modeObject)->Uninit();
-			RNLib::Memory().Release((CDemo**)&modeObject);
-		}break;
-		case RNSystem::MODE::SETUP3D_EDITOR: {
-			((CSetUp3DEditor*)modeObject)->Uninit();
-			RNLib::Memory().Release((CSetUp3DEditor**)&modeObject);
-		}break;
-		case RNSystem::MODE::LIGHT3D_EDITOR: {
-			((CLight3DEditor*)modeObject)->Uninit();
-			RNLib::Memory().Release((CLight3DEditor**)&modeObject);
-		}break;
-		case RNSystem::MODE::RAIL3D_EDITOR: {
-			((CRail3DEditor*)modeObject)->Uninit();
-			RNLib::Memory().Release((CRail3DEditor**)&modeObject);
-		}break;
-		}
-		
-		// 設定情報の解放処理
-		RNSettings::Release();
+//========================================
+// 最終終了処理
+//========================================
+void _RNC_Agent::EndUninit(void) {
 
-		// 分解能を戻す
-		timeEndPeriod(1);
-	}
-	
-	//========================================
-	// 最終終了処理
-	//========================================
-	void EndUninit(void) {
+	// 全オブジェクトマネージャーの解放処理
+	CObjectMgr::ReleaseAllMgrs();
+}
 
-		// 全オブジェクトマネージャーの解放処理
-		CObjectMgr::ReleaseAllMgrs();
+//========================================
+// 更新処理
+//========================================
+void _RNC_Agent::Update(void) {
+
+	// 3D空間停止予約を適用する
+	isSpace3DStop = isSpace3DStopReserve;
+
+	switch (nowMode) {
+	case RNSystem::MODE::DEMO: {
+		((CDemo*)modeObject)->Update();
+	}break;
+	case RNSystem::MODE::SETUP3D_EDITOR: {
+		((CSetUp3DEditor*)modeObject)->Update();
+	}break;
+	case RNSystem::MODE::LIGHT3D_EDITOR: {
+		((CLight3DEditor*)modeObject)->Update();
+	}break;
+	case RNSystem::MODE::RAIL3D_EDITOR: {
+		((CRail3DEditor*)modeObject)->Update();
+	}break;
 	}
 
-	//========================================
-	// 更新処理
-	//========================================
-	void Update(void) {
+	// 全オブジェクトマネージャーの更新処理
+	CObjectMgr::UpdateAllMgrs();
 
-		// 3D空間停止予約を適用する
-		isSpace3DStop = isSpace3DStopReserve;
+	// RNオブジェクト
+	_3DObject  .Update();
+	calculation.Update();
+	draw       .Update();
+	other	   .Update();
+	mechanical .Update();
+}
 
-		switch (nowMode) {
-		case RNSystem::MODE::DEMO: {
-			((CDemo*)modeObject)->Update();
-		}break;
-		case RNSystem::MODE::SETUP3D_EDITOR: {
-			((CSetUp3DEditor*)modeObject)->Update();
-		}break;
-		case RNSystem::MODE::LIGHT3D_EDITOR: {
-			((CLight3DEditor*)modeObject)->Update();
-		}break;
-		case RNSystem::MODE::RAIL3D_EDITOR: {
-			((CRail3DEditor*)modeObject)->Update();
-		}break;
-		}
+//========================================
+// 描画処理
+//========================================
+void _RNC_Agent::Draw(void) {
 
-		// 全オブジェクトマネージャーの更新処理
-		CObjectMgr::UpdateAllMgrs();
+	// 描画開始処理
+	draw.m_drawMgr.StartDraw(mechanical.m_window.GetD3DDevice());
+}
 
-		// RNオブジェクト
-		_3DObject  .Update();
-		calculation.Update();
-		draw       .Update();
-		other	   .Update();
-		mechanical .Update();
-	}
+//========================================
+// 最終描画処理
+//========================================
+void _RNC_Agent::EndDraw(void) {
 
-	//========================================
-	// 描画処理
-	//========================================
-	void Draw(void) {
+	// 描画終了処理
+	draw.m_drawMgr.EndDraw(mechanical.m_window.GetD3DDevice());
 
-		// 描画開始処理
-		draw.m_drawMgr.StartDraw(mechanical.m_window.GetD3DDevice());
-	}
-
-	//========================================
-	// 最終描画処理
-	//========================================
-	void EndDraw(void) {
-
-		// 描画終了処理
-		draw.m_drawMgr.EndDraw(mechanical.m_window.GetD3DDevice());
-
-		// シーン入れ替えフラグをリセット
-		isSceneSwap = false;
-	}
+	// シーン入れ替えフラグをリセット
+	isSceneSwap = false;
 }
 
 //================================================================================

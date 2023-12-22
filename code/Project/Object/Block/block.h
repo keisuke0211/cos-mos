@@ -131,8 +131,7 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
-	void SetCollision(bool isCollision) { m_isCollision = isCollision; }
-	bool& GetCollision(void) { return m_isCollision; }
+	bool GetCollision(void) { return LOOKS_DATAS[(int)m_looksType].isCollision; }
 	LOOKS_TYPE GetLooksType(void) { return m_looksType; }
 
 	//========== [[[ リアクション用関数宣言 ]]]
@@ -143,7 +142,6 @@ public:
 	void IsReaction_Land(bool bFrag)  { ; } //上に着地した瞬間
 	void IsReaction_TakeOff(bool bFrag){ ;}//上からジャンプで離れた瞬間
 
-private:
 	//========== [[[ 構造体定義 ]]]
 	struct LooksData {
 		const char* modelPath;
@@ -153,8 +151,10 @@ private:
 		SET_TYPE setType;
 		float height;
 		float depth;
+		bool isCollision;
 	};
 
+private:
 	//========== [[[ 定数宣言 ]]]
 	static const LooksData LOOKS_DATAS[(int)LOOKS_TYPE::MAX];
 	static const char* OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX];
@@ -175,7 +175,6 @@ private:
 	static short   m_otherSoundIdxes[(int)OTHER_SOUND::MAX];
 	CDoll3D*   m_doll;
 	LOOKS_TYPE m_looksType;		// 種類
-	bool       m_isCollision;
 	bool       m_isHitOlds[6];
 	bool       m_isHits[6];
 	Pos3D      m_targetAddPos;

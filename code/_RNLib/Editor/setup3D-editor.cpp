@@ -26,9 +26,9 @@ CSetUp3DEditor::CSetUp3DEditor() {
 
 	m_doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, EDITDATA);
 	m_doll->SetPos(Pos3D(0.0f, 0.0f, 0.0f));
-	RNLib::Doll3DMgr().SetEditDoll(m_doll);
-	RNLib::Doll3DMgr().SetEditCamera(m_camera);
-	RNLib::Doll3DMgr().SetEditDollDrawModelVtxIdxNum(10);
+	RNSystem::GetDoll3DMgr().SetEditDoll(m_doll);
+	RNSystem::GetDoll3DMgr().SetEditCamera(m_camera);
+	RNSystem::GetDoll3DMgr().SetEditDollDrawModelVtxIdxNum(10);
 
 	m_slither        = INITVECTOR3D;
 	m_slitherCounter = 0;
@@ -83,7 +83,7 @@ void CSetUp3DEditor::Update(void) {
 			Pos2D(9.0f, 9.0f));
 
 	// 現在のボーン番号を取得
-	short boneIdx = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx();
+	short boneIdx = RNSystem::GetDoll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx();
 
 	{// [[[ 操作 ]]]
 		// 新規作成
@@ -148,7 +148,7 @@ void CSetUp3DEditor::Update(void) {
 		
 		// 頂点番号の描画ON/OFF
 		if (RNLib::Input().GetKeyTrigger(DIK_7)) {
-			RNLib::Doll3DMgr().SetEditDollIsDrawModelVtxIdx(!RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx());
+			RNSystem::GetDoll3DMgr().SetEditDollIsDrawModelVtxIdx(!RNSystem::GetDoll3DMgr().GetEditDollIsDrawModelVtxIdx());
 		}
 
 		// くねくね値
@@ -183,11 +183,11 @@ void CSetUp3DEditor::Update(void) {
 				boneIdx = (boneIdx + 1) % RNLib::SetUp3D().GetData(EDITDATA).m_boneDataNum;
 			}
 
-			RNLib::Doll3DMgr().SetEditDollDrawModelVtxIdxBoneIdx(boneIdx);
+			RNSystem::GetDoll3DMgr().SetEditDollDrawModelVtxIdxBoneIdx(boneIdx);
 		}
 
 		{// 頂点番号の描画数
-			short drawVtxNum = RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum();
+			short drawVtxNum = RNSystem::GetDoll3DMgr().GetEditDollDrawModelVtxIdxNum();
 
 			if (RNLib::Input().GetKeyTrigger(DIK_D)) {
 				if (--drawVtxNum < NONEDATA)
@@ -197,7 +197,7 @@ void CSetUp3DEditor::Update(void) {
 				drawVtxNum++;
 			}
 
-			RNLib::Doll3DMgr().SetEditDollDrawModelVtxIdxNum(drawVtxNum);
+			RNSystem::GetDoll3DMgr().SetEditDollDrawModelVtxIdxNum(drawVtxNum);
 		}
 	}
 
@@ -241,12 +241,12 @@ void CSetUp3DEditor::Update(void) {
 	RNLib::Text2D().PutDebugLog(String("MotionCreateNew  [4]"));
 	RNLib::Text2D().PutDebugLog(String("MotionLoad       [5]"));
 	RNLib::Text2D().PutDebugLog(String("MotionReLoad     [6]%s", m_messageType == MESSAGE_TYPE::MOTION_RELOAD_SUCCEEDED ? " SUCCEEDED!" : m_messageType == MESSAGE_TYPE::MOTION_RELOAD_FAILED ? " FAILED!" : ""));
-	RNLib::Text2D().PutDebugLog(String("IsDrawVtxIdx     [7]   :%s", RNLib::Doll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
+	RNLib::Text2D().PutDebugLog(String("IsDrawVtxIdx     [7]   :%s", RNSystem::GetDoll3DMgr().GetEditDollIsDrawModelVtxIdx() ? "TRUE" : "FALSE"));
 	RNLib::Text2D().PutDebugLog(String("SlitherX         [Q][W]:%.1f", m_slither.x));
 	RNLib::Text2D().PutDebugLog(String("SlitherY         [A][S]:%.1f", m_slither.y));
 	RNLib::Text2D().PutDebugLog(String("SlitherZ         [Z][X]:%.1f", m_slither.z));
-	RNLib::Text2D().PutDebugLog(String("FocusedBoneIdx   [E][R]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
-	RNLib::Text2D().PutDebugLog(String("DrawVtxIdxNum    [D][F]:%d", RNLib::Doll3DMgr().GetEditDollDrawModelVtxIdxNum()));
+	RNLib::Text2D().PutDebugLog(String("FocusedBoneIdx   [E][R]:%d", RNSystem::GetDoll3DMgr().GetEditDollDrawModelVtxIdxBoneIdx()));
+	RNLib::Text2D().PutDebugLog(String("DrawVtxIdxNum    [D][F]:%d", RNSystem::GetDoll3DMgr().GetEditDollDrawModelVtxIdxNum()));
 	RNLib::Text2D().PutDebugLog(String("-----Materials"));
 
 	// マテリアル情報の表示

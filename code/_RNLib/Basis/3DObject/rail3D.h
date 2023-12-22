@@ -21,7 +21,7 @@ public:
 	void    Clear      (void);
 	void    Load       (const String& loadPath);
 	void    Save       (const String& loadPath, const float& scale = 1.0f);
-	Matrix  GetMtx     (float rate, const bool& isApplyScale);
+	Matrix  GetMtx     (float rate, const bool& isApplyScale = true);
 	bool&   GetIsLoop  (void)               { return m_isLoop; }
 	void    SetIsLoop  (const bool& isLoop) { m_isLoop = isLoop; }
 	Pos3D&  GetPoint   (const UShort& idx)  { return m_points[idx]; }

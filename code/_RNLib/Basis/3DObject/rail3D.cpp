@@ -106,19 +106,28 @@ Matrix CRail3D::GetMtx(float rate, const bool& isApplyScale) {
     if (m_pointNum < 3)
         return INITMATRIX;
 
+    assert(rate <= 1.0f);
+
     // 割合ループ制御
     RNLib::Number().LoopClamp(&rate, 1.0f, 0.0f);
 
     // 割合に基づいてCatmull-Romスプライン曲線上の位置と進行方向を計算
-    Pos3D pos;
+    Pos3D    pos;
     Vector3D tangent;
     CalculateCatmullRomSpline(rate, pos, tangent);
+
+    // 向きのはかり方ごり押し…
+    Pos3D    pos2;
+    Vector3D tangent2;
+    CalculateCatmullRomSpline(rate - 0.01f, pos2, tangent2);
+
+    Rot3D rot = RNLib::Geometry().FindRot(pos2, pos);
 
     if (isApplyScale) {
         pos *= m_scale;
     }
 
-    return RNLib::Matrix().ConvPosRotToMtx(pos, RNLib::Geometry().FindVecRot(tangent));
+    return RNLib::Matrix().ConvPosRotToMtx(pos, rot);
 }
 
 //========================================

@@ -8,6 +8,7 @@
 #include "extenddog.h"
 #include "../../main.h"
 #include "../../Character/player.h"
+#include "../../resource.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -102,6 +103,8 @@ void CExtenddog::Update(void) {
 
 	//前回位置更新
 	m_BodyPosOld = m_BodyPos;
+
+	m_stateOld = m_state;
 
 	//状態別更新処理
 	switch (m_state)

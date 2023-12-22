@@ -1092,8 +1092,8 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
 		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
 
-		m_pMenu = CFontText::Create(CFontText::BOX_NORMAL_GRAY, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-			"ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚Ä‚Ë„D", CFont::FONT_07NIKUMARU, &pFont, false, false, &pShadow);
+		m_pMenu = CFontText::Create(CFontText::BOX_NONE, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+			"ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚Ä‚Ë„J", CFont::FONT_07NIKUMARU, &pFont, false, false, &pShadow);
 	}
 		break;
 	case CMode_Title::TITLE_MENU_ANIME:
@@ -1139,7 +1139,7 @@ void CMode_Title::StageRel(int nPlanet, int nStgMax)
 		{
 			int nStgCoin = Manager::StgEd()->GetStageCoin(nPlanet, nCnt);
 
-			if (CCoin::GetNumAll() >= nStgCoin)
+			if (CCoin::GetWholeAll() >= nStgCoin)
 			{
 				Manager::StgEd()->SetStageRel(nPlanet, nCnt, false);
 			}

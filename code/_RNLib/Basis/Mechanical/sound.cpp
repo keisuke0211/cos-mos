@@ -76,7 +76,7 @@ void _RNC_Sound::Init(void) {
 void _RNC_Sound::Uninit(void) {
 
 	// 再生マネージャーの全解放
-	m_playMgr.ReleaseAll();
+	m_playMgr.DeleteAll();
 
 	// データの解放
 	RNLib::Memory().ReleaseDouble(&m_datas, m_num);

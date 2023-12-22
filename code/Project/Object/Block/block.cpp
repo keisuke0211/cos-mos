@@ -13,67 +13,67 @@
 // 定数定義
 //========================================
 const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Soil.PNG"              , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 土ブロック
-	{ "data\\MODEL\\StageObject\\SoilBlock_Grassy.x"          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 草の生えた土ブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロックA
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロックB
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石ブロックC
-	{ "data\\MODEL\\StageObject\\AncientStonePillar_Up.x"     , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 柱の上
-	{ "data\\MODEL\\StageObject\\AncientStonePillar_Center.x" , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 柱の繋ぎ
-	{ "data\\MODEL\\StageObject\\AncientStonePillar_Down.x"   , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 柱の根本
-	{ "data\\MODEL\\StageObject\\Leaf.x"                      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 草ブロック
-	{ "data\\MODEL\\StageObject\\TreeTrunk.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 木の幹
-	{ "data\\MODEL\\StageObject\\TreeTrunk_Root.x"            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 木の根元
-	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -16.0f , 0.0f , },	  // バオバブの木(背景用)
-	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 宝箱
-	{ "data\\MODEL\\coin.x"                                   , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 0.0f , },	  // 山積みのコイン
-	{ "data\\MODEL\\stone_monument.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 謎の石碑
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneBrick.PNG"        , Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 古代の石レンガブロック
-	{ "data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x"  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 土＆古代の石ブロック(中間用)
-	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -8.0f  , 0.0f , },	  // ヤシの木
-	{ "data\\MODEL\\Three-eyes_block.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 三つ目のブロック
-	{ "data\\MODEL\\StageObject\\Leaf_Nuts.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 草ブロック(木の実)
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // ヌイの家ブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Asphalt.PNG"           , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // アスファルトブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Asphalt_Cracked.PNG"   , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // ひび割れたアスファルトブロック
-	{ "data\\MODEL\\StageObject\\IronBar.x"                   , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 鉄格子(当たり判定無し想定)
-	{ "data\\MODEL\\StageObject\\IronBar1.x"                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 鉄格子1
-	{ "data\\MODEL\\StageObject\\IronBar2.x"                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 鉄格子2
-	{ "data\\MODEL\\StageObject\\IronBar3.x"                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 鉄格子3
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Mud.PNG"               , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // 泥ブロック
-	{ "data\\MODEL\\StageObject\\SandAndAsphaltBlock.x"       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 砂＆アスファルトブロック(中間用)
-	{ "data\\MODEL\\StageObject\\SandBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 砂ブロック
-	{ "data\\MODEL\\Torch.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, },	  // 松明
-	{ "data\\MODEL\\Snake.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -4.0f  , 30.0f, },	  // 蛇の壁画
-	{ "data\\MODEL\\leaf_large.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 緑色の葉っぱ(大)
-	{ "data\\MODEL\\leaf_small.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 緑色の葉っぱ(小)
-	{ "data\\MODEL\\dry-leaf_large.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 茶色の葉っぱ(大)
-	{ "data\\MODEL\\dry-leaf_small.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , },	  // 茶色の葉っぱ(小)
-	{ "data\\MODEL\\StoneDragon.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  5.0f  , 30.0f, },	  // 龍の石像
-	{ "data\\MODEL\\StoneSword.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -3.0f  , 30.0f, },	  // 剣の石像
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // なめらかなコンクリートブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // なめらかなひび割れたコンクリートブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , },	  // コンクリートブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)なめらかなコンクリートブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)なめらかなひび割れたコンクリートブロック
-	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , },	  // (後ろ)コンクリートブロック
-	{ "data\\MODEL\\sango_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -12.0f , 30.0f, },	  // サンゴ礁1
-	{ "data\\MODEL\\sango_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -14.0f , 30.0f, },	  // サンゴ礁2
-	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // サンゴ礁3
-	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -1.0f  , 30.0f, },	  // 岩1
-	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, },	  // 岩2
-	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, },	  // 建物1
-	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, },	  // 建物2
-	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -10.0f , 30.0f, },	  // 木の柵
-	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, },	  // 平屋
-	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(電線無し)
-	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(左に電線)
-	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(右に電線)
-	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 電柱(両方に電線)
-	{ "data\\MODEL\\Bus_Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // バス停
-	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(175,238,238,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 街灯
-	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, },	  // 看板
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Soil.PNG"              , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 土ブロック
+	{ "data\\MODEL\\StageObject\\SoilBlock_Grassy.x"          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 草の生えた土ブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 古代の石ブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 古代の石ブロックA
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 古代の石ブロックB
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 古代の石ブロックC
+	{ "data\\MODEL\\StageObject\\AncientStonePillar_Up.x"     , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 柱の上
+	{ "data\\MODEL\\StageObject\\AncientStonePillar_Center.x" , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 柱の繋ぎ
+	{ "data\\MODEL\\StageObject\\AncientStonePillar_Down.x"   , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 柱の根本
+	{ "data\\MODEL\\StageObject\\Leaf.x"                      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 草ブロック
+	{ "data\\MODEL\\StageObject\\TreeTrunk.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 木の幹
+	{ "data\\MODEL\\StageObject\\TreeTrunk_Root.x"            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 木の根元
+	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -16.0f , 0.0f , false, },	  // バオバブの木(背景用)
+	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 宝箱
+	{ "data\\MODEL\\coin.x"                                   , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 0.0f , true, },	  // 山積みのコイン
+	{ "data\\MODEL\\stone_monument.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 謎の石碑
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneBrick.PNG"        , Color(191,158,85 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 古代の石レンガブロック
+	{ "data\\MODEL\\StageObject\\SoilAndAncientStoneBlock.x"  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 土＆古代の石ブロック(中間用)
+	{ "NONEDATA"                                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -8.0f  , 0.0f , false, },	  // ヤシの木
+	{ "data\\MODEL\\Three-eyes_block.x"                       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 三つ目のブロック
+	{ "data\\MODEL\\StageObject\\Leaf_Nuts.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 草ブロック(木の実)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // ヌイの家ブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Asphalt.PNG"           , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // アスファルトブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Asphalt_Cracked.PNG"   , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // ひび割れたアスファルトブロック
+	{ "data\\MODEL\\StageObject\\IronBar.x"                   , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 鉄格子(当たり判定無し想定)
+	{ "data\\MODEL\\StageObject\\IronBar1.x"                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 鉄格子1
+	{ "data\\MODEL\\StageObject\\IronBar2.x"                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 鉄格子2
+	{ "data\\MODEL\\StageObject\\IronBar3.x"                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 鉄格子3
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Mud.PNG"               , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 泥ブロック
+	{ "data\\MODEL\\StageObject\\SandAndAsphaltBlock.x"       , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 砂＆アスファルトブロック(中間用)
+	{ "data\\MODEL\\StageObject\\SandBlock.x"                 , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 砂ブロック
+	{ "data\\MODEL\\Torch.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 30.0f, false, },	  // 松明
+	{ "data\\MODEL\\Snake.x"                                  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -4.0f  , 30.0f, false, },	  // 蛇の壁画
+	{ "data\\MODEL\\leaf_large.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 緑色の葉っぱ(大)
+	{ "data\\MODEL\\leaf_small.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 緑色の葉っぱ(小)
+	{ "data\\MODEL\\dry-leaf_large.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 茶色の葉っぱ(大)
+	{ "data\\MODEL\\dry-leaf_small.x"                         , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 茶色の葉っぱ(小)
+	{ "data\\MODEL\\StoneDragon.x"                            , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             ,  5.0f  , 30.0f, false, },	  // 龍の石像
+	{ "data\\MODEL\\StoneSword.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::PUT          , SET_TYPE::FORWARD             , -3.0f  , 30.0f, false, },	  // 剣の石像
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // なめらかなコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // なめらかなひび割れたコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // コンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth.PNG"            , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , false, },	  // (後ろ)なめらかなコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\Smooth_Cracked.PNG"    , Color(73 ,109,111,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , false, },	  // (後ろ)なめらかなひび割れたコンクリートブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(120,169,170,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::BACKWARD            ,  0.0f  , 0.0f , false, },	  // (後ろ)コンクリートブロック
+	{ "data\\MODEL\\sango_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -12.0f , 30.0f, false, },	  // サンゴ礁1
+	{ "data\\MODEL\\sango_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -14.0f , 30.0f, false, },	  // サンゴ礁2
+	{ "data\\MODEL\\sango_3.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // サンゴ礁3
+	{ "data\\MODEL\\stone_1.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -1.0f  , 30.0f, false, },	  // 岩1
+	{ "data\\MODEL\\stone_2.x"                                , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -8.0f  , 30.0f, false, },	  // 岩2
+	{ "data\\MODEL\\building000.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, false, },	  // 建物1
+	{ "data\\MODEL\\building001.x"                            , "NONEDATA"                                       , Color(0  ,139,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, false, },	  // 建物2
+	{ "data\\MODEL\\Wood_Fence.x"                             , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -10.0f , 30.0f, false, },	  // 木の柵
+	{ "data\\MODEL\\Old_House.x"                              , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 60.0f, false, },	  // 平屋
+	{ "data\\MODEL\\Power-Pole.x"						      , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 電柱(電線無し)
+	{ "data\\MODEL\\Power-Pole_LineL.x"						  , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 電柱(左に電線)
+	{ "data\\MODEL\\Power-Pole_LineR.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 電柱(右に電線)
+	{ "data\\MODEL\\Power-Pole_LineB.x"                       , "NONEDATA"                                       , Color(143,188,139,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 電柱(両方に電線)
+	{ "data\\MODEL\\Bus_Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // バス停
+	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(175,238,238,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 街灯
+	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 看板
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -157,7 +157,6 @@ CBlock::CBlock(void) {
 		m_isHits[cnt] =
 			m_isHitOlds[cnt] = false;
 	}
-	m_isCollision = true;
 	m_doll = NULL;
 	m_type = TYPE::BLOCK;
 	m_width = SIZE_OF_1_SQUARE * 0.5f;
@@ -189,7 +188,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	m_pos.z += LOOKS_DATAS[(int)m_looksType].depth;
 	m_pos.y += LOOKS_DATAS[(int)m_looksType].height * RNLib::Number().GetPlusMinus(m_pos.y);
 
-	UShort priority = m_isCollision ? PRIORITY_OBJECT : PRIORITY_BACKGROUND;
+	UShort priority = LOOKS_DATAS[(int)m_looksType].isCollision ? PRIORITY_OBJECT : PRIORITY_BACKGROUND;
 
 	// ドールの生成
 	switch (m_looksType) {
@@ -255,7 +254,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 				RNLib::StaticMesh().SetModel(priority, RNLib::Matrix().ConvPosRotToMtx(m_pos + Pos3D(0.0f, 0.0f, 16.0f), m_pos.y >= 0.0f ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI)), m_modelIdxes[(int)m_looksType], setCol, false);
 		}
 
-		if (!m_isCollision)
+		if (!LOOKS_DATAS[(int)m_looksType].isCollision)
 			Delete();	// もし判定を行わないのであれば破棄する
 	}
 

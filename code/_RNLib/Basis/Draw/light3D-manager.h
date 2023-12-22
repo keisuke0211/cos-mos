@@ -17,5 +17,8 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	_RNC_Light3DMgr();
 	~_RNC_Light3DMgr();
+
+private:
+	//========== [[[ ŠÖ”éŒ¾ ]]]
 	void Update(void);
 };
