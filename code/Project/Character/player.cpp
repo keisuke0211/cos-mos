@@ -1205,15 +1205,15 @@ void CPlayer::CollisionToStageObject(void)
 	m_aInfo[1].bGroundOld = m_aInfo[1].bGround;
 	m_aInfo[0].bGround = m_aInfo[1].bGround = false;
 
-	//死亡判定
-	bool aDeath[2];
-	OBJECT_TYPE aDeathType[2];
-	aDeath[0] = false;
-	aDeath[1] = false;
-	aDeathType[0] = OBJECT_TYPE::NONE;
-	aDeathType[1] = OBJECT_TYPE::NONE;
-
 	for (int nCntVec = 0; nCntVec < (int)VECTOL::MAX; nCntVec++) {
+
+		//死亡判定
+		bool aDeath[2];
+		OBJECT_TYPE aDeathType[2];
+		aDeath[0] = false;
+		aDeath[1] = false;
+		aDeathType[0] = OBJECT_TYPE::NONE;
+		aDeathType[1] = OBJECT_TYPE::NONE;
 
 		// 衝突ベクトルに変換
 		const VECTOL vec = (VECTOL)nCntVec;
@@ -1255,11 +1255,6 @@ void CPlayer::CollisionToStageObject(void)
 				colliInfo.fHeight = pObj->GetHeight() * 0.5f;
 				colliInfo.vec = nCntVec;
 
-				if (type == OBJECT_TYPE::ROCKET)
-				{
-					colliInfo.pos = pObj->GetPos();
-				}
-
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
@@ -1285,28 +1280,31 @@ void CPlayer::CollisionToStageObject(void)
 				}
 
 				// 死亡しているか保存
-				bool deathOld = aDeath[nCntPlayer];
+				const bool deathOld = aDeath[nCntPlayer];
 
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &aDeath[nCntPlayer]);break;
+				case OBJECT_TYPE::BLOCK:     CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &aDeath[nCntPlayer]);break;
 				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &aDeath[nCntPlayer]);	break;
-				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::SPIKE:     CCollision::Spike(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
-				case OBJECT_TYPE::METEOR:	 CCollision::Meteor(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
-				//case OBJECT_TYPE::LASER:	 CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &aDeath[nCntPlayer]); break;
-				case OBJECT_TYPE::GOALGATE:	 CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &aDeath[nCntPlayer]);	break;
-				case OBJECT_TYPE::PARTS:	 CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
-				case OBJECT_TYPE::ROCKET:	 CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
-				case OBJECT_TYPE::PILE:		 CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::METEOR:    CCollision::Meteor(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
+				//case OBJECT_TYPE::LASER:   CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::GOALGATE:  CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::PARTS:     CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::ROCKET:    CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::PILE:      CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				}
 
 				// 結果死亡した時、死亡した種類を保存
 				if (!deathOld && aDeath[nCntPlayer])
+				{
 					aDeathType[nCntPlayer] = type;
+					break;
+				}
 
 				//情報代入
 				if (vec == VECTOL::X) {
@@ -1322,15 +1320,15 @@ void CPlayer::CollisionToStageObject(void)
 				CollisionAfter(pObj, type, &nColliRot, Player);
 			}
 		}
-	}
 
-	// 死亡判定ON
-	if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
-		if (aDeath[0])
-			Death(m_aInfo[0], aDeathType[0]);
-		
-		if (aDeath[1])
-			Death(m_aInfo[1], aDeathType[1]);
+		// 死亡判定ON
+		if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
+			if (aDeath[0] && (aDeathType[0] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+				Death(m_aInfo[0], aDeathType[0]);
+
+			if (aDeath[1] && (aDeathType[1] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+				Death(m_aInfo[1], aDeathType[1]);
+		}
 	}
 }
 
