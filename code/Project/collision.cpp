@@ -468,7 +468,7 @@ void CCollision::Meteor(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_S
 // レーザーの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
+void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
 	// 本体
 	{
@@ -550,7 +550,7 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 					}
 
 					// もう一度当たり判定
-					Laser(pSelfInfo, pRoadTripLaser, pColli, pOthColli);
+					Laser(pSelfInfo, pRoadTripLaser, pColli);
 				}
 				break;
 		}
@@ -567,122 +567,60 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 // ヌイの当たり判定処理
 // Author:KEISUKE OTONO
 //----------------------------
-void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pColli, ColliInfo *pOthColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
+void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
-	// ハウス
+	switch (pColli->Rot)
 	{
-		switch (pColli->Rot)
-		{
+		//*********************************
+		// 上に当たった
+		//*********************************
+		case ROT::OVER:
+			// 位置・移動量修正
+			FixPos_OVER(&pSelfInfo->pos.y, pColli->maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
+
+			// 表の世界のプレイヤー
+			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
+			{
+				//プレイヤー取得
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+
+				//プレイヤーオプション設定
+				LandPlayerOption(pInfo, pColli->maxPos.y);
+			}
+			break;
+
 			//*********************************
-			// 上に当たった
+			// 下に当たった
 			//*********************************
-			case ROT::OVER:
-				// 位置・移動量修正
-				FixPos_OVER(&pSelfInfo->pos.y, pColli->maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
+		case ROT::UNDER:
+			// 位置・移動量修正
+			FixPos_UNDER(&pSelfInfo->pos.y, pColli->minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
 
-				// 表の世界のプレイヤー
-				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
-				{
-					//プレイヤー取得
-					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+			// 裏の世界のプレイヤー
+			if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
+			{
+				//プレイヤー取得
+				CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
-					//プレイヤーオプション設定
-					LandPlayerOption(pInfo, pColli->maxPos.y);
-				}
-				break;
+				//プレイヤーオプション設定
+				LandPlayerOption(pInfo, pColli->minPos.y);
+			}
+			break;
 
-				//*********************************
-				// 下に当たった
-				//*********************************
-			case ROT::UNDER:
-				// 位置・移動量修正
-				FixPos_UNDER(&pSelfInfo->pos.y, pColli->minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
-
-				// 裏の世界のプレイヤー
-				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
-				{
-					//プレイヤー取得
-					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
-
-					//プレイヤーオプション設定
-					LandPlayerOption(pInfo, pColli->minPos.y);
-				}
-				break;
-
-				//*********************************
-				// 左に当たった
-				//*********************************
-			case ROT::LEFT:	FixPos_LEFT(&pSelfInfo->pos.x, pColli->minPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
-
-				//*********************************
-				// 右に当たった
-				//*********************************
-			case ROT::RIGHT:FixPos_RIGHT(&pSelfInfo->pos.x, pColli->maxPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
-
-				//*********************************
-				// 埋まった
-				//*********************************
-			case ROT::UNKNOWN: *pDeath = true; break;
-		}
-	}
-
-	//別の当たり判定のサイズを取得（通常通りなら【頭・体・足】の3つになる
-	const int SIZE = sizeof pOthColli / sizeof ColliInfo;
-	for (int nCntColli = 0; nCntColli < SIZE; nCntColli++)
-	{
-		switch (pOthColli[nCntColli].Rot)
-		{
 			//*********************************
-			// 上に当たった
+			// 左に当たった
 			//*********************************
-			case ROT::OVER:
-				// 位置・移動量修正
-				FixPos_OVER(&pSelfInfo->pos.y, pOthColli[nCntColli].maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
+		case ROT::LEFT:	FixPos_LEFT(&pSelfInfo->pos.x, pColli->minPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
 
-				// 裏の世界のプレイヤー
-				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
-				{
-					//プレイヤー取得
-					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+			//*********************************
+			// 右に当たった
+			//*********************************
+		case ROT::RIGHT:FixPos_RIGHT(&pSelfInfo->pos.x, pColli->maxPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
 
-					//プレイヤーオプション設定
-					LandPlayerOption(pInfo, pColli->maxPos.y);
-				}
-				break;
-
-				//*********************************
-				// 下に当たった
-				//*********************************
-			case ROT::UNDER:
-				// 位置・移動量修正
-				FixPos_UNDER(&pSelfInfo->pos.y, pOthColli[nCntColli].minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
-
-				// 裏の世界のプレイヤー
-				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
-				{
-					//プレイヤー取得
-					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
-
-					//プレイヤーオプション設定
-					LandPlayerOption(pInfo, pColli->minPos.y);
-				}
-				break;
-
-				//*********************************
-				// 左に当たった
-				//*********************************
-			case ROT::LEFT:	FixPos_LEFT(&pSelfInfo->pos.x, pOthColli[nCntColli].minPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth); break;
-
-				//*********************************
-				// 右に当たった
-				//*********************************
-			case ROT::RIGHT:FixPos_RIGHT(&pSelfInfo->pos.x, pOthColli[nCntColli].maxPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth); break;
-
-				//*********************************
-				// 埋まった
-				//*********************************
-			case ROT::UNKNOWN: *pDeath = true; break;
-		}
+			//*********************************
+			// 埋まった
+			//*********************************
+		case ROT::UNKNOWN: *pDeath = true; break;
 	}
 }
 
