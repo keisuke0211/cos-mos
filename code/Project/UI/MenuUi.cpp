@@ -547,14 +547,15 @@ void CMenuUI::MenuAnime(void)
 
 			m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
 			{// Text‚ÌÄ¶¬
-				D3DXCOLOR col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 				if (Txt == m_Menu.nMaineSelect) {
-					col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 				}
 
 				FormFont pFont = { col,35.0f,3,1,-1, };
 
 				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_07NIKUMARU, &pFont);
+				m_pMenu[Txt]->SetTexrSkip(true);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -912,12 +913,12 @@ void CMenuUI::MenuSelect(void)
 				if (nCnt == m_Menu.nMaineSelect)
 				{
 					m_pMenu[nCnt]->SetTxtBoxColor(Color{ 255,255,255,255 });
-					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 				}
 				else
 				{
 					m_pMenu[nCnt]->SetTxtBoxColor(Color{ 155,155,155,255 });
-					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
+					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 				}
 			}
 		}
