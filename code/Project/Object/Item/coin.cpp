@@ -56,6 +56,8 @@ void CCoin::Update(void) {
 		->SetCol(m_color)
 		->SetOutLineIdx(m_outLineIdx);
 
+	if (CPlayer::GetSwapAnim()) return;
+
 	for (int nCnt = 0; nCnt < CPlayer::NUM_PLAYER; nCnt++)
 	{
 		//ƒvƒŒƒCƒ„[î•ñŽæ“¾

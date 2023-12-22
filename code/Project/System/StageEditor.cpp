@@ -72,54 +72,8 @@ CStageEditor::CStageEditor(void)
 //========================================
 CStageEditor::~CStageEditor()
 {
-	if (m_PlanetType != NULL){
-		for (int nPlanet = 0; nPlanet < m_Info.nPlanetMax; nPlanet++)
-		{
-			if (m_PlanetType[nPlanet].StageType != NULL)
-			{
-				delete[] m_PlanetType[nPlanet].StageType;
-				m_PlanetType[nPlanet].StageType = NULL;
-			}
-		}
-
-		delete[] m_PlanetType;
-		m_PlanetType = NULL;
-	}
-
-	if (m_LiftInfo != NULL){
-		delete[] m_LiftInfo;
-		m_LiftInfo = NULL;
-	}
-
-	if (m_MeteorInfo != NULL){
-		delete[] m_MeteorInfo;
-		m_MeteorInfo = NULL;
-	}
-
-	if (m_LaserInfo != NULL){
-		delete[] m_LaserInfo;
-		m_LaserInfo = NULL;
-	}
-
-	if (m_DogInfo != NULL){
-		delete[] m_DogInfo;
-		m_DogInfo = NULL;
-	}
-
-	if (m_PileInfo != NULL) {
-		delete[] m_PileInfo;
-		m_PileInfo = NULL;
-	}
-
-	if (m_Info.aBgFile != NULL){
-		delete[] m_Info.aBgFile;
-		m_Info.aBgFile;
-	}
-
-	if (m_Info.aSoundFile != NULL){
-		delete[] m_Info.aSoundFile;
-		m_Info.aSoundFile;
-	}
+	//メモリ開放
+	Release(true);
 }
 
 //========================================
@@ -128,7 +82,21 @@ CStageEditor::~CStageEditor()
 //========================================
 void CStageEditor::Uninit(void)
 {
-	if (m_PlanetType != NULL)
+	//メモリ開放
+	Release();
+}
+
+//========================================
+// メモリ開放
+// 惑星情報まで開放するかどうか（trueで開放
+// Author:KEISUKE OTONO
+// Arrange：HIRASAWA SHION
+//========================================
+void CStageEditor::Release(bool bPlanetRelease)
+{
+	//惑星情報の開放処理
+	if (bPlanetRelease &&
+		m_PlanetType != NULL)
 	{
 		for (int nPlanet = 0; nPlanet < m_Info.nPlanetMax; nPlanet++)
 		{
@@ -314,6 +282,9 @@ void CStageEditor::StageLoad(int planet, int stage)
 {
 	// エフェクト解放
 	Manager::EffectMgr()->DeleteAll();
+
+	//メモリ開放
+	Release();
 
 	CSVFILE *pFile = new CSVFILE;
 

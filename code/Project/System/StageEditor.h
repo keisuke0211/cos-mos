@@ -202,6 +202,10 @@ private:
 
 	/* ステージ生成 */void SetStage(int nType);
 
+	// メモリ開放
+	// 惑星情報まで開放するかどうか（trueで開放
+	void Release(bool bPlanetRelease = false);
+
 	// *** 変数宣言 ***
 	static PlanetType *m_PlanetType;	// 惑星情報
 	static StageColor m_StageColor;		// 色情報
