@@ -1282,7 +1282,10 @@ void CPlayer::CollisionToStageObject(void)
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:	 CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::BLOCK:
+					//当たり判定終了
+					CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);
+					break;
 				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
 				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
 				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
@@ -1328,9 +1331,10 @@ bool CPlayer::UniqueColliOpption(CStageObject *pObj, const OBJECT_TYPE type, Inf
 		// ブロック
 		case OBJECT_TYPE::BLOCK: {
 			CBlock* pBlock = (CBlock*)pObj;
+
 			if (!pBlock->GetCollision())
-				//当たり判定終了
 				return false;
+
 		}break;
 
 			// ゴールゲート
