@@ -1109,9 +1109,9 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 	if (Player.isDeath)
 		return;
 
-	Player.DeathType = (int)CEffect_Death::TYPE::BALL;
+	Player.DeathType = (int)CEffect_Death::TYPE::INK;
 
-	switch (type)
+	/*switch (type)
 	{
 		case OBJECT_TYPE::BLOCK:
 		case OBJECT_TYPE::FILLBLOCK:
@@ -1125,7 +1125,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 			if (s_nSwapInterval == 0) return;
 			else Player.DeathType = (int)CEffect_Death::TYPE::INK;
 			break;
-	}
+	}*/
 
 	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
@@ -1205,6 +1205,14 @@ void CPlayer::CollisionToStageObject(void)
 	m_aInfo[1].bGroundOld = m_aInfo[1].bGround;
 	m_aInfo[0].bGround = m_aInfo[1].bGround = false;
 
+	//Ž€–S”»’è
+	bool aDeath[2];
+	OBJECT_TYPE aDeathType[2];
+	aDeath[0] = false;
+	aDeath[1] = false;
+	aDeathType[0] = OBJECT_TYPE::NONE;
+	aDeathType[1] = OBJECT_TYPE::NONE;
+
 	for (int nCntVec = 0; nCntVec < (int)VECTOL::MAX; nCntVec++) {
 
 		// Õ“ËƒxƒNƒgƒ‹‚É•ÏŠ·
@@ -1256,7 +1264,7 @@ void CPlayer::CollisionToStageObject(void)
 				// ¦“Á’èƒIƒuƒWƒFƒNƒg‚ðœ‚­
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
 					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE && 
-					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true))
+					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true, false, false, s_nSwapInterval))
 					continue;
 
 				//“ÆŽ©‚Ì“–‚½‚è”»’èÝ’è
@@ -1276,34 +1284,29 @@ void CPlayer::CollisionToStageObject(void)
 					continue;
 				}
 
-				//Ž€–S”»’è
-				bool bDeath = false;
+				// Ž€–S‚µ‚Ä‚¢‚é‚©•Û‘¶
+				bool deathOld = aDeath[nCntPlayer];
 
 				// Ží—Þ‚²‚Æ‚ÉŠÖ”•ª‚¯
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:
-					//“–‚½‚è”»’èI—¹
-					CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);
-					break;
-				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::METEOR:	 CCollision::Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::BLOCK:CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &aDeath[nCntPlayer]);break;
+				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::METEOR:	 CCollision::Meteor(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
 				//case OBJECT_TYPE::LASER:	 CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::GOALGATE:	 CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::PARTS:	 CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::ROCKET:	 CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::PILE:		 CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::GOALGATE:	 CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::PARTS:	 CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::ROCKET:	 CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::PILE:		 CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				}
 
-				// Ž€–S”»’èON
-				if (bDeath && !m_aInfo[!nCntPlayer].isDeath) {
-					Death(Player, type);
-					break;
-				}
+				// Œ‹‰ÊŽ€–S‚µ‚½ŽžAŽ€–S‚µ‚½Ží—Þ‚ð•Û‘¶
+				if (!deathOld && aDeath[nCntPlayer])
+					aDeathType[nCntPlayer] = type;
 
 				//î•ñ‘ã“ü
 				if (vec == VECTOL::X) {
@@ -1319,6 +1322,15 @@ void CPlayer::CollisionToStageObject(void)
 				CollisionAfter(pObj, type, &nColliRot, Player);
 			}
 		}
+	}
+
+	// Ž€–S”»’èON
+	if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
+		if (aDeath[0])
+			Death(m_aInfo[0], aDeathType[0]);
+		
+		if (aDeath[1])
+			Death(m_aInfo[1], aDeathType[1]);
 	}
 }
 
