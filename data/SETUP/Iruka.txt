@@ -23,7 +23,7 @@ boneDataSum{ 2
 faceDataSum{ 8
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 122
@@ -48,7 +48,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 133
@@ -73,7 +73,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 134
@@ -98,7 +98,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 132
@@ -123,7 +123,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 130
@@ -148,7 +148,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 128
@@ -173,7 +173,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 126
@@ -198,7 +198,7 @@ faceData{
 
 faceData{
 	texIdx data\\TEXTURE\\Whale_2.png
-	col 145 204 204 255
+	col 140 140 160 255
 	vtx0{
 		boneIdx 0
 		vtxIdx 124

@@ -260,6 +260,7 @@ void CCollision::Block(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::Info& Pl
 				break;
 
 			*pDeath = true;
+
 			break;
 	}
 }

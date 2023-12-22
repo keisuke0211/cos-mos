@@ -456,7 +456,7 @@ namespace {
 		if (Stage::CheckPlanetIdx(0))
 		{// [[[ ”wŒi•`‰æ ]]]
 
-			if (Stage::CheckStageNumber(0, 0) && false) {
+			if (Stage::CheckStageNumber(0, 0)) {
 				RNLib::Polygon3D().Put(PRIORITY_UI, Pos3D(-184.0f, -100.0f, -20.0f), INITROT3D)
 					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_CONTROL_0])
 					->SetSize(Size2D(150.0f, 75.0f))
