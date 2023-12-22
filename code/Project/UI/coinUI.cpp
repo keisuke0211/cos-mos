@@ -65,7 +65,7 @@ void CCoinUI::Update(void) {
 		return;
 
 	//獲得しているコイン数を取得
-	CInt NumAll = CCoin::GetWholeAll();
+	CInt NumAll = Stage::GetCoinAll();
 
 	if (m_bFrame) {
 		//フレーム

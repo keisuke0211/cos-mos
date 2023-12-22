@@ -166,14 +166,14 @@ HRESULT CPlayer::Init(void)
 		delete m_aInfo[0].doll;
 	m_aInfo[0].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
-	m_aInfo[0].color = Color{255, 155, 59, 255 };
+	m_aInfo[0].color = Color{ 255, 155, 59, 255 };
 
 	// ‚Q‚o‰Šúî•ñ
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
 	m_aInfo[1].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
-	m_aInfo[1].color = Color{65, 233, 210, 255 };
+	m_aInfo[1].color = Color{ 65, 233, 210, 255 };
 
 	// ƒL[ƒRƒ“ƒtƒBƒO‰Šú‰»
 	InitKeyConfig();
@@ -185,37 +185,32 @@ HRESULT CPlayer::Init(void)
 		s_ParticleTex[nCntTex] = pTexture->Load(PARTICLE_TEX_PATH[nCntTex]);
 	}
 
-	s_SE.pSound	= &RNLib::Sound();
-	s_SE.jump	= s_SE.pSound->Load("data\\SOUND\\SE\\jamp_01.wav");
-	s_SE.dog[0]	= s_SE.pSound->Load("data\\SOUND\\SE\\heron2.wav");		// ‰Ÿ‚·
-	s_SE.dog[1]	= s_SE.pSound->Load("data\\SOUND\\SE\\shrink.wav");		// k‚Þ
-	s_SE.dog[2]	= s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");		// L‚Ñ‚é
-	s_SE.dog[3]	= s_SE.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// k‚¦‚é
+	s_SE.pSound = &RNLib::Sound();
+	s_SE.jump = s_SE.pSound->Load("data\\SOUND\\SE\\jamp_01.wav");
+	s_SE.dog[0] = s_SE.pSound->Load("data\\SOUND\\SE\\heron2.wav");		// ‰Ÿ‚·
+	s_SE.dog[1] = s_SE.pSound->Load("data\\SOUND\\SE\\shrink.wav");		// k‚Þ
+	s_SE.dog[2] = s_SE.pSound->Load("data\\SOUND\\SE\\extend.wav");		// L‚Ñ‚é
+	s_SE.dog[3] = s_SE.pSound->Load("data\\SOUND\\SE\\vibration.wav");	// k‚¦‚é
 	s_SE.Swaping = s_SE.pSound->Load("data\\SOUND\\SE\\swap_now.wav");
 	s_SE.SwapEnd = s_SE.pSound->Load("data\\SOUND\\SE\\swap_end.wav");
 	s_SE.expand = s_SE.pSound->Load("data\\SOUND\\SE\\death_expand.wav");
 	s_SE.explosion = s_SE.pSound->Load("data\\SOUND\\SE\\death_explosion.wav");
 
-	for (int cnt = 0; cnt < 2; cnt++) {
-		if (cnt == 0) {
-			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Default.txt");
-			s_motion[cnt].walk    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Walk.txt");
-			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Jump.txt");
-			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
-			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
-			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Dance.txt");
-			s_motion[cnt].getup   = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\GetUp.txt");
-		}
-		else {
-			s_motion[cnt].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
-			s_motion[cnt].walk    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Walk.txt");
-			s_motion[cnt].jump    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Jump.txt");
-			s_motion[cnt].fall    = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
-			s_motion[cnt].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
-			s_motion[cnt].dance   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Dance.txt");
-			s_motion[cnt].getup   = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\GetUp.txt");
-		}
-	}
+	s_motion[0].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Default.txt");
+	s_motion[0].walk = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Walk.txt");
+	s_motion[0].jump = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Jump.txt");
+	s_motion[0].fall = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Fall.txt");
+	s_motion[0].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Landing.txt");
+	s_motion[0].dance = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\Dance.txt");
+	s_motion[0].getup = RNLib::Motion3D().Load("data\\MOTION\\Player_Mouth\\GetUp.txt");
+
+	s_motion[1].neutral = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Default.txt");
+	s_motion[1].walk = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Walk.txt");
+	s_motion[1].jump = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Jump.txt");
+	s_motion[1].fall = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Fall.txt");
+	s_motion[1].landing = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Landing.txt");
+	s_motion[1].dance = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\Dance.txt");
+	s_motion[1].getup = RNLib::Motion3D().Load("data\\MOTION\\Player_Eye\\GetUp.txt");
 
 	InitInfo();
 
@@ -372,9 +367,6 @@ void CPlayer::Update(void)
 		//ƒS[ƒ‹‰‰o
 		GoalDirector();
 	}
-
-	m_aInfo[0].posOld;
-	m_aInfo[1].posOld;
 
 	// “–‚½‚è”»’è‚Ü‚Æ‚ß
 	CollisionToStageObject();

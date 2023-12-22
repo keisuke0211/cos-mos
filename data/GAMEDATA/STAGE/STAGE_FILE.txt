@@ -14,7 +14,7 @@ NUM_PLANET = 2
 
 -- １つ目の設定 ------------------------------------------------------
 SetPlanet
-	NumStage = 5
+	NumStage = 4
 	ModelPath = data\MODEL\World1.x
 	BackColor = 0 115 80 255
 
@@ -31,20 +31,19 @@ EndPlanet
 #================================================================================
 # 惑星番号 / ステージのファイル名 / コインの解放数 / 制限時間
 #================================================================================
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv 		0	30
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-2.csv 		1	60
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-3.csv 		2	60
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv 		3	60
-STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-TEST.csv 	0	60
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv 		4	60
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv 		5	300
-STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv 		6	300
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-1.csv		0	90
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-2.csv		1	90
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-3.csv		2	90
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv		3	120
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv		4	90
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv		5	150
+STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv		6	300
 
 END
 
 PLANET = 5 data\MODEL\Sirius.x シリウス
 
-
+STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-TEST.csv 	0	90
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-4.csv 2	60
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-5.csv 2	60
 STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-1.csv 3	60
