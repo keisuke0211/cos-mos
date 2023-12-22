@@ -927,7 +927,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Project\\data\\TEXTURE\\timber.jpg";
+    "data\\TEXTURE\\timber.jpg";
    }
   }
   Material {
@@ -936,7 +936,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Project\\data\\TEXTURE\\grain.jpg";
+    "data\\TEXTURE\\grain.jpg";
    }
   }
   Material {
@@ -945,7 +945,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Project\\data\\TEXTURE\\grain.jpg";
+    "data\\TEXTURE\\grain.jpg";
    }
   }
   Material {
