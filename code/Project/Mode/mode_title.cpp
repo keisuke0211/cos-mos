@@ -188,10 +188,6 @@ void CMode_Title::Init(void) {
 	// カメラの視点/注視点を設定
 	Manager::GetMainCamera()->SetPosVAndPosR(D3DXVECTOR3(0.0f, 0.0f, -200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	if (m_CoinUI == NULL) {
-		m_CoinUI = CCoinUI::Create(COINUIPOS,Scale2D(4.0f,4.0f),false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
-	}
-
 	// カメラのライト設定
 	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(0));
 
@@ -598,6 +594,10 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	m_Direction = RIGHT;
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
+
+	if (m_CoinUI == NULL) {
+		m_CoinUI = CCoinUI::Create(COINUIPOS, Scale2D(4.0f, 4.0f), false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
+	}
 
 	m_nCnt = 0;
 }
