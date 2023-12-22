@@ -104,6 +104,7 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_RotCnt = 0;
 	m_bStgEnter = false;
 	m_bStageChange = false;
+	m_bWorldChange = false;
 	m_bRocketMove = false;
 	m_bRocketRot = false;
 
@@ -294,7 +295,7 @@ void CMode_Title::Update(void) {
 
 		ColorChange();
 
-		if (m_bStageChange == false && m_bStgEnter == false) {
+		if (m_bWorldChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
 					Manager::Transition().GetState() == CTransition::STATE::NONE)
@@ -593,6 +594,8 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
+	m_MapIdx = RNLib::Texture().Load(String("data\\STAGE_SNAP\\stage_%d-%d.png", m_nPlanetIdx + 1, m_nStageSelect + 1));
+
 	if (m_CoinUI == NULL) {
 		m_CoinUI = CCoinUI::Create(COINUIPOS, Scale2D(4.0f, 4.0f), false, D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f));
 	}
@@ -618,11 +621,11 @@ void CMode_Title::StageSelect(void) {
 	//----------------------------------------
 	// ステージ選択処理
 	//----------------------------------------
-	if(m_bStageChange == false)
+	if(m_bWorldChange == false)
 	m_nOldSelect = m_nStageSelect;
 	bool bInput = false;
 
-	if (m_bStageChange == false && !m_bStgEnter) {
+	if (m_bWorldChange == false && !m_bStgEnter) {
 		if (m_bRocketMove == false) {
 
 			if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) {
@@ -645,6 +648,7 @@ void CMode_Title::StageSelect(void) {
 			if (bInput) {
 				m_nOldnPlanet = m_nPlanetIdx;
 				m_nDrawPlanet = m_nOldnPlanet;
+				m_bStageChange = true;
 
 				if (m_nStageSelect > -1 && m_nStageSelect < nStageMax) {
 					m_RocketPosOld = m_RocketPosOld + (m_RocketposDiff * RocketAnimRate);
@@ -660,7 +664,7 @@ void CMode_Title::StageSelect(void) {
 						m_RotCnt = 0;
 						m_RocketAnimCnt = 0;
 						m_nOldSelect = -1;
-						m_bStageChange = true;
+						m_bWorldChange = true;
 						m_StgFlag = STAGE::DESPAWN;
 					}
 				}
@@ -672,7 +676,7 @@ void CMode_Title::StageSelect(void) {
 						m_RotCnt = 0;
 						m_RocketAnimCnt = 0;
 						m_nOldSelect = 5;
-						m_bStageChange = true;
+						m_bWorldChange = true;
 						m_StgFlag = STAGE::DESPAWN;
 					}
 				}
@@ -706,13 +710,13 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			->SetOutLineIdx(5);
 
 		//ワールド遷移の処理
-		if (m_nCnt < MAX_COUNT && m_bStageChange == false && !m_bStgEnter)
+		if (m_nCnt < MAX_COUNT && m_bWorldChange == false && !m_bStgEnter)
 			m_nCnt++;
-		else if (m_nCnt > 0 && m_bStageChange == true || m_bStgEnter)
+		else if (m_nCnt > 0 && m_bWorldChange == true || m_bStgEnter)
 			if(m_nCnt != 0)
 				m_nCnt--;
 
-		if (m_nCnt == 0 && m_bStageChange == true) {
+		if (m_nCnt == 0 && m_bWorldChange == true) {
 
 			if (m_nOldSelect == nStage)
 				m_nOldSelect = 0;
@@ -723,13 +727,13 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 		//ステージのデモ画像
 		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(IMAGE_STG_POS), D3DXVECTOR3(0.0f, -0.58875f, 0.0f))
-			->SetSize(36.0f * ImageCntRate, 27.0f * ImageCntRate)
+			->SetSize(40.0f * ImageCntRate, 30.0f * ImageCntRate)
 			->SetCol(COLOR_WHITE)
-			/*->SetTex(m_TexIdx[0])*/
+			->SetTex(m_MapIdx)
 			->SetZTest(true);
 
 		//デモ画像のアニメーション処理
-		if (m_bStageChange == false) {
+		if (m_bWorldChange == false) {
 			if (m_bRocketMove == false) {
 
 				if (m_RocketAnimCnt < ANIMCOUNT * 0.5) {
@@ -739,13 +743,18 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				}
 				else if (m_RocketAnimCnt >= ANIMCOUNT * 0.5 && !m_bStgEnter) {
 
+					if (m_bStageChange) {
+						m_MapIdx = RNLib::Texture().Load(String("data\\STAGE_SNAP\\stage_%d-%d.png", m_nPlanetIdx + 1, m_nStageSelect + 1));
+						m_bStageChange = false;
+					}
+
 					if (m_ImageStgCnt < ANIMCOUNT * 0.5)
 						m_ImageStgCnt++;
 				}
 			}
 		}
 
-		if (m_bStageChange == true || m_bRocketMove == true) {
+		if (m_bWorldChange == true || m_bRocketMove == true) {
 
 			if (m_RocketAnimCnt < ANIMCOUNT) {
 				if (m_ImageStgCnt > 0)
@@ -819,9 +828,9 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				if (m_RocketAnimCnt < ANIMCOUNT) m_RocketAnimCnt++;
 				if (m_RocketAnimCnt == ANIMCOUNT) {
 
-					if (m_bStageChange) {
+					if (m_bWorldChange) {
 						m_RocketAnimCnt = 0;
-						m_bStageChange = false;
+						m_bWorldChange = false;
 						m_bRocketMove = true;
 						m_bRocketRot = false;
 
@@ -838,10 +847,10 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				}
 
 				if (m_bRocketMove == false) {
-					if (m_bStageChange == false)
+					if (m_bWorldChange == false)
 						m_RocketPos = UNSELECTBOX - poscor + nCnt * NUMPOSSELBOX + NUMPOSROCKET;
 
-					if (m_bStageChange == true) {
+					if (m_bWorldChange == true) {
 
 						if (m_nStageSelect == 0)
 							m_RocketPos = D3DXVECTOR3(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
@@ -908,7 +917,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					}
 
 					m_RocketRotDiff = m_RocketRot - m_RocketRotOld;
-					if (m_bStageChange)
+					if (m_bWorldChange)
 						m_bRocketRot = true;
 				}
 			}
@@ -976,7 +985,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				->SetCol(Color{ 243,191,63,255 });
 
 			//数字テクスチャ描画
-			if (m_bStageChange == false && m_nCnt == MAX_COUNT || m_bStgEnter) {
+			if (m_bWorldChange == false && m_nCnt == MAX_COUNT || m_bStgEnter) {
 				if (!bStgRel)
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
 					->SetSize(5.0f, 5.0f)
@@ -1009,7 +1018,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				->SetCol(Color{ 81,63,21,255 });
 
 			//数字テクスチャ描画
-			if (m_bStageChange == false && m_nCnt == MAX_COUNT) {
+			if (m_bWorldChange == false && m_nCnt == MAX_COUNT) {
 				numpos = D3DXVECTOR3(SELECTBOX.x - poscor.x + (nCnt * NUMPOSSELBOX.x), SELECTBOX.y, SELECTBOX.z - 5.0f);
 
 				if (!bStgRel)
