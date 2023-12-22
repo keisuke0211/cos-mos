@@ -66,7 +66,7 @@ bool CCollision::IsInRange(SelfInfo& self, ColliInfo& target, bool bXVec, bool b
 
 	//”ÍˆÍ“à‚É‹‚é‚©‚Ç‚¤‚©•Ô‚·
 	bool bRange = PosLength < SizeLength;
-	return bRange || ForPlayerInterval != 0;
+	return bRange && ForPlayerInterval == 0;
 }
 
 //----------------------------
