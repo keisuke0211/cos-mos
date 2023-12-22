@@ -825,12 +825,12 @@ void CMenuUI::MenuAnime(void)
 			case PAUSE_MENU_RESET:
 				Stage::SetIsReset(true);
 				Manager::Transition(CMode::TYPE::GAME, CTransition::TYPE::NUI);
-				Manager::EffectMgr()->ReleaseAll();
+				Manager::EffectMgr()->DeleteAll();
 				break;
 			case PAUSE_MENU_SELECT:
 				Manager::Transition(CMode::TYPE::TITLE, CTransition::TYPE::NUI);
 				CMode_Title::SetSelect(true);
-				Manager::EffectMgr()->ReleaseAll();
+				Manager::EffectMgr()->DeleteAll();
 				break;
 			}
 		}

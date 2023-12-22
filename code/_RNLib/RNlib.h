@@ -97,6 +97,7 @@ namespace RNSystem {
 	void              SetSpace3DStop(const bool& isStop);
 	bool              GetSpace3DStop(void);
 	bool              GetSceneSwap  (void);
+	_RNC_Doll3DMgr&   GetDoll3DMgr  (void);
 	_RNC_Effect3DMgr& GetEffet3DMgr (void);
 	_RNC_CameraMgr&   GetCameraMgr  (void);
 	_RNC_Light3DMgr&  GetLight3DMgr (void);
@@ -106,7 +107,6 @@ namespace RNSystem {
 namespace RNLib {
 
 	// 3DObject
-	_RNC_Doll3DMgr&        Doll3DMgr       (void);
 	_RNC_Motion3D&         Motion3D        (void);
 	_RNC_SetUp3D&          SetUp3D         (void);
 	_RNC_Effect3D&         Effect3D        (void);

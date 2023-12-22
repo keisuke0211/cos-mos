@@ -15,27 +15,41 @@
 class CObjectMgr {
 public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	static void          UpdateAllMgrs  (void);
-	static void          ReleaseAllMgrs (void);
-	static CObjectMgr**& GetObjectMgrs  (void) { return ms_objectMgrs; }
-	static UShort&       GetObjectMgrNum(void) { return ms_objectMgrNum; }
-	static void          SubMgr         (CObjectMgr* mgr);
-	CObjectMgr                          (const char* name);
-	virtual ~CObjectMgr                 ();
-	virtual void         Update         (void) {}
-	void                 UpdateAll      (void);
-	virtual void         ReleaseAll     (void);
-	void                 Release        (CObject* obj);
-	void                 AddList        (CObject* obj);
-	void                 SubList        (CObject* obj);
-	char*&               GetName        (void) { return m_name; }
-	int&                 GetNum         (void) { return m_num; }
-	CObject*&            GetTop         (void) { return m_top; }
-	bool                 ListLoop       (CObject** obj);
+	CObjectMgr         (const char* name);
+	virtual ~CObjectMgr();
+	void     UpdateAll (void);
+	void     DeleteAll (void);
+	void     AddList   (CObject* obj);
+	void     SubList   (CObject* obj);
+	char*    GetName   (void) { return m_name; }
+	UInt     GetNum    (void) { return m_num; }
+	CObject* GetTop    (void) { return m_top; }
+	template<class T> bool ListLoop(T** obj) {
+
+		CObject** casted = (CObject**)obj;
+
+		if (*casted == NULL)
+			*casted = m_top;
+		else
+			*casted = (*casted)->GetNext();
+
+		return (*obj != NULL);
+	}
 
 private:
+	//========== [[[ —F’BéŒ¾ ]]]
+	friend class _RNC_Agent;
+	friend class _RNC_Text2D;
+
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	void ReleaseDeleteObj(void);
+	static void          UpdateAllMgrs   (void);
+	static void          ReleaseAllMgrs  (void);
+	static CObjectMgr**& GetObjectMgrs   (void) { return ms_objectMgrs; }
+	static UShort&       GetObjectMgrNum (void) { return ms_objectMgrNum; }
+	static void          SubMgr          (CObjectMgr* mgr);
+	virtual void         Update          (void) {}
+	void                 Release         (CObject* obj);
+	void                 ReleaseDeleteObj(void);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	static CObjectMgr** ms_objectMgrs;
@@ -43,5 +57,5 @@ private:
 	char*    m_name;
 	CObject* m_top;	// æ“ª
 	CObject* m_cur;	// ÅŒã”ö
-	int      m_num;
+	UInt     m_num;
 };

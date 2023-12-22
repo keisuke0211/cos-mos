@@ -15,7 +15,6 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	             CObject    ();
 	virtual      ~CObject   ();
-	virtual void Update     (void) = 0;
 	void         Delete     (void)              { if    (this != NULL) m_isDelete = true; }
 	void         SetNext    (CObject* next)     { if    (this != NULL) m_next = next; }
 	CObject*     GetNext    (void)              { return this == NULL ? NULL : m_next; }
@@ -28,6 +27,12 @@ public:
 	bool         GetIsSub   (void)              { return this == NULL ? false : m_isSub; }
 
 private:
+	//========== [[[ —F’BéŒ¾ ]]]
+	friend class CObjectMgr;
+
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	virtual void Update(void) = 0;
+
 	//========== [[[ •Ï”éŒ¾ ]]]
 	CObject* m_prev;
 	CObject* m_next;

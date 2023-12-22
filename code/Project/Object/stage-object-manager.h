@@ -38,7 +38,7 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CStageObjectMgr();
 	virtual~CStageObjectMgr();
-	virtual void Update(void);	void Load(void);
+	void Load(void);
 	CBlock*     BlockCreate(D3DXVECTOR3 pos, CBlock::LOOKS_TYPE type, Color color = COLOR_WHITE, bool isCollision = true);
 	CMagmaBlock *MagmaBlockCreate(D3DXVECTOR3 pos,Color color);
 	CFillBlock  *FillBlockCreate(D3DXVECTOR3 pos,CFillBlock::BLOCKTYPE type, Color color);
@@ -58,6 +58,9 @@ public:
 	CMeteorGenerator *MeteorGeneratorCreate(D3DXVECTOR3 pos, D3DXVECTOR3 move, int nSummonInterval);
 	CBat * BatCreate(D3DXVECTOR3 pos);
 private:
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	virtual void Update(void);
+
 	// *** \‘¢‘Ì ***
 	// í—Şî•ñ
 	struct BlockType

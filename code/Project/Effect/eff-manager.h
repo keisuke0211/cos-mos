@@ -24,7 +24,6 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	CEffMgr();
 	virtual~CEffMgr();
-	virtual void Update(void);
 
 	CEff           *EffectCreate(int nTex, D3DXVECTOR3 pos , D3DXVECTOR3 scale, Color col, int nCount = EFFECT_COUNT, D3DXVECTOR3 spin = INITD3DXVECTOR3, D3DXVECTOR3 move = INITD3DXVECTOR3,bool billboard = true, D3DXVECTOR3 scalemag = D3DXVECTOR3(1.0f,1.0f,1.0f));
 	CEffect_Model  *ModelEffectCreate(int nIdx, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, Color col, int nCount = EFFECT_COUNT, D3DXVECTOR3 move = D3DXVECTOR3(8.0f, 6.0f, 0.0f));
@@ -39,6 +38,8 @@ public:
 	void DeathInk(D3DXVECTOR3 pos, int Tex);
 
 private:
+	//========== [[[ ä÷êîêÈåæ ]]]
+	virtual void Update(void);
 
 	// *** ç\ë¢ëÃ ***
 

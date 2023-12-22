@@ -20,11 +20,11 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	CEffect3D_Base         (const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType);
 	virtual ~CEffect3D_Base();
-	virtual void Update    (void) = 0;
 
 protected:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
-	float CountLife(void);
+	virtual void Update   (void) = 0;
+	float        CountLife(void);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
 	UShort                           m_priority;

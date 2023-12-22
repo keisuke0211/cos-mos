@@ -313,7 +313,7 @@ void CStageEditor::FileLoad(void)
 void CStageEditor::StageLoad(int planet, int stage)
 {
 	// エフェクト解放
-	Manager::EffectMgr()->ReleaseAll();
+	Manager::EffectMgr()->DeleteAll();
 
 	CSVFILE *pFile = new CSVFILE;
 

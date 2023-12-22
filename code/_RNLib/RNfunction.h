@@ -9,20 +9,6 @@
 //****************************************
 // ŠÖ”éŒ¾
 //****************************************
-//----- float’l“™‰¿”äŠr
-// ˆê’v  ==
-bool  RN_GetIsEq    (const float& numA, const float& numB, const float& allowableError = 0.000001f);
-// •sˆê’v  !=
-bool  RN_GetIsNoEq  (const float& numA, const float& numB, const float& allowableError = 0.000001f);
-// ˆÈã  >=
-bool  RN_GetIsGtOrEq(const float& numA, const float& numB, const float& allowableError = 0.000001f);
-// ’´‚¦‚½  >
-bool  RN_GetIsGt    (const float& numA, const float& numB, const float& allowableError = 0.000001f);
-// ˆÈ‰º  <=
-bool  RN_GetIsLsOrEq(const float& numA, const float& numB, const float& allowableError = 0.000001f);
-// –¢–ž  <
-bool  RN_GetIsLs    (const float& numA, const float& numB, const float& allowableError = 0.000001f);
-
 // ƒŠƒ\[ƒX‚Ì“Ç‚Ýž‚Ý
 short RN_LoadTexture (const char* loadPath);
 short RN_LoadModel   (const char* loadPath);

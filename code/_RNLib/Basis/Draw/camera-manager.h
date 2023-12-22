@@ -17,5 +17,8 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	_RNC_CameraMgr ();
 	~_RNC_CameraMgr();
-	void Update    (void);
+
+private:
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	void Update(void);
 };

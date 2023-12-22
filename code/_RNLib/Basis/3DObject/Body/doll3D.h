@@ -28,29 +28,29 @@ public:
 		// [[[ 構造体宣言 ]]]
 		// 移動アニメ状態
 		struct MoveAnimState {
-			_RNC_Ease::TYPE posEase   = _RNC_Ease::TYPE::LINEAR;
-			Pos3D       oldPos    = INITPOS3D;
-			Pos3D       targetPos = INITPOS3D;
-			short       counter   = 0;
-			short       time      = 0;
-		};
+			_RNC_Ease::TYPE posEase = _RNC_Ease::TYPE::LINEAR;
+			Pos3D           oldPos    = INITPOS3D;
+			Pos3D           targetPos = INITPOS3D;
+			short           counter   = 0;
+			short           time      = 0;
+		};			       
 
 		// 回転アニメ状態
 		struct SpinAnimState {
 			_RNC_Ease::TYPE rotEase   = _RNC_Ease::TYPE::LINEAR;
-			Rot3D       oldRot    = INITROT3D;
-			Rot3D       targetRot = INITROT3D;
-			short       counter   = 0;
-			short       time      = 0;
+			Rot3D           oldRot    = INITROT3D;
+			Rot3D           targetRot = INITROT3D;
+			short           counter   = 0;
+			short           time      = 0;
 		};
 
 		// 拡縮アニメ状態
 		struct ScalingAnimState {
 			_RNC_Ease::TYPE scaleEase   = _RNC_Ease::TYPE::LINEAR;
-			Scale3D     oldScale    = INITSCALE3D;
-			Scale3D     targetScale = INITSCALE3D;
-			short       counter     = 0;
-			short       time        = 0;
+			Scale3D         oldScale    = INITSCALE3D;
+			Scale3D         targetScale = INITSCALE3D;
+			short           counter     = 0;
+			short           time        = 0;
 		};
 
 		// アニメ状態総括
@@ -74,44 +74,43 @@ public:
 		~CBoneState();
 		void           Update            (const short& motionCounter, const _RNC_SetUp3D::BoneData& boneData);
 		void           PrepareMotion     (const _RNC_Motion3D::BoneMotionData& boneMotionData);
-		Pos3D&         GetAnimPos        (void)                                        { return m_animPos; }
-		void           SetAddPos         (const Pos3D& pos)                            { m_addPos = pos; }
-		Pos3D&         GetAddPos         (void)                                        { return m_addPos; }
-		void           AddAddPos         (const Vector3D& addVec)                      { m_addPos += addVec; }
-		Rot3D&         GetAnimRot        (void)                                        { return m_animRot; }
-		void           SetAddRot         (const Rot3D& rot)                            { m_addRot = rot; }
-		Rot3D&         GetAddRot         (void)                                        { return m_addRot; }
-		void           AddAddRot         (const Vector3D& addVec)                      { m_addRot += addVec; }
-		Scale3D&       GetAnimScale      (void)                                        { return m_animScale; }
-		void           SetAddScale       (const Scale3D& scale)                        { m_addScale = scale; }
-		Scale3D&       GetAddScale       (void)                                        { return m_addScale; }
-		void           SetWorldMtx       (const Matrix& worldMtx)                      { m_worldMtx = worldMtx; }
-		Matrix&        GetWorldMtx       (void)                                        { return m_worldMtx; }
-		SwayingState*& GetSwayingState   (void)                                        { return m_swayingState; }
-		void           CreateSwayingState(void)                                        { _RNC_Memory::Alloc(&m_swayingState); *m_swayingState = {}; }
+		Pos3D&         GetAnimPos        (void)                                            { return m_animPos; }
+		void           SetAddPos         (const Pos3D& pos)                                { m_addPos = pos; }
+		Pos3D&         GetAddPos         (void)                                            { return m_addPos; }
+		void           AddAddPos         (const Vector3D& addVec)                          { m_addPos += addVec; }
+		Rot3D&         GetAnimRot        (void)                                            { return m_animRot; }
+		void           SetAddRot         (const Rot3D& rot)                                { m_addRot = rot; }
+		Rot3D&         GetAddRot         (void)                                            { return m_addRot; }
+		void           AddAddRot         (const Vector3D& addVec)                          { m_addRot += addVec; }
+		Scale3D&       GetAnimScale      (void)                                            { return m_animScale; }
+		void           SetAddScale       (const Scale3D& scale)                            { m_addScale = scale; }
+		Scale3D&       GetAddScale       (void)                                            { return m_addScale; }
+		void           SetWorldMtx       (const Matrix& worldMtx)                          { m_worldMtx = worldMtx; }
+		Matrix&        GetWorldMtx       (void)                                            { return m_worldMtx; }
+		SwayingState*& GetSwayingState   (void)                                            { return m_swayingState; }
+		void           CreateSwayingState(void)                                            { _RNC_Memory::Alloc(&m_swayingState); *m_swayingState = {}; }
 		void           SetMotionData     (const _RNC_Motion3D::BoneMotionData* motionData) { m_motionData = motionData; }
-		void           SetParentBoneState(CBoneState* parentBoneState)                 { m_parentBoneState = parentBoneState; }
-		CBoneState*&   GetParentBoneState(void)                                        { return m_parentBoneState; }
+		void           SetParentBoneState(CBoneState* parentBoneState)                     { m_parentBoneState = parentBoneState; }
+		CBoneState*&   GetParentBoneState(void)                                            { return m_parentBoneState; }
 
 	private:
 		// [[[ 変数宣言 ]]]
-		Pos3D                            m_animPos;
-		Pos3D                            m_addPos;
-		Rot3D                            m_animRot;
-		Rot3D                            m_addRot;
-		Scale3D                          m_animScale;
-		Scale3D                          m_addScale;
-		Matrix                           m_worldMtx;
-		AnimStateSum                     m_animeStateSum;
-		SwayingState*                    m_swayingState;
+		Pos3D                                m_animPos;
+		Pos3D                                m_addPos;
+		Rot3D                                m_animRot;
+		Rot3D                                m_addRot;
+		Scale3D                              m_animScale;
+		Scale3D                              m_addScale;
+		Matrix                               m_worldMtx;
+		AnimStateSum                         m_animeStateSum;
+		SwayingState*                        m_swayingState;
 		const _RNC_Motion3D::BoneMotionData* m_motionData;
-		CBoneState*                      m_parentBoneState;
+		CBoneState*                          m_parentBoneState;
 	};
 
 	//========== [[[ 関数宣言 ]]]
 	CDoll3D                            (const UShort& priority, const short& setUpIdx);
 	~CDoll3D                           ();
-	void        Update                 (void);
 	void        SetUp                  (const short& setUpIdx);
 	void        SetClippingCamera      (CCamera& camera) { m_clippingID = camera.GetID(); }
 	void        SetClippingCamera      (const short& ID) { m_clippingID = ID; }
@@ -142,6 +141,7 @@ private:
 	};
 
 	//========== [[[ 関数宣言 ]]]
+	void   Update          (void);
 	void   UpdateMotion    (void);
 	void   UpdateBone      (_RNC_SetUp3D::CData& setUp);
 	void   DrawModelVtxIdx (_RNC_Model::Vertex3DInfo*& vtxInfo, ULong& vtxNum);

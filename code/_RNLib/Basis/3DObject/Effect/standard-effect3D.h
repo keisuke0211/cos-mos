@@ -17,13 +17,18 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	_RNC_StandardEffect3D        ();
 	~_RNC_StandardEffect3D       ();
-	void Init                    (void);
-	void Uninit                  (void);
-	void Update                  (void);
 	void SetPriority             (const UShort& priority) { m_priority = priority; }
 	void CreateDustStormOnLanding(const Pos3D& pos, const Rot3D& rot, const Color& col, float force);
 
 private:
+	//========== [[[ —F’BéŒ¾ ]]]
+	friend class C3DObject;
+
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	void Init  (void);
+	void Uninit(void);
+	void Update(void);
+
 	//========== [[[ •Ï”éŒ¾ ]]]
 	UShort m_priority;
 };

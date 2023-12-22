@@ -402,11 +402,11 @@ void Stage::EndStage(void) {
 	}
 
 	// ステージオブジェクトと背景を解放
-	Manager::StageObjectMgr()->ReleaseAll();
-	Manager::BGMgr()->ReleaseAll();
+	Manager::StageObjectMgr()->DeleteAll();
+	Manager::BGMgr()->DeleteAll();
 
 	// エフェクト3Dの解放
-	Manager::EffectMgr()->ReleaseAll();
+	Manager::EffectMgr()->DeleteAll();
 
 	// ロケットパーツUIを解放
 	if (rocketparts != NULL) {

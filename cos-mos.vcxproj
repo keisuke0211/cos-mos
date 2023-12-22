@@ -267,6 +267,7 @@
     <ClCompile Include="code\_RNLib\RNlib.cpp" />
     <ClCompile Include="code\_RNLib\RNsettings.cpp" />
     <ClCompile Include="code\_RNLib\Editor\setup3D-editor.cpp" />
+    <ClCompile Include="code\_RNLib\sample.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\BackGround\fishes.h" />
@@ -379,6 +380,7 @@
     <ClInclude Include="code\_RNLib\Demo\demo_zone.h" />
     <ClInclude Include="code\_RNLib\Editor\light3D-editor.h" />
     <ClInclude Include="code\_RNLib\Editor\rail3D-editor.h" />
+    <ClInclude Include="code\_RNLib\RNagent.h" />
     <ClInclude Include="code\_RNLib\RNfunction.h" />
     <ClInclude Include="code\_RNLib\RNlib.h" />
     <ClInclude Include="code\_RNLib\RNmain.h" />

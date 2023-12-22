@@ -17,5 +17,8 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	_RNC_Effect3DMgr ();
 	~_RNC_Effect3DMgr();
-	void Update      (void);
+
+private:
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	void Update(void);
 };

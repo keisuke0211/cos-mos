@@ -17,8 +17,11 @@
 class _RNC_Doll3DMgr : public CObjectMgr {
 public:
 	//========== [[[ ä÷êîêÈåæ ]]]
-	_RNC_Doll3DMgr                             ();
-	~_RNC_Doll3DMgr                            ();
+	_RNC_Doll3DMgr ();
+	~_RNC_Doll3DMgr();
+
+public:
+	//========== [[[ ä÷êîêÈåæ ]]]
 	void      Update                           (void);
 	void      SetEditDoll                      (CDoll3D*& editDoll)                   { m_editInfo.editDoll = editDoll; }
 	CDoll3D*& GetEditDoll                      (void)                                 { return m_editInfo.editDoll; }
@@ -31,7 +34,6 @@ public:
 	void      SetEditCamera                    (CCamera*& editCamera)                 { m_editInfo.editCamera = editCamera; }
 	CCamera*& GetEditCamera                    (void)                                 { return m_editInfo.editCamera; }
 
-public:
 	//========== [[[ ç\ë¢ëÃíËã` ]]]
 	struct EditInfo {
 		CDoll3D* editDoll               = NULL;
