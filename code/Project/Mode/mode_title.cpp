@@ -1139,7 +1139,7 @@ void CMode_Title::StageRel(int nPlanet, int nStgMax)
 		{
 			int nStgCoin = Manager::StgEd()->GetStageCoin(nPlanet, nCnt);
 
-			if (CCoin::GetWholeAll() >= nStgCoin)
+			if (Stage::GetCoinAll() >= nStgCoin)
 			{
 				Manager::StgEd()->SetStageRel(nPlanet, nCnt, false);
 			}

@@ -30,9 +30,6 @@ public:
 	//プレイ中に取得した総数
 	static int GetNumAll(void) { return s_NumAll; }
 
-	//全体を総括して取得した数（セーブデータから読み取ってすでに回収済みの数も含む
-	static int GetWholeAll(void) { return s_Num + s_NumAll + Stage::GetCoinAll(); }
-
 private:
 
 	int m_nID;
