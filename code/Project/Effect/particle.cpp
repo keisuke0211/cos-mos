@@ -120,7 +120,7 @@ void CParticle::Update(void)
 	m_Info.pos += m_Info.move;
 
 	//äÑçáåvéZ
-	float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, m_Info.nCount, m_Info.nCountMax);
+	float fCountRate = RNLib::Ease().Easing(EASE_TYPE::OUT_SINE, m_Info.nCount, m_Info.nCountMax);
 
 	D3DXVECTOR3 fScaleRate = m_Info.scale * fCountRate;
 

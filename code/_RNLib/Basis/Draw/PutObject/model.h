@@ -74,18 +74,18 @@ public:
 		~CDrawInfo();
 
 		// [[[ ïœêîêÈåæ ]]]
-		static Material                ms_outLineMat;
-		Matrix                         m_mtx;
-		Material*                      m_mats;
-		Texture*                       m_texes;
-		UShort                         m_matNum;
-		Mesh                           m_mesh;
-		Mesh                           m_outLineMesh;
-		bool                           m_isScaling;
-		bool                           m_isZTest;
-		bool                           m_isLighting;
-		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
-		float                          m_radiusMax;
+		static Material    ms_outLineMat;
+		Matrix             m_mtx;
+		Material*          m_mats;
+		Texture*           m_texes;
+		UShort             m_matNum;
+		Mesh               m_mesh;
+		Mesh               m_outLineMesh;
+		bool               m_isScaling;
+		bool               m_isZTest;
+		bool               m_isLighting;
+		INTERPOLATION_MODE m_interpolationMode;
+		float              m_radiusMax;
 	};
 
 	// ìoò^èÓïÒÉNÉâÉX
@@ -94,13 +94,9 @@ public:
 		// [[[ ä÷êîêÈåæ ]]]
 		CRegistInfo();
 		~CRegistInfo();
-		void ClearParameter(void);
-		CDrawInfo* ConvToDrawInfo(Device& device);
 		CRegistInfo* SetClippingCamera      (CCamera& camera); 
 		CRegistInfo* SetClippingCamera      (const short& ID);
-		CRegistInfo* SetMtx                 (const Matrix& mtx);
 		CRegistInfo* SetCol                 (const Color& col);
-		CRegistInfo* SetModel               (const short& modelIdx);
 		CRegistInfo* SetTex                 (const short& texIdx);
 		CRegistInfo* SetZTest               (const bool& isZTest);
 		CRegistInfo* SetLighting            (const bool& isLighting);
@@ -109,20 +105,30 @@ public:
 		CRegistInfo* SetInterpolationMode   (const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode);
 
 	private:
+		// [[[ óFíBêÈåæ ]]]
+		friend class _RNC_DrawMgr;
+		friend class _RNC_Model;
+
+		// [[[ ä÷êîêÈåæ ]]]
+		void         ClearParameter(void);
+		CDrawInfo*   ConvToDrawInfo(Device& device);
+		CRegistInfo* SetModel      (const short& modelIdx);
+		CRegistInfo* SetMtx        (const Matrix& mtx);
+
 		// <<< äÓñ{èÓïÒ >>>
-		Matrix                         m_mtx;
-		short                          m_modelIdx;
+		Matrix             m_mtx;
+		short              m_modelIdx;
 
 		// <<< å©ÇΩñ⁄èÓïÒ >>>
-		Color                          m_col;
-		short                          m_texIdx;
-		short                          m_outLineIdx;
-		float                          m_brightnessOfEmissive;
+		Color              m_col;
+		short              m_texIdx;
+		short              m_outLineIdx;
+		float              m_brightnessOfEmissive;
 
 		// <<< ï`âÊèÓïÒê›íË >>>
-		bool                           m_isZTest;
-		bool                           m_isLighting;
-		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
+		bool               m_isZTest;
+		bool               m_isLighting;
+		INTERPOLATION_MODE m_interpolationMode;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]

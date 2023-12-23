@@ -527,13 +527,13 @@ void _RNC_Sound::CPlay::Update(void) {
 	{// 再生中でない時、
 
 		if (m_isLoop) 
-		{// ループフラグが真なら再び再生
+		{// ループフラグがTRUEなら再び再生
 			m_sourceVoice->SubmitSourceBuffer(&RNLib::Sound().GetData(m_soundIdx).m_audioBuffer);	// オーディオバッファの登録
 			m_sourceVoice->Start(0);
 			m_count = 0;
 		}
 		else 
-		{// ループフラグが偽なら自身を削除
+		{// ループフラグがFALSEなら自身を削除
 			Delete();
 			return;
 		}

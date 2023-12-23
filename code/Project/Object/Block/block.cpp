@@ -284,7 +284,7 @@ void CBlock::Update(void) {
 			m_targetAddPos = RNLib::Geometry().GetRandomVec() * (1.0f + RNLib::Number().GetRandomFloat(1.0f));
 		}
 
-		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		float rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_counter, m_counterMax);
 		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
 
 		/*RNLib::Model().Put(PRIORITY_OBJECT, m_otherModelIdxes[(int)OTHER_MODEL::LEAF_INSIDE], m_pos - m_addPos * 0.5f, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)
@@ -425,7 +425,7 @@ void CBlock::Update(void) {
 			m_targetAddPos = RNLib::Geometry().GetRandomVec() * (1.0f + RNLib::Number().GetRandomFloat(1.0f));
 		}
 
-		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_counter, m_counterMax);
+		float rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_counter, m_counterMax);
 		m_addPos = (m_oldAddPos * rate) + (m_targetAddPos * (1.0f - rate));
 
 		RNLib::Model().Put(PRIORITY_OBJECT, m_modelIdxes[(int)m_looksType], m_pos + m_addPos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), false)

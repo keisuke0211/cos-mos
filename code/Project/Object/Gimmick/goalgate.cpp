@@ -166,8 +166,8 @@ void CGoalGate::StateUpdate(void)
 	{
 		m_state = STATE::MAX;
 
-		float CountRateRot = MAX_ROT_SPEED * RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-		float CntEffRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		float CountRateRot = MAX_ROT_SPEED * RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		float CntEffRate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
 		if (m_pos.y > 0)
 			m_rot.z += 0.6f - CountRateRot;
@@ -289,8 +289,8 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRate
 	if (m_bEntry == true && m_bStartGate == false)
 	{
 		//Š„‡ŒvŽZ
-		*CountRateX = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
-		*CountRateY = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
+		*CountRateX = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCntEtrX, ETR_CNT);
+		*CountRateY = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCntEtrY, ETR_CNT);
 
 		if (m_bScale == false)
 		{
@@ -323,11 +323,11 @@ void CGoalGate::CountRate(float *CountRateX, float *CountRateY, float *CountRate
 	else
 	{
 		//Š„‡ŒvŽZ
-		*CountRateX = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
-		*CountRateY = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		*CountRateX = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+		*CountRateY = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 	}
 
-	*CountRateZ = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+	*CountRateZ = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 }
 
 //========================================
@@ -362,7 +362,7 @@ void CGoalGate::EscapeGuide(void)
 				->SetBillboard(true)
 				->SetZTest(false)
 				->SetCol(Color{ 255,255,255,(int)m_GuideAlpha })
-				->SetTexUV(s_nEscapeGuideTexID,
+				->SetTex(s_nEscapeGuideTexID,
 						   Pos2D(LeftTexU, 0.0f), Pos2D(LeftTexU + 0.5f, 0.0f),
 						   Pos2D(LeftTexU, 1.0f), Pos2D(LeftTexU + 0.5f, 1.0f));
 		}

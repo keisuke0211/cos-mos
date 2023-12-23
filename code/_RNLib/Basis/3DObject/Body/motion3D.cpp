@@ -256,7 +256,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 										int easeTypeIdx;
 										RNLib::File().Scan(_RNC_File::SCAN::INT, &easeTypeIdx);
-										data.easeType = (_RNC_Ease::TYPE)easeTypeIdx;
+										data.easeType = (EASE_TYPE)easeTypeIdx;
 									}break;
 									case COMMAND::SPIN: {
 										boneMotionData.isSpin = true;
@@ -268,7 +268,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 										int easeTypeIdx;
 										RNLib::File().Scan(_RNC_File::SCAN::INT, &easeTypeIdx);
-										data.easeType = (_RNC_Ease::TYPE)easeTypeIdx;
+										data.easeType = (EASE_TYPE)easeTypeIdx;
 									}break;
 									case COMMAND::SCALING: {
 										boneMotionData.isScale = true;
@@ -280,7 +280,7 @@ bool _RNC_Motion3D::ExecutionLoad(const char* loadPath, CData& data) {
 
 										int easeTypeIdx;
 										RNLib::File().Scan(_RNC_File::SCAN::INT, &easeTypeIdx);
-										data.easeType = (_RNC_Ease::TYPE)easeTypeIdx;
+										data.easeType = (EASE_TYPE)easeTypeIdx;
 
 									}break;
 									}

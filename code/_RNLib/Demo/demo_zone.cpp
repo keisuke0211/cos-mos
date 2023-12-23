@@ -113,7 +113,7 @@ void CDemoZone::Update(void) {
 		RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, pos, Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
 			->SetSize(TYPE_DATAS[(int)m_type2].size)
 			->SetCol(Color{ colorRGB, colorRGB, colorRGB, (UShort)255 })
-			->SetTexUV(
+			->SetTex(
 				RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::TILE),
 				Pos2D(0.0f, 0.0f),
 				Pos2D(uvRight, 0.0f),

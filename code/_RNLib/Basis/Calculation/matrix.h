@@ -16,9 +16,6 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	_RNC_Matrix                  ();
 	~_RNC_Matrix                 ();
-	void     Init                (void);
-	void     Uninit              (void);
-	void     Update              (void);
 	Matrix   ConvPosToMtx        (const Pos3D& pos);
 	Matrix   ConvRotToMtx        (const Rot3D& rot);
 	Matrix   ConvPosRotToMtx     (const Pos3D& pos, const Rot3D& rot);
@@ -28,5 +25,14 @@ public:
 	Rot3D    ConvMtxToRot        (const Matrix& mtx);
 	Vector3D ConvMtxToRotVec     (const Matrix& mtx);
 	Scale3D  ConvMtxToScale      (const Matrix& mtx);
-	Matrix   MultiplyMtx         (const Matrix& mtxA, const Matrix& mtxB);
+	Matrix   MultiplyMtx         (const Matrix& parentMtx, const Matrix& childMtx);
+
+private:
+	//========== [[[ óFíBêÈåæ ]]]
+	friend class _RNC_Calculation;
+
+	//========== [[[ ä÷êîêÈåæ ]]]
+	void Init  (void);
+	void Uninit(void);
+	void Update(void);
 };

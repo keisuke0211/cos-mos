@@ -187,10 +187,10 @@ Scale3D _RNC_Matrix::ConvMtxToScale(const Matrix& mtx) {
 //========================================
 // マトリックスを掛け合わせる
 //========================================
-Matrix _RNC_Matrix::MultiplyMtx(const Matrix& mtxA, const Matrix& mtxB) {
+Matrix _RNC_Matrix::MultiplyMtx(const Matrix& parentMtx, const Matrix& childMtx) {
 
 	Matrix mtx = INITMATRIX;
-	D3DXMatrixMultiply(&mtx, &mtxA, &mtxB);
+	D3DXMatrixMultiply(&mtx, &childMtx, &parentMtx);
 
 	return mtx;
 }

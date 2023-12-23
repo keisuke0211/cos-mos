@@ -245,7 +245,7 @@ void Stage::StartStage(void) {
 	Manager::GetMainCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 	Manager::GetSubCamera()->SetLightID(Manager::GetLightIdx(Manager::StgEd()->GetPlanetIdx() + 1));
 
-	// リセットフラグを偽にする
+	// リセットフラグをFALSEにする
 	isReset = false;
 }
 
@@ -308,9 +308,8 @@ void Stage::UpdateStage(void) {
 		if (CheckStageNumber(0, 0)) {
 
 			// 下カメラ描画
-			RNLib::Polygon2D().Put(0, true)
-				->SetPos(windowCenterPos + Pos2D(0.0f, windowHeightHalf2))
-				->SetTexUV(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
+			RNLib::Polygon2D().Put(0, windowCenterPos + Pos2D(0.0f, windowHeightHalf2), 0.0f, true)
+				->SetTex(Manager::GetSubCamera(), Pos2D(0.0f, 0.5f), Pos2D(1.0f, 0.5f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 				->SetSize(windowWidth, windowHeightHalf)
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 		}
@@ -325,17 +324,15 @@ void Stage::UpdateStage(void) {
 		else {
 			counter = 0;
 		}
-		const float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::OUT_SINE, counter, 30);
+		const float rate = RNLib::Ease().Easing(EASE_TYPE::OUT_SINE, counter, 30);
 
 		// UIカメラ描画
-		RNLib::Polygon2D().Put(0, true)
-			->SetPos(Pos2D(-100.0f, windowHeightHalf) + Pos2D(250.0f * rate, 0.0f))
-			->SetTexUV(UICamera[0], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
+		RNLib::Polygon2D().Put(0, Pos2D(-100.0f, windowHeightHalf) + Pos2D(250.0f * rate, 0.0f), 0.0f, true)
+			->SetTex(UICamera[0], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 			->SetSize(200.0f, windowHeight)
 			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
-		RNLib::Polygon2D().Put(0, true)
-			->SetPos(Pos2D(windowWidth + 100.0f, windowHeightHalf) + Pos2D(-250.0f * rate, 0.0f))
-			->SetTexUV(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
+		RNLib::Polygon2D().Put(0, Pos2D(windowWidth + 100.0f, windowHeightHalf) + Pos2D(-250.0f * rate, 0.0f), 0.0f, true)
+			->SetTex(UICamera[1], Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f), Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f))
 			->SetSize(200.0f, windowHeight)
 			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
@@ -354,7 +351,7 @@ void Stage::UpdateStage(void) {
 			eyeTime = 5 + (rand() % 90);
 		}
 
-		RNLib::Polygon3D().Put(PRIORITY_OBJECT, RNLib::Matrix().MultiplyMtx(eyeMtx, UIDoll[1]->GetBoneState(0).GetWorldMtx()))
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT, RNLib::Matrix().MultiplyMtx(UIDoll[1]->GetBoneState(0).GetWorldMtx(), eyeMtx))
 			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
 			->SetSize(4.0f, 4.0f)
 			->SetClippingCamera(*UICamera[1]);
@@ -497,7 +494,7 @@ namespace {
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND, INITMATRIX)
-				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CAVE], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 
@@ -517,7 +514,7 @@ namespace {
 
 			// 下
 			RNLib::Polygon3D().Put(PRIORITY_BACKGROUND_DEPTH, INITMATRIX)
-				->SetTexUV(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
+				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::BG_CITY], Pos2D(0.0f, 1.0f), Pos2D(1.0f, 1.0f), Pos2D(0.0f, 0.0f), Pos2D(1.0f, 0.0f))
 				->SetVtxPos(Pos3D(-1024.0f, 0.0f, 700.0f), Pos3D(1024.0f, 0.0f, 700.0f), Pos3D(-1024.0f, -512.0f, 700.0f), Pos3D(1024.0f, -512.0f, 700.0f))
 				->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR)
 				->SetZTest(false);

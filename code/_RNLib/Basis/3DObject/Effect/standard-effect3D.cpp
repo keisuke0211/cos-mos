@@ -46,7 +46,7 @@ void _RNC_StandardEffect3D::CreateDustStormOnLanding(const Pos3D& pos, const Rot
 	circleBack.endDepth    = 0.0f;
 	circleBack.col         = col;
 
-	RNLib::Effect3D().CreateCylinder(m_priority, pos, rot + Rot3D(D3DX_PI_HALF, 0.0f, RNLib::Number().GetRandomFloat(1.0f) * D3DX_PI_DOUBLE), 30, _RNC_Ease::TYPE::OUT_SINE, _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL, 8, circleFront, circleBack)
+	RNLib::Effect3D().CreateCylinder(m_priority, pos, rot + Rot3D(D3DX_PI_HALF, 0.0f, RNLib::Number().GetRandomFloat(1.0f) * D3DX_PI_DOUBLE), 30, EASE_TYPE::OUT_SINE, _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL, 8, circleFront, circleBack)
 		->SetSpinZ(-0.01f + RNLib::Number().GetRandomFloat(1.0f) * 0.02f)
 		->SetTexIdx(RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::SMOKE))
 		->SetTexXNum(4);

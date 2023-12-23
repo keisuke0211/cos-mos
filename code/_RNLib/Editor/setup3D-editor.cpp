@@ -75,7 +75,7 @@ void CSetUp3DEditor::Update(void) {
 	// [[[ ƒOƒŠƒbƒh•`‰æ ]]]
 	RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, INITPOS3D, Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
 		->SetSize(Size2D(90.0f, 90.0f))
-		->SetTexUV(
+		->SetTex(
 			RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::GRID),
 			Pos2D(0.0f, 0.0f),
 			Pos2D(9.0f, 0.0f),
@@ -214,7 +214,7 @@ void CSetUp3DEditor::Update(void) {
 			countResult = m_slitherCounter;
 		}
 
-		Rot3D rot = -m_slither + (m_slither * 2.0f * RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, countResult, slitherTimeHalf));
+		Rot3D rot = -m_slither + (m_slither * 2.0f * RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, countResult, slitherTimeHalf));
 
 		const _RNC_SetUp3D::CData& setUp = RNLib::SetUp3D().GetData(EDITDATA);
 		if (&setUp != NULL) {
@@ -268,13 +268,11 @@ void CSetUp3DEditor::Update(void) {
 					};
 
 					RNLib::Text2D().PutDebugLog(String("Mat_%d", cntMat));
-					RNLib::Polygon2D().Put(0, true)
+					RNLib::Polygon2D().Put(0, RNLib::Text2D().PutDebugLog(String(" Color      :%d %d %d %d", col.r, col.g, col.b, col.a)) + Pos2D(8.0f, 0.0f), 0.0f, true)
 						->SetSize(16.0f, 16.0f)
-						->SetPos(RNLib::Text2D().PutDebugLog(String(" Color      :%d %d %d %d", col.r, col.g, col.b, col.a)) + Pos2D(8.0f, 0.0f))
 						->SetCol(col);
-					RNLib::Polygon2D().Put(0, true)
+					RNLib::Polygon2D().Put(0, RNLib::Text2D().PutDebugLog(String(" TexturePath:%s", RNLib::Texture().GetLoadPath(modelData.m_texIdxes[cntMat]))) + Pos2D(8.0f, 0.0f), true)
 						->SetSize(16.0f, 16.0f)
-						->SetPos(RNLib::Text2D().PutDebugLog(String(" TexturePath:%s", RNLib::Texture().GetLoadPath(modelData.m_texIdxes[cntMat]))) + Pos2D(8.0f, 0.0f))
 						->SetTex(modelData.m_texIdxes[cntMat]);
 				}
 			}

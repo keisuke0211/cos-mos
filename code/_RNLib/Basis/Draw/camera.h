@@ -30,7 +30,7 @@ public:
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	static void StartRenderingScreen(Device& device);
-	            CCamera             (const Size2D& scale2D);
+	            CCamera             (const Size2D& size2D);
 	            ~CCamera            ();
 	void        Update              (void);
 	void        StartRendering      (Device& device);
