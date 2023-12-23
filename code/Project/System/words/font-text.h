@@ -92,6 +92,7 @@ public:
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
 	// -- 設定 ------------------------------------------
+	/* 生成中の文字を一括で	*/void SetTexrSkip(bool skip) { m_Info.bLetterSkip = skip; }
 	/* 移動量				*/void SetMove(D3DXVECTOR3 move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
@@ -163,6 +164,7 @@ private:
 		int nLetterPopCount;	// 文字を出した最大数
 		int nLetterPopCountX;	// 横に文字を出した数
 		int nNiCount;			// 改行の数
+		bool bLetterSkip;		// 生成中なら残りの文字を一括生成する。
 		bool bLetterEnd;		// 文字の生成終了したか
 
 		int nStandTime;			// 待機時間
