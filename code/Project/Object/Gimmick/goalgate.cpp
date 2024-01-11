@@ -219,7 +219,6 @@ void CGoalGate::StateUpdate(void)
 
 			if (m_bStartGate)
 			{
-				CPlayer::Pop();
 				m_bCloseGate = true;
 			}
 				
