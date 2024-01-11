@@ -595,7 +595,7 @@ bool CPlayer::SwapGuideText(void)
 			if (s_zoomUpCounter == 0) {
 				if (++ms_guideCounter > 30)
 					ms_guideCounter = 30;
-				float rate = (float)ms_guideCounter / 30;
+				CFloat rate = (float)ms_guideCounter / 30;
 				if (ms_bSwapEnd) {
 
 					if (ms_guideCounter == 1) {
@@ -632,7 +632,7 @@ bool CPlayer::SwapGuideText(void)
 					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 
 				if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
-					RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+					RNLib::Text3D().Put(PRIORITY_UI, "‚Æ‚Ñ‚Ì‚ê!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 						->SetZTest(false)
 						->SetBillboard(true);
@@ -1474,8 +1474,17 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 
 				switch (Player.side)
 				{
-					case WORLD_SIDE::FACE:	Player.pos.y = Pos.y + height + SIZE_HEIGHT;	break;
-					case WORLD_SIDE::BEHIND:Player.pos.y = Pos.y - height - SIZE_HEIGHT;	break;
+					case WORLD_SIDE::FACE:
+					{
+						CFloat LandPos = Pos.y + height + SIZE_HEIGHT;
+						if (Player.pos.y < LandPos) Player.pos.y = LandPos;
+					}break;
+
+					case WORLD_SIDE::BEHIND:
+					{
+						CFloat LandPos = Pos.y - height - SIZE_HEIGHT;
+						if (Player.pos.y > LandPos) Player.pos.y = LandPos;
+					}break;
 				}
 
 				Player.move.y = 0.0f;

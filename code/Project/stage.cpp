@@ -735,6 +735,10 @@ namespace
 	//========================================
 	void SaveWorldData(void)
 	{
+#ifdef _DEBUG
+		return;
+#endif
+
 		if (pWldData == NULL) return;
 
 		FILE *pFile = fopen(STAGE_DATA, "w");
@@ -892,7 +896,7 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 // 外部ファイルよりすでに回収しているコインの総数を返す
 // Author：HIRASAWA SHION
 //========================================
-int  Stage::GetCoinAll(void)
+int Stage::GetCoinAll(void)
 {
 	LoadWorldData();
 
@@ -946,7 +950,7 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 // コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
-void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
+void Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
 {
 	LoadWorldData();
 
