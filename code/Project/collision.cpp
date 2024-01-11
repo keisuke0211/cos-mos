@@ -620,7 +620,10 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 			//*********************************
 			// –„‚Ü‚Á‚½
 			//*********************************
-		case ROT::UNKNOWN: *pDeath = true; break;
+		case ROT::UNKNOWN: 
+			if(CPlayer::GetSwapInterval() + 1 >= CPlayer::SWAP_INTERVAL)
+				*pDeath = true;
+		break;
 	}
 }
 
