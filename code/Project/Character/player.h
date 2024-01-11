@@ -116,11 +116,11 @@ public:
 		_RNC_Input::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
 
-	static const float SIZE_WIDTH;	// 横幅
-	static const float SIZE_HEIGHT;	// 高さ
+	static CFloat SIZE_WIDTH;	// 横幅
+	static CFloat SIZE_HEIGHT;	// 高さ
 
-	static const int SWAP_INTERVAL;	// スワップインターバル
-	static const int NUM_PLAYER = 2;// プレイヤーの数
+	static CInt SWAP_INTERVAL;	// スワップインターバル
+	static CInt NUM_PLAYER = 2;// プレイヤーの数
 
 	CPlayer();
 	~CPlayer();
@@ -136,7 +136,7 @@ public:
 
 	// プレイヤー情報設定
 	// 指定された番号のプレイヤー情報を設定します。
-	void SetInfo(const Info info, const int nNum);
+	void SetInfo(const Info info, CInt nNum);
 
 	// プレイヤー情報設定
 	// 各プレイヤーの位置情報などを引数に渡してください。
@@ -145,11 +145,11 @@ public:
 
 	// プレイヤー位置情報設定
 	// 指定したプレイヤーの位置情報を引数に渡してください。
-	void SetPos(const int nNum, D3DXVECTOR3 pos) { m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos; }
+	void SetPos(CInt nNum, D3DXVECTOR3 pos) { m_aInfo[nNum].StartPos = m_aInfo[nNum].pos = m_aInfo[nNum].posOld = pos; }
 
 	// プレイヤー色情報設定
 	// 指定したプレイヤーの色情報を引数に渡してください。
-	void SetColor(const int nNum, Color color) { m_aInfo[nNum].color = color; }
+	void SetColor(CInt nNum, Color color) { m_aInfo[nNum].color = color; }
 
 	// プレイヤーにトランポリン用のジャンプを設定
 	void SetTrampolineJump(Info*& pInfo, float fMaxHeight);
@@ -175,9 +175,6 @@ public:
 
 	// スワップ待ちフラグを取得
 	static bool GetIsSwapWait(void) { return m_aInfo[0].swapWaitCounter > 0 || m_aInfo[1].swapWaitCounter > 0; }
-
-	// 出現
-	static void Pop(void) {}
 
 	//SEラベル
 	enum class SE_LABEL {
@@ -233,16 +230,16 @@ public:
 	// 死亡取得
 	static bool GetDeath(void) { return m_aInfo[0].isDeath || m_aInfo[1].isDeath; }
 
-	// Guideカウンター取得
+	// Guideカウンター
 	static UShort GetGuideCounter(void) { return ms_guideCounter; }
 	static void SetGuideCounter(UShort guideCounter) { ms_guideCounter = guideCounter; }
 
 	// ズームアップカウンター
 	static int GetZoomUpCounter(void) { return s_zoomUpCounter; }
 
-	static bool IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigTrigger(CInt nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	static bool IsKeyConfigTrigger(KEY_CONFIG KeyConfig);
-	static bool IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
+	static bool IsKeyConfigPress(CInt nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig);
 	static bool IsKeyConfigPress(KEY_CONFIG KeyConfig);
 
 private:
@@ -264,53 +261,54 @@ private:
 		EPILOGUE,		//エピローグ
 		MAX
 	};
-	static const int SWAP_PROLOGUE_INTERVAL = 10; // スワップ開始～移動までの時間
-	static const int SWAP_MIDDLE_INTERVAL   = 50; // 移動～目的地到着までの時間
-	static const int SWAP_EPILOGUE_INTERVAL = 10; // 目的地到着～終了までの時間
-	static const int NORMAL_SWAP_ALPHA = 100;     // 通常時のスワップマークのα値
+	static CInt SWAP_PROLOGUE_INTERVAL = 10; // スワップ開始～移動までの時間
+	static CInt SWAP_MIDDLE_INTERVAL   = 50; // 移動～目的地到着までの時間
+	static CInt SWAP_EPILOGUE_INTERVAL = 10; // 目的地到着～終了までの時間
+	static CInt NORMAL_SWAP_ALPHA = 100;     // 通常時のスワップマークのα値
 
-	static const float GUIDE_WIDTH;      // ガイドの幅
-	static const float GUIDE_HEIGHT;     // ガイドの高さ
-	static const float MAX_GUIDE_SPEED;  // ガイドアニメーションの最大速度
+	static CFloat GUIDE_WIDTH;      // ガイドの幅
+	static CFloat GUIDE_HEIGHT;     // ガイドの高さ
+	static CFloat MAX_GUIDE_SPEED;  // ガイドアニメーションの最大速度
 
-	static const int EXPAND_TIME = 60;   // 膨らみにかかる時間
-	static const int DEATH_TIME = 60;    // 死亡時間
-	static const int DEATH_TIME2 = 120;  // 死亡時間2
+	static CInt EXPAND_TIME = 60;   // 膨らみにかかる時間
+	static CInt DEATH_TIME = 60;    // 死亡時間
+	static CInt DEATH_TIME2 = 120;  // 死亡時間2
 
-	static const int SWAP_WAIT_BALLOON_TIME = 5;  // スワップ待ち吹き出し時間
+	static CInt SWAP_WAIT_BALLOON_TIME = 5;  // スワップ待ち吹き出し時間
 	static SWAP_ANIM s_AnimState;        // アニメーション構成
 	static       int s_nSwapInterval;    // 残りスワップインターバル
 	static       bool s_bSwapAnim;       // スワップアニメーション中かどうか
 
-	static const int GOAL_INTERVAL = 120;// ゴール後の余韻
-	static const int POP_CLEARTIME = 60; // クリアタイム表示時間
+	static CInt GOAL_INTERVAL = 120;// ゴール後の余韻
+	static CInt POP_CLEARTIME = 60; // クリアタイム表示時間
 	static       int s_nGoalInterval;    // ゴール後の余韻カウンター
 
-	static const int ZOOM_UP_TIME       = 120; // ズームアップにかかる時間
-	static const int ZOOM_UP_FIXED_TIME = 90;  // ズームアップの固定時間
+	static CInt ZOOM_UP_TIME       = 120; // ズームアップにかかる時間
+	static CInt ZOOM_UP_FIXED_TIME = 90;  // ズームアップの固定時間
 	static       int s_zoomUpCounter;          // ズームアップカウンター
 	static       int s_zoomUpFixedCounter;    // ズームアップ固定カウンター2
 
 	void Swap(void);
 	void SwapAnimation(void);
-	void SwapAnim_Prologue(Info& Player, const int nIdxPlayer); // プロローグ処理
-	void SwapAnim_Middle(Info& Player, const int nIdxPlayer);   // 中間処理
-	void SwapAnim_Epilogue(Info& Player, const int nIdxPlayer); // エピローグ処理
-	void SwapGuide(Info& Player);                               // ガイド表示
+	void SwapAnim_Prologue(Info& Player, CInt nIdxPlayer); // プロローグ処理
+	void SwapAnim_Middle(Info& Player, CInt nIdxPlayer);   // 中間処理
+	void SwapAnim_Epilogue(Info& Player, CInt nIdxPlayer); // エピローグ処理
+	void SwapGuide(Info& Player);                          // ガイド表示
+	bool SwapGuideText(void);
 
 	static const char *PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX];
 	static int s_ParticleTex[(int)PARTI_TEX::MAX];
 
-	static const float MOVE_SPEED;		// 移動量
-	static const float MAX_MOVE_SPEED;	// 最大移動量
+	static CFloat MOVE_SPEED;		// 移動量
+	static CFloat MAX_MOVE_SPEED;	// 最大移動量
 
-	static const float JUMP_POWER;		// 基本ジャンプ量
-	static const float GRAVITY_POWER;	// 基本重力加速度
+	static CFloat JUMP_POWER;		// 基本ジャンプ量
+	static CFloat GRAVITY_POWER;	// 基本重力加速度
 
-	static const int TRAMPOLINE_JUMP_COUNTER;
+	static CInt TRAMPOLINE_JUMP_COUNTER;
 
-	static const int OBJ_TRAMPOLINE = 2;// オブジェクトの最大数
-	static const int OBJ_EXTENDDOG = 3;	// オブジェクトの最大数
+	static CInt OBJ_TRAMPOLINE = 2;// オブジェクトの最大数
+	static CInt OBJ_EXTENDDOG = 3;	// オブジェクトの最大数
 
 	static bool ms_bSwapEnd;
 	static UShort ms_guideCounter;
@@ -332,7 +330,7 @@ private:
 
 	// 情報更新処理（更新処理の最後に位置情報などを設定する
 	void UpdateInfo(void);
-	void UpdateDeath(Info& info, const int& count);
+	void UpdateDeath(Info& info, CInt& count);
 
 	static Info m_aInfo[NUM_PLAYER];	// 各プレイヤーの情報
 
