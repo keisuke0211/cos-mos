@@ -58,7 +58,7 @@ void CObjectMgr::SubMgr(CObjectMgr* mgr) {
 		{// 排除してない
 			if (mgr == ms_objectMgrs[cntObjectMgr]) 
 			{// カウントと対象アドレスが一致した時、
-				// 排除フラグを真にする
+				// 排除フラグをTRUEにする
 				isSub = true;
 			}
 		}
@@ -250,12 +250,12 @@ void CObjectMgr::Release(CObject* obj) {
 void CObjectMgr::ReleaseDeleteObj(void) {
 
 	// 先頭から順番に最後尾まで解放していく
-	// (※削除フラグが真の時、解放処理)
+	// (※削除フラグがTRUEの時、解放処理)
 	CObject* obj = m_top;
 	while (obj != NULL) {
 		CObject* nextObj = obj->GetNext();
 
-		// 削除フラグが真の時、解放処理
+		// 削除フラグがTRUEの時、解放処理
 		if (obj->GetIsDelete())
 			Release(obj);
 

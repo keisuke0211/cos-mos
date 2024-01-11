@@ -43,7 +43,8 @@ namespace Polygon2DAnd3D {
 		void SetTex        (CCamera*& camera, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos);
 		void SetTexUV      (const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
 		void SetTexUV      (CCamera*& camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
-		void SetTexMirrorX (const bool& isMirror);
+		void SetTexMirrorX (const bool& isMirrorX);
+		void SetTexMirrorY (const bool& isMirrorY);
 		
 		// [[[ ïœêîêÈåæ ]]]
 		void*         m_setTex         = NULL;
@@ -51,6 +52,7 @@ namespace Polygon2DAnd3D {
 		void*         m_setTexInfo     = NULL;
 		TEX_INFO_TYPE m_setTexInfoType = TEX_INFO_TYPE::NONE;
 		bool          m_isTexMirrorX   = false;
+		bool          m_isTexMirrorY   = false;
 	private:
 		// [[[ ä÷êîêÈåæ ]]]
 		void SetTex_Ptn  (const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos);

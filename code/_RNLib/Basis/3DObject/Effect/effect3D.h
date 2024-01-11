@@ -17,11 +17,11 @@ public:
 	//========== [[[ ä÷êîêÈåæ ]]]
 	_RNC_Effect3D                     ();
 	~_RNC_Effect3D                    ();
-	CEffect3D_Cylinder* CreateCylinder(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType, const UShort& divNum, const CEffect3D_Cylinder::Circle& circleFront, const CEffect3D_Cylinder::Circle& circleBack);
+	CEffect3D_Cylinder* CreateCylinder(const UShort& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const EASE_TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType, const UShort& divNum, const CEffect3D_Cylinder::Circle& circleFront, const CEffect3D_Cylinder::Circle& circleBack);
 
 private:
 	//========== [[[ óFíBêÈåæ ]]]
-	friend class C3DObject;
+	friend class _RNC_3DObject;
 
 	//========== [[[ ä÷êîêÈåæ ]]]
 	void Init  (void);

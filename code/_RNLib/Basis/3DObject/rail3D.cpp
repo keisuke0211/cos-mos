@@ -109,7 +109,7 @@ Matrix CRail3D::GetMtx(float rate, const bool& isApplyScale) {
     assert(rate <= 1.0f);
 
     // 割合ループ制御
-    RNLib::Number().LoopClamp(&rate, 1.0f, 0.0f);
+    RNLib::Number().LoopClamp(&rate, 0.0f, 1.0f);
 
     // 割合に基づいてCatmull-Romスプライン曲線上の位置と進行方向を計算
     Pos3D    pos;

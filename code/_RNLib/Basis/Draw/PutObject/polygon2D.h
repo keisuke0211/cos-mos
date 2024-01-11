@@ -24,16 +24,16 @@ public:
 	public:
 		// [[[ ŠÖ”éŒ¾ ]]]
 		static void InitCreateVertexBuffer(void);
-		static void CreateVertexBuffer(const UShort& num);
-		static void ReleaseVertexBuffer(void);
+		static void CreateVertexBuffer    (const UShort& num);
+		static void ReleaseVertexBuffer   (void);
 		CDrawInfo ();
 		~CDrawInfo();
 
 		// [[[ •Ï”éŒ¾ ]]]
-		static VertexBuffer ms_vtxBuff;
-		static UShort       ms_allocPower;
-		static UShort       ms_allocNum;
-		static UShort       ms_idxCount;
+		static VertexBuffer                ms_vtxBuff;
+		static UShort                      ms_allocPower;
+		static UShort                      ms_allocNum;
+		static UShort                      ms_idxCount;
 		short                              m_idx;
 		void*                              m_tex;
 		Polygon2DAnd3D::TEX_TYPE           m_texType;
@@ -47,23 +47,33 @@ public:
 		// [[[ ŠÖ”éŒ¾ ]]]
 		CRegistInfo();
 		~CRegistInfo();
-		void ClearParameter(void);
-		_RNC_Polygon2D::CDrawInfo* ConvToDrawInfo(void);
-		CRegistInfo* SetIdx              (const short& idx);
-		CRegistInfo* SetPos              (const Pos2D& pos);
-		CRegistInfo* SetAngle            (const Angle& angle);
 		CRegistInfo* SetVtxPos           (const Pos2D pos0, const Pos2D pos1, const Pos2D pos2, const Pos2D pos3);
 		CRegistInfo* SetSize             (const float& width, const float& height);
+		CRegistInfo* SetSize             (const Size2D& size);
 		CRegistInfo* SetCol              (const Color& col);
 		CRegistInfo* SetVtxCol           (const Color col0, const Color col1, const Color col2, const Color col3);
-		CRegistInfo* SetTex              (const short& texIdx, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
-		CRegistInfo* SetTex              (CCamera* camera,     const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
-		CRegistInfo* SetTexUV            (const short& texIdx, const Pos2D& pos0 = Pos2D(0.0f, 0.0f), const Pos2D& pos1 = Pos2D(1.0f, 0.0f), const Pos2D& pos2 = Pos2D(0.0f, 1.0f), const Pos2D& pos3 = Pos2D(1.0f, 1.0f));
-		CRegistInfo* SetTexUV            (CCamera* camera,     const Pos2D& pos0 = Pos2D(0.0f, 0.0f), const Pos2D& pos1 = Pos2D(1.0f, 0.0f), const Pos2D& pos2 = Pos2D(0.0f, 1.0f), const Pos2D& pos3 = Pos2D(1.0f, 1.0f));
-		CRegistInfo* SetTexMirrorX       (const bool& isMirror);
-		CRegistInfo* SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode);
+		CRegistInfo* SetTex              (const short& texIdx);
+		CRegistInfo* SetTex              (CCamera* camera);
+		CRegistInfo* SetTex              (const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos = INITPOS2D);
+		CRegistInfo* SetTex              (CCamera* camera,     const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos = INITPOS2D);
+		CRegistInfo* SetTex              (const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
+		CRegistInfo* SetTex              (CCamera* camera,     const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
+		CRegistInfo* SetTexMirrorX       (const bool& isMirrorX);
+		CRegistInfo* SetTexMirrorY       (const bool& isMirrorY);
+		CRegistInfo* SetInterpolationMode(const INTERPOLATION_MODE& interpolationMode);
 
 	private:
+		// [[[ —F’BéŒ¾ ]]]
+		friend class _RNC_Polygon2D;
+		friend class _RNC_DrawMgr;
+
+		// [[[ ŠÖ”éŒ¾ ]]]
+		void                       ClearParameter(void);
+		_RNC_Polygon2D::CDrawInfo* ConvToDrawInfo(void);
+		CRegistInfo*               SetIdx        (const short& idx);
+		CRegistInfo*               SetPos        (const Pos2D& pos);
+		CRegistInfo*               SetAngle      (const Angle& angle);
+
 		// <<< Šî–{î•ñ >>>
 		short                          m_idx;
 		Pos2D                          m_pos;

@@ -34,7 +34,7 @@ short CCamera::ms_IDCount = 0;
 //========================================
 // コンストラクタ
 //========================================
-CCamera::CCamera(const Size2D& scale2D) {
+CCamera::CCamera(const Size2D& size2D) {
 
 	// リストに追加
 	RNSystem::GetCameraMgr().AddList(this);
@@ -49,7 +49,7 @@ CCamera::CCamera(const Size2D& scale2D) {
 	m_posVib          = INITPOS3D;
 	m_rot             = INITROT3D;
 	m_spin            = INITVECTOR3D;
-	m_size            = scale2D;
+	m_size            = size2D;
 	m_dist            = 1.0f;
 	m_radian          = INIT_RADIAN;
 	m_radianGoal      = INIT_RADIAN;
@@ -72,8 +72,8 @@ CCamera::CCamera(const Size2D& scale2D) {
 	float areaHeight;
 	{
 		const float resolution = RNLib::Window().GetResolution();
-		areaWidth  = scale2D.x * resolution;
-		areaHeight = scale2D.y * resolution;
+		areaWidth  = size2D.x * resolution;
+		areaHeight = size2D.y * resolution;
 	}
 
 	{// [[[ レンダリング設定 ]]]
@@ -109,7 +109,7 @@ CCamera::CCamera(const Size2D& scale2D) {
 	m_MTInfo.vtxBuff->Lock(0, 0, (void**)&vtxs, 0);
 
 	// [[[ 頂点位置の設定 ]]]
-	RNLib::Polygon2D().SetVtxPos_TopLeft(vtxs, INITPOS2D, scale2D.x, scale2D.y);
+	RNLib::Polygon2D().SetVtxPos_TopLeft(vtxs, INITPOS2D, size2D.x, size2D.y);
 
 	// [[[ 頂点カラーの設定 ]]]
 	RNLib::Polygon2D().SetVtxCol(vtxs, Color{ 255,255,255,0 });
@@ -180,8 +180,8 @@ void CCamera::Update(void) {
 	m_spin += -m_spin * SPIN_DAMP;
 
 	// [[[ 向きを制御 ]]]
-	RNLib::Number().Clamp(&m_rot.x, ROT_X_MAX, ROT_X_MIN);
-	RNLib::Number().LoopClamp(&m_rot.y, D3DX_PI, -D3DX_PI);
+	RNLib::Number().Clamp(&m_rot.x, ROT_X_MIN, ROT_X_MAX);
+	RNLib::Number().LoopClamp(&m_rot.y, -D3DX_PI, D3DX_PI);
 
 	// [[[ 視点/注視点位置を算出 ]]]
 	// 回転軸が視点   > 注視点位置を算出

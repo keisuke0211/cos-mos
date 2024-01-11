@@ -453,7 +453,7 @@ void _RNC_Input::CJoyPad::UpdateVibration(void) {
 		if (m_vibration < 0.0f)
 			m_vibration = 0.0f;
 
-		{// 振動フラグが真の時、
+		{// 振動フラグがTRUEの時、
 			XINPUT_VIBRATION vibration;	// XINPUT_VIBRATION vibrationを作成
 
 			//vibrationメンバーwLeftMotorSpeedに値を代入 モータースピード100%

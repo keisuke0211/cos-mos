@@ -74,7 +74,7 @@ public:
 
 private:
 	//========== [[[ —F’BéŒ¾ ]]]
-	friend class C3DObject;
+	friend class _RNC_3DObject;
 	friend class CSetUp3DEditor;
 
 	//========== [[[ ŠÖ”éŒ¾ ]]]

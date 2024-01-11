@@ -348,8 +348,8 @@ void CMenuUI::SelectInput(void)
 	}
 
 	// ループ制御
-	RNLib::Number().LoopClamp(&m_Menu.nMaineSelect, m_Menu.MainMenuMax - 1, 0);
-	RNLib::Number().LoopClamp(&m_Menu.nSubSelect, SETTING_SCREEN_TEXT - 1, 1);
+	RNLib::Number().LoopClamp(&m_Menu.nMaineSelect, 0, m_Menu.MainMenuMax - 1);
+	RNLib::Number().LoopClamp(&m_Menu.nSubSelect, 1, SETTING_SCREEN_TEXT - 1);
 
 	// アニメーション
 	if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID != -1 && !m_Menu.bSubMenuMove && !m_Menu.bSubMenuDisp) {
@@ -379,8 +379,8 @@ void CMenuUI::SelectInput(void)
 	}
 
 	// ループ制御
-	RNLib::Number().Clamp(&m_Menu.nBGMVolume, VOLUME_MSX, 0);
-	RNLib::Number().Clamp(&m_Menu.nSEVolume, VOLUME_MSX, 0);
+	RNLib::Number().Clamp(&m_Menu.nBGMVolume, 0, VOLUME_MSX);
+	RNLib::Number().Clamp(&m_Menu.nSEVolume, 0, VOLUME_MSX);
 }
 
 //========================================
@@ -536,7 +536,7 @@ void CMenuUI::MenuAnime(void)
 	{
 		int Txt = m_Menu.nNumLeftMenu;
 		float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
-		float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+		float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 		float SizeX = TgtSizeX * ScaleRate;
 		float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
@@ -547,14 +547,15 @@ void CMenuUI::MenuAnime(void)
 
 			m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
 			{// Textの再生成
-				D3DXCOLOR col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 				if (Txt == m_Menu.nMaineSelect) {
-					col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 				}
 
 				FormFont pFont = { col,35.0f,3,1,-1, };
 
 				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_07NIKUMARU, &pFont);
+				m_pMenu[Txt]->SetTexrSkip(true);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -592,7 +593,7 @@ void CMenuUI::MenuAnime(void)
 				if (Txt == m_Menu.nMaineSelect&& !m_Menu.bBackMode)
 					TgtSizeX = 80.0f;
 
-				float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+				float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 				float SizeX = 0;
 
 				if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
@@ -624,7 +625,7 @@ void CMenuUI::MenuAnime(void)
 			int Txt = m_Menu.nMaineSelect;
 			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + 80.0f;
 			float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
-			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 			float SizeX = TgtSizeX - (TgtSizeX * ScaleRate);
 
 			m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
@@ -657,7 +658,7 @@ void CMenuUI::MenuAnime(void)
 
 		D3DXVECTOR3 move = INITD3DXVECTOR3;
 
-			float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntRightAnime, PAUSE_RIGHT_ANIME);
+			float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntRightAnime, PAUSE_RIGHT_ANIME);
 			m_Menu.RightScale.x = m_Menu.RightScaleMax.x * Rate;
 			m_Menu.RightScale.y = m_Menu.RightScaleMax.y * Rate;
 
@@ -696,7 +697,7 @@ void CMenuUI::MenuAnime(void)
 	{
 		if (!m_Menu.bSubText)
 		{
-			float ScaleRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntRightTextAnime, PAUSE_RIGHT_TEXT_ANIME);
+			float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntRightTextAnime, PAUSE_RIGHT_TEXT_ANIME);
 
 			int nTextMax = 0;
 			if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 0) nTextMax = m_Menu.OperationMax;
@@ -778,7 +779,7 @@ void CMenuUI::MenuAnime(void)
 		}
 		else if (m_Menu.bSubText)
 		{
-			float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntRightTextAnime, PAUSE_RIGHT_TEXT_ANIME);
+			float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntRightTextAnime, PAUSE_RIGHT_TEXT_ANIME);
 
 			int nTextMax = 0;
 			if (m_MaineMenu[m_Menu.nSubMenuIdx].nSubMenuID == 0) nTextMax = m_Menu.OperationMax;
@@ -856,7 +857,7 @@ void CMenuUI::PartElasticity(void)
 
 			bool bChg = false;
 
-			float Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
 			float SizeX = 0;
 			float SizeY = 0;
 			float size = 0;
@@ -912,12 +913,12 @@ void CMenuUI::MenuSelect(void)
 				if (nCnt == m_Menu.nMaineSelect)
 				{
 					m_pMenu[nCnt]->SetTxtBoxColor(Color{ 255,255,255,255 });
-					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 				}
 				else
 				{
 					m_pMenu[nCnt]->SetTxtBoxColor(Color{ 155,155,155,255 });
-					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
+					m_pMenu[nCnt]->SetTxtColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
 				}
 			}
 		}

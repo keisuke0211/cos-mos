@@ -11,35 +11,35 @@ Start
 
 -- ‚PŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = ‘±‚¯‚é
+		Text = „X„X‘±‚¯‚é
 		SubMenuID = -1
 		
 	EndSelect
 	
 -- ‚QŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = ‚â‚è’¼‚·
+		Text = „X„X‚â‚è’¼‚·
 		SubMenuID = -1
 		
 	EndSelect
 
 -- ‚RŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = ‘€ì•û–@
+		Text = „X„X‘€ì•û–@
 		SubMenuID = 0
 		
 	EndSelect
 
 -- ‚SŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = İ’è
+		Text = „X„Xİ’è
 		SubMenuID = 1
 
 	EndSelect
 
 -- ‚TŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = ƒXƒe[ƒW‘I‘ğ
+		Text = „X„XƒXƒe[ƒW‘I‘ğ
 		SubMenuID = -1
 
 	EndSelect

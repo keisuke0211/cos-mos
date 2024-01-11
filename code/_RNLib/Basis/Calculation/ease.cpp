@@ -50,7 +50,7 @@ void _RNC_Ease::Update(void) {
 //========================================
 // •âŠÔˆ—(®”)
 //========================================
-float _RNC_Ease::Easing(const TYPE& ease, const int& base, const int& max) {
+float _RNC_Ease::Easing(const EASE_TYPE& ease, const int& base, const int& max) {
 
 	return Easing(ease, (float)base, (float)max);
 }
@@ -58,7 +58,7 @@ float _RNC_Ease::Easing(const TYPE& ease, const int& base, const int& max) {
 //========================================
 // •âŠÔˆ—(•‚“®¬”)
 //========================================
-float _RNC_Ease::Easing(const TYPE& type, const float& base, const float& max) {
+float _RNC_Ease::Easing(const EASE_TYPE& type, const float& base, const float& max) {
 
 	float rate = 0.0f;
 	float progress = base;
@@ -71,21 +71,21 @@ float _RNC_Ease::Easing(const TYPE& type, const float& base, const float& max) {
 
 	switch (type) {
 		// [[[ “™‘¬ ]]]
-	case TYPE::LINEAR: {
+	case EASE_TYPE::LINEAR: {
 		rate = progress / max;
 	}break;
 		// [[[ ™X‚É‰Á‘¬ ]]]
-	case TYPE::IN_SINE: {
+	case EASE_TYPE::IN_SINE: {
 		rate = progress / max;
 		rate *= rate;
 	}break;
 		// [[[ ™X‚ÉŒ¸‘¬ ]]]
-	case TYPE::OUT_SINE: {
+	case EASE_TYPE::OUT_SINE: {
 		rate = progress / max;
 		rate = -rate * (rate - 2.0f);
 	}break;
 		// [[[ ‰Á‘¬‚µ‚ÄŒ¸‘¬ ]]]
-	case TYPE::INOUT_SINE: {
+	case EASE_TYPE::INOUT_SINE: {
 		rate = progress / (max / 2.0f);
 
 		if (rate < 1.0f) {

@@ -597,7 +597,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 
 				// [[[ ビルボードフラグに応じてマトリックスを設定 ]]]
 				if (drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_isBillboard)
-					device->SetTransform(D3DTS_WORLD, &RNLib::Matrix().MultiplyMtx(cameraBillboardMtx, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx));
+					device->SetTransform(D3DTS_WORLD, &RNLib::Matrix().MultiplyMtx(drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx, cameraBillboardMtx));	
 				else
 					device->SetTransform(D3DTS_WORLD, &drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_mtx);
 

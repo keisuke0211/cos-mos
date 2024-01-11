@@ -17,8 +17,14 @@ public:
 	//========== [[[ ŠÖ”éŒ¾ ]]]
 	_RNC_HitTest                ();
 	~_RNC_HitTest               ();
-	void Init                   (void);
-	void Uninit                 (void);
-	void Update                 (void);
 	bool XZ_OverlapPointToSquare(const Pos3D& basePos, const Pos3D& targetPos, const Scale2D& targetScale);
+
+private:
+	//========== [[[ —F’BéŒ¾ ]]]
+	friend class _RNC_Calculation;
+
+	//========== [[[ ŠÖ”éŒ¾ ]]]
+	void Init  (void);
+	void Uninit(void);
+	void Update(void);
 };

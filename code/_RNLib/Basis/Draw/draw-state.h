@@ -46,3 +46,10 @@ public:
 	void SetIsFog            (Device& device, const bool& isFog);
 	void SetFogParameter     (Device& device, const Color& col, const UShort& startDist, const UShort& endDist);
 };
+
+//****************************************
+// •Ê–¼’è‹`
+//****************************************
+typedef _RNC_DrawState::CULLING_MODE       CULLING_MODE;
+typedef _RNC_DrawState::ALPHA_BLEND_MODE   ALPHA_BLEND_MODE;
+typedef _RNC_DrawState::INTERPOLATION_MODE INTERPOLATION_MODE;

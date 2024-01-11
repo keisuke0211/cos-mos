@@ -90,7 +90,7 @@ void CEffect_Meteor::Update(void)
 	m_nCount--;
 
 	//äÑçáåvéZ
-	float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_nCount, MAX_DELTECNT);
+	float fCountRate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCount, MAX_DELTECNT);
 
 	for (int nCnt = 0; nCnt < MAX_INFO; nCnt++)
 	{

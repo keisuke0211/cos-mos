@@ -35,11 +35,11 @@ namespace {
 	bool             isBeginScene;
 
 	// RNオブジェクト
-	C3DObject    _3DObject;
-	CCalculation calculation;
-	CDraw        draw;
-	CMechanical  mechanical;
-	COther       other;
+	_RNC_3DObject    _3DObject;
+	_RNC_Calculation calculation;
+	_RNC_Draw        draw;
+	_RNC_Mechanical  mechanical;
+	_RNC_Other       other;
 	void*        modeObject;
 }
 

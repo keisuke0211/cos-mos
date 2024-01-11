@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffect3D_Model::CEffect3D_Model(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType) : CEffect3D_Base(priority, pos, rot, life, easeType, alphaBlendType) {
+CEffect3D_Model::CEffect3D_Model(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const EASE_TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType) : CEffect3D_Base(priority, pos, rot, life, easeType, alphaBlendType) {
 
 }
 

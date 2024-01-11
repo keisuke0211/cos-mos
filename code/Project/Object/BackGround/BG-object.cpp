@@ -61,7 +61,7 @@ void CBGObject::Update(void) {
 			moveInfo->isReturn = !moveInfo->isReturn;
 		}
 
-		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, moveInfo->counter, moveInfo->time);
+		float rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, moveInfo->counter, moveInfo->time);
 		if (moveInfo->isReturn)
 			rate = 1.0f - rate;
 
@@ -79,7 +79,7 @@ void CBGObject::Update(void) {
 			return;
 		}
 		
-		lifeRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::LINEAR, m_Info.life, m_Info.lifeMax);
+		lifeRate = RNLib::Ease().Easing(EASE_TYPE::LINEAR, m_Info.life, m_Info.lifeMax);
 	}
 
 	// [[[ •`‰æ ]]]

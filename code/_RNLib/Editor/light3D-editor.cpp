@@ -115,9 +115,9 @@ void CLight3DEditor::Update(void) {
 			if (RNLib::Input().GetKeyPress(DIK_M)) { m_light->GetBGCol().b++; m_isSaved = false; }
 
 			// 制御
-			RNLib::Number().LoopClamp(&m_light->GetBGCol().r, 255, 0);
-			RNLib::Number().LoopClamp(&m_light->GetBGCol().g, 255, 0);
-			RNLib::Number().LoopClamp(&m_light->GetBGCol().b, 255, 0);
+			RNLib::Number().LoopClamp(&m_light->GetBGCol().r, 0, 255);//OK!
+			RNLib::Number().LoopClamp(&m_light->GetBGCol().g, 0, 255);//OK!
+			RNLib::Number().LoopClamp(&m_light->GetBGCol().b, 0, 255);//OK!
 		}
 
 		// フォグのON/OFF
@@ -131,8 +131,8 @@ void CLight3DEditor::Update(void) {
 		if (RNLib::Input().GetKeyPress(DIK_O))                                    { m_light->GetFogInfo().start++; m_isSaved = false; }
 		if (RNLib::Input().GetKeyPress(DIK_K) && m_light->GetFogInfo().end > 0)   { m_light->GetFogInfo().end--  ; m_isSaved = false; }
 		if (RNLib::Input().GetKeyPress(DIK_L))                                    { m_light->GetFogInfo().end++  ; m_isSaved = false; }
-		RNLib::Number().Clamp(&m_light->GetFogInfo().start, USHRT_MAX, 0);
-		RNLib::Number().Clamp(&m_light->GetFogInfo().end, USHRT_MAX, m_light->GetFogInfo().start);
+		RNLib::Number().Clamp(&m_light->GetFogInfo().start, 0, USHRT_MAX);//OK!
+		RNLib::Number().Clamp(&m_light->GetFogInfo().end, m_light->GetFogInfo().start, USHRT_MAX);//OK!
 
 		// リニアライトの加算
 		if (RNLib::Input().GetKeyTrigger(DIK_C)) {
@@ -161,7 +161,7 @@ void CLight3DEditor::Update(void) {
 		if (m_light->GetLinearLightNum() > 0) {
 		
 			// 選択リニアライトの制御
-			RNLib::Number().LoopClamp(&m_selectLinearLightIdx, m_light->GetLinearLightNum() - 1, 0);
+			RNLib::Number().LoopClamp(&m_selectLinearLightIdx, 0, m_light->GetLinearLightNum() - 1);//OK!
 
 			if (RNLib::Count().GetCount() % 3 == 0)
 			{// 選択リニアライトの色
@@ -173,9 +173,9 @@ void CLight3DEditor::Update(void) {
 				if (RNLib::Input().GetKeyPress(DIK_B)) { m_light->GetLinearLight(m_selectLinearLightIdx).col.b++; m_isSaved = false; }
 
 				// 制御
-				RNLib::Number().LoopClamp(&m_light->GetLinearLight(m_selectLinearLightIdx).col.r, 255, 0);
-				RNLib::Number().LoopClamp(&m_light->GetLinearLight(m_selectLinearLightIdx).col.g, 255, 0);
-				RNLib::Number().LoopClamp(&m_light->GetLinearLight(m_selectLinearLightIdx).col.b, 255, 0);
+				RNLib::Number().LoopClamp(&m_light->GetLinearLight(m_selectLinearLightIdx).col.r, 0, 255);//OK!
+				RNLib::Number().LoopClamp(&m_light->GetLinearLight(m_selectLinearLightIdx).col.g, 0, 255);//OK!
+				RNLib::Number().LoopClamp(&m_light->GetLinearLight(m_selectLinearLightIdx).col.b, 0, 255);//OK!
 			}
 
 			{// 選択リニアライトの回転
@@ -185,8 +185,8 @@ void CLight3DEditor::Update(void) {
 				if (RNLib::Input().GetKeyPress(DIK_S)) { lightRot.x -= 0.02f; isSpin = true; m_isSaved = false; }
 				if (RNLib::Input().GetKeyPress(DIK_A)) { lightRot.y += 0.02f; isSpin = true; m_isSaved = false; }
 				if (RNLib::Input().GetKeyPress(DIK_D)) { lightRot.y -= 0.02f; isSpin = true; m_isSaved = false; }
-				RNLib::Number().LoopClamp(&lightRot.x, D3DX_PI, -D3DX_PI);
-				RNLib::Number().LoopClamp(&lightRot.y, D3DX_PI, -D3DX_PI);
+				RNLib::Number().LoopClamp(&lightRot.x, -D3DX_PI, D3DX_PI);//OK!
+				RNLib::Number().LoopClamp(&lightRot.y, -D3DX_PI, D3DX_PI);//OK!
 				m_light->GetLinearLight(m_selectLinearLightIdx).rotMtx = RNLib::Matrix().ConvRotToMtx(lightRot);
 			}
 		}
@@ -208,7 +208,7 @@ void CLight3DEditor::Update(void) {
 	}
 	RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, INITPOS3D, Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
 		->SetSize(Size2D(90.0f, 90.0f))
-		->SetTexUV(
+		->SetTex(
 			RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::GRID),
 			Pos2D(0.0f, 0.0f),
 			Pos2D(9.0f, 0.0f),
@@ -227,7 +227,7 @@ void CLight3DEditor::Update(void) {
 
 		// [[[ リニアライト描画 ]]]
 		for (int cntLinearLight = 0; cntLinearLight < m_light->GetLinearLightNum(); cntLinearLight++) {
-			RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::LINEAR_LIGHT), RNLib::Matrix().MultiplyMtx(m_light->GetLinearLight(cntLinearLight).rotMtx, lightMtx))
+			RNLib::Model().Put((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetModelIdx(_RNC_DefaultData::MODEL::LINEAR_LIGHT), RNLib::Matrix().MultiplyMtx(lightMtx, m_light->GetLinearLight(cntLinearLight).rotMtx))
 				->SetCol(m_light->GetLinearLight(cntLinearLight).col.GetAlphaApplied(m_selectLinearLightIdx == cntLinearLight ? 1.0f : 0.5f));
 		}
 	}

@@ -130,7 +130,7 @@ void Manager::Update(void) {
 		const float windowHeight      = RNLib::Window().GetHeight();
 
 		RNLib::Polygon2D().Put(0, Pos3D(windowCenterPos.x, windowCenterPos.y, 0.0f), 0.0f, true)
-			->SetTexUV(m_camera)
+			->SetTex(m_camera)
 			->SetSize(windowWidth, windowHeight)
 			->SetInterpolationMode(_RNC_DrawState::INTERPOLATION_MODE::LINEAR);
 	}

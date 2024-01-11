@@ -13,7 +13,7 @@
 // クラス定義
 //****************************************
 // 3Dオブジェクト
-class C3DObject {
+class _RNC_3DObject {
 public:
 	//========== [[[ 関数宣言 ]]]
 	void Init(void) {
@@ -45,7 +45,7 @@ public:
 };
 
 // 計算
-class CCalculation {
+class _RNC_Calculation {
 public:
 	//========== [[[ 関数宣言 ]]]
 	void Init(void) {
@@ -79,7 +79,7 @@ public:
 };
 
 // 描画
-class CDraw {
+class _RNC_Draw {
 public:
 	//========== [[[ 関数宣言 ]]]
 	void Init(Device& device, const UShort& priorityMax) {
@@ -135,7 +135,7 @@ public:
 };
 
 // 機械
-class CMechanical {
+class _RNC_Mechanical {
 public:
 	//========== [[[ 変数宣言 ]]]
 	void Init(HINSTANCE& instanceHandle) {
@@ -169,7 +169,7 @@ public:
 };
 
 // その他
-class COther {
+class _RNC_Other {
 public:
 	//========== [[[ 関数宣言 ]]]
 	void Init(void) {
