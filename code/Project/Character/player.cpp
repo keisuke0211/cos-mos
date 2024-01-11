@@ -632,7 +632,7 @@ bool CPlayer::SwapGuideText(void)
 					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 
 				if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
-					RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+					RNLib::Text3D().Put(PRIORITY_UI, "‚Æ‚Ñ‚Ì‚ê!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
 						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
 						->SetZTest(false)
 						->SetBillboard(true);
