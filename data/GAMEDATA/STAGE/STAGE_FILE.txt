@@ -23,7 +23,7 @@ EndPlanet
 -- ‚Q‚Â–Ú‚Ìİ’è ------------------------------------------------------
 SetPlanet
 	NumStage = 3
-	ModelPath = data\MODEL\Regulus.x
+	ModelPath = data\MODEL\World2.x
 	BackColor = 45 110 135 255
 
 EndPlanet
