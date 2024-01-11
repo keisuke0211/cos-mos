@@ -74,6 +74,7 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\Bus_Stop.x"								  , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // バス停
 	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(175,238,238,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 街灯
 	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 看板
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\SteelFrame.PNG"        , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // アスファルトブロック
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
