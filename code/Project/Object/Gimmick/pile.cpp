@@ -189,7 +189,7 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(TexPos.x, TexPos.y + 1.0f * cosf(world), TexPos.z), rot, INITSCALE3D * 0.1f,COLOR_WHITE);
 	}
 
-	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], _RNC_Sound::CATEGORY::SE, 0.2f, false);
+	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::PILE_DIG], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 }
 
 //===============================
