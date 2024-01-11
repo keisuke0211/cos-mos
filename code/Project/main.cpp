@@ -14,7 +14,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR IpCmdLine, int nCmdShow) {
 	int nEndCode = 0;
 
-	while (RNSystem::MainLoop(hInstance, "data\\RNSettings.txt", "data\\RNOptionsData.txt", PRIORITY_MAX, RNSystem::MODE::EXECUTION)) {
+	while (RNSystem::MainLoop(hInstance, "data\\RNSettings.txt", "data\\RNOptionsData.txt", PRIORITY_MAX, RNSystem::MODE::SETUP3D_EDITOR)) {
 
 		switch (RNSystem::GetSignal()) {
 		case RNSystem::SIGNAL::INIT:
