@@ -1323,10 +1323,10 @@ void CPlayer::CollisionToStageObject(void)
 
 		// Ž€–S”»’èON
 		if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
-			if (aDeath[0] && (aDeathType[0] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+			if (aDeath[0] || (aDeathType[0] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
 				Death(m_aInfo[0], aDeathType[0]);
 
-			if (aDeath[1] && (aDeathType[1] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+			if (aDeath[1] || (aDeathType[1] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
 				Death(m_aInfo[1], aDeathType[1]);
 		}
 	}
