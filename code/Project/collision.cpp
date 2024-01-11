@@ -620,7 +620,10 @@ void CCollision::Dog(SelfInfo *pSelfInfo, CExtenddog *pExtenddog, ColliInfo *pCo
 			//*********************************
 			// 埋まった
 			//*********************************
-		case ROT::UNKNOWN: *pDeath = true; break;
+		case ROT::UNKNOWN: 
+			if(CPlayer::GetSwapInterval() + 1 >= CPlayer::SWAP_INTERVAL)
+				*pDeath = true;
+		break;
 	}
 }
 
@@ -659,6 +662,8 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 	// 取得数増加・描画OFF
 	pParts->DispSwitch(false);
 	pParts->GetParts();
+
+	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::GET_PARTS], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 
 	// 取得した数が全体数と同じなら、ロケット乗車可能
 	if (CParts::IsReady()) CRocket::ReadyRide();

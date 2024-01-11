@@ -9,6 +9,7 @@
 #include "rocket.h"
 #include "../../main.h"
 #include"../../Character/player.h"
+#include"../../resource.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -181,6 +182,8 @@ void CRocket::UpdateState_Ride(void)
 		if (s_nCountPlayer == CPlayer::NUM_PLAYER)
 		{// プレイヤーが全員乗ったら
 			m_Info.Animstate = ANIME_STATE::FLY;	// 飛ぶ状態に移行
+
+			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_FIRE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 		}
 		m_Info.nRideAnimeCounter = 0;					// 乗るアニメーションカウンターを初期化
 	}
@@ -226,6 +229,8 @@ void CRocket::UpdateState_Fly(void)
 void CRocket::RideOn(void)
 {
 	if (!s_bReady) return;
+
+	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_RIDE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 
 	s_nCountPlayer++;												// プレイヤーの乗った人数の増加
 	if (s_nCountPlayer == CPlayer::NUM_PLAYER) s_bReady = true;		// 搭乗OK
