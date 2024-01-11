@@ -7,6 +7,7 @@
 #pragma once
 
 #include "../stage-object.h"
+#include "../../resource.h"
 
 //****************************************
 // クラス定義
@@ -57,7 +58,11 @@ public:
 	//引数１　state： どっちの方向に着地したか
 	//引数２　fForce：どれだけバウンドさせるか（最高Ｙ座標を代入）
 	//---------------------------------------------
-	void SetBound(STATE state, float fForce) { SetState(state); SetSpringForce(fForce); SetCount(MAX_COUNT); }
+	void SetBound(STATE state, float fForce) 
+	{ 
+		SetState(state); SetSpringForce(fForce); SetCount(MAX_COUNT); 
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::TRAMPOLINE_BOUND], _RNC_Sound::CATEGORY::SE, 0.5f, false);
+	}
 
 private:
 	//========== [[[ 関数宣言 ]]]
