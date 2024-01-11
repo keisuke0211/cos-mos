@@ -183,6 +183,7 @@ void CRocket::UpdateState_Ride(void)
 		{// プレイヤーが全員乗ったら
 			m_Info.Animstate = ANIME_STATE::FLY;	// 飛ぶ状態に移行
 
+			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_DEPARTURE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_FIRE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 		}
 		m_Info.nRideAnimeCounter = 0;					// 乗るアニメーションカウンターを初期化
