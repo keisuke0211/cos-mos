@@ -15,10 +15,10 @@
 #include "../stage.h"
 
 // スワップインターバル
-const int	CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
-const float CPlayer::GUIDE_WIDTH   = 10.0f; // ガイドの幅
-const float CPlayer::GUIDE_HEIGHT  = 14.0f; // ガイドの高さ
-const float CPlayer::MAX_GUIDE_SPEED = 0.2f;// ガイドアニメーションの最大速度
+CInt   CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
+CFloat CPlayer::GUIDE_WIDTH   = 10.0f; // ガイドの幅
+CFloat CPlayer::GUIDE_HEIGHT  = 14.0f; // ガイドの高さ
+CFloat CPlayer::MAX_GUIDE_SPEED = 0.2f;// ガイドアニメーションの最大速度
 
 int                CPlayer::s_nSwapInterval = 0; // 残りスワップインターバル
 bool               CPlayer::s_bSwapAnim = false; //スワップアニメーション中かどうか
@@ -28,16 +28,16 @@ int CPlayer::s_nGoalInterval = 0;//ゴール後の余韻カウンター
 int CPlayer::s_zoomUpCounter = 0;// ズームアップカウンター
 int CPlayer::s_zoomUpFixedCounter = 0;// ズームアップカウンター
 
-const float CPlayer::SIZE_WIDTH = 7.0f; // 横幅
-const float CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
+CFloat CPlayer::SIZE_WIDTH = 7.0f; // 横幅
+CFloat CPlayer::SIZE_HEIGHT = 8.0f;// 高さ
 
-const float CPlayer::MOVE_SPEED = 0.3f;     // 移動量
-const float CPlayer::MAX_MOVE_SPEED = 2.3f; // 最大移動量
+CFloat CPlayer::MOVE_SPEED = 0.3f;     // 移動量
+CFloat CPlayer::MAX_MOVE_SPEED = 2.3f; // 最大移動量
 
-const float CPlayer::JUMP_POWER = 5.0f;     // 基本ジャンプ量
-const float CPlayer::GRAVITY_POWER = -0.3f; // 基本重力加速度
+CFloat CPlayer::JUMP_POWER = 5.0f;     // 基本ジャンプ量
+CFloat CPlayer::GRAVITY_POWER = -0.3f; // 基本重力加速度
 
-const int CPlayer::TRAMPOLINE_JUMP_COUNTER = 10;
+CInt CPlayer::TRAMPOLINE_JUMP_COUNTER = 10;
 
 const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 	"data\\TEXTURE\\Effect\\eff_Circle_005.png",// スワップマーク
@@ -103,7 +103,7 @@ CPlayer::CPlayer()
 		Player.posOld = INITD3DXVECTOR3;       // 前回位置
 		Player.rot = INITD3DXVECTOR3;          // 向き
 		Player.move = INITD3DXVECTOR3;         // 移動量
-		Player.color = COLOR_WHITE;              // 色
+		Player.color = COLOR_WHITE;            // 色
 		Player.nSwapAlpha = NORMAL_SWAP_ALPHA; // スワップマークのα値
 		Player.fSwapPosY = 0.0f;               // スワップ先のＹ座標
 		Player.fSwapMoveY = 0.0f;              // スワップ移動時の速度
@@ -384,73 +384,8 @@ void CPlayer::Update(void)
 //----------------------------
 void CPlayer::UpdateInfo(void)
 {
-	//----------------------------------------
 	// ガイドテキスト
-	//----------------------------------------
-	bool isSwapGuide = false;
-	if (!s_bSwapAnim) {
-		if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath &&
-			!m_aInfo[0].bGoal || !m_aInfo[1].bGoal) {
-			const int planet = Manager::StgEd()->GetPlanetIdx();
-
-			if (planet == 0) {
-				if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
-					if (s_zoomUpCounter == 0) {
-						if (++ms_guideCounter > 30)
-							ms_guideCounter = 30;
-						float rate = (float)ms_guideCounter / 30;
-						if (ms_bSwapEnd) {
-
-							if (ms_guideCounter == 1) {
-								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
-							}
-							if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
-								RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-									->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-									->SetZTest(false)
-									->SetBillboard(true);
-							}
-						}
-						else {
-							if (s_nSwapInterval == 0) {
-								if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
-									RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-										->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-										->SetZTest(false)
-										->SetBillboard(true);
-									isSwapGuide = true;
-								}
-							}
-						}
-					}
-				}
-				else if (Manager::StgEd()->GetType()[0].nStageIdx == 3) {
-					if (++ms_guideCounter > 30)
-						ms_guideCounter = 30;
-					float rate = (float)ms_guideCounter / 30;
-					if (CParts::GetDispNum() == 0) {
-						if (ms_guideCounter == 1) {
-							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
-						}
-						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
-							RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-								->SetSize(Size2D(32.0f * rate, 32.0f * rate))
-								->SetZTest(false)
-								->SetBillboard(true);
-						}
-					}
-					else {
-						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
-							RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
-								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
-								->SetZTest(false)
-								->SetBillboard(true);
-						}
-					}
-				}
-			}
-		}
-	}
+	const bool isSwapGuide = SwapGuideText();
 
 	int nCntPlayer = -1;
 	for each (Info &Player in m_aInfo)
@@ -501,7 +436,7 @@ void CPlayer::UpdateInfo(void)
 			if (-156.0f <= Player.pos.x && 156.0f >= Player.pos.x) {
 				Pos3D putPos = Player.pos;
 				putPos.y += (Player.pos.y / fabsf(Player.pos.y)) * 24.0f;
-				const int count = RNLib::Count().GetCount() % 40;
+				CInt count = RNLib::Count().GetCount() % 40;
 				float sizeRate = (float)(count - ((count % 20) * (count / 20)) * 2) / 20;
 				RNLib::Text3D().Put(PRIORITY_UI, "X", _RNC_Text::ALIGNMENT::CENTER, 0, RNLib::Matrix().ConvPosToMtx(putPos))
 					->SetSize(Size2D(16.0f * (0.5f + sizeRate * 0.25f), 16.0f * (0.5f + sizeRate * 0.25f)))
@@ -533,7 +468,7 @@ void CPlayer::UpdateInfo(void)
 //----------------------------
 // 死亡更新処理
 //----------------------------
-void CPlayer::UpdateDeath(Info& info, const int& count) {
+void CPlayer::UpdateDeath(Info& info, CInt& count) {
 
 	// 死亡カウンター&演出
 	static Vector3D addVec = INITVECTOR3D;
@@ -625,7 +560,7 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 
 				case CEffect_Death::TYPE::BALL:
 				{
-					const int NUM_PARTICLE = 8;
+					CInt NUM_PARTICLE = 8;
 					Pos3D rot = INITVECTOR3D;
 					for (int ParCnt = 0; ParCnt < NUM_PARTICLE; ParCnt++)
 					{
@@ -643,6 +578,76 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 		info.scale.z = 1.0f + (1.0f - RNLib::Ease().Easing(EASE_TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 0.2f;
 		info.pos.z = -(1.0f - RNLib::Ease().Easing(EASE_TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 8.0f;
 	}
+}
+
+//----------------------------
+// スワップガイドテキスト
+//----------------------------
+bool CPlayer::SwapGuideText(void)
+{
+	//スワップ中 or 最初の惑星ではない
+	if (s_bSwapAnim || Manager::StgEd()->GetPlanetIdx() != 0) return false;
+
+	if (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath &&
+		!m_aInfo[0].bGoal || !m_aInfo[1].bGoal) {
+
+		if (Manager::StgEd()->GetType()[0].nStageIdx == 0) {
+			if (s_zoomUpCounter == 0) {
+				if (++ms_guideCounter > 30)
+					ms_guideCounter = 30;
+				float rate = (float)ms_guideCounter / 30;
+				if (ms_bSwapEnd) {
+
+					if (ms_guideCounter == 1) {
+						RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+					}
+					if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+						RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+							->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+							->SetZTest(false)
+							->SetBillboard(true);
+					}
+				}
+				else {
+					if (s_nSwapInterval == 0) {
+						if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+							RNLib::Text3D().Put(PRIORITY_UI, "SWAPしてみよう!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+								->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+								->SetZTest(false)
+								->SetBillboard(true);
+							return true;
+						}
+					}
+				}
+			}
+		}
+		else if (Manager::StgEd()->GetType()[0].nStageIdx == 3) {
+			if (++ms_guideCounter > 30)
+				ms_guideCounter = 30;
+
+			//カウンターが進むほどテキストを拡大させるためのカウンター割合
+			CFloat rate = (float)ms_guideCounter / 30;
+			if (CParts::GetDispNum() == 0) {
+				if (ms_guideCounter == 1) 
+					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::OK], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+
+				if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+					RNLib::Text3D().Put(PRIORITY_UI, "OK!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+						->SetSize(Size2D(32.0f * rate, 32.0f * rate))
+						->SetZTest(false)
+						->SetBillboard(true);
+				}
+			}
+			else if (RNLib::DrawMgr().GetIsDrawPolygon2D(false)) {
+				RNLib::Text3D().Put(PRIORITY_UI, "ロケットのパーツをあつめて!", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, INITMATRIX)
+					->SetSize(Size2D(24.0f * rate, 24.0f * rate))
+					->SetZTest(false)
+					->SetBillboard(true);
+			}
+		}
+	}
+
+	return false;
 }
 
 //----------------------------
@@ -981,7 +986,7 @@ void CPlayer::SwapAnimation(void)
 			setCol = Color{ (45 + rand() % 40),(130 + rand() % 125),(130 + rand() % 125),255 };
 		}
 
-		const int nTex = rand() % 2 + 2;
+		CInt nTex = rand() % 2 + 2;
 
 		Manager::EffectMgr()->ParticleCreate(GetParticleIdx((PARTI_TEX)nTex), Player.pos + Pos3D(0.0f,0.0f,0.0f), Vector3D(16.0f, 16.0f, 0.0f), setCol, CParticle::TYPE::TYPE_NORMAL, 300,D3DXVECTOR3(0.0f, 0.0f, (float)(rand() % 629 - 314) / 100.0f),D3DXVECTOR3(8.0f,8.0f,0.0f),false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
 	}
@@ -990,7 +995,7 @@ void CPlayer::SwapAnimation(void)
 //*************************************************
 //プロローグ処理
 //*************************************************
-void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
+void CPlayer::SwapAnim_Prologue(Info& Player, CInt nIdxPlayer)
 {
 	//次のインターバルへ
 	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
@@ -1001,7 +1006,7 @@ void CPlayer::SwapAnim_Prologue(Info& Player, const int nIdxPlayer)
 //*************************************************
 //中間処理
 //*************************************************
-void CPlayer::SwapAnim_Middle(Info& Player, const int nIdxPlayer)
+void CPlayer::SwapAnim_Middle(Info& Player, CInt nIdxPlayer)
 {
 	//スワップ先へ移動
 	Player.posOld.y = Player.pos.y;
@@ -1027,7 +1032,7 @@ void CPlayer::SwapAnim_Middle(Info& Player, const int nIdxPlayer)
 //*************************************************
 //エピローグ処理
 //*************************************************
-void CPlayer::SwapAnim_Epilogue(Info& Player, const int nIdxPlayer)
+void CPlayer::SwapAnim_Epilogue(Info& Player, CInt nIdxPlayer)
 {
 	//最後のプレイヤーのときにスワップアニメーション終了
 	if (s_nSwapInterval > 0 || nIdxPlayer == 0) return;
@@ -1322,10 +1327,10 @@ void CPlayer::CollisionToStageObject(void)
 
 		// 死亡判定ON
 		if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
-			if (aDeath[0] || (aDeathType[0] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+			if (aDeath[0] && (aDeathType[0] == OBJECT_TYPE::EXTEND_DOG && (s_nSwapInterval / SWAP_INTERVAL != 0)))
 				Death(m_aInfo[0], aDeathType[0]);
 
-			if (aDeath[1] || (aDeathType[1] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+			if (aDeath[1] && (aDeathType[1] == OBJECT_TYPE::EXTEND_DOG && (s_nSwapInterval / SWAP_INTERVAL != 0)))
 				Death(m_aInfo[1], aDeathType[1]);
 		}
 	}
@@ -1509,7 +1514,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 // プレイヤー情報設定
 // 指定された番号のプレイヤー情報を設定します。
 //----------------------------
-void CPlayer::SetInfo(const Info info, const int nNum)
+void CPlayer::SetInfo(const Info info, CInt nNum)
 {
 	if (0 <= nNum && nNum < NUM_PLAYER)
 	{
@@ -1537,7 +1542,7 @@ void CPlayer::SetTrampolineJump(Info*& pInfo, float fMaxHeight)
 	SetSwapInterval();
 
 	// ジャンプ量を継承
-	const float diff = -fMaxHeight - pInfo->pos.y;
+	CFloat diff = -fMaxHeight - pInfo->pos.y;
 	pInfo->move.y = diff / TRAMPOLINE_JUMP_COUNTER;
 
 	pInfo->fTramTargetPosY = -fMaxHeight;
@@ -1563,7 +1568,7 @@ CPlayer::Info *CPlayer::GetInfo(WORLD_SIDE side)
 //----------------------------
 // プレイヤーが指定されたキーコンフィグを使っているか
 //----------------------------
-bool CPlayer::IsKeyConfigTrigger(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
+bool CPlayer::IsKeyConfigTrigger(CInt nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
 {
 	return RNLib::Input().GetTrigger(m_aInfo[nIdx].Keyborad[(int)side][(int)KeyConfig], m_aInfo[nIdx].JoyPad[(int)KeyConfig], nIdx);
 }
@@ -1581,7 +1586,7 @@ bool CPlayer::IsKeyConfigTrigger(KEY_CONFIG KeyConfig)
 //----------------------------
 // プレイヤーが指定されたキーコンフィグを使っているか
 //----------------------------
-bool CPlayer::IsKeyConfigPress(const int nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
+bool CPlayer::IsKeyConfigPress(CInt nIdx, const WORLD_SIDE side, KEY_CONFIG KeyConfig)
 {
 	return RNLib::Input().GetPress(m_aInfo[nIdx].Keyborad[(int)side][(int)KeyConfig], m_aInfo[nIdx].JoyPad[(int)KeyConfig], nIdx);
 }
