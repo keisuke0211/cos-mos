@@ -595,7 +595,7 @@ bool CPlayer::SwapGuideText(void)
 			if (s_zoomUpCounter == 0) {
 				if (++ms_guideCounter > 30)
 					ms_guideCounter = 30;
-				float rate = (float)ms_guideCounter / 30;
+				CFloat rate = (float)ms_guideCounter / 30;
 				if (ms_bSwapEnd) {
 
 					if (ms_guideCounter == 1) {
@@ -1474,8 +1474,17 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 
 				switch (Player.side)
 				{
-					case WORLD_SIDE::FACE:	Player.pos.y = Pos.y + height + SIZE_HEIGHT;	break;
-					case WORLD_SIDE::BEHIND:Player.pos.y = Pos.y - height - SIZE_HEIGHT;	break;
+					case WORLD_SIDE::FACE:
+					{
+						CFloat LandPos = Pos.y + height + SIZE_HEIGHT;
+						if (Player.pos.y < LandPos) Player.pos.y = LandPos;
+					}break;
+
+					case WORLD_SIDE::BEHIND:
+					{
+						CFloat LandPos = Pos.y - height - SIZE_HEIGHT;
+						if (Player.pos.y > LandPos) Player.pos.y = LandPos;
+					}break;
 				}
 
 				Player.move.y = 0.0f;
