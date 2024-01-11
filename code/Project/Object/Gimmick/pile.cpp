@@ -6,6 +6,7 @@
 //================================================================================================
 #include "pile.h"
 #include "../../main.h"
+#include "../../resource.h"
 
 //Y‚ð‚ß‚èž‚Ü‚¹‚éÅ’á‚‚³
 const float CPile::CAVEIN_DIFF_HEIGHT = 35.0f;
@@ -187,6 +188,8 @@ void CPile::CaveInTrunkHeight(float fCaveInHeight)
 		Manager::EffectMgr()->ParticleCreate(m_nTex[RAND_TEX], TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 300,rot, D3DXVECTOR3(80.0f, 80.0f, 0.0f),false,false,_RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
 		Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(TexPos.x, TexPos.y + 1.0f * cosf(world), TexPos.z), rot, INITSCALE3D * 0.1f,COLOR_WHITE);
 	}
+
+	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::PILE_DIG], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 }
 
 //===============================

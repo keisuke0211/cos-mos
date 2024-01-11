@@ -78,6 +78,7 @@ public:
 		BUS_STOP						   = 58,	// バス停
 		STREET_LIGHT					   = 59,	// 街灯
 		SIGN							   = 60,	// 看板
+		STEEL_FRAME_BLOCK				   = 61,	// 鉄骨ブロック
 		MAX,
 	};
 	enum class OTHER_TEXTURE {

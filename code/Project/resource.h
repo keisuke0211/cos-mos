@@ -62,6 +62,11 @@ public:
 		GET_PARTS,		//ロケットパーツ取得
 		GET_COIN,		//コイン取得　（無）
 		GATE_CLOSE,		//ワープゲート消えるときの音
+		TRAMPOLINE_BOUND,
+		PILE_DIG,
+		ROCKET_RIDE,
+		ROCKET_DEPARTURE,
+		ROCKET_FIRE,
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
