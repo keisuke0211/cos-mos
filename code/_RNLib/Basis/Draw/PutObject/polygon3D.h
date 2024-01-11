@@ -10,7 +10,6 @@
 #include "../draw-info.h"
 #include "../draw-state.h"
 #include "../../Draw/camera.h"
-#include "../draw-state.h"
 
 //****************************************
 // ÉNÉâÉXíËã`
@@ -30,55 +29,63 @@ public:
 		static void ReleaseVertexBuffer(void);
 
 		// [[[ ïœêîêÈåæ ]]]
-		static VertexBuffer                ms_vtxBuff;
-		static UShort                      ms_allocPower;
-		static UShort                      ms_allocNum;
-		static UShort                      ms_idxCount;
-		short                              m_idx;
-		Matrix                             m_mtx;
-		void*                              m_tex;
-		Polygon2DAnd3D::TEX_TYPE           m_texType;
-		bool                               m_isZTest;
-		bool                               m_isLighting;
-		bool                               m_isBillboard;
-		_RNC_DrawState::CULLING_MODE       m_cullingMode;
-		_RNC_DrawState::ALPHA_BLEND_MODE   m_alphaBlendMode;
-		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
-		float                              m_distance;
-		Vertex3D                           m_vtxs[4];
+		static VertexBuffer      ms_vtxBuff;
+		static UShort            ms_allocPower;
+		static UShort            ms_allocNum;
+		static UShort            ms_idxCount;
+		short                    m_idx;
+		Matrix                   m_mtx;
+		void*                    m_tex;
+		Polygon2DAnd3D::TEX_TYPE m_texType;
+		bool                     m_isZTest;
+		bool                     m_isLighting;
+		bool                     m_isBillboard;
+		CULLING_MODE             m_cullingMode;
+		ALPHA_BLEND_MODE         m_alphaBlendMode;
+		INTERPOLATION_MODE       m_interpolationMode;
+		float                    m_distance;
+		Vertex3D                 m_vtxs[4];
 	};
 
 	// ìoò^èÓïÒ
 	class CRegistInfo : public CRegistInfoBase {
 	public:
 		// [[[ ä÷êîêÈåæ ]]]
-		CRegistInfo                                    ();
-		~CRegistInfo                                   ();
-		void                       ClearParameter      (void);
-		_RNC_Polygon3D::CDrawInfo* ConvToDrawInfo      (void);
-		CRegistInfo*               SetIdx              (const short& idx);
-		CRegistInfo*               SetMtx              (const Matrix& mtx);
-		CRegistInfo*               SetClippingCamera   (CCamera& camera); 
-		CRegistInfo*               SetClippingCamera   (const short& ID);
-		CRegistInfo*               SetVtxPos           (const Pos3D pos0, const Pos3D pos1, const Pos3D pos2, const Pos3D pos3);
-		CRegistInfo*               SetSize             (const float& width, const float& height);
-		CRegistInfo*               SetSize             (const Size2D& size);
-		CRegistInfo*               SetVtxNor           (const Vector3D nor0, const Vector3D nor1, const Vector3D nor2, const Vector3D nor3);
-		CRegistInfo*               SetCol              (const Color& col);
-		CRegistInfo*               SetVtxCol           (const Color col0, const Color col1, const Color col2, const Color col3);
-		CRegistInfo*               SetTex              (const short& texIdx, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
-		CRegistInfo*               SetTex              (CCamera* camera, const UShort& ptn = 0, const UShort& ptnX = 1, const UShort& ptnY = 1, const Pos2D& ptnPos = INITPOS2D);
-		CRegistInfo*               SetTexUV            (const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
-		CRegistInfo*               SetTexUV            (CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
-		CRegistInfo*               SetTexMirrorX       (const bool& isMirror);
-		CRegistInfo*               SetZTest            (const bool& isZTest);
-		CRegistInfo*               SetLighting         (const bool& isLighting);
-		CRegistInfo*               SetBillboard        (const bool& isBillboard);
-		CRegistInfo*               SetCullingMode      (const _RNC_DrawState::CULLING_MODE& cullingMode);
-		CRegistInfo*               SetAlphaBlendMode   (const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendMode);
-		CRegistInfo*               SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode);
+		CRegistInfo                      ();
+		~CRegistInfo                     ();
+		CRegistInfo* SetClippingCamera   (CCamera& camera); 
+		CRegistInfo* SetClippingCamera   (const short& ID);
+		CRegistInfo* SetVtxPos           (const Pos3D pos0, const Pos3D pos1, const Pos3D pos2, const Pos3D pos3);
+		CRegistInfo* SetSize             (const float& width, const float& height);
+		CRegistInfo* SetSize             (const Size2D& size);
+		CRegistInfo* SetVtxNor           (const Vector3D nor0, const Vector3D nor1, const Vector3D nor2, const Vector3D nor3);
+		CRegistInfo* SetCol              (const Color& col);
+		CRegistInfo* SetVtxCol           (const Color col0, const Color col1, const Color col2, const Color col3);
+		CRegistInfo* SetTex              (const short& texIdx);
+		CRegistInfo* SetTex              (CCamera* camera);
+		CRegistInfo* SetTex              (const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos = INITPOS2D);
+		CRegistInfo* SetTex              (CCamera* camera,     const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos = INITPOS2D);
+		CRegistInfo* SetTex              (const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
+		CRegistInfo* SetTex              (CCamera* camera,     const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3);
+		CRegistInfo* SetTexMirrorX       (const bool& isMirrorX);
+		CRegistInfo* SetTexMirrorY       (const bool& isMirrorY);
+		CRegistInfo* SetZTest            (const bool& isZTest);
+		CRegistInfo* SetLighting         (const bool& isLighting);
+		CRegistInfo* SetBillboard        (const bool& isBillboard);
+		CRegistInfo* SetCullingMode      (const CULLING_MODE& cullingMode);
+		CRegistInfo* SetAlphaBlendMode   (const ALPHA_BLEND_MODE& alphaBlendMode);
+		CRegistInfo* SetInterpolationMode(const INTERPOLATION_MODE& interpolationMode);
 
 	private:
+		// [[[ óFíBêÈåæ ]]]
+		friend class _RNC_DrawMgr;
+
+		// [[[ ä÷êîêÈåæ ]]]
+		void                       ClearParameter(void);
+		_RNC_Polygon3D::CDrawInfo* ConvToDrawInfo(void);
+		CRegistInfo*               SetIdx        (const short& idx);
+		CRegistInfo*               SetMtx        (const Matrix& mtx);
+
 		// <<< äÓñ{èÓïÒ >>>
 		short  m_idx;
 		Matrix m_mtx;
@@ -106,12 +113,12 @@ public:
 		Polygon2DAnd3D::CSetTexInfoSum m_setTexInfoSum;
 
 		// <<< ï`âÊèÓïÒê›íË >>>
-		bool                               m_isZtest;
-		bool                               m_isLighting;
-		bool                               m_isBillboard;
-		_RNC_DrawState::CULLING_MODE       m_cullingMode;
-		_RNC_DrawState::ALPHA_BLEND_MODE   m_alphaBlendMode;
-		_RNC_DrawState::INTERPOLATION_MODE m_interpolationMode;
+		bool               m_isZtest;
+		bool               m_isLighting;
+		bool               m_isBillboard;
+		CULLING_MODE       m_cullingMode;
+		ALPHA_BLEND_MODE   m_alphaBlendMode;
+		INTERPOLATION_MODE m_interpolationMode;
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]

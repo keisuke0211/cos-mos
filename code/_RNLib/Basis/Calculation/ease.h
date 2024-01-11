@@ -7,21 +7,35 @@
 #pragma once
 
 //****************************************
+// 列挙型定義
+//****************************************
+// 補間の種類
+enum class EASE_TYPE { 
+	LINEAR,
+	IN_SINE,
+	OUT_SINE,
+	INOUT_SINE,
+	MAX,
+};
+
+//****************************************
 // クラス定義
 //****************************************
 // 補間クラス
 class _RNC_Ease {
 public:
-	//========== [[[ 列挙型定義 ]]]
-	// 種類
-	enum class TYPE { LINEAR, IN_SINE, OUT_SINE, INOUT_SINE, MAX, };
+	//========== [[[ 関数宣言 ]]]
+	_RNC_Ease ();
+	~_RNC_Ease();
+	float Easing(const EASE_TYPE& ease, const int& base, const int& max);
+	float Easing(const EASE_TYPE& ease, const float& base, const float& max);
+
+private:
+	//========== [[[ 友達宣言 ]]]
+	friend class _RNC_Calculation;
 
 	//========== [[[ 関数宣言 ]]]
-	_RNC_Ease   ();
-	~_RNC_Ease  ();
-	void  Init  (void);
-	void  Uninit(void);
-	void  Update(void);
-	float Easing(const TYPE& ease, const int& base, const int& max);
-	float Easing(const TYPE& ease, const float& base, const float& max);
+	void Init  (void);
+	void Uninit(void);
+	void Update(void);
 };

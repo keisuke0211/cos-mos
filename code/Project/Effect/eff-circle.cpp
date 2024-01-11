@@ -40,7 +40,7 @@ CEffCircle::~CEffCircle() {
 void CEffCircle::Update(void) {
 
 	// éıñΩäÑçáÇéZèo
-	float lifeRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_life, m_maxLife);
+	float lifeRate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_life, m_maxLife);
 	float scale    = (lifeRate * m_startScale) + ((1.0f - lifeRate) * m_endScale);
 
 	// ï\é¶

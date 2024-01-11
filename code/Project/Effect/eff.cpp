@@ -76,7 +76,7 @@ void CEff::Update(void)
 		m_Info.nCount--;
 
 		//äÑçáåvéZ
-		float fCountRate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
+		float fCountRate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_Info.nCount, m_Info.nCountMax);
 
 		m_Info.col.a = m_Info.col.a * fCountRate;
 

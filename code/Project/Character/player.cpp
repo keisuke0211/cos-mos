@@ -483,7 +483,7 @@ void CPlayer::UpdateInfo(void)
 					eyeTime = 5 + (rand() % 90);
 				}
 
-				RNLib::Polygon3D().Put(PRIORITY_OBJECT, RNLib::Matrix().MultiplyMtx(eyeMtx, Player.doll->GetBoneState(0).GetWorldMtx()))
+				RNLib::Polygon3D().Put(PRIORITY_OBJECT, RNLib::Matrix().MultiplyMtx(Player.doll->GetBoneState(0).GetWorldMtx(), eyeMtx))
 					->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::CHR_BLACK_EYE], (eyeCounter2 > 0), 2, 1)
 					->SetSize(4.0f, 4.0f);
 			}
@@ -585,7 +585,7 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 		int counter = info.deathCounter2;
 		if (counter > DEATH_TIME2 / 2)
 			counter -= DEATH_TIME2 / 2;
-		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, counter, DEATH_TIME2 / 2);
+		float rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, counter, DEATH_TIME2 / 2);
 		if (rate > 0.5f) {
 			rate = 0.5f + (0.5f - rate);
 			isReturn = true;
@@ -640,8 +640,8 @@ void CPlayer::UpdateDeath(Info& info, const int& count) {
 		}
 		info.scale.x =
 		info.scale.y =
-		info.scale.z = 1.0f + (1.0f - RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 0.2f;
-		info.pos.z = -(1.0f - RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 8.0f;
+		info.scale.z = 1.0f + (1.0f - RNLib::Ease().Easing(EASE_TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 0.2f;
+		info.pos.z = -(1.0f - RNLib::Ease().Easing(EASE_TYPE::IN_SINE, info.expandCounter, EXPAND_TIME)) * 8.0f;
 	}
 }
 
@@ -695,7 +695,7 @@ void CPlayer::ActionControl(void)
 			Pos3D basePosVSub  = basePosRSub  + Pos3D(0.0f, 0.0f, -100.0f);
 			float rate = 1.0f;
 			if (s_zoomUpCounter < 60) {
-				rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, s_zoomUpCounter, 60);
+				rate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, s_zoomUpCounter, 60);
 			}
 			CFloat rateOpp = 1.0f - rate;
 			Manager::GetMainCamera()->SetPosVAndPosR(targetPosV * rateOpp + basePosVMain * rate, targetPosR * rateOpp + basePosRMain * rate);
@@ -872,7 +872,7 @@ void CPlayer::ActionControl(void)
 		{// 吹き出しの表示
 			Pos3D putPos = Player.pos;
 			putPos.y += RNLib::Number().GetPlusMinus(Player.pos.y) * 12.0f;
-			_RNC_Polygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f, 0.0f, -0.1f + (RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, RNLib::Number().GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
+			_RNC_Polygon3D::CRegistInfo* polygon3D = RNLib::Polygon3D().Put(PRIORITY_UI, putPos, Rot3D(0.0f, 0.0f, -0.1f + (RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, RNLib::Number().GetTurnNum(RNLib::Count().GetCount(), 30), 30)) * 0.2f))
 				->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_WAITBUBBLE], Player.pos.y < 0.0f, 2, 1)
 				->SetCol(Color(255, 255, 255, 255 * ((float)Player.swapWaitCounter / SWAP_WAIT_BALLOON_TIME)))
 				->SetZTest(false);
@@ -954,8 +954,7 @@ void CPlayer::SwapAnimation(void)
 	//インターバル減少
 	s_nSwapInterval--;
 
-	RNLib::Polygon2D().Put(PRIORITY_SWAP_CURTAIN)
-		->SetPos(INITPOS2D)
+	RNLib::Polygon2D().Put(PRIORITY_SWAP_CURTAIN, INITPOS2D, 0.0f)
 		->SetSize(10000.0f, 10000.0f)
 		->SetCol(Color{ 0,0,0,100 });
 
@@ -1065,7 +1064,7 @@ void CPlayer::SwapGuide(Info& Player)
 			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK))
 			->SetCol(Color{ 255, 255, 255, (int)Player.nSwapAlpha })
 			->SetLighting(false)
-			->SetTexUV(GetParticleIdx(PARTI_TEX::CHARACTER),
+			->SetTex(GetParticleIdx(PARTI_TEX::CHARACTER),
 				Pos2D(TexULeft, TexVOver), Pos2D(TexURight, TexVOver),
 				Pos2D(TexULeft, TexVUnder), Pos2D(TexURight, TexVUnder));
 	}
@@ -1081,7 +1080,7 @@ void CPlayer::SwapGuide(Info& Player)
 
 	//ガイドのスピードを設定
 	Player.fGuideMoveSpeed = fSize / 100.0f;
-	RNLib::Number().Clamp(&Player.fGuideMoveSpeed, MAX_GUIDE_SPEED, -MAX_GUIDE_SPEED);
+	RNLib::Number().Clamp(&Player.fGuideMoveSpeed, -MAX_GUIDE_SPEED, MAX_GUIDE_SPEED);//OK!
 	Player.fGuideTexVPos += Player.fGuideMoveSpeed;
 
 	if (Player.fGuideTexVPos >= Player.fGuideTexVSize)
@@ -1095,7 +1094,7 @@ void CPlayer::SwapGuide(Info& Player)
 			->SetZTest(false)
 			->SetCol(Color{ Player.color.r,Player.color.g,Player.color.b, (UShort)Player.nSwapAlpha })
 			->SetLighting(false)
-			->SetTexUV(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
+			->SetTex(GetParticleIdx(PARTI_TEX::SWAP_GUIDE),
 				Pos2D(0.0f, Player.fGuideTexVPos), Pos2D(1.0f, Player.fGuideTexVPos),
 				Pos2D(0.0f, BottomPosV), Pos2D(1.0f, BottomPosV));
 	}
@@ -1109,9 +1108,9 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 	if (Player.isDeath)
 		return;
 
-	Player.DeathType = (int)CEffect_Death::TYPE::BALL;
+	Player.DeathType = (int)CEffect_Death::TYPE::INK;
 
-	switch (type)
+	/*switch (type)
 	{
 		case OBJECT_TYPE::BLOCK:
 		case OBJECT_TYPE::FILLBLOCK:
@@ -1125,7 +1124,7 @@ void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
 			if (s_nSwapInterval == 0) return;
 			else Player.DeathType = (int)CEffect_Death::TYPE::INK;
 			break;
-	}
+	}*/
 
 	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
@@ -1158,7 +1157,7 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
 
 		// Ⅹの移動量を修正
-		RNLib::Number().Clamp(&Player.move.x, MAX_MOVE_SPEED, -MAX_MOVE_SPEED);
+		RNLib::Number().Clamp(&Player.move.x, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);//OK!
 		
 		// 位置更新
 		Player.pos.x += Player.move.x;
@@ -1207,6 +1206,14 @@ void CPlayer::CollisionToStageObject(void)
 
 	for (int nCntVec = 0; nCntVec < (int)VECTOL::MAX; nCntVec++) {
 
+		//死亡判定
+		bool aDeath[2];
+		OBJECT_TYPE aDeathType[2];
+		aDeath[0] = false;
+		aDeath[1] = false;
+		aDeathType[0] = OBJECT_TYPE::NONE;
+		aDeathType[1] = OBJECT_TYPE::NONE;
+
 		// 衝突ベクトルに変換
 		const VECTOL vec = (VECTOL)nCntVec;
 
@@ -1247,16 +1254,11 @@ void CPlayer::CollisionToStageObject(void)
 				colliInfo.fHeight = pObj->GetHeight() * 0.5f;
 				colliInfo.vec = nCntVec;
 
-				if (type == OBJECT_TYPE::ROCKET)
-				{
-					colliInfo.pos = pObj->GetPos();
-				}
-
 				// プレイヤーの近くにオブジェクトがあるか判定
 				// ※特定オブジェクトを除く
 				if (type != OBJECT_TYPE::TRAMPOLINE && type != OBJECT_TYPE::LASER &&
 					type != OBJECT_TYPE::EXTEND_DOG && type != OBJECT_TYPE::PILE && 
-					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true))
+					type != OBJECT_TYPE::ROCKET && CCollision::IsInRange(Self, colliInfo, true, true, false, false, s_nSwapInterval))
 					continue;
 
 				//独自の当たり判定設定
@@ -1276,32 +1278,30 @@ void CPlayer::CollisionToStageObject(void)
 					continue;
 				}
 
-				//死亡判定
-				bool bDeath = false;
+				// 死亡しているか保存
+				const bool deathOld = aDeath[nCntPlayer];
 
 				// 種類ごとに関数分け
 				switch (type)
 				{
-				case OBJECT_TYPE::BLOCK:
-					//当たり判定終了
-					CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &bDeath);
-					break;
-				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::SPIKE:	 CCollision::Spike(&Self, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::METEOR:	 CCollision::Meteor(&Self, &colliInfo, &Player.side, &bDeath); break;
-				//case OBJECT_TYPE::LASER:	 CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, NULL, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, NULL, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::GOALGATE:	 CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &bDeath);	break;
-				case OBJECT_TYPE::PARTS:	 CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::ROCKET:	 CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &bDeath); break;
-				case OBJECT_TYPE::PILE:		 CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &bDeath); break;
+				case OBJECT_TYPE::BLOCK:     CCollision::Block(&Self, &colliInfo, Player, (CBlock*)pObj, &Player.side, &aDeath[nCntPlayer]);break;
+				case OBJECT_TYPE::FILLBLOCK: CCollision::FillBlock(&Self, colliInfo.Rot, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::TRAMPOLINE:CCollision::Trampoline(&Self, &colliInfo, (CTrampoline*)pObj, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::SPIKE:     CCollision::Spike(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::METEOR:    CCollision::Meteor(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
+				//case OBJECT_TYPE::LASER:   CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::GOALGATE:  CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::PARTS:     CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::ROCKET:    CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
+				case OBJECT_TYPE::PILE:      CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				}
 
-				// 死亡判定ON
-				if (bDeath && !m_aInfo[!nCntPlayer].isDeath) {
-					Death(Player, type);
+				// 結果死亡した時、死亡した種類を保存
+				if (!deathOld && aDeath[nCntPlayer])
+				{
+					aDeathType[nCntPlayer] = type;
 					break;
 				}
 
@@ -1318,6 +1318,15 @@ void CPlayer::CollisionToStageObject(void)
 				//当たり判定の事後処理
 				CollisionAfter(pObj, type, &nColliRot, Player);
 			}
+		}
+
+		// 死亡判定ON
+		if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
+			if (aDeath[0] && (aDeathType[0] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+				Death(m_aInfo[0], aDeathType[0]);
+
+			if (aDeath[1] && (aDeathType[1] == OBJECT_TYPE::EXTEND_DOG && s_nSwapInterval != 0))
+				Death(m_aInfo[1], aDeathType[1]);
 		}
 	}
 }
@@ -1648,8 +1657,7 @@ void CPlayer::GoalDirector(void)
 	const Pos2D Size = RNLib::Window().GetSize();
 
 	//画面を暗くする
-	RNLib::Polygon2D().Put(PRIORITY_UI)
-		->SetPos(Center)
+	RNLib::Polygon2D().Put(PRIORITY_UI, Center, 0.0f)
 		->SetSize(Size.x, Size.y)
 		->SetCol(Color{ 0,0,0,150 });
 

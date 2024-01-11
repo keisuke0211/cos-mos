@@ -100,7 +100,7 @@ void CCamera::ProcessState(const PROCESS process) {
 				count = info->time - (count - info->time);
 
 			// Š„‡
-			float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, count, info->time);
+			float rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, count, info->time);
 
 			// ŽÀÛ‚ÌŒü‚«‚ðŽZo
 			m_rot = (info->rotA * (1.0f - rate)) + (info->rotB * rate);

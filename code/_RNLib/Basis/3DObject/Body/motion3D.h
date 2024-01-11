@@ -28,19 +28,19 @@ public:
 	//========== [[[ 構造体定義 ]]]
 	// コマンド構造体
 	struct CommandData_Move {
-		UShort          time;
-		Pos3D           targetPos;
-		_RNC_Ease::TYPE easeType;
+		UShort    time;
+		Pos3D     targetPos;
+		EASE_TYPE easeType;
 	};
 	struct CommandData_Spin {
-		UShort          time;
-		Rot3D           targetRot;
-		_RNC_Ease::TYPE easeType;
+		UShort    time;
+		Rot3D     targetRot;
+		EASE_TYPE easeType;
 	};
 	struct CommandData_Scaling {
-		UShort          time;
-		Scale3D         targetScale;
-		_RNC_Ease::TYPE easeType;
+		UShort    time;
+		Scale3D   targetScale;
+		EASE_TYPE easeType;
 	};
 	struct CommandData {
 		short   time    = 0;
@@ -80,7 +80,7 @@ public:
 
 private:
 	//========== [[[ 友達宣言 ]]]
-	friend class C3DObject;
+	friend class _RNC_3DObject;
 	friend class CSetUp3DEditor;
 
 	//========== [[[ 関数宣言 ]]]

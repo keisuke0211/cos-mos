@@ -415,6 +415,12 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetVtxCol(const Color 
 //========================================
 // テクスチャを設定
 //========================================
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(const short& texIdx) {
+	return SetTex(texIdx, 0, 1, 1);
+}
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(CCamera* camera) {
+	return SetTex(camera, 0, 1, 1);
+}
 _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
@@ -424,10 +430,6 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(const short& te
 	
 	return this;
 }
-
-//========================================
-// テクスチャを設定
-//========================================
 _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(CCamera* camera, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
@@ -441,7 +443,7 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(CCamera* camera
 //========================================
 // テクスチャを設定(UV)
 //========================================
-_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexUV(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
@@ -450,11 +452,7 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexUV(const short& 
 
 	return this;
 }
-
-//========================================
-// テクスチャを設定(UV)
-//========================================
-_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexUV(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTex(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
@@ -467,12 +465,25 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexUV(CCamera* came
 //========================================
 // テクスチャのX反転設定
 //========================================
-_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexMirrorX(const bool& isMirror) {
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexMirrorX(const bool& isMirrorX) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_setTexInfoSum.SetTexMirrorX(isMirror);
+	m_setTexInfoSum.SetTexMirrorX(isMirrorX);
+
+	return this;
+}
+
+//========================================
+// テクスチャのY反転設定
+//========================================
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetTexMirrorY(const bool& isMirrorY) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_setTexInfoSum.SetTexMirrorY(isMirrorY);
 
 	return this;
 }
@@ -519,7 +530,7 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetBillboard(const boo
 //========================================
 // カリングモードを設定
 //========================================
-_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetCullingMode(const _RNC_DrawState::CULLING_MODE& cullingMode) {
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetCullingMode(const CULLING_MODE& cullingMode) {
 
 	if (this == NULL)
 		return NULL;
@@ -532,7 +543,7 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetCullingMode(const _
 //========================================
 // アルファブレンドモードを設定
 //========================================
-_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetAlphaBlendMode(const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendMode) {
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetAlphaBlendMode(const ALPHA_BLEND_MODE& alphaBlendMode) {
 
 	if (this == NULL)
 		return NULL;
@@ -545,7 +556,7 @@ _RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetAlphaBlendMode(cons
 //========================================
 // 補間モードを設定
 //========================================
-_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode) {
+_RNC_Polygon3D::CRegistInfo* _RNC_Polygon3D::CRegistInfo::SetInterpolationMode(const INTERPOLATION_MODE& interpolationMode) {
 
 	if (this == NULL)
 		return NULL;

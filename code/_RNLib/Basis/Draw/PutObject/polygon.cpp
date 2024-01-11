@@ -54,6 +54,7 @@ Polygon2DAnd3D::CSetTexInfoSum::CSetTexInfoSum() {
 	m_setTexInfo     = NULL;
 	m_setTexInfoType = TEX_INFO_TYPE::NONE;
 	m_isTexMirrorX   = false;
+	m_isTexMirrorY   = false;
 	ClearParameter();
 }
 
@@ -74,6 +75,7 @@ void Polygon2DAnd3D::CSetTexInfoSum::ClearParameter(void) {
 	RNLib::Memory().Release(&m_setTexInfo);
 	m_setTexInfoType = TEX_INFO_TYPE::NONE;
 	m_isTexMirrorX   = false;
+	m_isTexMirrorY   = false;
 }
 
 //========================================
@@ -141,6 +143,16 @@ void Polygon2DAnd3D::CSetTexInfoSum::AssignTexInfo(void*& tex, TEX_TYPE& texType
 		pos2.x = pos3.x;
 		pos3.x = XTemp;
 	}
+
+	if (m_isTexMirrorY) {
+		float YTemp = pos0.y;
+		pos0.y = pos1.y;
+		pos1.y = YTemp;
+
+		YTemp = pos2.y;
+		pos2.y = pos3.y;
+		pos3.y = YTemp;
+	}
 }
 
 //========================================
@@ -182,9 +194,17 @@ void Polygon2DAnd3D::CSetTexInfoSum::SetTexUV(CCamera*& camera, const Pos2D& pos
 //========================================
 // テクスチャのX反転設定
 //========================================
-void Polygon2DAnd3D::CSetTexInfoSum::SetTexMirrorX(const bool& isMirror) {
+void Polygon2DAnd3D::CSetTexInfoSum::SetTexMirrorX(const bool& isMirrorX) {
 
-	m_isTexMirrorX = isMirror;
+	m_isTexMirrorX = isMirrorX;
+}
+
+//========================================
+// テクスチャのY反転設定
+//========================================
+void Polygon2DAnd3D::CSetTexInfoSum::SetTexMirrorY(const bool& isMirrorY) {
+
+	m_isTexMirrorY = isMirrorY;
 }
 
 //================================================================================

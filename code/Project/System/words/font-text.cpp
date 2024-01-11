@@ -36,6 +36,7 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.Tex.PtnX = 1;
 	m_Info.Tex.PtnY = 1;
 
+	m_Info.bLetterSkip = false;
 	m_Info.bLetterEnd = false;
 
 	m_Info.nStandTime = 0;
@@ -169,7 +170,7 @@ void CFontText::Update()
 	// テキスト生成
 	if (!m_Info.bLetterEnd)
 	{
-		if (m_Info.nAppearTime <= 0)
+		if (m_Info.nAppearTime <= 0 || m_Info.bLetterSkip)
 		{
 			while (1)
 			{
@@ -513,6 +514,7 @@ void CFontText::TextLetter(const char * Text, int AppearTime)
 	m_Info.nAddCount = AppearTime;
 	m_Info.nAppearTime = m_Info.nAddCount;
 	m_Info.nAddLetter = 0;
+	m_Info.bLetterSkip = false;
 	m_Info.bLetterEnd = false;
 	m_Info.words = new CWords*[m_Info.nTextLength];
 

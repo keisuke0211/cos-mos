@@ -64,7 +64,7 @@ void CRail3DEditor::Update(void) {
 	// [[[ グリッド描画 ]]]
 	RNLib::Polygon3D().Put((UShort)RNMode::PRIORITY::STAGE3D, INITPOS3D, Rot3D(D3DX_PI_HALF, 0.0f, 0.0f))
 		->SetSize(Size2D(90.0f, 90.0f))
-		->SetTexUV(
+		->SetTex(
 			RNLib::DefaultData().GetTextureIdx(_RNC_DefaultData::TEXTURE::GRID),
 			Pos2D(0.0f, 0.0f),
 			Pos2D(9.0f, 0.0f),
@@ -127,7 +127,7 @@ void CRail3DEditor::Update(void) {
 			if (RNLib::Input().GetKeyPress(DIK_T)) { m_time--; }
 			if (RNLib::Input().GetKeyPress(DIK_Y)) { m_time++; }
 
-			RNLib::Number().Clamp(&m_counter, SHRT_MAX, 0);
+			RNLib::Number().Clamp(&m_counter, 0, SHRT_MAX);
 		}
 
 		{// スケールの加算/減算
@@ -155,7 +155,7 @@ void CRail3DEditor::Update(void) {
 					scale += 1.0f;
 				}
 			}
-			RNLib::Number().Clamp(&scale, FLT_MAX, 0.0f);
+			RNLib::Number().Clamp(&scale, 0.0f, FLT_MAX);
 		}
 
 		// ポイントのループ
@@ -198,7 +198,7 @@ void CRail3DEditor::Update(void) {
 			// ポイントの選択
 			if (RNLib::Input().GetKeyTrigger(DIK_Q)) { m_selectPointIdx--; }
 			if (RNLib::Input().GetKeyTrigger(DIK_E)) { m_selectPointIdx++; }
-			RNLib::Number().LoopClamp(&m_selectPointIdx, m_rail3D.GetPointNum() - 1 - m_rail3D.GetIsLoop(), 0);
+			RNLib::Number().LoopClamp(&m_selectPointIdx, 0, m_rail3D.GetPointNum() - 1 - m_rail3D.GetIsLoop());
 
 			{// ポイントの移動
 				Pos3D& point = m_rail3D.GetPoint(m_selectPointIdx);
@@ -292,7 +292,7 @@ void CRail3DEditor::Update(void) {
 
 	// カウンター処理
 	m_counter++;
-	RNLib::Number().LoopClamp(&m_counter, m_time, 0);
+	RNLib::Number().LoopClamp(&m_counter, 0, m_time);
 	
 	// [[[ ログ表示 ]]]
 	RNLib::Text2D().PutDebugLog(String("-----Information"));

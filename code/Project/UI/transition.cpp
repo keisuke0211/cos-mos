@@ -100,11 +100,9 @@ void CTransition::Update(void) {
 			size = 1.0f - ((counter - BLACK_TIME) / 5.0f) * 200.0f;
 		}
 
-		RNLib::Polygon2D().Put(2, true)
+		RNLib::Polygon2D().Put(2, Pos2D(RNLib::Window().GetWidth() - 100.0f, RNLib::Window().GetHeight() - 100.0f), (((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE) + m_startGearAngle, true)
 			->SetTex(m_texIdxes[2])
-			->SetSize(size, size)
-			->SetPos(Pos2D(RNLib::Window().GetWidth() - 100.0f, RNLib::Window().GetHeight() - 100.0f))
-			->SetAngle((((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE) + m_startGearAngle);
+			->SetSize(size, size);
 
 	}break;
 		// [[[ ÉNÉçÅ[ÉY ]]]

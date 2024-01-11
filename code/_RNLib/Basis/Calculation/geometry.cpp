@@ -61,6 +61,18 @@ float _RNC_Geometry::FindDistance(const Pos3D& posA, const Pos3D& posB) {
 }
 
 //========================================
+// 2“_‚Ì‹——£‚ğ’²‚×‚é(XY•½–Ê)
+//========================================
+float _RNC_Geometry::FindDistanceXY(const Pos3D& posA, const Pos3D& posB) {
+
+	const float x = posA.x - posB.x;	// •½•ûª‚ÌX•Ó
+	const float y = posA.y - posB.y;	// •½•ûª‚ÌZ•Ó
+
+	// 2“_‚Ì‹——£‚ğ•Ô‚·
+	return sqrtf((x * x) + (y * y));
+}
+
+//========================================
 // 2“_‚Ì‹——£‚ğ’²‚×‚é(XZ•½–Ê)
 //========================================
 float _RNC_Geometry::FindDistanceXZ(const Pos3D& posA, const Pos3D& posB) {

@@ -436,6 +436,9 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetVtxPos(const Pos2D 
 //========================================
 // 大きさを設定
 //========================================
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetSize(const Size2D& size) {
+	return SetSize(size.x, size.y);
+}
 _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetSize(const float& width, const float& height) {
 
 	if (m_setVtxPosInfoType == SET_VTX_POS_INFO_TYPE::SIZE) {
@@ -489,6 +492,12 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetVtxCol(const Color 
 //========================================
 // テクスチャを設定
 //========================================
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(const short& texIdx) {
+	return SetTex(texIdx, 0, 1, 1);
+}
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(CCamera* camera) {
+	return SetTex(camera, 0, 1, 1);
+}
 _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(const short& texIdx, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
@@ -498,10 +507,6 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(const short& te
 
 	return this;
 }
-
-//========================================
-// テクスチャを設定
-//========================================
 _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(CCamera* camera, const UShort& ptn, const UShort& ptnX, const UShort& ptnY, const Pos2D& ptnPos) {
 
 	if (this == NULL)
@@ -515,7 +520,7 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(CCamera* camera
 //========================================
 // テクスチャを設定(UV)
 //========================================
-_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexUV(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(const short& texIdx, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
@@ -524,11 +529,7 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexUV(const short& 
 
 	return this;
 }
-
-//========================================
-// テクスチャを設定(UV)
-//========================================
-_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexUV(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTex(CCamera* camera, const Pos2D& pos0, const Pos2D& pos1, const Pos2D& pos2, const Pos2D& pos3) {
 
 	if (this == NULL)
 		return NULL;
@@ -541,12 +542,25 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexUV(CCamera* came
 //========================================
 // テクスチャのX反転設定
 //========================================
-_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexMirrorX(const bool& isMirror) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexMirrorX(const bool& isMirrorX) {
 
 	if (this == NULL)
 		return NULL;
 
-	m_setTexInfoSum.SetTexMirrorX(isMirror);
+	m_setTexInfoSum.SetTexMirrorX(isMirrorX);
+
+	return this;
+}
+
+//========================================
+// テクスチャのY反転設定
+//========================================
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexMirrorY(const bool& isMirrorY) {
+
+	if (this == NULL)
+		return NULL;
+
+	m_setTexInfoSum.SetTexMirrorY(isMirrorY);
 
 	return this;
 }
@@ -554,7 +568,7 @@ _RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetTexMirrorX(const bo
 //========================================
 // 補間モードを設定
 //========================================
-_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetInterpolationMode(const _RNC_DrawState::INTERPOLATION_MODE& interpolationMode) {
+_RNC_Polygon2D::CRegistInfo* _RNC_Polygon2D::CRegistInfo::SetInterpolationMode(const INTERPOLATION_MODE& interpolationMode) {
 
 	if (this == NULL)
 		return NULL;

@@ -213,7 +213,7 @@ void CDoll3D::UpdateBone(_RNC_SetUp3D::CData& setUp) {
 		vtxInfo[cntBone] = NULL;
 		RNLib::Model().StoreVtxInfo(worldMtx, setUp.m_boneDatas[cntBone].modelIdx, &vtxInfo[cntBone]);
 
-		// 表示フラグが真の時、
+		// 表示フラグがTRUEの時、
 		if (m_isShow) {
 
 			// モデルの設置処理
@@ -232,7 +232,7 @@ void CDoll3D::UpdateBone(_RNC_SetUp3D::CData& setUp) {
 		}
 	}
 
-	// 表示フラグが真の時、
+	// 表示フラグがTRUEの時、
 	if (m_isShow) {
 
 		// フェイスを描画
@@ -376,7 +376,7 @@ void CDoll3D::DrawFace(_RNC_SetUp3D::CData& setUp, _RNC_Model::Vertex3DInfo**& v
 				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldNor)
 			->SetCol(
 				setUp.m_faceDatas[cntFace].col)
-			->SetTexUV(
+			->SetTex(
 				setUp.m_faceDatas[cntFace].texIdx,
 				vtx0.texPos,
 				vtx1.texPos,
@@ -443,7 +443,7 @@ Matrix CDoll3D::FindBoneWorldMtx(const short& idx, CBoneState*& boneState, _RNC_
 	}
 
 	// ワールドマトリックスを算出
-	worldMtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosRotScaleToMtx(resultPos, resultRot, resultScale), parentMtx);
+	worldMtx = RNLib::Matrix().MultiplyMtx(parentMtx, RNLib::Matrix().ConvPosRotScaleToMtx(resultPos, resultRot, resultScale));
 
 	// ワールドマトリックス設定
 	boneState[idx].SetWorldMtx(worldMtx);
@@ -535,7 +535,7 @@ void CDoll3D::CBoneState::Update(const short& motionCounter, const _RNC_SetUp3D:
 			m_swayingState->targetAddPos = RNLib::Geometry().GetRandomVec() * (boneData.swaying->distMin + RNLib::Number().GetRandomFloat(1.0f) * boneData.swaying->distAdd);
 		}
 
-		float rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::INOUT_SINE, m_swayingState->counter, m_swayingState->counterMax);
+		float rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_swayingState->counter, m_swayingState->counterMax);
 		m_swayingState->addPos = (m_swayingState->oldAddPos * rate) + (m_swayingState->targetAddPos * (1.0f - rate));
 	}
 
@@ -684,7 +684,7 @@ void CDoll3D::CBoneState::PrepareMotion(const _RNC_Motion3D::BoneMotionData& bon
 		m_animeStateSum.move->oldPos    = m_animPos;
 		m_animeStateSum.move->targetPos = INITPOS3D;
 		m_animeStateSum.move->time      = PAUSE_RESET_TIME;
-		m_animeStateSum.move->posEase   = _RNC_Ease::TYPE::LINEAR;
+		m_animeStateSum.move->posEase   = EASE_TYPE::LINEAR;
 	}
 
 	// 回転しないモーションの時、向き変更しているのであれば、
@@ -697,7 +697,7 @@ void CDoll3D::CBoneState::PrepareMotion(const _RNC_Motion3D::BoneMotionData& bon
 		m_animeStateSum.spin->oldRot    = m_animRot;
 		m_animeStateSum.spin->targetRot = INITROT3D;
 		m_animeStateSum.spin->time      = PAUSE_RESET_TIME;
-		m_animeStateSum.spin->rotEase   = _RNC_Ease::TYPE::LINEAR;
+		m_animeStateSum.spin->rotEase   = EASE_TYPE::LINEAR;
 	}
 
 	// 拡縮しないモーションの時、拡大倍率変更しているのであれば、
@@ -710,6 +710,6 @@ void CDoll3D::CBoneState::PrepareMotion(const _RNC_Motion3D::BoneMotionData& bon
 		m_animeStateSum.scaling->oldScale    = m_animScale;
 		m_animeStateSum.scaling->targetScale = INITSCALE3D;
 		m_animeStateSum.scaling->time        = PAUSE_RESET_TIME;
-		m_animeStateSum.scaling->scaleEase   = _RNC_Ease::TYPE::LINEAR;
+		m_animeStateSum.scaling->scaleEase   = EASE_TYPE::LINEAR;
 	}
 }

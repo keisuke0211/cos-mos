@@ -251,7 +251,7 @@ void CEffect_Death::UpdateType_Ball(void)
 //=======================================
 void CEffect_Death::UpdateType_Ink(void)
 {
-	CFloat Rate = RNLib::Ease().Easing(_RNC_Ease::TYPE::IN_SINE, m_Info.nLife, MAX_INK_LIFE);
+	CFloat Rate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_Info.nLife, MAX_INK_LIFE);
 	m_color.a = 255 * Rate;
 
 	//インクが垂れるようにサイズを拡大

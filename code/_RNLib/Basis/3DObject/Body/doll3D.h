@@ -28,7 +28,7 @@ public:
 		// [[[ 構造体宣言 ]]]
 		// 移動アニメ状態
 		struct MoveAnimState {
-			_RNC_Ease::TYPE posEase = _RNC_Ease::TYPE::LINEAR;
+			EASE_TYPE posEase = EASE_TYPE::LINEAR;
 			Pos3D           oldPos    = INITPOS3D;
 			Pos3D           targetPos = INITPOS3D;
 			short           counter   = 0;
@@ -37,7 +37,7 @@ public:
 
 		// 回転アニメ状態
 		struct SpinAnimState {
-			_RNC_Ease::TYPE rotEase   = _RNC_Ease::TYPE::LINEAR;
+			EASE_TYPE rotEase   = EASE_TYPE::LINEAR;
 			Rot3D           oldRot    = INITROT3D;
 			Rot3D           targetRot = INITROT3D;
 			short           counter   = 0;
@@ -46,7 +46,7 @@ public:
 
 		// 拡縮アニメ状態
 		struct ScalingAnimState {
-			_RNC_Ease::TYPE scaleEase   = _RNC_Ease::TYPE::LINEAR;
+			EASE_TYPE scaleEase   = EASE_TYPE::LINEAR;
 			Scale3D         oldScale    = INITSCALE3D;
 			Scale3D         targetScale = INITSCALE3D;
 			short           counter     = 0;

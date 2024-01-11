@@ -65,14 +65,14 @@ void CFontObject::ReleaseAll(void)
 			if (pObj->m_pNext == NULL)
 			{
 				pObj->Uninit();		// 終了処理
-				pObj->Release();	// 死亡フラグを真にする
+				pObj->Release();	// 死亡フラグをTRUEにする
 				pObj = NULL;
 				break;
 			}
 			else
 			{
 				pObj->Uninit();		// 終了処理
-				pObj->Release();	// 死亡フラグを真にする
+				pObj->Release();	// 死亡フラグをTRUEにする
 				pObj = NULL;
 			}
 			pObj = pObjNext;	// 次のオブジェクトポインタを代入
@@ -86,7 +86,7 @@ void CFontObject::ReleaseAll(void)
 			// 次のオブジェクト
 			CFontObject *pObjNext = pObj->m_pNext;
 
-			// 死亡フラグが真か
+			// 死亡フラグがTRUEか
 			if (pObj->m_bDeath)
 			{
 				// 破棄
@@ -121,14 +121,14 @@ void CFontObject::ReleaseAll(TYPE type)
 				if (pObj->m_pNext == NULL)
 				{
 					pObj->Uninit();		// 終了処理
-					pObj->Release();	// 死亡フラグを真にする
+					pObj->Release();	// 死亡フラグをTRUEにする
 					pObj = NULL;
 					break;
 				}
 				else
 				{
 					pObj->Uninit();		// 終了処理
-					pObj->Release();	// 死亡フラグを真にする
+					pObj->Release();	// 死亡フラグをTRUEにする
 					pObj = NULL;
 				}
 			}
@@ -143,7 +143,7 @@ void CFontObject::ReleaseAll(TYPE type)
 			// 次のオブジェクト
 			CFontObject *pObjNext = pObj->m_pNext;
 
-			// 死亡フラグが真か
+			// 死亡フラグがTRUEか
 			if (pObj->m_bDeath)
 			{
 				// 破棄
@@ -160,7 +160,7 @@ void CFontObject::ReleaseAll(TYPE type)
 //========================================
 void CFontObject::Release(void)
 {
-	// 死亡フラグを真にする
+	// 死亡フラグをTRUEにする
 	m_bDeath = true;
 }
 //========================================
@@ -265,7 +265,7 @@ void CFontObject::DrawAll(void)
 		// オブジェクト分の回す
 		while (pObj != NULL)
 		{
-			// 死亡フラグが偽か
+			// 死亡フラグがFALSEか
 			if (!pObj->m_bDeath)
 			{
 				// 描画処理

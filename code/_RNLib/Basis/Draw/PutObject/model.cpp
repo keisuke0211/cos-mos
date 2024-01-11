@@ -296,7 +296,10 @@ short _RNC_Model::Load(const char* loadPath, short idx) {
 
 			// テクスチャの読み込み
 			for (int cntMat = 0; cntMat < m_datas[idx]->m_matNum; cntMat++) {
-				m_datas[idx]->m_matDatas[cntMat].col.Set(mats[cntMat].MatD3D.Diffuse);
+				m_datas[idx]->m_matDatas[cntMat].col.r = mats[cntMat].MatD3D.Diffuse.r * 255;
+				m_datas[idx]->m_matDatas[cntMat].col.g = mats[cntMat].MatD3D.Diffuse.g * 255;
+				m_datas[idx]->m_matDatas[cntMat].col.b = mats[cntMat].MatD3D.Diffuse.b * 255;
+				m_datas[idx]->m_matDatas[cntMat].col.a = mats[cntMat].MatD3D.Diffuse.a * 255;
 				m_datas[idx]->m_texIdxes[cntMat] = (mats[cntMat].pTextureFilename != NULL) ? RNLib::Texture().Load(mats[cntMat].pTextureFilename)          : NONEDATA;
 				m_datas[idx]->m_texes   [cntMat] = m_datas[idx]->m_texIdxes[cntMat] >= 0   ? RNLib::Texture().GetTexture(m_datas[idx]->m_texIdxes[cntMat]) : NULL;
 			}
@@ -394,7 +397,7 @@ void _RNC_Model::ExecutionStoreVtxInfo(Vertex3DInfo* vtx, const Matrix& modelMtx
 	vtx->nor = *(Normal3D*)(vtxBuff + (dwSizeFVF * cntVtx) + D3DXGetFVFVertexSize(D3DFVF_XYZ));
 
 	// ワールドマトリックスを算出
-	Matrix worldMtx = RNLib::Matrix().MultiplyMtx(RNLib::Matrix().ConvPosNorToMtx(vtx->pos, vtx->nor), modelMtx);
+	Matrix worldMtx = RNLib::Matrix().MultiplyMtx(modelMtx, RNLib::Matrix().ConvPosNorToMtx(vtx->pos, vtx->nor));	
 
 	vtx->worldPos = RNLib::Matrix().ConvMtxToPos(worldMtx);
 	vtx->rot      = RNLib::Geometry().FindVecRot(vtx->nor);

@@ -161,6 +161,7 @@ private:
 	D3DXVECTOR3 m_rotEff;
 	float m_PlanetAngle;
 	int m_TexIdx[TEX_MAX];
+	int m_MapIdx;
 	int m_EffTex[3];
 	int m_nSelectTemp;
 	int m_nOldSelect;
@@ -179,6 +180,7 @@ private:
 	int m_nCnt;
 	int m_nStgStartCnt;
 	bool m_bBackMode;
+	bool m_bWorldChange;
 	bool m_bStageChange;
 	bool m_bRocketMove;
 	bool m_bRocketRot;

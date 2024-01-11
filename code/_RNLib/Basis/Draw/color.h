@@ -120,14 +120,6 @@ public:
 	bool operator !=(const Color& other) {
 		return !(*this == other);
 	}
-	// İ’è
-	Color Set(const D3DXCOLOR& other) {
-		this->r = other.r * 255;
-		this->g = other.g * 255;
-		this->b = other.b * 255;
-		this->a = other.a * 255;
-		return *this;
-	}
 	// ¬‚º‚½F‚ğæ“¾
 	Color GetMixed(const Color& other) {
 		Color selfCol = *this;

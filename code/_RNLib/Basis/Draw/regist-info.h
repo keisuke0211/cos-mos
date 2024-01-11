@@ -18,6 +18,9 @@ public:
 	//===== [[[ ŠÖ”éŒ¾ ]]]
 	CRegistInfoBase         ();
 	virtual ~CRegistInfoBase();
+
+protected:
+	//===== [[[ ŠÖ”éŒ¾ ]]]
 	void ClearParameter     (void);
 	void AssignToDrawInfo   (CDrawInfoBase& drawInfo);
 

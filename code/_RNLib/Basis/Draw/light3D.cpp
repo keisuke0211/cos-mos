@@ -179,7 +179,7 @@ void CLight3D::Setting(Device& device, const Color* ovrCol) {
 
 			// ŠgŽUŒõ‚Æ•ûŒü‚ðÝ’è
 			light3D.Diffuse   = m_linearLights[cntLinearLight].col.GetMixed(m_col);
-			light3D.Direction = RNLib::Matrix().ConvMtxToRotVec(RNLib::Matrix().MultiplyMtx(m_linearLights[cntLinearLight].rotMtx, rotMtx));
+			light3D.Direction = RNLib::Matrix().ConvMtxToRotVec(RNLib::Matrix().MultiplyMtx(rotMtx, m_linearLights[cntLinearLight].rotMtx));
 
 			// Œõ‚Ìî•ñ‚ðÝ’è‚µA—LŒø‚É‚·‚é
 			device->SetLight(cntLinearLight, &light3D);

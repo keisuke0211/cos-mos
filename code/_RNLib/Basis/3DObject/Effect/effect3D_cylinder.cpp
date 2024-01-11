@@ -15,7 +15,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CEffect3D_Cylinder::CEffect3D_Cylinder(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const _RNC_Ease::TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType) : CEffect3D_Base(priority, pos, rot, life, easeType, alphaBlendType) {
+CEffect3D_Cylinder::CEffect3D_Cylinder(const short& priority, const Pos3D& pos, const Rot3D& rot, const short& life, const EASE_TYPE& easeType, const _RNC_DrawState::ALPHA_BLEND_MODE& alphaBlendType) : CEffect3D_Base(priority, pos, rot, life, easeType, alphaBlendType) {
 
 	m_fadeOutStartRate = 0.0f;
 	m_spinZ			   = 0.0f;
@@ -101,7 +101,7 @@ void CEffect3D_Cylinder::Update(void) {
 			->SetVtxNor(vtxNors[cntDiv], vtxNors[rightIdx], vtxNors[cntDiv], vtxNors[rightIdx])
 			->SetVtxCol(colA, colA, colB, colB)
 			->SetZTest(false)
-			->SetTexUV(m_texIdx, Pos2D(vtxTexX[cntDiv], 0.0f), Pos2D(rightTexX, 0.0f), Pos2D(vtxTexX[cntDiv], 1.0f), Pos2D(rightTexX, 1.0f))
+			->SetTex(m_texIdx, Pos2D(vtxTexX[cntDiv], 0.0f), Pos2D(rightTexX, 0.0f), Pos2D(vtxTexX[cntDiv], 1.0f), Pos2D(rightTexX, 1.0f))
 			->SetCullingMode(_RNC_DrawState::CULLING_MODE::BOTH_SIDES)
 			->SetAlphaBlendMode(m_alphaBlendMode);
 	}

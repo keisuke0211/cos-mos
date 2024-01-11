@@ -113,7 +113,7 @@ void CDemo::Update(void) {
 
 			// Ô(ã)
 			RNLib::Polygon2D().Put(0, Pos2D(windowCenterPos.x, windowCenterPos.y - windowHeightHalf2), 0.0f, true)
-				->SetTexUV(
+				->SetTex(
 					&m_players[(int)PLAYER::RED]->GetCamera(),
 					Pos2D(0.0f, 0.25f),
 					Pos2D(1.0f, 0.25f),
@@ -124,7 +124,7 @@ void CDemo::Update(void) {
 
 			// Â(‰º)
 			RNLib::Polygon2D().Put(0, Pos2D(windowCenterPos.x, windowCenterPos.y + windowHeightHalf2), 0.0f, true)
-				->SetTexUV(
+				->SetTex(
 					&m_players[(int)PLAYER::BLUE]->GetCamera(),
 					Pos2D(0.0f, 0.25f),
 					Pos2D(1.0f, 0.25f),

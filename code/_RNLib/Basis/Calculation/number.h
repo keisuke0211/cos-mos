@@ -15,12 +15,9 @@
 class _RNC_Number {
 public:
 	//========== [[[ 関数宣言 ]]]
-	void  Init            (void);
-	void  Uninit          (void);
-	void  Update          (void);
-	bool  Lottery         (const float& prob)                                                                { return (prob > (0.001f * (rand() % 100000))); }
-	float GetRandomFloat  (const float& max)                                                                 { return ((float)rand() / RAND_MAX) * max; }
-	//----- float値等価比較
+	bool  Lottery       (const float& prob) { return (prob > (0.001f * (rand() % 100000))); }
+	float GetRandomFloat(const float& max)  { return ((float)rand() / RAND_MAX) * max; }
+	//----- 小数値等価比較
 	bool  GetIsEq    /* == */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB)))); }
 	bool  GetIsNoEq  /* != */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (fabs(numA - numB) <= allowableError * fmax(1, fmax(fabs(numA), fabs(numB)))); }
 	bool  GetIsGtOrEq/* >= */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA > numB) ||  GetIsEq(numA, numB, allowableError); }
@@ -28,12 +25,12 @@ public:
 	bool  GetIsLsOrEq/* <= */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA < numB) ||  GetIsEq(numA, numB, allowableError); }
 	bool  GetIsLs    /* <  */(const float& numA, const float& numB, const float& allowableError = 0.000001f) { return (numA < numB) && !GetIsEq(numA, numB, allowableError); }
 	//-----
-	float RoundUpFloat  (const float& num, const float& interval)                                      { return (long)((num / interval) + 1) * interval; }
-	float RoundDownFloat(const float& num, const float& interval)                                      { return (long)(num / interval) * interval; }
+	float RoundUpFloat  (const float& num, const float& interval) { return (long)((num / interval) + 1) * interval; }
+	float RoundDownFloat(const float& num, const float& interval) { return (long)(num / interval) * interval; }
 
 	//========== [[[ 関数定義 ]]]
 	// 範囲内制御
-	template<class T, class T2, class T3>void Clamp(T* num, const T2& max, const T3& min) {
+	template<class T, class T2, class T3>void Clamp(T* num, const T3& min, const T2& max) {
 		if (!FindIsNumber(*num) || !FindIsNumber(max) || !FindIsNumber(min)) { assert(false); return; }
 
 		if (*num < min)
@@ -42,7 +39,7 @@ public:
 			*num = max;
 	}
 	// 範囲内ループ制御
-	template<class T, class T2, class T3>void LoopClamp(T* num, const T2& max, const T3& min) {
+	template<class T, class T2, class T3>void LoopClamp(T* num, const T3& min, const T2& max) {
 		if (!FindIsNumber(*num) || !FindIsNumber(max) || !FindIsNumber(min)) { assert(false); return; }
 		else if (min > max) {
 			assert(false);
@@ -130,4 +127,13 @@ public:
 			typeid(T) == typeid(long)   ||
 			typeid(T) == typeid(ULong));
 	}
+
+private:
+	//========== [[[ 友達宣言 ]]]
+	friend class _RNC_Calculation;
+
+	//========== [[[ 関数宣言 ]]]
+	void Init  (void);
+	void Uninit(void);
+	void Update(void);
 };
