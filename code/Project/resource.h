@@ -66,6 +66,8 @@ public:
 		PILE_DIG,
 		ROCKET_RIDE,
 		ROCKET_FIRE,
+		EXPLOSION,
+		ROCKET_MOVE,
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
