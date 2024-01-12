@@ -762,7 +762,8 @@ void CCollision::Pile(SelfInfo *pSelfInfo, ColliInfo *pColli, CPile *pPile, CPla
 		{
 			if (pSide == NULL) return;
 
-			if (CPlayer::GetSwapInterval() != 0) *pDeath = true;
+			if (CPlayer::GetSwapInterval() + 1 >= CPlayer::SWAP_INTERVAL)
+				*pDeath = true;
 			else if(pColli->vec == (int)CPlayer::VECTOL::Y)
 			{
 				//“–‚½‚Á‚½•ûŒü‚ð“K“–‚Éã‚É‚µ‚ÄC³

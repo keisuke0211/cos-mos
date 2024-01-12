@@ -11,7 +11,7 @@ boneDataSum{ 2
 		idx 1
 		modelIdx data\\MODEL\\Door\\World1_Up_Door.x
 		parentIdx 0
-		relativePos 0.00 0.00 0.00
+		relativePos -9.80 0.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 }
