@@ -1166,6 +1166,8 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 		
 		// 位置更新
 		Player.pos.x += Player.move.x;
+
+		RNLib::Number().Clamp(&Player.pos.x, -360.0f, 360.0f);
 		break;
 
 		// 重力処理
