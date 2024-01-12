@@ -153,6 +153,8 @@ void CStageEditor::Release(bool bPlanetRelease)
 //========================================
 void CStageEditor::FileLoad(void)
 {
+	//ステージ情報全開放
+	Release(true);
 
 	int nCntPlanet = 0;
 	int *pCntStage = NULL;
