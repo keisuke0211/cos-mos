@@ -935,6 +935,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					for (int Particle = 0; Particle < 64; Particle++) {
 						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + INIT_EFFECT_SCALE.x * 0.5);
 						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 2], m_RocketPosOld + (m_RocketposDiff * RktAnimRt), Scale3D(ScaleTex, ScaleTex, 0.0f), Effcol[rand() % 3], CParticle::TYPE::TYPE_NORMAL, 180, INITD3DXVECTOR3, D3DXVECTOR3(8.0f, 8.0f, 0.0f));
+						Manager::GetMainCamera()->SetVib(6);
 					}
 
 					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);

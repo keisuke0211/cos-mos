@@ -204,6 +204,7 @@ public:
 		DEATH_INK,      // 死亡インク
 		DEATH_PARTI,    // 死亡パーティクル
 		GOAL_EFFECT,    // ゴール・ロケット乗車時のエフェクト
+		SMOKE_EFFECT,   // 煙のエフェクト
 		MAX
 	};
 
@@ -355,4 +356,6 @@ private:
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;
+
+	int nCnt;
 };
