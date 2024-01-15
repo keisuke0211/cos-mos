@@ -75,6 +75,14 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\Street_Light.x"							  , "NONEDATA"                                       , Color(175,238,238,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 街灯
 	{ "data\\MODEL\\Sign.x"							          , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             , -9.0f  , 30.0f, false, },	  // 看板
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\SteelFrame.PNG"        , Color(255,255,255,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // アスファルトブロック
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(211,211,211,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロック (上)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(211,211,211,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックA(上)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(211,211,211,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックB(上)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(211,211,211,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックC(上)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile.PNG"         , Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロック (下)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックA(下)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックB(下)
+	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックC(下)
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
