@@ -13,7 +13,7 @@
 //****************************************
 // É}ÉNÉçíËã`
 //****************************************
-#define LIGHT3D_MAX (3)
+#define LIGHT3D_MAX (4)
 
 //****************************************
 // ñ≥ñºãÛä‘
@@ -63,6 +63,7 @@ void Manager::Init(CMode::TYPE mode) {
 		case 0:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\Title.txt"); break;
 		case 1:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\World1.txt"); break;
 		case 2:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\World2.txt"); break;
+		case 3:m_light3D[cnt] = new CLight3D("data\\LIGHT3D\\World3.txt"); break;
 		default:
 			m_light3D[cnt] = NULL;
 			assert(false);
