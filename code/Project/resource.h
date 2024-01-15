@@ -67,6 +67,8 @@ public:
 		ROCKET_RIDE,
 		ROCKET_DEPARTURE,
 		ROCKET_FIRE,
+		EXPLOSION,
+		ROCKET_MOVE,
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
