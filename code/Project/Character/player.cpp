@@ -806,7 +806,7 @@ void CPlayer::ActionControl(void)
 			CRocket::RideOff();
 			Player.bRide = false;
 			Player.bGoal = false;
-			Player.move.x *= -2.0f;
+
 		}
 
 		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ

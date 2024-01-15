@@ -181,7 +181,7 @@ void StageSoundPlayer::Update(void) {
 
 	RNLib::Text2D().PutDebugLog(String("ÅIƒtƒŒ[ƒ€%d", f));
 
-	{
+	if (BGMPlayID != NONEDATA) {
 		float setVolume = 0.2f + ((1.0f - swapBGMVolume));
 		if (setVolume > 1.0f)
 			setVolume = 1.0f;

@@ -79,6 +79,14 @@ public:
 		STREET_LIGHT					   = 59,	// 街灯
 		SIGN							   = 60,	// 看板
 		STEEL_FRAME_BLOCK				   = 61,	// 鉄骨ブロック
+		DOWN_STONE_BLOCK			       = 62,	// 石ブロック (上)
+		DOWN_STONE_BLOCK_PTN_A	           = 63,	// 石ブロックA(上)
+		DOWN_STONE_BLOCK_PTN_B	           = 64,	// 石ブロックB(上)
+		DOWN_STONE_BLOCK_PTN_C	           = 65,	// 石ブロックC(上)
+		UP_STONE_BLOCK			           = 66,	// 石ブロック (下)
+		UP_STONE_BLOCK_PTN_A	           = 67,	// 石ブロックA(下)
+		UP_STONE_BLOCK_PTN_B	           = 68,	// 石ブロックB(下)
+		UP_STONE_BLOCK_PTN_C	           = 69,	// 石ブロックC(下)
 		MAX,
 	};
 	enum class OTHER_TEXTURE {

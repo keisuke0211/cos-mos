@@ -6,7 +6,7 @@
 #========================================
 # òfêØêî
 #========================================
-NUM_PLANET = 2
+NUM_PLANET = 3
 
 #========================================
 # ÉXÉeÅ[ÉWêî / ÉÇÉfÉã / îwåiêF
@@ -17,7 +17,6 @@ SetPlanet
 	NumStage = 4
 	ModelPath = data\MODEL\World1.x
 	BackColor = 0 115 80 255
-
 EndPlanet
 
 -- ÇQÇ¬ñ⁄ÇÃê›íË ------------------------------------------------------
@@ -25,7 +24,13 @@ SetPlanet
 	NumStage = 3
 	ModelPath = data\MODEL\World2.x
 	BackColor = 45 110 135 255
+EndPlanet
 
+-- ÇRÇ¬ñ⁄ÇÃê›íË ------------------------------------------------------
+SetPlanet
+	NumStage = 1
+	ModelPath = data\MODEL\World3.x
+	BackColor = 110 110 110 255
 EndPlanet
 
 #================================================================================
@@ -38,6 +43,7 @@ STAGE = 0 data\\GAMEDATA\\STAGE\\csv\\STAGE1-4.csv		3	120
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-1.csv		4	90
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-2.csv		5	150
 STAGE = 1 data\\GAMEDATA\\STAGE\\csv\\STAGE2-3.csv		6	300
+STAGE = 2 data\\GAMEDATA\\STAGE\\csv\\STAGE3-1.csv		10	300
 
 END
 
