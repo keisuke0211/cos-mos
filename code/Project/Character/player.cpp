@@ -50,6 +50,7 @@ const char *CPlayer::PARTICLE_TEX_PATH[(int)PARTI_TEX::MAX] = {
 	"data\\TEXTURE\\Effect\\ink001.png",        // 死亡インク
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",   // 死亡パーティクル
 	"data\\TEXTURE\\Effect\\eff_Hit_002.png",   // ゴール・ロケット乗車時のエフェクト
+	"data\\TEXTURE\\Effect\\eff_Smoke_000.png", // 煙のテクスチャ
 };
 int CPlayer::s_ParticleTex[(int)PARTI_TEX::MAX] = {};
 
@@ -229,6 +230,9 @@ HRESULT CPlayer::Init(void)
 
 	//カットイン
 	Stage::SetIsCutIn(false);
+
+	//カウント
+	nCnt = 60;
 
 	// 初期化成功
 	return S_OK;
@@ -673,7 +677,8 @@ void CPlayer::ActionControl(void)
 		targetPosR.x *= 0.25f;
 		targetPosR.y = 0.0f;
 
-		if (isZoomUp) {
+		if (isZoomUp) 
+		{// ズームアップ中
 			if (s_zoomUpFixedCounter > 0) {
 				s_zoomUpFixedCounter--;
 				if (s_zoomUpFixedCounter <= ZOOM_UP_FIXED_TIME - 60) {
@@ -693,6 +698,22 @@ void CPlayer::ActionControl(void)
 				s_zoomUpCounter--;
 			}
 			
+			if (nCnt > 0) {
+
+				nCnt--;
+				if (nCnt == 0) {
+
+					CInt NumEffect = 40;
+					for (int Cnt = 0; Cnt < NumEffect; Cnt++) {
+						CInt Num = rand() % 2;
+						const Pos3D TexPos = Pos3D(m_aInfo[Num].pos.x + (float)(rand() % (int)12.0f - 12.0f * 0.5), m_aInfo[Num].pos.y - 8.0f * cosf(m_aInfo[Num].rot.z), m_aInfo[Num].pos.z);
+						const Rot3D TexRot = Pos3D(m_aInfo[Num].rot.x, m_aInfo[Num].rot.y, m_aInfo[Num].rot.z + ((rand() % 1570) - 785) * 0.001f);
+						CFloat ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.9f) + INIT_EFFECT_SCALE.x * 0.1f);
+						Manager::EffectMgr()->ParticleCreate(GetParticleIdx(PARTI_TEX::SMOKE_EFFECT), TexPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,255,155,30 }, CParticle::TYPE::TYPE_FLOATUP, 600, TexRot, D3DXVECTOR3(80.0f, 80.0f, 0.0f), false, false, _RNC_DrawState::ALPHA_BLEND_MODE::NORMAL);
+						Manager::EffectMgr()->ModelEffectCreate(0, D3DXVECTOR3(TexPos.x, TexPos.y + 1.0f * cosf(TexRot.y), TexPos.z), TexRot, INITSCALE3D * 0.05f, COLOR_WHITE);
+					}
+				}
+			}
 
 			Pos3D basePosRMain = m_aInfo[0].pos + Pos3D(0.0f, -16.0f, 0.0f);
 			Pos3D basePosRSub  = m_aInfo[1].pos + Pos3D(0.0f, 16.0f, 0.0f);
