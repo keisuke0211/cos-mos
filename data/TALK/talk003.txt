@@ -1,6 +1,6 @@
 #=======================================
 #
-#会話002[ステージ1-3終了後の会話]
+#会話003[ステージ1-3終了後の会話]
 #Author：HIRASAWA SHION
 #Scenario Writer：OMIYA AIRA
 #
@@ -11,35 +11,35 @@ NUM_TALK   5
 
 #会話内容
 SET_TALK
-	TALK    あ！あそこにあるのって！
-	PLAYER  2
-	TYPE    0
-END_TALK
-
-#会話内容
-SET_TALK
-	TALK    僕らが乗ってきたロケットだ！
-	PLAYER  2
-	TYPE    0
-END_TALK
-
-#会話内容
-SET_TALK
-	TALK    でも不時着してことで壊れてる...
+	TALK    ロケットに乗れて良かったよ！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    ロケットを直すためにパーツを集めなきゃ！
+	TALK    でもまだ冒険したいなぁ
 	PLAYER  1
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    ロケットの場所に行けば絶対弟に会える！
+	TALK    それならほかの惑星も探索してみよう！
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    行こう！行こう！
+	PLAYER  1
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    じゃあ！次の惑星に出発だー！
 	PLAYER  0
 	TYPE    0
 END_TALK
