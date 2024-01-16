@@ -295,10 +295,11 @@ void CMode_Title::Update(void) {
 
 		ColorChange();
 
-		if (m_bWorldChange == false && m_bStgEnter == false && Manager::StgEd()->GetStageRel(m_nPlanetIdx,m_nStageSelect) == false) {
+		if (m_bWorldChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
-					Manager::Transition().GetState() == CTransition::STATE::NONE)
+					Manager::Transition().GetState() == CTransition::STATE::NONE &&
+					Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == false)
 				{
 					switch (Title)
 					{
@@ -329,6 +330,8 @@ void CMode_Title::Update(void) {
 					}
 				}
 			}
+			else if (Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == true && m_bWorldChange == false && m_bRocketMove == false)
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 		}
 
 		if (m_nStgStartCnt == m_RocketRail.GetPointNum() * 10) {
@@ -955,7 +958,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
+				if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 8)
+					Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
 			}
 
 			//数字ブロックアニメーション処理
