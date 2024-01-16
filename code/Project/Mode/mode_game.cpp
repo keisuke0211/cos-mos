@@ -17,6 +17,7 @@
 #include "../resource.h"
 #include "../stage.h"
 #include "../UI/MenuUi.h"
+#include "../Talk/talk.h"
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -28,6 +29,8 @@ static const int s_PlanetMaxSummon = 8;		// 出現する位置の最大数
 static const int s_StarMaxSummon = 10;		// 出現する位置の最大数
 
 CMode_Game::GameTime CMode_Game::s_GameTime = {};
+
+CTalk *g_pGameTalk = NULL;
 
 //========================================
 // コンストラクタ
@@ -46,6 +49,13 @@ CMode_Game::~CMode_Game(void) {
 	if (m_MenuUI != NULL){
 		delete m_MenuUI;
 		m_MenuUI = NULL;
+	}
+
+	if (g_pGameTalk != NULL)
+	{
+		g_pGameTalk->Uninit();
+		delete g_pGameTalk;
+		g_pGameTalk = NULL;
 	}
 }
 
@@ -73,6 +83,9 @@ void CMode_Game::Init(void) {
 
 	//開始時間取得
 	RestartTime();
+
+	if (g_pGameTalk == NULL)
+		g_pGameTalk = CTalk::Create(CTalk::EVENT::OPENING_1_1);
 }
 
 //========================================
@@ -87,6 +100,13 @@ void CMode_Game::Uninit(void) {
 
 	//ゲーム時間初期化
 	FormatGameTime();
+
+	if (g_pGameTalk != NULL)
+	{
+		g_pGameTalk->Uninit();
+		delete g_pGameTalk;
+		g_pGameTalk = NULL;
+	}
 }
 
 //========================================
@@ -116,6 +136,11 @@ void CMode_Game::Update(void) {
 
 	//ポーズ時間を計測
 	else MeasureTime(TimeType::Pause);
+
+	if (g_pGameTalk != NULL)
+	{
+		g_pGameTalk->Update();
+	}
 }
 
 //========================================
