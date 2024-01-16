@@ -561,7 +561,7 @@ void CStageEditor::SwapStage(int nStageIdx)
 			NecstStage = 0;
 		}
 
-		if (planet < m_Info.nPlanetMax)
+		if (planet < m_Info.nPlanetMax && !Manager::StgEd()->GetStageRel(planet, NecstStage))
 		{
 			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
