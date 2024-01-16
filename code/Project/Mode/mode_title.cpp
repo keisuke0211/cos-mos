@@ -94,7 +94,7 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_bBackMode        = false;
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
-	m_StgBoardIdx      = RNLib::Model().Load("data\\MODEL\\Stage_Board.x");
+	m_WldBoardIdx      = RNLib::Model().Load("data\\MODEL\\World_Board-1.x");
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
 	m_EffTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png");
@@ -295,10 +295,11 @@ void CMode_Title::Update(void) {
 
 		ColorChange();
 
-		if (m_bWorldChange == false && m_bStgEnter == false && Manager::StgEd()->GetStageRel(m_nPlanetIdx,m_nStageSelect) == false) {
+		if (m_bWorldChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
-					Manager::Transition().GetState() == CTransition::STATE::NONE)
+					Manager::Transition().GetState() == CTransition::STATE::NONE &&
+					Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == false)
 				{
 					switch (Title)
 					{
@@ -329,6 +330,8 @@ void CMode_Title::Update(void) {
 					}
 				}
 			}
+			else if (Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == true && m_bWorldChange == false && m_bRocketMove == false)
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 		}
 
 		if (m_nStgStartCnt == m_RocketRail.GetPointNum() * 10) {
@@ -594,6 +597,7 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
+	/*m_WldBoardIdx = RNLib::Model().Load(String("data\\MODEL\\World_Board-%d.x", m_nPlanetIdx + 1));*/
 	m_MapIdx = RNLib::Texture().Load(String("data\\STAGE_SNAP\\stage_%d-%d.png", m_nPlanetIdx + 1, m_nStageSelect + 1));
 
 	if (m_CoinUI == NULL) {
@@ -769,7 +773,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 	{//看板
 		//ステージ看板
-		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_WldBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
 			->SetOutLineIdx(5)
 			->SetCol(Color(211, 170, 132, 255));
 		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
@@ -954,7 +958,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
+				if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 8)
+					Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
 			}
 
 			//数字ブロックアニメーション処理
@@ -1053,28 +1058,30 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 
 	if (m_nSelectTemp < 0 && m_nPlanetIdx != 0) {
 
-			m_nPlanetIdx--;
-			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-			m_nStageSelect = nStage - 1;
-			m_nOldSelect = nStage;
+		m_nPlanetIdx--;
+		nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+		m_nStageSelect = nStage - 1;
+		m_nOldSelect = nStage;
 
-			BgOldColor = BgColor;
-			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
-			nCntColorChange = 0;
-			bColorChange = true;
-		}
-		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
-			
-			m_nPlanetIdx++;
-			m_nStageSelect = 0;
-			m_nOldSelect = -1;
-			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+	}
+	else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 
-			BgOldColor = BgColor;
-			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
-			nCntColorChange = 0;
-			bColorChange = true;
-		}
+		m_nPlanetIdx++;
+		m_nStageSelect = 0;
+		m_nOldSelect = -1;
+		nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+	}
+
+	/*m_WldBoardIdx = RNLib::Model().Load(String("data\\MODEL\\World_Board-%d.x", m_nPlanetIdx + 1));*/
 
 	m_nDrawPlanet = m_nPlanetIdx;
 

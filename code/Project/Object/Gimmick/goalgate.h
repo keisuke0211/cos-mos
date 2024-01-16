@@ -62,6 +62,7 @@ private:
 	void EscapeGuide(void);
 
 	//========== [[[ •Ï”éŒ¾ ]]]
+	CDoll3D* m_doll;
 	STATE m_state;							//í—Ş
 	RAINBOW m_Rainbow;						//Fó‘Ô
 	Color m_col;							//F
