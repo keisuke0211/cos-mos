@@ -143,13 +143,42 @@ void CRoadTripLaser::Update(void) {
 		->SetCol(Color{ 255,0,0,255 });
 	
 	Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png"), m_LaserPos, INIT_EFFECT_SCALE, COLOR_WHITE, CParticle::TYPE::TYPE_STOP,1);
-}
 
+	CRoadTripLaser::Collision(m_pos, m_rot, m_LaserPos, m_LaserSize);
+}
 //========================================
-// 描画処理
+// 当たり判定処理
 // Author:KOMURO HIROMU
 //========================================
-void CRoadTripLaser::Draw(void) {
+void CRoadTripLaser::Collision(D3DXVECTOR3 pos,D3DXVECTOR3 rot, D3DXVECTOR3 Laserpos, D3DXVECTOR2 Lasersize) {
 
+	CPlayer::WORLD_SIDE side = CPlayer::WORLD_SIDE::FACE;
+
+	// レーザーが表にいるか裏にいるか
+	if (rot.z == 0.0f)
+	{
+		CPlayer::WORLD_SIDE side = CPlayer::WORLD_SIDE::FACE;
+	}
+	else
+	{
+		CPlayer::WORLD_SIDE side = CPlayer::WORLD_SIDE::BEHIND;
+	}
+
+	// レーザーのいる方のプレイヤーの情報を入手
+	CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(side);
+
+	// ブロックやレーザーの範囲内にいるとき
+	if (Laserpos.y - Lasersize.y < pInfo->pos.y + pInfo->scale.y &&
+		pos.y + 15.0f > pInfo->pos.y - pInfo->scale.y	&&
+		pos.x + 20.0f > pInfo->pos.x - pInfo->scale.x &&
+		pos.x - 20.0f < pInfo->pos.x + pInfo->scale.x)
+	{
+		if (Laserpos.x + Lasersize.x > pInfo->pos.x - pInfo->scale.x
+			&& Laserpos.x - Lasersize.x < pInfo->pos.x + pInfo->scale.x
+			&& Laserpos.y + Lasersize.y > pInfo->pos.y - pInfo->scale.y
+			&& Laserpos.y - Lasersize.y < pInfo->pos.y + pInfo->scale.y)
+		{// レーザーの範囲内の時
+		}
+	}
 
 }

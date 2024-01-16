@@ -77,31 +77,31 @@ public:
 
 	//--------------------------------------------------
 	// テキスト生成
-	// 引数1  : Box type            / テキストボックスの画像
-	// 引数2  : D3DXVECTOR3 pos     / テキストボックスの位置
-	// 引数3  : D3DXVECTOR2 size    / テキストボックスのサイズ
-	// 引数4  : const char *Text　　/ テキスト
-	// 引数5  : CFont::FONT Type　　/ フォント種類
-	// 引数6  : FormFont *pFont		/ フォント関連の情報(色・時間など) 無くても大丈夫
-	// 引数7  : bool bBoxSize		/ メッセージボックスのサイズ調整の無効・有効（初期値 false）
-	// 引数8  : bool bTextBox　　　 / メッセージボックスの表示・非表示 (初期値 true)
-	// 引数9  : FormShadow *Shadow  / フォントの影の情報 無くても大丈夫
+	// 引数1  : Box type           / テキストボックスの画像
+	// 引数2  : Pos3D pos          / テキストボックスの位置
+	// 引数3  : Pos2D size         / テキストボックスのサイズ
+	// 引数4  : const char *Text   / テキスト
+	// 引数5  : CFont::FONT Type   / フォント種類
+	// 引数6  : FormFont *pFont    / フォント関連の情報(色・時間など) 無くても大丈夫
+	// 引数7  : bool bBoxSize      / メッセージボックスのサイズ調整の無効・有効（初期値 false）
+	// 引数8  : bool bTextBox      / メッセージボックスの表示・非表示 (初期値 true)
+	// 引数9  : FormShadow *Shadow / フォントの影の情報 無くても大丈夫
 	//--------------------------------------------------
-	static CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FormShadow *Shadow = NULL);
+	static CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FormShadow *Shadow = NULL);
 
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
 	// -- 設定 ------------------------------------------
 	/* 生成中の文字を一括で	*/void SetTexrSkip(bool skip) { m_Info.bLetterSkip = skip; }
-	/* 移動量				*/void SetMove(D3DXVECTOR3 move);
+	/* 移動量				*/void SetMove(Pos3D move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
 	/* TextBoxの表示		*/void SetTxtBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
 	/* TextBoxの位置		*/void SetTxtBoxPos(CFloat &X, CFloat &Y) { m_Info.TxtBoxPos = Pos2D(X, Y); }
 	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos2D &pos) { m_Info.TxtBoxPos = pos; }
 	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos3D &pos) { m_Info.TxtBoxPos = Pos2D(pos.x, pos.y); }
-	/* TextBoxのサイズ		*/void SetTxtBoxSize(float width, float height) { m_Info.TxtBoxSize = D3DXVECTOR2(width, height); }
-	/* TextBoxの目標サイズ	*/void SetTxtBoxTgtSize(float width, float height) { m_Info.TxtBoxTgtSize = D3DXVECTOR2(width, height); }
+	/* TextBoxのサイズ		*/void SetTxtBoxSize(float width, float height) { m_Info.TxtBoxSize = Pos2D(width, height); }
+	/* TextBoxの目標サイズ	*/void SetTxtBoxTgtSize(float width, float height) { m_Info.TxtBoxTgtSize = Pos2D(width, height); }
 	/* TextBoxのテクスチャ	*/void SetTxtBoxTex(const char* Path = NULL, int PthIdx = -1, int PthX = 1, int PthY = 1);
 	/* TextBoxのパターン番号*/void SetTxtBoxPthIdx(int PthIdx);
 	/* TextBoxの色			*/void SetTxtBoxColor(Color col);
@@ -115,9 +115,9 @@ public:
 
 	// -- 取得 ------------------------------------------
 	/* TxtBotのTex番号	*/Box GetTxtBoxType() { return m_Info.Tex.type; }
-	/* 位置				*/D3DXVECTOR2 GetTxtBoxPos() { return m_Info.TxtBoxPos; }
-	/* Txtサイズ		*/D3DXVECTOR2 GetTxtBoxSize() { return m_Info.TxtBoxSize; }
-	/* Txt目標サイズ	*/D3DXVECTOR2 GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
+	/* 位置				*/Pos2D GetTxtBoxPos() { return m_Info.TxtBoxPos; }
+	/* Txtサイズ		*/Pos2D GetTxtBoxSize() { return m_Info.TxtBoxSize; }
+	/* Txt目標サイズ	*/Pos2D GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
 	/* 文字サイズ		*/float GetTxtSize() { return m_Info.fTextSize; }
 	/* Textの生成フラグ	*/bool GetLetter() { return m_Info.bLetterEnd; }
 
@@ -127,21 +127,21 @@ private:
 
 	// テクスチャ情報
 	struct Texture {
-		Box type;		// TxtBoxの種類
-		int Idx;		// テクスチャ番号
-		int PtnIdx;		// パターン	番号
-		int PtnX;		//			Xの分割数
-		int PtnY;		//			Yの分割数
+		Box type;   // TxtBoxの種類
+		int Idx;    // テクスチャ番号
+		int PtnIdx; // パターン番号
+		int PtnX;   // Xの分割数
+		int PtnY;   // Yの分割数
 	};
 
 	// 影
 	struct Shadow
 	{
-		D3DXCOLOR col;			// 影の色
-		bool bShadow;			// 影フラグ
-		CWords** shadow;		// 文字(影)
-		D3DXVECTOR3 AddPos;		// 文字の位置からずらす値 (初期値 0,0,0)	(元の文字 + AddPos)
-		D3DXVECTOR2 AddSize;	// 文字のサイズの加算値 (初期値 0,0)		(元の文字 + AddSize)
+		D3DXCOLOR col;   // 影の色
+		bool bShadow;    // 影フラグ
+		CWords** shadow; // 文字(影)
+		Pos3D AddPos;    // 文字の位置からずらす値 (初期値 0,0,0) (元の文字 + AddPos)
+		Pos2D AddSize;   // 文字のサイズの加算値   (初期値 0,0)   (元の文字 + AddSize)
 	};
 
 	// テキスト情報
@@ -201,5 +201,4 @@ private:
 
 	// ***** 変数 *****
 	Info m_Info;
-
 };
