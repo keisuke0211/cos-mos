@@ -295,7 +295,7 @@ void CMode_Title::Update(void) {
 
 		ColorChange();
 
-		if (m_bWorldChange == false && m_bStgEnter == false) {
+		if (m_bWorldChange == false && m_bStgEnter == false && Manager::StgEd()->GetStageRel(m_nPlanetIdx,m_nStageSelect) == false) {
 			if (m_bRocketMove == false) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
 					Manager::Transition().GetState() == CTransition::STATE::NONE)
@@ -772,8 +772,9 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
 			->SetOutLineIdx(5)
 			->SetCol(Color(211, 170, 132, 255));
-		RNLib::Text3D().Put(PRIORITY_OBJECT, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
-			->SetSize(Size2D(3.0f, 3.0f));
+		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
+			->SetSize(Size2D(3.0f, 3.0f))
+			->SetZTest(false);
 
 		//コイン看板
 		if(!m_bStgEnter)
@@ -984,8 +985,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				RNLib::Matrix().ConvPosToMtx(numpos));
 
 			//ブロック描画
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
+			if (!bStgRel)
+				RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
 				->SetCol(Color{ 243,191,63,255 });
+			else
+				RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
+				->SetCol(Color{ 81,63,21,255 });
 
 			//数字テクスチャ描画
 			if (m_bWorldChange == false && m_nCnt == MAX_COUNT || m_bStgEnter) {
@@ -996,7 +1001,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				else
 				{
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
-						->SetSize(5.0f, 5.0f)
+						->SetSize(6.0f, 6.0f)
 						->SetTex(m_TexIdx[TEX_LOCK]);
 
 					int nStgCoin = Manager::StgEd()->GetStageCoin(m_nPlanetIdx, nCnt);
@@ -1032,7 +1037,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				else
 					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
-					->SetCol(Color{ 85,85,85,255 })
+					->SetCol(Color{ 255,255,255,255 })
 					->SetTex(m_TexIdx[TEX_LOCK]);
 			}
 		}

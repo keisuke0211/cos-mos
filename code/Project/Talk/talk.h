@@ -20,6 +20,14 @@ public:
 		MAX,
 	};
 
+	//会話表示の種類
+	enum class DrawType {
+		Under = -1,// 画面下部に表示
+		Wipe,      // モデルとセリフを描画
+		PopOver,   // モデルの頭上にセリフを描画
+		MAX
+	};
+
 	CTalk();
 	~CTalk();
 	void Init(EVENT &Event);
@@ -44,15 +52,17 @@ private:
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込
 
+	void PopPlayer(void); //プレイヤーキャラを配置する
 	void DeleteText(void);//表示するテキストのメモリ確保（引数がNULLなら開放のみ
 	void NextSpeak(void); //次にしゃべるテキストの設定
+	void Skip(void);      //会話スキップ
 
 	//会話情報
 	struct Talk
 	{
 		char *pLog;   // 会話内容
-		int  nTex;    // テクスチャ番号
 		int TalkerID; // 会話しているプレイヤーID
+		DrawType type;// 描画方法
 	};
 
 	static Talk *s_pTalk;   //会話内容
@@ -61,6 +71,9 @@ private:
 	CFontText *m_pText;
 	FormFont   m_pFont;
 	FormShadow m_pShadow;
+
+	static int Chara_1P; // 1Pのキャラクター画像ID
+	static int Chara_2P; // 2Pのキャラクター画像ID
 
 	Pos3D  m_pos;
 	Pos2D  m_size;

@@ -96,7 +96,10 @@ public:
 	/* 移動量				*/void SetMove(D3DXVECTOR3 move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
-	/* TextBoxの表示		*/void SetTetBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
+	/* TextBoxの表示		*/void SetTxtBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
+	/* TextBoxの位置		*/void SetTxtBoxPos(CFloat &X, CFloat &Y) { m_Info.TxtBoxPos = Pos2D(X, Y); }
+	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos2D &pos) { m_Info.TxtBoxPos = pos; }
+	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos3D &pos) { m_Info.TxtBoxPos = Pos2D(pos.x, pos.y); }
 	/* TextBoxのサイズ		*/void SetTxtBoxSize(float width, float height) { m_Info.TxtBoxSize = D3DXVECTOR2(width, height); }
 	/* TextBoxの目標サイズ	*/void SetTxtBoxTgtSize(float width, float height) { m_Info.TxtBoxTgtSize = D3DXVECTOR2(width, height); }
 	/* TextBoxのテクスチャ	*/void SetTxtBoxTex(const char* Path = NULL, int PthIdx = -1, int PthX = 1, int PthY = 1);

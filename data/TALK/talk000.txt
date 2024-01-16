@@ -7,27 +7,34 @@
 #=======================================
 
 #会話数
-NUM_TALK   3
+NUM_TALK   4
 
 #会話内容
 SET_TALK
-	TALK    それじゃあ宇宙旅行に出発しようか
+	TALK    宇宙旅行に行くぞー！
 	PLAYER  0
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    荷物は大丈夫？
-	PLAYER  0
-	TEXTURE -1
-END_TALK
-
-#会話内容
-SET_TALK
-	TALK    全部ツボに詰めたよ!
+	TALK    そうだね！宇宙に行こう！
 	PLAYER  1
-	TEXTURE -1
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    荷物は持った？
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    うん！荷物持ったよ！
+	PLAYER  0
+	TYPE    0
 END_TALK
 
 END
