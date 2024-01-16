@@ -204,7 +204,7 @@ void CFontText::Draw()
 //========================================
 // ¶¬
 //========================================
-CFontText *CFontText::Create(Box type, D3DXVECTOR3 pos, D3DXVECTOR2 size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow)
+CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow)
 {
 	CFontText *pText = new CFontText;
 
@@ -297,7 +297,7 @@ void CFontText::LetterForm(void)
 
 			m_Info.sText += m_Info.sALLText[m_Info.nAddLetter];
 			string Text = m_Info.sText;
-			D3DXVECTOR3 pos = m_Info.TxtBoxPos * 2;
+			Pos3D pos = m_Info.TxtBoxPos * 2;
 
 			pos.x = pos.x - ((m_Info.TxtBoxSize.x * 2) / 2);
 
@@ -314,8 +314,8 @@ void CFontText::LetterForm(void)
 					// ‰e
 					if (m_Info.aShadow.bShadow)
 					{
-						D3DXVECTOR3 AddPos = m_Info.aShadow.AddPos;
-						D3DXVECTOR2 AddSize = m_Info.aShadow.AddSize;
+						Pos3D AddPos = m_Info.aShadow.AddPos;
+						Pos2D AddSize = m_Info.aShadow.AddSize;
 
 						m_Info.aShadow.shadow[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
 							D3DXVECTOR3((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
@@ -350,8 +350,8 @@ void CFontText::LetterForm(void)
 						// ‰e
 						if (m_Info.aShadow.bShadow)
 						{
-							D3DXVECTOR3 AddPos = m_Info.aShadow.AddPos;
-							D3DXVECTOR2 AddSize = m_Info.aShadow.AddSize;
+							Pos3D AddPos = m_Info.aShadow.AddPos;
+							Pos2D AddSize = m_Info.aShadow.AddSize;
 
 							m_Info.aShadow.shadow[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
 								D3DXVECTOR3((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
@@ -453,7 +453,7 @@ void CFontText::DisapTime(void)
 //========================================
 // ˆÚ“®—Ê
 //========================================
-void CFontText::SetMove(D3DXVECTOR3 move)
+void CFontText::SetMove(Pos3D move)
 {
 	m_Info.TxtBoxMove = Pos2D(move.x, move.y);
 
@@ -658,15 +658,15 @@ bool CFontText::ChgWords(char* Text, int nIdx, D3DXCOLOR col)
 	if (m_Info.words[nIdx] != NULL)
 	{
 		float fTxtSize = m_Info.fTextSize;
-		D3DXVECTOR3 pos = m_Info.words[nIdx]->GetPos();
+		Pos3D pos = m_Info.words[nIdx]->GetPos();
 
 		m_Info.words[nIdx]->Uninit();
 
 		// ‰e‚ÌÄ¶¬
 		if (m_Info.aShadow.bShadow)
 		{
-			D3DXVECTOR3 AddPos = m_Info.aShadow.AddPos;
-			D3DXVECTOR2 AddSize = m_Info.aShadow.AddSize;
+			Pos3D AddPos = m_Info.aShadow.AddPos;
+			Pos2D AddSize = m_Info.aShadow.AddSize;
 			D3DXCOLOR ShadowCol = m_Info.aShadow.col;
 
 			m_Info.aShadow.shadow[nIdx]->Uninit();

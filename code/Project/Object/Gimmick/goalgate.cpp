@@ -56,6 +56,8 @@ CGoalGate::CGoalGate(void) {
 	if(s_TexIdx[0]         == NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	if(s_TexIdx[1]         == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
 	if(s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
+
+	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Door_1Up.txt"));
 }
 
 //========================================
@@ -63,6 +65,9 @@ CGoalGate::CGoalGate(void) {
 //========================================
 CGoalGate::~CGoalGate(void) {
 	s_num--;
+
+	if (m_doll != NULL)
+		delete m_doll;
 }
 
 //========================================
@@ -116,8 +121,10 @@ void CGoalGate::Update(void)
 	if (setCol.a > 255)setCol.a = 255;
 
 	//ƒ‚ƒfƒ‹”z’u
-	RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
-		->SetCol(setCol);
+	m_doll->SetPos(m_pos + Pos3D(0.0f,RNLib::Number().GetPlusMinus(m_pos.y)*-22.0f,20.0f));
+	m_doll->SetRot(m_pos.y > 0 ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI));
+	//RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
+	//	->SetCol(setCol);
 
 	if (!CPlayer::GetSwapAnim()) {
 		if (!m_bCloseGate) {
