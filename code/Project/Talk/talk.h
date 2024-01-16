@@ -21,10 +21,10 @@ public:
 	};
 
 	//会話表示の種類
-	enum class DrawType {
+	enum class SHOWTYPE {
 		Under = -1,// 画面下部に表示
-		Wipe,      // モデルとセリフを描画
-		PopOver,   // モデルの頭上にセリフを描画
+		Wipe,      // モデルとセリフを表示
+		PopOver,   // モデルの頭上にセリフを表示
 		MAX
 	};
 
@@ -46,13 +46,20 @@ private:
 	//会話イベントのファイルパス
 	static const char *EVENT_FILE[(int)EVENT::MAX];
 
-	static const int NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
-	static const int NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
+	static const Pos3D TEXTBOX_UNDER_POS; //テキストボックスの画面下部位置
+	static CFloat POPOVER_FLOAT;          //頭上に表示する時の浮かせる量
+
+	static CInt NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
+	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
+	static CInt AUTO_COUNTER = 100;       //発言終了から自動進行するまでのカウンター
 
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込
 
-	void PopPlayer(void); //プレイヤーキャラを配置する
+	void SetFontOption(const SHOWTYPE& type);
+
+	void ShowType(void);  //表示方法を適用する
+	void Auto(void);      //自動進行
 	void DeleteText(void);//表示するテキストのメモリ確保（引数がNULLなら開放のみ
 	void NextSpeak(void); //次にしゃべるテキストの設定
 	void Skip(void);      //会話スキップ
@@ -62,22 +69,20 @@ private:
 	{
 		char *pLog;   // 会話内容
 		int TalkerID; // 会話しているプレイヤーID
-		DrawType type;// 描画方法
+		SHOWTYPE type;// 描画方法
 	};
 
-	static Talk *s_pTalk;   //会話内容
-	static EVENT s_Event;   //イベント
-	bool   m_bTalk;         //会話中かどうか
+	static Talk *s_pTalk; //会話内容
+	static EVENT s_Event; //イベント
+	bool   m_bTalk;       //会話中かどうか
 	CFontText *m_pText;
 	FormFont   m_pFont;
 	FormShadow m_pShadow;
-
-	static int Chara_1P; // 1Pのキャラクター画像ID
-	static int Chara_2P; // 2Pのキャラクター画像ID
 
 	Pos3D  m_pos;
 	Pos2D  m_size;
 	int    m_nTalkNumAll; //最大会話数
 	int    m_nTalkID;     //会話番号
-	bool   m_bEndSpeak;   //発言終了（会話自体の終了ではない
+	bool   m_bAuto;       //自動進行フラグ
+	int    m_nAutoCounter;//自動進行のカウンター
 };
