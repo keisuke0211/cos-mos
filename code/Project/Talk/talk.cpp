@@ -105,7 +105,7 @@ void CTalk::DeleteLog(void)
 	m_nTalkNumAll = 0;     //最大会話数
 	m_nTalkID = 0;         //会話番号
 	m_nAutoCounter = 0;    //自動進行カウンター
-	m_bAuto = false;       //自動進行フラグ
+	m_bAuto = true;        //自動進行フラグ
 	DeleteText();          //表示するテキストのメモリ開放
 }
 
