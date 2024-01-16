@@ -772,8 +772,9 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
 			->SetOutLineIdx(5)
 			->SetCol(Color(211, 170, 132, 255));
-		RNLib::Text3D().Put(PRIORITY_OBJECT, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
-			->SetSize(Size2D(3.0f, 3.0f));
+		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
+			->SetSize(Size2D(3.0f, 3.0f))
+			->SetZTest(false);
 
 		//ƒRƒCƒ“ŠÅ”Â
 		if(!m_bStgEnter)

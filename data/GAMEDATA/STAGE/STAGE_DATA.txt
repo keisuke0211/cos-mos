@@ -21,6 +21,6 @@ SET_RECORD
 	RECORD = 1 - 2 - 60.00 = 3 - 1 - 1 - 1
 
 #=====[ 3–Ê ]
-	RECORD = 1 - 0 - 60.00 = 0
+	RECORD = 2 - 0 - 60.00 = 0
 
 END_RECORD
