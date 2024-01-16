@@ -666,12 +666,12 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_PLAYER_0:
 		pos.y += fSizeY * 0.5f;
 		Stage::GetPlayer()->SetPos(0, pos);
-		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
+		//Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_PLAYER_1:
 		pos.y += -fSizeY * 0.5f;
 		Stage::GetPlayer()->SetPos(1, pos);
-		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
+		//Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_GOALGATE:
 		Manager::StageObjectMgr()->GoalGateCreate(pos,false);
