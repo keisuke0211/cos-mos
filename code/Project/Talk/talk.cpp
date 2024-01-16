@@ -18,6 +18,9 @@ const char *CTalk::EVENT_FILE[(int)EVENT::MAX] = {
 CTalk::Talk  *CTalk::s_pTalk = NULL;        //会話内容
 CTalk::EVENT  CTalk::s_Event = EVENT::NONE; //イベント
 
+int CTalk::Chara_1P = NONEDATA; // 1Pのキャラクター画像ID
+int CTalk::Chara_2P = NONEDATA; // 2Pのキャラクター画像ID
+
 //=======================================
 // コンストラクタ
 //=======================================
@@ -45,7 +48,11 @@ CTalk::CTalk()
 
 	m_pos = D3DXVECTOR3(330.0f, 700.0f, 0.0f);
 
-	DeleteLog(); //会話ログ削除
+	//会話ログ削除
+	DeleteLog();
+
+	if (Chara_1P == NONEDATA) RNLib::Texture().Load("");
+	if (Chara_2P == NONEDATA) RNLib::Texture().Load("");
 }
 
 //=======================================
@@ -131,18 +138,22 @@ void CTalk::LoadTalk(EVENT &Event)
 			//会話内容読み取り
 			else if (RNLib::File().CheckIdentifier("SET_TALK")){
 
-				//会話ログ保管用
+				//会話ログ・表示方法保管用
 				char LogTmp[TXT_MAX] = {};
+				int nTypeTmp = 0;
 				while (RNLib::File().SearchLoop("END_TALK")) {
 					RNLib::File().Scan(_RNC_File::SCAN::STRING, &LogTmp[0], "TALK");
 					RNLib::File().Scan(_RNC_File::SCAN::INT,    &s_pTalk[nTalkCounter].TalkerID, "PLAYER");
-					RNLib::File().Scan(_RNC_File::SCAN::INT,    &s_pTalk[nTalkCounter].nTex, "TEXTURE");
+					RNLib::File().Scan(_RNC_File::SCAN::INT,    &nTypeTmp, "TYPE");
 				}
 
 				//文字列代入
 				CInt len = strlen(&LogTmp[0]) + 1;
 				s_pTalk[nTalkCounter].pLog = new char[len];
 				strcpy(&s_pTalk[nTalkCounter].pLog[0], &LogTmp[0]);
+
+				//表示方法代入
+				s_pTalk[nTalkCounter].type = (DrawType)nTypeTmp;
 
 				//次の番号へ
 				nTalkCounter++;
@@ -165,6 +176,9 @@ void CTalk::Init(EVENT &Event)
 	//読み込めた
 	if (s_pTalk != NULL)
 	{
+		if (Event == EVENT::BEFORE_DEPARTURE) 
+			Stage::SetIsCutIn(true);
+
 		//会話開始
 		m_bTalk = true;
 		m_nTalkID = -1;      //会話番号
@@ -192,13 +206,26 @@ void CTalk::Update(void)
 	if (s_pTalk == NULL || !m_bTalk)
 		return;
 
-	//次の会話へ  or  会話終了
-	else if (!m_bEndSpeak &&
-			 (RNLib::Input().GetTrigger(DIK_T, _RNC_Input::BUTTON::Y) ||
-			 RNLib::Input().GetTrigger(DIK_T, _RNC_Input::BUTTON::Y, 1)))
+	else
 	{
-		//次の発言へ
-		NextSpeak();
+		//プレイヤーキャラを配置する
+		PopPlayer();
+
+		//会話スキップ
+		if (RNLib::Input().GetTrigger(DIK_P, _RNC_Input::BUTTON::START) ||
+			RNLib::Input().GetTrigger(DIK_P, _RNC_Input::BUTTON::START, 1))
+		{
+			Skip();
+		}
+
+		//次の会話へ  or  会話終了
+		else if (!m_bEndSpeak &&
+			(RNLib::Input().GetTrigger(DIK_T, _RNC_Input::BUTTON::Y) ||
+			 RNLib::Input().GetTrigger(DIK_T, _RNC_Input::BUTTON::Y, 1)))
+		{
+			//次の発言へ
+			NextSpeak();
+		}
 	}
 }
 
@@ -213,6 +240,14 @@ void CTalk::DeleteText(void)
 		m_pText->Uninit();
 		m_pText = NULL;
 	}
+}
+
+//=======================================
+//プレイヤーキャラを配置する
+//=======================================
+void CTalk::PopPlayer(void)
+{
+
 }
 
 //=======================================
@@ -237,4 +272,12 @@ void CTalk::NextSpeak(void)
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D,
 									s_pTalk[m_nTalkID].pLog, CFont::FONT_07NIKUMARU, &m_pFont, false, false, &m_pShadow);
 	}
+}
+
+//=======================================
+//会話スキップ
+//=======================================
+void CTalk::Skip(void)
+{
+	DeleteLog();
 }

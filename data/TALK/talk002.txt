@@ -1,6 +1,6 @@
 #=======================================
 #
-#会話000[]
+#会話002[]
 #Author：HIRASAWA SHION
 #Scenario Writer：OMIYA AIRA
 #
@@ -13,7 +13,7 @@ NUM_TALK   0
 SET_TALK
 	TALK    
 	PLAYER  
-	TEXTURE 
+	TYPE    
 END_TALK
 
 END

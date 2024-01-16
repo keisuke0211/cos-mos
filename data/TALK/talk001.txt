@@ -13,49 +13,49 @@ NUM_TALK   7
 SET_TALK
 	TALK    イッテテテテ…。　ここはどこだ？
 	PLAYER  2
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
 	TALK    ロケットも弟もいない...
 	PLAYER  0
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
 	TALK    けど、弟の入れ替わり(SWAP)の鼓動を感じる…!!
 	PLAYER  0
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
 	TALK    近いようで遠い…?この惑星はいったい…?
 	PLAYER  0
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
 	TALK    とりあえず進もう…
 	PLAYER  0
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
 	TALK    兄ちゃん…
 	PLAYER  1
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
 	TALK    …ｸﾞｽﾝ
 	PLAYER  1
-	TEXTURE -1
+	TYPE    0
 END_TALK
 
 END
