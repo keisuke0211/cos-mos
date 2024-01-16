@@ -36,6 +36,7 @@ public:
 		MISS	   = 13,//ミス
 		GHOST	   = 14,//幽霊
 		DEATH_EFF  = 15,//死亡エフェクト
+		LAVA_BLOCK = 16,//溶岩ブロック
 		MAX,
 	};
 

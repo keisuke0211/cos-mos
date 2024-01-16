@@ -22,7 +22,7 @@ CMagmaBlock::CMagmaBlock(void)
 {
 	Manager::StageObjectMgr()->AddList(this);
 
-	m_type = TYPE::BLOCK;
+	m_type = TYPE::LAVA_BLOCK;
 	m_width = SIZE_OF_1_SQUARE;
 	m_height = SIZE_OF_1_SQUARE;
 
@@ -71,7 +71,7 @@ void CMagmaBlock::Update(void)
 	{
 		int Tex = RNLib::Texture().Load("data\\TEXTURE\\maguma2.png");
 
-		Manager::EffectMgr()->EffectCreate(Tex, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z - SIZE_OF_1_SQUARE), D3DXVECTOR3(16.0f, 16.0f, 0.0f), COLOR_WHITE,1200);
+		Manager::EffectMgr()->EffectCreate(Tex, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z - SIZE_OF_1_SQUARE*0.5f), D3DXVECTOR3(16.0f, 16.0f, 0.0f), COLOR_WHITE,1200);
 	}
 
 	// ‰ß‹Ž‚ÌˆÊ’u
