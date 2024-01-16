@@ -626,6 +626,9 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_COIN:
 		Manager::StageObjectMgr()->CoinCreate(pos);
 		break;
+	case TYPE_MAGMA_BLOCK:
+		Manager::StageObjectMgr()->MagmaBlockCreate(pos, COLOR_WHITE);
+		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::StageObjectMgr()->FillBlockCreate(pos, CFillBlock::BLOCKTYPE::TYPE_1x1, m_StageColor.FillBlock);
 		break;

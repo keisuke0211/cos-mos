@@ -649,6 +649,15 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CObject *obj, 
 		{
 			Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::GOAL_EFFECT), pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
 		}
+
+		if (pSelfInfo->pos.x < 0.0f) {
+			pSelfInfo->pos.x = GoalGateObj->GetPos().x + GoalGateObj->GetWidth() + pSelfInfo->fWidth + 0.1f;
+		}
+		else {
+			pSelfInfo->pos.x = GoalGateObj->GetPos().x - GoalGateObj->GetWidth() - pSelfInfo->fWidth - 0.1f;
+		}
+		pSelfInfo->posOld = pSelfInfo->pos;
+		pSelfInfo->move = INITVECTOR3D;
 	}
 }
 

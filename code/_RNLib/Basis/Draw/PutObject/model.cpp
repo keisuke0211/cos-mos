@@ -359,7 +359,7 @@ void _RNC_Model::StoreVtxInfo(const Matrix& modelMtx, const short& modelIdx, Ver
 _RNC_Model::CRegistInfo* _RNC_Model::Put(const UShort& priority, const short& modelIdx, const Matrix& mtx, const bool& isOnScreen) {
 
 	// モデル番号が無しの時、
-	if (modelIdx == NONEDATA)
+	if (modelIdx == NONEDATA || modelIdx >= m_num)
 		return NULL;
 
 	return RNLib::DrawMgr().PutModel(priority, mtx, isOnScreen)
@@ -627,8 +627,8 @@ _RNC_Model::CDrawInfo* _RNC_Model::CRegistInfo::ConvToDrawInfo(Device& device) {
 	//----------------------------------------
 	// マテリアル情報を算出
 	//----------------------------------------
-	{
-		D3DXMATERIAL* mats= (D3DXMATERIAL*)modelData.m_matBuff->GetBufferPointer();
+	if (modelData.m_matBuff != NULL){
+		D3DXMATERIAL* mats = (D3DXMATERIAL*)modelData.m_matBuff->GetBufferPointer();
 		RNLib::Memory().Alloc(&drawInfo->m_mats, drawInfo->m_matNum);
 		for (int cntMat = 0; cntMat < drawInfo->m_matNum; cntMat++) {
 			drawInfo->m_mats[cntMat] = mats[cntMat].MatD3D;
