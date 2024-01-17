@@ -97,9 +97,10 @@ public:
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
 	/* TextBoxの表示		*/void SetTxtBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
-	/* TextBoxの位置		*/void SetTxtBoxPos(CFloat &X, CFloat &Y) { m_Info.TxtBoxPos = Pos2D(X, Y); }
-	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos2D &pos) { m_Info.TxtBoxPos = pos; }
-	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos3D &pos) { m_Info.TxtBoxPos = Pos2D(pos.x, pos.y); }
+	/* TextBoxの位置		*/void SetTxtBoxPos(CFloat &X, CFloat &Y, bool bMoveWordsX = false, bool bMoveWordsY = false);
+	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos2D &pos,     bool bMoveWordsX = false, bool bMoveWordsY = false) { SetTxtBoxPos(pos.x, pos.y, bMoveWordsX, bMoveWordsY); }
+	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos3D &pos,     bool bMoveWordsX = false, bool bMoveWordsY = false) { SetTxtBoxPos(pos.x, pos.y, bMoveWordsX, bMoveWordsY); }
+	// bSetAll : 既に配置している文字位置も設定するか  trueならSetWordPos関数を使用する
 	/* TextBoxのサイズ		*/void SetTxtBoxSize(float width, float height) { m_Info.TxtBoxSize = Pos2D(width, height); }
 	/* TextBoxの目標サイズ	*/void SetTxtBoxTgtSize(float width, float height) { m_Info.TxtBoxTgtSize = Pos2D(width, height); }
 	/* TextBoxのテクスチャ	*/void SetTxtBoxTex(const char* Path = NULL, int PthIdx = -1, int PthX = 1, int PthY = 1);
@@ -198,6 +199,7 @@ private:
 	/* 待機時間			*/void SetStandTime(int StandTime);
 	/* 文字の消す時間	*/void EraseTime(int time);
 	/* 文字の出現時間	*/void TextLetter(const char *Text, int DispText);
+	/* 配置した文字位置 */void SetWordPos(bool bMoveWordsX, bool bMoveWordsY);
 
 	// ***** 変数 *****
 	Info m_Info;

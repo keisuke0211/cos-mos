@@ -22,9 +22,9 @@ public:
 
 	//会話表示の種類
 	enum class SHOWTYPE {
-		Under = -1,// 画面下部に表示
+		Under = -1,// 画面中央下部に表示
 		Wipe,      // モデルとセリフを表示
-		PopOver,   // モデルの頭上にセリフを表示
+		Curtain,   // 画面上下に暗幕を用意してその上にセリフを表示
 		MAX
 	};
 
@@ -46,8 +46,15 @@ private:
 	//会話イベントのファイルパス
 	static const char *EVENT_FILE[(int)EVENT::MAX];
 
-	static const Pos3D TEXTBOX_UNDER_POS; //テキストボックスの画面下部位置
-	static CFloat POPOVER_FLOAT;          //頭上に表示する時の浮かせる量
+	//テキストボックスの画面下部位置
+	static const Pos3D TEXTBOX_UNDER_POS; 
+
+	static CFloat CURTAIN_WIDTH;              // カーテンの幅
+	static CFloat CURTAIN_HEIGHT;             // カーテンの高さ
+	static CFloat CURTAIN_OVER_BEHIND_POS_Y;  // 上部カーテン位置
+	static CFloat CURTAIN_BOTTOM_BEHIND_POS_Y;// 下部カーテン位置
+	static CInt CURTAIN_COUNTER = 20;         // カーテンの表示ON/OFFのアニメーションカウンター
+	static int s_CurtainCounter;              // アニメーションカウンター
 
 	static CInt NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
 	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
@@ -64,6 +71,8 @@ private:
 	void NextSpeak(void); //次にしゃべるテキストの設定
 	void Skip(void);      //会話スキップ
 
+	void SetCurtain(void);//暗幕設定
+
 	//会話情報
 	struct Talk
 	{
@@ -77,7 +86,6 @@ private:
 	bool   m_bTalk;       //会話中かどうか
 	CFontText *m_pText;
 	FormFont   m_pFont;
-	FormShadow m_pShadow;
 
 	Pos3D  m_pos;
 	Pos2D  m_size;
