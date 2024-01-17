@@ -39,7 +39,7 @@ public:
 	void	SetLaserSize(const D3DXVECTOR2 size) { m_LaserSize = size; }
 	void	SetXMoveReturn(const bool xReturn) { m_bXMoveReturn = xReturn; }
 
-
+	D3DXVECTOR3 GetBlockpos(void) { return m_pos; }
 	D3DXVECTOR3 GetLaserPos(void) { return m_LaserPos; }
 	D3DXVECTOR2	GetLaserSize(void) { return m_LaserSize; }
 	D3DXVECTOR3 GetMove(void) { return m_move; }

@@ -472,94 +472,110 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 {
 	// 本体
 	{
-		// 当たった方向ごとに処理を切り替え
-		switch (pColli->Rot)
+		D3DXVECTOR3 pos = pRoadTripLaser->GetBlockpos();
+		D3DXVECTOR3 Laserpos = pRoadTripLaser->GetLaserPos();
+		D3DXVECTOR3 Lasersize = pRoadTripLaser->GetLaserSize();
+
+		//プレイヤー取得
+		CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+
+		// ブロックやレーザーの範囲内にいるとき
+		if (Laserpos.y - Lasersize.y < pInfo->pos.y + pInfo->scale.y &&
+			pos.y + 15.0f > pInfo->pos.y - pInfo->scale.y	&&
+			pos.x + 20.0f > pInfo->pos.x - pInfo->scale.x &&
+			pos.x - 20.0f < pInfo->pos.x + pInfo->scale.x)
 		{
-			//*********************************
-			// 上に当たった
-			//*********************************
-			case ROT::OVER:
-				// 位置・移動量修正
-				FixPos_OVER(&pSelfInfo->pos.y, pColli->maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
-
-				// 表の世界のプレイヤー
-				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
-				{
-					//プレイヤー取得
-					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
-
-					//プレイヤーオプション設定
-					LandPlayerOption(pInfo, pColli->maxPos.y);
-					pSelfInfo->move = pRoadTripLaser->GetMove();
-				}
-				break;
-
-				//*********************************
-				// 下に当たった
-				//*********************************
-			case ROT::UNDER:
-				// 位置・移動量修正
-				FixPos_UNDER(&pSelfInfo->pos.y, pColli->minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
-
-				// 裏の世界のプレイヤー
-				if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
-				{
-					//プレイヤー取得
-					CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
-
-					//プレイヤーオプション設定
-					LandPlayerOption(pInfo, pColli->minPos.y);
-					pSelfInfo->move = pRoadTripLaser->GetMove();
-				}
-				break;
-
-				//*********************************
-				// 左に当たった
-				//*********************************
-			case ROT::LEFT:	FixPos_LEFT(&pSelfInfo->pos.x, pColli->minPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
-
-				//*********************************
-				// 右に当たった
-				//*********************************
-			case ROT::RIGHT:FixPos_RIGHT(&pSelfInfo->pos.x, pColli->maxPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
-
-				//*********************************
-				// 埋まった
-				//*********************************
-			case ROT::UNKNOWN:
-				// 移動床からの当たり判定
-				for (int nCntVec = 0; nCntVec < (int)CPlayer::VECTOL::MAX; nCntVec++)
-				{
-					SelfInfo self;						ColliInfo colliInfo;
-					self.pos = pColli->pos;				colliInfo.pos = pSelfInfo->pos;
-					self.posOld = pColli->posOld;		colliInfo.posOld = pSelfInfo->posOld;
-					self.fWidth = pColli->fWidth;		colliInfo.fWidth = pSelfInfo->fWidth;
-					self.fHeight = pColli->fHeight;		colliInfo.fHeight = pSelfInfo->fHeight;
-
-					// プレイヤーのどの方向に当たっているか
-					pColli->Rot = IsBoxToBoxCollider(self, colliInfo, (CPlayer::VECTOL)nCntVec);
-
-					// それでも当たらないなら、スキップ
-					if (pColli->Rot == ROT::NONE || pColli->Rot == ROT::UNKNOWN) continue;
-
-					// 当たった方向（上下・左右）を反転する
-					{
-						// 当たった方向をint型に変換
-						const int nRot = (int)pColli->Rot;
-						pColli->Rot = (ROT)(nRot - 1 + 2 * (nRot % 2));
-					}
-
-					// もう一度当たり判定
-					Laser(pSelfInfo, pRoadTripLaser, pColli);
-				}
-				break;
+			if (Laserpos.x + Lasersize.x > pInfo->pos.x - pInfo->scale.x
+				&& Laserpos.x - Lasersize.x < pInfo->pos.x + pInfo->scale.x
+				&& Laserpos.y + Lasersize.y > pInfo->pos.y - pInfo->scale.y
+				&& Laserpos.y - Lasersize.y < pInfo->pos.y + pInfo->scale.y)
+			{// レーザーの範囲内の時
+				*pDeath = true;
+			}
 		}
-	}
 
-	// レーザー
-	{
-		// 死亡処理
-		//*pDeath = true;
+		//// 当たった方向ごとに処理を切り替え
+		//switch (pColli->Rot)
+		//{
+		//	//*********************************
+		//	// 上に当たった
+		//	//*********************************
+		//	case ROT::OVER:
+		//		// 位置・移動量修正
+		//		FixPos_OVER(&pSelfInfo->pos.y, pColli->maxPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
+
+		//		// 表の世界のプレイヤー
+		//		if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::FACE)
+		//		{
+		//			//プレイヤー取得
+		//			CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+
+		//			//プレイヤーオプション設定
+		//			LandPlayerOption(pInfo, pColli->maxPos.y);
+		//			pSelfInfo->move = pRoadTripLaser->GetMove();
+		//		}
+		//		break;
+
+		//		//*********************************
+		//		// 下に当たった
+		//		//*********************************
+		//	case ROT::UNDER:
+		//		// 位置・移動量修正
+		//		FixPos_UNDER(&pSelfInfo->pos.y, pColli->minPos.y, &pSelfInfo->move.y, pSelfInfo->fHeight);
+
+		//		// 裏の世界のプレイヤー
+		//		if (pSide != NULL && *pSide == CPlayer::WORLD_SIDE::BEHIND)
+		//		{
+		//			//プレイヤー取得
+		//			CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
+
+		//			//プレイヤーオプション設定
+		//			LandPlayerOption(pInfo, pColli->minPos.y);
+		//			pSelfInfo->move = pRoadTripLaser->GetMove();
+		//		}
+		//		break;
+
+		//		//*********************************
+		//		// 左に当たった
+		//		//*********************************
+		//	case ROT::LEFT:	FixPos_LEFT(&pSelfInfo->pos.x, pColli->minPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
+
+		//		//*********************************
+		//		// 右に当たった
+		//		//*********************************
+		//	case ROT::RIGHT:FixPos_RIGHT(&pSelfInfo->pos.x, pColli->maxPos.x, &pSelfInfo->move.x, pSelfInfo->fWidth);	break;
+
+		//		//*********************************
+		//		// 埋まった
+		//		//*********************************
+		//	case ROT::UNKNOWN:
+		//		// 移動床からの当たり判定
+		//		for (int nCntVec = 0; nCntVec < (int)CPlayer::VECTOL::MAX; nCntVec++)
+		//		{
+		//			SelfInfo self;						ColliInfo colliInfo;
+		//			self.pos = pColli->pos;				colliInfo.pos = pSelfInfo->pos;
+		//			self.posOld = pColli->posOld;		colliInfo.posOld = pSelfInfo->posOld;
+		//			self.fWidth = pColli->fWidth;		colliInfo.fWidth = pSelfInfo->fWidth;
+		//			self.fHeight = pColli->fHeight;		colliInfo.fHeight = pSelfInfo->fHeight;
+
+		//			// プレイヤーのどの方向に当たっているか
+		//			pColli->Rot = IsBoxToBoxCollider(self, colliInfo, (CPlayer::VECTOL)nCntVec);
+
+		//			// それでも当たらないなら、スキップ
+		//			if (pColli->Rot == ROT::NONE || pColli->Rot == ROT::UNKNOWN) continue;
+
+		//			// 当たった方向（上下・左右）を反転する
+		//			{
+		//				// 当たった方向をint型に変換
+		//				const int nRot = (int)pColli->Rot;
+		//				pColli->Rot = (ROT)(nRot - 1 + 2 * (nRot % 2));
+		//			}
+
+		//			// もう一度当たり判定
+		//			Laser(pSelfInfo, pRoadTripLaser, pColli);
+		//		}
+		//		break;
+		//}
 	}
 }
 
