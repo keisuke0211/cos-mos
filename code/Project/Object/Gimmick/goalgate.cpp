@@ -42,6 +42,7 @@ CGoalGate::CGoalGate(void) {
 	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_bEntry = false;
 	m_bScale = false;
+	m_bLeave = false;
 	m_col = Color{ 200,0,0,255 };
 	m_Rainbow = RAINBOW::RED;
 	s_num++;
@@ -54,7 +55,7 @@ CGoalGate::CGoalGate(void) {
 	//モデルとテクスチャ
 	if(s_modelIdx          == NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	if(s_TexIdx[0]         == NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
-	if(s_TexIdx[1]         == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
+	if(s_TexIdx[1]         == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000RNL.jpg");
 	if(s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
 
 	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Door_1Up.txt"));
@@ -90,6 +91,8 @@ void CGoalGate::Init(void) {
 	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,255,255,255 };
 	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,255,0,255 };
 	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 255,255,0,255 };
+
+	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Door\\Open.txt");
 }
 
 //========================================
@@ -120,11 +123,21 @@ void CGoalGate::Update(void)
 	if (setCol.b > 255)setCol.b = 255;
 	if (setCol.a > 255)setCol.a = 255;
 
+	if (m_bLeave){
+		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Door\\Open.txt");
+		m_bLeave = false;
+	}
+
+	if (m_MotionIdx != m_MotionOldIdx) {
+		m_doll->SetMotion(m_MotionIdx);
+		m_MotionOldIdx = m_MotionIdx;
+	}
+
 	//モデル配置
 	m_doll->SetPos(m_pos + Pos3D(0.0f,RNLib::Number().GetPlusMinus(m_pos.y)*-22.0f,20.0f));
 	m_doll->SetRot(m_pos.y > 0 ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI));
-	//RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
-	//	->SetCol(setCol);
+	/*RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
+		->SetCol(setCol);*/
 
 	if (!CPlayer::GetSwapAnim()) {
 		if (!m_bCloseGate) {
@@ -169,7 +182,7 @@ void CGoalGate::StateUpdate(void)
 			m_rot.z -= 0.05f;
 	}
 
-	if (s_num == s_numEntry || m_bCloseGate == true)
+	if (s_num == s_numEntry && m_bCloseGate == true)
 	{
 		m_state = STATE::MAX;
 
@@ -389,7 +402,10 @@ void CGoalGate::SetEntry(bool bEntry)
 {
 	m_bEntry = bEntry;
 
+	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Door\\Close.txt");
+
 	if (bEntry) {
+		m_bLeave = false;
 		m_nEntryNo = s_numEntry++;
 		m_nCntEtrX = ETR_CNT;
 		m_nCntEtrY = ETR_CNT * 0.5;
