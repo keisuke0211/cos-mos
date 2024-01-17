@@ -25,22 +25,22 @@ END_TALK
 
 #会話内容
 SET_TALK
-	TALK    でも不時着してことで壊れてる...
+	TALK    でも不時着したことで壊れてる...
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    ロケットを直すためにパーツを集めなきゃ！
+	TALK    ロケットを直すためにパーツを集めよう！
 	PLAYER  1
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    ロケットの場所に行けば絶対弟に会える！
-	PLAYER  0
+	TALK    ロケットの場所に行けば絶対に会える！
+	PLAYER  2
 	TYPE    0
 END_TALK
 
