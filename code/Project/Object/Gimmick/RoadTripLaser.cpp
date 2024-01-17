@@ -144,7 +144,6 @@ void CRoadTripLaser::Update(void) {
 	
 	Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png"), m_LaserPos, INIT_EFFECT_SCALE, COLOR_WHITE, CParticle::TYPE::TYPE_STOP,1);
 
-	CRoadTripLaser::Collision(m_pos, m_rot, m_LaserPos, m_LaserSize);
 }
 //========================================
 // 当たり判定処理
@@ -155,13 +154,13 @@ void CRoadTripLaser::Collision(D3DXVECTOR3 pos,D3DXVECTOR3 rot, D3DXVECTOR3 Lase
 	CPlayer::WORLD_SIDE side = CPlayer::WORLD_SIDE::FACE;
 
 	// レーザーが表にいるか裏にいるか
-	if (rot.z == 0.0f)
+	if (pos.y >= 0.0f)
 	{
-		CPlayer::WORLD_SIDE side = CPlayer::WORLD_SIDE::FACE;
+		side = CPlayer::WORLD_SIDE::FACE;
 	}
 	else
 	{
-		CPlayer::WORLD_SIDE side = CPlayer::WORLD_SIDE::BEHIND;
+		side = CPlayer::WORLD_SIDE::BEHIND;
 	}
 
 	// レーザーのいる方のプレイヤーの情報を入手
