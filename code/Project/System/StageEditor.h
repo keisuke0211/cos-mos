@@ -175,6 +175,7 @@ private:
 		TYPE_Extenddog     = 6,		// ヌイ
 		TYPE_COIN          = 7,		// コイン
 		TYPE_MAGMA_BLOCK   = 8,		// マグマブロック
+		TYPE_BAT		   = 9,		// コウモリ
 		TYPE_FILL_BLOCK_11 = 11,	// ブロック(判定 無) 1 * 1
 		TYPE_FILL_BLOCK_12 = 12,	// ブロック(判定 無) 1 * 2
 		TYPE_FILL_BLOCK_13 = 13,	// ブロック(判定 無) 1 * 3
