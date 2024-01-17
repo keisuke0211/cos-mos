@@ -1,6 +1,6 @@
 #=======================================
 #
-#会話003[ステージ2-3とステージ3-1の間の会話]
+#会話003[エンディングの会話]
 #Author：HIRASAWA SHION
 #Scenario Writer：OMIYA AIRA
 #
@@ -11,35 +11,35 @@ NUM_TALK   5
 
 #会話内容
 SET_TALK
-	TALK    次に向かう惑星はなんか雰囲気が違うね
+	TALK    今回の宇宙旅行どうだった？
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    そうだなぁ...
+	TALK    いろいろな経験ができて楽しかったよ！
 	PLAYER  1
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    多分、今まで通りにはいかないと思うよ
+	TALK    それなら良かったよ！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    でも、二人の絆があれば大丈夫だよ！
+	TALK    またいつかこういう旅行をしてみたいね！
 	PLAYER  1
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    そうだね！じゃあ行こうか！
+	TALK    そうだね！またいつか！
 	PLAYER  0
 	TYPE    0
 END_TALK
