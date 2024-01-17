@@ -33,7 +33,7 @@ END_TALK
 #会話内容
 SET_TALK
 	TALK    うん！荷物持ったよ！
-	PLAYER  0
+	PLAYER  1
 	TYPE    0
 END_TALK
 
