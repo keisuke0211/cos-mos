@@ -116,7 +116,8 @@ CPlayer::CPlayer()
 		Player.landingCounter = false;
 		Player.bJump = false;                  // ジャンプ
 		Player.bRide = false;                  // ロケットに乗っているかどうか
-		Player.bGoal = false;                  // ゴールしたかどうか
+		Player.bGoal = false;				   // ゴールしたかどうか
+		Player.pGoalGate = NULL;
 		Player.fJumpPower = 0.0f;              // ジャンプ量
 		Player.fGravity = 0.0f;                // 重力
 		Player.fMaxHeight = 0.0f;              // 最高Ｙ座標
@@ -827,7 +828,7 @@ void CPlayer::ActionControl(void)
 			CRocket::RideOff();
 			Player.bRide = false;
 			Player.bGoal = false;
-
+			Player.pGoalGate->LeaveDoor();
 		}
 
 		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ
@@ -1319,13 +1320,13 @@ void CPlayer::CollisionToStageObject(void)
 				case OBJECT_TYPE::SPIKE:     CCollision::Spike(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::METEOR:    CCollision::Meteor(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
-				//case OBJECT_TYPE::LASER:   CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, &Player.side, &bDeath);	break;
+				case OBJECT_TYPE::LASER:   CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::GOALGATE:  CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::PARTS:     CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::ROCKET:    CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::PILE:      CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
-				}
+				}		
 
 				// 結果死亡した時、死亡した種類を保存
 				if (!deathOld && aDeath[nCntPlayer])

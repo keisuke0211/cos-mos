@@ -298,8 +298,7 @@ void CMode_Title::Update(void) {
 		if (m_bWorldChange == false && m_bStgEnter == false) {
 			if (m_bRocketMove == false) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
-					Manager::Transition().GetState() == CTransition::STATE::NONE &&
-					Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == false)
+					Manager::Transition().GetState() == CTransition::STATE::NONE)
 				{
 					switch (Title)
 					{
@@ -312,18 +311,20 @@ void CMode_Title::Update(void) {
 						break;
 					case TITLE_SELECT:
 					{
-						if (!Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) || RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
-							if (m_Direction == RIGHT)
-								m_RocketPos = FADEROCKET;
-							else if (m_Direction == LEFT)
-								m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+						if (Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == false) {
+							if (!Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) || RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
+								if (m_Direction == RIGHT)
+									m_RocketPos = FADEROCKET;
+								else if (m_Direction == LEFT)
+									m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
 
-							m_RocketposDiff = m_RocketPos - m_RocketPosOld;
-							m_RocketAnimCnt = 0;
-							m_nStgStartCnt = 0;
-							m_bStgEnter = true;
+								m_RocketposDiff = m_RocketPos - m_RocketPosOld;
+								m_RocketAnimCnt = 0;
+								m_nStgStartCnt = 0;
+								m_bStgEnter = true;
 
-							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_MOVE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
+								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_MOVE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
+							}
 						}
 					}
 					break;

@@ -17,6 +17,7 @@ class CRoadTripLaser;
 class CExtenddog;
 class CPile;
 class CCollision;
+class CGoalGate;
 
 // プレイヤークラス
 class CPlayer {
@@ -86,6 +87,7 @@ public:
 		bool  bRide;         // ロケットに乗っているかどうか
 		int   nRideInterval; //ロケットに乗り降りした時のインターバル
 		bool  bGoal;         // ゴールしたかどうか
+		CGoalGate *pGoalGate;
 		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間
 		float fTramTargetPosY;  // トランポリン用の目標位置
 		bool  bTramJump;        // トランポリン用の特殊ジャンプ
