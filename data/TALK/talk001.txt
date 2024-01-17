@@ -39,7 +39,7 @@ END_TALK
 
 #会話内容
 SET_TALK
-	TALK    こうなったら探しに行くか！
+	TALK    こうなったらロケットを探しに行くか！
 	PLAYER  2
 	TYPE    1
 END_TALK

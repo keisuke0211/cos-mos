@@ -1,0 +1,30 @@
+SetUp3DFile
+boneDataSum{ 3
+	boneData{
+		idx 0
+		modelIdx data\\Model\\W1_Goal_Down\\Frame.x
+		parentIdx -1
+		relativePos 0.00 0.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+	
+	boneData{
+		idx 1
+		modelIdx data\\Model\\W1_Goal_Down\\Door.x
+		parentIdx 0
+		relativePos -14.00 0.00 0.00
+		relativeRot 0.00 1.0 0.00
+	}
+	boneData{
+		idx 2
+		modelIdx data\\Model\\W1_Goal_Down\\Door.x
+		parentIdx 0
+		relativePos 14.00 0.00 0.00
+		relativeRot 0.00 0.00 0.00
+	}
+}
+
+faceDataSum{ 0
+
+}
+END

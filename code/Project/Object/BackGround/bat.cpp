@@ -7,8 +7,8 @@
 #include "bat.h"
 #include "../../main.h"
 #include"../../Character/player.h"
-#define	MOVE_UP		(D3DXVECTOR3(1.0f,0.3f,0.0f))
-#define	MOVE_DOWN	(D3DXVECTOR3(1.0f,-0.3f,0.0f))
+#define	MOVE_UP		(D3DXVECTOR3(0.0f,0.3f,0.0f))
+#define	MOVE_DOWN	(D3DXVECTOR3(0.0f,-0.3f,0.0f))
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CBatƒNƒ‰ƒX
