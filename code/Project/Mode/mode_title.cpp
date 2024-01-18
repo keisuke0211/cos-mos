@@ -22,6 +22,8 @@
 #include "../../_RNLib/Basis/3DObject/rail3D.h"
 #include "../Talk/talk.h"
 
+#define DEFAULT_BG_COLOR Color(165,75,124,255)
+
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CMode_Titleクラス
@@ -77,9 +79,9 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 		}
 	}
 
-	BgColor = Color{ 0,0,0,255 };
-	BgOldColor = Color{ 0,0,0,255 };
-	BgNextColor = Color{ 0,0,0,255 };
+	BgColor = DEFAULT_BG_COLOR;
+	BgOldColor = DEFAULT_BG_COLOR;
+	BgNextColor = DEFAULT_BG_COLOR;
 	nCntColorChange = 0;
 	bColorChange = false;
 
@@ -637,7 +639,7 @@ void CMode_Title::StageSelect(void) {
 				TextRelease(TEXT_MENU);
 				SwapMode(TITLE_MENU_ANIME);
 
-				BgNextColor = Color{ 0,0,0,255 };
+				BgNextColor = DEFAULT_BG_COLOR;
 				bColorChange = true;
 				return;
 			}
@@ -775,7 +777,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 	{//看板
 		//ステージ看板
 		RNLib::Model().Put(PRIORITY_OBJECT, m_WldBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
-			->SetOutLineIdx(5)
+			->SetOutLineIdx(2)
 			->SetCol(Color(211, 170, 132, 255));
 		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
 			->SetSize(Size2D(3.0f, 3.0f))
@@ -784,10 +786,10 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		//コイン看板
 		if(!m_bStgEnter)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
-			->SetOutLineIdx(5);
+			->SetOutLineIdx(2);
 		else if (m_bStgEnter)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f + (18.0f * (1.0f - CountRate)), -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
-			->SetOutLineIdx(5);
+			->SetOutLineIdx(2);
 
 		if (m_CoinUI != NULL) {
 			if(m_bStgEnter)
@@ -930,7 +932,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		
 			{//ロケット描画
 				Matrix mtxRocket = RNLib::Matrix().ConvPosRotScaleToMtx(m_RocketPosOld + (m_RocketposDiff * RktAnimRt),m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f));
-				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, mtxRocket, false);
+				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, mtxRocket, false)
+					->SetOutLineIdx(10);
 
 				Color Effcol[3];
 				Effcol[0] = Color(255, 55, 0, 255);
@@ -954,8 +957,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
  				Matrix effMtx = RNLib::Matrix().MultiplyMtx(
 					mtxRocket,
-					RNLib::Matrix().ConvPosRotToMtx(TexPos,Rot3D(0.0f,0.0f,D3DX_PI)));
 
+					RNLib::Matrix().ConvPosRotToMtx(TexPos,Rot3D(0.0f,0.0f,D3DX_PI)));
 				D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
