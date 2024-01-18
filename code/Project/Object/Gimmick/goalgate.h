@@ -67,6 +67,7 @@ private:
 	Color m_col;							//色
 	Color m_RainbowCol[(int)RAINBOW::MAX];	//色
 	Scale3D m_scale;						//拡縮
+	CCamera m_camera;						//カメラ
 	static int s_modelIdx;					//モデル番号
 	static int s_TexIdx[2];					//テクスチャ番号
 	static int s_num;
