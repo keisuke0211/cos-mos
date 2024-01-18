@@ -90,12 +90,12 @@ private:
 	};
 
 	// ***** 関数 *****
-	/* 文字の設定	*/void SetWords(const char*Text, CFont::FONT Type);
-
+	/* 文字の設定 */ void SetWords(const char*Text, CFont::FONT Type);
+	/*  頂点座標  */ void SetVtxPos(void);
 	/* 変数	*/
 	Info m_Info;
-	LPDIRECT3DTEXTURE9 m_pTex;			// テクスチャ情報
-	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// 頂点バッファ
+	LPDIRECT3DTEXTURE9      m_pTex;     // テクスチャ情報
+	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff; // 頂点バッファ
 
 };
 

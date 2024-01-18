@@ -23,7 +23,6 @@ public:
 	//会話表示の種類
 	enum class SHOWTYPE {
 		Under = -1,// 画面中央下部に表示
-		Wipe,      // モデルとセリフを表示
 		Curtain,   // 画面上下に暗幕を用意してその上にセリフを表示
 		MAX
 	};
@@ -46,15 +45,17 @@ private:
 	//会話イベントのファイルパス
 	static const char *EVENT_FILE[(int)EVENT::MAX];
 
-	//テキストボックスの画面下部位置
-	static const Pos3D TEXTBOX_UNDER_POS; 
+	//画面下部表示の位置・サイズ
+	static const Pos3D TYPE_UNDER_POS;
+	static CFloat TYPE_UNDER_FONT_SIZE;
 
-	static CFloat CURTAIN_WIDTH;              // カーテンの幅
-	static CFloat CURTAIN_HEIGHT;             // カーテンの高さ
-	static CFloat CURTAIN_OVER_BEHIND_POS_Y;  // 上部カーテン位置
-	static CFloat CURTAIN_BOTTOM_BEHIND_POS_Y;// 下部カーテン位置
-	static CInt CURTAIN_COUNTER = 20;         // カーテンの表示ON/OFFのアニメーションカウンター
-	static int s_CurtainCounter;              // アニメーションカウンター
+	static CFloat TYPE_CURTAIN_WIDTH;              // カーテンの幅
+	static CFloat TYPE_CURTAIN_HEIGHT;             // カーテンの高さ
+	static CFloat TYPE_CURTAIN_OVER_BEHIND_POS_Y;  // 上部カーテン位置
+	static CFloat TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y;// 下部カーテン位置
+	static CInt   TYPE_CURTAIN_COUNTER = 20;       // カーテンの表示ON/OFFのアニメーションカウンター
+	static CFloat TYPE_CURTAIN_FONT_SIZE;          // カーテンのフォントサイズ
+	static int    s_CurtainCounter;                // アニメーションカウンター
 
 	static CInt NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
 	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル

@@ -21,6 +21,9 @@ CWords::CWords(int nPriority) : CFontObject(nPriority)
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.moveRot = INITD3DXVECTOR3;
 	m_Info.col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+
+	m_pTex = NULL;
+	m_pVtxBuff = NULL;
 }
 
 //========================================
@@ -53,32 +56,21 @@ HRESULT CWords::Init(void)
 		&m_pVtxBuff,
 		NULL);
 
-	// 頂点情報へのポインタ
-	VERTEX_2D*pVtx;
-
-	// 頂点バッファをロックし、頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
 	//-------------------
 	// 頂点情報の設定
 	//-------------------
-	pVtx[0].pos = D3DXVECTOR3(m_Info.pos.x, m_Info.pos.y, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(m_Info.pos.x, m_Info.pos.y, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(m_Info.pos.x, m_Info.pos.y, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(m_Info.pos.x, m_Info.pos.y, 0.0f);
-
-	// rhwの設定
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
+	SetVtxPos();
 
 	// 頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	SetColar(m_Info.col);
 
+	//頂点バッファをロックし頂点情報へのポインタを取得
+	VERTEX_2D *pVtx;
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	// rhwの設定
+	pVtx[0].rhw = pVtx[1].rhw = pVtx[2].rhw = pVtx[3].rhw = 1.0f;
+	
 	// テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
@@ -111,37 +103,12 @@ void CWords::Uninit(void)
 //========================================
 void CWords::Update(void)
 {
+	// 位置・向き更新
+	m_Info.pos += m_Info.move;
 	m_Info.rot.z += m_Info.moveRot.z;
 
-	// 頂点へのポインタ
-	VERTEX_2D *pVtx;
-
-	// 頂点バッファをロックし頂点情報へのポインタを取得
-	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	D3DXVECTOR3 addPos[4];
-	D3DXMATRIX mtx;	// 計算用マトリックス
-
-	// マトリックス作成
-	D3DXMatrixIdentity(&mtx);
-	D3DXMatrixRotationYawPitchRoll(&mtx, 0.0f, 0.0f, m_Info.rot.z);
-
-	// 頂点座標
-	for (int i = 0; i < 4; ++i)
-	{
-		D3DXVec3TransformCoord(&addPos[i], &m_Vtx[i], &mtx);
-
-		pVtx[i].pos.x = m_Info.pos.x + (addPos[i].x * m_Info.size.x);// <-サイズ変更
-		pVtx[i].pos.y = m_Info.pos.y + (addPos[i].y * m_Info.size.y);// <-サイズ変更
-		pVtx[i].pos.z = 0.0f;
-	}
-
-	// 頂点バッファをアンロック
-	m_pVtxBuff->Unlock();
-
-
-	// 位置更新
-	m_Info.pos += m_Info.move;
+	//頂点座標設定
+	SetVtxPos();
 }
 
 //========================================
@@ -180,9 +147,9 @@ CWords *CWords::Create(const char*text, D3DXVECTOR3 pos, D3DXVECTOR3 size, CFont
 	{
 		pWords->SetPos(pos);
 		pWords->SetSize(size);
-		pWords->Init();
 		pWords->SetWords(text, type);
 		pWords->SetColar(col);
+		pWords->Init();
 	}
 	return pWords;
 }
@@ -230,6 +197,9 @@ void CWords::SetWords(const char*text, CFont::FONT type)
 void CWords::SetPos(const D3DXVECTOR3 &pos)
 {
 	m_Info.pos = pos;
+
+	//頂点座標設定
+	SetVtxPos();
 }
 
 //========================================
@@ -247,9 +217,10 @@ void CWords::SetColar(D3DXCOLOR col)
 {
 	m_Info.col = col;
 
-	VERTEX_2D *pVtx; //頂点へのポインタ
+	if (m_pVtxBuff == NULL) return;
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
+	VERTEX_2D *pVtx;
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	pVtx[0].col = D3DXCOLOR(m_Info.col.r, m_Info.col.g, m_Info.col.b, m_Info.col.a);
@@ -258,5 +229,39 @@ void CWords::SetColar(D3DXCOLOR col)
 	pVtx[3].col = D3DXCOLOR(m_Info.col.r, m_Info.col.g, m_Info.col.b, m_Info.col.a);
 
 	//頂点バッファをアンロック
+	m_pVtxBuff->Unlock();
+}
+
+//========================================
+// 頂点座標
+//========================================
+void CWords::SetVtxPos(void)
+{
+	if (m_pVtxBuff == NULL) return;
+
+	//頂点バッファをロックし頂点情報へのポインタを取得
+	VERTEX_2D *pVtx;
+	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 計算用マトリックス
+	D3DXMATRIX mtx;
+
+	// マトリックス作成
+	D3DXMatrixIdentity(&mtx);
+	D3DXMatrixRotationYawPitchRoll(&mtx, 0.0f, 0.0f, m_Info.rot.z);
+
+	// 頂点座標
+	for (int i = 0; i < 4; ++i)
+	{
+		D3DXVECTOR3 addPos = INITPOS3D;
+		D3DXVec3TransformCoord(&addPos, &m_Vtx[i], &mtx);
+
+		// サイズ変更
+		pVtx[i].pos.x = m_Info.pos.x + (addPos.x * m_Info.size.x);
+		pVtx[i].pos.y = m_Info.pos.y + (addPos.y * m_Info.size.y);
+		pVtx[i].pos.z = 0.0f;
+	}
+
+	// 頂点バッファをアンロック
 	m_pVtxBuff->Unlock();
 }
