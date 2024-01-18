@@ -3,7 +3,7 @@
 // テキスト表示
 // 
 //========================================
-// *** text.h ***
+// *** text.h *** www
 //========================================
 #pragma once
 
@@ -17,11 +17,11 @@
 // テキスト情報(生成用)
 struct FormFont
 {
-	D3DXCOLOR col;		// 文字の色
-	float fTextSize;	// 文字のサイズ(初期値 20)
-	int nAppearTime;	// 1文字目が表示されるまでの時間(初期値 1)
-	int nStandTime;		// 待機時間(初期値 10)
-	int nEraseTime;		// 消えるまでの時間(初期値 1) ※ 0 は消えない
+	D3DXCOLOR col;       // 文字の色
+	float fTextSize;     // 文字のサイズ(初期値 20)
+	int nAppearTime;     // 2文字目以降が表示されるまでの時間(初期値 1)
+	int nStandTime;      // 待機時間(初期値 10)
+	int nEraseTime;      // 消えるまでの時間(初期値 1) ※ 0 は消えない
 };
 
 // 影情報(生成用)
@@ -92,7 +92,7 @@ public:
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
 	// -- 設定 ------------------------------------------
-	/* 生成中の文字を一括で	*/void SetTexrSkip(bool skip) { m_Info.bLetterSkip = skip; }
+	/* 生成中の文字を一括で	*/void SetTexrSkip(bool skip) { m_Info.bLetterSkip = skip; }//www
 	/* 移動量				*/void SetMove(Pos3D move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
@@ -109,12 +109,14 @@ public:
 	/* TextBoxの種類		*/void SetTxtBoxType(Box type);
 	/* テキストの色			*/bool SetTxtColor(D3DXCOLOR col);
 	/* テキストのサイズ		*/bool SetTxtSize(float size);
+	/* 出現時間				*/void SetAppearTime(CInt nAppearTime) { m_Info.nAppearTime = nAppearTime; }
 	/* 文字変更(単体)		*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
 	/* 文字変更(全体)		*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
 	/* テキストの再生		*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
 
 
 	// -- 取得 ------------------------------------------
+	/* 何文字表示したか */int GetPopCount() { return m_Info.nLetterPopCount; }
 	/* TxtBotのTex番号	*/Box GetTxtBoxType() { return m_Info.Tex.type; }
 	/* 位置				*/Pos2D GetTxtBoxPos() { return m_Info.TxtBoxPos; }
 	/* Txtサイズ		*/Pos2D GetTxtBoxSize() { return m_Info.TxtBoxSize; }
@@ -179,7 +181,7 @@ private:
 
 		Shadow aShadow;			// 影
 
-		bool bTextBok;			// テキストボックスの表示フラグ
+		bool bTextBok;			// テキストボックスの表示フラグ wwwwwwwwww
 		bool bPause;			// ポーズ中でも動くか（false：動かない）
 		bool bSpace;			// 空白表示フラグ(sprintf用)
 		string sText;			// 表示するテキスト
@@ -198,7 +200,7 @@ private:
 	/* テキスト サイズ	*/void SetTextSize(float TextSize);
 	/* 待機時間			*/void SetStandTime(int StandTime);
 	/* 文字の消す時間	*/void EraseTime(int time);
-	/* 文字の出現時間	*/void TextLetter(const char *Text, int DispText);
+	/* 文字の出現時間	*/void TextLetter(const char *Text, int nAppearTime);
 	/* 配置した文字位置 */void SetWordPos(bool bMoveWordsX, bool bMoveWordsY);
 
 	// ***** 変数 *****

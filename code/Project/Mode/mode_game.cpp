@@ -84,7 +84,8 @@ void CMode_Game::Init(void) {
 	//開始時間取得
 	RestartTime();
 
-	if (g_pGameTalk == NULL)
+	// 1-1のみ会話文表示
+	if (g_pGameTalk == NULL && Manager::StgEd()->GetPlanetIdx() == 0 && Manager::StgEd()->GetType()[0].nStageIdx == 0)
 		g_pGameTalk = CTalk::Create(CTalk::EVENT::OPENING_1_1);
 }
 

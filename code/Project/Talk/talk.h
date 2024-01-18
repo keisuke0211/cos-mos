@@ -57,9 +57,10 @@ private:
 	static CFloat TYPE_CURTAIN_FONT_SIZE;          // カーテンのフォントサイズ
 	static int    s_CurtainCounter;                // アニメーションカウンター
 
+	static CInt TYPE_CURTAIN_APPEAR_INTERVAL = 60;
 	static CInt NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
 	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
-	static CInt AUTO_COUNTER = 100;       //発言終了から自動進行するまでのカウンター
+	static CInt AUTO_COUNTER = 60;       //発言終了から自動進行するまでのカウンター
 
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込

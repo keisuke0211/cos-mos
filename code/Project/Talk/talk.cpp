@@ -20,10 +20,10 @@ const Pos3D CTalk::TYPE_UNDER_POS = Pos3D(230.0f, 700.0f, 0.0f);
 CFloat CTalk::TYPE_UNDER_FONT_SIZE = 40.0f;
 
 /*  カーテンの幅  */ CFloat CTalk::TYPE_CURTAIN_WIDTH = 1280.0f;
-/* カーテンの高さ */ CFloat CTalk::TYPE_CURTAIN_HEIGHT = 60.0f;
+/* カーテンの高さ */ CFloat CTalk::TYPE_CURTAIN_HEIGHT = 40.0f;
 /*上部カーテン位置*/ CFloat CTalk::TYPE_CURTAIN_OVER_BEHIND_POS_Y = -TYPE_CURTAIN_HEIGHT;
 /*下部カーテン位置*/ CFloat CTalk::TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y = 720.0f + TYPE_CURTAIN_HEIGHT;
-/* フォントサイズ */ CFloat CTalk::TYPE_CURTAIN_FONT_SIZE = 50.0f;
+/* フォントサイズ */ CFloat CTalk::TYPE_CURTAIN_FONT_SIZE = 35.0f;
 
 /*アニメーションカウンター*/int CTalk::s_CurtainCounter = 0;
 
@@ -278,7 +278,7 @@ void CTalk::ShowType(void)
 void CTalk::Auto(void)
 {
 	// フラグがTRUEでカウンター増加
-	if (m_bAuto && m_pText != NULL && m_pText->GetLetter() && m_nTalkID + 1 < m_nTalkNumAll)
+	if (m_bAuto && m_pText != NULL && m_pText->GetLetter())
 		m_nAutoCounter++;
 
 	// フラグ切替
@@ -341,6 +341,10 @@ void CTalk::Skip(void)
 //=======================================
 void CTalk::SetFontOption(const SHOWTYPE& type)
 {
+	m_pFont.nAppearTime = 5; // 1文字目が表示されるまでの時間
+	m_pFont.nStandTime = NEXT_POPUP_INTERVAL;  // 待機時間
+	m_pFont.nEraseTime = 0;  // 消えるまでの時間
+
 	switch (type) {
 			//==========================
 			// 画面下部に表示
@@ -348,7 +352,19 @@ void CTalk::SetFontOption(const SHOWTYPE& type)
 
 			//==========================
 			// 画面上下に黒幕を用意してその上にセリフを表示
-		case SHOWTYPE::Curtain: m_pFont.fTextSize = TYPE_CURTAIN_FONT_SIZE; break;
+		case SHOWTYPE::Curtain: 
+			m_pFont.fTextSize = TYPE_CURTAIN_FONT_SIZE;
+
+			if (m_pText != NULL)
+			{
+				//暗幕が表示しきるまで待機
+				if (m_nTalkID == 0 && m_pText->GetPopCount() == 0)
+					m_pFont.nAppearTime = TYPE_CURTAIN_APPEAR_INTERVAL;
+
+				//出現時間を設定
+				m_pText->SetAppearTime(m_pFont.nAppearTime);
+			}
+			break;
 	}
 
 	if (s_pTalk != NULL)
@@ -364,10 +380,6 @@ void CTalk::SetFontOption(const SHOWTYPE& type)
 		// 違えば白に
 		else m_pFont.col = COLOR_WHITE;
 	}
-
-	m_pFont.nAppearTime = 5; // 1文字目が表示されるまでの時間
-	m_pFont.nStandTime = 8;  // 待機時間
-	m_pFont.nEraseTime = 0;  // 消えるまでの時間
 }
 
 //=======================================
@@ -390,16 +402,17 @@ void CTalk::SetCurtain(void)
 	CFloat CenterX = RNLib::Window().GetCenterX();
 	CFloat CurtainOverPos = TYPE_CURTAIN_OVER_BEHIND_POS_Y + Move;
 	CFloat CurtainBottomPos = TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y - Move;
+	const Color CURTAIN_COLOR = { 0,0,0,200 };
 
 	//上の幕
 	RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainOverPos), 0.0f)
 		->SetSize(TYPE_CURTAIN_WIDTH, TYPE_CURTAIN_HEIGHT)
-		->SetCol(COLOR_BLACK);
+		->SetCol(CURTAIN_COLOR);
 
 	//下の幕
 	RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainBottomPos), 0.0f)
 		->SetSize(TYPE_CURTAIN_WIDTH, TYPE_CURTAIN_HEIGHT)
-		->SetCol(COLOR_BLACK);
+		->SetCol(CURTAIN_COLOR);
 
 	//カウンターが０でセリフ削除
 	if (s_CurtainCounter == 0)

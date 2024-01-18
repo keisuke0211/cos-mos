@@ -3,7 +3,7 @@
 // テキスト表示
 // 
 //========================================
-// *** text.cpp ***
+// *** text.cpp *** www
 //========================================
 #include "font-text.h"
 #include "../../manager.h"
@@ -13,9 +13,9 @@
 //========================================
 CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 {
-	m_Info.TxtBoxPos = INITD3DXVECTOR2;
+	m_Info.TxtBoxPos = INITPOS2D;
 	m_Info.TxtBoxCol = COLOR_WHITE;
-	m_Info.TxtBoxMove = INITD3DXVECTOR2;
+	m_Info.TxtBoxMove = INITPOS2D;
 	m_Info.FontCol = INITD3DCOLOR;
 	m_Info.TxtBoxColOld = INITD3DCOLOR;
 	m_Info.FontColOld = INITD3DCOLOR;
@@ -50,8 +50,8 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.bSpace = false;
 
 	m_Info.aShadow.col = INITD3DCOLOR;
-	m_Info.aShadow.AddPos = INITD3DXVECTOR3;
-	m_Info.aShadow.AddSize = INITD3DXVECTOR2;
+	m_Info.aShadow.AddPos = INITPOS3D;
+	m_Info.aShadow.AddSize = INITPOS2D;
 	m_Info.aShadow.bShadow = false;
 }
 
@@ -165,7 +165,7 @@ void CFontText::Update()
 		}
 	}
 
-	m_Info.TxtBoxMove = INITD3DXVECTOR2;
+	m_Info.TxtBoxMove = INITPOS2D;
 
 	// テキスト生成
 	if (!m_Info.bLetterEnd)
@@ -250,8 +250,8 @@ CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, 
 		if (Shadow == NULL)
 		{
 			pText->m_Info.aShadow.col = INITD3DCOLOR;
-			pText->m_Info.aShadow.AddPos = INITD3DXVECTOR3;
-			pText->m_Info.aShadow.AddSize = INITD3DXVECTOR2;
+			pText->m_Info.aShadow.AddPos = INITPOS3D;
+			pText->m_Info.aShadow.AddSize = INITPOS2D;
 			pText->m_Info.aShadow.bShadow = false;
 		}
 		else if (Shadow != NULL)
@@ -287,7 +287,7 @@ CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, 
 //========================================
 void CFontText::LetterForm(void)
 {
-	float fTxtSize = m_Info.fTextSize;
+	CFloat& fTxtSize = m_Info.fTextSize;
 
 	if (++m_Info.nAddCount >= m_Info.nAppearTime)
 	{// 表示する時間を上回ったら、
@@ -319,14 +319,14 @@ void CFontText::LetterForm(void)
 						Pos2D AddSize = m_Info.aShadow.AddSize;
 
 						m_Info.aShadow.shadow[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-							D3DXVECTOR3((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
-							D3DXVECTOR3(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
+							Pos3D((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
+							Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 							m_Info.FontType, m_Info.aShadow.col);
 					}
 
 					m_Info.words[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-						D3DXVECTOR3((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
-						D3DXVECTOR3(fTxtSize, fTxtSize, 0.0f),
+						Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
+						Pos3D(fTxtSize, fTxtSize, 0.0f),
 						m_Info.FontType, m_Info.FontCol);
 
 					m_Info.nLetterPopCount++;
@@ -355,14 +355,14 @@ void CFontText::LetterForm(void)
 							Pos2D AddSize = m_Info.aShadow.AddSize;
 
 							m_Info.aShadow.shadow[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-								D3DXVECTOR3((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
-								D3DXVECTOR3(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
+								Pos3D((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
+								Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 								m_Info.FontType, m_Info.aShadow.col);
 						}
 
 						m_Info.words[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
-							D3DXVECTOR3((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
-							D3DXVECTOR3(fTxtSize, fTxtSize, 0.0f),
+							Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
+							Pos3D(fTxtSize, fTxtSize, 0.0f),
 							m_Info.FontType, m_Info.FontCol);
 
 						m_Info.nLetterPopCount++;
@@ -507,12 +507,12 @@ void CFontText::EraseTime(int Time)
 //========================================
 // 表示するまでの時間
 //========================================
-void CFontText::TextLetter(const char * Text, int AppearTime)
+void CFontText::TextLetter(const char *Text, int nAppearTime)
 {
 	m_Info.sALLText = Text;
 	m_Info.nTextLength = m_Info.sALLText.size();
-	m_Info.nAddCount = AppearTime;
-	m_Info.nAppearTime = m_Info.nAddCount;
+	m_Info.nAddCount = 0;
+	m_Info.nAppearTime = nAppearTime;
 	m_Info.nAddLetter = 0;
 	m_Info.bLetterSkip = false;
 	m_Info.bLetterEnd = false;
@@ -676,7 +676,7 @@ bool CFontText::SetTxtSize(float size)
 	{
 		if (m_Info.words[wordsCount] != NULL)
 		{
-			m_Info.words[wordsCount]->SetSize(D3DXVECTOR3(size,size,0.0f));
+			m_Info.words[wordsCount]->SetSize(Pos3D(size,size,0.0f));
 		}
 		else
 		{
@@ -710,8 +710,8 @@ bool CFontText::ChgWords(char* Text, int nIdx, D3DXCOLOR col)
 			if (Text != NULL)
 			{
 				m_Info.aShadow.shadow[nIdx] = CWords::Create(Text,
-					D3DXVECTOR3(pos.x + AddPos.x, pos.y + AddPos.y, pos.z + AddPos.z),
-					D3DXVECTOR3(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
+					Pos3D(pos.x + AddPos.x, pos.y + AddPos.y, pos.z + AddPos.z),
+					Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 					m_Info.FontType, ShadowCol);
 			}
 		}
@@ -721,7 +721,7 @@ bool CFontText::ChgWords(char* Text, int nIdx, D3DXCOLOR col)
 		{
 			m_Info.words[nIdx] = CWords::Create(Text,
 				pos,
-				D3DXVECTOR3(fTxtSize, fTxtSize, 0.0f),
+				Pos3D(fTxtSize, fTxtSize, 0.0f),
 				m_Info.FontType, col);
 		}
 
@@ -827,8 +827,8 @@ void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FormFont *p
 
 	if (Shadow == NULL){
 		m_Info.aShadow.col = INITD3DCOLOR;
-		m_Info.aShadow.AddPos = INITD3DXVECTOR3;
-		m_Info.aShadow.AddSize = INITD3DXVECTOR2;
+		m_Info.aShadow.AddPos = INITPOS3D;
+		m_Info.aShadow.AddSize = INITPOS2D;
 		m_Info.aShadow.bShadow = false;
 	}
 	else if (Shadow != NULL){
