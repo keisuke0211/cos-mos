@@ -571,6 +571,7 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CObject *obj, 
 		CGoalGate *GoalGateObj = dynamic_cast<CGoalGate*>(obj);
 		GoalGateObj->SetEntry(true);
 
+		pInfo->pGoalGate = GoalGateObj;
 		pInfo->bGoal = true;
 		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 		{

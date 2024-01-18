@@ -15,8 +15,14 @@ const char *CTalk::EVENT_FILE[(int)EVENT::MAX] = {
 	"data\\TALK\\talk002.txt", // ロケット発見(1-3クリア後
 };
 
-const Pos3D CTalk::TEXTBOX_UNDER_POS = Pos3D(330.0f, 700.0f, 0.0f); //テキストボックスの画面下部位置
-CFloat      CTalk::POPOVER_FLOAT = 10.0f;           //頭上に表示する時の浮かせる量
+//テキストボックスの画面下部位置
+const Pos3D CTalk::TEXTBOX_UNDER_POS = Pos3D(330.0f, 700.0f, 0.0f); 
+
+/*  カーテンの幅  */ CFloat CTalk::CURTAIN_WIDTH = 1280.0f;
+/* カーテンの高さ */ CFloat CTalk::CURTAIN_HEIGHT = 80.0f;
+/*上部カーテン位置*/ CFloat CTalk::CURTAIN_OVER_BEHIND_POS_Y = -CURTAIN_HEIGHT;
+/*下部カーテン位置*/ CFloat CTalk::CURTAIN_BOTTOM_BEHIND_POS_Y = 720.0f + CURTAIN_HEIGHT;
+/*アニメーションカウンター*/int CTalk::s_CurtainCounter = 0;
 
 CTalk::Talk  *CTalk::s_pTalk = NULL;        //会話内容
 CTalk::EVENT  CTalk::s_Event = EVENT::NONE; //イベント
@@ -39,11 +45,6 @@ CTalk::CTalk()
 
 	SetFontOption(SHOWTYPE::Under);
 
-	m_pShadow.col = COLOR_BLACK; // 影の色
-	m_pShadow.bShadow = true;                   // 影フラグ
-	m_pShadow.AddPos = Pos3D(6.0f, 6.0f, 0.0f); // 文字の位置からずらす値
-	m_pShadow.AddSize = Pos2D(4.0f, 4.0f);      // 文字のサイズの加算値
-
 	//会話ログ削除
 	DeleteLog();
 }
@@ -53,6 +54,8 @@ CTalk::CTalk()
 //=======================================
 CTalk::~CTalk()
 {
+	s_CurtainCounter = 0;
+
 	//会話ログ削除
 	DeleteLog();
 }
@@ -106,6 +109,7 @@ void CTalk::DeleteLog(void)
 	m_nTalkID = 0;         //会話番号
 	m_nAutoCounter = 0;    //自動進行カウンター
 	m_bAuto = true;        //自動進行フラグ
+	s_CurtainCounter = 0;  //アニメーションカウンター
 	DeleteText();          //表示するテキストのメモリ開放
 }
 
@@ -196,8 +200,14 @@ void CTalk::Uninit(void)
 void CTalk::Update(void)
 {
 	//会話終了
-	if (s_pTalk == NULL || !m_bTalk)
+	if (s_pTalk == NULL)
 		return;
+
+	if (!m_bTalk)
+	{
+		SetCurtain();
+		return;
+	}
 
 	//表示方法を適用する
 	ShowType();
@@ -254,30 +264,18 @@ void CTalk::ShowType(void)
 			break;
 
 			//==========================
-			// モデルの頭上にセリフを表示
-		case SHOWTYPE::PopOver:
-			//略称設定
-			CInt& TalkerID = s_pTalk[m_nTalkID].TalkerID;
-
-			//語り手がプレイヤーで無ければ画面下部位置に設定
-			if (TalkerID < 0) m_pos = TEXTBOX_UNDER_POS;
-			else
-			{
-				CPlayer::Info Info = *CPlayer::GetInfo(TalkerID);
-				m_pos = Info.pos;
-
-				switch (Info.side)
-				{
-					case CPlayer::WORLD_SIDE::FACE:   m_pos.y += POPOVER_FLOAT; break;
-					case CPlayer::WORLD_SIDE::BEHIND: m_pos.y -= POPOVER_FLOAT; break;
-				}
-			}
+			// 画面上下に黒幕を用意してその上にセリフを表示
+		case SHOWTYPE::Curtain:
+			SetCurtain();
 			break;
 	}
 
+	//フォント設定
+	SetFontOption(s_pTalk[m_nTalkID].type);
+
 	//テキストボックスの位置設定
 	if (m_pText != NULL)
-		m_pText->SetTxtBoxPos(m_pos);
+		m_pText->SetTxtBoxPos(m_pos, false, true);
 }
 
 //=======================================
@@ -310,7 +308,7 @@ void CTalk::NextSpeak(void)
 	//会話終了
 	if (m_nTalkID == m_nTalkNumAll)
 	{
-		DeleteLog();
+		m_bTalk = false;
 	}
 	else
 	{
@@ -318,7 +316,7 @@ void CTalk::NextSpeak(void)
 		DeleteText();
 
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
-									CFont::FONT_07NIKUMARU, &m_pFont, false, false, &m_pShadow);
+									CFont::FONT_07NIKUMARU, &m_pFont, false, false, NULL);
 
 		//自動進行カウンター
 		m_nAutoCounter = 0;
@@ -353,8 +351,8 @@ void CTalk::SetFontOption(const SHOWTYPE& type)
 			break;
 
 			//==========================
-			// モデルの頭上にセリフを表示
-		case SHOWTYPE::PopOver:
+			// 画面上下に黒幕を用意してその上にセリフを表示
+		case SHOWTYPE::Curtain:
 			if (s_pTalk != NULL)
 			{
 				CInt& Talker = s_pTalk[m_nTalkID].TalkerID;
@@ -367,12 +365,57 @@ void CTalk::SetFontOption(const SHOWTYPE& type)
 				else m_pFont.col = COLOR_WHITE;
 
 				//フォントサイズ
-				m_pFont.fTextSize = 30.0f;
+				m_pFont.fTextSize = 18.0f;
 			}
 			break;
 	}
 
-	m_pFont.nAppearTime = 5;   // 1文字目が表示されるまでの時間
-	m_pFont.nStandTime = 8;    // 待機時間
-	m_pFont.nEraseTime = 0;    // 消えるまでの時間
+	m_pFont.nAppearTime = 5; // 1文字目が表示されるまでの時間
+	m_pFont.nStandTime = 8;  // 待機時間
+	m_pFont.nEraseTime = 0;  // 消えるまでの時間
+}
+
+//=======================================
+//暗幕設定
+//=======================================
+void CTalk::SetCurtain(void)
+{
+	//カウンターの割合算出  ->  出現量算出
+	CFloat rate = RNLib::Ease().Easing(EASE_TYPE::LINEAR, s_CurtainCounter, CURTAIN_COUNTER);
+	CFloat Move = rate * CURTAIN_HEIGHT * 1.5f;
+
+	//カウンター増減
+	if (m_bTalk && s_CurtainCounter < CURTAIN_COUNTER)
+		s_CurtainCounter++;
+
+	else if(!m_bTalk && 0 < s_CurtainCounter)
+		s_CurtainCounter--;
+
+	//画面・カーテン上下の中心位置
+	CFloat CenterX = RNLib::Window().GetCenterX();
+	CFloat CurtainOverPos = CURTAIN_OVER_BEHIND_POS_Y + Move;
+	CFloat CurtainBottomPos = CURTAIN_BOTTOM_BEHIND_POS_Y - Move;
+
+	//上の幕
+	RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainOverPos), 0.0f)
+		->SetSize(CURTAIN_WIDTH, CURTAIN_HEIGHT)
+		->SetCol(COLOR_BLACK);
+
+	//下の幕
+	RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainBottomPos), 0.0f)
+		->SetSize(CURTAIN_WIDTH, CURTAIN_HEIGHT)
+		->SetCol(COLOR_BLACK);
+
+	//カウンターが０でセリフ削除
+	if (s_CurtainCounter == 0)
+	{
+		DeleteLog();
+		return;
+	}
+
+	switch (CPlayer::GetInfo(s_pTalk[m_nTalkID].TalkerID)->side)
+	{
+		case CPlayer::WORLD_SIDE::FACE:  m_pos = Pos3D(CenterX, CurtainOverPos,   0.0f); break;
+		case CPlayer::WORLD_SIDE::BEHIND:m_pos = Pos3D(CenterX, CurtainBottomPos, 0.0f); break;
+	}
 }

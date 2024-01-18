@@ -549,6 +549,46 @@ void CFontText::SetTxtPause(bool bPause)
 	m_Info.bPause = bPause;
 }
 
+
+//========================================
+// TextBoxの位置
+//各ベクトルを個別に設定
+//========================================
+void CFontText::SetTxtBoxPos(CFloat &X, CFloat &Y, bool bMoveWordsX, bool bMoveWordsY)
+{
+	//位置設定
+	m_Info.TxtBoxPos = Pos2D(X, Y);
+
+	//文字位置設定
+	SetWordPos(bMoveWordsX, bMoveWordsY);
+}
+
+//========================================
+// 配置した文字位置
+//========================================
+void CFontText::SetWordPos(bool bMoveWordsX, bool bMoveWordsY)
+{
+	//両方設定しないなら帰る
+	if (!bMoveWordsX && !bMoveWordsY) return;
+
+	//配置位置設定
+	for (int nCntWord = 0; nCntWord < m_Info.nLetterPopCount; nCntWord++)
+	{
+		//現在位置を取得し、移動させるベクトルの値を代入
+		Pos3D SetPos = m_Info.words[nCntWord]->GetPos();
+		if (bMoveWordsX) SetPos.x = m_Info.TxtBoxPos.x;
+		if (bMoveWordsY) SetPos.y = m_Info.TxtBoxPos.y;
+
+		//文字位置代入
+		m_Info.words[nCntWord]->SetPos(SetPos);
+		
+		if (m_Info.aShadow.bShadow)
+		{
+			//(pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z
+		}
+	}
+}
+
 //========================================
 // テキストボックスのテクスチャ設定
 //========================================
