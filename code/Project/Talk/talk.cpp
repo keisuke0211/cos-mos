@@ -274,7 +274,7 @@ void CTalk::ShowType(void)
 	SetFontOption(s_pTalk[m_nTalkID].type);
 
 	//テキストボックスの位置設定
-	if (m_pText != NULL)
+	if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
 		m_pText->SetTxtBoxPos(m_pos, false, true);
 }
 
@@ -315,6 +315,9 @@ void CTalk::NextSpeak(void)
 		//次の会話の最大文字数
 		DeleteText();
 
+		//フォント設定
+		SetFontOption(s_pTalk[m_nTalkID].type);
+
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
 									CFont::FONT_07NIKUMARU, &m_pFont, false, false, NULL);
 
@@ -336,38 +339,32 @@ void CTalk::Skip(void)
 //=======================================
 void CTalk::SetFontOption(const SHOWTYPE& type)
 {
-	switch (type)
-	{
+	switch (type) {
 			//==========================
 			// 画面下部に表示
-		case SHOWTYPE::Under:
-			m_pFont.col = COLOR_WHITE; // 文字の色
-			m_pFont.fTextSize = 40.0f; // 文字のサイズ
-			break;
+		case SHOWTYPE::Under: m_pFont.fTextSize = 40.0f; break;
 
 			//==========================
 			// モデルとセリフを表示
-		case SHOWTYPE::Wipe:
-			break;
+		case SHOWTYPE::Wipe:  break;
 
 			//==========================
 			// 画面上下に黒幕を用意してその上にセリフを表示
-		case SHOWTYPE::Curtain:
-			if (s_pTalk != NULL)
-			{
-				CInt& Talker = s_pTalk[m_nTalkID].TalkerID;
+		case SHOWTYPE::Curtain: m_pFont.fTextSize = 30.0f; break;
+	}
 
-				// プレイヤーカラーを文字の色に設定
-				if (Talker == 0 || Talker == 1)
-					m_pFont.col = CPlayer::GetInfo(Talker)->color;
+	if (s_pTalk != NULL)
+	{
+		CInt& Talker = s_pTalk[m_nTalkID].TalkerID;
 
-				// 違えば白に
-				else m_pFont.col = COLOR_WHITE;
+		// プレイヤーカラーに設定
+		if (Talker == 0)
+			m_pFont.col = CPlayer::P1_COLOR;
+		else if (Talker == 1)
+			m_pFont.col = CPlayer::P2_COLOR;
 
-				//フォントサイズ
-				m_pFont.fTextSize = 18.0f;
-			}
-			break;
+		// 違えば白に
+		else m_pFont.col = COLOR_WHITE;
 	}
 
 	m_pFont.nAppearTime = 5; // 1文字目が表示されるまでの時間

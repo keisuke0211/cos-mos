@@ -22,6 +22,16 @@ class CGoalGate;
 // プレイヤークラス
 class CPlayer {
 public:
+	static CFloat SIZE_WIDTH;	// 横幅
+	static CFloat SIZE_HEIGHT;	// 高さ
+
+	static CInt SWAP_INTERVAL;	// スワップインターバル
+	static CInt NUM_PLAYER = 2;// プレイヤーの数
+
+	static const Color P1_COLOR;
+	static const Color P2_COLOR;
+
+
 	// 表裏どちらの世界に存在するか
 	enum class WORLD_SIDE {
 		FACE = 0,	// 表
@@ -117,12 +127,6 @@ public:
 		int Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
 		_RNC_Input::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
-
-	static CFloat SIZE_WIDTH;	// 横幅
-	static CFloat SIZE_HEIGHT;	// 高さ
-
-	static CInt SWAP_INTERVAL;	// スワップインターバル
-	static CInt NUM_PLAYER = 2;// プレイヤーの数
 
 	CPlayer();
 	~CPlayer();

@@ -300,6 +300,7 @@ void CFontText::LetterForm(void)
 			Pos3D pos = m_Info.TxtBoxPos * 2;
 
 			pos.x = pos.x - ((m_Info.TxtBoxSize.x * 2) / 2);
+			pos.z = 0.0f;
 
 			if (Text != "" && m_Info.nAddLetter < m_Info.nTextLength)
 			{// 空白じゃなかったら、 && テキストサイズを下回ってたら、
@@ -464,7 +465,6 @@ void CFontText::SetMove(Pos3D move)
 			m_Info.words[nWords]->SetMove(move);
 		}
 	}
-
 }
 
 //========================================
@@ -549,7 +549,6 @@ void CFontText::SetTxtPause(bool bPause)
 	m_Info.bPause = bPause;
 }
 
-
 //========================================
 // TextBoxの位置
 //各ベクトルを個別に設定
@@ -569,11 +568,13 @@ void CFontText::SetTxtBoxPos(CFloat &X, CFloat &Y, bool bMoveWordsX, bool bMoveW
 void CFontText::SetWordPos(bool bMoveWordsX, bool bMoveWordsY)
 {
 	//両方設定しないなら帰る
-	if (!bMoveWordsX && !bMoveWordsY) return;
+	if ((!bMoveWordsX && !bMoveWordsY) || *m_Info.words == NULL) return;
 
 	//配置位置設定
 	for (int nCntWord = 0; nCntWord < m_Info.nLetterPopCount; nCntWord++)
 	{
+		CWords *ppp = m_Info.words[nCntWord];
+
 		//現在位置を取得し、移動させるベクトルの値を代入
 		Pos3D SetPos = m_Info.words[nCntWord]->GetPos();
 		if (bMoveWordsX) SetPos.x = m_Info.TxtBoxPos.x;
@@ -581,11 +582,6 @@ void CFontText::SetWordPos(bool bMoveWordsX, bool bMoveWordsY)
 
 		//文字位置代入
 		m_Info.words[nCntWord]->SetPos(SetPos);
-		
-		if (m_Info.aShadow.bShadow)
-		{
-			//(pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z
-		}
 	}
 }
 

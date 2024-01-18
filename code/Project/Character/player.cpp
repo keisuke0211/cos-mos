@@ -14,6 +14,9 @@
 #include "../resource.h"
 #include "../stage.h"
 
+const Color CPlayer::P1_COLOR = Color{ 255, 155, 59, 255 };
+const Color CPlayer::P2_COLOR = Color{ 65, 233, 210, 255 };
+
 // スワップインターバル
 CInt   CPlayer::SWAP_INTERVAL = 20;	// スワップインターバル
 CFloat CPlayer::GUIDE_WIDTH   = 10.0f; // ガイドの幅
@@ -168,14 +171,14 @@ HRESULT CPlayer::Init(void)
 		delete m_aInfo[0].doll;
 	m_aInfo[0].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
-	m_aInfo[0].color = Color{ 255, 155, 59, 255 };
+	m_aInfo[0].color = P1_COLOR;
 
 	// ２Ｐ初期情報
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
 	m_aInfo[1].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
-	m_aInfo[1].color = Color{ 65, 233, 210, 255 };
+	m_aInfo[1].color = P2_COLOR;
 
 	// キーコンフィグ初期化
 	InitKeyConfig();
