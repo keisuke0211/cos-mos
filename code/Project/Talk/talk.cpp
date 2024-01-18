@@ -20,7 +20,7 @@ const Pos3D CTalk::TYPE_UNDER_POS = Pos3D(230.0f, 700.0f, 0.0f);
 CFloat CTalk::TYPE_UNDER_FONT_SIZE = 40.0f;
 
 /*  カーテンの幅  */ CFloat CTalk::TYPE_CURTAIN_WIDTH = 1280.0f;
-/* カーテンの高さ */ CFloat CTalk::TYPE_CURTAIN_HEIGHT = 80.0f;
+/* カーテンの高さ */ CFloat CTalk::TYPE_CURTAIN_HEIGHT = 60.0f;
 /*上部カーテン位置*/ CFloat CTalk::TYPE_CURTAIN_OVER_BEHIND_POS_Y = -TYPE_CURTAIN_HEIGHT;
 /*下部カーテン位置*/ CFloat CTalk::TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y = 720.0f + TYPE_CURTAIN_HEIGHT;
 /* フォントサイズ */ CFloat CTalk::TYPE_CURTAIN_FONT_SIZE = 50.0f;
