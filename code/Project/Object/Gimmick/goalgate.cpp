@@ -18,7 +18,7 @@
 int CGoalGate::s_num = 0;
 int CGoalGate::s_numEntry = 0;
 int CGoalGate::s_modelIdx = NONEDATA;
-int CGoalGate::s_TexIdx[2] = {NONEDATA, NONEDATA};
+int CGoalGate::s_TexIdx[3] = {NONEDATA, NONEDATA,NONEDATA };
 int CGoalGate::s_nEscapeGuideTexID = NONEDATA;
 
 //================================================================================
@@ -61,6 +61,7 @@ CGoalGate::CGoalGate(void) :m_camera(Size2D(500.0f, 500.0f)) {
 	if (s_modelIdx == NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
 	if (s_TexIdx[0] == NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
 	if (s_TexIdx[1] == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
+	if (s_TexIdx[2] == NONEDATA)s_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 	if (s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
 
 	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Door_1Up.txt"));
@@ -89,13 +90,12 @@ void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
-
-	m_RainbowCol[(int)RAINBOW::RED] =		{ 255,0,0,255 };
-	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 255,0,255,255 };
-	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,255,255 };
-	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,255,255,255 };
-	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,255,0,255 };
-	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 255,255,0,255 };
+	m_RainbowCol[(int)RAINBOW::RED] =		{ 150,0,0,125 };
+	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 150,0,150,125 };
+	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,150,125 };
+	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,150,150,125 };
+	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,150,0,125 };
+	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 150,150,0,125 };
 
 	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
 }
@@ -192,7 +192,7 @@ void CGoalGate::StateUpdate(void)
 			m_rot.z -= 0.05f;
 	}
 
-	if (s_num == s_numEntry || m_bCloseGate == true)
+	if (s_num == s_numEntry)
 	{
 		m_state = STATE::MAX;
 
@@ -207,8 +207,11 @@ void CGoalGate::StateUpdate(void)
 
 		if (m_nCnt > 0)
 		{
-			Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(0.0f, 12.0f * cosf(m_doll->GetRot().z), 0.0f), INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 60, m_rot,Pos3D(6.0f,6.0f,0.0f));
-			Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(0.0f, 12.0f * cosf(m_doll->GetRot().z), 0.0f), INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 60, D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z + D3DX_PI), Pos3D(6.0f, 6.0f, 0.0f));
+			Pos3D pos = INITPOS3D;
+			pos.x = (float)((rand() % 32) - 16);
+			pos.y = (float)(rand() % 32);
+
+			Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(pos.x, pos.y * cosf(m_doll->GetRot().z), 0.0f), (INIT_EFFECT_SCALE * 2) * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_FLOATUP, 120, m_doll->GetRot(),Pos3D(60.0f,60.0f,0.0f));
 		
 			m_nCnt--;
 		}
@@ -221,10 +224,12 @@ void CGoalGate::StateUpdate(void)
 				s_numEntry--;
 			}
 
-			/*for (int ParCnt = 0; ParCnt < 16; ParCnt++)
+			for (int ParCnt = 0; ParCnt < 32; ParCnt++)
 			{
-				Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, m_RainbowCol[rand() % 6]);
-			}*/
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[2], m_doll->GetPos(), INIT_EFFECT_SCALE * 2.0f, m_RainbowCol[rand() % 6],CParticle::TYPE::TYPE_NORMAL,300);
+			}
+
+			/*Delete();*/
 		}
 	}
 	else if (m_state == STATE::SMALL )

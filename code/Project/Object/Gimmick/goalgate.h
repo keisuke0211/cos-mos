@@ -69,7 +69,7 @@ private:
 	Scale3D m_scale;						//拡縮
 	CCamera m_camera;						//カメラ
 	static int s_modelIdx;					//モデル番号
-	static int s_TexIdx[2];					//テクスチャ番号
+	static int s_TexIdx[3];					//テクスチャ番号
 	static int s_num;
 	static int s_numEntry;
 
