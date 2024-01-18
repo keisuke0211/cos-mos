@@ -517,7 +517,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 					device->SetTexture(0, drawInfo[cntPriority].m_model[cntModel]->m_texes[cntMat]);
 
 					// ï`âÊ
-					drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat);
+					while (FAILED(drawInfo[cntPriority].m_model[cntModel]->m_mesh->DrawSubset(cntMat)));
 				}
 
 				// ó÷äsê¸ÇÃï`âÊ
@@ -530,7 +530,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 					RNLib::DrawStateMgr().SetCullingMode(device, _RNC_DrawState::CULLING_MODE::BACK_SIDE);
 
 					for (int cntMat = 0; cntMat < drawInfo[cntPriority].m_model[cntModel]->m_matNum; cntMat++)
-						drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh->DrawSubset(cntMat);
+						while (FAILED(drawInfo[cntPriority].m_model[cntModel]->m_outLineMesh->DrawSubset(cntMat)));
 
 					// ï\ñ 
 					RNLib::DrawStateMgr().SetCullingMode(device, _RNC_DrawState::CULLING_MODE::FRONT_SIDE);
@@ -605,7 +605,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 				Polygon2DAnd3D::SetTexture(device, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_tex, drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_texType);
 
 				// ï`âÊ
-				device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_idx, 2);
+				while (FAILED(device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon3D[cntPolygon3D]->m_idx, 2)));
 			}
 		}
 
@@ -647,7 +647,7 @@ void _RNC_DrawMgr::ExecutionDraw(Device& device, CCamera* camera, CDrawInfoSum*&
 				Polygon2DAnd3D::SetTexture(device, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_tex, drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_texType);
 
 				// É|ÉäÉSÉìÇÃï`âÊ
-				device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_idx, 2);
+				while (FAILED(device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * drawInfo[cntPriority].m_polygon2D[cntPolygon2D]->m_idx, 2)));
 			}
 
 			// ÉtÉHÉOÇñﬂÇ∑

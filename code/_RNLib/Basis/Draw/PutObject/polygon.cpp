@@ -28,10 +28,27 @@ void Polygon2DAnd3D::SetTexture(Device& device, void* tex, const TEX_TYPE& texTy
 		}break;
 		case TEX_TYPE::CAMERA: {
 			CCamera** camera = (CCamera**)tex;
-			if (*camera == NULL)
+			if (*camera == NULL) {
 				device->SetTexture(0, NULL);
-			else
-				device->SetTexture(0, (*camera)->GetTexture());
+			}
+			else {
+				bool isFound = false; {
+					CCamera* otherCamera = NULL;
+					while (RNSystem::GetCameraMgr().ListLoop(&otherCamera)) {
+						if (*camera == otherCamera) {
+							isFound = true;
+							break;
+						}
+					}
+
+					if (isFound) {
+						device->SetTexture(0, (*camera)->GetTexture());
+					}
+					else {
+						device->SetTexture(0, NULL);
+					}
+				}
+			}
 			RNLib::DrawStateMgr().SetIsTextureAlpha(device, false);
 		}break;
 		}

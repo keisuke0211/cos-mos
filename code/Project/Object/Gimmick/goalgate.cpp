@@ -18,7 +18,7 @@
 int CGoalGate::s_num = 0;
 int CGoalGate::s_numEntry = 0;
 int CGoalGate::s_modelIdx = NONEDATA;
-int CGoalGate::s_TexIdx[2] = {NONEDATA, NONEDATA};
+int CGoalGate::s_TexIdx[3] = {NONEDATA, NONEDATA,NONEDATA };
 int CGoalGate::s_nEscapeGuideTexID = NONEDATA;
 
 //================================================================================
@@ -30,11 +30,11 @@ int CGoalGate::s_nEscapeGuideTexID = NONEDATA;
 //========================================
 // コンストラクタ
 //========================================
-CGoalGate::CGoalGate(void) {
+CGoalGate::CGoalGate(void) :m_camera(Size2D(500.0f, 500.0f)) {
 	Manager::StageObjectMgr()->AddList(this);
 
 	//初期状態
-	m_scale = Scale3D(3.0f,3.0f,6.0f);
+	m_scale = Scale3D(3.0f, 3.0f, 6.0f);
 	m_nCnt = MAX_COUNT;
 	m_state = STATE::NONE;
 	m_type = TYPE::GOALGATE;
@@ -52,11 +52,17 @@ CGoalGate::CGoalGate(void) {
 	m_nEntryCounter = 0;
 	m_GuideAlpha = 0; // ガイドUIのα値
 
+	//クリッピング設定
+	m_camera.SetIsClipping(true);
+	m_camera.SetPosVAndPosR(Pos3D(0.0f,0.0f,-15.0f),INITVECTOR3D);
+	m_camera.SetLightID(Manager::GetLightIdx(0));
+
 	//モデルとテクスチャ
-	if(s_modelIdx          == NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
-	if(s_TexIdx[0]         == NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
-	if(s_TexIdx[1]         == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000RNL.jpg");
-	if(s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
+	if (s_modelIdx == NONEDATA)s_modelIdx = RNLib::Model().Load("data\\MODEL\\GoalGate.x");
+	if (s_TexIdx[0] == NONEDATA)s_TexIdx[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png");
+	if (s_TexIdx[1] == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
+	if (s_TexIdx[2] == NONEDATA)s_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
+	if (s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
 
 	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Door_1Up.txt"));
 }
@@ -84,15 +90,14 @@ void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
+	m_RainbowCol[(int)RAINBOW::RED] =		{ 150,0,0,125 };
+	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 150,0,150,125 };
+	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,150,125 };
+	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,150,150,125 };
+	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,150,0,125 };
+	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 150,150,0,125 };
 
-	m_RainbowCol[(int)RAINBOW::RED] =		{ 255,0,0,255 };
-	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 255,0,255,255 };
-	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,255,255 };
-	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,255,255,255 };
-	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,255,0,255 };
-	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 255,255,0,255 };
-
-	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Door\\Open.txt");
+	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
 }
 
 //========================================
@@ -100,7 +105,6 @@ void CGoalGate::Init(void) {
 // Author:RYUKI FUJIWARA
 //========================================
 void CGoalGate::Uninit(void) {
-
 }
 
 //========================================
@@ -124,7 +128,7 @@ void CGoalGate::Update(void)
 	if (setCol.a > 255)setCol.a = 255;
 
 	if (m_bLeave){
-		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Door\\Open.txt");
+		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
 		m_bLeave = false;
 	}
 
@@ -136,8 +140,14 @@ void CGoalGate::Update(void)
 	//モデル配置
 	m_doll->SetPos(m_pos + Pos3D(0.0f,RNLib::Number().GetPlusMinus(m_pos.y)*-22.0f,20.0f));
 	m_doll->SetRot(m_pos.y > 0 ? INITROT3D : Rot3D(0.0f, 0.0f, D3DX_PI));
-	/*RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, m_pos, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
-		->SetCol(setCol);*/
+
+	RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, INITPOS3D, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
+		->SetCol(setCol)
+		->SetClippingCamera(m_camera);
+
+	RNLib::Polygon3D().Put(PRIORITY_OBJECT2, m_doll->GetPos() + Pos3D(0.0f,12.0f * cosf(m_doll->GetRot().z),0.0f), m_doll->GetRot(), false)
+		->SetTex(&m_camera)
+		->SetSize(20.0f,24.0f);
 
 	if (!CPlayer::GetSwapAnim()) {
 		if (!m_bCloseGate) {
@@ -182,7 +192,7 @@ void CGoalGate::StateUpdate(void)
 			m_rot.z -= 0.05f;
 	}
 
-	if (s_num == s_numEntry && m_bCloseGate == true)
+	if (s_num == s_numEntry)
 	{
 		m_state = STATE::MAX;
 
@@ -197,12 +207,12 @@ void CGoalGate::StateUpdate(void)
 
 		if (m_nCnt > 0)
 		{
-			if (!m_bStartGate)
-			{
-				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, m_rot);
-				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_pos, INIT_EFFECT_SCALE * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_SPIN, 30, D3DXVECTOR3(m_rot.x, m_rot.y, m_rot.z + D3DX_PI));
-			}
+			Pos3D pos = INITPOS3D;
+			pos.x = (float)((rand() % 32) - 16);
+			pos.y = (float)(rand() % 32);
 
+			Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(pos.x, pos.y * cosf(m_doll->GetRot().z), 0.0f), (INIT_EFFECT_SCALE * 2) * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_FLOATUP, 120, m_doll->GetRot(),Pos3D(60.0f,60.0f,0.0f));
+		
 			m_nCnt--;
 		}
 		else
@@ -214,12 +224,12 @@ void CGoalGate::StateUpdate(void)
 				s_numEntry--;
 			}
 
-			for (int ParCnt = 0; ParCnt < 16; ParCnt++)
+			for (int ParCnt = 0; ParCnt < 32; ParCnt++)
 			{
-				Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, m_RainbowCol[rand() % 6]);
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[2], m_doll->GetPos(), INIT_EFFECT_SCALE * 2.0f, m_RainbowCol[rand() % 6],CParticle::TYPE::TYPE_NORMAL,300);
 			}
 
-			Delete();
+			/*Delete();*/
 		}
 	}
 	else if (m_state == STATE::SMALL )
@@ -402,7 +412,7 @@ void CGoalGate::SetEntry(bool bEntry)
 {
 	m_bEntry = bEntry;
 
-	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Door\\Close.txt");
+	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Close.txt");
 
 	if (bEntry) {
 		m_bLeave = false;
@@ -413,11 +423,6 @@ void CGoalGate::SetEntry(bool bEntry)
 		if (s_num == s_numEntry)
 		{
 			RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::GATE_CLOSE], _RNC_Sound::CATEGORY::SE, 1.0f, false);
-		}
-
-		for (int ParCnt = 0; ParCnt < 16; ParCnt++)
-		{
-			Manager::EffectMgr()->ParticleCreate(s_TexIdx[0], m_pos, INIT_EFFECT_SCALE, COLOR_WHITE);
 		}
 	}
 }
