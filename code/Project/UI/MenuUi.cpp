@@ -283,8 +283,8 @@ void CMenuUI::SelectInput(void)
 		m_Menu.nMaineOldSelect = m_Menu.nMaineSelect;
 	}
 
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK))
-	{
+	if ((RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) &&
+		Manager::GetMode() == CMode::TYPE::TITLE) {
 		if (!m_Menu.bSubMenu) {
 			m_Menu.nCntLeftAnime = 0;
 			m_Menu.bBackMode = true;

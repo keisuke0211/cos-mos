@@ -7,6 +7,8 @@
 #include "../../../RNlib.h"
 #include "../../../RNmode.h"
 
+#define OUTLINE_IDX (4)
+
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| [公開]ドール3Dクラス
@@ -220,7 +222,8 @@ void CDoll3D::UpdateBone(_RNC_SetUp3D::CData& setUp) {
 			RNLib::Model().Put(m_priority, setUp.m_boneDatas[cntBone].modelIdx, worldMtx)
 				->SetCol(m_col)
 				->SetBrightnessOfEmissive(m_brightnessOfEmission)
-				->SetClippingCamera(m_clippingID);
+				->SetClippingCamera(m_clippingID)
+				->SetOutLineIdx(OUTLINE_IDX);
 
 			// 頂点番号の描画
 			if (RNSystem::GetDoll3DMgr().GetEditDoll() == this &&
@@ -382,6 +385,22 @@ void CDoll3D::DrawFace(_RNC_SetUp3D::CData& setUp, _RNC_Model::Vertex3DInfo**& v
 				vtx1.texPos,
 				vtx2.texPos,
 				vtx3.texPos)
+			->SetClippingCamera(m_clippingID);
+
+		RNLib::Polygon3D().Put(m_priority, INITMATRIX)
+			->SetVtxPos(
+				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldPos + vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldNor * 0.3f,
+				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldPos + vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldNor * 0.3f,
+				vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldPos + vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldNor * 0.3f,
+				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldPos + vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldNor * 0.3f)
+			->SetVtxNor(
+				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldNor,
+				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldNor,
+				vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldNor,
+				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldNor)
+			->SetCol(
+				COLOR_BLACK)
+			->SetCullingMode(CULLING_MODE::BACK_SIDE)
 			->SetClippingCamera(m_clippingID);
 	}
 }
