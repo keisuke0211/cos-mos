@@ -389,10 +389,10 @@ void CDoll3D::DrawFace(_RNC_SetUp3D::CData& setUp, _RNC_Model::Vertex3DInfo**& v
 
 		RNLib::Polygon3D().Put(m_priority, INITMATRIX)
 			->SetVtxPos(
-				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldPos + vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldNor * 0.3f,
-				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldPos + vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldNor * 0.3f,
-				vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldPos + vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldNor * 0.3f,
-				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldPos + vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldNor * 0.3f)
+				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldPos + vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldNor * 0.4f,
+				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldPos + vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldNor * 0.4f,
+				vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldPos + vtxInfo[vtx2.boneIdx][vtx2.vtxIdx].worldNor * 0.4f,
+				vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldPos + vtxInfo[vtx3.boneIdx][vtx3.vtxIdx].worldNor * 0.4f)
 			->SetVtxNor(
 				vtxInfo[vtx0.boneIdx][vtx0.vtxIdx].worldNor,
 				vtxInfo[vtx1.boneIdx][vtx1.vtxIdx].worldNor,
