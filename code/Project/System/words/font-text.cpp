@@ -204,7 +204,7 @@ void CFontText::Draw()
 //========================================
 // 生成
 //========================================
-CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow)
+CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow, CShort SeIdx)
 {
 	CFontText *pText = new CFontText;
 
@@ -223,6 +223,9 @@ CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, 
 
 		// -- テキスト -----------------------
 		pText->m_Info.FontType = FontType;
+
+		// -- サウンド -----------------------
+		pText->m_Info.SeIdx = SeIdx;
 
 		if (pFont != NULL)
 		{
@@ -375,6 +378,9 @@ void CFontText::LetterForm(void)
 						m_Info.nNiCount++;
 					}
 				}
+
+				// サウンド再生
+				RNLib::Sound().Play(m_Info.SeIdx, _RNC_Sound::CATEGORY::SE, 0.5f, false);
 			}
 			else
 			{

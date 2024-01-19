@@ -30,6 +30,9 @@ CFloat CTalk::TYPE_UNDER_FONT_SIZE = 40.0f;
 CTalk::Talk  *CTalk::s_pTalk = NULL;        //会話内容
 CTalk::EVENT  CTalk::s_Event = EVENT::NONE; //イベント
 
+int CTalk::s_1P_Voice = NONEDATA;
+int CTalk::s_2P_Voice = NONEDATA;
+
 //=======================================
 // コンストラクタ
 //=======================================
@@ -105,6 +108,10 @@ void CTalk::DeleteLog(void)
 		delete s_pTalk;
 		s_pTalk = NULL;
 	}
+
+	//ボイス読込
+	if (s_1P_Voice == NONEDATA) s_1P_Voice = RNLib::Sound().Load("data\\SOUND\\SE\\Voice\\cos.wav");
+	if (s_2P_Voice == NONEDATA) s_2P_Voice = RNLib::Sound().Load("data\\SOUND\\SE\\Voice\\mos.wav");
 
 	s_Event = EVENT::NONE; //イベント
 	m_bTalk = false;       //会話中かどうか
@@ -313,8 +320,12 @@ void CTalk::NextSpeak(void)
 		//フォント設定
 		SetFontOption(s_pTalk[m_nTalkID].type);
 
+		//サウンド設定　語り手番号がプレイヤー番号以外ならサウンド無し。　合致しているなら語り手番号代入
+		CShort SeIdx = s_pTalk[m_nTalkID].TalkerID < 0 || s_pTalk[m_nTalkID].TalkerID >= 2 ?
+			NONEDATA : s_pTalk[m_nTalkID].TalkerID;
+
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
-									CFont::FONT_07NIKUMARU, &m_pFont, false, false, NULL);
+									CFont::FONT_07NIKUMARU, &m_pFont, false, false, NULL, SeIdx);
 
 		//テキストボックスの位置設定
 		if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)

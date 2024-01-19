@@ -86,8 +86,9 @@ public:
 	// 引数7  : bool bBoxSize      / メッセージボックスのサイズ調整の無効・有効（初期値 false）
 	// 引数8  : bool bTextBox      / メッセージボックスの表示・非表示 (初期値 true)
 	// 引数9  : FormShadow *Shadow / フォントの影の情報 無くても大丈夫
+	// 引数10 : CShort SE          / 文字表示ごとのサウンド
 	//--------------------------------------------------
-	static CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FormShadow *Shadow = NULL);
+	static CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FormShadow *Shadow = NULL, CShort SeIdx = -1);
 
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
@@ -188,6 +189,8 @@ private:
 		string sALLText;		// テキストの全体
 		CWords** words;			// 文字
 		CFont::FONT FontType;	// フォント種類
+
+		short SeIdx;            // サウンド番号
 	};
 
 	// ***** 関数 *****

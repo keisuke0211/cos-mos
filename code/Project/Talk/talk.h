@@ -62,6 +62,9 @@ private:
 	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
 	static CInt AUTO_COUNTER = 60;       //発言終了から自動進行するまでのカウンター
 
+	static int s_1P_Voice;
+	static int s_2P_Voice;
+
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込
 
