@@ -142,7 +142,7 @@ public:
 		return col;
 	}
 	// “§–¾‚É‚µ‚½F‚ðŽæ“¾
-	Color GetAlphaApplied(const float& alphaRate) {
+	Color GetAlphaApplied(const float& alphaRate) const {
 		Color col = *this;
 		col.a *= alphaRate;
 		col.a = col.a > 255 ? 255 : col.a;

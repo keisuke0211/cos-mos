@@ -219,7 +219,7 @@ void CTalk::Update(void)
 	Auto();
 
 	//会話スキップ
-	if (RNLib::Input().GetTrigger(DIK_P, _RNC_Input::BUTTON::START) ||
+	if (RNLib::Input().GetTrigger(DIK_U, _RNC_Input::BUTTON::START) ||
 		RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::START, 1))
 	{
 		Skip();
@@ -319,7 +319,7 @@ void CTalk::NextSpeak(void)
 		//テキストボックスの位置設定
 		if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
 		{
-			SetCurtain();
+			SetCurtain(false);
 			m_pText->SetTxtBoxPos(m_pos, false, true);
 		}
 
@@ -385,7 +385,7 @@ void CTalk::SetFontOption(const SHOWTYPE& type)
 //=======================================
 //暗幕設定
 //=======================================
-void CTalk::SetCurtain(void)
+void CTalk::SetCurtain(const bool bSetCurtain)
 {
 	//カウンターの割合算出  ->  出現量算出
 	CFloat rate = RNLib::Ease().Easing(EASE_TYPE::LINEAR, s_CurtainCounter, TYPE_CURTAIN_COUNTER);
@@ -402,17 +402,21 @@ void CTalk::SetCurtain(void)
 	CFloat CenterX = RNLib::Window().GetCenterX();
 	CFloat CurtainOverPos = TYPE_CURTAIN_OVER_BEHIND_POS_Y + Move;
 	CFloat CurtainBottomPos = TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y - Move;
-	const Color CURTAIN_COLOR = { 0,0,0,200 };
+	const Color CURTAIN_COLOR = { 0,0,0,100 };
 
-	//上の幕
-	RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainOverPos), 0.0f)
-		->SetSize(TYPE_CURTAIN_WIDTH, TYPE_CURTAIN_HEIGHT)
-		->SetCol(CURTAIN_COLOR);
+	//暗幕配置
+	if (bSetCurtain)
+	{
+		//上の幕
+		RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainOverPos), 0.0f)
+			->SetSize(TYPE_CURTAIN_WIDTH, TYPE_CURTAIN_HEIGHT)
+			->SetCol(CURTAIN_COLOR);
 
-	//下の幕
-	RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainBottomPos), 0.0f)
-		->SetSize(TYPE_CURTAIN_WIDTH, TYPE_CURTAIN_HEIGHT)
-		->SetCol(CURTAIN_COLOR);
+		//下の幕
+		RNLib::Polygon2D().Put(PRIORITY_EFFECT, Pos2D(CenterX, CurtainBottomPos), 0.0f)
+			->SetSize(TYPE_CURTAIN_WIDTH, TYPE_CURTAIN_HEIGHT)
+			->SetCol(CURTAIN_COLOR);
+	}
 
 	//カウンターが０でセリフ削除
 	if (s_CurtainCounter == 0)
@@ -421,9 +425,10 @@ void CTalk::SetCurtain(void)
 		return;
 	}
 
-	if (s_pTalk[m_nTalkID].TalkerID == 0 || s_pTalk[m_nTalkID].TalkerID == 1)
+	CInt& Talker = s_pTalk[m_nTalkID].TalkerID;
+	if (Talker == 0 || Talker == 1)
 	{
-		switch (CPlayer::GetInfo(s_pTalk[m_nTalkID].TalkerID)->side)
+		switch (CPlayer::GetInfo(Talker)->side)
 		{
 			case CPlayer::WORLD_SIDE::FACE:  m_pos.y = CurtainOverPos; break;
 			case CPlayer::WORLD_SIDE::BEHIND:m_pos.y = CurtainBottomPos; break;

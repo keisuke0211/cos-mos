@@ -73,7 +73,7 @@ private:
 	void NextSpeak(void); //次にしゃべるテキストの設定
 	void Skip(void);      //会話スキップ
 
-	void SetCurtain(void);//暗幕設定
+	void SetCurtain(const bool bSetCurtain = true);//暗幕設定
 
 	//会話情報
 	struct Talk
