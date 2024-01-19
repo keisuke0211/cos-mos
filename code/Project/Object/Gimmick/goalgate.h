@@ -32,6 +32,7 @@ public:
 		LIGHT_BLUE,	//êÖ
 		GREEN,		//óŒ
 		YELLOW,		//â©
+		WHITE,
 		MAX		
 	};
 
