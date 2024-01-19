@@ -10,7 +10,7 @@
 #include "../../resource.h"
 
 //マクロ定義
-#define MAX_COUNT		(90)						//最大カウント数
+#define MAX_COUNT		(120)						//最大カウント数
 #define MAX_ROT_SPEED	(30.0f / (float) MAX_COUNT)	//最大回転速度
 #define MAX_COLOR		(200)						//最大カラー値
 #define ADDSUB_COLOR	(10)						//和差カラー値
@@ -90,12 +90,13 @@ void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
-	m_RainbowCol[(int)RAINBOW::RED] =		{ 150,0,0,125 };
-	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 150,0,150,125 };
-	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,150,125 };
-	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,150,150,125 };
-	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,150,0,125 };
-	m_RainbowCol[(int)RAINBOW::YELLOW] =	{ 150,150,0,125 };
+	m_RainbowCol[(int)RAINBOW::RED] =		{ 200,0,0,200 };
+	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 200,0,200,200 };
+	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,200,200 };
+	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,200,200,200 };
+	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,200,0,200 };
+	m_RainbowCol[(int)RAINBOW::YELLOW] = { 200,200,0,200 };
+	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 200,200,200,100 };
 
 	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
 }
@@ -143,11 +144,21 @@ void CGoalGate::Update(void)
 
 	RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, INITPOS3D, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
 		->SetCol(setCol)
-		->SetClippingCamera(m_camera);
+		->SetClippingCamera(m_camera)
+		->SetOutLineIdx(4);
 
+	float CntRate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
+
+	if (m_state == STATE::MAX) {
+		m_doll->SetScale(Scale3D(1.0f,1.0f * CntRate,1.0f));
+		m_doll->SetCol(Color(255, 255, 255, 255 * CntRate));
+	}
+
+	if(m_state != STATE::MAX)
 	RNLib::Polygon3D().Put(PRIORITY_OBJECT2, m_doll->GetPos() + Pos3D(0.0f,12.0f * cosf(m_doll->GetRot().z),0.0f), m_doll->GetRot(), false)
 		->SetTex(&m_camera)
-		->SetSize(20.0f,24.0f);
+		->SetCol(Color(255, 255, 255, 255 * CntRate))
+		->SetSize(20.0f, 24.0f);
 
 	if (!CPlayer::GetSwapAnim()) {
 		if (!m_bCloseGate) {
@@ -208,11 +219,21 @@ void CGoalGate::StateUpdate(void)
 		if (m_nCnt > 0)
 		{
 			Pos3D pos = INITPOS3D;
-			pos.x = (float)((rand() % 32) - 16);
-			pos.y = (float)(rand() % 32);
+			Color col[3];
+			col[0] = m_RainbowCol[(int)RAINBOW::BLUE];
+			col[1] = m_RainbowCol[(int)RAINBOW::LIGHT_BLUE];
+			col[2] = m_RainbowCol[(int)RAINBOW::WHITE];
 
-			Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(pos.x, pos.y * cosf(m_doll->GetRot().z), 0.0f), (INIT_EFFECT_SCALE * 2) * CntEffRate, m_RainbowCol[rand() % 6], CParticle::TYPE::TYPE_FLOATUP, 120, m_doll->GetRot(),Pos3D(60.0f,60.0f,0.0f));
-		
+			for (int Eff = 0; Eff < 4; Eff++)
+			{
+				Pos3D scale = (INIT_EFFECT_SCALE * 0.1f) + (INIT_EFFECT_SCALE * (rand() % 9) * 0.1f);
+				pos.x = (float)((rand() % 40) - 20);
+				pos.y = (float)(rand() % 4);
+				float move = (float)((rand() % 100) + 70);
+				float life = (float)((rand() % 45) + 45);
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(pos.x, pos.y * cosf(m_doll->GetRot().z), 0.0f), scale * CntEffRate, col[rand() % 3], CParticle::TYPE::TYPE_FLOATUP, life, m_doll->GetRot(), Pos3D(move, move, 0.0f));
+			}
+			
 			m_nCnt--;
 		}
 		else
@@ -224,12 +245,7 @@ void CGoalGate::StateUpdate(void)
 				s_numEntry--;
 			}
 
-			for (int ParCnt = 0; ParCnt < 32; ParCnt++)
-			{
-				Manager::EffectMgr()->ParticleCreate(s_TexIdx[2], m_doll->GetPos(), INIT_EFFECT_SCALE * 2.0f, m_RainbowCol[rand() % 6],CParticle::TYPE::TYPE_NORMAL,300);
-			}
-
-			/*Delete();*/
+			Delete();
 		}
 	}
 	else if (m_state == STATE::SMALL )

@@ -1694,6 +1694,7 @@ void CPlayer::GoalDirector(void)
 	if (s_nGoalInterval < 0) return;
 
 	Stage::SetIsCutIn(true);
+	Stage::SetIsGoal(true);
 
 	const Pos2D Center = RNLib::Window().GetCenterPos();
 	const Pos2D Size = RNLib::Window().GetSize();
