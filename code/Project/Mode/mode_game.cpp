@@ -124,7 +124,7 @@ void CMode_Game::Update(void) {
 	Stage::UpdateStage();
 
 	// [[[ 非ポーズ時の処理 ]]]
-	if (m_state != (int)STATE::PAUSE) {
+	if (m_state != (int)STATE::PAUSE && !Stage::GetIsGoal()) {
 
 		// ポーズ（時間も保存
 		if (!CPlayer::GetSwapAnim() && !CPlayer::GetDeath() && CPlayer::GetZoomUpCounter() == 0 && !Stage::GetIsTimeOver()) {
