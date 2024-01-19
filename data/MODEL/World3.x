@@ -7137,7 +7137,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.500000;0.296078;0.219608;;
    TextureFilename {
-    data\\TEXTURE\\maguma2.png";
+    "data\\TEXTURE\\maguma2.png";
    }
   }
   Material {
@@ -7146,7 +7146,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    data\\TEXTURE\\Tree_bark.jpg";
+    "data\\TEXTURE\\Tree_bark.jpg";
    }
   }
   Material {
@@ -7155,7 +7155,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    data\\TEXTURE\\basis.jpg";
+    "data\\TEXTURE\\basis.jpg";
    }
   }
   Material {
@@ -7164,7 +7164,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    data\\TEXTURE\\Meteorite000.png";
+    "data\\TEXTURE\\Meteorite000.png";
    }
   }
   Material {
@@ -7173,7 +7173,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    data\\TEXTURE\\base.jpg";
+    "data\\TEXTURE\\base.jpg";
    }
   }
   Material {
@@ -7188,7 +7188,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    data\\TEXTURE\\abstract.jpg";
+    "data\\TEXTURE\\abstract.jpg";
    }
   }
  }
