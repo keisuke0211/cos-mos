@@ -20,6 +20,7 @@ int CGoalGate::s_numEntry = 0;
 int CGoalGate::s_modelIdx = NONEDATA;
 int CGoalGate::s_TexIdx[3] = {NONEDATA, NONEDATA,NONEDATA };
 int CGoalGate::s_nEscapeGuideTexID = NONEDATA;
+CGoalGate::WORLD CGoalGate::s_World = CGoalGate::WORLD::NONE;
 
 //================================================================================
 //----------|---------------------------------------------------------------------
@@ -52,6 +53,13 @@ CGoalGate::CGoalGate(void) :m_camera(Size2D(500.0f, 500.0f)) {
 	m_nEntryCounter = 0;
 	m_GuideAlpha = 0; // ガイドUIのα値
 
+	if (s_World == WORLD::NONE)
+		s_World = WORLD::UP;
+	else if (s_World == WORLD::UP)
+		s_World = WORLD::DOWN;
+		
+	m_World = s_World;
+
 	//クリッピング設定
 	m_camera.SetIsClipping(true);
 	m_camera.SetPosVAndPosR(Pos3D(0.0f,0.0f,-15.0f),INITVECTOR3D);
@@ -64,7 +72,7 @@ CGoalGate::CGoalGate(void) :m_camera(Size2D(500.0f, 500.0f)) {
 	if (s_TexIdx[2] == NONEDATA)s_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 	if (s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
 
-	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\Door_1Up.txt"));
+	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Up_Goal.txt"));
 }
 
 //========================================
@@ -75,6 +83,8 @@ CGoalGate::~CGoalGate(void) {
 
 	if (m_doll != NULL)
 		delete m_doll;
+
+	s_World = WORLD::NONE;
 }
 
 //========================================
@@ -98,7 +108,15 @@ void CGoalGate::Init(void) {
 	m_RainbowCol[(int)RAINBOW::YELLOW] = { 200,200,0,120 };
 	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 200,200,200,70 };
 
-	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
+	if (m_World == WORLD::UP) {
+		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
+		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Up_Goal.txt"));
+	}
+	else if (m_World == WORLD::DOWN) {
+		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt");
+		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Down_Goal.txt"));
+	}
+
 }
 
 //========================================
@@ -129,7 +147,11 @@ void CGoalGate::Update(void)
 	if (setCol.a > 255)setCol.a = 255;
 
 	if (m_bLeave){
-		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
+		if (m_World == WORLD::UP)
+			m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
+		else if (m_World == WORLD::DOWN)
+			m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt");
+
 		m_bLeave = false;
 	}
 
@@ -154,10 +176,10 @@ void CGoalGate::Update(void)
 	}
 
 	if(m_state != STATE::MAX)
-	RNLib::Polygon3D().Put(PRIORITY_OBJECT2, m_doll->GetPos() + Pos3D(0.0f,12.0f * cosf(m_doll->GetRot().z),0.0f), m_doll->GetRot(), false)
+	RNLib::Polygon3D().Put(PRIORITY_OBJECT2, m_doll->GetPos() + Pos3D(0.0f,14.0f * cosf(m_doll->GetRot().z),0.0f), m_doll->GetRot(), false)
 		->SetTex(&m_camera)
 		->SetCol(Color(255, 255, 255, 255 * CntRate))
-		->SetSize(20.0f, 24.0f);
+		->SetSize(28.0f, 36.0f);
 
 	if (!CPlayer::GetSwapAnim()) {
 		if (!m_bCloseGate) {
@@ -427,7 +449,10 @@ void CGoalGate::SetEntry(bool bEntry)
 {
 	m_bEntry = bEntry;
 
-	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Close.txt");
+	if (m_World == WORLD::UP)
+		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Close.txt");
+	else if (m_World == WORLD::DOWN)
+		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Close.txt");
 
 	if (bEntry) {
 		m_bLeave = false;

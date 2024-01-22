@@ -36,6 +36,13 @@ public:
 		MAX		
 	};
 
+	//========== [[[ 列挙型定義 ]]]
+	enum class WORLD {
+		NONE = 0,
+		UP,			//上
+		DOWN		//下
+	};
+
 	//========== [[[ 関数宣言 ]]]
 	CGoalGate();
 	virtual        ~CGoalGate();
@@ -69,6 +76,7 @@ private:
 	Color m_RainbowCol[(int)RAINBOW::MAX];	//色
 	Scale3D m_scale;						//拡縮
 	CCamera m_camera;						//カメラ
+	static WORLD s_World;
 	static int s_modelIdx;					//モデル番号
 	static int s_TexIdx[3];					//テクスチャ番号
 	static int s_num;
@@ -90,4 +98,5 @@ private:
 	int m_nEntryNo;      // エントリーNo
 	int m_nEntryCounter; // 入ってからの時間カウンター
 	UShort m_GuideAlpha; // ガイドUIのα値
+	WORLD m_World;
 };
