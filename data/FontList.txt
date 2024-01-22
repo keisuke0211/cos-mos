@@ -1,4 +1,11 @@
-fontDatas{ 1
+fontDatas{ 2
+	fontData{
+		texIdx		data\\TEXTURE\\Font.PNG
+		startCode	33
+		ptnX		8
+		ptnY		8
+	}
+
 	fontData{
 		texIdx		data\\TEXTURE\\Font.PNG
 		startCode	33

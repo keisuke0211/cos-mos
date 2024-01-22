@@ -209,6 +209,8 @@ void CTalk::Uninit(void)
 //=======================================
 void CTalk::Update(void)
 {
+	RNLib::Text2D().Put(PRIORITY_TEXT, "Ç†ÇΩÇÁÇµÇ¢Ç”ÇßÇÒÇ∆", _RNC_Text::ALIGNMENT::LEFT, NONEDATA, Pos2D(200.0f, 200.0f), 0.0f);
+
 	//âÔòbèIóπ
 	if (s_pTalk == NULL)
 		return;
