@@ -616,7 +616,6 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
-	m_WldBoardIdx = RNLib::Model().Load(String("data\\MODEL\\World_Board-%d.x", m_nPlanetIdx + 1));
 	m_MapIdx = RNLib::Texture().Load(String("data\\STAGE_SNAP\\stage_%d-%d.png", m_nPlanetIdx + 1, m_nStageSelect + 1));
 
 	if (m_CoinUI == NULL) {
