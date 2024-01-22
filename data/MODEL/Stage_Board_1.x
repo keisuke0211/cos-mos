@@ -1016,7 +1016,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "cos-mos\\data\\TEXTURE\\timber.jpg";
+    "data\\TEXTURE\\timber.jpg";
    }
   }
   Material {
@@ -1025,7 +1025,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "cos-mos\\data\\TEXTURE\\shaft.jpg";
+    "data\\TEXTURE\\shaft.jpg";
    }
   }
   Material {
@@ -1034,7 +1034,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "cos-mos\\data\\TEXTURE\\leaf.jpg";
+    "data\\TEXTURE\\leaf.jpg";
    }
   }
  }

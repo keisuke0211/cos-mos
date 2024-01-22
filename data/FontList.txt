@@ -5,12 +5,11 @@ fontDatas{ 2
 		ptnX		8
 		ptnY		8
 	}
-
 	fontData{
-		texIdx		data\\TEXTURE\\Font.PNG
-		startCode	33
-		ptnX		8
-		ptnY		8
+		texIdx		data\\TEXTURE\\Font2.PNG
+		startCode	12353
+		ptnX		16
+		ptnY		16
 	}
 }
 END
