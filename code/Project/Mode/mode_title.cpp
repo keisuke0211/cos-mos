@@ -273,6 +273,20 @@ void CMode_Title::Update(void) {
 		Matrix rocketMtx = RNLib::Matrix().ConvRotToMtx(D3DXVECTOR3(0.0f, ((RNLib::Count().GetCount() % 300) / 300.0f) * D3DX_PI_DOUBLE, 0.0f));
 		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, RNLib::Matrix().MultiplyMtx(baseMtx, rocketMtx), false)
 			->SetOutLineIdx(5);
+
+		float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.7) + 1.0f);
+		D3DXVECTOR3 TexPos = INITPOS3D;
+		TexPos.x = TexPos.x + (float)(rand() % (int)12 - 6);
+		TexPos.y = -35.0f;
+
+		Matrix effMtx = RNLib::Matrix().MultiplyMtx(
+			baseMtx,
+			RNLib::Matrix().ConvPosRotToMtx(TexPos, Rot3D(1.57f,0.0f,0.0f)));
+
+		D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
+		D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
+
+		Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 30, EffRot, D3DXVECTOR3(120.0f, 120.0f, 0.0f), true, true);
 	}
 
 	// ゲーム終了
@@ -954,20 +968,26 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 				}					
 				
-				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
 				D3DXVECTOR3 TexPos = INITPOS3D;
 				TexPos.x = TexPos.x + (float)(rand() % (int)3 - 1) * 0.5f;
 				TexPos.y = -30.0f;
 
  				Matrix effMtx = RNLib::Matrix().MultiplyMtx(
 					mtxRocket,
-
 					RNLib::Matrix().ConvPosRotToMtx(TexPos,Rot3D(0.0f,0.0f,D3DX_PI)));
 				D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
-				if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 8)
-					Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
+				if (!m_bStgEnter) {
+					float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
+					Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 30, EffRot, D3DXVECTOR3(10.0f, 10.0f, 0.0f), true, true);
+				}
+				else if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 8) {
+					for (int Particle = 0; Particle < 3; Particle++) {
+						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
+						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f) * 2.0f, Color{ 255,45,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 60, EffRot, D3DXVECTOR3(40.0f, 40.0f, 0.0f), false, true);
+					}
+				}
 			}
 
 			//数字ブロックアニメーション処理
