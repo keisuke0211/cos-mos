@@ -964,7 +964,6 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 				}					
 				
-				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
 				D3DXVECTOR3 TexPos = INITPOS3D;
 				TexPos.x = TexPos.x + (float)(rand() % (int)3 - 1) * 0.5f;
 				TexPos.y = -30.0f;
@@ -976,11 +975,13 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
 				if (!m_bStgEnter) {
+					float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
 					Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 30, EffRot, D3DXVECTOR3(10.0f, 10.0f, 0.0f), true, true);
 				}
 				else if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 8) {
-					for (int Particle = 0; Particle < 2; Particle++) {
-						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f) * 2.0f, Color{ 255,105,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 60, EffRot, D3DXVECTOR3(40.0f, 40.0f, 0.0f), false, true);
+					for (int Particle = 0; Particle < 3; Particle++) {
+						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
+						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f) * 2.0f, Color{ 255,45,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 60, EffRot, D3DXVECTOR3(40.0f, 40.0f, 0.0f), false, true);
 					}
 				}
 			}
