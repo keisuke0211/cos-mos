@@ -86,13 +86,13 @@ void CCoinUI::Update(void) {
 	else if (!m_bFrame) {
 
 		//ƒRƒCƒ“
-		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z), m_rot)
+		RNLib::Polygon3D().Put(PRIORITY_UI, Pos3D(m_pos.x + 1.0f, m_pos.y + 0.4f, m_pos.z), m_rot)
 			->SetSize(m_scale.x, m_scale.y)
 			->SetTex(m_TexIdx[0])
 			->SetZTest(false);
 
 		//”
-		RNLib::Text3D().Put(PRIORITY_UI, String("%d", NumAll), _RNC_Text::ALIGNMENT::LEFT, 0, Pos3D(m_pos.x + 4.5f, m_pos.y + 0.8f, m_pos.z), m_rot)
+		RNLib::Text3D().Put(PRIORITY_UI, String("%d", NumAll), _RNC_Text::ALIGNMENT::CENTER, 0, Pos3D(m_pos.x + 6.5f, m_pos.y + 1.0f, m_pos.z), m_rot)
 			->SetSize(Size2D(3.0f, 3.0f))
 			->SetCol(COLOR_WHITE)
 			->SetZTest(false);

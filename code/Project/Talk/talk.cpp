@@ -321,8 +321,9 @@ void CTalk::NextSpeak(void)
 		SetFontOption(s_pTalk[m_nTalkID].type);
 
 		//サウンド設定　語り手番号がプレイヤー番号以外ならサウンド無し。　合致しているなら語り手番号代入
-		CShort SeIdx = s_pTalk[m_nTalkID].TalkerID < 0 || s_pTalk[m_nTalkID].TalkerID >= 2 ?
-			NONEDATA : s_pTalk[m_nTalkID].TalkerID;
+		CShort SeIdx = 
+			s_pTalk[m_nTalkID].TalkerID < 0 || s_pTalk[m_nTalkID].TalkerID >= 2 ? NONEDATA :
+			s_pTalk[m_nTalkID].TalkerID == 0 ? s_1P_Voice : s_2P_Voice;
 
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
 									CFont::FONT_07NIKUMARU, &m_pFont, false, false, NULL, SeIdx);

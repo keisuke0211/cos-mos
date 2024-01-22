@@ -96,7 +96,9 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_bBackMode        = false;
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
-	m_WldBoardIdx      = RNLib::Model().Load("data\\MODEL\\World_Board-1.x");
+	m_WldBoardIdx[0]   = RNLib::Model().Load("data\\MODEL\\Stage_Board_1.x");
+	m_WldBoardIdx[1]   = RNLib::Model().Load("data\\MODEL\\Stage_Board_2.x");
+	m_WldBoardIdx[2]   = RNLib::Model().Load("data\\MODEL\\Stage_Board_3.x");
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
 	m_EffTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png");
@@ -268,7 +270,7 @@ void CMode_Title::Update(void) {
 
 		// ロケット
 		Matrix baseMtx = RNLib::Matrix().ConvPosRotToMtx(D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f));
-		Matrix rocketMtx = RNLib::Matrix().ConvRotToMtx(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		Matrix rocketMtx = RNLib::Matrix().ConvRotToMtx(D3DXVECTOR3(0.0f, ((RNLib::Count().GetCount() % 300) / 300.0f) * D3DX_PI_DOUBLE, 0.0f));
 		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, RNLib::Matrix().MultiplyMtx(baseMtx, rocketMtx), false)
 			->SetOutLineIdx(5);
 
@@ -748,7 +750,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 		//ステージのデモ画像
 		RNLib::Polygon3D().Put(PRIORITY_UI, D3DXVECTOR3(IMAGE_STG_POS), D3DXVECTOR3(0.0f, -0.58875f, 0.0f))
-			->SetSize(40.0f * ImageCntRate, 30.0f * ImageCntRate)
+			->SetSize(40.0f * ImageCntRate * 0.8f, 30.0f * ImageCntRate * 0.8f)
 			->SetCol(COLOR_WHITE)
 			->SetTex(m_MapIdx)
 			->SetZTest(true);
@@ -790,10 +792,10 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 	{//看板
 		//ステージ看板
-		RNLib::Model().Put(PRIORITY_OBJECT, m_WldBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_WldBoardIdx[m_nPlanetIdx], D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f,D3DX_PI,0.0f), INITSCALE3D)
 			->SetOutLineIdx(2)
 			->SetCol(Color(211, 170, 132, 255));
-		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
+		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx + 1), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
 			->SetSize(Size2D(3.0f, 3.0f))
 			->SetZTest(false);
 
@@ -816,14 +818,16 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		if (!m_bStgEnter) {
 			if (m_nPlanetIdx > 0) {
 				// 矢印の描画(左)
-				RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - poscor.x - NUMPOSSELBOX.x * 0.7f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D)
-					->SetCol(Color{ 0,168,112,255 });
+				RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x - poscor.x - NUMPOSSELBOX.x * 0.7f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, 1.57f), INITSCALE3D* CountRate)
+					->SetCol(Color{ 0,168,112,255 })
+					->SetOutLineIdx(2);
 			}
 
 			if (m_nPlanetIdx < nPlanet - 1) {
 				// 矢印の描画(右)
-				RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + poscor.x - NUMPOSSELBOX.x * 0.3f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D)
-					->SetCol(Color{ 0,168,112,255 });
+				RNLib::Model().Put(PRIORITY_OBJECT, m_ArrowIdx, D3DXVECTOR3(SELECTBOX.x + poscor.x - NUMPOSSELBOX.x * 0.3f, UNSELECTBOX.y, UNSELECTBOX.z - 5.0f), D3DXVECTOR3(0.0f, 0.0f, -1.57f), INITSCALE3D* CountRate)
+					->SetCol(Color{ 0,168,112,255 })
+					->SetOutLineIdx(2);
 			}
 		}
 	}
@@ -1016,10 +1020,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 			//ブロック描画
 			if (!bStgRel)
 				RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
-				->SetCol(Color{ 243,191,63,255 });
+				->SetCol(Color{ 243,191,63,255 })
+				->SetOutLineIdx(2);
 			else
 				RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
-				->SetCol(Color{ 81,63,21,255 });
+				->SetCol(Color{ 81,63,21,255 })
+				->SetOutLineIdx(2);
 
 			//数字テクスチャ描画
 			if (m_bWorldChange == false && m_nCnt == MAX_COUNT || m_bStgEnter) {
@@ -1052,7 +1058,8 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 			// 非選択時	//ブロック描画
 			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, SELECTBOX - poscor + nCnt * NUMPOSSELBOX - (SELBOXRATE * AnimRate), INITD3DXVECTOR3, INITSCALE3D * CountRate, false)
-				->SetCol(Color{ 81,63,21,255 });
+				->SetCol(Color{ 81,63,21,255 })
+				->SetOutLineIdx(2);
 
 			//数字テクスチャ描画
 			if (m_bWorldChange == false && m_nCnt == MAX_COUNT) {

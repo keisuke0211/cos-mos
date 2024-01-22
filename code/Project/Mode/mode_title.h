@@ -169,7 +169,7 @@ private:
 	int m_nDrawPlanet;
 	int m_RocketIdx;
 	int m_SelIdx;
-	int m_WldBoardIdx;
+	int m_WldBoardIdx[3];
 	int m_CoinBoardIdx;
 	int m_ArrowIdx;
 	int *m_AnimCnt;

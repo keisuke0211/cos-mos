@@ -424,7 +424,7 @@ void CMenuUI::MenuCreate(void)
 	if (Mode == CMode::TYPE::TITLE) {
 		pos = D3DXVECTOR3(m_Menu.LeftPos.x - 10, 400.0f, 0.0f);
 		size = D3DXVECTOR2(0.0f, 0.0f);
-		TargetSize = D3DXVECTOR2(450.0f, 100.0f);
+		TargetSize = D3DXVECTOR2(400.0f*1.2f, 100.0f*1.2f);
 	}
 	else if (Mode == CMode::TYPE::GAME) {
 		pos = D3DXVECTOR3(m_Menu.LeftPos.x - 20, 150.0f, 0.0f);
