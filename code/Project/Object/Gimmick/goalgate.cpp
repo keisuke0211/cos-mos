@@ -90,13 +90,13 @@ void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
-	m_RainbowCol[(int)RAINBOW::RED] =		{ 200,0,0,200 };
-	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 200,0,200,200 };
-	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,200,200 };
-	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,200,200,200 };
-	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,200,0,200 };
-	m_RainbowCol[(int)RAINBOW::YELLOW] = { 200,200,0,200 };
-	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 200,200,200,100 };
+	m_RainbowCol[(int)RAINBOW::RED] =		{ 200,0,0,120 };
+	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 200,0,200,120 };
+	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,200,120 };
+	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,200,200,120 };
+	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,200,0,120 };
+	m_RainbowCol[(int)RAINBOW::YELLOW] = { 200,200,0,120 };
+	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 200,200,200,70 };
 
 	m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
 }
@@ -144,8 +144,7 @@ void CGoalGate::Update(void)
 
 	RNLib::Model().Put(PRIORITY_OBJECT, s_modelIdx, INITPOS3D, m_rot, Scale3D(m_scale.x * fCountRateX, m_scale.y * fCountRateY, m_scale.z * fCountRateZ), false)
 		->SetCol(setCol)
-		->SetClippingCamera(m_camera)
-		->SetOutLineIdx(4);
+		->SetClippingCamera(m_camera);
 
 	float CntRate = RNLib::Ease().Easing(EASE_TYPE::IN_SINE, m_nCnt, MAX_COUNT);
 
@@ -226,7 +225,7 @@ void CGoalGate::StateUpdate(void)
 
 			for (int Eff = 0; Eff < 4; Eff++)
 			{
-				Pos3D scale = (INIT_EFFECT_SCALE * 0.1f) + (INIT_EFFECT_SCALE * (rand() % 9) * 0.1f);
+				Pos3D scale = (INIT_EFFECT_SCALE * 0.1f) + (INIT_EFFECT_SCALE * (rand() % 10) * 0.1f);
 				pos.x = (float)((rand() % 40) - 20);
 				pos.y = (float)(rand() % 4);
 				float move = (float)((rand() % 100) + 70);
