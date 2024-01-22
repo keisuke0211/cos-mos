@@ -32,6 +32,7 @@ public:
 		LIGHT_BLUE,	//水
 		GREEN,		//緑
 		YELLOW,		//黄
+		WHITE,
 		MAX		
 	};
 
@@ -44,12 +45,11 @@ public:
 	virtual void   Draw(void);
 
 	void SetEntry(bool bEntry);
+	void LeaveDoor(void) { m_bLeave = true; }
 	void SetStartGate(bool bStartGate) { m_bStartGate = bStartGate; }
 
 	bool GetStartGate(void) { return m_bStartGate; }
-
 	static void EntrySub(void) { s_numEntry--; }
-
 	static void ResetEtr(void) { s_numEntry = 0; }
 
 protected:
@@ -62,21 +62,28 @@ private:
 	void EscapeGuide(void);
 
 	//========== [[[ 変数宣言 ]]]
+	CDoll3D* m_doll;
 	STATE m_state;							//種類
 	RAINBOW m_Rainbow;						//色状態
 	Color m_col;							//色
 	Color m_RainbowCol[(int)RAINBOW::MAX];	//色
-	static int s_modelIdx;					//モデル番号
-	static int s_TexIdx[2];					//テクスチャ番号
 	Scale3D m_scale;						//拡縮
-	int		m_nCnt;							//カウント
-	bool	m_bEntry;						//入ったかどうか
-	bool	m_bScale;						//拡大するか縮小するか
-	int		m_nCntEtrX,m_nCntEtrY;			//XYの個別カウント
+	CCamera m_camera;						//カメラ
+	static int s_modelIdx;					//モデル番号
+	static int s_TexIdx[3];					//テクスチャ番号
 	static int s_num;
 	static int s_numEntry;
+
+	int		m_nCnt;							//カウント
+	int		m_nCntEtrX, m_nCntEtrY;			//XYの個別カウント
+	int		m_MotionIdx;
+	int		m_MotionOldIdx;
+
+	bool	m_bEntry;						//入ったかどうか
+	bool	m_bScale;						//拡大するか縮小するか
 	bool	m_bStartGate;
 	bool	m_bCloseGate;
+	bool	m_bLeave;						//ゴールから出たか
 
 	static const int ESCAPE_GUIDE_POPUP_TIME = 60;
 	static int s_nEscapeGuideTexID; // 脱出アイコンのテクスチャID

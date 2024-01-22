@@ -1,0 +1,47 @@
+#=======================================
+#
+#会話003[ステージ2-3とステージ3-1の間の会話]
+#Author：HIRASAWA SHION
+#Scenario Writer：OMIYA AIRA
+#
+#=======================================
+
+#会話数
+NUM_TALK   5
+
+#会話内容
+SET_TALK
+	TALK    次に向かう惑星はなんか雰囲気が違うね
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    そうだなぁ...
+	PLAYER  1
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    多分、今まで通りにはいかないと思うよ
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    でも、二人の絆があれば大丈夫だよ！
+	PLAYER  1
+	TYPE    0
+END_TALK
+
+#会話内容
+SET_TALK
+	TALK    そうだね！じゃあ行こうか！
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+END

@@ -48,6 +48,7 @@ namespace {
 	bool            isPause;
 	bool            isReset;
 	bool            isCutIn;
+	bool            isGoal;
 	short           wallModelIdxes[2];
 	CCamera*        UICamera[2];
 	CDoll3D*        UIDoll[2];
@@ -90,6 +91,8 @@ void Stage::SetPause        (const bool& setIsPause)                          { 
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
 void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
+void Stage::SetIsGoal       (const bool& setIsGoal)                           { isGoal      = setIsGoal; }
+bool Stage::GetIsGoal       (void)                                            { return isGoal; }
 bool Stage::GetIsTimeOver   (void)                                            { return (limitTimeCounter <= 0); }
 bool Stage::GetIsShowUI     (void)                                            { return !isPause && !isCutIn && CPlayer::GetZoomUpCounter() <= 0 && !isReset; }
 
@@ -111,6 +114,7 @@ void Stage::Init(void) {
 	rocketparts = NULL;
 	isPause = false;
 	isReset = false;
+	isGoal = false;
 	fishpos = Pos3D(100.0f,300.0f,0.0f);
 
 	for (int nCnt = 0; nCnt < MAX_CLOUD; nCnt++)
@@ -175,6 +179,9 @@ bool Stage::CheckStageNumber(const int& planetIdx, const int& stageIdx) {
 // ステージ開始処理（※やり直しを含む）
 //========================================
 void Stage::StartStage(void) {
+
+	// ゴールフラグをFALSEに
+	isGoal = false;
 
 	// リセットしたかフラグ
 	isReset;
@@ -370,8 +377,8 @@ void Stage::UpdateStage(void) {
 		rocketparts->Update();
 	}
 
-	// 非ポーズ時、
-	if (!isPause) {
+	// 非ポーズ & 非リセット時、
+	if (!isPause && !isReset) {
 
 		// プレイヤーの更新処理
 		if (player != NULL)
@@ -735,6 +742,10 @@ namespace
 	//========================================
 	void SaveWorldData(void)
 	{
+#ifdef _DEBUG
+		return;
+#endif
+
 		if (pWldData == NULL) return;
 
 		FILE *pFile = fopen(STAGE_DATA, "w");
@@ -892,7 +903,7 @@ bool Stage::GetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID)
 // 外部ファイルよりすでに回収しているコインの総数を返す
 // Author：HIRASAWA SHION
 //========================================
-int  Stage::GetCoinAll(void)
+int Stage::GetCoinAll(void)
 {
 	LoadWorldData();
 
@@ -946,7 +957,7 @@ void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, const Data& data)
 // コイン回収状況を設定
 // Author：HIRASAWA SHION
 //========================================
-void  Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
+void Stage::SetCoinInfo(CInt& planetIdx, CInt& stageIdx, CInt& coinID, const bool& bGet)
 {
 	LoadWorldData();
 

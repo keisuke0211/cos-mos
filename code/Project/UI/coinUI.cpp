@@ -61,7 +61,7 @@ void CCoinUI::Uninit(void) {
 //========================================
 void CCoinUI::Update(void) {
 
-	if (!Stage::GetIsShowUI())
+	if (!Stage::GetIsShowUI() && Manager::GetMode() == CMode::TYPE::GAME)
 		return;
 
 	//Šl“¾‚µ‚Ä‚¢‚éƒRƒCƒ“”‚ğæ“¾

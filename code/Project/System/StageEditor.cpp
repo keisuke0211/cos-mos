@@ -153,6 +153,8 @@ void CStageEditor::Release(bool bPlanetRelease)
 //========================================
 void CStageEditor::FileLoad(void)
 {
+	//ステージ情報全開放
+	Release(true);
 
 	int nCntPlanet = 0;
 	int *pCntStage = NULL;
@@ -559,7 +561,7 @@ void CStageEditor::SwapStage(int nStageIdx)
 			NecstStage = 0;
 		}
 
-		if (planet < m_Info.nPlanetMax)
+		if (planet < m_Info.nPlanetMax && !Manager::StgEd()->GetStageRel(planet, NecstStage))
 		{
 			if (Manager::Transition().GetState() == CTransition::STATE::NONE)
 			{
@@ -624,6 +626,12 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_COIN:
 		Manager::StageObjectMgr()->CoinCreate(pos);
 		break;
+	case TYPE_MAGMA_BLOCK:
+		Manager::StageObjectMgr()->MagmaBlockCreate(pos, COLOR_WHITE);
+		break;
+	case TYPE_BAT:
+		Manager::StageObjectMgr()->BatCreate(pos);
+		break;
 	case TYPE_FILL_BLOCK_11:
 		Manager::StageObjectMgr()->FillBlockCreate(pos, CFillBlock::BLOCKTYPE::TYPE_1x1, m_StageColor.FillBlock);
 		break;
@@ -661,12 +669,12 @@ void CStageEditor::ObjPlace(float fSizeX, float fSizeY, D3DXVECTOR3 pos, int nTy
 	case TYPE_PLAYER_0:
 		pos.y += fSizeY * 0.5f;
 		Stage::GetPlayer()->SetPos(0, pos);
-		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
+		//Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_PLAYER_1:
 		pos.y += -fSizeY * 0.5f;
 		Stage::GetPlayer()->SetPos(1, pos);
-		Manager::StageObjectMgr()->GoalGateCreate(pos,true);
+		//Manager::StageObjectMgr()->GoalGateCreate(pos,true);
 		break;
 	case TYPE_GOALGATE:
 		Manager::StageObjectMgr()->GoalGateCreate(pos,false);

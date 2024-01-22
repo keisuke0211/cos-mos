@@ -283,8 +283,8 @@ void CMenuUI::SelectInput(void)
 		m_Menu.nMaineOldSelect = m_Menu.nMaineSelect;
 	}
 
-	if (RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK))
-	{
+	if ((RNLib::Input().GetTrigger(DIK_BACKSPACE, _RNC_Input::BUTTON::B) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::BACK)) &&
+		Manager::GetMode() == CMode::TYPE::TITLE) {
 		if (!m_Menu.bSubMenu) {
 			m_Menu.nCntLeftAnime = 0;
 			m_Menu.bBackMode = true;
@@ -467,6 +467,7 @@ void CMenuUI::SubTextCreate(void)
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 130, 50.0f, 0.0f), D3DXVECTOR2(256.0f, 70.0f),
 			"", CFont::FONT_07NIKUMARU, &pFont);
+		m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
 
 		for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
 			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NONE,
@@ -482,6 +483,7 @@ void CMenuUI::SubTextCreate(void)
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 180, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
 			"", CFont::FONT_07NIKUMARU, &pFont);
+		m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
 
 		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
@@ -722,7 +724,7 @@ void CMenuUI::MenuAnime(void)
 					m_Menu.bSubMenuDisp = true;
 					m_Menu.nSubMenuIdx = m_Menu.nMaineSelect;
 
-					FormFont pFontTitle = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+					FormFont pFontTitle = { D3DXCOLOR(1.0f,1.0f,1.0f,0.0f),35.0f,3,1,-1, };
 					FormFont pFontText = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
 					// テキストの再生成

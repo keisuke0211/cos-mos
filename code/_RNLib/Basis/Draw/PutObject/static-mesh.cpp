@@ -278,7 +278,7 @@ void _RNC_StaticMesh::CMesh::Draw(Device& device) {
 	Polygon2DAnd3D::SetTexture(device, (void*)(&m_texIdx), Polygon2DAnd3D::TEX_TYPE::IDX);
 
 	// ƒ|ƒŠƒSƒ“‚Ì•`‰æ
-	device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vtxNum, 0, m_idxNum / 3);
+	while(FAILED(device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_vtxNum, 0, m_idxNum / 3)));
 }
 
 //========================================

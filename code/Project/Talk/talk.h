@@ -20,6 +20,13 @@ public:
 		MAX,
 	};
 
+	//会話表示の種類
+	enum class SHOWTYPE {
+		Under = -1,// 画面中央下部に表示
+		Curtain,   // 画面上下に暗幕を用意してその上にセリフを表示
+		MAX
+	};
+
 	CTalk();
 	~CTalk();
 	void Init(EVENT &Event);
@@ -38,33 +45,57 @@ private:
 	//会話イベントのファイルパス
 	static const char *EVENT_FILE[(int)EVENT::MAX];
 
-	static const int NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
-	static const int NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
+	//画面下部表示の位置・サイズ
+	static const Pos3D TYPE_UNDER_POS;
+	static CFloat TYPE_UNDER_FONT_SIZE;
+
+	static CFloat TYPE_CURTAIN_WIDTH;              // カーテンの幅
+	static CFloat TYPE_CURTAIN_HEIGHT;             // カーテンの高さ
+	static CFloat TYPE_CURTAIN_OVER_BEHIND_POS_Y;  // 上部カーテン位置
+	static CFloat TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y;// 下部カーテン位置
+	static CInt   TYPE_CURTAIN_COUNTER = 20;       // カーテンの表示ON/OFFのアニメーションカウンター
+	static CFloat TYPE_CURTAIN_FONT_SIZE;          // カーテンのフォントサイズ
+	static int    s_CurtainCounter;                // アニメーションカウンター
+
+	static CInt TYPE_CURTAIN_APPEAR_INTERVAL = 60;
+	static CInt NEXT_POPUP_INTERVAL = 4; //次の文字を表示するインターバル
+	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
+	static CInt AUTO_COUNTER = 60;       //発言終了から自動進行するまでのカウンター
+
+	static int s_1P_Voice;
+	static int s_2P_Voice;
 
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込
 
+	void SetFontOption(const SHOWTYPE& type);
+
+	void ShowType(void);  //表示方法を適用する
+	void Auto(void);      //自動進行
 	void DeleteText(void);//表示するテキストのメモリ確保（引数がNULLなら開放のみ
 	void NextSpeak(void); //次にしゃべるテキストの設定
+	void Skip(void);      //会話スキップ
+
+	void SetCurtain(const bool bSetCurtain = true);//暗幕設定
 
 	//会話情報
 	struct Talk
 	{
 		char *pLog;   // 会話内容
-		int  nTex;    // テクスチャ番号
 		int TalkerID; // 会話しているプレイヤーID
+		SHOWTYPE type;// 描画方法
 	};
 
-	static Talk *s_pTalk;   //会話内容
-	static EVENT s_Event;   //イベント
-	bool   m_bTalk;         //会話中かどうか
+	static Talk *s_pTalk; //会話内容
+	static EVENT s_Event; //イベント
+	bool   m_bTalk;       //会話中かどうか
 	CFontText *m_pText;
 	FormFont   m_pFont;
-	FormShadow m_pShadow;
 
 	Pos3D  m_pos;
 	Pos2D  m_size;
 	int    m_nTalkNumAll; //最大会話数
 	int    m_nTalkID;     //会話番号
-	bool   m_bEndSpeak;   //発言終了（会話自体の終了ではない
+	bool   m_bAuto;       //自動進行フラグ
+	int    m_nAutoCounter;//自動進行のカウンター
 };

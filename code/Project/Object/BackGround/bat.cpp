@@ -7,8 +7,8 @@
 #include "bat.h"
 #include "../../main.h"
 #include"../../Character/player.h"
-#define	MOVE_UP		(D3DXVECTOR3(1.0f,0.3f,0.0f))
-#define	MOVE_DOWN	(D3DXVECTOR3(1.0f,-0.3f,0.0f))
+#define	MOVE_UP		(D3DXVECTOR3(0.0f,0.3f,0.0f))
+#define	MOVE_DOWN	(D3DXVECTOR3(0.0f,-0.3f,0.0f))
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CBatクラス
@@ -31,7 +31,7 @@ CBat::CBat(void) {
 	m_rot = INITD3DXVECTOR3;
 
 	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data/SETUP/Bat.txt"));
-	m_State = CBat::STATE::STATE_FLY;
+	m_State = CBat::STATE::STATE_DEFAULT;
 	m_nIdxMotion = 0;
 	m_nFlyCounter = 0;
 	m_nStayCounter = 0;
@@ -76,8 +76,16 @@ void CBat::Uninit(void) {
 //========================================
 void CBat::Update(void) {
 	 
-	//CPlayer *Player = CPlayer::GetInfo(CPlayer::WORLD_SIDE::FACE);
-
+	if (m_pos.y < 0)
+	{
+		// コウモリのいる方のプレイヤーの情報を入手
+		CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::BEHIND);
+	}
+	else
+	{
+		// コウモリのいる方のプレイヤーの情報を入手
+		CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(CPlayer::WORLD_SIDE::FACE);
+	}
 	// 状態
 	switch (m_State)
 	{

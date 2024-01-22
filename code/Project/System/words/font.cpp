@@ -67,7 +67,7 @@ void CFont::FontCreate(FONT nFont)
 
 	// フォントの生成
 	int resolution = 120;	// 解像度
-	m_logFont[nFont] = { resolution, 0, 0, 0, FW_DONTCARE, false, false, false, SHIFTJIS_CHARSET, OUT_TT_ONLY_PRECIS,
+	m_logFont[nFont] = { resolution, 0, 0, 0, 1, false, false, false, SHIFTJIS_CHARSET, OUT_TT_ONLY_PRECIS,
 		CLIP_DEFAULT_PRECIS, PROOF_QUALITY, FIXED_PITCH | FF_MODERN };
 
 	strcpy(m_logFont[nFont].lfFaceName, s_FontName[nFont]);

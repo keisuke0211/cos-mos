@@ -17,10 +17,21 @@ class CRoadTripLaser;
 class CExtenddog;
 class CPile;
 class CCollision;
+class CGoalGate;
 
 // プレイヤークラス
 class CPlayer {
 public:
+	static CFloat SIZE_WIDTH;	// 横幅
+	static CFloat SIZE_HEIGHT;	// 高さ
+
+	static CInt SWAP_INTERVAL;	// スワップインターバル
+	static CInt NUM_PLAYER = 2;// プレイヤーの数
+
+	static const Color P1_COLOR;
+	static const Color P2_COLOR;
+
+
 	// 表裏どちらの世界に存在するか
 	enum class WORLD_SIDE {
 		FACE = 0,	// 表
@@ -86,6 +97,7 @@ public:
 		bool  bRide;         // ロケットに乗っているかどうか
 		int   nRideInterval; //ロケットに乗り降りした時のインターバル
 		bool  bGoal;         // ゴールしたかどうか
+		CGoalGate *pGoalGate;
 		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間
 		float fTramTargetPosY;  // トランポリン用の目標位置
 		bool  bTramJump;        // トランポリン用の特殊ジャンプ
@@ -115,12 +127,6 @@ public:
 		int Keyborad[(int)WORLD_SIDE::MAX][(int)KEY_CONFIG::MAX]; // キーボードのキー配置
 		_RNC_Input::BUTTON JoyPad[(int)KEY_CONFIG::MAX];              // ジョイパッドのボタン配置
 	};
-
-	static CFloat SIZE_WIDTH;	// 横幅
-	static CFloat SIZE_HEIGHT;	// 高さ
-
-	static CInt SWAP_INTERVAL;	// スワップインターバル
-	static CInt NUM_PLAYER = 2;// プレイヤーの数
 
 	CPlayer();
 	~CPlayer();
@@ -204,6 +210,7 @@ public:
 		DEATH_INK,      // 死亡インク
 		DEATH_PARTI,    // 死亡パーティクル
 		GOAL_EFFECT,    // ゴール・ロケット乗車時のエフェクト
+		SMOKE_EFFECT,   // 煙のエフェクト
 		MAX
 	};
 
@@ -355,4 +362,6 @@ private:
 	static float s_fCorrWidth;
 	static float s_fCorrHeight;
 	static float s_fAimWorkSpeed;
+
+	int nCnt;
 };

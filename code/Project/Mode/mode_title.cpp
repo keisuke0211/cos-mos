@@ -22,6 +22,8 @@
 #include "../../_RNLib/Basis/3DObject/rail3D.h"
 #include "../Talk/talk.h"
 
+#define DEFAULT_BG_COLOR Color(165,75,124,255)
+
 //================================================================================
 //----------|---------------------------------------------------------------------
 //==========| CMode_Titleクラス
@@ -77,9 +79,9 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 		}
 	}
 
-	BgColor = Color{ 0,0,0,255 };
-	BgOldColor = Color{ 0,0,0,255 };
-	BgNextColor = Color{ 0,0,0,255 };
+	BgColor = DEFAULT_BG_COLOR;
+	BgOldColor = DEFAULT_BG_COLOR;
+	BgNextColor = DEFAULT_BG_COLOR;
 	nCntColorChange = 0;
 	bColorChange = false;
 
@@ -94,7 +96,7 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_bBackMode        = false;
 	m_RocketIdx        = RNLib::Model().Load("data\\MODEL\\Rocket_Body.x");
 	m_SelIdx           = RNLib::Model().Load("data\\MODEL\\Select_Box.x");
-	m_StgBoardIdx      = RNLib::Model().Load("data\\MODEL\\Stage_Board.x");
+	m_WldBoardIdx      = RNLib::Model().Load("data\\MODEL\\World_Board-1.x");
 	m_CoinBoardIdx     = RNLib::Model().Load("data\\MODEL\\Coin_Board.x");
 	m_ArrowIdx         = RNLib::Model().Load("data\\MODEL\\Arrow.x");
 	m_EffTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png");
@@ -266,9 +268,23 @@ void CMode_Title::Update(void) {
 
 		// ロケット
 		Matrix baseMtx = RNLib::Matrix().ConvPosRotToMtx(D3DXVECTOR3(60.0f, -40.0f, -20.0f), D3DXVECTOR3(0.0f, D3DX_PI, 1.9f));
-		Matrix rocketMtx = RNLib::Matrix().ConvRotToMtx(D3DXVECTOR3(0.0f, ((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE, 0.0f));
+		Matrix rocketMtx = RNLib::Matrix().ConvRotToMtx(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, RNLib::Matrix().MultiplyMtx(baseMtx, rocketMtx), false)
 			->SetOutLineIdx(5);
+
+		float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.7) + 1.0f);
+		D3DXVECTOR3 TexPos = INITPOS3D;
+		TexPos.x = TexPos.x + (float)(rand() % (int)12 - 6);
+		TexPos.y = -35.0f;
+
+		Matrix effMtx = RNLib::Matrix().MultiplyMtx(
+			baseMtx,
+			RNLib::Matrix().ConvPosRotToMtx(TexPos, Rot3D(1.57f,0.0f,0.0f)));
+
+		D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
+		D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
+
+		Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 30, EffRot, D3DXVECTOR3(120.0f, 120.0f, 0.0f), true, true);
 	}
 
 	// ゲーム終了
@@ -300,8 +316,6 @@ void CMode_Title::Update(void) {
 				if ((RNLib::Input().GetKeyTrigger(DIK_RETURN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::A)) &&
 					Manager::Transition().GetState() == CTransition::STATE::NONE)
 				{
-					//RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SELECT], CSound::CATEGORY::SE, false);
-
 					switch (Title)
 					{
 					case TITLE_OUTSET:
@@ -313,22 +327,28 @@ void CMode_Title::Update(void) {
 						break;
 					case TITLE_SELECT:
 					{
-						if (!Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) || RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
-							if (m_Direction == RIGHT)
-								m_RocketPos = FADEROCKET;
-							else if (m_Direction == LEFT)
-								m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
+						if (Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == false) {
+							if (!Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) || RNSystem::GetMode() == RNSystem::MODE::DEBUG) {
+								if (m_Direction == RIGHT)
+									m_RocketPos = FADEROCKET;
+								else if (m_Direction == LEFT)
+									m_RocketPos = Pos3D(-FADEROCKET.x, FADEROCKET.y, FADEROCKET.z);
 
-							m_RocketposDiff = m_RocketPos - m_RocketPosOld;
-							m_RocketAnimCnt = 0;
-							m_nStgStartCnt = 0;
-							m_bStgEnter = true;
+								m_RocketposDiff = m_RocketPos - m_RocketPosOld;
+								m_RocketAnimCnt = 0;
+								m_nStgStartCnt = 0;
+								m_bStgEnter = true;
+
+								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_MOVE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
+							}
 						}
 					}
 					break;
 					}
 				}
 			}
+			else if (Manager::StgEd()->GetStageRel(m_nPlanetIdx, m_nStageSelect) == true && m_bWorldChange == false && m_bRocketMove == false)
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 		}
 
 		if (m_nStgStartCnt == m_RocketRail.GetPointNum() * 10) {
@@ -594,6 +614,7 @@ void CMode_Title::CreateStageSelectInfo(void) {
 	for (int AnimInit = 0; AnimInit < Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax; AnimInit++)
 		m_AnimCnt[AnimInit] = 0;
 
+	/*m_WldBoardIdx = RNLib::Model().Load(String("data\\MODEL\\World_Board-%d.x", m_nPlanetIdx + 1));*/
 	m_MapIdx = RNLib::Texture().Load(String("data\\STAGE_SNAP\\stage_%d-%d.png", m_nPlanetIdx + 1, m_nStageSelect + 1));
 
 	if (m_CoinUI == NULL) {
@@ -632,7 +653,7 @@ void CMode_Title::StageSelect(void) {
 				TextRelease(TEXT_MENU);
 				SwapMode(TITLE_MENU_ANIME);
 
-				BgNextColor = Color{ 0,0,0,255 };
+				BgNextColor = DEFAULT_BG_COLOR;
 				bColorChange = true;
 				return;
 			}
@@ -769,19 +790,20 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 
 	{//看板
 		//ステージ看板
-		RNLib::Model().Put(PRIORITY_OBJECT, m_StgBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
-			->SetOutLineIdx(5)
+		RNLib::Model().Put(PRIORITY_OBJECT, m_WldBoardIdx, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), INITD3DXVECTOR3, INITSCALE3D)
+			->SetOutLineIdx(2)
 			->SetCol(Color(211, 170, 132, 255));
-		RNLib::Text3D().Put(PRIORITY_OBJECT, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
-			->SetSize(Size2D(3.0f, 3.0f));
+		RNLib::Text3D().Put(PRIORITY_UI, String("WORLD %d", m_nPlanetIdx), _RNC_Text::ALIGNMENT::CENTER, 0, D3DXVECTOR3(0.0f, 16.5f + 12.0f * (1.0f - CountRate), -145.0f), Rot3D(0.0f, 0.0f, D3DX_PI * -0.025f))
+			->SetSize(Size2D(3.0f, 3.0f))
+			->SetZTest(false);
 
 		//コイン看板
 		if(!m_bStgEnter)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f, -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
-			->SetOutLineIdx(5);
+			->SetOutLineIdx(2);
 		else if (m_bStgEnter)
 			RNLib::Model().Put(PRIORITY_OBJECT, m_CoinBoardIdx, D3DXVECTOR3(30.0f, 18.0f + (18.0f * (1.0f - CountRate)), -135.0f), D3DXVECTOR3(-0.3925f, 0.58875f, 0.0f), INITSCALE3D)
-			->SetOutLineIdx(5);
+			->SetOutLineIdx(2);
 
 		if (m_CoinUI != NULL) {
 			if(m_bStgEnter)
@@ -924,21 +946,24 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 		
 			{//ロケット描画
 				Matrix mtxRocket = RNLib::Matrix().ConvPosRotScaleToMtx(m_RocketPosOld + (m_RocketposDiff * RktAnimRt),m_RocketRotOld + (RotRate * m_RocketRotDiff), Scale3D(0.15f, 0.15f, 0.15f));
-				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, mtxRocket, false);
+				RNLib::Model().Put(PRIORITY_OBJECT, m_RocketIdx, mtxRocket, false)
+					->SetOutLineIdx(10);
 
 				Color Effcol[3];
 				Effcol[0] = Color(255, 55, 0, 255);
 				Effcol[1] = Color(0, 0, 0, 100);
 				Effcol[2] = Color(20,20,20,120);
 
-				if(m_nStgStartCnt == m_RocketRail.GetPointNum() * 8)
+				if (m_nStgStartCnt == m_RocketRail.GetPointNum() * 8) {
 					for (int Particle = 0; Particle < 64; Particle++) {
 						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.4) + INIT_EFFECT_SCALE.x * 0.5);
-						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 2], m_RocketPosOld + (m_RocketposDiff * RktAnimRt),Scale3D(ScaleTex,ScaleTex,0.0f), Effcol[rand() % 3], CParticle::TYPE::TYPE_NORMAL, 180,INITD3DXVECTOR3,D3DXVECTOR3(8.0f,8.0f,0.0f));
-						//SE入れる場所DEATH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 2], m_RocketPosOld + (m_RocketposDiff * RktAnimRt), Scale3D(ScaleTex, ScaleTex, 0.0f), Effcol[rand() % 3], CParticle::TYPE::TYPE_NORMAL, 180, INITD3DXVECTOR3, D3DXVECTOR3(8.0f, 8.0f, 0.0f));
+						Manager::GetMainCamera()->SetVib(6);
 					}
+
+					RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::EXPLOSION], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+				}					
 				
-				float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
 				D3DXVECTOR3 TexPos = INITPOS3D;
 				TexPos.x = TexPos.x + (float)(rand() % (int)3 - 1) * 0.5f;
 				TexPos.y = -30.0f;
@@ -946,11 +971,19 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
  				Matrix effMtx = RNLib::Matrix().MultiplyMtx(
 					mtxRocket,
 					RNLib::Matrix().ConvPosRotToMtx(TexPos,Rot3D(0.0f,0.0f,D3DX_PI)));
-
 				D3DXVECTOR3 EffPos = RNLib::Matrix().ConvMtxToPos(effMtx);
 				D3DXVECTOR3 EffRot = RNLib::Matrix().ConvMtxToRot(effMtx);
 
-				Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP,30, EffRot,D3DXVECTOR3(10.0f,10.0f,0.0f),true,true);
+				if (!m_bStgEnter) {
+					float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
+					Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,85,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 30, EffRot, D3DXVECTOR3(10.0f, 10.0f, 0.0f), true, true);
+				}
+				else if (m_nStgStartCnt < m_RocketRail.GetPointNum() * 8) {
+					for (int Particle = 0; Particle < 3; Particle++) {
+						float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 0.1) + 1.0f);
+						Manager::EffectMgr()->ParticleCreate(m_EffTex[rand() % 3], EffPos, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f) * 2.0f, Color{ 255,45,0,255 }, CParticle::TYPE::TYPE_FLOATUP, 60, EffRot, D3DXVECTOR3(40.0f, 40.0f, 0.0f), false, true);
+					}
+				}
 			}
 
 			//数字ブロックアニメーション処理
@@ -981,8 +1014,12 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				RNLib::Matrix().ConvPosToMtx(numpos));
 
 			//ブロック描画
-			RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
+			if (!bStgRel)
+				RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
 				->SetCol(Color{ 243,191,63,255 });
+			else
+				RNLib::Model().Put(PRIORITY_OBJECT, m_SelIdx, mtxBlock, false)
+				->SetCol(Color{ 81,63,21,255 });
 
 			//数字テクスチャ描画
 			if (m_bWorldChange == false && m_nCnt == MAX_COUNT || m_bStgEnter) {
@@ -993,7 +1030,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				else
 				{
 					RNLib::Polygon3D().Put(PRIORITY_UI, mtxNum)
-						->SetSize(5.0f, 5.0f)
+						->SetSize(6.0f, 6.0f)
 						->SetTex(m_TexIdx[TEX_LOCK]);
 
 					int nStgCoin = Manager::StgEd()->GetStageCoin(m_nPlanetIdx, nCnt);
@@ -1029,7 +1066,7 @@ void CMode_Title::StageDraw(int nPlanet, int nStage, D3DXVECTOR3 poscor, float &
 				else
 					RNLib::Polygon3D().Put(PRIORITY_UI, numpos - (SELBOXRATE * AnimRate), INITROT3D)
 					->SetSize(5.0f, 5.0f)
-					->SetCol(Color{ 85,85,85,255 })
+					->SetCol(Color{ 255,255,255,255 })
 					->SetTex(m_TexIdx[TEX_LOCK]);
 			}
 		}
@@ -1045,28 +1082,30 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 
 	if (m_nSelectTemp < 0 && m_nPlanetIdx != 0) {
 
-			m_nPlanetIdx--;
-			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
-			m_nStageSelect = nStage - 1;
-			m_nOldSelect = nStage;
+		m_nPlanetIdx--;
+		nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+		m_nStageSelect = nStage - 1;
+		m_nOldSelect = nStage;
 
-			BgOldColor = BgColor;
-			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
-			nCntColorChange = 0;
-			bColorChange = true;
-		}
-		else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
-			
-			m_nPlanetIdx++;
-			m_nStageSelect = 0;
-			m_nOldSelect = -1;
-			nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+	}
+	else if (m_nSelectTemp >= nStage && m_nPlanetIdx != nStage - 1) {
 
-			BgOldColor = BgColor;
-			BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
-			nCntColorChange = 0;
-			bColorChange = true;
-		}
+		m_nPlanetIdx++;
+		m_nStageSelect = 0;
+		m_nOldSelect = -1;
+		nStage = Manager::StgEd()->GetType()[m_nPlanetIdx].nStageMax;
+
+		BgOldColor = BgColor;
+		BgNextColor = Manager::StgEd()->GetType()[m_nPlanetIdx].color;
+		nCntColorChange = 0;
+		bColorChange = true;
+	}
+
+	/*m_WldBoardIdx = RNLib::Model().Load(String("data\\MODEL\\World_Board-%d.x", m_nPlanetIdx + 1));*/
 
 	m_nDrawPlanet = m_nPlanetIdx;
 
