@@ -883,8 +883,13 @@ void CPlayer::ActionControl(void)
 			Player.doll->OverwriteMotion(s_motion[nIdxPlayer].dance);
 		}
 		else if (!Player.bGround) {
-			if ((Player.pos.y > 0.0f && Player.move.y < 0.0f) || (Player.pos.y < 0.0f && Player.move.y > 0.0f)) {
-				Player.doll->OverwriteMotion(s_motion[nIdxPlayer].fall);
+			if (Player.bGroundOld) {
+				Player.doll->OverwriteMotion(s_motion[0].jump);
+			}
+			else if(Player.doll->GetMotionCounter() > 10){
+				if ((Player.pos.y > 0.0f && Player.move.y < 0.0f) || (Player.pos.y < 0.0f && Player.move.y > 0.0f)) {
+					Player.doll->OverwriteMotion(s_motion[nIdxPlayer].fall);
+				}
 			}
 		}
 		else if (Player.landingCounter == 0) {

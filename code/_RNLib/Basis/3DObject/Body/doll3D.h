@@ -118,6 +118,7 @@ public:
 	void        OverwriteMotion        (const short& motionIdx);
 	void        SetMotionStop          (const bool& isStop)                { m_motionInfo.isStop = isStop; }
 	void        SetMotionCounter       (const short& counter)              { m_motionInfo.counter = counter; }
+	short&      GetMotionCounter       (void)                              { return m_motionInfo.counter; }
 	void        SetPos                 (const Pos3D& pos)                  { m_pos = pos; m_isSetPos = true; }
 	Pos3D&      GetPos                 (void)                              { return m_pos; }
 	void        SetRot                 (const Rot3D& rot)                  { m_rot = rot; }
