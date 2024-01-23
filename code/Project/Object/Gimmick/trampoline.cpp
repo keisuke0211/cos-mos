@@ -28,7 +28,7 @@ CTrampoline::CTrampoline(void) {
 	//èâä˙èÛë‘
 	m_type = TYPE::TRAMPOLINE;
 	m_width = SIZE_OF_1_SQUARE * 2.0f;
-	m_height = SIZE_OF_1_SQUARE;
+	m_height = SIZE_OF_1_SQUARE * 2.0f;
 	m_state = STATE::NONE;
 	m_modelIdx[Parts_BASE] = RNLib::Model().Load("data\\MODEL\\Spring_Body.x");
 	m_modelIdx[Parts_MASH] = RNLib::Model().Load("data\\MODEL\\Spring_Footing.x");

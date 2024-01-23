@@ -328,7 +328,7 @@ void CTalk::NextSpeak(void)
 		//フォント設定
 		SetFontOption(s_pTalk[m_nTalkID].type);
 
-		FontEdging Edge = { Color{ 255,255,255,255}, true, Pos2D(0.1f, 0.1f)};
+		FontEdging Edge = { Color{ 0,0,0,255}, true, Pos2D(0.1f, 0.1f)};
 
 		//サウンド設定　語り手番号がプレイヤー番号以外ならサウンド無し。　合致しているなら語り手番号代入
 		CShort SeIdx = 
