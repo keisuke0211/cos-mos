@@ -78,6 +78,9 @@ private:
 
 	void SetCurtain(const bool bSetCurtain = true);//暗幕設定
 
+	Color GetTalkerColor(CInt &Talker);
+	float GetTalkerPosY(CInt &Talker);
+
 	//会話情報
 	struct Talk
 	{
@@ -89,7 +92,7 @@ private:
 	static Talk *s_pTalk; //会話内容
 	static EVENT s_Event; //イベント
 	bool   m_bTalk;       //会話中かどうか
-	CFontText *m_pText;
+	CFontText *m_pText, *m_pTextSub;
 	FontFont   m_pFont;
 
 	Pos3D  m_pos;
