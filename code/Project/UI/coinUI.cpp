@@ -68,19 +68,22 @@ void CCoinUI::Update(void) {
 	CInt NumAll = Stage::GetCoinAll();
 
 	if (m_bFrame) {
+		static const float x = -40.0f;
+		static const float y = 40.0f;
+
 		//フレーム
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + m_scale.x, m_pos.y),0.0f)
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + m_scale.x + x, m_pos.y + y),0.0f)
 			->SetSize(m_scale.x * 5.0f, m_scale.y * 1.5f)
 			->SetTex(m_TexIdx[1]);
 
 		//コイン
-		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x, m_pos.y),0.0f)
+		RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR2(m_pos.x + x, m_pos.y + y),0.0f)
 			->SetSize(m_scale.x, m_scale.y)
 			->SetTex(m_TexIdx[0]);
 
 		//数
-		RNLib::Text2D().Put(PRIORITY_UI, String("%d", NumAll), _RNC_Text::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x, m_pos.y),0.0f)
-			->SetSize(Size2D(m_scale.x * 0.7f, m_scale.y* 0.7f))
+		RNLib::Text2D().Put(PRIORITY_UI, String("%d", NumAll), _RNC_Text::ALIGNMENT::LEFT, 0, Pos2D(m_pos.x + m_scale.x + x, m_pos.y + y), 0.0f)
+			->SetSize(Size2D(m_scale.x * 0.7f, m_scale.y * 0.7f))
 			->SetCol(COLOR_WHITE);
 	}
 	else if (!m_bFrame) {
