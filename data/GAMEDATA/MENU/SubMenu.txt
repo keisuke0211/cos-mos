@@ -22,7 +22,7 @@ SetSetting
 	Text = Чフルスクリーン
 	Text = ЧBGM
 	Text = ЧSE
-	Text =  戻る
+	Text =  もどる
 	Text = OFF
 	Text = %
 	Text = %

@@ -118,7 +118,8 @@ public:
 
 		// サブメニュー
 		int nSubMenuIdx;			// 生成したメニュー番号
-		bool bSubMenu;				// 生成したかフラグ
+		bool bSubMenuCreate;		// サブメニューの生成したか
+		bool bSubMenu;				// サブメニュー内で選択するか
 		bool bSubMenuMove;			// 移動方向の切替フラグ
 		bool bSubMenuDisp;			// 削除フラグ
 		bool bSubMenuCD;			// 生成間隔のクールダウン
@@ -129,6 +130,7 @@ public:
 
 		int BoxTex[2];
 		int BoxTexIdx;
+		Color BoxColor;
 		int OperationMax;
 		int SettingMax;
 
