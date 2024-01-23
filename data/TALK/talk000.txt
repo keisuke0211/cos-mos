@@ -25,7 +25,7 @@ END_TALK
 
 #会話内容
 SET_TALK
-	TALK    荷物は持った？
+	TALK    わすれものはない?？
 	PLAYER  0
 	TYPE    -1
 END_TALK
