@@ -471,7 +471,7 @@ Color CTalk::GetTalkerColor(CInt &Talker)
 //=======================================
 float CTalk::GetTalkerPosY(CInt &Talker)
 {
-	if (Talker <= 0 || Talker <= 2)
+	if (0 <= Talker || Talker <= 2)
 	{
 		switch ((int)CPlayer::GetInfo(Talker)->side)
 		{
