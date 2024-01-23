@@ -447,6 +447,8 @@ void CTalk::SetCurtain(const bool bSetCurtain)
 		return;
 	}
 
+	if (m_nTalkID >= m_nTalkNumAll) return;
+
 	//•\¦À•Wæ“¾
 	m_pos.y = GetTalkerPosY(s_pTalk[m_nTalkID].TalkerID);
 }
