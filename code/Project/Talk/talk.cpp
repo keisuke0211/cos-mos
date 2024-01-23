@@ -30,8 +30,8 @@ CFloat CTalk::TYPE_UNDER_FONT_SIZE = 40.0f;
 CTalk::Talk  *CTalk::s_pTalk = NULL;        //会話内容
 CTalk::EVENT  CTalk::s_Event = EVENT::NONE; //イベント
 
-int CTalk::s_1P_Voice = NONEDATA;
-int CTalk::s_2P_Voice = NONEDATA;
+short CTalk::s_1P_Voice = NONEDATA;
+short CTalk::s_2P_Voice = NONEDATA;
 
 //=======================================
 // コンストラクタ
@@ -328,7 +328,7 @@ void CTalk::NextSpeak(void)
 			s_pTalk[m_nTalkID].TalkerID == 0 ? s_1P_Voice : s_2P_Voice;
 
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
-									CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL,SeIdx);
+									CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL, SeIdx);
 
 		//テキストボックスの位置設定
 		if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
