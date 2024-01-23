@@ -30,8 +30,8 @@ CFloat CTalk::TYPE_UNDER_FONT_SIZE = 40.0f;
 CTalk::Talk  *CTalk::s_pTalk = NULL;        //会話内容
 CTalk::EVENT  CTalk::s_Event = EVENT::NONE; //イベント
 
-int CTalk::s_1P_Voice = NONEDATA;
-int CTalk::s_2P_Voice = NONEDATA;
+short CTalk::s_1P_Voice = NONEDATA;
+short CTalk::s_2P_Voice = NONEDATA;
 
 //=======================================
 // コンストラクタ
@@ -47,6 +47,7 @@ CTalk::CTalk()
 	m_bAuto = true;        //自動進行フラグ
 
 	m_pText = NULL;
+	m_pTextSub = NULL;
 	m_pos = TYPE_UNDER_POS;
 
 	SetFontOption(SHOWTYPE::Under);
@@ -255,6 +256,11 @@ void CTalk::DeleteText(void)
 		m_pText->Uninit();
 		m_pText = NULL;
 	}
+	if (m_pTextSub != NULL)
+	{
+		m_pTextSub->Uninit();
+		m_pTextSub = NULL;
+	}
 }
 
 //=======================================
@@ -324,11 +330,21 @@ void CTalk::NextSpeak(void)
 
 		//サウンド設定　語り手番号がプレイヤー番号以外ならサウンド無し。　合致しているなら語り手番号代入
 		CShort SeIdx = 
-			s_pTalk[m_nTalkID].TalkerID < 0 || s_pTalk[m_nTalkID].TalkerID >= 2 ? NONEDATA :
-			s_pTalk[m_nTalkID].TalkerID == 0 ? s_1P_Voice : s_2P_Voice;
+			s_pTalk[m_nTalkID].TalkerID < 0 || s_pTalk[m_nTalkID].TalkerID > 2 ? NONEDATA :
+			s_pTalk[m_nTalkID].TalkerID % 2 == 0 ? s_1P_Voice : s_2P_Voice;
 
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
-									CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL,SeIdx);
+									CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL, SeIdx);
+
+		//両方喋る場合
+		if (s_pTalk[m_nTalkID].TalkerID == 2)
+		{
+			//2P設定
+			m_pFont.col = GetTalkerColor(1);
+			m_pos.y = GetTalkerPosY(1);
+			m_pTextSub = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
+										CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL, s_2P_Voice);
+		}
 
 		//テキストボックスの位置設定
 		if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
@@ -381,19 +397,9 @@ void CTalk::SetFontOption(const SHOWTYPE& type)
 			break;
 	}
 
+	//色取得
 	if (s_pTalk != NULL)
-	{
-		CInt& Talker = s_pTalk[m_nTalkID].TalkerID;
-
-		// プレイヤーカラーに設定
-		if (Talker == 0)
-			m_pFont.col = CPlayer::P1_COLOR;
-		else if (Talker == 1)
-			m_pFont.col = CPlayer::P2_COLOR;
-
-		// 違えば白に
-		else m_pFont.col = COLOR_WHITE;
-	}
+		m_pFont.col = GetTalkerColor(s_pTalk[m_nTalkID].TalkerID);
 }
 
 //=======================================
@@ -439,13 +445,43 @@ void CTalk::SetCurtain(const bool bSetCurtain)
 		return;
 	}
 
-	CInt& Talker = s_pTalk[m_nTalkID].TalkerID;
-	if (Talker == 0 || Talker == 1)
+	//表示座標取得
+	m_pos.y = GetTalkerPosY(s_pTalk[m_nTalkID].TalkerID);
+}
+
+//=======================================
+//語り手別セリフカラー取得
+//=======================================
+Color CTalk::GetTalkerColor(CInt &Talker)
+{
+	// プレイヤーカラー設定
+	if (Talker == 0 || Talker == 2)
+		return CPlayer::P1_COLOR;
+	else if (Talker == 1)
+		return CPlayer::P2_COLOR;
+
+	// 違えば白に
+	else return COLOR_WHITE;
+}
+
+//=======================================
+//語り手別セリフ表示座標取得
+//=======================================
+float CTalk::GetTalkerPosY(CInt &Talker)
+{
+	if (Talker <= 0 || Talker <= 2)
 	{
-		switch (CPlayer::GetInfo(Talker)->side)
+		switch ((int)CPlayer::GetInfo(Talker)->side)
 		{
-			case CPlayer::WORLD_SIDE::FACE:  m_pos.y = CurtainOverPos; break;
-			case CPlayer::WORLD_SIDE::BEHIND:m_pos.y = CurtainBottomPos; break;
+			case (int)CPlayer::WORLD_SIDE::FACE:
+			case 2:
+				return TYPE_CURTAIN_OVER_BEHIND_POS_Y + TYPE_CURTAIN_HEIGHT * 1.5f; break;
+
+			case (int)CPlayer::WORLD_SIDE::BEHIND:
+				return TYPE_CURTAIN_BOTTOM_BEHIND_POS_Y - TYPE_CURTAIN_HEIGHT * 1.5f; break;
 		}
 	}
+
+	//現在地を返す
+	return m_pos.y;
 }

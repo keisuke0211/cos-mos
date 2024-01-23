@@ -2,7 +2,7 @@ SetUp3DFile
 boneDataSum{ 9
 	boneData{
 		idx 0
-		modelIdx data\\Model\\W2_Goal_Up\\Frame.x
+		modelIdx data\\Model\\W2_Goal_Down\\Frame.x
 		parentIdx -1
 		relativePos 0.00 0.00 0.00
 		relativeRot 0.00 0.00 0.00
@@ -10,56 +10,56 @@ boneDataSum{ 9
 	
 	boneData{
 		idx 1
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 0
 		relativePos 0.00 0.00 0.00
 		relativeRot 0.00 1.0 0.00
 	}
 	boneData{
 		idx 2
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 1
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 3
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 2
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 4
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 3
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 5
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 4
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 6
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 5
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 7
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 6
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 	boneData{
 		idx 8
-		modelIdx data\\Model\\W2_Goal_Up\\Door.x
+		modelIdx data\\Model\\W2_Goal_Down\\Door.x
 		parentIdx 7
 		relativePos 0.00 -4.00 0.00
 		relativeRot 0.00 0.00 0.00

@@ -100,13 +100,13 @@ void CGoalGate::Init(void) {
 
 	m_state = STATE::SMALL;
 	m_Rainbow = RAINBOW::RED;
-	m_RainbowCol[(int)RAINBOW::RED] =		{ 200,0,0,120 };
-	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 200,0,200,120 };
-	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,200,120 };
-	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,200,200,120 };
-	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,200,0,120 };
-	m_RainbowCol[(int)RAINBOW::YELLOW] = { 200,200,0,120 };
-	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 200,200,200,70 };
+	m_RainbowCol[(int)RAINBOW::RED] =		{ 255,0,0,120 };
+	m_RainbowCol[(int)RAINBOW::PURPLE] =	{ 255,0,255,120 };
+	m_RainbowCol[(int)RAINBOW::BLUE] =		{ 0,0,255,120 };
+	m_RainbowCol[(int)RAINBOW::LIGHT_BLUE] ={ 0,255,255,120 };
+	m_RainbowCol[(int)RAINBOW::GREEN] =		{ 0,255,0,120 };
+	m_RainbowCol[(int)RAINBOW::YELLOW] = { 255,255,0,120 };
+	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 255,255,255,70 };
 
 	if (m_World == WORLD::UP) {
 		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
@@ -151,6 +151,8 @@ void CGoalGate::Update(void)
 			m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
 		else if (m_World == WORLD::DOWN)
 			m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt");
+
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::DOOR_OPEN], _RNC_Sound::CATEGORY::SE, 0.7f, false);
 
 		m_bLeave = false;
 	}
@@ -252,7 +254,7 @@ void CGoalGate::StateUpdate(void)
 				pos.y = (float)(rand() % 4);
 				float move = (float)((rand() % 100) + 70);
 				float life = (float)((rand() % 45) + 45);
-				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(pos.x, pos.y * cosf(m_doll->GetRot().z), 0.0f), scale * CntEffRate, col[rand() % 3], CParticle::TYPE::TYPE_FLOATUP, life, m_doll->GetRot(), Pos3D(move, move, 0.0f));
+				Manager::EffectMgr()->ParticleCreate(s_TexIdx[1], m_doll->GetPos() + Pos3D(pos.x, pos.y * cosf(m_doll->GetRot().z), -10.0f), scale * CntEffRate, col[rand() % 3], CParticle::TYPE::TYPE_FLOATUP, life, m_doll->GetRot(), Pos3D(move, move, 0.0f));
 			}
 			
 			m_nCnt--;
@@ -453,6 +455,8 @@ void CGoalGate::SetEntry(bool bEntry)
 		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Close.txt");
 	else if (m_World == WORLD::DOWN)
 		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Close.txt");
+
+	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::DOOR_CLOSE], _RNC_Sound::CATEGORY::SE, 0.7f, false);
 
 	if (bEntry) {
 		m_bLeave = false;

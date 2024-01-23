@@ -62,8 +62,8 @@ private:
 	static CInt NEXT_SPEAK_INTERVAL = 40;//次の発言までのインターバル
 	static CInt AUTO_COUNTER = 60;       //発言終了から自動進行するまでのカウンター
 
-	static int s_1P_Voice;
-	static int s_2P_Voice;
+	static short s_1P_Voice;
+	static short s_2P_Voice;
 
 	void DeleteLog(void);        //会話ログ削除
 	void LoadTalk(EVENT &Event); //会話イベント読込
@@ -78,6 +78,9 @@ private:
 
 	void SetCurtain(const bool bSetCurtain = true);//暗幕設定
 
+	Color GetTalkerColor(CInt &Talker);
+	float GetTalkerPosY(CInt &Talker);
+
 	//会話情報
 	struct Talk
 	{
@@ -89,7 +92,7 @@ private:
 	static Talk *s_pTalk; //会話内容
 	static EVENT s_Event; //イベント
 	bool   m_bTalk;       //会話中かどうか
-	CFontText *m_pText;
+	CFontText *m_pText, *m_pTextSub;
 	FontFont   m_pFont;
 
 	Pos3D  m_pos;
