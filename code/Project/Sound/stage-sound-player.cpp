@@ -45,6 +45,16 @@ static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
 	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 900, 0.5f, 0.5f },
 	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 600, 0.25f, 0.25f },
 };
+// World3
+#define AMBIENT_SE_3_MAX (2)
+//#define AMBIENT_SE_3_LOOP_PATH "data\\SOUND\\SE\\AmbientSound\\bubble.wav"
+#define AMBIENT_SE_3_LOOP_VOLUME (0.5f)
+#define BGM_3_PATH "data\\SOUND\\BGM\\STAGE3.wav"
+#define BGM_3_VOLUME (0.5f)
+//static const AmbientSEInfo sc_ambientSE2Infos[AMBIENT_SE_2_MAX] = {
+//	{ "data\\SOUND\\SE\\AmbientSound\\whale.wav", 300, 900, 0.5f, 0.5f },
+//	{ "data\\SOUND\\SE\\AmbientSound\\dolphin.wav", 600, 600, 0.25f, 0.25f },
+//};
 // 着地SE
 static const char* sc_blockLandingSE[(int)CBlock::LOOKS_TYPE::MAX] = {
 	"data\\SOUND\\SE\\landing\\soil.wav",			//[0] 土ブロック
@@ -226,6 +236,11 @@ void StageSoundPlayer::Start(void) {
 		loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_2_LOOP_PATH), _RNC_Sound::CATEGORY::SE, AMBIENT_SE_2_LOOP_VOLUME, true);
 		BGMVolume = BGM_2_VOLUME;
 		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_2_PATH), _RNC_Sound::CATEGORY::BGM, BGM_2_VOLUME, true);
+	}
+	else if (planet == 2) {
+		/*loopPlayID = RNLib::Sound().Play(RNLib::Sound().Load(AMBIENT_SE_3_LOOP_PATH), _RNC_Sound::CATEGORY::SE, AMBIENT_SE_3_LOOP_VOLUME, true);*/
+		BGMVolume = BGM_3_VOLUME;
+		BGMPlayID = RNLib::Sound().Play(RNLib::Sound().Load(BGM_3_PATH), _RNC_Sound::CATEGORY::BGM, BGM_3_VOLUME, true);
 	}
 	else {
 		loopPlayID = NONEDATA;

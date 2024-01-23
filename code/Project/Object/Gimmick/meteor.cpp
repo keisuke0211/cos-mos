@@ -150,6 +150,9 @@ void CMeteor::CollisionBlock(void)
 			{
 				// エフェクトの生成
 				Manager::EffectMgr()->EffectMeteorCreate(m_pos);
+
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::METEOR_BREAK], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+
 				// 削除
 				Delete();
 				return;

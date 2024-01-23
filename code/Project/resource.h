@@ -69,9 +69,13 @@ public:
 		ROCKET_FIRE,
 		EXPLOSION,
 		ROCKET_MOVE,
+		DOOR_OPEN,
+		DOOR_CLOSE,
+		METEOR_BREAK,
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
+
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];
