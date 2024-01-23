@@ -88,6 +88,7 @@ namespace {
 //========================================
 void Stage::SetStageNumber  (const int& setPlanetIdx, const int& setStageIdx) { planetIdx   = setPlanetIdx; stageIdx = setStageIdx; }
 void Stage::SetPause        (const bool& setIsPause)                          { isPause     = setIsPause; }
+bool Stage::GetPause        (void)                                            { return isPause; }
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
 void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
