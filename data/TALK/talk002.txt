@@ -7,7 +7,7 @@
 #=======================================
 
 #会話数
-NUM_TALK   5
+NUM_TALK   7
 
 #会話内容
 SET_TALK
@@ -16,31 +16,38 @@ SET_TALK
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    僕らが乗ってきたロケットだ！
+	TALK    ぼくらのロケットだ！
 	PLAYER  2
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    でも不時着したことで壊れてる...
+	TALK    でも「パーツ」がないからうごかないな...
 	PLAYER  0
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    ロケットを直すためにパーツを集めよう！
+	TALK    （；＿；）
 	PLAYER  1
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    ロケットの場所に行けば絶対に会える！
-	PLAYER  2
+	TALK    ちらばった「パーツ」をあつめてなおそうか！
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+SET_TALK
+	TALK    ロケットにのればあえるからなくな！
+	PLAYER  0
+	TYPE    0
+END_TALK
+SET_TALK
+	TALK    ...！！(°ー°)ウ(｡_｡)ﾝ
+	PLAYER  1
 	TYPE    0
 END_TALK
 

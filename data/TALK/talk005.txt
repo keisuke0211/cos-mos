@@ -1,46 +1,48 @@
 #=======================================
 #
-#会話003[エンディングの会話]
+#会話005[エンディングの会話]
 #Author：HIRASAWA SHION
 #Scenario Writer：OMIYA AIRA
 #
 #=======================================
 
 #会話数
-NUM_TALK   5
+NUM_TALK   6
 
 #会話内容
 SET_TALK
-	TALK    今回の宇宙旅行どうだった？
+	TALK    コンカイのうちゅうりょこうはどうだった？
 	PLAYER  0
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    いろいろな経験ができて楽しかったよ！
+	TALK    いろいろなケイケンができてたのしかったよ！
 	PLAYER  1
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    それなら良かったよ！
+	TALK    それならよかったよ！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    またいつかこういう旅行をしてみたいね！
+	TALK    またりょこうしようね！
 	PLAYER  1
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    そうだね！またいつか！
+	TALK    そうだな！ついらくはしたくないけど…ww
 	PLAYER  0
+	TYPE    0
+END_TALK
+
+SET_TALK
+	TALK    それじゃあ、おつかれさま！！
+	PLAYER  2
 	TYPE    0
 END_TALK
 

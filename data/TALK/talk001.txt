@@ -22,7 +22,6 @@ SET_TALK
 	TYPE    0
 END_TALK
 
-
 SET_TALK
 	TALK    あれ！？ぼくたちのロケットがない！
 	PLAYER  0
