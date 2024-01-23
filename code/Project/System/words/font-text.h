@@ -67,8 +67,10 @@ public:
 		BOX_SUB_TITLE,			// サブメニューのタイトル
 		BOX_SUB_MENU00,			// サブメニュー00
 		BOX_SUB_SELECTU00,		// サブメニュー00の選択時
-		BOX_SUB_MENU01,			// サブメニュー00
-		BOX_SUB_SELECTU01,		// サブメニュー00の選択時
+		BOX_SUB_MENU01,			// サブメニュー01
+		BOX_SUB_SELECTU01,		// サブメニュー01の選択時
+		BOX_SUB_MENU02,			// サブメニュー02
+		BOX_SUB_SELECTU02,		// サブメニュー02の選択時
 		BOX_NONE,				// 無し
 		BOX_MAX
 	};
