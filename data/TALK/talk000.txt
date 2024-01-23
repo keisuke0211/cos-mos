@@ -18,21 +18,21 @@ END_TALK
 
 #会話内容
 SET_TALK
-	TALK    おー!
+	TALK    おー（＾O＾）／！
 	PLAYER  1
 	TYPE    -1
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    わすれものはない?？
+	TALK    わすれものはない？
 	PLAYER  0
 	TYPE    -1
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    うん！荷物持ったよ！
+	TALK    うん！だいじょうぶだよ（＞＿＜）！
 	PLAYER  1
 	TYPE    -1
 END_TALK
