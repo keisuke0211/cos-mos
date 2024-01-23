@@ -243,6 +243,14 @@ void CTalk::Update(void)
 		//次の発言へ
 		NextSpeak();
 	}
+
+	//テキストボックスの位置設定
+	if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
+	{
+		SetCurtain(false);
+		m_pText->SetTxtBoxPos(m_pos, false, true);
+	}
+
 }
 
 //=======================================
