@@ -53,6 +53,10 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.aShadow.AddPos = INITPOS3D;
 	m_Info.aShadow.AddSize = INITPOS2D;
 	m_Info.aShadow.bShadow = false;
+
+	m_Info.aEdging.col = INITD3DCOLOR;
+	m_Info.aEdging.bEdging = false;
+	m_Info.aEdging.AddSize = INITPOS2D;
 }
 
 //========================================
@@ -122,6 +126,7 @@ void CFontText::Uninit()
 		m_Info.words = NULL;
 	}
 
+	// âe
 	if (m_Info.aShadow.bShadow)
 	{
 		for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++)
@@ -136,6 +141,24 @@ void CFontText::Uninit()
 		{
 			delete[] m_Info.aShadow.shadow;
 			m_Info.aShadow.shadow = NULL;
+		}
+	}
+
+	// âèéÊÇË
+	if (m_Info.aEdging.bEdging)
+	{
+		for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++)
+		{
+			if (m_Info.aEdging.edging[wordsCount] != NULL)
+			{
+				m_Info.aEdging.edging[wordsCount]->Uninit();
+			}
+		}
+
+		if (m_Info.aEdging.edging != NULL)
+		{
+			delete[] m_Info.aEdging.edging;
+			m_Info.aEdging.edging = NULL;
 		}
 	}
 
@@ -204,7 +227,7 @@ void CFontText::Draw()
 //========================================
 // ê∂ê¨
 //========================================
-CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont, bool bBoxSize, bool bTextBox, FormShadow *Shadow, CShort SeIdx)
+CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FontFont *pFont, bool bBoxSize, bool bTextBox, FontShadow *Shadow, FontEdging *Edging, CShort SeIdx)
 {
 	CFontText *pText = new CFontText;
 
@@ -250,6 +273,7 @@ CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, 
 			pText->m_Info.TxtBoxSize.x = pText->m_Info.fTextSize * (pText->m_Info.nTextLength * 0.5f + 1);
 		}
 
+		// âe
 		if (Shadow == NULL)
 		{
 			pText->m_Info.aShadow.col = INITD3DCOLOR;
@@ -273,6 +297,26 @@ CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, 
 				pText->m_Info.aShadow.AddSize = Shadow->AddSize;
 				pText->m_Info.aShadow.bShadow = Shadow->bShadow;
 			}
+		}
+
+		// âèéÊÇË
+		if (Edging == NULL)
+		{
+			pText->m_Info.aEdging.col = INITD3DCOLOR;
+			pText->m_Info.aEdging.AddSize = INITPOS2D;
+			pText->m_Info.aEdging.bEdging = false;
+		}
+		else if (Edging != NULL)
+		{
+			pText->m_Info.aEdging.edging = new CWords*[pText->m_Info.nTextLength];
+
+			for (int wordsCount = 0; wordsCount < pText->m_Info.nTextLength; wordsCount++) {
+				pText->m_Info.aEdging.edging[wordsCount] = NULL;
+			}
+
+			pText->m_Info.aEdging.col = Edging->col;
+			pText->m_Info.aEdging.AddSize = Edging->AddSize;
+			pText->m_Info.aEdging.bEdging = Edging->bEdging;
 		}
 	}
 
@@ -331,6 +375,16 @@ void CFontText::LetterForm(void)
 						Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
 						Pos3D(fTxtSize, fTxtSize, 0.0f),
 						m_Info.FontType, m_Info.FontCol);
+
+					if (m_Info.FontType == CFont::FONT::FONT_WAKUWAKU && m_Info.aEdging.bEdging)
+					{
+						Pos2D AddSize = m_Info.aEdging.AddSize;
+
+						m_Info.aEdging.edging[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
+							Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount * 40.0f, pos.z),
+							Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
+							CFont::FONT::FONT_CONVENIE, m_Info.aEdging.col);
+					}
 
 					m_Info.nLetterPopCount++;
 					m_Info.nLetterPopCountX++;
@@ -553,6 +607,25 @@ bool CFontText::CheckLeadByte(int nLetter)
 void CFontText::SetTxtPause(bool bPause)
 {
 	m_Info.bPause = bPause;
+}
+
+//========================================
+// âèéÊÇËÇÃê›íË
+//========================================
+void CFontText::SetEdging(FontEdging *Edging)
+{
+	if (Edging != NULL)
+	{
+		m_Info.aEdging.edging = new CWords*[m_Info.nTextLength];
+
+		for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++) {
+			m_Info.aEdging.edging[wordsCount] = NULL;
+		}
+
+		m_Info.aEdging.col = Edging->col;
+		m_Info.aEdging.AddSize = Edging->AddSize;
+		m_Info.aEdging.bEdging = Edging->bEdging;
+	}
 }
 
 //========================================
@@ -781,7 +854,7 @@ bool CFontText::ChgHalfSizeText(char* Text, D3DXCOLOR col)
 //========================================
 // ÉeÉLÉXÉgÇÃçƒê∂ê¨
 //========================================
-void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont, FormShadow *Shadow)
+void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FontFont *pFont, FontShadow *Shadow, FontEdging *Edging)
 {
 	// -- îjä¸ -----------------------
 	{
@@ -850,5 +923,24 @@ void CFontText::Regeneration(const char *Text, CFont::FONT FontType, FormFont *p
 			m_Info.aShadow.AddSize = Shadow->AddSize;
 			m_Info.aShadow.bShadow = Shadow->bShadow;
 		}
+	}
+
+	if (Edging == NULL)
+	{
+		m_Info.aEdging.col = INITD3DCOLOR;
+		m_Info.aEdging.AddSize = INITPOS2D;
+		m_Info.aEdging.bEdging = false;
+	}
+	else if (Edging != NULL)
+	{
+		m_Info.aEdging.edging = new CWords*[m_Info.nTextLength];
+
+		for (int wordsCount = 0; wordsCount < m_Info.nTextLength; wordsCount++) {
+			m_Info.aEdging.edging[wordsCount] = NULL;
+		}
+
+		m_Info.aEdging.col = Edging->col;
+		m_Info.aEdging.AddSize = Edging->AddSize;
+		m_Info.aEdging.bEdging = Edging->bEdging;
 	}
 }

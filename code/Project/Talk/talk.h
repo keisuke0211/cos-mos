@@ -90,7 +90,7 @@ private:
 	static EVENT s_Event; //イベント
 	bool   m_bTalk;       //会話中かどうか
 	CFontText *m_pText;
-	FormFont   m_pFont;
+	FontFont   m_pFont;
 
 	Pos3D  m_pos;
 	Pos2D  m_size;

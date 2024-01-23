@@ -15,7 +15,7 @@
 //****************************************
 
 // テキスト情報(生成用)
-struct FormFont
+struct FontFont
 {
 	D3DXCOLOR col;       // 文字の色
 	float fTextSize;     // 文字のサイズ(初期値 20)
@@ -25,12 +25,20 @@ struct FormFont
 };
 
 // 影情報(生成用)
-struct FormShadow
+struct FontShadow
 {
 	D3DXCOLOR col;			// 影の色
 	bool bShadow;			// 影フラグ
 	D3DXVECTOR3 AddPos;		// 文字の位置からずらす値 (初期値 0,0,0)	(元の文字 + AddPos)
 	D3DXVECTOR2 AddSize;	// 文字のサイズの加算値 (初期値 0,0)		(元の文字 + AddSize)
+};
+
+// 縁取り情報(生成用)※一部の文字のみ
+struct FontEdging
+{
+	D3DXCOLOR col;   // 影の色
+	bool bEdging;    // 影フラグ
+	Pos2D AddSize;   // 文字のサイズの加算値   (初期値 0,0)   (元の文字 + AddSize)
 };
 
 //****************************************
@@ -86,14 +94,16 @@ public:
 	// 引数7  : bool bBoxSize      / メッセージボックスのサイズ調整の無効・有効（初期値 false）
 	// 引数8  : bool bTextBox      / メッセージボックスの表示・非表示 (初期値 true)
 	// 引数9  : FormShadow *Shadow / フォントの影の情報 無くても大丈夫
-	// 引数10 : CShort SE          / 文字表示ごとのサウンド
+	// 引数10 : FontEdging *Edging / 一部フォントの縁取り情報
+	// 引数11 : CShort SE          / 文字表示ごとのサウンド
 	//--------------------------------------------------
-	static CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FormShadow *Shadow = NULL, CShort SeIdx = -1);
+	static CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, CFont::FONT FontType, FontFont *pFont = NULL, bool bBoxSize = false, bool bTextBox = true, FontShadow *Shadow = NULL, FontEdging *Edging = NULL, CShort SeIdx = -1);
 
 	/* 削除 */void Disap(bool bDisap,int nTime);
 
 	// -- 設定 ------------------------------------------
-	/* 生成中の文字を一括で	*/void SetTexrSkip(bool skip) { m_Info.bLetterSkip = skip; }//www
+	/* 縁取り設定			*/void SetEdging(FontEdging *Edging = NULL);
+	/* 生成中の文字を一括で	*/void SetTextSkip(bool skip) { m_Info.bLetterSkip = skip; }
 	/* 移動量				*/void SetMove(Pos3D move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
@@ -113,7 +123,7 @@ public:
 	/* 出現時間				*/void SetAppearTime(CInt nAppearTime) { m_Info.nAppearTime = nAppearTime; }
 	/* 文字変更(単体)		*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
 	/* 文字変更(全体)		*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
-	/* テキストの再生		*/void Regeneration(const char *Text, CFont::FONT FontType, FormFont *pFont = NULL, FormShadow *Shadow = NULL);
+	/* テキストの再生成		*/void Regeneration(const char *Text, CFont::FONT FontType, FontFont *pFont = NULL, FontShadow *Shadow = NULL, FontEdging *Edging = NULL);
 
 
 	// -- 取得 ------------------------------------------
@@ -145,6 +155,15 @@ private:
 		bool bShadow;    // 影フラグ
 		CWords** shadow; // 文字(影)
 		Pos3D AddPos;    // 文字の位置からずらす値 (初期値 0,0,0) (元の文字 + AddPos)
+		Pos2D AddSize;   // 文字のサイズの加算値   (初期値 0,0)   (元の文字 + AddSize)
+	};
+
+	// 縁取り
+	struct Edging
+	{
+		D3DXCOLOR col;   // 影の色
+		bool bEdging;    // 影フラグ
+		CWords** edging; // 文字(影)
 		Pos2D AddSize;   // 文字のサイズの加算値   (初期値 0,0)   (元の文字 + AddSize)
 	};
 
@@ -181,6 +200,7 @@ private:
 		bool bRelease;			// 消すフラグ
 
 		Shadow aShadow;			// 影
+		Edging aEdging;			// 縁取り
 
 		bool bTextBok;			// テキストボックスの表示フラグ wwwwwwwwww
 		bool bPause;			// ポーズ中でも動くか（false：動かない）

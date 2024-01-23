@@ -11,8 +11,8 @@
 //　フォントパス
 const char* CFont::s_FileName[] =
 {
-	"data/FONT/07にくまるフォント.otf",
-	"data/FONT/AmeChanPopMaruLight-Regular.otf",
+	"data/FONT/mini-wakuwaku-maru.otf",
+	"data/FONT/mini-convenie.otf",
 	"data/FONT/meiryob.ttc",
 };
 static_assert(sizeof(CFont::s_FileName) / sizeof(CFont::s_FileName[0]) == CFont::FONT_MAX, "bagu");
@@ -20,8 +20,8 @@ static_assert(sizeof(CFont::s_FileName) / sizeof(CFont::s_FileName[0]) == CFont:
 // フォント名
 const char* CFont::s_FontName[] =
 {
-	"07にくまるフォント",
-	"AmeChanPopMaruLight-Regular",
+	"mini-わくわくマル",
+	"mini-コンビニ",
 	"メイリオ",
 };
 static_assert(sizeof(CFont::s_FontName) / sizeof(CFont::s_FontName[0]) == CFont::FONT_MAX, "aho");

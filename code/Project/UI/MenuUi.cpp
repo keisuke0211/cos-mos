@@ -250,10 +250,10 @@ void CMenuUI::DecisionInput(void)
 					if (!m_Menu.bFullScreen)	sprintf(data, " OFF");
 					else if (m_Menu.bFullScreen)	sprintf(data, " ON");
 
-					FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+					FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
 					if (m_pSubMenu[nText] != NULL)
-						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
+						m_pSubMenu[nText]->Regeneration(data, CFont::FONT_WAKUWAKU, &pFont);
 
 					m_Menu.nCntScrChg = 30;
 				}
@@ -415,7 +415,7 @@ void CMenuUI::MenuCreate(void)
 	m_Menu.BoxTex[1] = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox21.png");
 
 	CMode::TYPE Mode = Manager::GetMode();
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,0.0f),35.0f,1,1,-1, };
+	FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,0.0f),35.0f,1,1,-1, };
 
 	D3DXVECTOR3 pos = INITD3DXVECTOR3;
 	D3DXVECTOR2 size = INITD3DXVECTOR2;
@@ -435,7 +435,7 @@ void CMenuUI::MenuCreate(void)
 	for (int nText = 0; nText < m_Menu.MainMenuMax; nText++) {
 		m_pMenu[nText] = CFontText::Create(CFontText::BOX_MAINE_MENU,
 			D3DXVECTOR3(pos.x, pos.y + (100.0f * nText), pos.z), size,
-			"", CFont::FONT_AMECHAN, &pFont);
+			"", CFont::FONT_CONVENIE, &pFont);
 
 		if (nText == m_Menu.nMaineSelect) {
 			m_pMenu[nText]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -456,7 +456,7 @@ void CMenuUI::MenuCreate(void)
 //========================================
 void CMenuUI::SubTextCreate(void)
 {
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
+	FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
 	if (m_pSubMenu != NULL)
 		TextRelease(TEXT_RIGHT);
@@ -466,13 +466,13 @@ void CMenuUI::SubTextCreate(void)
 		m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(256.0f, 70.0f);
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 130, 50.0f, 0.0f), D3DXVECTOR2(256.0f, 70.0f),
-			"", CFont::FONT_07NIKUMARU, &pFont);
+			"", CFont::FONT_WAKUWAKU, &pFont);
 		m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
 
 		for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
 			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NONE,
 				D3DXVECTOR3(m_Menu.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-				"", CFont::FONT_07NIKUMARU, &pFont, false, false);
+				"", CFont::FONT_WAKUWAKU, &pFont, false, false);
 
 			m_Menu.SubMenuSizeMax[nText] = D3DXVECTOR2(370.0f, 80.0f);
 		}
@@ -482,7 +482,7 @@ void CMenuUI::SubTextCreate(void)
 		m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(175.0f, 70.0f);
 		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
 			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 180, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
-			"", CFont::FONT_07NIKUMARU, &pFont);
+			"", CFont::FONT_WAKUWAKU, &pFont);
 		m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
 
 		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
@@ -517,7 +517,7 @@ void CMenuUI::SubTextCreate(void)
 
 			m_pSubMenu[nText] = CFontText::Create(type,
 				pos, size,
-				"", CFont::FONT_07NIKUMARU, &pFont, false, true);
+				"", CFont::FONT_WAKUWAKU, &pFont, false, true);
 
 			m_pSubMenu[nText]->SetTxtBoxColor(Color{255,255,255,0});
 		}
@@ -554,10 +554,10 @@ void CMenuUI::MenuAnime(void)
 					col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 				}
 
-				FormFont pFont = { col,35.0f,3,1,-1, };
+				FontFont pFont = { col,35.0f,3,1,-1, };
 
-				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_07NIKUMARU, &pFont);
-				m_pMenu[Txt]->SetTexrSkip(true);
+				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_WAKUWAKU, &pFont);
+				m_pMenu[Txt]->SetTextSkip(true);
 
 				if (Txt == m_Menu.nMaineSelect){
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
@@ -583,9 +583,9 @@ void CMenuUI::MenuAnime(void)
 			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++) {
 
 				if (m_Menu.nCntLeftAnime == 0) {
-					FormFont pFont = { D3DXCOLOR(0.0f,0.0f,0.0f,0.0f),35.0f,3,1,-1, };
+					FontFont pFont = { D3DXCOLOR(0.0f,0.0f,0.0f,0.0f),35.0f,3,1,-1, };
 
-					m_pMenu[Txt]->Regeneration("", CFont::FONT_AMECHAN, &pFont);
+					m_pMenu[Txt]->Regeneration("", CFont::FONT_CONVENIE, &pFont);
 				}
 
 				// 膨縮
@@ -724,8 +724,8 @@ void CMenuUI::MenuAnime(void)
 					m_Menu.bSubMenuDisp = true;
 					m_Menu.nSubMenuIdx = m_Menu.nMaineSelect;
 
-					FormFont pFontTitle = { D3DXCOLOR(1.0f,1.0f,1.0f,0.0f),35.0f,3,1,-1, };
-					FormFont pFontText = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+					FontFont pFontTitle = { D3DXCOLOR(1.0f,1.0f,1.0f,0.0f),35.0f,3,1,-1, };
+					FontFont pFontText = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
 					// テキストの再生成
 					if (m_MaineMenu[m_Menu.nRightTextType].nSubMenuID == 0) {
@@ -733,13 +733,13 @@ void CMenuUI::MenuAnime(void)
 							if (m_pSubMenu[nText] != NULL)
 							{
 								if (nText != 0)
-									m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_07NIKUMARU, &pFontText);
+									m_pSubMenu[nText]->Regeneration(m_Menu.pOperation[nText].Text, CFont::FONT_WAKUWAKU, &pFontText);
 								else
 								{
 									char data[TXT_MAX];
 									sprintf(data, " %s", m_Menu.pOperation[nText].Text);
 
-									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFontTitle);
+									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_WAKUWAKU, &pFontTitle);
 								}
 							}
 						}
@@ -770,9 +770,9 @@ void CMenuUI::MenuAnime(void)
 								}
 
 								if (nText != 0)
-									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFontText);
+									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_WAKUWAKU, &pFontText);
 								else
-									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFontTitle);
+									m_pSubMenu[nText]->Regeneration(data, CFont::FONT_WAKUWAKU, &pFontTitle);
 							}
 						}
 					}
@@ -994,7 +994,7 @@ void CMenuUI::MenuSelect(void)
 	// メニュー選択
 	SelectInput();
 
-	FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
+	FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,3,1,-1, };
 
 	// サウンド
 	if (m_Menu.nBGMVolume != m_Menu.nBGMOldVolume) {
@@ -1004,7 +1004,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, " %d%s", nData, m_Menu.pSetting[SETTING_BGM_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_BGM_TEXT] != NULL)
-			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
+			m_pSubMenu[SETTING_BGM_TEXT]->Regeneration(data, CFont::FONT_WAKUWAKU, &pFont);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::BGM, volume);
@@ -1016,7 +1016,7 @@ void CMenuUI::MenuSelect(void)
 		sprintf(data, " %d%s", nData, m_Menu.pSetting[SETTING_SE_TEXT].Text);
 
 		if (m_pSubMenu[SETTING_SE_TEXT] != NULL)
-			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_07NIKUMARU, &pFont);
+			m_pSubMenu[SETTING_SE_TEXT]->Regeneration(data, CFont::FONT_WAKUWAKU, &pFont);
 
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);

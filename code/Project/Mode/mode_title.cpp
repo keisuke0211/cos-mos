@@ -1144,11 +1144,11 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		break;
 	case CMode_Title::TITLE_OUTSET:
 	{
-		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
-		FormShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
-
+		FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
+		FontShadow pShadow = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR3(6.0f,6.0f,0.0f) ,D3DXVECTOR2(4.0f,4.0f) };
+		FontEdging pEdging = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR2(0.0f,0.0f) };
 		m_pMenu = CFontText::Create(CFontText::BOX_NONE, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
-			"ボタンを押してねЙ", CFont::FONT_07NIKUMARU, &pFont, false, false, &pShadow);
+			"ボタンをおしてね！", CFont::FONT_WAKUWAKU, &pFont, false, false, NULL, &pEdging);
 	}
 		break;
 	case CMode_Title::TITLE_MENU_ANIME:
@@ -1172,7 +1172,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		nCntColorChange = 0;
 		bColorChange = true;
 
-		FormFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
+		FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),65.0f,5,10,-1 };// 45
 	}
 		break;
 	case CMode_Title::TITLE_NEXT:

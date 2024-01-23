@@ -26,8 +26,8 @@ public:
 	// ƒtƒHƒ“ƒg
 	enum FONT
 	{
-		FONT_07NIKUMARU = 0,
-		FONT_AMECHAN,
+		FONT_WAKUWAKU = 0,// ’Êí•¶Žš
+		FONT_CONVENIE,	  // ã‚Ì‰Žæ‚è•¶Žš
 		FONT_MEIRIO,
 		FONT_MAX,
 		FONT_NONE,
