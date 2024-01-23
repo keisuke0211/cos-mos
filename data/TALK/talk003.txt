@@ -7,40 +7,33 @@
 #=======================================
 
 #会話数
-NUM_TALK   5
+NUM_TALK   4
 
 #会話内容
 SET_TALK
-	TALK    ロケットに乗れて良かったよ！
+	TALK    ロケットにのれてよかったな！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    でもまだ冒険したいなぁ
+	TALK    うん(*´∇｀*)
 	PLAYER  1
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    それならほかの惑星も探索してみよう！
+	TALK    どうせならほかのわくせいにもいこうか！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    行こう！行こう！
+	TALK    おー（＾O＾）／！
 	PLAYER  1
-	TYPE    0
-END_TALK
-
-#会話内容
-SET_TALK
-	TALK    じゃあ！次の惑星に出発だー！
-	PLAYER  0
 	TYPE    0
 END_TALK
 

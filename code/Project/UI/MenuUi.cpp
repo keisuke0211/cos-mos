@@ -40,6 +40,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.nCntRightAnime = 0;
 	m_Menu.nCntRightTextAnime = 0;
 	m_Menu.BoxTexIdx = 0;
+	m_Menu.BoxColor = Color{ 255,255,255,0 };
 	m_Menu.nMaineSelect = 0;
 	m_Menu.nMaineOldSelect = 0;
 	m_Menu.nSubSelect = 1;
@@ -54,7 +55,7 @@ CMenuUI::CMenuUI(void) {
 	m_Menu.bSubMenu = false;
 	m_Menu.bSubTextMenu = false;
 	m_Menu.bSubText = false;
-	m_Menu.bSubText = false;
+	m_Menu.bSubMenuCreate = false;
 	m_Menu.bClose = false;
 	m_MenuEnd = false;
 	m_Menu.bBackMode = false;
@@ -154,7 +155,8 @@ void CMenuUI::Update(void)
 	// サブメニュー
 	RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(m_Menu.RightPos.x + 10, 400.0f, 100.0f), 0.0f, false)
 		->SetSize(m_Menu.RightScale.x, m_Menu.RightScale.y)
-		->SetTex(m_Menu.BoxTex[m_Menu.BoxTexIdx]);
+		->SetTex(m_Menu.BoxTex[m_Menu.BoxTexIdx])
+		->SetCol(m_Menu.BoxColor);
 		
 	// 入力
 	DecisionInput();
@@ -287,13 +289,16 @@ void CMenuUI::SelectInput(void)
 		Manager::GetMode() == CMode::TYPE::TITLE) {
 		if (!m_Menu.bSubMenu) {
 			m_Menu.nCntLeftAnime = 0;
-			m_Menu.bBackMode = true;
-			m_Menu.bSubMenuMove = true;
 			m_Menu.bClose = true;
+			m_Menu.bBackMode = true;
+			m_Menu.bSubMenuMove = false;
+			m_Menu.bSubMenuCreate = false;
+
 			return;
 		}
 		else if (m_Menu.bSubMenu) {
 			m_Menu.bSubMenu = false;
+
 			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxPthIdx(1);
 			m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxColor(COLOR_WHITE);
 
@@ -372,7 +377,6 @@ void CMenuUI::SelectInput(void)
 				m_Menu.nRightCoolDown = COOLDOWN;
 		}
 		else if (m_Menu.nMaineSelect == m_Menu.nRightTextType) {
-			m_Menu.bSubMenuMove = false;
 			m_Menu.bSubMenuCD = false;
 			m_Menu.nRightCoolDown = COOLDOWN;
 		}
@@ -458,72 +462,76 @@ void CMenuUI::SubTextCreate(void)
 {
 	FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
-	if (m_pSubMenu != NULL)
-		TextRelease(TEXT_RIGHT);
+	if (!m_Menu.bSubMenuCreate)
+	{
+		if (m_pSubMenu != NULL)
+			TextRelease(TEXT_RIGHT);
 
-	if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 0) {
+		if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 0) {
 
-		m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(256.0f, 70.0f);
-		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 130, 50.0f, 0.0f), D3DXVECTOR2(256.0f, 70.0f),
-			"", CFont::FONT_WAKUWAKU, &pFont);
-		m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
+			m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(256.0f, 70.0f);
+			m_pSubMenu[INPUT_TITLE] = CFontText::Create(
+				CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 130, 50.0f, 0.0f), D3DXVECTOR2(256.0f, 70.0f),
+				"", CFont::FONT_WAKUWAKU, &pFont);
+			m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
 
-		for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
-			m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NONE,
-				D3DXVECTOR3(m_Menu.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
-				"", CFont::FONT_WAKUWAKU, &pFont, false, false);
+			for (int nText = 1; nText < m_Menu.OperationMax; nText++) {
+				m_pSubMenu[nText] = CFontText::Create(CFontText::BOX_NONE,
+					D3DXVECTOR3(m_Menu.RightPos.x - 50, 100.0f + (50.0f * nText), 0.0f), D3DXVECTOR2(370.0f, 80.0f),
+					"", CFont::FONT_WAKUWAKU, &pFont, false, false);
 
-			m_Menu.SubMenuSizeMax[nText] = D3DXVECTOR2(370.0f, 80.0f);
+				m_Menu.SubMenuSizeMax[nText] = D3DXVECTOR2(370.0f, 80.0f);
+			}
 		}
-	}
-	else if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 1) {
+		else if (m_MaineMenu[m_Menu.nMaineSelect].nSubMenuID == 1) {
 
-		m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(175.0f, 70.0f);
-		m_pSubMenu[INPUT_TITLE] = CFontText::Create(
-			CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 180, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
-			"", CFont::FONT_WAKUWAKU, &pFont);
-		m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
+			m_Menu.SubMenuSizeMax[0] = D3DXVECTOR2(175.0f, 70.0f);
+			m_pSubMenu[INPUT_TITLE] = CFontText::Create(
+				CFontText::BOX_SUB_TITLE, D3DXVECTOR3(m_Menu.RightPos.x - 180, 50.0f, 0.0f), D3DXVECTOR2(175.0f, 70.0f),
+				"", CFont::FONT_WAKUWAKU, &pFont);
+			m_pSubMenu[INPUT_TITLE]->SetTxtBoxColor(Color{ 0,0,0,0 });
 
-		pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
+			pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),35.0f,1,1,-1, };
 
-		for (int nText = 1; nText < m_Menu.SettingMax; nText++) {
+			for (int nText = 1; nText < m_Menu.SettingMax; nText++) {
 
-			D3DXVECTOR3 pos = INITD3DXVECTOR3;
-			D3DXVECTOR2 size = INITD3DXVECTOR2;
+				D3DXVECTOR3 pos = INITD3DXVECTOR3;
+				D3DXVECTOR2 size = INITD3DXVECTOR2;
 
-			// 位置
-			if (nText <= SETTING_SE)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x, 180.0f + (130 * (nText - 1)), 0.0f);
-			else if (nText == SETTING_BACK)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 160.0f, 620.0f, 0.0f);//190
-			else if (nText >= SETTING_SCREEN_TEXT)
-				pos = D3DXVECTOR3(m_Menu.RightPos.x + 85.0f, 230.0f + (130.0f * (nText - SETTING_SCREEN_TEXT)), 0.0f);
+				// 位置
+				if (nText <= SETTING_SE)
+					pos = D3DXVECTOR3(m_Menu.RightPos.x, 180.0f + (130 * (nText - 1)), 0.0f);
+				else if (nText == SETTING_BACK)
+					pos = D3DXVECTOR3(m_Menu.RightPos.x + 160.0f, 620.0f, 0.0f);//190
+				else if (nText >= SETTING_SCREEN_TEXT)
+					pos = D3DXVECTOR3(m_Menu.RightPos.x + 85.0f, 230.0f + (130.0f * (nText - SETTING_SCREEN_TEXT)), 0.0f);
 
-			// サイズとボックス種類
-			CFontText::Box type = CFontText::BOX_NONE;
-			if (nText > SETTING_BACK) {
-				size = D3DXVECTOR2(256.0f, 64.0f);
-				type = CFontText::BOX_SUB_MENU01;
+				// サイズとボックス種類
+				CFontText::Box type = CFontText::BOX_NONE;
+				if (nText > SETTING_BACK) {
+					size = D3DXVECTOR2(256.0f, 64.0f);
+					type = CFontText::BOX_SUB_MENU01;
+				}
+				else if (nText == SETTING_BACK) {
+					size = D3DXVECTOR2(150.0f, 80.0f);
+					type = CFontText::BOX_SUB_MENU00;
+				}
+				else {
+					size = D3DXVECTOR2(480.0f, 60.0f);
+					type = CFontText::BOX_SUB_MENU00;
+				}
+
+				m_pSubMenu[nText] = CFontText::Create(type,
+					pos, size,
+					"", CFont::FONT_WAKUWAKU, &pFont, false, true);
+
+				m_pSubMenu[nText]->SetTxtBoxColor(Color{ 255,255,255,0 });
 			}
-			else if (nText == SETTING_BACK) {
-				size = D3DXVECTOR2(150.0f, 80.0f);
-				type = CFontText::BOX_SUB_MENU00;
-			}
-			else {
-				size = D3DXVECTOR2(480.0f, 60.0f);
-				type = CFontText::BOX_SUB_MENU00;
-			}
-
-			m_pSubMenu[nText] = CFontText::Create(type,
-				pos, size,
-				"", CFont::FONT_WAKUWAKU, &pFont, false, true);
-
-			m_pSubMenu[nText]->SetTxtBoxColor(Color{255,255,255,0});
 		}
-	}
 
-	m_Menu.nRightTextType = m_Menu.nMaineSelect;
+		m_Menu.nRightTextType = m_Menu.nMaineSelect;
+		m_Menu.bSubMenuCreate = true;
+	}
 }
 
 //========================================
@@ -559,10 +567,10 @@ void CMenuUI::MenuAnime(void)
 				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_WAKUWAKU, &pFont);
 				m_pMenu[Txt]->SetTextSkip(true);
 
-				if (Txt == m_Menu.nMaineSelect){
+				if (Txt == m_Menu.nMaineSelect) {
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
 				}
-				else{
+				else {
 					m_pMenu[Txt]->SetTxtBoxColor(Color{ 155,155,155,255 });
 				}
 			}
@@ -592,7 +600,7 @@ void CMenuUI::MenuAnime(void)
 				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
 				float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
-				if (Txt == m_Menu.nMaineSelect&& !m_Menu.bBackMode)
+				if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
 					TgtSizeX = 80.0f;
 
 				float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
@@ -605,7 +613,7 @@ void CMenuUI::MenuAnime(void)
 
 				m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
 
-				if ((m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME-1 && Txt != m_Menu.nMaineSelect) || (m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME-1 && m_Menu.bBackMode)) {
+				if ((m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && Txt != m_Menu.nMaineSelect) || (m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && m_Menu.bBackMode)) {
 					m_pMenu[Txt]->SetTxtBoxSize(0, SizeY);
 				}
 			}
@@ -645,6 +653,9 @@ void CMenuUI::MenuAnime(void)
 
 			m_Menu.bSubMenuCD = false;
 			m_Menu.nRightCoolDown = COOLDOWN;
+
+			if (!m_Menu.bClose && !m_Menu.bSubMenuDisp)
+				m_Menu.BoxColor.a = 255;
 		}
 	}
 	else if (m_Menu.bSubMenuMove && !m_Menu.bSubMenuCD && !m_Menu.bSubTextMenu || (m_Menu.bClose && m_Menu.bSubMenuDisp))
@@ -660,40 +671,48 @@ void CMenuUI::MenuAnime(void)
 
 		D3DXVECTOR3 move = INITD3DXVECTOR3;
 
-			float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntRightAnime, PAUSE_RIGHT_ANIME);
-			m_Menu.RightScale.x = m_Menu.RightScaleMax.x * Rate;
-			m_Menu.RightScale.y = m_Menu.RightScaleMax.y * Rate;
+		float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntRightAnime, PAUSE_RIGHT_ANIME);
+		m_Menu.RightScale.x = m_Menu.RightScaleMax.x * Rate;
+		m_Menu.RightScale.y = m_Menu.RightScaleMax.y * Rate;
 
-			if (m_pSubMenu[0] != NULL) {
-				m_Menu.SubMenuSize[0].x = m_Menu.SubMenuSizeMax[0].x * Rate;
-				m_Menu.SubMenuSize[0].y = m_Menu.SubMenuSizeMax[0].y * Rate;
+		if (m_pSubMenu[0] != NULL) {
+			m_Menu.SubMenuSize[0].x = m_Menu.SubMenuSizeMax[0].x * Rate;
+			m_Menu.SubMenuSize[0].y = m_Menu.SubMenuSizeMax[0].y * Rate;
 
-				m_pSubMenu[0]->SetTxtBoxSize(m_Menu.SubMenuSize[0].x, m_Menu.SubMenuSize[0].y);
+			m_pSubMenu[0]->SetTxtBoxSize(m_Menu.SubMenuSize[0].x, m_Menu.SubMenuSize[0].y);
+		}
+
+		int nAnime = 0;
+		if (!m_Menu.bClose && !m_Menu.bSubMenuDisp) {
+			++m_Menu.nCntRightAnime;
+			nAnime = PAUSE_RIGHT_ANIME;
+
+			if (m_Menu.nCntRightAnime >= nAnime)
+				m_Menu.nCntRightAnime = nAnime;
+		}
+		else if (m_Menu.bClose || m_Menu.bSubMenuDisp) {
+			--m_Menu.nCntRightAnime;
+			nAnime = 0;
+
+			if (m_Menu.nCntRightAnime <= nAnime)
+				m_Menu.nCntRightAnime = nAnime;
+		}
+
+		if (m_Menu.nCntRightAnime == nAnime) {
+
+			if (!m_Menu.bSubMenuDisp)
+			{
+				SubTextCreate();
+				m_Menu.bSubTextMenu = true;
 			}
-
-			int nAnime = 0;
-			if (!m_Menu.bClose && !m_Menu.bSubMenuDisp) {
-				++m_Menu.nCntRightAnime;
-				nAnime = PAUSE_RIGHT_ANIME;
+			else if (m_Menu.bSubMenuDisp && !m_Menu.bClose && !m_Menu.bSubTextMenu) {
+				m_Menu.bSubMenuDisp = false;
+				m_Menu.bSubMenuMove = false;
+				m_Menu.bSubMenuCreate = false;
+				m_Menu.BoxColor.a = 0;
+				TextRelease(TEXT_RIGHT);
 			}
-			else if (m_Menu.bClose || m_Menu.bSubMenuDisp) {
-				--m_Menu.nCntRightAnime;
-				nAnime = 0;
-			}
-
-			if (m_Menu.nCntRightAnime == nAnime) {
-
-				if (!m_Menu.bSubMenuDisp)
-				{
-					SubTextCreate();
-					m_Menu.bSubTextMenu = true;
-				}
-				else if (m_Menu.bSubMenuDisp && !m_Menu.bClose && !m_Menu.bSubTextMenu) {
-					m_Menu.bSubMenuDisp = false;
-					m_Menu.bSubMenuMove = false;
-					TextRelease(TEXT_RIGHT);
-				}
-			}
+		}
 	}
 	else if ((m_Menu.bSubMenuMove && !m_Menu.bSubMenuCD && m_Menu.bSubTextMenu) || (m_Menu.bClose && m_Menu.bSubMenuDisp))
 	{
@@ -795,7 +814,7 @@ void CMenuUI::MenuAnime(void)
 				if (m_pSubMenu[nTxt] != NULL)
 				{
 					float a = 255 * Rate;
-					m_pSubMenu[nTxt]->SetTxtBoxColor(Color{ 255,255,255,a });				
+					m_pSubMenu[nTxt]->SetTxtBoxColor(Color{ 255,255,255,a });
 					m_pSubMenu[nTxt]->SetTxtSize(size);
 				}
 			}
@@ -810,7 +829,7 @@ void CMenuUI::MenuAnime(void)
 	}
 
 	// メニュー終了時、
-	if (m_MenuEnd)
+	if (m_MenuEnd && !m_Menu.bSubMenuCreate)
 	{
 		CMode::TYPE Mode = Manager::GetMode();
 		if (Mode == CMode::TYPE::TITLE) {

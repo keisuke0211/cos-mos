@@ -42,48 +42,6 @@
     <ClCompile Include="code\Project\System\words\object\font-object.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Object\stage-object.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\stage-object-manager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Item\Parts.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\meteor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\RoadTripLaser.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\rocket.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\Spike.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\trampoline.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Block\fill-block.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Block\move-block.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\BackGround\Planet.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\BackGround\ShiningWave.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\BackGround\Star.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\Project\Mode\mode.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -201,16 +159,7 @@
     <ClCompile Include="code\_RNLib\Basis\3DObject\Body\setup3D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\meteor_generator.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\extenddog.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\_RNLib\RNsettings.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Block\magma-block.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\_RNLib\Basis\Draw\camera-manager.cpp">
@@ -237,16 +186,10 @@
     <ClCompile Include="code\_RNLib\Demo\demo_player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\Project\Effect\eff-meteor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\System\BG-Editor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Gimmick\pile.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\collision.cpp">
@@ -294,19 +237,10 @@
     <ClCompile Include="code\Project\UI\miss.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="code\Project\Object\Block\Ghost.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\BackGround\bat.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="code\Project\Effect\eff-model.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\UI\partsUI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Item\coin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\resource-path.cpp">
@@ -316,9 +250,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\UI\coinUI.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="code\Project\Object\Block\block.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="code\Project\stage.cpp">
@@ -357,6 +288,75 @@
     <ClCompile Include="code\_RNLib\sample.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="code\Project\Object\BackGround\bat.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\BackGround\BG-object.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\BackGround\Planet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\BackGround\ShiningWave.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\BackGround\Star.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Block\block.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Block\fill-block.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Block\Ghost.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Block\magma-block.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Block\move-block.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\extenddog.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\goalgate.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\meteor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\meteor_generator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\pile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\RoadTripLaser.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\rocket.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\Spike.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Gimmick\trampoline.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Item\coin.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\Item\Parts.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\stage-object.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="code\Project\Object\stage-object-manager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\Project\main.h">
@@ -384,51 +384,6 @@
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\System\words\object\font-object.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\stage-object.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\stage-object-manager.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Item\Parts.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\goalgate.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\meteor.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\RoadTripLaser.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\rocket.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\Spike.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\trampoline.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Block\block.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Block\fill-block.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Block\move-block.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\BackGround\Planet.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\BackGround\Shiningwave.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\BackGround\Star.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\Mode\mode.h">
@@ -554,16 +509,7 @@
     <ClInclude Include="code\_RNLib\Basis\3DObject\Body\setup3D.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\meteor_generator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\extenddog.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="code\_RNLib\RNsettings.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Block\magma-block.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\Draw\camera-manager.h">
@@ -590,16 +536,10 @@
     <ClInclude Include="code\_RNLib\RNobject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Object\BackGround\BG-object.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="code\Project\Effect\eff-meteor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\System\BG-Editor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Gimmick\pile.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\collision.h">
@@ -647,25 +587,16 @@
     <ClInclude Include="code\Project\UI\miss.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Object\Block\Ghost.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="code\_RNLib\Basis\3DObject\Effect\effect3D_model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="code\Project\Object\BackGround\bat.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="code\Project\Effect\eff-model.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\Project\UI\partsUI.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="code\Project\Object\Item\coin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="code\_RNLib\RNfunction.h">
@@ -712,6 +643,75 @@
     </ClInclude>
     <ClInclude Include="code\_RNLib\RNagent.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\BackGround\bat.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\BackGround\BG-object.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\BackGround\Planet.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\BackGround\Shiningwave.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\BackGround\Star.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Block\block.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Block\fill-block.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Block\Ghost.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Block\magma-block.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Block\move-block.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\extenddog.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\goalgate.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\meteor.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\meteor_generator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\pile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\RoadTripLaser.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\rocket.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\Spike.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Gimmick\trampoline.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Item\coin.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\Item\Parts.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\stage-object.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="code\Project\Object\stage-object-manager.h">
+      <Filter>ソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

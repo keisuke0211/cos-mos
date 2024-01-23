@@ -7,46 +7,35 @@
 #=======================================
 
 #会話数
-NUM_TALK   6
+NUM_TALK   5
 
 #会話内容
 SET_TALK
 	TALK    イテテテテ... ここはどこだ？
-	PLAYER  2
-	TYPE    0
-END_TALK
-
-#会話内容
-SET_TALK
-	TALK    あれ！？僕らが乗ってきたロケットがない！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    弟もいない！
-	PLAYER  0
-	TYPE    0
-END_TALK
-
-#会話内容
-SET_TALK
-	TALK    お兄ちゃんがいない！
+	TALK    ＼(゜ロ＼)ココハドコ?(／ロ゜)／アタシハダアレ?
 	PLAYER  1
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    こうなったらロケットを探しに行くか！
+	TALK    あれ！？ぼくたちのロケットがない！
+	PLAYER  0
+	TYPE    0
+END_TALK
+
+SET_TALK
+	TALK    こうなったらロケットをさがしにいくか！
 	PLAYER  2
 	TYPE    0
 END_TALK
 
-#会話内容
 SET_TALK
-	TALK    僕らが持つSWAP能力で！
+	TALK    ぼくらの「SWAP」で！
 	PLAYER  2
 	TYPE    0
 END_TALK
