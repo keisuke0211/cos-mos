@@ -48,7 +48,7 @@ CDemoZone::CDemoZone(const TYPE2& type2) : CDemoObject(TYPE::ZONE) {
 	case TYPE2::DOLL_TEST: {
 		RNLib::Memory().Alloc((TypeInfo_DollTest**)&m_typeInfo);
 		TypeInfo_DollTest* typeInfo = (TypeInfo_DollTest*)m_typeInfo;
-		typeInfo->doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetSetUp3DIdx(_RNC_DefaultData::SETUP3D::CAPSULE));
+		typeInfo->doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, RNLib::DefaultData().GetSetUp3DIdx(_RNC_DefaultData::SETUP3D::CAPSULE), FALSE);
 	}break;
 	case TYPE2::EFFECT_TEST: {
 

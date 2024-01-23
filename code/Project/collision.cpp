@@ -466,7 +466,7 @@ void CCollision::Meteor(SelfInfo *pSelfInfo, ColliInfo *pColli, CPlayer::WORLD_S
 
 //----------------------------
 // レーザーの当たり判定処理
-// Author:KEISUKE OTONO
+// Author:KOMURO HIROMU
 //----------------------------
 void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, ColliInfo *pColli, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
@@ -480,10 +480,10 @@ void CCollision::Laser(SelfInfo *pSelfInfo, CRoadTripLaser *pRoadTripLaser, Coll
 		CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 	
 	
-		if (Laserpos.x + Lasersize.x > pInfo->pos.x - pInfo->scale.x
-			&& Laserpos.x - Lasersize.x < pInfo->pos.x + pInfo->scale.x
-			&& Laserpos.y + Lasersize.y > pInfo->pos.y - pInfo->scale.y
-			&& Laserpos.y - Lasersize.y < pInfo->pos.y + pInfo->scale.y)
+		if (Laserpos.x + Lasersize.x > pInfo->pos.x - pSelfInfo->fWidth
+			&& Laserpos.x - Lasersize.x < pInfo->pos.x + pSelfInfo->fWidth
+			&& Laserpos.y + Lasersize.y * 0.5f> pInfo->pos.y - pSelfInfo->fHeight
+			&& Laserpos.y - Lasersize.y * 0.5f < pInfo->pos.y + pSelfInfo->fHeight )
 		{// レーザーの範囲内の時
 			*pDeath = true;
 		}

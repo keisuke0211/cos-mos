@@ -59,7 +59,7 @@ static const FishData fishDatas[FISH_NUM] = {
 void Fishes::Start(void) {
 
 	for (int cnt = 0; cnt < FISH_NUM; cnt++) {
-		fishes[cnt].doll = new CDoll3D(PRIORITY_BACKGROUND, RNLib::SetUp3D().Load(fishDatas[cnt].setUpPath));
+		fishes[cnt].doll = new CDoll3D(PRIORITY_BACKGROUND, RNLib::SetUp3D().Load(fishDatas[cnt].setUpPath), TRUE);
 		fishes[cnt].doll->SetMotion(RNLib::Motion3D().Load(fishDatas[cnt].motionPath));
 		fishes[cnt].doll->SetScale(Scale3D(fishDatas[cnt].scale, fishDatas[cnt].scale, fishDatas[cnt].scale));
 		fishes[cnt].rail = new CRail3D(fishDatas[cnt].railPath);

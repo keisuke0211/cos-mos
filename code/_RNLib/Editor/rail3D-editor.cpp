@@ -17,7 +17,7 @@
 //========================================
 // コンストラクタ
 //========================================
-CRail3DEditor::CRail3DEditor() : m_camera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight())), m_rail3D("NONEDATA"), m_editPath("NONEDATA"), m_doll((UShort)RNMode::PRIORITY::OBJECT3D, NONEDATA) {
+CRail3DEditor::CRail3DEditor() : m_camera(Scale2D(RNLib::Window().GetWidth(), RNLib::Window().GetHeight())), m_rail3D("NONEDATA"), m_editPath("NONEDATA"), m_doll((UShort)RNMode::PRIORITY::OBJECT3D, NONEDATA, FALSE) {
 
 	m_camera.SetGrabAirMouse(1.0f, 1.0f, 1.0f);
 	m_camera.SetPosVAndPosR (Pos3D(0.0f, 100.0f, -100.0f), INITPOS3D);
