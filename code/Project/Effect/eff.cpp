@@ -64,13 +64,15 @@ void CEff::Uninit(void)
 void CEff::Update(void)
 {
 	// ‰ß‹Ž‚ÌˆÊ’u
-	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
-		->SetTex(m_Info.nTex)
-		->SetBillboard(m_Info.Billboard)
-		->SetCol(m_Info.col)
-		->SetSize(m_Info.scale.x, m_Info.scale.y)
-		->SetAlphaBlendMode(_RNC_DrawState::ALPHA_BLEND_MODE::ADD)
-		->SetZTest(false);
+	if (m_Info.col.a > 0) {
+		RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_Info.pos, m_Info.rot)
+			->SetTex(m_Info.nTex)
+			->SetBillboard(m_Info.Billboard)
+			->SetCol(m_Info.col)
+			->SetSize(m_Info.scale.x, m_Info.scale.y)
+			->SetAlphaBlendMode(_RNC_DrawState::ALPHA_BLEND_MODE::ADD)
+			->SetZTest(false);
+	}
 
 	if (m_Info.nCount != -44) {
 		m_Info.nCount--;
