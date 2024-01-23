@@ -202,21 +202,21 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	// ƒh[ƒ‹‚Ì¶¬
 	switch (m_looksType) {
 	case LOOKS_TYPE::BAOBAB_TREE: {
-		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE]);
+		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::BAOBAB_TREE], TRUE);
 		m_doll->SetPos(m_pos + Pos3D(0.0f, (((int)fabsf(m_pos.x) % 20) * (m_pos.y / fabsf(m_pos.y))), 30.0f + ((int)fabsf(m_pos.x) % 20)));
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::CHEST: {
-		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST]);
+		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::CHEST], TRUE);
 		m_doll->SetPos(m_pos);
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));
 		}
 	}break;
 	case LOOKS_TYPE::PALMTREE: {
-		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE]);
+		m_doll = new CDoll3D(priority, m_otherSetUp3DlIdxes[(int)OTHER_SETUP3D::PALM_TREE], TRUE);
 		m_doll->SetPos(m_pos);
 		if (m_pos.y < 0.0f) {
 			m_doll->SetRot(Rot3D(0.0f, 0.0f, D3DX_PI));

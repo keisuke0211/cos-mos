@@ -11,14 +11,14 @@ NUM_TALK   4
 
 #会話内容
 SET_TALK
-	TALK    うちゅうりょこうにいくぞー!！
+	TALK    うちゅうりょこうにいくぞー！
 	PLAYER  0
 	TYPE    -1
 END_TALK
 
 #会話内容
 SET_TALK
-	TALK    おー（＾O＾）／！
+	TALK    おー（＾Ｏ＾）／！
 	PLAYER  1
 	TYPE    -1
 END_TALK

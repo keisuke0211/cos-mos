@@ -343,7 +343,7 @@ void Sample(void) {
 		//   毎フレーム情報を更新するなどして、操り人形のように扱います。
 
 		// コンストラクタにプライオリティとセットアップ3DのIdxを渡す
-		CDoll3D doll(0, RNLib::SetUp3D().Load("path"));
+		CDoll3D doll(0, RNLib::SetUp3D().Load("path"), TRUE);
 
 		// ・位置を渡すことで始めてその場所に現れます。
 		doll.SetPos(INITPOS3D);

@@ -30,7 +30,7 @@ CBat::CBat(void) {
 	m_pos = INITD3DXVECTOR3;
 	m_rot = INITD3DXVECTOR3;
 
-	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data/SETUP/Bat.txt"));
+	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data/SETUP/Bat.txt"), TRUE);
 	m_State = CBat::STATE::STATE_DEFAULT;
 	m_nIdxMotion = 0;
 	m_nFlyCounter = 0;

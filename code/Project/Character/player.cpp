@@ -169,14 +169,14 @@ HRESULT CPlayer::Init(void)
 	// ÇPÇoèâä˙èÓïÒ
 	if (m_aInfo[0].doll != NULL)
 		delete m_aInfo[0].doll;
-	m_aInfo[0].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"));
+	m_aInfo[0].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Mouth.txt"), TRUE);
 	m_aInfo[0].rot = Rot3D(0.0f, D3DX_PI, 0.0f);
 	m_aInfo[0].color = P1_COLOR;
 
 	// ÇQÇoèâä˙èÓïÒ
 	if (m_aInfo[1].doll != NULL)
 		delete m_aInfo[1].doll;
-	m_aInfo[1].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"));
+	m_aInfo[1].doll = new CDoll3D(PRIORITY_PLAYER, RNLib::SetUp3D().Load("data\\SETUP\\Player_Eye.txt"), TRUE);
 	m_aInfo[1].rot = CStageObject::INVERSEVECTOR3;
 	m_aInfo[1].color = P2_COLOR;
 

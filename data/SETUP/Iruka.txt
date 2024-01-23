@@ -11,7 +11,7 @@ boneDataSum{ 2
 		idx 1
 		modelIdx data\\Model\\Iruka_Back.x
 		parentIdx 0
-		relativePos 23.00 5.50 0.00
+		relativePos 18.00 5.50 0.00
 		relativeRot 0.00 0.00 0.00
 	}
 }
@@ -20,7 +20,11 @@ boneDataSum{ 2
 
 
 
-faceDataSum{ 8
+faceDataSum{ 0
+}
+END
+
+
 faceData{
 	texIdx NONEDATA
 	col 96 161 165 255
@@ -220,5 +224,3 @@ faceData{
 		texPos 0.20 0.20
 	}
 }
-}
-END

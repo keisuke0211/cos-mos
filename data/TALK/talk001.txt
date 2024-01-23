@@ -11,13 +11,13 @@ NUM_TALK   5
 
 #会話内容
 SET_TALK
-	TALK    イテテテテ... ここはどこだ？
+	TALK    イテテテテ・・・ ここはどこだ？
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 SET_TALK
-	TALK    ＼(゜ロ＼)ココハドコ?(／ロ゜)／アタシハダアレ?
+	TALK    ＼（゜ロ＼）ココハドコ？（／ロ゜）／アタシハダアレ？
 	PLAYER  1
 	TYPE    0
 END_TALK
@@ -35,7 +35,7 @@ SET_TALK
 END_TALK
 
 SET_TALK
-	TALK    ぼくらの「SWAP」で！
+	TALK    ぼくらの「ＳＷＡＰ」で！
 	PLAYER  2
 	TYPE    0
 END_TALK
