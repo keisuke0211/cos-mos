@@ -71,8 +71,6 @@ CGoalGate::CGoalGate(void) :m_camera(Size2D(500.0f, 500.0f)) {
 	if (s_TexIdx[1] == NONEDATA)s_TexIdx[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\effect000.jpg");
 	if (s_TexIdx[2] == NONEDATA)s_TexIdx[2] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
 	if (s_nEscapeGuideTexID == NONEDATA)s_nEscapeGuideTexID = RNLib::Texture().Load("data\\TEXTURE\\PressBotton01.png");
-
-	m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Up_Goal.txt"));
 }
 
 //========================================
@@ -110,11 +108,11 @@ void CGoalGate::Init(void) {
 
 	if (m_World == WORLD::UP) {
 		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
-		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Up_Goal.txt"));
+		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Up_Goal.txt"), TRUE);
 	}
 	else if (m_World == WORLD::DOWN) {
 		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt");
-		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Down_Goal.txt"));
+		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Down_Goal.txt"), TRUE);
 	}
 
 }

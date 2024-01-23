@@ -109,7 +109,7 @@ public:
 	};
 
 	//========== [[[ ä÷êîêÈåæ ]]]
-	CDoll3D                            (const UShort& priority, const short& setUpIdx);
+	CDoll3D                            (const UShort& priority, const short& setUpIdx, const bool& isOutLine);
 	~CDoll3D                           ();
 	void        SetUp                  (const short& setUpIdx);
 	void        SetClippingCamera      (CCamera& camera) { m_clippingID = camera.GetID(); }
@@ -154,6 +154,7 @@ private:
 	static const int PAUSE_RESET_TIME = 10;
 
 	//========== [[[ ïœêîêÈåæ ]]]
+	bool        m_isOutLine;
 	UShort      m_priority;
 	short       m_clippingID;
 	Pos3D       m_pos;

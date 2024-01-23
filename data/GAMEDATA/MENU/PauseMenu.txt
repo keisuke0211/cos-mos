@@ -11,37 +11,67 @@ Start
 
 -- ‚PŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = „X„X‘±‚¯‚é
+		Text = „X„X
 		SubMenuID = -1
 		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\Pause0.png
+			PtnIdx 		= 1
+			PtnX		= 1
+			PtnY		= 1
+		EndTexture
 	EndSelect
 	
 -- ‚QŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = „X„X‚â‚è’¼‚·
+		Text = „X„X
 		SubMenuID = -1
 		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\Pause1.png
+			PtnIdx 		= 1
+			PtnX		= 1
+			PtnY		= 1
+		EndTexture
 	EndSelect
 
 -- ‚RŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = „X„X‘€ì•û–@
+		Text = „X„X
 		SubMenuID = 0
 		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\Pause2.png
+			PtnIdx 		= 1
+			PtnX		= 1
+			PtnY		= 1
+		EndTexture
 	EndSelect
 
 -- ‚SŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = „X„Xİ’è
+		Text = „X„X
 		SubMenuID = 1
-
+		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\Pause3.png
+			PtnIdx 		= 1
+			PtnX		= 1
+			PtnY		= 1
+		EndTexture
 	EndSelect
 
 -- ‚TŒÂ–Ú‚Ìİ’è ------------------------------------------------------
 	SetSelect
-		Text = „X„XƒXƒe[ƒW‘I‘ğ
+		Text = „X„X
 		SubMenuID = -1
-
+		
+		SetTexture
+			FilePath 	= data\\TEXTURE\\TextBox\\Pause4.png
+			PtnIdx 		= 1
+			PtnX		= 1
+			PtnY		= 1
+		EndTexture
 	EndSelect
 
 END

@@ -429,7 +429,7 @@ void CMenuUI::MenuCreate(void)
 	else if (Mode == CMode::TYPE::GAME) {
 		pos = D3DXVECTOR3(m_Menu.LeftPos.x - 20, 150.0f, 0.0f);
 		size = D3DXVECTOR2(0.0f, 0.0f);
-		TargetSize = D3DXVECTOR2(370.0f, 80.0f);
+		TargetSize = D3DXVECTOR2(320.0f, 80.0f);
 	}
 
 	for (int nText = 0; nText < m_Menu.MainMenuMax; nText++) {

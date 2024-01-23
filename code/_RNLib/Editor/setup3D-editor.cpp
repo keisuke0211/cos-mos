@@ -24,7 +24,7 @@ CSetUp3DEditor::CSetUp3DEditor() {
 	m_camera->SetPosVAndPosR(Pos3D(0.0f, 100.0f, -100.0f), INITPOS3D);
 	m_camera->SetLightID((new CLight3D("RNData\\StandardLight.txt"))->GetID());
 
-	m_doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, EDITDATA);
+	m_doll = new CDoll3D((UShort)RNMode::PRIORITY::OBJECT3D, EDITDATA, FALSE);
 	m_doll->SetPos(Pos3D(0.0f, 0.0f, 0.0f));
 	RNSystem::GetDoll3DMgr().SetEditDoll(m_doll);
 	RNSystem::GetDoll3DMgr().SetEditCamera(m_camera);
