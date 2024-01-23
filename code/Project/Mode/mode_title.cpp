@@ -1226,6 +1226,8 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		break;
 	case CMode_Title::TITLE_OUTSET:
 	{
+		m_TextAnime.state = TEXT_ANIME::TEXT_IN;
+
 		FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
 		FontEdging pEdging = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR2(0.0f,0.0f) };
 		m_pText = CFontText::Create(CFontText::BOX_NONE, D3DXVECTOR3(1000.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
