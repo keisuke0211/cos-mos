@@ -666,15 +666,27 @@ void CFontText::SetWordPos(bool bMoveWordsX, bool bMoveWordsY)
 	//配置位置設定
 	for (int nCntWord = 0; nCntWord < m_Info.nLetterPopCount; nCntWord++)
 	{
-		CWords *ppp = m_Info.words[nCntWord];
-
 		//現在位置を取得し、移動させるベクトルの値を代入
 		Pos3D SetPos = m_Info.words[nCntWord]->GetPos();
-		if (bMoveWordsX) SetPos.x = m_Info.TxtBoxPos.x;
-		if (bMoveWordsY) SetPos.y = m_Info.TxtBoxPos.y * 2;
+		Pos3D SetPos1 = INITD3DXVECTOR3;
+
+		if (m_Info.aEdging.edging[nCntWord] != NULL)
+			SetPos1 = m_Info.aEdging.edging[nCntWord]->GetPos();
+
+		if (bMoveWordsX) {
+			SetPos.x = m_Info.TxtBoxPos.x;
+			SetPos1.x = m_Info.TxtBoxPos.x;
+		}
+		if (bMoveWordsY) {
+			SetPos.y = m_Info.TxtBoxPos.y * 2;
+			SetPos1.y = m_Info.TxtBoxPos.y * 2;
+		}
 
 		//文字位置代入
 		m_Info.words[nCntWord]->SetPos(SetPos);
+
+		if (m_Info.aEdging.edging[nCntWord] != NULL)
+			m_Info.aEdging.edging[nCntWord]->SetPos(SetPos);
 	}
 }
 
