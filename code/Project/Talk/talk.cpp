@@ -243,6 +243,14 @@ void CTalk::Update(void)
 		//次の発言へ
 		NextSpeak();
 	}
+
+	//テキストボックスの位置設定
+	if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
+	{
+		SetCurtain(false);
+		m_pText->SetTxtBoxPos(m_pos, false, true);
+	}
+
 }
 
 //=======================================
@@ -447,6 +455,8 @@ void CTalk::SetCurtain(const bool bSetCurtain)
 		return;
 	}
 
+	if (m_nTalkID >= m_nTalkNumAll) return;
+
 	//表示座標取得
 	m_pos.y = GetTalkerPosY(s_pTalk[m_nTalkID].TalkerID);
 }
@@ -471,7 +481,7 @@ Color CTalk::GetTalkerColor(CInt &Talker)
 //=======================================
 float CTalk::GetTalkerPosY(CInt &Talker)
 {
-	if (Talker <= 0 || Talker <= 2)
+	if (0 <= Talker || Talker <= 2)
 	{
 		switch ((int)CPlayer::GetInfo(Talker)->side)
 		{

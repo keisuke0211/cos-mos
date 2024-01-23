@@ -344,9 +344,11 @@ void CFontText::LetterForm(void)
 
 			m_Info.sText += m_Info.sALLText[m_Info.nAddLetter];
 			string Text = m_Info.sText;
+
+			// 解像度に合わせる
 			Pos3D pos = m_Info.TxtBoxPos * 2;
 
-			pos.x = pos.x - ((m_Info.TxtBoxSize.x * 2) / 2);
+			pos.x = pos.x - m_Info.TxtBoxSize.x;
 			pos.z = 0.0f;
 
 			if (Text != "" && m_Info.nAddLetter < m_Info.nTextLength)
@@ -376,6 +378,7 @@ void CFontText::LetterForm(void)
 						Pos3D(fTxtSize, fTxtSize, 0.0f),
 						m_Info.FontType, m_Info.FontCol);
 
+					// 縁取り
 					if (m_Info.FontType == CFont::FONT::FONT_WAKUWAKU && m_Info.aEdging.bEdging)
 					{
 						Pos2D AddSize = m_Info.aEdging.AddSize;
@@ -421,6 +424,17 @@ void CFontText::LetterForm(void)
 							Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
 							Pos3D(fTxtSize, fTxtSize, 0.0f),
 							m_Info.FontType, m_Info.FontCol);
+
+						// 縁取り
+						if (m_Info.FontType == CFont::FONT::FONT_WAKUWAKU && m_Info.aEdging.bEdging)
+						{
+							Pos2D AddSize = m_Info.aEdging.AddSize;
+
+							m_Info.aEdging.edging[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
+								Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount * 40.0f, pos.z),
+								Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
+								CFont::FONT::FONT_CONVENIE, m_Info.aEdging.col);
+						}
 
 						m_Info.nLetterPopCount++;
 						m_Info.nLetterPopCountX++;
@@ -657,7 +671,7 @@ void CFontText::SetWordPos(bool bMoveWordsX, bool bMoveWordsY)
 		//現在位置を取得し、移動させるベクトルの値を代入
 		Pos3D SetPos = m_Info.words[nCntWord]->GetPos();
 		if (bMoveWordsX) SetPos.x = m_Info.TxtBoxPos.x;
-		if (bMoveWordsY) SetPos.y = m_Info.TxtBoxPos.y;
+		if (bMoveWordsY) SetPos.y = m_Info.TxtBoxPos.y * 2;
 
 		//文字位置代入
 		m_Info.words[nCntWord]->SetPos(SetPos);
