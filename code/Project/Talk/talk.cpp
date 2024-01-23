@@ -328,13 +328,15 @@ void CTalk::NextSpeak(void)
 		//フォント設定
 		SetFontOption(s_pTalk[m_nTalkID].type);
 
+		FontEdging Edge = { Color{ 255,255,255,255}, true, Pos2D(0.1f, 0.1f)};
+
 		//サウンド設定　語り手番号がプレイヤー番号以外ならサウンド無し。　合致しているなら語り手番号代入
 		CShort SeIdx = 
 			s_pTalk[m_nTalkID].TalkerID < 0 || s_pTalk[m_nTalkID].TalkerID > 2 ? NONEDATA :
 			s_pTalk[m_nTalkID].TalkerID % 2 == 0 ? s_1P_Voice : s_2P_Voice;
 
 		m_pText = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
-									CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL, SeIdx);
+									CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, &Edge, SeIdx);
 
 		//両方喋る場合
 		if (s_pTalk[m_nTalkID].TalkerID == 2)
@@ -343,7 +345,7 @@ void CTalk::NextSpeak(void)
 			m_pFont.col = GetTalkerColor(1);
 			m_pos.y = GetTalkerPosY(1);
 			m_pTextSub = CFontText::Create(CFontText::BOX_NONE, m_pos, INITPOS2D, s_pTalk[m_nTalkID].pLog,
-										CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, NULL, s_2P_Voice);
+										CFont::FONT_WAKUWAKU, &m_pFont, false, false, NULL, &Edge, s_2P_Voice);
 		}
 
 		//テキストボックスの位置設定
