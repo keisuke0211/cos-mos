@@ -107,7 +107,7 @@ public:
 	/* 移動量				*/void SetMove(Pos3D move);
 	/* 空白表示				*/void SetSpace(bool bSpace) { m_Info.bSpace = bSpace; }
 	/* ポーズ中の生成		*/void SetTxtPause(bool bPause);
-	/* TextBoxの表示		*/void SetTxtBox(bool bTextBox) { m_Info.bTextBok = bTextBox; }
+	/* TextBoxの表示		*/void SetTxtBox(bool bTextBox) { m_Info.bTextBox = bTextBox; }
 	/* TextBoxの位置		*/void SetTxtBoxPos(CFloat &X, CFloat &Y, bool bMoveWordsX = false, bool bMoveWordsY = false);
 	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos2D &pos,     bool bMoveWordsX = false, bool bMoveWordsY = false) { SetTxtBoxPos(pos.x, pos.y, bMoveWordsX, bMoveWordsY); }
 	/* TextBoxの位置		*/void SetTxtBoxPos(const Pos3D &pos,     bool bMoveWordsX = false, bool bMoveWordsY = false) { SetTxtBoxPos(pos.x, pos.y, bMoveWordsX, bMoveWordsY); }
@@ -124,9 +124,11 @@ public:
 	/* 文字変更(単体)		*/bool ChgWords(char* Text, int nIdx, D3DXCOLOR col);
 	/* 文字変更(全体)		*/bool ChgHalfSizeText(char* Text, D3DXCOLOR col);// ※ 元のテキストより多いと使えない また半角英数のみ
 	/* テキストの再生成		*/void Regeneration(const char *Text, CFont::FONT FontType, FontFont *pFont = NULL, FontShadow *Shadow = NULL, FontEdging *Edging = NULL);
-
+	/* 目標位置の設定(単体)	*/void SetTargetPos(D3DXVECTOR3 pos, int nWord, int Time = 0);
+	/* 目標位置の設定(全体)	*/void SetAllTargetPos(D3DXVECTOR3 pos, int Time = 0);
 
 	// -- 取得 ------------------------------------------
+	/* 文字の長さ		*/int GetTextLength() { return m_Info.nTextLength; }
 	/* 何文字表示したか */int GetPopCount() { return m_Info.nLetterPopCount; }
 	/* TxtBotのTex番号	*/Box GetTxtBoxType() { return m_Info.Tex.type; }
 	/* 位置				*/Pos2D GetTxtBoxPos() { return m_Info.TxtBoxPos; }
@@ -134,6 +136,7 @@ public:
 	/* Txt目標サイズ	*/Pos2D GetTxtBoxTgtSize() { return m_Info.TxtBoxTgtSize; }
 	/* 文字サイズ		*/float GetTxtSize() { return m_Info.fTextSize; }
 	/* Textの生成フラグ	*/bool GetLetter() { return m_Info.bLetterEnd; }
+	/* 文字情報			*/CWords* GetWord(int nWords) { return m_Info.words[nWords]; }
 
 private:
 
@@ -202,7 +205,7 @@ private:
 		Shadow aShadow;			// 影
 		Edging aEdging;			// 縁取り
 
-		bool bTextBok;			// テキストボックスの表示フラグ wwwwwwwwww
+		bool bTextBox;			// テキストボックスの表示フラグ
 		bool bPause;			// ポーズ中でも動くか（false：動かない）
 		bool bSpace;			// 空白表示フラグ(sprintf用)
 		string sText;			// 表示するテキスト

@@ -112,6 +112,10 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_bRocketMove = false;
 	m_bRocketRot = false;
 
+	m_TextAnime.state = TEXT_IN;
+	m_TextAnime.StandTime = 0;
+	m_TextAnime.Interval = 0;
+
 	g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
 }
 
@@ -160,7 +164,7 @@ void CMode_Title::Init(void) {
 	TitleLoad();
 
 	// テキストの初期化
-	m_pMenu = NULL;
+	m_pText = NULL;
 
 	// メニュー生成
 	m_MenuUI = CMenuUI::Create(CMode::TYPE::TITLE );
@@ -301,6 +305,8 @@ void CMode_Title::Update(void) {
 
 		// 各モードの処理
 		if (Title == TITLE_TITLE)
+			TitleAnime();
+		else if (Title == TITLE_OUTSET)
 			TextAnime();
 		else if (Title == TITLE_MENU) {
 			m_MenuUI->Update();
@@ -403,7 +409,7 @@ void CMode_Title::ProcessState(const PROCESS process) {
 //========================================
 // タイトルテキストアニメーション
 //========================================
-void CMode_Title::TextAnime(void)
+void CMode_Title::TitleAnime(void)
 {
 	if (TitleAnima == ANIME_NUI)
 	{
@@ -559,6 +565,82 @@ void CMode_Title::TextAnime(void)
 			}
 		}
 
+	}
+}
+
+//========================================
+// テキストアニメーション
+//========================================
+void CMode_Title::TextAnime(void)
+{
+	if (m_TextAnime.state == TEXT_ANIME::TEXT_IN)
+	{
+		if (m_pText != NULL)
+		{
+			m_pText->SetAllTargetPos(D3DXVECTOR3(330.0f, 600.0f, 0.0f), 20);
+
+			bool bLetter = m_pText->GetLetter();
+
+			if (bLetter)
+			{
+				m_TextAnime.state = TEXT_ANIME::TEXT_STAND;
+				m_TextAnime.StandTime = TEXE_ANIME_STAND_TIME;
+			}
+		}
+	}
+	else if (m_TextAnime.state == TEXT_ANIME::TEXT_STAND)
+	{
+		if (--m_TextAnime.StandTime <= 0)
+		{
+			m_TextAnime.state = TEXT_ANIME::TEXT_OUT;
+			m_TextAnime.nAppearTime = 0;
+			m_TextAnime.nLetterPopCount = 0;
+		}
+	}
+	else if (m_TextAnime.state == TEXT_ANIME::TEXT_OUT)
+	{
+		if (m_pText != NULL)
+		{
+			int nLetterPop = m_pText->GetPopCount();
+
+			if (m_TextAnime.nLetterPopCount < nLetterPop)
+			{
+				if (--m_TextAnime.nAppearTime <= 0)
+				{
+					m_pText->SetTargetPos(D3DXVECTOR3(-500.0f, 600.0f, 0.0f), m_TextAnime.nLetterPopCount, 20);
+
+					m_TextAnime.nAppearTime = 5;
+					m_TextAnime.nLetterPopCount++;
+				}
+			}
+			else
+			{
+				bool move = m_pText->GetWord(nLetterPop - 1)->ISMoveEnd();
+
+				if (move)
+				{
+					if (m_pText != NULL) {
+						m_pText->Uninit();
+						m_pText = NULL;
+					}
+
+					m_TextAnime.state = TEXT_ANIME::TEXT_INTERVAL;
+					m_TextAnime.Interval = TEXE_ANIME_INTERVAL_TIME;
+				}
+			}
+		}
+	}
+	else if (m_TextAnime.state == TEXT_ANIME::TEXT_INTERVAL)
+	{
+		if (--m_TextAnime.Interval <= 0)
+		{
+			m_TextAnime.state = TEXT_ANIME::TEXT_IN;
+
+			FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
+			FontEdging pEdging = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR2(0.0f,0.0f) };
+			m_pText = CFontText::Create(CFontText::BOX_NONE, D3DXVECTOR3(1000.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+				"ボタンをおしてね！", CFont::FONT_WAKUWAKU, &pFont, false, false, NULL, &pEdging);
+		}
 	}
 }
 
@@ -1146,7 +1228,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 	{
 		FontFont pFont = { D3DXCOLOR(1.0f,1.0f,1.0f,1.0f),60.0f,5,10,-1, };// 45
 		FontEdging pEdging = { D3DXCOLOR(0.0f,0.0f,0.0f,1.0f),true, D3DXVECTOR2(0.0f,0.0f) };
-		m_pMenu = CFontText::Create(CFontText::BOX_NONE, D3DXVECTOR3(330.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
+		m_pText = CFontText::Create(CFontText::BOX_NONE, D3DXVECTOR3(1000.0f, 600.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f),
 			"ボタンをおしてね！", CFont::FONT_WAKUWAKU, &pFont, false, false, NULL, &pEdging);
 	}
 		break;
@@ -1422,9 +1504,9 @@ void CMode_Title::TextRelease(TEXT type) {
 
 	// メニュー
 	if (type == TEXT_MENU || type == TEXT_ALL) {
-		if (m_pMenu != NULL) {
-			m_pMenu->Uninit();
-			m_pMenu = NULL;
+		if (m_pText != NULL) {
+			m_pText->Uninit();
+			m_pText = NULL;
 		}
 	}
 }
