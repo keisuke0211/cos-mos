@@ -43,6 +43,7 @@ private:
 	float m_fBlink;		// 点滅
 	int	  m_nBlinkAnim;	// 点滅アニメーション
 	D3DXVECTOR3 m_move;	// 移動量
+	int m_EffTex[3];
 
 	int ModelIdx;
 };

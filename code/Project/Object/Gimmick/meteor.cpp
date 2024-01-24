@@ -35,6 +35,9 @@ CMeteor::CMeteor(void) {
 
 	// 各情報の初期化
 	ModelIdx = RNLib::Model().Load("data\\MODEL\\Meteorite.x");
+	m_EffTex[0] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_000.png");
+	m_EffTex[1] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Smoke_001.png");
+	m_EffTex[2] = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_steam_000.png");
 	m_pos = INITD3DXVECTOR3;
 	m_rot = INITD3DXVECTOR3;
 	m_move = INITD3DXVECTOR3;
@@ -81,6 +84,9 @@ void CMeteor::Update(void) {
 	if (!Stage::GetPause()){
 		m_pos += m_move;	// 移動量の追加
 	}
+
+	float ScaleTex = (float)(rand() % (int)(INIT_EFFECT_SCALE.x * 1.5f) + 2.0f);
+	Manager::EffectMgr()->EffectCreate(m_EffTex[rand() % 3], m_pos + RNLib::Geometry().GetRandomVec() * 32.0f, D3DXVECTOR3(ScaleTex, ScaleTex, 0.0f), Color{ 255,65,0,255 },60);
 
 	// ブロックとの当たり判定処理
 	CollisionBlock();
