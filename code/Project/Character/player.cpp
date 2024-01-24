@@ -831,7 +831,9 @@ void CPlayer::ActionControl(void)
 			CRocket::RideOff();
 			Player.bRide = false;
 			Player.bGoal = false;
-			Player.pGoalGate->LeaveDoor();
+
+			if(Player.pGoalGate != NULL)
+				Player.pGoalGate->LeaveDoor();
 		}
 
 		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ

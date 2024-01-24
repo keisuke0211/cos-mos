@@ -116,7 +116,8 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_TextAnime.StandTime = 0;
 	m_TextAnime.Interval = 0;
 
-	g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
+	if(!m_bStageSelect)
+		g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
 }
 
 //========================================
