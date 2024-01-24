@@ -16,11 +16,20 @@
 CWords::CWords(int nPriority) : CFontObject(nPriority)
 {
 	m_Info.pos = INITD3DXVECTOR3;
+	m_Info.OldPos = INITD3DXVECTOR3;
+	m_Info.TargetPos = INITD3DXVECTOR3;
+	m_Info.DifferencePos = INITD3DXVECTOR3;
 	m_Info.rot = INITD3DXVECTOR3;
 	m_Info.size = INITD3DXVECTOR3;
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.moveRot = INITD3DXVECTOR3;
 	m_Info.col = D3DXCOLOR(1.0f,1.0f,1.0f,1.0f);
+
+	m_Info.nCntMove = 0;
+	m_Info.nMoveTime = 0;
+	m_Info.nLetterPop = 0;
+	m_Info.bMove = false;
+	m_Info.bMoveEnd = true;
 
 	m_pTex = NULL;
 	m_pVtxBuff = NULL;
@@ -62,7 +71,7 @@ HRESULT CWords::Init(void)
 	SetVtxPos();
 
 	// 頂点カラーの設定
-	SetColar(m_Info.col);
+	SetColor(m_Info.col);
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	VERTEX_2D *pVtx;
@@ -107,6 +116,8 @@ void CWords::Update(void)
 	m_Info.pos += m_Info.move;
 	m_Info.rot.z += m_Info.moveRot.z;
 
+	TargetMove();
+
 	//頂点座標設定
 	SetVtxPos();
 }
@@ -136,6 +147,35 @@ void CWords::Draw(void)
 }
 
 //========================================
+// 目標位置まで移動
+//========================================
+void CWords::TargetMove(void)
+{
+	if (m_Info.bMove)
+	{
+		// カウンター加算
+		if (m_Info.nCntMove < m_Info.nMoveTime)
+			m_Info.nCntMove++;
+
+		CFloat rate = RNLib::Ease().Easing(EASE_TYPE::LINEAR, m_Info.nCntMove, m_Info.nMoveTime);
+		CFloat MoveX = rate * m_Info.DifferencePos.x;
+		CFloat MoveY = rate * m_Info.DifferencePos.y;
+		CFloat MoveZ = rate * m_Info.DifferencePos.z;
+
+		// 移動
+		m_Info.pos.x = m_Info.OldPos.x + MoveX;
+		m_Info.pos.y = m_Info.OldPos.y + MoveY;
+		m_Info.pos.z = m_Info.OldPos.z + MoveZ;
+
+		if (m_Info.nCntMove == m_Info.nMoveTime)
+		{
+			m_Info.bMove = false;
+			m_Info.bMoveEnd = true;
+		}
+	}
+}
+
+//========================================
 // 生成
 //========================================
 CWords *CWords::Create(const char*text, D3DXVECTOR3 pos, D3DXVECTOR3 size, CFont::FONT type, D3DXCOLOR col)
@@ -148,7 +188,7 @@ CWords *CWords::Create(const char*text, D3DXVECTOR3 pos, D3DXVECTOR3 size, CFont
 		pWords->SetPos(pos);
 		pWords->SetSize(size);
 		pWords->SetWords(text, type);
-		pWords->SetColar(col);
+		pWords->SetColor(col);
 		pWords->Init();
 	}
 	return pWords;
@@ -187,7 +227,32 @@ void CWords::SetWords(const char*text, CFont::FONT type)
 	else
 	{
 		m_pTex = NULL;
-		SetColar(D3DXCOLOR{0,0,0,0});
+		SetColor(D3DXCOLOR{0,0,0,0});
+	}
+}
+
+//========================================
+// 目標位置の設定
+//========================================
+void CWords::SetTargetPos(D3DXVECTOR3 pos, int Time)
+{
+	// 解像度の倍率
+	D3DXVECTOR3 Target = pos * 2;
+
+	D3DXVECTOR3 TargetPos = m_Info.TargetPos;
+
+	if (!m_Info.bMove && TargetPos != Target)
+	{
+		m_Info.bMove = true;
+		m_Info.bMoveEnd = false;
+		TargetPos = Target;
+		TargetPos.x = TargetPos.x + ((m_Info.size.x * 2) * m_Info.nLetterPop);
+
+		m_Info.nCntMove = 0;
+		m_Info.nMoveTime = 20;
+
+		m_Info.OldPos = m_Info.pos;
+		m_Info.DifferencePos = TargetPos - m_Info.pos;
 	}
 }
 
@@ -197,6 +262,7 @@ void CWords::SetWords(const char*text, CFont::FONT type)
 void CWords::SetPos(const D3DXVECTOR3 &pos)
 {
 	m_Info.pos = pos;
+	m_Info.TargetPos = pos;
 
 	//頂点座標設定
 	SetVtxPos();
@@ -213,7 +279,7 @@ void CWords::SetMove(const D3DXVECTOR3 &move)
 //========================================
 // 色
 //========================================
-void CWords::SetColar(D3DXCOLOR col)
+void CWords::SetColor(D3DXCOLOR col)
 {
 	m_Info.col = col;
 

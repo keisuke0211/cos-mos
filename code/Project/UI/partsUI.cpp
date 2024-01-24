@@ -11,7 +11,7 @@
 #define FRAME_INTER (Scale2D(96.0f,64.0f))				//フレーム間隔
 #define UNACQU_COLA	(150)								//未取得のアルファ値
 #define SCALE		(50.0f)								//拡縮値
-#define INITPOS		(D3DXVECTOR3(1000.0f,50.0f, 0.0f))	//初期位置
+#define INITPOS		(D3DXVECTOR3(1000.0f,90.0f, 0.0f))	//初期位置
 
 
 //静的メンバ変数

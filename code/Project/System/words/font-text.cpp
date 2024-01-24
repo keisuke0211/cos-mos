@@ -45,7 +45,7 @@ CFontText::CFontText(int nPriority) : CFontObject(nPriority)
 	m_Info.nDisapTimeMax = 0;
 	m_Info.bRelease = false;
 
-	m_Info.bTextBok = true;
+	m_Info.bTextBox = true;
 	m_Info.bPause = false;
 	m_Info.bSpace = false;
 
@@ -172,7 +172,7 @@ void CFontText::Update()
 {
 	m_Info.TxtBoxPos += m_Info.TxtBoxMove;
 
-	if (m_Info.bTextBok)
+	if (m_Info.bTextBox)
 	{
 		if (m_Info.Tex.PtnIdx >= 0){
 			RNLib::Polygon2D().Put(PRIORITY_TEXT, m_Info.TxtBoxPos, 0.0f, false)
@@ -242,7 +242,7 @@ CFontText *CFontText::Create(Box type, Pos3D pos, Pos2D size, const char *Text, 
 
 		pText->m_Info.TxtBoxPos = Pos2D(pos.x, pos.y);
 		pText->m_Info.TxtBoxSize = size;
-		pText->m_Info.bTextBok = bTextBox;
+		pText->m_Info.bTextBox = bTextBox;
 
 		// -- テキスト -----------------------
 		pText->m_Info.FontType = FontType;
@@ -344,9 +344,11 @@ void CFontText::LetterForm(void)
 
 			m_Info.sText += m_Info.sALLText[m_Info.nAddLetter];
 			string Text = m_Info.sText;
+
+			// 解像度に合わせる
 			Pos3D pos = m_Info.TxtBoxPos * 2;
 
-			pos.x = pos.x - ((m_Info.TxtBoxSize.x * 2) / 2);
+			pos.x = pos.x - m_Info.TxtBoxSize.x;
 			pos.z = 0.0f;
 
 			if (Text != "" && m_Info.nAddLetter < m_Info.nTextLength)
@@ -369,6 +371,8 @@ void CFontText::LetterForm(void)
 							Pos3D((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
 							Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 							m_Info.FontType, m_Info.aShadow.col);
+
+						m_Info.aShadow.shadow[m_Info.nLetterPopCount]->SetLetterPop(m_Info.nLetterPopCountX + SPACE_X);
 					}
 
 					m_Info.words[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
@@ -376,6 +380,9 @@ void CFontText::LetterForm(void)
 						Pos3D(fTxtSize, fTxtSize, 0.0f),
 						m_Info.FontType, m_Info.FontCol);
 
+					m_Info.words[m_Info.nLetterPopCount]->SetLetterPop(m_Info.nLetterPopCountX + SPACE_X);
+
+					// 縁取り
 					if (m_Info.FontType == CFont::FONT::FONT_WAKUWAKU && m_Info.aEdging.bEdging)
 					{
 						Pos2D AddSize = m_Info.aEdging.AddSize;
@@ -384,6 +391,8 @@ void CFontText::LetterForm(void)
 							Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount * 40.0f, pos.z),
 							Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 							CFont::FONT::FONT_CONVENIE, m_Info.aEdging.col);
+
+						m_Info.aEdging.edging[m_Info.nLetterPopCount]->SetLetterPop(m_Info.nLetterPopCountX + SPACE_X);
 					}
 
 					m_Info.nLetterPopCount++;
@@ -415,12 +424,28 @@ void CFontText::LetterForm(void)
 								Pos3D((pos.x + (SPACE + AddPos.x)) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), (pos.y + AddPos.y) + m_Info.nNiCount * 40.0f, pos.z),
 								Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
 								m_Info.FontType, m_Info.aShadow.col);
+							m_Info.aShadow.shadow[m_Info.nLetterPopCount]->SetLetterPop(m_Info.nLetterPopCountX + SPACE_X);
 						}
 
 						m_Info.words[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
 							Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount*40.0f, pos.z),
 							Pos3D(fTxtSize, fTxtSize, 0.0f),
 							m_Info.FontType, m_Info.FontCol);
+
+						m_Info.words[m_Info.nLetterPopCount]->SetLetterPop(m_Info.nLetterPopCountX + SPACE_X);
+
+						// 縁取り
+						if (m_Info.FontType == CFont::FONT::FONT_WAKUWAKU && m_Info.aEdging.bEdging)
+						{
+							Pos2D AddSize = m_Info.aEdging.AddSize;
+
+							m_Info.aEdging.edging[m_Info.nLetterPopCount] = CWords::Create(m_Info.sText.c_str(),
+								Pos3D((pos.x + SPACE) + ((fTxtSize * 2) * (m_Info.nLetterPopCountX + SPACE_X)), pos.y + m_Info.nNiCount * 40.0f, pos.z),
+								Pos3D(fTxtSize + AddSize.x, fTxtSize + AddSize.y, 0.0f),
+								CFont::FONT::FONT_CONVENIE, m_Info.aEdging.col);
+
+							m_Info.aEdging.edging[m_Info.nLetterPopCount]->SetLetterPop(m_Info.nLetterPopCountX + SPACE_X);
+						}
 
 						m_Info.nLetterPopCount++;
 						m_Info.nLetterPopCountX++;
@@ -486,7 +511,7 @@ void CFontText::DisapTime(void)
 		{
 			if (m_Info.words[wordsCount] != NULL)
 			{
-				m_Info.words[wordsCount]->SetColar(m_Info.FontCol);
+				m_Info.words[wordsCount]->SetColor(m_Info.FontCol);
 			}
 		}
 
@@ -498,7 +523,7 @@ void CFontText::DisapTime(void)
 			{
 				if (m_Info.aShadow.shadow[wordsCount] != NULL)
 				{
-					m_Info.aShadow.shadow[wordsCount]->SetColar(m_Info.aShadow.col);
+					m_Info.aShadow.shadow[wordsCount]->SetColor(m_Info.aShadow.col);
 				}
 			}
 		}
@@ -510,6 +535,87 @@ void CFontText::DisapTime(void)
 //*********************************** 設定処理 ***********************************
 //--------------------------------------------------------------------------------
 //================================================================================
+
+//========================================
+// 目標位置(単体)
+//========================================
+void CFontText::SetTargetPos(D3DXVECTOR3 pos, int nWord, int Time)
+{
+	// 通常文字
+	if (m_Info.words[nWord] != NULL)
+	{
+		bool bMove = m_Info.words[nWord]->IsMove();
+
+		if (!bMove)
+			m_Info.words[nWord]->SetTargetPos(pos, Time);
+	}
+
+	// 影
+	if (m_Info.aShadow.bShadow)
+	{
+		if (m_Info.aShadow.shadow[nWord] != NULL)
+		{
+			bool bMove = m_Info.aShadow.shadow[nWord]->IsMove();
+
+			if (!bMove)
+				m_Info.aShadow.shadow[nWord]->SetTargetPos(pos, Time);
+		}
+	}
+
+	// 縁取り
+	if (m_Info.aEdging.bEdging)
+	{
+		if (m_Info.aEdging.edging[nWord] != NULL)
+		{
+			bool bMove = m_Info.aEdging.edging[nWord]->IsMove();
+
+			if (!bMove)
+				m_Info.aEdging.edging[nWord]->SetTargetPos(pos, Time);
+		}
+	}
+}
+
+//========================================
+// 目標位置(全体)
+//========================================
+void CFontText::SetAllTargetPos(D3DXVECTOR3 pos, int Time)
+{
+	for (int nWords = 0; nWords < m_Info.nLetterPopCount; nWords++)
+	{
+		// 通常文字
+		if (m_Info.words[nWords] != NULL)
+		{
+			bool bMove = m_Info.words[nWords]->IsMove();
+
+			if (!bMove)
+				m_Info.words[nWords]->SetTargetPos(pos,Time);
+		}
+
+		// 影
+		if (m_Info.aShadow.bShadow)
+		{
+			if (m_Info.aShadow.shadow[nWords] != NULL)
+			{
+				bool bMove = m_Info.aShadow.shadow[nWords]->IsMove();
+
+				if (!bMove)
+					m_Info.aShadow.shadow[nWords]->SetTargetPos(pos, Time);
+			}
+		}
+
+		// 縁取り
+		if (m_Info.aEdging.bEdging)
+		{
+			if (m_Info.aEdging.edging[nWords] != NULL)
+			{
+				bool bMove = m_Info.aEdging.edging[nWords]->IsMove();
+
+				if (!bMove)
+					m_Info.aEdging.edging[nWords]->SetTargetPos(pos, Time);
+			}
+		}
+	}
+}
 
 //========================================
 // 移動量
@@ -652,15 +758,27 @@ void CFontText::SetWordPos(bool bMoveWordsX, bool bMoveWordsY)
 	//配置位置設定
 	for (int nCntWord = 0; nCntWord < m_Info.nLetterPopCount; nCntWord++)
 	{
-		CWords *ppp = m_Info.words[nCntWord];
-
 		//現在位置を取得し、移動させるベクトルの値を代入
 		Pos3D SetPos = m_Info.words[nCntWord]->GetPos();
-		if (bMoveWordsX) SetPos.x = m_Info.TxtBoxPos.x;
-		if (bMoveWordsY) SetPos.y = m_Info.TxtBoxPos.y;
+		Pos3D SetPos1 = INITD3DXVECTOR3;
+
+		if (m_Info.aEdging.edging[nCntWord] != NULL)
+			SetPos1 = m_Info.aEdging.edging[nCntWord]->GetPos();
+
+		if (bMoveWordsX) {
+			SetPos.x = m_Info.TxtBoxPos.x;
+			SetPos1.x = m_Info.TxtBoxPos.x;
+		}
+		if (bMoveWordsY) {
+			SetPos.y = m_Info.TxtBoxPos.y * 2;
+			SetPos1.y = m_Info.TxtBoxPos.y * 2;
+		}
 
 		//文字位置代入
 		m_Info.words[nCntWord]->SetPos(SetPos);
+
+		if (m_Info.aEdging.edging[nCntWord] != NULL)
+			m_Info.aEdging.edging[nCntWord]->SetPos(SetPos);
 	}
 }
 
@@ -722,6 +840,10 @@ void CFontText::SetTxtBoxType(Box type)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox15.png");
 	else if (type == BOX_SUB_SELECTU01)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox14.png");
+	else if (type == BOX_SUB_MENU02)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox16.png");
+	else if (type == BOX_SUB_SELECTU02)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox17.png");
 	else if (type == BOX_NONE || type == BOX_MAX)
 		m_Info.Tex.Idx = -1;
 }
@@ -736,7 +858,7 @@ bool CFontText::SetTxtColor(D3DXCOLOR col)
 	{
 		if (m_Info.words[wordsCount] != NULL)
 		{
-			m_Info.words[wordsCount]->SetColar(col);
+			m_Info.words[wordsCount]->SetColor(col);
 		}
 		else
 		{

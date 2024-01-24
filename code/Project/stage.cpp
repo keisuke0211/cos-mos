@@ -88,6 +88,7 @@ namespace {
 //========================================
 void Stage::SetStageNumber  (const int& setPlanetIdx, const int& setStageIdx) { planetIdx   = setPlanetIdx; stageIdx = setStageIdx; }
 void Stage::SetPause        (const bool& setIsPause)                          { isPause     = setIsPause; }
+bool Stage::GetPause        (void)                                            { return isPause; }
 void Stage::SetRocketPartsUI(CRocketPartsUI* parts)                           { rocketparts = parts; }
 void Stage::SetIsCutIn      (const bool& setIsCutIn)                          { isCutIn     = setIsCutIn; }
 void Stage::SetIsReset      (const bool& setIsReset)                          { isReset     = setIsReset; }
@@ -288,14 +289,14 @@ void Stage::UpdateStage(void) {
 
 	// ŽžŠÔ•\Ž¦
 	if (GetIsShowUI()) {
-		RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(180.0f, 120.0f), 0.0f)
+		RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(140.0f, 160.0f), 0.0f)
 			->SetSize(200.0f, 60.0f)
 			->SetTex(CResources::TEXTURE_IDXES[(int)CResources::TEXTURE::UI_FRAME]);
 		{
 			float rate = (limitTimeCounter % 60) / 60.0f;
 			float scale = 1.0f + rate * 0.2f;
 
-			_RNC_Text2D::CRegistInfo* registInfo = RNLib::Text2D().Put(PRIORITY_UI, String("%d", limitTimeCounter / 60 < 0 ? 0: limitTimeCounter / 60), _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(180.0f, 120.0f), 0.0f)
+			_RNC_Text2D::CRegistInfo* registInfo = RNLib::Text2D().Put(PRIORITY_UI, String("%d", limitTimeCounter / 60 < 0 ? 0: limitTimeCounter / 60), _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(140.0f, 160.0f), 0.0f)
 				->SetSize(limitTimeCounter > 0 ? Size2D(28.0f * scale, 28.0f * scale) : Size2D(28.0f, 28.0f));
 
 			if (limitTimeCounter / 60 <= 10) {

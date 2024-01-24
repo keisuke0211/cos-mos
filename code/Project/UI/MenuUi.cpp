@@ -514,7 +514,7 @@ void CMenuUI::SubTextCreate(void)
 				}
 				else if (nText == SETTING_BACK) {
 					size = D3DXVECTOR2(150.0f, 80.0f);
-					type = CFontText::BOX_SUB_MENU00;
+					type = CFontText::BOX_SUB_MENU02;
 				}
 				else {
 					size = D3DXVECTOR2(480.0f, 60.0f);
@@ -955,6 +955,8 @@ void CMenuUI::MenuSelect(void)
 				{
 					if (BoxType == CFontText::Box::BOX_SUB_MENU00)
 						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU00);
+					else if (BoxType == CFontText::Box::BOX_SUB_MENU02)
+						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU02);
 
 					if(nCnt == SETTING_SCREEN)
 						m_pSubMenu[SETTING_SCREEN_TEXT]->SetTxtBoxType(CFontText::BOX_SUB_SELECTU01);
@@ -966,6 +968,8 @@ void CMenuUI::MenuSelect(void)
 				else
 				{
 					if (BoxType == CFontText::Box::BOX_SUB_SELECTU00)
+						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_MENU00);
+					else if (BoxType == CFontText::Box::BOX_SUB_SELECTU02)
 						m_pSubMenu[nCnt]->SetTxtBoxType(CFontText::BOX_SUB_MENU00);
 					else if (BoxType == CFontText::Box::BOX_SUB_SELECTU01 && 
 						((nCnt == SETTING_SCREEN_TEXT && m_Menu.nSubSelect != SETTING_SCREEN) ||

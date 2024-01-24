@@ -23,8 +23,8 @@ CMagmaBlock::CMagmaBlock(void)
 	Manager::StageObjectMgr()->AddList(this);
 
 	m_type = TYPE::LAVA_BLOCK;
-	m_width = SIZE_OF_1_SQUARE;
-	m_height = SIZE_OF_1_SQUARE;
+	m_width = SIZE_OF_1_SQUARE * 0.9f;
+	m_height = SIZE_OF_1_SQUARE * 0.9f;
 
 	m_Info.move = INITD3DXVECTOR3;
 	m_Info.nType = 0;

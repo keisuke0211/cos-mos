@@ -23,6 +23,7 @@ namespace Stage {
 	void     EndStage        (void);
 	void     SetStageNumber  (const int& planetIdx, const int& stageIdx);
 	void     SetPause        (const bool& isPause);
+	bool     GetPause        (void);
 	void     SetRocketPartsUI(CRocketPartsUI* parts);
 	void     SetIsCutIn      (const bool& isCutIn);
 	void     SetIsReset      (const bool& isReset);

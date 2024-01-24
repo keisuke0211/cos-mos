@@ -23,11 +23,13 @@ class CCoinUI;
 class CMode_Title :public CMode{
 public:
 	//========== [[[ 定数定義 ]]]
-	static const char* TITLE_LOGO_FILE;			// タイトルロゴ情報のファイルパス
-	static const int TITLE_LOGO_MAX = 6;		// タイトルロゴの最大数
-	static const int NUI_ANIME = 20;			// ヌイのアニメーション時間
-	static const int TITLE_TEXT_ANIME = 40;		// タイトルテキストのアニメーション時間
-	static const int COLOR_CHANGE_TIME = 60;	// 色の推移時間
+	static const char* TITLE_LOGO_FILE;				// タイトルロゴ情報のファイルパス
+	static const int TITLE_LOGO_MAX = 6;			// タイトルロゴの最大数
+	static const int NUI_ANIME = 20;				// ヌイのアニメーション時間
+	static const int TITLE_TEXT_ANIME = 40;			// タイトルテキストのアニメーション時間
+	static const int COLOR_CHANGE_TIME = 60;		// 色の推移時間
+	static const int TEXE_ANIME_STAND_TIME = 120;	// TextAnimeの待機時間
+	static const int TEXE_ANIME_INTERVAL_TIME = 60;	// TextAnimeの待機時間
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {
@@ -82,6 +84,13 @@ private:
 		ANIME_NONE,		// 無し
 	};
 
+	enum TEXT_ANIME {
+		TEXT_IN = 0,	// 出現
+		TEXT_STAND,		// 待機
+		TEXT_OUT,		// 消滅
+		TEXT_INTERVAL,	// 間隔
+	};
+
 	enum TITLE_LOGO {
 		LOGO_COS1 = 0,	// COS
 		LOGO_MOS1,		// MOS
@@ -120,9 +129,20 @@ private:
 		int nCntAnime;					// アニメーションカウンター
 	};
 
+	// テキストアニメーションの情報
+	struct TextAnimeInfo {
+		TEXT_ANIME state = TEXT_IN;	// 状態
+		int StandTime;				// 待機時間
+		int Interval;				// 間隔
+		int nLetterPopCount;		// 次の文字
+		int nAppearTime;			// 次の文字が移動するまでの時間
+		bool bOut;					// 消滅フラグ
+	};
+
 	// *** 関数 ***
 	void ColorChange(void);
 	void MenuAnime(void);
+	void TitleAnime(void);
 	void TextAnime(void);
 	void CreateStageSelectInfo(void);
 	void StageSelect(void);
@@ -186,8 +206,11 @@ private:
 	bool m_bRocketRot;
 	bool m_bRotDir;
 	bool m_bStgEnter;
+
+	TextAnimeInfo m_TextAnime;	// テキストアニメーション
+
 	TitleLogoInfo m_TitleLogo;
-	CFontText *m_pMenu;
+	CFontText *m_pText;
 	PlanetType *m_PlanetType;
 	STAGE m_StgFlag;
 	CCoinUI *m_CoinUI;
