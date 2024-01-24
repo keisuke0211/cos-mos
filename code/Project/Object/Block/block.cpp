@@ -83,6 +83,7 @@ const CBlock::LooksData CBlock::LOOKS_DATAS[(int)LOOKS_TYPE::MAX] = {
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternA.PNG", Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックA(下)
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternB.PNG", Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックB(下)
 	{ "data\\MODEL\\StageObject\\BaseBlock.x"                 , "data\\TEXTURE\\Material\\StoneTile_PatternC.PNG", Color(80 ,80 ,80 ,255), MODEL_TYPE::MATERIAL_MESH, SET_TYPE::FORWARD_AND_BACKWARD,  0.0f  , 0.0f , true, },	  // 石ブロックC(下)
+	{ "data\\MODEL\\StageObject\\Leaf_Nuts.x"			      , "NONEDATA"                                       , Color(255,255,255,255), MODEL_TYPE::MESH         , SET_TYPE::FORWARD             ,  0.0f  , 0.0f , true, },	  // 葉っぱ
 };
 const char* CBlock::OTHER_TEXTURE_PATHS[(int)OTHER_TEXTURE::MAX] = {
 	"data\\TEXTURE\\Effect\\effect000.jpg",
@@ -242,7 +243,7 @@ HRESULT CBlock::Init(LOOKS_TYPE looksType) {
 	}
 
 	if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH || LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MESH) {
-
+		  
 		if (LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD ||
 			LOOKS_DATAS[(int)m_looksType].setType == SET_TYPE::FORWARD_AND_BACKWARD) {
 			if (LOOKS_DATAS[(int)m_looksType].modelType == MODEL_TYPE::MATERIAL_MESH)
