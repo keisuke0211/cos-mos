@@ -27,7 +27,7 @@ public:
 	static const int SUB_TEXT_MAX = 10;				// テキストの最大数
 	static const int FONT_TEXT_MAX = 10;			// テキストの最大数
 	static const int PAUSE_LEFT_ANIME = 10;			// 画面左のアニメーション時間
-	static const int PAUSE_RIGHT_ANIME = 20;		// 画面右のアニメーション時間
+	static const int PAUSE_RIGHT_ANIME = 15;		// 画面右のアニメーション時間
 	static const int PAUSE_RIGHT_TEXT_ANIME = 10;	// 画面右のアニメーション時間
 	static const int VOLUME_MSX = 20;				// サウンドの最大値
 	static const int COOLDOWN = 20;					// クールダウン
