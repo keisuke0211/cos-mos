@@ -841,9 +841,9 @@ void CFontText::SetTxtBoxType(Box type)
 	else if (type == BOX_SUB_SELECTU01)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox14.png");
 	else if (type == BOX_SUB_MENU02)
-		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox16.png");
-	else if (type == BOX_SUB_SELECTU02)
 		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox17.png");
+	else if (type == BOX_SUB_SELECTU02)
+		m_Info.Tex.Idx = RNLib::Texture().Load("data\\TEXTURE\\TextBox\\TextBox16.png");
 	else if (type == BOX_NONE || type == BOX_MAX)
 		m_Info.Tex.Idx = -1;
 }
