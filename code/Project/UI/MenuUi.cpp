@@ -981,39 +981,6 @@ void CMenuUI::MenuSelect(void)
 		}
 	}
 
-	// 矢印の表示
-	if (m_Menu.bSubMenu && (m_Menu.nSubSelect == SETTING_BGM || m_Menu.nSubSelect == SETTING_SE)) {
-
-		int nPrevTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_01.png");
-		int nNextTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Arrow_00.png");
-
-		D3DXVECTOR2 pos = INITD3DXVECTOR2;	D3DXVECTOR2 TexSize = INITD3DXVECTOR2;	float TxtSize;	int Volume = 0;
-		if (m_Menu.nSubSelect == SETTING_BGM) {
-			pos = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtBoxPos();
-			TexSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtBoxSize();
-			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
-			Volume = m_Menu.nBGMVolume;
-		}
-		else if (m_Menu.nSubSelect == SETTING_SE) {
-			pos = m_pSubMenu[SETTING_SE_TEXT]->GetTxtBoxPos();
-			TexSize = m_pSubMenu[SETTING_SE_TEXT]->GetTxtBoxSize();
-			TxtSize = m_pSubMenu[SETTING_BGM_TEXT]->GetTxtSize() * 1.5;
-			Volume = m_Menu.nSEVolume;
-		}
-
-		if (Volume != 0)
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(pos.x - (TexSize.x - TxtSize), pos.y, 0.0), 0.0f, false)
-			->SetSize(80.0f, 100.0f)
-			->SetCol(Color{ 50,255,0,255 })
-			->SetTex(nPrevTex);
-
-		if (Volume != VOLUME_MSX)
-			RNLib::Polygon2D().Put(PRIORITY_UI, D3DXVECTOR3(pos.x + (TexSize.x - TxtSize), pos.y, 0.0), 0.0f, false)
-			->SetSize(80.0f, 100.0f)
-			->SetCol(Color{ 50,255,0,255 })
-			->SetTex(nNextTex);
-	}
-
 	// メニュー選択
 	SelectInput();
 
