@@ -351,6 +351,9 @@ void CMode_Title::Update(void) {
 								RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::ROCKET_MOVE], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 							}
 						}
+						else{
+							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_ERROR], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+						}
 					}
 					break;
 					}

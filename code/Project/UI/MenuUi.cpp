@@ -188,6 +188,8 @@ void CMenuUI::DecisionInput(void)
 	{
 		CMode::TYPE Mode = Manager::GetMode();
 
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_ENTER], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+
 		if (!m_Menu.bSubMenu) {
 			if(m_pMenu[m_Menu.nMaineSelect] != NULL)
 				m_pMenu[m_Menu.nMaineSelect]->SetTxtBoxPthIdx(0);
@@ -322,6 +324,8 @@ void CMenuUI::SelectInput(void)
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect--;
 
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_SELECT], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+
 		m_Menu.bPartElasticity = true;
 	}
 	else if (RNLib::Input().GetKeyTrigger(DIK_S) || RNLib::Input().GetKeyTrigger(DIK_DOWN) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::DOWN) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::DOWN))
@@ -330,6 +334,9 @@ void CMenuUI::SelectInput(void)
 			m_Menu.nMaineSelect++;
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect++;
+
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_SELECT], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+
 
 		m_Menu.bPartElasticity = true;
 	}
