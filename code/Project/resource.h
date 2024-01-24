@@ -72,6 +72,9 @@ public:
 		DOOR_OPEN,
 		DOOR_CLOSE,
 		METEOR_BREAK,
+		SE_ENTER,
+		SE_SELECT,
+		SE_ERROR,
 
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
