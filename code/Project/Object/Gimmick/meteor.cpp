@@ -151,6 +151,14 @@ void CMeteor::CollisionBlock(void)
 				MaxPos.y > m_pos.y - m_height * 0.5f&&
 				MinPos.y < m_pos.y + m_height * 0.5f)
 			{
+				CBlock* block = (CBlock*)stageObj;
+				if (block->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR ||
+					block->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_1 ||
+					block->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_2 ||
+					block->GetLooksType() == CBlock::LOOKS_TYPE::IRON_BAR_3) {
+					continue;
+				}
+
 				// エフェクトの生成
 				Manager::EffectMgr()->EffectMeteorCreate(m_pos);
 
