@@ -152,8 +152,6 @@ void CRoadTripLaser::Update(void) {
 	RNLib::Polygon3D().Put(PRIORITY_EFFECT, m_LaserPos, INITD3DXVECTOR3, false)
 		->SetSize(m_LaserSize.x, m_LaserSize.y)
 		->SetCol(Color{ 255,255,0,255 });
-	
-	Manager::EffectMgr()->ParticleCreate(RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Star_000.png"), m_LaserPos, INIT_EFFECT_SCALE, COLOR_WHITE, CParticle::TYPE::TYPE_STOP,1);
 
 }
 //========================================
