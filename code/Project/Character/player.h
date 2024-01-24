@@ -95,7 +95,7 @@ public:
 		//特定のギミック用
 		//-------------------------------
 		bool  bRide;         // ロケットに乗っているかどうか
-		int   nRideInterval; //ロケットに乗り降りした時のインターバル
+		int   nEscapeGoalInterval; //ゴールから脱出したときのインターバル
 		bool  bGoal;         // ゴールしたかどうか
 		CGoalGate *pGoalGate;
 		int   nTramJumpCounter; // トランポリンによって跳ね上がる時間

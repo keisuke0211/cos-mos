@@ -15,6 +15,8 @@
 // モードの情報構造体
 class CGoalGate : public CStageObject {
 public:
+	//脱出インターバル
+	static CInt ESCAPE_INTERVAL = 60;
 
 	//========== [[[ 列挙型定義 ]]]
 	enum class STATE {

@@ -110,7 +110,7 @@ void CRocket::Update(void)
 	switch (m_Info.Animstate)
 	{
 	case CRocket::ANIME_STATE::NONE:
-		if (CParts::GetNumParts() == CPlayer::NUM_PLAYER)
+		if (s_bReady)
 			m_Info.Animstate = ANIME_STATE::RIDE;		// èÊÇÈèÛë‘Ç…à⁄çs
 		break;
 	case CRocket::ANIME_STATE::RIDE:

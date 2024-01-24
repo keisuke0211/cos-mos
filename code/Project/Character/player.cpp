@@ -114,12 +114,12 @@ CPlayer::CPlayer()
 		Player.fGuideTexVPos = 0.0f;           // ガイドのテクスチャＶ座標
 		Player.fGuideTexVSize = 0.0f;          // ガイドのテクスチャＶサイズ
 		Player.fGuideMoveSpeed = 0.0f;         // ガイドのテクスチャ移動スピード
-		Player.bGround = true;                // 地面に接しているか
-		Player.bGroundOld = true;             // 地面に接しているか(過去)
+		Player.bGround = true;                 // 地面に接しているか
+		Player.bGroundOld = true;              // 地面に接しているか(過去)
 		Player.landingCounter = false;
 		Player.bJump = false;                  // ジャンプ
 		Player.bRide = false;                  // ロケットに乗っているかどうか
-		Player.bGoal = false;				   // ゴールしたかどうか
+		Player.bGoal = false;                  // ゴールしたかどうか
 		Player.pGoalGate = NULL;
 		Player.fJumpPower = 0.0f;              // ジャンプ量
 		Player.fGravity = 0.0f;                // 重力
@@ -332,7 +332,7 @@ void CPlayer::InitInfo(void) {
 		Player.deathCounter = 0;
 		Player.deathCounter2 = 0;
 		Player.swapWaitCounter = 0;
-		Player.nRideInterval = 0;
+		Player.nEscapeGoalInterval = 0;
 	}
 
 	CGoalGate::ResetEtr();
@@ -454,8 +454,8 @@ void CPlayer::UpdateInfo(void)
 		}
 
 		//ロケット乗り降りインターバル減少
-		if (Player.nRideInterval > 0)
-			Player.nRideInterval--;
+		if (Player.nEscapeGoalInterval > 0)
+			Player.nEscapeGoalInterval--;
 
 		// ロケットに乗ってたら　or ゴールしていたらスキップ
 		if (Player.bRide || Player.bGoal)
@@ -823,15 +823,21 @@ void CPlayer::ActionControl(void)
 		if (CRocket::GetCounter() < NUM_PLAYER && !m_aInfo[(nIdxPlayer + 1) % NUM_PLAYER].bGoal &&
 			(Player.bRide || Player.bGoal) && IsKeyConfigTrigger(nIdxPlayer, Player.side, KEY_CONFIG::JUMP))
 		{
-			//ロケットに乗っていたらインターバル設定
+			//ロケット脱出のインターバル設定
 			if (Player.bRide)
-				Player.nRideInterval = CRocket::RIDE_ONOFF_INTERVAL;
+				Player.nEscapeGoalInterval = CRocket::ESCAPE_INTERVAL;
+
+			//ゴールドア脱出のインターバル設定
+			else if (Player.bGoal)
+				Player.nEscapeGoalInterval = CGoalGate::ESCAPE_INTERVAL;
 
 			CGoalGate::EntrySub();
 			CRocket::RideOff();
 			Player.bRide = false;
 			Player.bGoal = false;
-			Player.pGoalGate->LeaveDoor();
+
+			if(Player.pGoalGate != NULL)
+				Player.pGoalGate->LeaveDoor();
 		}
 
 		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ
@@ -1147,6 +1153,7 @@ void CPlayer::Death(Info& Player)
 
 	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
+	Player.swapWaitCounter = 0;
 	RNLib::Sound().Play(s_SE.expand, _RNC_Sound::CATEGORY::SE, 1.0f, false);
 }
 
@@ -1687,39 +1694,6 @@ void CPlayer::GoalDirector(void)
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		//ステージ情報取得
-		/*
-		Stage::Data data = Stage::GetData(planet, stage);
-		CFloat CoinUISize = 40.0f;
-		CFloat CoinUISPace = 10.0f;
-
-		CFloat SizeSpace = data.CoinNums % EVENPARITY == 1 ? CoinUISize * 0.5f : 0.0f;
-		CFloat AllSize = data.CoinNums / EVENPARITY * CoinUISize * 0.5f + ((data.CoinNums - 1) / 2.0f) * CoinUISPace + SizeSpace;
-
-		CFloat CoinUIStartX = Center.x - AllSize;
-
-		RNLib::Text2D().Put(PRIORITY_UI, String("コイン数:%d", data.CoinNums), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Pos2D(Center.x, 100.0f), 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f))
-			->SetCol(COLOR_WHITE);
-
-		RNLib::Polygon2D().Put(PRIORITY_UI, Center, 0.0f)
-			->SetSize(2.0f, Center.y)
-			->SetCol(COLOR_WHITE);
-
-		for (int nCntData = 0; nCntData < data.CoinNums; nCntData++)
-		{
-			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(CoinUIStartX + (CoinUISize + CoinUISPace) * nCntData, 150.0f), 0.0f)
-				->SetSize(CoinUISize, CoinUISize)
-				->SetCol(data.pGet[nCntData] ? Color{ 255,255,0,255 } : Color{ 200,200,200,255 })//true : 黄色    false : 灰色
-				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK));
-
-			RNLib::Polygon2D().Put(PRIORITY_UI, Pos2D(test + (CoinUISize + CoinUISPace) * nCntData, 200.0f), 0.0f)
-				->SetSize(CoinUISize, CoinUISize)
-				->SetCol(Color{ 255,255,0,255 })//true : 黄色    false : 灰色
-				->SetTex(GetParticleIdx(PARTI_TEX::SWAP_MARK));
-		}
-		*/
-
 		if(ClearTime < BestTime)
 			RNLib::Text2D().Put(PRIORITY_UI, String("New Record!!"), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f))
