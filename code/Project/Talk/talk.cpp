@@ -248,7 +248,8 @@ void CTalk::Update(void)
 	if (m_pText != NULL && s_pTalk[m_nTalkID].type == SHOWTYPE::Curtain)
 	{
 		SetCurtain(false);
-		m_pText->SetTxtBoxPos(m_pos, false, true);
+		if (m_pText != NULL)
+			m_pText->SetTxtBoxPos(m_pos, false, true);
 	}
 
 }
