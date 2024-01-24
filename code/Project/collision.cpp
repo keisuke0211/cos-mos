@@ -575,6 +575,7 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CObject *obj, 
 
 	pInfo->bGoal = true;
 	pInfo->pGoalGate = GoalGateObj;
+	pInfo->swapWaitCounter = 0;
 
 	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 	{
@@ -616,6 +617,7 @@ void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SI
 
 	pInfo->bRide = true;
 	pInfo->nEscapeGoalInterval = CRocket::ESCAPE_INTERVAL;
+	pInfo->swapWaitCounter = 0;
 	pRocket->RideOn();
 	
 	CInt ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
