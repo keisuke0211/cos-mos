@@ -9,7 +9,7 @@
 #include "magma-block.h"
 #include "../../main.h"
 
-#define COUNT (30)
+#define COUNT (60)
 //========================================
 // Ã“I•Ï”
 //========================================
@@ -71,7 +71,7 @@ void CMagmaBlock::Update(void)
 	{
 		int Tex = RNLib::Texture().Load("data\\TEXTURE\\maguma2.png");
 
-		Manager::EffectMgr()->EffectCreate(Tex, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z - SIZE_OF_1_SQUARE*0.5f), D3DXVECTOR3(16.0f, 16.0f, 0.0f), COLOR_WHITE,1200);
+		Manager::EffectMgr()->EffectCreate(Tex, D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z - SIZE_OF_1_SQUARE*0.5f), D3DXVECTOR3(16.0f, 16.0f, 0.0f), Color(255,255,255,100),1200);
 	}
 
 	// ‰ß‹Ž‚ÌˆÊ’u
