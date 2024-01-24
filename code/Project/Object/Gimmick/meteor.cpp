@@ -77,7 +77,10 @@ void CMeteor::Update(void) {
 	BlinkAnimation();
 
 	m_rot += METEOR_ADDROT;	// Œü‚«‚ÌˆÚ“®—Ê‚Ì’Ç‰Á
-	m_pos += m_move;		// ˆÚ“®—Ê‚Ì’Ç‰Á
+
+	if (!Stage::GetPause()){
+		m_pos += m_move;	// ˆÚ“®—Ê‚Ì’Ç‰Á
+	}
 
 	// ƒuƒƒbƒN‚Æ‚Ì“–‚½‚è”»’èˆ—
 	CollisionBlock();
