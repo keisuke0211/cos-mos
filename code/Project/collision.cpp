@@ -565,28 +565,24 @@ void CCollision::GoalGate(SelfInfo *pSelfInfo, ColliInfo *pColli, CObject *obj, 
 	//プレイヤー取得
 	CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 
-	if (!pInfo->bGoal)
+	// ドアに入る
+	if (!CPlayer::IsKeyConfigTrigger(pInfo->idx, *pSide, CPlayer::KEY_CONFIG::JUMP) ||
+		pInfo->nEscapeGoalInterval != 0 || pInfo->bGoal) return;
+
+	//オブジェクトをキャスト
+	CGoalGate *GoalGateObj = dynamic_cast<CGoalGate*>(obj);
+	GoalGateObj->SetEntry(true);
+
+	pInfo->bGoal = true;
+	pInfo->pGoalGate = GoalGateObj;
+
+	for (int ParCnt = 0; ParCnt < 8; ParCnt++)
 	{
-		//オブジェクトをキャスト
-		CGoalGate *GoalGateObj = dynamic_cast<CGoalGate*>(obj);
-		GoalGateObj->SetEntry(true);
-
-		pInfo->pGoalGate = GoalGateObj;
-		pInfo->bGoal = true;
-		for (int ParCnt = 0; ParCnt < 8; ParCnt++)
-		{
-			Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::GOAL_EFFECT), pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
-		}
-
-		if (pSelfInfo->pos.x < 0.0f) {
-			pSelfInfo->pos.x = GoalGateObj->GetPos().x + GoalGateObj->GetWidth() + pSelfInfo->fWidth + 0.1f;
-		}
-		else {
-			pSelfInfo->pos.x = GoalGateObj->GetPos().x - GoalGateObj->GetWidth() - pSelfInfo->fWidth - 0.1f;
-		}
-		pSelfInfo->posOld = pSelfInfo->pos;
-		pSelfInfo->move = INITVECTOR3D;
+		Manager::EffectMgr()->ParticleCreate(CPlayer::GetParticleIdx(CPlayer::PARTI_TEX::GOAL_EFFECT), pSelfInfo->pos, INIT_EFFECT_SCALE * 0.5f, Color{ 245,255,0,255 });
 	}
+
+	pSelfInfo->posOld = pSelfInfo->pos;
+	pSelfInfo->move = INITVECTOR3D;
 }
 
 //----------------------------
@@ -611,17 +607,15 @@ void CCollision::Parts(SelfInfo *pSelfInfo, CParts *pParts, CPlayer::WORLD_SIDE 
 //----------------------------
 void CCollision::Rocket(SelfInfo *pSelfInfo, CRocket *pRocket, CPlayer::WORLD_SIDE *pSide, bool *pDeath)
 {
-	RNLib::Text2D().PutDebugLog("ロケットに当たっている");
-
 	CPlayer::Info *pInfo = Stage::GetPlayer()->GetInfo(*pSide);
 	if (!pRocket->GetReady() && !pInfo->bRide) return;
 
 	// ロケットに搭乗
 	if (!CPlayer::IsKeyConfigTrigger(pInfo->idx, *pSide, CPlayer::KEY_CONFIG::JUMP) ||
-		pInfo->nRideInterval != 0) return;
+		pInfo->nEscapeGoalInterval != 0) return;
 
 	pInfo->bRide = true;
-	pInfo->nRideInterval = CRocket::RIDE_ONOFF_INTERVAL;
+	pInfo->nEscapeGoalInterval = CRocket::ESCAPE_INTERVAL;
 	pRocket->RideOn();
 	
 	CInt ParTex = RNLib::Texture().Load("data\\TEXTURE\\Effect\\eff_Hit_002.png");
