@@ -86,7 +86,8 @@ public:
 		UP_STONE_BLOCK			           = 66,	// 石ブロック (下)
 		UP_STONE_BLOCK_PTN_A	           = 67,	// 石ブロックA(下)
 		UP_STONE_BLOCK_PTN_B	           = 68,	// 石ブロックB(下)
-		UP_STONE_BLOCK_PTN_C	           = 69,	// 石ブロックC(下)
+		UP_STONE_BLOCK_PTN_C			   = 69,	// 石ブロックC(下)
+		LEAF							   = 70,	// 草
 		MAX,
 	};
 	enum class OTHER_TEXTURE {

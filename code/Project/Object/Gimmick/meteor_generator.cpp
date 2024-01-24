@@ -75,8 +75,9 @@ void CMeteorGenerator::Update(void)
 		}
 	}
 
-	/*if (m_bLive == false)
-	{*/// è¦Î‚ª¶‚«‚Ä‚¢‚È‚¢‚Æ‚«
+	if (!Stage::GetPause()) {
+		/*if (m_bLive == false)
+		{*/// è¦Î‚ª¶‚«‚Ä‚¢‚È‚¢‚Æ‚«
 		m_nCntSummon++;	// ‘‰Á
 
 		if (m_nCntSummon >= m_nSummoninterval)
@@ -86,6 +87,7 @@ void CMeteorGenerator::Update(void)
 			Manager::StageObjectMgr()->MeteorCreate(m_pos, m_move);
 			m_nCntSummon = 0;	// ƒJƒEƒ“ƒg‚Ì‰Šú‰»
 		}
-	//}
+		//}
+	}
 }
 
