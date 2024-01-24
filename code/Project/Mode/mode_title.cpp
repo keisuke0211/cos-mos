@@ -352,7 +352,7 @@ void CMode_Title::Update(void) {
 							}
 						}
 						else{
-							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_ERROR], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+							RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_ERROR], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 						}
 					}
 					break;
@@ -746,10 +746,12 @@ void CMode_Title::StageSelect(void) {
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_A) || RNLib::Input().GetKeyTrigger(DIK_LEFT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::LEFT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::LEFT)) {
 				m_nStageSelect--;
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_STG_SELECT], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 				bInput = true;
 			}
 			else if (RNLib::Input().GetKeyTrigger(DIK_D) || RNLib::Input().GetKeyTrigger(DIK_RIGHT) || RNLib::Input().GetButtonTrigger(_RNC_Input::BUTTON::RIGHT) || RNLib::Input().GetStickAngleTrigger(_RNC_Input::STICK::LEFT, _RNC_Input::INPUT_ANGLE::RIGHT)) {
 				m_nStageSelect++;
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_STG_SELECT], _RNC_Sound::CATEGORY::SE, 0.5f, false);
 				bInput = true;
 			}
 
@@ -1196,8 +1198,6 @@ void CMode_Title::StagePop(int nPlanet,int &nStage,D3DXVECTOR3 poscor) {
 		nCntColorChange = 0;
 		bColorChange = true;
 	}
-
-	/*m_WldBoardIdx = RNLib::Model().Load(String("data\\MODEL\\World_Board-%d.x", m_nPlanetIdx + 1));*/
 
 	m_nDrawPlanet = m_nPlanetIdx;
 
