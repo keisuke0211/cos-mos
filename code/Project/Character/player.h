@@ -324,7 +324,7 @@ private:
 	void InitInfo(void);
 	void ActionControl(void);
 	void Move(VECTOL vec, int cntPlayer);
-	void Death(Info& Player, const OBJECT_TYPE type);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
+	void Death(Info& Player);// 死んだ場所を引数に指定（死亡パーティクルなどを描画するのに使用する
 
 	//ゴール後の演出
 	void GoalDirector(void);

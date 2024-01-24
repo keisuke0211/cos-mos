@@ -831,7 +831,9 @@ void CPlayer::ActionControl(void)
 			CRocket::RideOff();
 			Player.bRide = false;
 			Player.bGoal = false;
-			Player.pGoalGate->LeaveDoor();
+
+			if(Player.pGoalGate != NULL)
+				Player.pGoalGate->LeaveDoor();
 		}
 
 		// ロケットに乗っている　or ゴールしている or ズームアップ or タイムオーバーの時スキップ
@@ -1138,28 +1140,12 @@ void CPlayer::SwapGuide(Info& Player)
 //----------------------------
 // 死亡処理
 //----------------------------
-void CPlayer::Death(Info& Player, const OBJECT_TYPE type)
+void CPlayer::Death(Info& Player)
 {
 	if (Player.isDeath)
 		return;
 
 	Player.DeathType = (int)CEffect_Death::TYPE::INK;
-
-	/*switch (type)
-	{
-		case OBJECT_TYPE::BLOCK:
-		case OBJECT_TYPE::FILLBLOCK:
-		case OBJECT_TYPE::TRAMPOLINE:
-		case OBJECT_TYPE::MOVE_BLOCK:
-		case OBJECT_TYPE::EXTEND_DOG:
-		case OBJECT_TYPE::GOALGATE:
-		case OBJECT_TYPE::PARTS:
-		case OBJECT_TYPE::ROCKET:
-		case OBJECT_TYPE::PILE:
-			if (s_nSwapInterval == 0) return;
-			else Player.DeathType = (int)CEffect_Death::TYPE::INK;
-			break;
-	}*/
 
 	Player.isDeath = true;
 	Player.expandCounter = EXPAND_TIME;
@@ -1181,12 +1167,10 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 	// ロケットに乗ってたら　or ゴールしていたらスキップ
 	if (Player.bRide || Player.bGoal) return;
 
-	
 	// 移動量反映
 	switch (vec)
 	{
 	case VECTOL::X:
-		
 
 		// 慣性処理
 		Player.move.x += (0.0f - Player.move.x) * 0.12f;
@@ -1202,7 +1186,6 @@ void CPlayer::Move(VECTOL vec, int cntPlayer)
 
 		// 重力処理
 	case VECTOL::Y:
-		
 
 		// トランポリンによる特殊ジャンプ中
 		if (Player.bTramJump)
@@ -1245,11 +1228,8 @@ void CPlayer::CollisionToStageObject(void)
 
 		//死亡判定
 		bool aDeath[2];
-		OBJECT_TYPE aDeathType[2];
 		aDeath[0] = false;
 		aDeath[1] = false;
-		aDeathType[0] = OBJECT_TYPE::NONE;
-		aDeathType[1] = OBJECT_TYPE::NONE;
 
 		// 衝突ベクトルに変換
 		const VECTOL vec = (VECTOL)nCntVec;
@@ -1328,20 +1308,13 @@ void CPlayer::CollisionToStageObject(void)
 				case OBJECT_TYPE::SPIKE:     CCollision::Spike(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::MOVE_BLOCK:CCollision::MoveBlock(&Self, (CMoveBlock*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::METEOR:    CCollision::Meteor(&Self, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
-				case OBJECT_TYPE::LASER:   CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
+				case OBJECT_TYPE::LASER:     CCollision::Laser(&Self, (CRoadTripLaser*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::EXTEND_DOG:CCollision::Dog(&Self, (CExtenddog*)pObj, &colliInfo, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::GOALGATE:  CCollision::GoalGate(&Self, &colliInfo, obj, &Player.side, &aDeath[nCntPlayer]);	break;
 				case OBJECT_TYPE::PARTS:     CCollision::Parts(&Self, (CParts*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::ROCKET:    CCollision::Rocket(&Self, (CRocket*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				case OBJECT_TYPE::PILE:      CCollision::Pile(&Self, &colliInfo, (CPile*)pObj, &Player.side, &aDeath[nCntPlayer]); break;
 				}		
-
-				// 結果死亡した時、死亡した種類を保存
-				if (!deathOld && aDeath[nCntPlayer])
-				{
-					aDeathType[nCntPlayer] = type;
-					break;
-				}
 
 				//情報代入
 				if (vec == VECTOL::X) {
@@ -1361,10 +1334,10 @@ void CPlayer::CollisionToStageObject(void)
 		// 死亡判定ON
 		if ((aDeath[0] || aDeath[1]) && (!m_aInfo[0].isDeath && !m_aInfo[1].isDeath)) {
 			if (aDeath[0])
-				Death(m_aInfo[0], aDeathType[0]);
+				Death(m_aInfo[0]);
 
 			if (aDeath[1])
-				Death(m_aInfo[1], aDeathType[1]);
+				Death(m_aInfo[1]);
 		}
 	}
 }
@@ -1539,7 +1512,7 @@ void CPlayer::CollisionAfter(CStageObject *pStageObj, const CStageObject::TYPE t
 			}
 		}
 
-		//ゴールゲート
+		//ロケット
 		case OBJECT_TYPE::ROCKET:
 		{
 			if (m_aInfo[0].bRide && m_aInfo[1].bRide)
