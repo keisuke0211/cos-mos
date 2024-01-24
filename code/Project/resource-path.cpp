@@ -53,6 +53,7 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\meteor-break.wav",
 	"data\\SOUND\\SE\\enter.wav",
 	"data\\SOUND\\SE\\select.wav",
+	"data\\SOUND\\SE\\stg-select.wav",
 	"data\\SOUND\\SE\\error.wav",
 	"data\\SOUND\\SE\\time-count.wav",
 	"data\\SOUND\\SE\\time-over.wav",

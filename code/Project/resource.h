@@ -74,6 +74,7 @@ public:
 		METEOR_BREAK,
 		SE_ENTER,
 		SE_SELECT,
+		SE_STG_SELECT,
 		SE_ERROR,
 
 		TIME_COUNT,		//タイムカウント
