@@ -434,7 +434,7 @@ void CFontText::LetterForm(void)
 				}
 
 				// ÉTÉEÉìÉhçƒê∂
-				RNLib::Sound().Play(m_Info.SeIdx, _RNC_Sound::CATEGORY::SE, 0.5f, false);
+				RNLib::Sound().Play(m_Info.SeIdx, _RNC_Sound::CATEGORY::SE, 0.3f, false);
 			}
 			else
 			{
