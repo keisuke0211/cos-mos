@@ -192,7 +192,8 @@ void CMode_Game::ProcessState(const PROCESS process) {
 				->SetSize(RNLib::Window().GetCenterX() * 2, RNLib::Window().GetCenterY() * 2)
 				->SetCol(Color{ 0,0,0,120 });
 
-			m_MenuUI->Update();
+			if (m_MenuUI != NULL)
+				m_MenuUI->Update();
 
 			bool MenuEnd = m_MenuUI->m_MenuEnd;
 
