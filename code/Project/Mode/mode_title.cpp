@@ -307,12 +307,12 @@ void CMode_Title::Update(void) {
 		else if (Title == TITLE_OUTSET)
 			TextAnime();
 		else if (Title == TITLE_MENU) {
-			m_MenuUI->Update();
+			if (m_MenuUI != NULL)
+				m_MenuUI->Update();
 			MenuAnime();
 		}
 		else if (Title == TITLE_SELECT)
 		{
-			m_MenuUI->Update();
 			StageSelect();
 		}
 		else if (Title == TITLE_NEXT)
@@ -1250,8 +1250,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		//m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
-
 		m_bStageSelect = false;
 
 		BgOldColor = BgColor;
