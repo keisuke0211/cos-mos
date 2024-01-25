@@ -94,10 +94,10 @@ void CTransition::Update(void) {
 			break;
 		}
 
-		float size = ((float)(m_stateCounter > 10 ? 10 : m_stateCounter) / 10) * 200.0f;
+		float size = ((float)(m_stateCounter > 10 ? 10 : m_stateCounter) / 10) * 160.0f;
 		if (m_stateCounter >= BLACK_TIME - 5) {
 			int counter = m_stateCounter + 1;
-			size = 1.0f - ((counter - BLACK_TIME) / 5.0f) * 200.0f;
+			size = 1.0f - ((counter - BLACK_TIME) / 5.0f) * 160.0f;
 		}
 
 		RNLib::Polygon2D().Put(2, Pos2D(RNLib::Window().GetWidth() - 100.0f, RNLib::Window().GetHeight() - 100.0f), (((RNLib::Count().GetCount() % 60) / 60.0f) * D3DX_PI_DOUBLE) + m_startGearAngle, true)
@@ -196,7 +196,7 @@ void CTransition::FillScreen(const float& rate) {
 			// “ª
 			RNLib::Polygon2D().Put(1, true)
 				->SetCol(m_col)
-				->SetTex(m_texIdxes[0], RNLib::Count().GetBlinkF2(), 1, 2)
+				->SetTex(m_texIdxes[0], 0, 1, 2)
 				->SetTexMirrorX(true)
 				->SetVtxPos(Pos2D(right2 - 0.1f, 0.0f), Pos2D(right1, 0.0f), Pos2D(right2 - 0.1f, screenHeightHalf), Pos2D(right1, screenHeightHalf));
 		}
@@ -214,7 +214,7 @@ void CTransition::FillScreen(const float& rate) {
 			// “ª
 			RNLib::Polygon2D().Put(1, true)
 				->SetCol(m_col)
-				->SetTex(m_texIdxes[0], !RNLib::Count().GetBlinkF2(), 1, 2)
+				->SetTex(m_texIdxes[0], 1, 1, 2)
 				->SetVtxPos(Pos2D(left1, screenHeightHalf), Pos2D(left2 + 0.1f, screenHeightHalf), Pos2D(left1, screenHeight), Pos2D(left2 + 0.1f, screenHeight));
 		}
 	}
