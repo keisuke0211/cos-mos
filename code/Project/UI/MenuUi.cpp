@@ -324,7 +324,7 @@ void CMenuUI::SelectInput(void)
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect--;
 
-		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_SELECT], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_SELECT], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 
 		m_Menu.bPartElasticity = true;
 	}
@@ -335,7 +335,7 @@ void CMenuUI::SelectInput(void)
 		else if (m_Menu.bSubMenu)
 			m_Menu.nSubSelect++;
 
-		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_SELECT], _RNC_Sound::CATEGORY::SE, 0.7f, false);
+		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::SE_SELECT], _RNC_Sound::CATEGORY::SE, 1.0f, false);
 
 
 		m_Menu.bPartElasticity = true;
