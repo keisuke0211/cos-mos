@@ -314,7 +314,10 @@ void CMode_Title::Update(void) {
 			MenuAnime();
 		}
 		else if (Title == TITLE_SELECT)
+		{
+			m_MenuUI->Update();
 			StageSelect();
+		}
 		else if (Title == TITLE_NEXT)
 			return;
 
@@ -1250,7 +1253,7 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
+		//m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
 
 		m_bStageSelect = false;
 

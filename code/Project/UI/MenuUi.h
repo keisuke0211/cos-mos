@@ -187,11 +187,12 @@ public:
 	static CMenuUI *Create(CMode::TYPE type);
 
 	// -- メニュー関連 -------------------------------------------------------------------
-	/* アニメーション	*/void MenuAnime(void);
-	/* メインの生成		*/void MenuCreate(void);
-	/* サブの生成		*/void SubTextCreate(void);
-	/* メニュー選択		*/void MenuSelect(void);
-	/* 一部の伸縮		*/void PartElasticity(void);
+	/* アニメーション		*/void MenuAnime(void);
+	/* メインの生成			*/void MenuCreate(void);
+	/* サブの生成			*/void SubTextCreate(void);
+	/* メニュー選択			*/void MenuSelect(void);
+	/* 一部の伸縮			*/void PartElasticity(void);
+	/* サブメニューの非表示	*/void SubMenuHidden(void);
 
 	// -- 入力関連 -----------------------------------------------------------------------
 	/* 決定	*/void DecisionInput(void);

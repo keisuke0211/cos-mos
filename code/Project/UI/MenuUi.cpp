@@ -665,7 +665,7 @@ void CMenuUI::MenuAnime(void)
 				m_Menu.BoxColor.a = 255;
 		}
 	}
-	else if (m_Menu.bSubMenuMove && !m_Menu.bSubMenuCD && !m_Menu.bSubTextMenu || (m_Menu.bClose && m_Menu.bSubMenuDisp))
+	else if (m_Menu.bSubMenuMove && !m_Menu.bSubMenuCD && !m_Menu.bSubTextMenu || (m_Menu.bClose && m_Menu.bSubMenuDisp && !m_Menu.bSubTextMenu))
 	{
 		int nTextMax = 0;
 		int nMainSelect = 0;
@@ -712,7 +712,7 @@ void CMenuUI::MenuAnime(void)
 				SubTextCreate();
 				m_Menu.bSubTextMenu = true;
 			}
-			else if (m_Menu.bSubMenuDisp && !m_Menu.bClose && !m_Menu.bSubTextMenu) {
+			else if (m_Menu.bSubMenuDisp && !m_Menu.bSubTextMenu) {
 				m_Menu.bSubMenuDisp = false;
 				m_Menu.bSubMenuMove = false;
 				m_Menu.bSubMenuCreate = false;
@@ -1018,6 +1018,14 @@ void CMenuUI::MenuSelect(void)
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);
 	}
+
+}
+
+//========================================
+// サブメニューの非表示
+//========================================
+void SubMenuHidden(void)
+{
 
 }
 
