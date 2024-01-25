@@ -844,7 +844,7 @@ void CMenuUI::MenuAnime(void)
 	}
 
 	// メニュー終了時、
-	if (m_MenuEnd && !m_Menu.bSubMenuCreate)
+	if (m_MenuEnd)
 	{
 		CMode::TYPE Mode = Manager::GetMode();
 		if (Mode == CMode::TYPE::TITLE) {
