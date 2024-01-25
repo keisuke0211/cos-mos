@@ -17,26 +17,26 @@ SET_TALK
 END_TALK
 
 SET_TALK
-	TALK    ＼（゜ロ＼）ココハドコ？（／ロ゜）／アタシハダアレ？
+	TALK    ＼（゜ロ＼）（／ロ゜）／ココハドコ？アタシハダレ？
 	PLAYER  1
 	TYPE    0
 END_TALK
 
 SET_TALK
-	TALK    あれ！？ぼくたちのロケットがない！
+	TALK    あれ！？オレたちのロケットがない！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
 SET_TALK
-	TALK    こうなったらロケットをさがしにいくか！
-	PLAYER  2
+	TALK    ロケットをさがしにいくしかないね・・・
+	PLAYER  1
 	TYPE    0
 END_TALK
 
 SET_TALK
-	TALK    ぼくらの「ＳＷＡＰ」で！
-	PLAYER  2
+	TALK    そうだな、オレたちの「ＳＷＡＰ」のちからで！
+	PLAYER  0
 	TYPE    0
 END_TALK
 
