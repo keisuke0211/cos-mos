@@ -107,12 +107,18 @@ void CGoalGate::Init(void) {
 	m_RainbowCol[(int)RAINBOW::WHITE] =	{ 255,255,255,70 };
 
 	if (m_World == WORLD::UP) {
-		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
-		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Up_Goal.txt"), TRUE);
+		m_MotionIdx = Stage::CheckPlanetIdx(0) ?
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt") :
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W2\\UP\\Open.txt")
+			;
+		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(Stage::CheckPlanetIdx(0) ? "data\\SETUP\\W1_Up_Goal.txt" : "data\\SETUP\\W2_Up_Goal.txt"), TRUE);
 	}
 	else if (m_World == WORLD::DOWN) {
-		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt");
-		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load("data\\SETUP\\W1_Down_Goal.txt"), TRUE);
+		m_MotionIdx = Stage::CheckPlanetIdx(0) ?
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt") :
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W2\\DOWN\\Open.txt")
+			;
+		m_doll = new CDoll3D(PRIORITY_OBJECT, RNLib::SetUp3D().Load(Stage::CheckPlanetIdx(0) ? "data\\SETUP\\W1_Down_Goal.txt" : "data\\SETUP\\W2_Down_Goal.txt"), TRUE);
 	}
 
 }
@@ -145,10 +151,18 @@ void CGoalGate::Update(void)
 	if (setCol.a > 255)setCol.a = 255;
 
 	if (m_bLeave){
-		if (m_World == WORLD::UP)
-			m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt");
-		else if (m_World == WORLD::DOWN)
-			m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt");
+		if (m_World == WORLD::UP) {
+			m_MotionIdx = Stage::CheckPlanetIdx(0) ?
+				RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Open.txt") :
+				RNLib::Motion3D().Load("data\\MOTION\\Goal\\W2\\UP\\Open.txt")
+				;
+		}
+		else if (m_World == WORLD::DOWN) {
+			m_MotionIdx = Stage::CheckPlanetIdx(0) ?
+				RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Open.txt") :
+				RNLib::Motion3D().Load("data\\MOTION\\Goal\\W2\\DOWN\\Open.txt")
+				;
+		}
 
 		RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::DOOR_OPEN], _RNC_Sound::CATEGORY::SE, 0.7f, false);
 
