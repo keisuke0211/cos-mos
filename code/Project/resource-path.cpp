@@ -57,4 +57,6 @@ const char* CResources::SOUND_PATHS[(int)SOUND::MAX] = {
 	"data\\SOUND\\SE\\error.wav",
 	"data\\SOUND\\SE\\time-count.wav",
 	"data\\SOUND\\SE\\time-over.wav",
+	"data\\SOUND\\SE\\Yay0.wav",
+	"data\\SOUND\\SE\\Yay1.wav",
 };

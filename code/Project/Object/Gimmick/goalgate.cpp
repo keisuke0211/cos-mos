@@ -189,11 +189,12 @@ void CGoalGate::Update(void)
 		m_doll->SetCol(Color(255, 255, 255, 255 * CntRate));
 	}
 
-	if(m_state != STATE::MAX)
-	RNLib::Polygon3D().Put(PRIORITY_OBJECT2, m_doll->GetPos() + Pos3D(0.0f,14.0f * cosf(m_doll->GetRot().z),0.0f), m_doll->GetRot(), false)
-		->SetTex(&m_camera)
-		->SetCol(Color(255, 255, 255, 255 * CntRate))
-		->SetSize(28.0f, 36.0f);
+	if (m_state != STATE::MAX) {
+		RNLib::Polygon3D().Put(PRIORITY_OBJECT2, m_doll->GetPos() + Pos3D(0.0f, 14.0f * cosf(m_doll->GetRot().z), 0.0f), m_doll->GetRot(), false)
+			->SetTex(&m_camera)
+			->SetCol(Color(255, 255, 255, 255 * CntRate))
+			->SetSize(Stage::CheckPlanetIdx(1) && m_pos.y > 0.0f ? 40.0f : 28.0f, 36.0f);
+	}
 
 	if (!CPlayer::GetSwapAnim()) {
 		if (!m_bCloseGate) {
@@ -463,10 +464,18 @@ void CGoalGate::SetEntry(bool bEntry)
 {
 	m_bEntry = bEntry;
 
-	if (m_World == WORLD::UP)
-		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Close.txt");
-	else if (m_World == WORLD::DOWN)
-		m_MotionIdx = RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Close.txt");
+	if(m_World == WORLD::UP) {
+		m_MotionIdx = Stage::CheckPlanetIdx(0) ?
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\UP\\Close.txt") :
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W2\\UP\\Close.txt")
+			;
+	}
+	else if (m_World == WORLD::DOWN) {
+		m_MotionIdx = Stage::CheckPlanetIdx(0) ?
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W1\\DOWN\\Close.txt") :
+			RNLib::Motion3D().Load("data\\MOTION\\Goal\\W2\\DOWN\\Close.txt")
+			;
+	}
 
 	RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::DOOR_CLOSE], _RNC_Sound::CATEGORY::SE, 0.7f, false);
 
