@@ -80,6 +80,9 @@ public:
 		TIME_COUNT,		//タイムカウント
 		TIME_OVER,		//タイムオーバー
 
+		YAY_0,
+		YAY_1,
+
 		MAX,
 	};
 	static short SOUND_IDXES[(int)SOUND::MAX];

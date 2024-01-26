@@ -552,40 +552,43 @@ void CMenuUI::MenuAnime(void)
 	if (!m_Menu.bMenu)
 	{
 		int Txt = m_Menu.nNumLeftMenu;
-		float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
-		float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
-		float SizeX = TgtSizeX * ScaleRate;
-		float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+		if (m_pMenu[Txt] != NULL)
+		{
+			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
+			float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+			float SizeX = TgtSizeX * ScaleRate;
+			float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
-		m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
+			m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
 
-		if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
-			m_Menu.nCntLeftAnime = 0;
+			if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
+				m_Menu.nCntLeftAnime = 0;
 
-			m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
-			{// TextÇÃçƒê∂ê¨
-				D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-				if (Txt == m_Menu.nMaineSelect) {
-					col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+				m_pMenu[Txt]->SetTxtBoxSize(TgtSizeX, SizeY);
+				{// TextÇÃçƒê∂ê¨
+					D3DXCOLOR col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+					if (Txt == m_Menu.nMaineSelect) {
+						col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+					}
+
+					FontFont pFont = { col,35.0f,3,1,-1, };
+
+					m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_WAKUWAKU, &pFont);
+					m_pMenu[Txt]->SetTextSkip(true);
+
+					if (Txt == m_Menu.nMaineSelect) {
+						m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
+					}
+					else {
+						m_pMenu[Txt]->SetTxtBoxColor(Color{ 155,155,155,255 });
+					}
 				}
 
-				FontFont pFont = { col,35.0f,3,1,-1, };
-
-				m_pMenu[Txt]->Regeneration(m_MaineMenu[Txt].Text, CFont::FONT_WAKUWAKU, &pFont);
-				m_pMenu[Txt]->SetTextSkip(true);
-
-				if (Txt == m_Menu.nMaineSelect) {
-					m_pMenu[Txt]->SetTxtBoxColor(Color{ 255,255,255,255 });
+				if (++m_Menu.nNumLeftMenu >= m_Menu.MainMenuMax)
+				{
+					m_Menu.bMenu = true;
+					m_Menu.bPartElasticity = true;
 				}
-				else {
-					m_pMenu[Txt]->SetTxtBoxColor(Color{ 155,155,155,255 });
-				}
-			}
-
-			if (++m_Menu.nNumLeftMenu >= m_Menu.MainMenuMax)
-			{
-				m_Menu.bMenu = true;
-				m_Menu.bPartElasticity = true;
 			}
 		}
 	}
@@ -596,32 +599,34 @@ void CMenuUI::MenuAnime(void)
 		// ñcÇÁÇﬁ ÅE èkÇﬁ
 		if (!m_Menu.bAllElasticity) {
 			for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++) {
+				if (m_pMenu[Txt] != NULL)
+				{
+					if (m_Menu.nCntLeftAnime == 0) {
+						FontFont pFont = { D3DXCOLOR(0.0f,0.0f,0.0f,0.0f),35.0f,3,1,-1, };
 
-				if (m_Menu.nCntLeftAnime == 0) {
-					FontFont pFont = { D3DXCOLOR(0.0f,0.0f,0.0f,0.0f),35.0f,3,1,-1, };
+						m_pMenu[Txt]->Regeneration("", CFont::FONT_CONVENIE, &pFont);
+					}
 
-					m_pMenu[Txt]->Regeneration("", CFont::FONT_CONVENIE, &pFont);
-				}
+					// ñcèk
+					float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
+					float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
 
-				// ñcèk
-				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
-				float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+					if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
+						TgtSizeX = 80.0f;
 
-				if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
-					TgtSizeX = 80.0f;
+					float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+					float SizeX = 0;
 
-				float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
-				float SizeX = 0;
+					if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
+						SizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + (TgtSizeX * ScaleRate);
+					else if (Txt != m_Menu.nMaineSelect || m_Menu.bBackMode)
+						SizeX = TgtSizeX - (TgtSizeX * ScaleRate);
 
-				if (Txt == m_Menu.nMaineSelect && !m_Menu.bBackMode)
-					SizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + (TgtSizeX * ScaleRate);
-				else if (Txt != m_Menu.nMaineSelect || m_Menu.bBackMode)
-					SizeX = TgtSizeX - (TgtSizeX * ScaleRate);
+					m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
 
-				m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
-
-				if ((m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && Txt != m_Menu.nMaineSelect) || (m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && m_Menu.bBackMode)) {
-					m_pMenu[Txt]->SetTxtBoxSize(0, SizeY);
+					if ((m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && Txt != m_Menu.nMaineSelect) || (m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME - 1 && m_Menu.bBackMode)) {
+						m_pMenu[Txt]->SetTxtBoxSize(0, SizeY);
+					}
 				}
 			}
 			if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME)
@@ -640,16 +645,19 @@ void CMenuUI::MenuAnime(void)
 		else if (m_Menu.bAllElasticity && !m_MenuEnd)
 		{
 			int Txt = m_Menu.nMaineSelect;
-			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + 80.0f;
-			float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
-			float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
-			float SizeX = TgtSizeX - (TgtSizeX * ScaleRate);
+			if (m_pMenu[Txt] != NULL)
+			{
+				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x + 80.0f;
+				float SizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+				float ScaleRate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+				float SizeX = TgtSizeX - (TgtSizeX * ScaleRate);
 
-			m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
+				m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
 
-			if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
-				m_pMenu[Txt]->SetTxtBoxSize(0, SizeY);
-				m_MenuEnd = true;
+				if (++m_Menu.nCntLeftAnime == PAUSE_LEFT_ANIME) {
+					m_pMenu[Txt]->SetTxtBoxSize(0, SizeY);
+					m_MenuEnd = true;
+				}
 			}
 		}
 	}
@@ -665,7 +673,7 @@ void CMenuUI::MenuAnime(void)
 				m_Menu.BoxColor.a = 255;
 		}
 	}
-	else if (m_Menu.bSubMenuMove && !m_Menu.bSubMenuCD && !m_Menu.bSubTextMenu || (m_Menu.bClose && m_Menu.bSubMenuDisp))
+	else if (m_Menu.bSubMenuMove && !m_Menu.bSubMenuCD && !m_Menu.bSubTextMenu || (m_Menu.bClose && m_Menu.bSubMenuDisp && !m_Menu.bSubTextMenu))
 	{
 		int nTextMax = 0;
 		int nMainSelect = 0;
@@ -712,7 +720,7 @@ void CMenuUI::MenuAnime(void)
 				SubTextCreate();
 				m_Menu.bSubTextMenu = true;
 			}
-			else if (m_Menu.bSubMenuDisp && !m_Menu.bClose && !m_Menu.bSubTextMenu) {
+			else if (m_Menu.bSubMenuDisp && !m_Menu.bSubTextMenu) {
 				m_Menu.bSubMenuDisp = false;
 				m_Menu.bSubMenuMove = false;
 				m_Menu.bSubMenuCreate = false;
@@ -836,7 +844,7 @@ void CMenuUI::MenuAnime(void)
 	}
 
 	// ÉÅÉjÉÖÅ[èIóπéûÅA
-	if (m_MenuEnd && !m_Menu.bSubMenuCreate)
+	if (m_MenuEnd)
 	{
 		CMode::TYPE Mode = Manager::GetMode();
 		if (Mode == CMode::TYPE::TITLE) {
@@ -877,36 +885,36 @@ void CMenuUI::PartElasticity(void)
 	{
 		for (int Txt = 0; Txt < m_Menu.MainMenuMax; Txt++)
 		{
-			float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
-			float TgtSizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
-
-			float TxtSizeX = m_pMenu[Txt]->GetTxtBoxSize().x;
-			float TxtSizeY = m_pMenu[Txt]->GetTxtBoxSize().y;
-
-			bool bChg = false;
-
-			float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
-			float SizeX = 0;
-			float SizeY = 0;
-			float size = 0;
-
-			if (Txt == m_Menu.nMaineSelect && TxtSizeX < TgtSizeX)
+			if (m_pMenu[Txt] != NULL)
 			{
-				bChg = true;
-				SizeX = (TgtSizeX * 0.8f) + ((TgtSizeX * 0.2f) * Rate);
-				SizeY = (TgtSizeY * 0.8f) + ((TgtSizeY * 0.2f) * Rate);
-			}
-			else if (Txt != m_Menu.nMaineSelect && TxtSizeX > (TgtSizeX * 0.8f))
-			{
-				bChg = true;
-				SizeX = TgtSizeX - ((TgtSizeX * 0.2f) * Rate);
-				SizeY = TgtSizeY - ((TgtSizeY * 0.2f) * Rate);
-			}
+				float TgtSizeX = m_pMenu[Txt]->GetTxtBoxTgtSize().x;
+				float TgtSizeY = m_pMenu[Txt]->GetTxtBoxTgtSize().y;
+
+				float TxtSizeX = m_pMenu[Txt]->GetTxtBoxSize().x;
+				float TxtSizeY = m_pMenu[Txt]->GetTxtBoxSize().y;
+
+				bool bChg = false;
+
+				float Rate = RNLib::Ease().Easing(EASE_TYPE::INOUT_SINE, m_Menu.nCntLeftAnime, PAUSE_LEFT_ANIME);
+				float SizeX = 0;
+				float SizeY = 0;
+				float size = 0;
+
+				if (Txt == m_Menu.nMaineSelect && TxtSizeX < TgtSizeX)
+				{
+					bChg = true;
+					SizeX = (TgtSizeX * 0.8f) + ((TgtSizeX * 0.2f) * Rate);
+					SizeY = (TgtSizeY * 0.8f) + ((TgtSizeY * 0.2f) * Rate);
+				}
+				else if (Txt != m_Menu.nMaineSelect && TxtSizeX > (TgtSizeX * 0.8f))
+				{
+					bChg = true;
+					SizeX = TgtSizeX - ((TgtSizeX * 0.2f) * Rate);
+					SizeY = TgtSizeY - ((TgtSizeY * 0.2f) * Rate);
+				}
 
 
-			if (bChg)
-			{
-				if (m_pMenu[Txt] != NULL)
+				if (bChg)
 					m_pMenu[Txt]->SetTxtBoxSize(SizeX, SizeY);
 			}
 		}
@@ -1018,6 +1026,14 @@ void CMenuUI::MenuSelect(void)
 		float volume = (float)nData / (float)100.0f;
 		RNLib::Options().SetCategoryVolume(_RNC_Sound::CATEGORY::SE, volume);
 	}
+
+}
+
+//========================================
+// ÉTÉuÉÅÉjÉÖÅ[ÇÃîÒï\é¶
+//========================================
+void SubMenuHidden(void)
+{
 
 }
 

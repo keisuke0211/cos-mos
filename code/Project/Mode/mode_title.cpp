@@ -115,9 +115,6 @@ CMode_Title::CMode_Title(void) : m_RocketRail("data\\RAIL3D\\rocket.txt") {
 	m_TextAnime.state = TEXT_IN;
 	m_TextAnime.StandTime = 0;
 	m_TextAnime.Interval = 0;
-
-	if(!m_bStageSelect)
-		g_pTalk = CTalk::Create(CTalk::EVENT::BEFORE_DEPARTURE);
 }
 
 //========================================
@@ -310,11 +307,14 @@ void CMode_Title::Update(void) {
 		else if (Title == TITLE_OUTSET)
 			TextAnime();
 		else if (Title == TITLE_MENU) {
-			m_MenuUI->Update();
+			if (m_MenuUI != NULL)
+				m_MenuUI->Update();
 			MenuAnime();
 		}
 		else if (Title == TITLE_SELECT)
+		{
 			StageSelect();
+		}
 		else if (Title == TITLE_NEXT)
 			return;
 
@@ -1250,8 +1250,6 @@ void CMode_Title::SwapMode(TITLE aTitle) {
 		break;
 	case CMode_Title::TITLE_SELECT:
 	{
-		m_MenuUI->TextRelease(CMenuUI::TEXT_ALL);
-
 		m_bStageSelect = false;
 
 		BgOldColor = BgColor;

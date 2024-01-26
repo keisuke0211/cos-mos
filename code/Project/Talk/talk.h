@@ -14,7 +14,7 @@ public:
 	//会話イベント
 	enum class EVENT {
 		NONE,             //イベント無し
-		BEFORE_DEPARTURE, // 出発前（タイトル->ステージ選択の合間
+		//BEFORE_DEPARTURE, // 出発前（タイトル->ステージ選択の合間
 		OPENING_1_1,      // 不時着陸（1-1のOPイベント
 		ROCKET_FOUND,     // ロケット発見(1-3クリア後
 		MAX,

@@ -10,7 +10,7 @@
 //会話イベントのファイルパス
 const char *CTalk::EVENT_FILE[(int)EVENT::MAX] = {
 	"",//イベント無し
-	"data\\TALK\\talk000.txt", // 出発前（タイトル->ステージ選択の合間？
+	//"data\\TALK\\talk000.txt", // 出発前（タイトル->ステージ選択の合間？
 	"data\\TALK\\talk001.txt", // 不時着陸（1-1の開始イベント
 	"data\\TALK\\talk002.txt", // ロケット発見(1-3クリア後
 };
@@ -185,9 +185,6 @@ void CTalk::Init(EVENT &Event)
 	//読み込めた
 	if (s_pTalk != NULL)
 	{
-		if (Event == EVENT::BEFORE_DEPARTURE) 
-			Stage::SetIsCutIn(true);
-
 		//会話開始
 		m_bTalk = true;
 		m_nTalkID = -1; //会話番号

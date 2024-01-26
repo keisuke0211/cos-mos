@@ -61,6 +61,7 @@ CPlayer::SE     CPlayer::s_SE = {};	//サウンド用構造体
 CPlayer::Motion CPlayer::s_motion[2] = {};	//モーション用構造体
 bool            CPlayer::ms_bSwapEnd = false;
 UShort          CPlayer::ms_guideCounter = 0;
+bool            CPlayer::ms_isGoal = false;
 
 bool  CPlayer::s_bAimPlayer = false;
 int   CPlayer::s_nAimNo = 0;
@@ -368,6 +369,8 @@ void CPlayer::Update(void)
 	{
 		// スワップ
 		Swap();
+
+		ms_isGoal = false;
 	}
 	else if ((m_aInfo[0].bGoal && m_aInfo[1].bGoal) ||
 		     (m_aInfo[0].bRide && m_aInfo[1].bRide))
@@ -1694,16 +1697,26 @@ void CPlayer::GoalDirector(void)
 	//クリアタイム表示
 	if (s_nGoalInterval >= POP_CLEARTIME)
 	{
-		if(ClearTime < BestTime)
-			RNLib::Text2D().Put(PRIORITY_UI, String("New Record!!"), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 130.0f), 0.0f)
-			->SetSize(Size2D(20.0f, 20.0f))
-			->SetCol(Color{ 255,255,0,255 });
+		if (ClearTime < BestTime) {
+			RNLib::Text2D().Put(PRIORITY_UI, String("NEW RECORD"), _RNC_Text::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 130.0f), 0.0f)
+				->SetSize(Size2D(20.0f, 20.0f))
+				->SetCol(Color{ 255,255,0,255 });
+			if (!ms_isGoal) {
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::YAY_1], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+			}
+		}
+		else {
+			if (!ms_isGoal) {
+				RNLib::Sound().Play(CResources::SOUND_IDXES[(int)CResources::SOUND::YAY_0], _RNC_Sound::CATEGORY::SE, 1.0f, false);
+			}
+		}
+		ms_isGoal = true;
 
-		RNLib::Text2D().Put(PRIORITY_UI, String("ベストタイム:%.1f秒", BestTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(100.0f, 160.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, String("BEST TIME:%.1f!", BestTime), _RNC_Text::ALIGNMENT::CENTER, 0, Center + Pos2D(100.0f, 160.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		const Pos2D PopPos = Center + Pos2D(0.0f, 200.0f);
-		RNLib::Text2D().Put(PRIORITY_UI, String("クリアタイム:%.1f秒", ClearTime), _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Center + Pos2D(0.0f, 200.0f), 0.0f)
+		RNLib::Text2D().Put(PRIORITY_UI, String("CLEAR TIME:%.1f!", ClearTime), _RNC_Text::ALIGNMENT::CENTER, 0, Center + Pos2D(0.0f, 200.0f), 0.0f)
 			->SetSize(Size2D(50.0f, 50.0f));
 	}
 
@@ -1715,7 +1728,7 @@ void CPlayer::GoalDirector(void)
 
 		//インターバル前半は表示
 		if (DiffInterval < GOAL_INTERVAL / 2)
-			RNLib::Text2D().Put(PRIORITY_UI, "NextStage: A ボタン or Enter", _RNC_Text::ALIGNMENT::CENTER, NONEDATA, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
+			RNLib::Text2D().Put(PRIORITY_UI, "NEXT STAGE A OR ENTER", _RNC_Text::ALIGNMENT::CENTER, 0, Pos2D(Center.x + 100.0f, 600.0f), 0.0f)
 			->SetSize(Size2D(20.0f, 20.0f));
 
 		if (s_nGoalInterval >= GOAL_INTERVAL * 2)

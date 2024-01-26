@@ -7,18 +7,18 @@
 #=======================================
 
 #会話数
-NUM_TALK   7
+NUM_TALK   6
 
 #会話内容
 SET_TALK
-	TALK    あ！あそこにあるのって！
-	PLAYER  2
+	TALK    お！あそこにあるのはもしや！
+	PLAYER  0
 	TYPE    0
 END_TALK
 
 SET_TALK
 	TALK    ぼくらのロケットだ！
-	PLAYER  2
+	PLAYER  1
 	TYPE    0
 END_TALK
 
@@ -35,16 +35,11 @@ SET_TALK
 END_TALK
 
 SET_TALK
-	TALK    ちらばった「パーツ」をあつめてなおそうか！
+	TALK    ぜんぶあつめればきっとなおるさ！
 	PLAYER  0
 	TYPE    0
 END_TALK
 
-SET_TALK
-	TALK    ロケットにのればあえるからなくな！
-	PLAYER  0
-	TYPE    0
-END_TALK
 SET_TALK
 	TALK    ...！！(°ー°)ウ(｡_｡)ﾝ
 	PLAYER  1

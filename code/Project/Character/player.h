@@ -319,6 +319,7 @@ private:
 
 	static bool ms_bSwapEnd;
 	static UShort ms_guideCounter;
+	static bool ms_isGoal;
 
 	void InitKeyConfig(void);// 各プレイヤーのキーボード・ジョイパッドのキーコンフィグ初期化設定
 	void InitInfo(void);
