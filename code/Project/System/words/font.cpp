@@ -116,7 +116,10 @@ void CFont::TextureCreate(string nWords, FONT nFont)
 
 	// デバイスコンテキストとフォントハンドルの開放
 	SelectObject(hdc, oldFont);
+
+	if (m_hFont[nFont] != NULL);
 	DeleteObject(m_hFont[nFont]);
+
 	ReleaseDC(NULL, hdc);
 
 	//デバイスの取得
@@ -149,8 +152,8 @@ void CFont::TextureCreate(string nWords, FONT nFont)
 	int nBoxX = GM.gmBlackBoxX;
 	DWORD Alpha, Color;
 	FillMemory(LockedRect.pBits, LockedRect.Pitch * TM.tmHeight, 0);
-	for (int y = iOfs_y; y<iOfs_y + iBmp_h; y++)
-		for (int x = iOfs_x; x <iOfs_x + nBoxX; x++) {
+	for (int y = iOfs_y; y < iOfs_y + iBmp_h; y++)
+		for (int x = iOfs_x; x < iOfs_x + nBoxX; x++) {
 			Alpha = (255 * ptr[x - iOfs_x + iBmp_w*(y - iOfs_y)]) / (Level - 1);
 			Color = 0x00ffffff | (Alpha << 24);
 			memcpy((BYTE*)LockedRect.pBits + LockedRect.Pitch*y + 4 * x, &Color, sizeof(DWORD));
